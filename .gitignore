@@ -1,0 +1,5 @@
+bin
+vendor
+.history
+grafana-dashboard-manager
+importer.yml
