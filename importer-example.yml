@@ -1,0 +1,19 @@
+grafana:
+  url: https://gf.gc1.dev-stage.stardust.es.net
+  token: <CHANGEME>
+  datasource:
+    user: esnet-admin
+    password: <CHANGEME>
+
+## Monitored Folders
+  watched:
+    - Stardust Flow
+    - Stardust Internals
+    - Stardust OLS
+global:
+  debug: true
+
+env:
+  output:
+    datasources: testing/datasources
+    dashboards: testing/dashboards
