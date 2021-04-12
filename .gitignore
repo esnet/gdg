@@ -3,3 +3,4 @@ vendor
 .history
 grafana-dashboard-manager
 importer.yml
+dist/
