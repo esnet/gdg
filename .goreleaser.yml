@@ -9,10 +9,12 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+    ldflags: -X github.com/esnet/grafana-dashboard-manager/version.GitCommit={{ .Commit }} -X github.com/esnet/grafana-dashboard-manager/version.BuildDate={{ .Date }}
     goos:
       - linux
       - windows
       - darwin
+
 archives:
   - replacements:
       darwin: Darwin
@@ -20,6 +22,10 @@ archives:
       windows: Windows
       386: i386
       amd64: x86_64
+    files:
+     - README*
+     - conf/importer-example.yml
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:

@@ -20,14 +20,16 @@ help:
 	@echo 'Management commands for grafana-dashboard-manager:'
 	@echo
 	@echo 'Usage:'
-	@echo '    make build           Compile the project.'
-	@echo '    make get-deps        runs dep ensure, mostly used for ci.'
-	@echo '    make build-alpine    Compile optimized for alpine linux.'
-	@echo '    make package         Build final docker image with just the go binary inside'
-	@echo '    make tag             Tag image created by package with latest, git commit and version'
-	@echo '    make test            Run tests on a compiled project.'
-	@echo '    make push            Push tagged images to registry'
-	@echo '    make clean           Clean the directory tree.'
+	@echo '    make build             Compile the project.'
+	@echo '    make get-deps          runs dep ensure, mostly used for ci.'
+	@echo '    make build-alpine      Compile optimized for alpine linux.'
+	@echo '    make package           Build final docker image with just the go binary inside'
+	@echo '    make release-snapshot  Test Release locally using goreleaser'
+	@echo '    make release           Push Release to github'
+	@echo '    make tag               Tag image created by package with latest, git commit and version'
+	@echo '    make test              Run tests on a compiled project.'
+	@echo '    make push              Push tagged images to registry'
+	@echo '    make clean             Clean the directory tree.'
 	@echo
 
 build:
@@ -62,6 +64,12 @@ push: tag
 clean:
 	@test ! -e bin/${BIN_NAME} || rm bin/${BIN_NAME}
 	rm -fr dist/
+
+release-snapshot: clean 
+	goreleaser build --snapshot
+
+release: clean 
+	goreleaser release
 
 test:
 	go test ./...
