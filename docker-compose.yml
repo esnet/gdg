@@ -3,7 +3,7 @@ services:
     grafana-dashboard-manager:
         build:
             context: . 
-        image: safaci2000/grafana-dashboard-manager
+        image: esnet/grafana-dashboard-manager:latest
         volumes:
-          - ./importer.yml:/opt/grafana-dashboard-manager/bin/importer.yml
+          - ./conf:/opt/grafana-dashboard-manager/bin/conf
 

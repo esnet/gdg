@@ -9,7 +9,7 @@ VERSION := $(shell grep "const Version " version/version.go | sed -E 's/.*"(.+)"
 GIT_COMMIT=$(shell git rev-parse HEAD)
 GIT_DIRTY=$(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE=$(shell date '+%Y-%m-%d-%H:%M:%S')
-IMAGE_NAME := "safaci2000/grafana-dashboard-manager"
+IMAGE_NAME := "esnet/grafana-dashboard-manager"
 
 default: test
 
@@ -61,6 +61,7 @@ push: tag
 
 clean:
 	@test ! -e bin/${BIN_NAME} || rm bin/${BIN_NAME}
+	rm -fr dist/
 
 test:
 	go test ./...
