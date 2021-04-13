@@ -11,10 +11,10 @@
             "mode": "debug",
             "program": "${workspaceFolder}",
             "args": [
-                "dash",
-                "export"
+                "ds",
+                //"export"
                 //"datasources",
-                //"list",
+                "list",
                 //"-f",
                 //"c3fjqulMz"
             ]

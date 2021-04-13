@@ -10,6 +10,15 @@ type GrafanaConfig struct {
 	Datasource       GrafanaDataSource `yaml:"datasource"`
 }
 
+func (s *GrafanaConfig) GetMonitoredFolders() []string {
+	if len(s.MonitoredFolders) == 0 {
+		return []string{"General"}
+	}
+
+	return s.MonitoredFolders
+
+}
+
 //Default datasource credentials
 type GrafanaDataSource struct {
 	User     string `yaml:"user"`

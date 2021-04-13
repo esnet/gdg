@@ -66,6 +66,6 @@ func init() {
 
 func setupGrafanaClient() {
 	grafana := config.GetGrafanaConfig()
-	client = api.TokenLogin(grafana.URL, grafana.APIToken)
+	client = api.Login(grafana)
 
 }

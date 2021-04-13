@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/esnet/grafana-dashboard-manager/api"
+	"github.com/esnet/grafana-dashboard-manager/config"
 	"github.com/jedib0t/go-pretty/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -14,7 +16,7 @@ var listDashboards = &cobra.Command{
 	Short: "List all dashboards",
 	Long:  `List all dashboards`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
+		tableObj.AppendHeader(table.Row{"id", "Title", "Slug", "folder", "UID", "URL"})
 
 		filter, _ := cmd.Flags().GetString("filter")
 		var folders []string
@@ -25,7 +27,13 @@ var listDashboards = &cobra.Command{
 		boards := api.ListDashboards(client, folders, "")
 
 		for _, link := range boards {
-			tableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
+			url := fmt.Sprintf("%s%s", config.GetGrafanaConfig().URL, link.URL)
+			elements := strings.Split(link.URI, "/")
+			var slug string = ""
+			if len(elements) > 1 {
+				slug = elements[len(elements)-1]
+			}
+			tableObj.AppendRow(table.Row{link.ID, link.Title, slug, link.FolderTitle, link.UID, url})
 
 		}
 		if len(boards) > 0 {
