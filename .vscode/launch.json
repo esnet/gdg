@@ -12,9 +12,9 @@
             "program": "${workspaceFolder}",
             "args": [
                 "dash",
-                "export"
+                //"export"
                 //"datasources",
-                //"list",
+                "list",
                 //"-f",
                 //"c3fjqulMz"
             ]

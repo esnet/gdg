@@ -24,7 +24,7 @@ func ListDashboards(client *sdk.Client, folderFilters []string, query string) []
 		panic(err)
 	}
 	if len(folderFilters) == 0 {
-		folderFilters = config.GetGrafanaConfig().MonitoredFolders
+		folderFilters = config.GetGrafanaConfig().GetMonitoredFolders()
 	}
 	for _, link := range boardLinks {
 		if funk.Contains(folderFilters, link.FolderTitle) {
@@ -47,7 +47,7 @@ func ImportDashboards(client *sdk.Client, query string, conf config.Provider) []
 	)
 	ctx := context.Background()
 
-	boardLinks = ListDashboards(client, config.GetGrafanaConfig().MonitoredFolders, query)
+	boardLinks = ListDashboards(client, config.GetGrafanaConfig().GetMonitoredFolders(), query)
 	var boards []string = make([]string, 0)
 	for _, link := range boardLinks {
 		if rawBoard, meta, err = client.GetRawDashboardByUID(ctx, link.UID); err != nil {
@@ -141,7 +141,7 @@ func ExportDashboards(client *sdk.Client, folderFilters []string, query string, 
 func DeleteAllDashboards(client *sdk.Client, folderFilters []string) []string {
 	ctx := context.Background()
 	var dashboards []string = make([]string, 0)
-	items := ListDashboards(client, config.GetGrafanaConfig().MonitoredFolders, "")
+	items := ListDashboards(client, config.GetGrafanaConfig().GetMonitoredFolders(), "")
 	for _, item := range items {
 		_, err := client.DeleteDashboardByUID(ctx, item.UID)
 		if err == nil {
