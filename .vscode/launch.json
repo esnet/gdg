@@ -11,7 +11,7 @@
             "mode": "debug",
             "program": "${workspaceFolder}",
             "args": [
-                "dash",
+                "ds",
                 //"export"
                 //"datasources",
                 "list",

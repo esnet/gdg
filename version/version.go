@@ -5,8 +5,14 @@ import (
 	"runtime"
 )
 
+// GitCommit returns the git commit that was compiled. This will be filled in by the compiler.
+var GitCommit string
+
 // Version returns the main version number that is being run at the moment.
 const Version = "0.1.1"
+
+// BuildDate returns the date the binary was built
+var BuildDate = ""
 
 // GoVersion returns the version of the go runtime used to compile the binary
 var GoVersion = runtime.Version()
