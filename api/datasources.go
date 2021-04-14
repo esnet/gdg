@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/esnet/grafana-dashboard-manager/config"
 	"github.com/gosimple/slug"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/config"
 )
 
 //ListDataSources: list all the currently configured datasources

@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/esnet/grafana-dashboard-manager/api"
-	"github.com/esnet/grafana-dashboard-manager/config"
 	"github.com/jedib0t/go-pretty/table"
+	"github.com/netsage-project/grafana-dashboard-manager/api"
+	"github.com/netsage-project/grafana-dashboard-manager/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/esnet/grafana-dashboard-manager/version"
+	"github.com/netsage-project/grafana-dashboard-manager/version"
 	"github.com/spf13/cobra"
 )
 

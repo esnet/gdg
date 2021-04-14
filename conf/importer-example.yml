@@ -1,5 +1,5 @@
 grafana:
-  url: https://gf.gc1.dev-stage.stardust.es.net
+  url: http://localhost:3000
   token: <CHANGEME>
   user_name: admin
   password: admin

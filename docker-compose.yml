@@ -3,7 +3,7 @@ services:
     grafana-dashboard-manager:
         build:
             context: . 
-        image: esnet/grafana-dashboard-manager:latest
+        image: netsage/grafana-dashboard-manager:latest
         volumes:
           - ./conf:/opt/grafana-dashboard-manager/bin/conf
 

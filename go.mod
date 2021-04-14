@@ -1,4 +1,4 @@
-module github.com/esnet/grafana-dashboard-manager
+module github.com/netsage-project/grafana-dashboard-manager
 
 go 1.16
 
