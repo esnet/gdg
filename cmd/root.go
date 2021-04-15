@@ -7,9 +7,9 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/esnet/grafana-dashboard-manager/api"
-	"github.com/esnet/grafana-dashboard-manager/config"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/api"
+	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/spf13/cobra"
 )
 

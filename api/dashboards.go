@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/esnet/grafana-dashboard-manager/config"
-	"github.com/esnet/grafana-dashboard-manager/log"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/grafana-dashboard-manager/log"
 	"github.com/thoas/go-funk"
 )
 

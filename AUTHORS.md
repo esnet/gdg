@@ -2,7 +2,7 @@
 
 ## Development Lead
 
-- Samir Faci [esnet](https://github.com/esnet)
+- Samir Faci [netsage-project](https://github.com/netsage-project)
 
 ## Contributors
 

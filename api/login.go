@@ -3,8 +3,8 @@ package api
 import (
 	"fmt"
 
-	"github.com/esnet/grafana-dashboard-manager/config"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/config"
 )
 
 //Login: Logs into grafana returning a client instance using Token or Basic Auth

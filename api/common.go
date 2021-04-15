@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/esnet/grafana-dashboard-manager/config"
+	"github.com/netsage-project/grafana-dashboard-manager/config"
 )
 
 //buildDashboardPath returns the dashboard path for a given folder
