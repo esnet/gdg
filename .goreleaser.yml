@@ -9,7 +9,7 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
-    ldflags: -X github.com/esnet/grafana-dashboard-manager/version.GitCommit={{ .Commit }} -X github.com/esnet/grafana-dashboard-manager/version.BuildDate={{ .Date }}
+    ldflags: -X github.com/netsage-project/grafana-dashboard-manager/version.GitCommit={{ .Commit }} -X github.com/netsage-project/grafana-dashboard-manager/version.BuildDate={{ .Date }}  -X github.com/netsage-project/grafana-dashboard-manager/version.Version={{ .Tag }} 
     goos:
       - linux
       - windows

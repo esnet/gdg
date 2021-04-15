@@ -7,10 +7,10 @@ require (
 	github.com/go-openapi/errors v0.20.0 // indirect
 	github.com/go-openapi/strfmt v0.20.1 // indirect
 	github.com/gosimple/slug v1.1.1
-	github.com/grafana-tools/sdk v0.0.0-20210402150123-f7c763c3738c
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/mattn/go-runewidth v0.0.12 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
+	github.com/netsage-project/sdk v0.1.1
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v1.0.0
@@ -21,5 +21,3 @@ require (
 	gopkg.in/yaml.v2 v2.2.8
 
 )
-
-replace github.com/grafana-tools/sdk v0.0.0-20210402150123-f7c763c3738c => github.com/safaci2000/sdk v0.1.0

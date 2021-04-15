@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/gosimple/slug"
-	"github.com/grafana-tools/sdk"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/sdk"
 )
 
 //ListDataSources: list all the currently configured datasources
