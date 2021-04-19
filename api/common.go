@@ -8,8 +8,13 @@ import (
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 )
 
+var DefaultFolderName = "General"
+
 //buildDashboardPath returns the dashboard path for a given folder
 func buildDashboardPath(conf config.Provider, folderName string) string {
+	if folderName == "" {
+		folderName = DefaultFolderName
+	}
 	v := fmt.Sprintf("%s/%s", getResourcePath(conf, "dashboard"), folderName)
 	os.MkdirAll(v, 0755)
 	return v

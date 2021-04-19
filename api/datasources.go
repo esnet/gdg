@@ -90,12 +90,25 @@ func ExportDataSources(client *sdk.Client, folderFilters []string, query string,
 				fmt.Fprint(os.Stderr, err)
 				continue
 			}
-			user := config.GetGrafanaConfig().Datasource.User
-			var secureData map[string]string = make(map[string]string, 0)
-			newDS.BasicAuthUser = &user
-			secureData["basicAuthPassword"] = config.GetGrafanaConfig().Datasource.Password
+			dsConfig := config.GetGrafanaConfig()
+			var creds *config.GrafanaDataSource
 
-			newDS.SecureJSONData = secureData
+			if *newDS.BasicAuth {
+				creds = dsConfig.GetCredentials(newDS.Name)
+			} else {
+				creds = nil
+			}
+
+			if creds != nil {
+				user := creds.User
+				var secureData map[string]string = make(map[string]string)
+				newDS.BasicAuthUser = &user
+				secureData["basicAuthPassword"] = creds.Password
+				newDS.SecureJSONData = secureData
+			} else {
+				enabledAuth := false
+				newDS.BasicAuth = &enabledAuth
+			}
 
 			for _, existingDS := range datasources {
 				if existingDS.Name == newDS.Name {

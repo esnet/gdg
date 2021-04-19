@@ -8,10 +8,14 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gosimple/slug"
+	"github.com/tidwall/pretty"
+
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/netsage-project/grafana-dashboard-manager/log"
 	"github.com/netsage-project/sdk"
 	"github.com/thoas/go-funk"
+	"github.com/yalp/jsonpath"
 )
 
 //ListDashboards: List all dashboards optionally filtered by folder name. If folderFilters
@@ -28,6 +32,9 @@ func ListDashboards(client *sdk.Client, folderFilters []string, query string) []
 	}
 	for _, link := range boardLinks {
 		if funk.Contains(folderFilters, link.FolderTitle) {
+			boardsList = append(boardsList, link)
+		} else if funk.Contains(folderFilters, DefaultFolderName) && link.FolderID == 0 {
+			link.FolderTitle = DefaultFolderName
 			boardsList = append(boardsList, link)
 		}
 
@@ -55,7 +62,7 @@ func ImportDashboards(client *sdk.Client, query string, conf config.Provider) []
 			continue
 		}
 		fileName := fmt.Sprintf("%s/%s.json", buildDashboardPath(conf, link.FolderTitle), meta.Slug)
-		if err = ioutil.WriteFile(fileName, rawBoard, os.FileMode(int(0666))); err != nil {
+		if err = ioutil.WriteFile(fileName, pretty.Pretty(rawBoard), os.FileMode(int(0666))); err != nil {
 			fmt.Fprintf(os.Stderr, "%s for %s\n", err, meta.Slug)
 		} else {
 			boards = append(boards, fileName)
@@ -97,7 +104,7 @@ func ExportDashboards(client *sdk.Client, folderFilters []string, query string, 
 			if len(elements) >= 2 {
 				folderName = elements[len(elements)-2]
 			}
-			if folderName == "" {
+			if folderName == "" || folderName == DefaultFolderName {
 				folderId = sdk.DefaultFolderId
 			} else {
 				if val, ok := folderMap[folderName]; ok {
@@ -113,23 +120,32 @@ func ExportDashboards(client *sdk.Client, folderFilters []string, query string, 
 				}
 			}
 
-			var board sdk.Board
+			var board = make(map[string]interface{})
 			if err = json.Unmarshal(rawBoard, &board); err != nil {
 				log.Println(err)
 				log.Printf("Failed to unmarshall file: %s", file)
 				continue
 			}
-			if _, err = client.DeleteDashboard(ctx, board.UpdateSlug()); err != nil {
+			title, err := jsonpath.Read(board, "$.title")
+
+			rawTitle := fmt.Sprintf("%v", title)
+			slugName := strings.ToLower(slug.Make(rawTitle))
+			if _, err = client.DeleteDashboard(ctx, slugName); err != nil {
 				log.Println(err)
 				continue
 			}
-			params := sdk.SetDashboardParams{
+			defaultParams := sdk.SetDashboardParams{
+				Overwrite: true,
 				FolderID:  folderId,
-				Overwrite: false,
 			}
-			_, err := client.SetDashboard(ctx, board, params)
+			request := sdk.RawBoardRequest{
+				Parameters: defaultParams,
+				Dashboard:  rawBoard,
+			}
+
+			_, err = client.SetRawDashboardWithParam(ctx, request)
 			if err != nil {
-				log.Printf("error on Exporting dashboard %s", board.Title)
+				log.Printf("error on Exporting dashboard %s", rawTitle)
 				continue
 			}
 		}

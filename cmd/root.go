@@ -45,7 +45,10 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize()
+	cobra.OnInitialize(initConfig)
+}
+
+func initConfig() {
 	configProvider = config.Config()
 	setupGrafanaClient()
 	log.Debug("Creating output locations")
