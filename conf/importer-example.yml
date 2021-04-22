@@ -3,9 +3,16 @@ grafana:
   token: <CHANGEME>
   user_name: admin
   password: admin
-  datasource:
-    user: esnet-admin
-    password: <CHANGEME>
+  datasources:
+    default:
+      user: user
+      password: password
+    ds_name:
+      user: abcd
+      password: secret
+    "Complex Name":
+      user: test
+      password: secret
 
   ## Monitored Folders
   watched:
