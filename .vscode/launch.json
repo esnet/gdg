@@ -11,12 +11,11 @@
             "mode": "debug",
             "program": "${workspaceFolder}",
             "args": [
-                "ds",
-                "export"
-                //"datasources",
-                //"list"
-                //"-f",
-                //"c3fjqulMz"
+                "users",
+                "list",
+                //"promote",
+                //"-u",
+                //"user@domain.com"
             ]
         }
     ]
