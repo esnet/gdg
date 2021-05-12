@@ -43,7 +43,7 @@ func PromoteUser(client *sdk.Client, userLogin string) (*sdk.StatusMessage, erro
 	}
 	msg, err := client.UpdateUserPermissions(ctx, role, user.ID)
 	if err != nil {
-		errorMsg := fmt.Sprintf("failed to promot user: '%s'", userLogin)
+		errorMsg := fmt.Sprintf("failed to promote user: '%s'", userLogin)
 		logrus.Error(errorMsg)
 		return nil, errors.New(errorMsg)
 	}

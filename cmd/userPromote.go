@@ -20,7 +20,7 @@ var promoteUser = &cobra.Command{
 			logrus.Error(err.Error())
 		} else {
 			logrus.Info(*msg.Message)
-			logrus.Info("Please not user is a grafana admin, not necessarily an Org admin.  You may need to promote yourself manually per org")
+			logrus.Info("Please note user is a grafana admin, not necessarily an Org admin.  You may need to promote yourself manually per org")
 		}
 
 	},
