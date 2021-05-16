@@ -8,7 +8,7 @@ This project requires Go to be installed. On OS X with Homebrew you can just run
 
 ### Configuring Auth
 
-make a copy of `conf/importer.yml.default` and name it `conf/importer.yml` You'll need administrative privileges to proceed.
+make a copy of `conf/importer-example.yml` and name it `conf/importer.yml` You'll need administrative privileges to proceed.
 
 You can use either an Auth Token or username/password credentials.  If you configure both then the Token is given priority.
 
@@ -40,8 +40,7 @@ All commands can use `dashboards` or `dash` to manage dashboards
 
 #### DataSources
 
-Currently only one set of credentials is supported.  grafana.datasource defines the default credentials.  The password is set as a value for 
-basicAuthPassword.  
+DataSources credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml).  If the datasource JSON doesn't have auth enabled, the credentials are igored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.  
 
 
 All commands can use `datasources` or `ds` to manage datasources
@@ -52,7 +51,6 @@ All commands can use `datasources` or `ds` to manage datasources
 ./bin/grafana-dashboard-manager ds export -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
 ./bin/grafana-dashboard-manager ds clear -- Deletes all datasources
 ```
-
 
 ## Making a release
 
