@@ -14,7 +14,7 @@ IMAGE_NAME := "netsage-project/grafana-dashboard-manager"
 default: test
 
 linux: clean 
-	env GOOS='linux' GOARCH='amd64' go build -o grafana-dashboard-manager_linux
+	env GOOS='linux' GOARCH='amd64' go build -ldflags "-X github.com/netsage-project/grafana-dashboard-manager/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/grafana-dashboard-manager/version.BuildDate=${BUILD_DATE}" -o bin/${BIN_NAME}_linux
 
 help:
 	@echo 'Management commands for grafana-dashboard-manager:'
