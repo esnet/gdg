@@ -1,26 +1,42 @@
-grafana:
-  url: http://localhost:3000
-  token: <CHANGEME>
-  user_name: admin
-  password: admin
-  datasources:
-    default:
-      user: user
-      password: password
-    ds_name:
-      user: abcd
-      password: secret
-    "Complex Name":
-      user: test
-      password: secret
+context_name: qa
 
-  ## Monitored Folders
-  watched:
-    - General
+contexts:
+  production:
+    dashboards_output: prod/datasources
+    datasources:
+      complex name:
+        password: secret
+        user: test
+      default:
+        password: password
+        user: user
+      ds_name:
+        password: secret
+        user: abcd
+    datasources_output: prod/dashboards
+    url: https://grafana.com
+    user_name: admin
+    password: admin
+    watched:
+      - General
+  qa:
+    dashboards_output: qa/datasources
+    token: <CHANGEME>
+    datasources:
+      complex name:
+        password: secret
+        user: test
+      default:
+        password: password
+        user: user
+      ds_name:
+        password: secret
+        user: abcd
+    datasources_output: qa/dashboards
+    url: https://staging.grafana.com
+    watched:
+      - Folder1
+      - Folder2
+
 global:
   debug: true
-
-env:
-  output:
-    datasources: testing/datasources
-    dashboards: testing/dashboards

@@ -6,12 +6,14 @@ import (
 	"path/filepath"
 
 	"github.com/netsage-project/grafana-dashboard-manager/config"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var DefaultFolderName = "General"
 
 //buildDashboardPath returns the dashboard path for a given folder
-func buildDashboardPath(conf config.Provider, folderName string) string {
+func buildDashboardPath(conf *viper.Viper, folderName string) string {
 	if folderName == "" {
 		folderName = DefaultFolderName
 	}
@@ -21,7 +23,7 @@ func buildDashboardPath(conf config.Provider, folderName string) string {
 }
 
 //buildDataSourcePath returns the expected file for a given datasource
-func buildDataSourcePath(conf config.Provider, name string) string {
+func buildDataSourcePath(conf *viper.Viper, name string) string {
 	dsPath := getResourcePath(conf, "ds")
 	v := fmt.Sprintf("%s/%s.json", dsPath, name)
 	os.MkdirAll(dsPath, 0755)
@@ -29,20 +31,24 @@ func buildDataSourcePath(conf config.Provider, name string) string {
 }
 
 //getResourcePath for a gven resource type: ["dashboard", "ds"] it'll return the configured location
-func getResourcePath(conf config.Provider, resourceType string) string {
+func getResourcePath(conf *viper.Viper, resourceType string) string {
 	if resourceType == "dashboard" {
-		return conf.GetString("env.output.dashboards")
+		return config.GetDefaultGrafanaConfig().OutputDashboard
 	} else if resourceType == "ds" {
-		return conf.GetString("env.output.datasources")
+		return config.GetDefaultGrafanaConfig().OutputDataSource
 	}
 	return ""
 }
 
 //findAllFiles recursively list all files for a given path
 func findAllFiles(folder string) []string {
+	if _, err := os.Stat(folder); os.IsNotExist(err) {
+		log.Warn("Output folder was not found")
+		return []string{}
+	}
 	fileList := []string{}
 	err := filepath.Walk(folder, func(path string, f os.FileInfo, err error) error {
-		if f.IsDir() != true {
+		if !f.IsDir() {
 			fileList = append(fileList, path)
 		}
 		return nil

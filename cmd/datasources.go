@@ -7,7 +7,7 @@ import (
 // versionCmd represents the version command
 var datasources = &cobra.Command{
 	Use:     "datasources",
-	Aliases: []string{"ds"},
+	Aliases: []string{"ds", "datasource"},
 	Short:   "Manage datasources",
 	Long:    `All software has versions.`,
 }

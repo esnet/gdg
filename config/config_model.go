@@ -15,6 +15,8 @@ type GrafanaConfig struct {
 	MonitoredFolders   []string `yaml:"watched"`
 	DefaultDataSource  *GrafanaDataSource
 	DataSourceSettings map[string]*GrafanaDataSource `yaml:"datasources"`
+	OutputDashboard    string                        `yaml:"dashboards_output"`
+	OutputDataSource   string                        `yaml:"datasources_output"`
 }
 
 //GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.

@@ -13,6 +13,8 @@
             "args": [
                 "users",
                 "list",
+                // "--context",
+                // "prod"
                 //"promote",
                 //"-u",
                 //"user@domain.com"

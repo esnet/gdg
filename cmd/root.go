@@ -11,10 +11,11 @@ import (
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/netsage-project/sdk"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
-	configProvider config.Provider
+	configProvider *viper.Viper
 	client         *sdk.Client
 	tableObj       table.Writer
 	debug          bool
@@ -68,7 +69,7 @@ func initConfig() {
 }
 
 func setupGrafanaClient() {
-	grafana := config.GetGrafanaConfig()
+	grafana := config.GetDefaultGrafanaConfig()
 	client = api.Login(grafana)
 
 }

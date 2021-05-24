@@ -6,7 +6,7 @@ import (
 
 var dashboard = &cobra.Command{
 	Use:     "dashboards",
-	Aliases: []string{"dash"},
+	Aliases: []string{"dash", "dashboard"},
 	Short:   "Manage Dashboards",
 	Long:    `Manage Grafana Dashboards.`,
 }

@@ -9,11 +9,13 @@ import (
 	"strings"
 
 	"github.com/gosimple/slug"
+	"github.com/spf13/viper"
 	"github.com/tidwall/pretty"
 
 	"github.com/netsage-project/grafana-dashboard-manager/config"
-	"github.com/netsage-project/grafana-dashboard-manager/log"
+
 	"github.com/netsage-project/sdk"
+	log "github.com/sirupsen/logrus"
 	"github.com/thoas/go-funk"
 	"github.com/yalp/jsonpath"
 )
@@ -28,7 +30,7 @@ func ListDashboards(client *sdk.Client, folderFilters []string, query string) []
 		panic(err)
 	}
 	if len(folderFilters) == 0 {
-		folderFilters = config.GetGrafanaConfig().GetMonitoredFolders()
+		folderFilters = config.GetDefaultGrafanaConfig().GetMonitoredFolders()
 	}
 	for _, link := range boardLinks {
 		if funk.Contains(folderFilters, link.FolderTitle) {
@@ -45,7 +47,7 @@ func ListDashboards(client *sdk.Client, folderFilters []string, query string) []
 }
 
 //ImportDashboards saves all dashboards matching query to configured location
-func ImportDashboards(client *sdk.Client, query string, conf config.Provider) []string {
+func ImportDashboards(client *sdk.Client, query string, conf *viper.Viper) []string {
 	var (
 		boardLinks []sdk.FoundBoard
 		rawBoard   []byte
@@ -54,7 +56,7 @@ func ImportDashboards(client *sdk.Client, query string, conf config.Provider) []
 	)
 	ctx := context.Background()
 
-	boardLinks = ListDashboards(client, config.GetGrafanaConfig().GetMonitoredFolders(), query)
+	boardLinks = ListDashboards(client, config.GetDefaultGrafanaConfig().GetMonitoredFolders(), query)
 	var boards []string = make([]string, 0)
 	for _, link := range boardLinks {
 		if rawBoard, meta, err = client.GetRawDashboardByUID(ctx, link.UID); err != nil {
@@ -85,7 +87,7 @@ func getFolderNameIDMap(client *sdk.Client, ctx context.Context) map[string]int 
 
 //ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folde doesn't exist, it'll be created.
-func ExportDashboards(client *sdk.Client, folderFilters []string, query string, conf config.Provider) {
+func ExportDashboards(client *sdk.Client, folderFilters []string, query string, conf *viper.Viper) {
 	filesInDir := findAllFiles(getResourcePath(conf, "dashboard"))
 	ctx := context.Background()
 	var rawBoard []byte
@@ -157,7 +159,7 @@ func ExportDashboards(client *sdk.Client, folderFilters []string, query string, 
 func DeleteAllDashboards(client *sdk.Client, folderFilters []string) []string {
 	ctx := context.Background()
 	var dashboards []string = make([]string, 0)
-	items := ListDashboards(client, config.GetGrafanaConfig().GetMonitoredFolders(), "")
+	items := ListDashboards(client, config.GetDefaultGrafanaConfig().GetMonitoredFolders(), "")
 	for _, item := range items {
 		_, err := client.DeleteDashboardByUID(ctx, item.UID)
 		if err == nil {
