@@ -15,6 +15,7 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.1
+	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/thoas/go-funk v0.8.0
 	github.com/tidwall/pretty v1.0.0
 	github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0

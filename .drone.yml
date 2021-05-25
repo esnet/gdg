@@ -7,5 +7,6 @@ steps:
   commands:
   - make linux
   - cp conf/importer-example.yml conf/importer.yml
+  - make test
   - ./bin/grafana-dashboard-manager_linux version
 

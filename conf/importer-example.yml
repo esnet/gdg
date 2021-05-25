@@ -2,7 +2,7 @@ context_name: qa
 
 contexts:
   production:
-    dashboards_output: prod/datasources
+    dashboards_output: prod/dashboards
     datasources:
       complex name:
         password: secret
@@ -13,14 +13,14 @@ contexts:
       ds_name:
         password: secret
         user: abcd
-    datasources_output: prod/dashboards
+    datasources_output: prod/datasources
     url: https://grafana.com
     user_name: admin
     password: admin
     watched:
       - General
   qa:
-    dashboards_output: qa/datasources
+    dashboards_output: qa/dashboards
     token: <CHANGEME>
     datasources:
       complex name:
@@ -32,7 +32,7 @@ contexts:
       ds_name:
         password: secret
         user: abcd
-    datasources_output: qa/dashboards
+    datasources_output: qa/datasources
     url: https://staging.grafana.com
     watched:
       - Folder1

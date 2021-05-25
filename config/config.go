@@ -76,6 +76,7 @@ func readViperConfig(appName string) *viper.Viper {
 	v.SetEnvPrefix(appName)
 	v.SetConfigName(appName)
 	v.AddConfigPath(".")
+	v.AddConfigPath("../conf")
 	v.AddConfigPath("conf")
 	v.AutomaticEnv()
 
