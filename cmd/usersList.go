@@ -18,7 +18,7 @@ var listUserCmd = &cobra.Command{
 
 		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "grafanaAdmin", "disabled", "authLabels"})
-		users := api.ListUsers(client)
+		users := api.ListUsers(adminClient)
 		if len(users) == 0 {
 			log.Info("No users found")
 		} else {

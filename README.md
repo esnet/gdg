@@ -30,7 +30,7 @@ ctx is shorthand for context
 
 ### Users
 
-Only supported with basic auth.
+Only supported with basic auth.  Users is the only one where basic auth is given priority.  API Auth is not supported, so will try to use basic auth if configured otherwise will warn the user and exit.
 
 ```sh
 ./bin/grafana-dashboard-manager users list -- Lists all known users

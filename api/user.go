@@ -11,18 +11,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func validateUserAPI() {
-	if config.GetDefaultGrafanaConfig().APIToken != "" {
-		logrus.Error("The Admin HTTP API does not currently work with an API Token.  Please check your config")
+func validateUserAPI(client *sdk.Client) {
+	if client == nil || !config.GetDefaultGrafanaConfig().AdminEnabled {
+		logrus.Info("Missing Admin client, please check your config and ensure basic auth is configured")
 		os.Exit(1)
 	}
-
 }
 
 //ListUsers list all grafana users
 func ListUsers(client *sdk.Client) []sdk.User {
 	ctx := context.Background()
-	validateUserAPI()
+	validateUserAPI(client)
 	users, err := client.GetAllUsers(ctx)
 	if err != nil {
 		logrus.Error(err)
@@ -34,7 +33,7 @@ func ListUsers(client *sdk.Client) []sdk.User {
 //PromoteUser promote the user to have Admin Access
 func PromoteUser(client *sdk.Client, userLogin string) (*sdk.StatusMessage, error) {
 
-	validateUserAPI()
+	validateUserAPI(client)
 	ctx := context.Background()
 	//Get all users
 	users := ListUsers(client)

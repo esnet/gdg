@@ -17,6 +17,7 @@ import (
 var (
 	configProvider *viper.Viper
 	client         *sdk.Client
+	adminClient    *sdk.Client
 	tableObj       table.Writer
 	debug          bool
 )
@@ -71,5 +72,6 @@ func initConfig() {
 func setupGrafanaClient() {
 	grafana := config.GetDefaultGrafanaConfig()
 	client = api.Login(grafana)
+	adminClient = api.AdminLogin(grafana)
 
 }
