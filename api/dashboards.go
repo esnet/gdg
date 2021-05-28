@@ -10,58 +10,14 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gosimple/slug"
 	"github.com/spf13/viper"
 	"github.com/tidwall/pretty"
-
-	"github.com/netsage-project/grafana-dashboard-manager/config"
 
 	"github.com/netsage-project/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/thoas/go-funk"
 	"github.com/yalp/jsonpath"
 )
-
-type DashboardFilter struct {
-	FolderFilter string // Name of Folder
-	DashFilter   string //name of dashboard
-}
-
-//GetFolders splits the comma delimited folder list and returns a slice
-func (s *DashboardFilter) GetFolders() []string {
-	if s.FolderFilter == "" {
-		return config.GetDefaultGrafanaConfig().GetMonitoredFolders()
-	}
-	s.FolderFilter = quoteRegex.ReplaceAllString(s.FolderFilter, "")
-
-	return strings.Split(s.FolderFilter, ",")
-}
-
-func (s DashboardFilter) ValidateDashboard(dashUid string) bool {
-	if s.DashFilter == "" {
-		return true
-	}
-	return dashUid == s.DashFilter
-}
-
-func (s DashboardFilter) Validate(folder, dashUid string) bool {
-	return s.ValidateDashboard(dashUid) && s.ValidateFolder(folder)
-}
-
-func (s DashboardFilter) ValidateFolder(folder string) bool {
-	if s.FolderFilter == "" {
-		return true
-	}
-	return folder == s.FolderFilter
-}
-
-//Update the slug in the board returned
-func updateSlug(board *sdk.FoundBoard) {
-	elements := strings.Split(board.URI, "/")
-	if len(elements) > 1 {
-		board.Slug = elements[len(elements)-1]
-	}
-}
 
 //ListDashboards: List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
@@ -216,7 +172,7 @@ func ExportDashboards(client *sdk.Client, filters DashboardFilter, conf *viper.V
 			title, err := jsonpath.Read(board, "$.title")
 
 			rawTitle := fmt.Sprintf("%v", title)
-			slugName := strings.ToLower(slug.Make(rawTitle))
+			slugName := GetSlug(rawTitle)
 			if _, err = client.DeleteDashboard(ctx, slugName); err != nil {
 				log.Println(err)
 				continue

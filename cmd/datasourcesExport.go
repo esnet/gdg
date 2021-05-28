@@ -13,7 +13,8 @@ var exportDataSources = &cobra.Command{
 	Long:  `export all datasources`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Exporting datasources")
-		exportedList := api.ExportDataSources(client, nil, "", configProvider)
+		filters := getDatasourcesGlobalFlags(cmd)
+		exportedList := api.ExportDataSources(client, filters, configProvider)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range exportedList {
 			tableObj.AppendRow(table.Row{"datasource", file})

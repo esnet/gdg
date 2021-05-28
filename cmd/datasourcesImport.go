@@ -14,7 +14,8 @@ var ImportDataSources = &cobra.Command{
 	Long:  `import all datasources from grafana to local filesystem`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Importing datasources for context: '%s'", config.GetContext())
-		savedFiles := api.ImportDataSources(client, configProvider)
+		filters := getDatasourcesGlobalFlags(cmd)
+		savedFiles := api.ImportDataSources(client, filters, configProvider)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"datasource", file})

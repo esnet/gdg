@@ -22,7 +22,7 @@ var ClearDashboards = &cobra.Command{
 			log.Info("No dashboards were found.  0 dashboards removed")
 
 		} else {
-			log.Infof("%s dashboards were deleted", len(deletedDashboards))
+			log.Infof("%d dashboards were deleted", len(deletedDashboards))
 			tableObj.Render()
 		}
 

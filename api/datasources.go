@@ -15,20 +15,26 @@ import (
 )
 
 //ListDataSources: list all the currently configured datasources
-func ListDataSources(client *sdk.Client, folderFilters []string) []sdk.Datasource {
+func ListDataSources(client *sdk.Client, filter DatasourceFilter) []sdk.Datasource {
 
 	ctx := context.Background()
 	ds, err := client.GetAllDatasources(ctx)
 	if err != nil {
 		panic(err)
 	}
+	result := make([]sdk.Datasource, 0)
+	for _, item := range ds {
+		if filter.ValidateDatasource(GetSlug(item.Name)) {
+			result = append(result, item)
+		}
+	}
 
-	return ds
+	return result
 }
 
 //ImportDataSources: will read in all the configured datasources.
 //NOTE: credentials cannot be retrieved and need to be set via configuration
-func ImportDataSources(client *sdk.Client, conf *viper.Viper) []string {
+func ImportDataSources(client *sdk.Client, filter DatasourceFilter, conf *viper.Viper) []string {
 	var (
 		datasources []sdk.Datasource
 		dsPacked    []byte
@@ -36,7 +42,7 @@ func ImportDataSources(client *sdk.Client, conf *viper.Viper) []string {
 		err         error
 		dataFiles   []string
 	)
-	datasources = ListDataSources(client, nil)
+	datasources = ListDataSources(client, filter)
 	for _, ds := range datasources {
 		if dsPacked, err = json.MarshalIndent(ds, "", "	"); err != nil {
 			fmt.Fprintf(os.Stderr, "%s for %s\n", err, ds.Name)
@@ -53,10 +59,10 @@ func ImportDataSources(client *sdk.Client, conf *viper.Viper) []string {
 }
 
 //Removes all current datasources
-func DeleteAllDataSources(client *sdk.Client) []string {
+func DeleteAllDataSources(client *sdk.Client, filter DatasourceFilter) []string {
 	ctx := context.Background()
 	var ds []string = make([]string, 0)
-	items := ListDataSources(client, nil)
+	items := ListDataSources(client, filter)
 	for _, item := range items {
 		client.DeleteDatasource(ctx, item.ID)
 		ds = append(ds, item.Name)
@@ -65,14 +71,14 @@ func DeleteAllDataSources(client *sdk.Client) []string {
 }
 
 //ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
-func ExportDataSources(client *sdk.Client, folderFilters []string, query string, conf *viper.Viper) []string {
+func ExportDataSources(client *sdk.Client, filter DatasourceFilter, conf *viper.Viper) []string {
 	var datasources []sdk.Datasource
 	var status sdk.StatusMessage
 	var exported []string = make([]string, 0)
 
 	ctx := context.Background()
 	filesInDir, err := ioutil.ReadDir(getResourcePath(conf, "ds"))
-	datasources = ListDataSources(client, nil)
+	datasources = ListDataSources(client, filter)
 
 	var rawDS []byte
 	if err != nil {
@@ -89,6 +95,9 @@ func ExportDataSources(client *sdk.Client, folderFilters []string, query string,
 
 			if err = json.Unmarshal(rawDS, &newDS); err != nil {
 				fmt.Fprint(os.Stderr, err)
+				continue
+			}
+			if !filter.ValidateDatasource(GetSlug(newDS.Name)) {
 				continue
 			}
 			dsConfig := config.GetDefaultGrafanaConfig()
