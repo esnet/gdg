@@ -3,7 +3,7 @@
 
 
 
-BIN_NAME=grafana-dashboard-manager
+BIN_NAME=gdg
 
 VERSION := $(shell grep "const Version " version/version.go | sed -E 's/.*"(.+)"$$/\1/')
 GIT_COMMIT=$(shell git rev-parse HEAD)
@@ -11,7 +11,7 @@ GIT_DIRTY=$(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE=$(shell date '+%Y-%m-%d-%H:%M:%S')
 IMAGE_NAME := "netsage-project/grafana-dashboard-manager"
 
-default: test
+default: build
 
 linux: clean 
 	env GOOS='linux' GOARCH='amd64' go build -ldflags "-X github.com/netsage-project/grafana-dashboard-manager/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/grafana-dashboard-manager/version.BuildDate=${BUILD_DATE}" -o bin/${BIN_NAME}_linux

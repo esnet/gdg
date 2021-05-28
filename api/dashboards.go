@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/gosimple/slug"
@@ -20,25 +21,73 @@ import (
 	"github.com/yalp/jsonpath"
 )
 
+type DashboardFilter struct {
+	FolderFilter string // Name of Folder
+	DashFilter   string //name of dashboard
+}
+
+var quoteRegex *regexp.Regexp
+
+func init() {
+	quoteRegex, _ = regexp.Compile("['\"]+")
+}
+
+//GetFolders splits the comma delimited folder list and returns a slice
+func (s *DashboardFilter) GetFolders() []string {
+	if s.FolderFilter == "" {
+		return config.GetDefaultGrafanaConfig().GetMonitoredFolders()
+	}
+	s.FolderFilter = quoteRegex.ReplaceAllString(s.FolderFilter, "")
+
+	return strings.Split(s.FolderFilter, ",")
+}
+
+//Update the slug in the board returned
+func updateSlug(board *sdk.FoundBoard) {
+	elements := strings.Split(board.URI, "/")
+	if len(elements) > 1 {
+		board.Slug = elements[len(elements)-1]
+	}
+}
+
 //ListDashboards: List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
-func ListDashboards(client *sdk.Client, folderFilters []string, query string) []sdk.FoundBoard {
+func ListDashboards(client *sdk.Client, filters *DashboardFilter, query string) []sdk.FoundBoard {
 	ctx := context.Background()
 	var boardsList []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
 	boardLinks, err := client.SearchDashboards(ctx, query, false)
 	if err != nil {
 		panic(err)
 	}
-	if len(folderFilters) == 0 {
-		folderFilters = config.GetDefaultGrafanaConfig().GetMonitoredFolders()
-	}
+	folderFilters := filters.GetFolders()
+	var validFolder bool = false
+	var validUid bool = false
 	for _, link := range boardLinks {
 		if funk.Contains(folderFilters, link.FolderTitle) {
-			boardsList = append(boardsList, link)
+			validFolder = true
 		} else if funk.Contains(folderFilters, DefaultFolderName) && link.FolderID == 0 {
 			link.FolderTitle = DefaultFolderName
+			validFolder = true
+		}
+		if !validFolder {
+			continue
+		}
+		updateSlug(&link)
+		if filters.DashFilter != "" {
+			if link.Slug == filters.DashFilter {
+				validUid = true
+			} else {
+				validUid = false
+			}
+		} else {
+			validUid = true
+		}
+
+		if validFolder && validUid {
 			boardsList = append(boardsList, link)
 		}
+
+		validFolder, validUid = false, false
 
 	}
 
@@ -56,7 +105,11 @@ func ImportDashboards(client *sdk.Client, query string, conf *viper.Viper) []str
 	)
 	ctx := context.Background()
 
-	boardLinks = ListDashboards(client, config.GetDefaultGrafanaConfig().GetMonitoredFolders(), query)
+	filters := DashboardFilter{
+		DashFilter: strings.Join(config.GetDefaultGrafanaConfig().GetMonitoredFolders(), ","),
+	}
+
+	boardLinks = ListDashboards(client, &filters, query)
 	var boards []string = make([]string, 0)
 	for _, link := range boardLinks {
 		if rawBoard, meta, err = client.GetRawDashboardByUID(ctx, link.UID); err != nil {
@@ -159,7 +212,12 @@ func ExportDashboards(client *sdk.Client, folderFilters []string, query string, 
 func DeleteAllDashboards(client *sdk.Client, folderFilters []string) []string {
 	ctx := context.Background()
 	var dashboards []string = make([]string, 0)
-	items := ListDashboards(client, config.GetDefaultGrafanaConfig().GetMonitoredFolders(), "")
+
+	filters := DashboardFilter{
+		DashFilter: strings.Join(config.GetDefaultGrafanaConfig().GetMonitoredFolders(), ","),
+	}
+
+	items := ListDashboards(client, &filters, "")
 	for _, item := range items {
 		_, err := client.DeleteDashboardByUID(ctx, item.UID)
 		if err == nil {

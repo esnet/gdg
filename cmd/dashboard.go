@@ -13,4 +13,5 @@ var dashboard = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(dashboard)
+	dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
 }

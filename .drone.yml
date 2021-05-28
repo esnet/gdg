@@ -2,11 +2,13 @@ kind: pipeline
 name: default
 
 steps:
-- name: build
-  image: golang:1.16
-  commands:
-  - make linux
-  - cp conf/importer-example.yml conf/importer.yml
-  - make test
-  - ./bin/grafana-dashboard-manager_linux version
-
+  - name: build
+    image: golang:1.16
+    commands:
+      - make linux
+      - cp conf/importer-example.yml conf/importer.yml
+      - make test
+      - ./bin/grafana-dashboard-manager_linux version
+  - name: release
+    when:
+      event: tag

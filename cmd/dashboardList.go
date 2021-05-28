@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/netsage-project/grafana-dashboard-manager/api"
@@ -16,25 +15,23 @@ var listDashboards = &cobra.Command{
 	Short: "List all dashboards",
 	Long:  `List all dashboards`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tableObj.AppendHeader(table.Row{"id", "Title", "Slug", "folder", "UID", "URL"})
+		tableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "URL"})
 
-		filter, _ := cmd.Flags().GetString("filter")
-		var folders []string
+		folderFilter, _ := cmd.Flags().GetString("folder")
+		dashboardFilter, _ := cmd.Flags().GetString("dashboard")
 
-		if filter != "" {
-			folders = strings.Split(filter, ",")
+		filters := api.DashboardFilter{
+			FolderFilter: folderFilter,
+			DashFilter:   dashboardFilter,
 		}
-		boards := api.ListDashboards(client, folders, "")
+
+		boards := api.ListDashboards(client, &filters, "")
 
 		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
 		for _, link := range boards {
 			url := fmt.Sprintf("%s%s", config.GetDefaultGrafanaConfig().URL, link.URL)
-			elements := strings.Split(link.URI, "/")
-			var slug string = ""
-			if len(elements) > 1 {
-				slug = elements[len(elements)-1]
-			}
-			tableObj.AppendRow(table.Row{link.ID, link.Title, slug, link.FolderTitle, link.UID, url})
+			tableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
+				link.UID, url})
 
 		}
 		if len(boards) > 0 {
@@ -48,5 +45,5 @@ var listDashboards = &cobra.Command{
 
 func init() {
 	dashboard.AddCommand(listDashboards)
-	listDashboards.Flags().StringP("filter", "f", "", "folders UID filter")
+	listDashboards.Flags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
 }

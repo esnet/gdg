@@ -11,8 +11,12 @@
             "mode": "debug",
             "program": "${workspaceFolder}",
             "args": [
-                "users",
+                "dash",
                 "list",
+                "-f",
+                "'Stardust Internals'",
+                "-d",
+                "monitored-query-diagnostics"
                 // "--context",
                 // "prod"
                 //"promote",

@@ -1,6 +1,6 @@
-# grafana-dashboard-manager
+# Grafana dash-n-grab 
 
-Grafana Dashboard Manager (GDM)
+Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager.  The purpose of this project is to provide an easy to use CLI to interact with the grafana API allowing you to backup and restore dashboard and datasources.
 
 ## Getting started
 
