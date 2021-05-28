@@ -12,13 +12,19 @@ var ClearDashboards = &cobra.Command{
 	Short: "delete all monitored dashboards",
 	Long:  `clear all monitored dashboards from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Delete all dashboards")
-		savedFiles := api.DeleteAllDashboards(client, nil)
+		filter := getDashboardGlobalFlags(cmd)
+		deletedDashboards := api.DeleteAllDashboards(client, filter)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
-		for _, file := range savedFiles {
-			tableObj.AppendRow(table.Row{"datasource", file})
+		for _, file := range deletedDashboards {
+			tableObj.AppendRow(table.Row{"dashboard", file})
 		}
-		tableObj.Render()
+		if len(deletedDashboards) == 0 {
+			log.Info("No dashboards were found.  0 dashboards removed")
+
+		} else {
+			log.Infof("%s dashboards were deleted", len(deletedDashboards))
+			tableObj.Render()
+		}
 
 	},
 }

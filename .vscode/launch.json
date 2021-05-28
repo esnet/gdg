@@ -12,9 +12,9 @@
             "program": "${workspaceFolder}",
             "args": [
                 "dash",
-                "list",
-                "-f",
-                "'Stardust Internals'",
+                "export",
+                // "-f",
+                // "'General'",
                 "-d",
                 "monitored-query-diagnostics"
                 // "--context",

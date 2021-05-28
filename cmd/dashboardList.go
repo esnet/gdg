@@ -17,15 +17,8 @@ var listDashboards = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "URL"})
 
-		folderFilter, _ := cmd.Flags().GetString("folder")
-		dashboardFilter, _ := cmd.Flags().GetString("dashboard")
-
-		filters := api.DashboardFilter{
-			FolderFilter: folderFilter,
-			DashFilter:   dashboardFilter,
-		}
-
-		boards := api.ListDashboards(client, &filters, "")
+		filters := getDashboardGlobalFlags(cmd)
+		boards := api.ListDashboards(client, &filters)
 
 		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
 		for _, link := range boards {
@@ -45,5 +38,4 @@ var listDashboards = &cobra.Command{
 
 func init() {
 	dashboard.AddCommand(listDashboards)
-	listDashboards.Flags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
 }
