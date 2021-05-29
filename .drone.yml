@@ -9,3 +9,23 @@ steps:
   - cp conf/importer-example.yml conf/importer.yml
   - ./bin/grafana-dashboard-manager_linux version
 
+trigger:
+  event:
+    - push
+    - pull_request
+---
+kind: pipeline
+name: release
+
+steps:
+  - name: release
+    image: golang:1.16
+    commands:
+      - go install github.com/goreleaser/goreleaser@v0.166.1
+      - goreleaser check
+      - make release
+
+trigger:
+  event:
+    - tag
+
