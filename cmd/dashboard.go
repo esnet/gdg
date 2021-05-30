@@ -5,14 +5,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getDashboardGlobalFlags(cmd *cobra.Command) api.DashboardFilter {
+func getDashboardGlobalFlags(cmd *cobra.Command) api.Filter {
 	folderFilter, _ := cmd.Flags().GetString("folder")
 	dashboardFilter, _ := cmd.Flags().GetString("dashboard")
 
-	filters := api.DashboardFilter{
-		FolderFilter: folderFilter,
-		DashFilter:   dashboardFilter,
-	}
+	filters := api.NewDashboardFilter()
+	filters.AddFilter(api.FolderFilter, folderFilter)
+	filters.AddFilter(api.DashFilter, dashboardFilter)
 
 	return filters
 

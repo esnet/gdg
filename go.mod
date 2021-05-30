@@ -8,10 +8,12 @@ require (
 	github.com/go-openapi/strfmt v0.20.1 // indirect
 	github.com/gosimple/slug v1.9.0
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
+	github.com/jinzhu/copier v0.3.0 // indirect
 	github.com/mattn/go-runewidth v0.0.12 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/netsage-project/sdk v0.1.3-0.20210512193805-a3b05178eae0
 	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rjeczalik/interfaces v0.1.1 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.1

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/grafana-dashboard-manager/api"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -13,7 +12,7 @@ var ClearDashboards = &cobra.Command{
 	Long:  `clear all monitored dashboards from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
 		filter := getDashboardGlobalFlags(cmd)
-		deletedDashboards := api.DeleteAllDashboards(client, filter)
+		deletedDashboards := client.DeleteAllDashboards(filter)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range deletedDashboards {
 			tableObj.AppendRow(table.Row{"dashboard", file})

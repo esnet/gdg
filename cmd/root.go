@@ -9,17 +9,12 @@ import (
 
 	"github.com/netsage-project/grafana-dashboard-manager/api"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
-	"github.com/netsage-project/sdk"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
-	configProvider *viper.Viper
-	client         *sdk.Client
-	adminClient    *sdk.Client
-	tableObj       table.Writer
-	debug          bool
+	tableObj table.Writer
+	client   api.ApiService
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -51,7 +46,7 @@ func init() {
 }
 
 func initConfig() {
-	configProvider = config.Config()
+	configProvider := config.Config()
 	setupGrafanaClient()
 	log.Debug("Creating output locations")
 	dir := configProvider.GetString("env.output.datasources")
@@ -63,15 +58,9 @@ func initConfig() {
 	tableObj.SetOutputMirror(os.Stdout)
 	tableObj.SetStyle(table.StyleLight)
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	debug = configProvider.GetBool("global.debug")
-
 }
 
 func setupGrafanaClient() {
-	grafana := config.GetDefaultGrafanaConfig()
-	client = api.Login(grafana)
-	adminClient = api.AdminLogin(grafana)
+	client = api.NewApiService()
 
 }

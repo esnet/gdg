@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -73,4 +74,15 @@ func findAllFiles(folder string) []string {
 	}
 
 	return fileList
+}
+
+//getFolderNameIDMap helper function to build a mapping for name to folderID
+func getFolderNameIDMap(client *sdk.Client, ctx context.Context) map[string]int {
+
+	folders, _ := client.GetAllFolders(ctx)
+	var folderMap map[string]int = make(map[string]int)
+	for _, folder := range folders {
+		folderMap[folder.Title] = folder.ID
+	}
+	return folderMap
 }

@@ -5,12 +5,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getDatasourcesGlobalFlags(cmd *cobra.Command) api.DatasourceFilter {
+func getDatasourcesGlobalFlags(cmd *cobra.Command) api.Filter {
 	dashboardFilter, _ := cmd.Flags().GetString("datasource")
 
-	filters := api.DatasourceFilter{
-		Name: dashboardFilter,
-	}
+	filters := api.DatasourceFilter{}
+	filters.Init()
+	filters.AddFilter("Name", dashboardFilter)
 
 	return filters
 

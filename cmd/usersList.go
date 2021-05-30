@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/grafana-dashboard-manager/api"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -18,7 +17,7 @@ var listUserCmd = &cobra.Command{
 
 		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "grafanaAdmin", "disabled", "authLabels"})
-		users := api.ListUsers(adminClient)
+		users := client.ListUsers()
 		if len(users) == 0 {
 			log.Info("No users found")
 		} else {
