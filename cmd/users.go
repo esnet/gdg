@@ -6,9 +6,10 @@ import (
 
 // userCmd represents the version command
 var userCmd = &cobra.Command{
-	Use:   "users",
-	Short: "Manage users",
-	Long:  `Manage users.`,
+	Use:     "users",
+	Aliases: []string{"user"},
+	Short:   "Manage users",
+	Long:    `Manage users.`,
 }
 
 func init() {

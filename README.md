@@ -1,6 +1,6 @@
 # grafana-dashboard-manager
 
-Grafana Dashboard Manager
+Grafana Dashboard Manager (GDM)
 
 ## Getting started
 
@@ -15,6 +15,28 @@ You can use either an Auth Token or username/password credentials.  If you confi
 Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only "General" is managed.  
 
 env.output defines where the files will be saved and imported from.
+
+### Contexts
+
+Starting with version 0.1.4 contexts are now supported.  Your config can contain one or multiple contexts which are essentially a grafana server configuration.
+
+ctx is shorthand for context
+
+```sh
+./bin/grafana-dashboard-manager ctx list -- Lists all known contexts
+./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context
+./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value.
+```
+
+### Users
+
+Only supported with basic auth.  Users is the only one where basic auth is given priority.  API Auth is not supported, so will try to use basic auth if configured otherwise will warn the user and exit.
+
+```sh
+./bin/grafana-dashboard-manager users list -- Lists all known users
+./bin/grafana-dashboard-manager users promote -u user@foobar.com -- promotes the user to a grafana admin
+```
+
 
 ### Running the app
 

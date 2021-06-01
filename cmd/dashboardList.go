@@ -26,8 +26,9 @@ var listDashboards = &cobra.Command{
 		}
 		boards := api.ListDashboards(client, folders, "")
 
+		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
 		for _, link := range boards {
-			url := fmt.Sprintf("%s%s", config.GetGrafanaConfig().URL, link.URL)
+			url := fmt.Sprintf("%s%s", config.GetDefaultGrafanaConfig().URL, link.URL)
 			elements := strings.Split(link.URI, "/")
 			var slug string = ""
 			if len(elements) > 1 {

@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"github.com/netsage-project/grafana-dashboard-manager/api"
-	"github.com/sirupsen/logrus"
+	"github.com/netsage-project/grafana-dashboard-manager/config"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -13,14 +14,15 @@ var promoteUser = &cobra.Command{
 	Aliases: []string{"godmode"},
 	Run: func(cmd *cobra.Command, args []string) {
 
+		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
 		userLogin, _ := cmd.Flags().GetString("user")
 
-		msg, err := api.PromoteUser(client, userLogin)
+		msg, err := api.PromoteUser(adminClient, userLogin)
 		if err != nil {
-			logrus.Error(err.Error())
+			log.Error(err.Error())
 		} else {
-			logrus.Info(*msg.Message)
-			logrus.Info("Please note user is a grafana admin, not necessarily an Org admin.  You may need to promote yourself manually per org")
+			log.Info(*msg.Message)
+			log.Info("Please note user is a grafana admin, not necessarily an Org admin.  You may need to promote yourself manually per org")
 		}
 
 	},

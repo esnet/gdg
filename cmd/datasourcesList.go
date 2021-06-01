@@ -18,11 +18,12 @@ var listDataSources = &cobra.Command{
 		tableObj.AppendHeader(table.Row{"id", "name", "type", "default", "url"})
 
 		datasources := api.ListDataSources(client, nil)
+		log.Infof("Listing datasources for context: '%s'", config.GetContext())
 		if len(datasources) == 0 {
 			log.Info("No datasources found")
 		} else {
 			for _, link := range datasources {
-				url := fmt.Sprintf("%s/datasource/edit/%d", config.GetGrafanaConfig().URL, link.ID)
+				url := fmt.Sprintf("%s/datasource/edit/%d", config.GetDefaultGrafanaConfig().URL, link.ID)
 				tableObj.AppendRow(table.Row{link.ID, link.Name, link.Type, link.IsDefault, url})
 			}
 			tableObj.Render()

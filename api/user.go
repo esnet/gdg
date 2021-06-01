@@ -4,17 +4,27 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 
+	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/netsage-project/sdk"
 	"github.com/sirupsen/logrus"
 )
 
+func validateUserAPI(client *sdk.Client) {
+	if client == nil || !config.GetDefaultGrafanaConfig().AdminEnabled {
+		logrus.Fatal("Missing Admin client, please check your config and ensure basic auth is configured")
+		os.Exit(1)
+	}
+}
+
 //ListUsers list all grafana users
 func ListUsers(client *sdk.Client) []sdk.User {
 	ctx := context.Background()
+	validateUserAPI(client)
 	users, err := client.GetAllUsers(ctx)
 	if err != nil {
-		logrus.Panic("Unable to get users")
+		logrus.Fatal(err)
 	}
 	return users
 }
@@ -22,6 +32,7 @@ func ListUsers(client *sdk.Client) []sdk.User {
 //PromoteUser promote the user to have Admin Access
 func PromoteUser(client *sdk.Client, userLogin string) (*sdk.StatusMessage, error) {
 
+	validateUserAPI(client)
 	ctx := context.Background()
 	//Get all users
 	users := ListUsers(client)

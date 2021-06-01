@@ -11,6 +11,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/netsage-project/sdk"
+	"github.com/spf13/viper"
 )
 
 //ListDataSources: list all the currently configured datasources
@@ -27,7 +28,7 @@ func ListDataSources(client *sdk.Client, folderFilters []string) []sdk.Datasourc
 
 //ImportDataSources: will read in all the configured datasources.
 //NOTE: credentials cannot be retrieved and need to be set via configuration
-func ImportDataSources(client *sdk.Client, conf config.Provider) []string {
+func ImportDataSources(client *sdk.Client, conf *viper.Viper) []string {
 	var (
 		datasources []sdk.Datasource
 		dsPacked    []byte
@@ -64,7 +65,7 @@ func DeleteAllDataSources(client *sdk.Client) []string {
 }
 
 //ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
-func ExportDataSources(client *sdk.Client, folderFilters []string, query string, conf config.Provider) []string {
+func ExportDataSources(client *sdk.Client, folderFilters []string, query string, conf *viper.Viper) []string {
 	var datasources []sdk.Datasource
 	var status sdk.StatusMessage
 	var exported []string = make([]string, 0)
@@ -90,7 +91,7 @@ func ExportDataSources(client *sdk.Client, folderFilters []string, query string,
 				fmt.Fprint(os.Stderr, err)
 				continue
 			}
-			dsConfig := config.GetGrafanaConfig()
+			dsConfig := config.GetDefaultGrafanaConfig()
 			var creds *config.GrafanaDataSource
 
 			if *newDS.BasicAuth {

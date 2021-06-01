@@ -19,6 +19,17 @@ func Login(grafanaConf *config.GrafanaConfig) *sdk.Client {
 
 }
 
+func AdminLogin(grafanaConf *config.GrafanaConfig) *sdk.Client {
+	if grafanaConf.UserName != "" && grafanaConf.Password != "" {
+		grafanaConf.AdminEnabled = true
+		return authLogin(grafanaConf.URL, grafanaConf.UserName, grafanaConf.Password)
+	} else {
+		grafanaConf.AdminEnabled = false
+		return nil
+	}
+
+}
+
 //tokenLogin: given a URL and token return the client
 func tokenLogin(url, token string) *sdk.Client {
 	return sdk.NewClient(url, token, sdk.DefaultHTTPClient)
