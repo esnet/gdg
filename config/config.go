@@ -62,11 +62,13 @@ func init() {
 	configData = &ConfigStruct{}
 	configData.defaultConfig = readViperConfig("importer")
 	contexts := configData.defaultConfig.GetStringMap("contexts")
-	contextMaps, _ := yaml.Marshal(contexts)
-	err := yaml.Unmarshal([]byte(contextMaps), &configData.contextMap)
+	contextMaps, err := yaml.Marshal(contexts)
 	if err != nil {
-		log.Error("No valid configuration file has been found")
-		os.Exit(1)
+		log.Fatal("Failed to decode context map, please check your configuration")
+	}
+	err = yaml.Unmarshal([]byte(contextMaps), &configData.contextMap)
+	if err != nil {
+		log.Fatal("No valid configuration file has been found")
 	}
 
 }

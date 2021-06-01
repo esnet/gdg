@@ -13,7 +13,7 @@ import (
 
 func validateUserAPI(client *sdk.Client) {
 	if client == nil || !config.GetDefaultGrafanaConfig().AdminEnabled {
-		logrus.Info("Missing Admin client, please check your config and ensure basic auth is configured")
+		logrus.Fatal("Missing Admin client, please check your config and ensure basic auth is configured")
 		os.Exit(1)
 	}
 }
@@ -24,8 +24,7 @@ func ListUsers(client *sdk.Client) []sdk.User {
 	validateUserAPI(client)
 	users, err := client.GetAllUsers(ctx)
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		logrus.Fatal(err)
 	}
 	return users
 }

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/netsage-project/grafana-dashboard-manager/config"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )
@@ -19,7 +19,7 @@ var contextShow = &cobra.Command{
 		grafana := config.GetGrafanaConfig(context)
 		d, err := yaml.Marshal(grafana)
 		if err != nil {
-			logrus.Info("Failed to serialize context")
+			log.Info("Failed to serialize context")
 			os.Exit(1)
 		}
 		fmt.Printf("---%s:\n%s\n\n", context, string(d))
