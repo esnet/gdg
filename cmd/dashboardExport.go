@@ -12,10 +12,12 @@ var exportDashboard = &cobra.Command{
 	Short: "export all dashboards",
 	Long:  `export all dashboards`,
 	Run: func(cmd *cobra.Command, args []string) {
-		api.ExportDashboards(client, nil, "", configProvider)
+
+		filter := getDashboardGlobalFlags(cmd)
+		api.ExportDashboards(client, filter, configProvider)
 
 		tableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
-		boards := api.ListDashboards(client, nil, "")
+		boards := api.ListDashboards(client, &filter)
 
 		for _, link := range boards {
 			tableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})

@@ -16,6 +16,10 @@ var contextShow = &cobra.Command{
 	Long:  `show contexts.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		context, _ := cmd.Flags().GetString("context")
+		if context == "" {
+			context = config.GetContext()
+		}
+
 		grafana := config.GetGrafanaConfig(context)
 		d, err := yaml.Marshal(grafana)
 		if err != nil {
@@ -30,5 +34,5 @@ var contextShow = &cobra.Command{
 func init() {
 	context.AddCommand(contextShow)
 	contextShow.Flags().StringP("context", "c", "", "context")
-	contextShow.MarkFlagRequired("context")
+	// contextShow.MarkFlagRequired("context")
 }

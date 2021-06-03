@@ -13,7 +13,8 @@ var ClearDataSources = &cobra.Command{
 	Long:  `clear all datasources from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Delete datasources")
-		savedFiles := api.DeleteAllDataSources(client)
+		filters := getDatasourcesGlobalFlags(cmd)
+		savedFiles := api.DeleteAllDataSources(client, filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"datasource", file})

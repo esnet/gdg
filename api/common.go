@@ -4,13 +4,28 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/gosimple/slug"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 var DefaultFolderName = "General"
+
+func GetSlug(title string) string {
+	return strings.ToLower(slug.Make(title))
+}
+
+//Update the slug in the board returned
+func updateSlug(board *sdk.FoundBoard) {
+	elements := strings.Split(board.URI, "/")
+	if len(elements) > 1 {
+		board.Slug = elements[len(elements)-1]
+	}
+}
 
 //buildDashboardPath returns the dashboard path for a given folder
 func buildDashboardPath(conf *viper.Viper, folderName string) string {

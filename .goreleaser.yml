@@ -9,7 +9,8 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
-    ldflags: -X github.com/netsage-project/grafana-dashboard-manager/version.GitCommit={{ .Commit }} -X github.com/netsage-project/grafana-dashboard-manager/version.BuildDate={{ .Date }}  -X github.com/netsage-project/grafana-dashboard-manager/version.Version={{ .Tag }} 
+    binary: gdg
+    ldflags: -X github.com/netsage-project/grafana-dashboard-manager/version.GitCommit={{ .Commit }} -X github.com/netsage-project/grafana-dashboard-manager/version.BuildDate={{ .Date }}  -X github.com/netsage-project/grafana-dashboard-manager/version.Version={{ .Tag }}
     goos:
       - linux
       - windows
@@ -23,16 +24,16 @@ archives:
       386: i386
       amd64: x86_64
     files:
-     - README*
-     - conf/importer-example.yml
+      - README*
+      - conf/importer-example.yml
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"

@@ -13,7 +13,8 @@ var importDashboard = &cobra.Command{
 	Short: "Import all dashboards",
 	Long:  `Import all dashboards from grafana to local file system`,
 	Run: func(cmd *cobra.Command, args []string) {
-		savedFiles := api.ImportDashboards(client, "", configProvider)
+		filter := getDashboardGlobalFlags(cmd)
+		savedFiles := api.ImportDashboards(client, filter, configProvider)
 		log.Infof("Importing dashboards for context: '%s'", config.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
