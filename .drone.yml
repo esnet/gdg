@@ -19,14 +19,25 @@ kind: pipeline
 name: release
 
 steps:
-  - name: release
-    image: golang:1.16
+  - name: fetch
+    image: docker:git
     commands:
-      - go install github.com/goreleaser/goreleaser@v0.166.1
-      - goreleaser check
-      - make release
+      - git fetch --tags
 
-trigger:
-  event:
-    - tag
+  - name: release
+    image: golang
+    environment:
+      GITHUB_TOKEN:
+        from_secret: gh_secret
+    volumes:
+      - name: deps
+        path: /go
+    commands:
+      - curl -sL https://git.io/goreleaser | bash
+    when:
+      event: tag
+
+volumes:
+  - name: deps
+    temp: {}
 
