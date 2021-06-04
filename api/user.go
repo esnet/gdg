@@ -19,10 +19,10 @@ func validateUserAPI(client *sdk.Client) {
 }
 
 //ListUsers list all grafana users
-func ListUsers(client *sdk.Client) []sdk.User {
+func (s *DashNGoImpl) ListUsers() []sdk.User {
 	ctx := context.Background()
-	validateUserAPI(client)
-	users, err := client.GetAllUsers(ctx)
+	validateUserAPI(s.adminClient)
+	users, err := s.adminClient.GetAllUsers(ctx)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -30,12 +30,12 @@ func ListUsers(client *sdk.Client) []sdk.User {
 }
 
 //PromoteUser promote the user to have Admin Access
-func PromoteUser(client *sdk.Client, userLogin string) (*sdk.StatusMessage, error) {
+func (s *DashNGoImpl) PromoteUser(userLogin string) (*sdk.StatusMessage, error) {
 
-	validateUserAPI(client)
+	validateUserAPI(s.adminClient)
 	ctx := context.Background()
 	//Get all users
-	users := ListUsers(client)
+	users := s.ListUsers()
 	var user *sdk.User
 	for _, item := range users {
 		if item.Login == userLogin {
@@ -52,7 +52,7 @@ func PromoteUser(client *sdk.Client, userLogin string) (*sdk.StatusMessage, erro
 	role := sdk.UserPermissions{
 		IsGrafanaAdmin: true,
 	}
-	msg, err := client.UpdateUserPermissions(ctx, role, user.ID)
+	msg, err := s.adminClient.UpdateUserPermissions(ctx, role, user.ID)
 	if err != nil {
 		errorMsg := fmt.Sprintf("failed to promote user: '%s'", userLogin)
 		logrus.Error(errorMsg)

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/netsage-project/grafana-dashboard-manager/api"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -17,7 +16,7 @@ var promoteUser = &cobra.Command{
 		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
 		userLogin, _ := cmd.Flags().GetString("user")
 
-		msg, err := api.PromoteUser(adminClient, userLogin)
+		msg, err := client.PromoteUser(userLogin)
 		if err != nil {
 			log.Error(err.Error())
 		} else {

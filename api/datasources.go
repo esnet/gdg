@@ -11,20 +11,19 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/netsage-project/sdk"
-	"github.com/spf13/viper"
 )
 
 //ListDataSources: list all the currently configured datasources
-func ListDataSources(client *sdk.Client, filter DatasourceFilter) []sdk.Datasource {
+func (s *DashNGoImpl) ListDataSources(filter Filter) []sdk.Datasource {
 
 	ctx := context.Background()
-	ds, err := client.GetAllDatasources(ctx)
+	ds, err := s.client.GetAllDatasources(ctx)
 	if err != nil {
 		panic(err)
 	}
 	result := make([]sdk.Datasource, 0)
 	for _, item := range ds {
-		if filter.ValidateDatasource(GetSlug(item.Name)) {
+		if filter.Validate(map[string]string{Name: GetSlug(item.Name)}) {
 			result = append(result, item)
 		}
 	}
@@ -34,7 +33,7 @@ func ListDataSources(client *sdk.Client, filter DatasourceFilter) []sdk.Datasour
 
 //ImportDataSources: will read in all the configured datasources.
 //NOTE: credentials cannot be retrieved and need to be set via configuration
-func ImportDataSources(client *sdk.Client, filter DatasourceFilter, conf *viper.Viper) []string {
+func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 	var (
 		datasources []sdk.Datasource
 		dsPacked    []byte
@@ -42,13 +41,13 @@ func ImportDataSources(client *sdk.Client, filter DatasourceFilter, conf *viper.
 		err         error
 		dataFiles   []string
 	)
-	datasources = ListDataSources(client, filter)
+	datasources = s.ListDataSources(filter)
 	for _, ds := range datasources {
 		if dsPacked, err = json.MarshalIndent(ds, "", "	"); err != nil {
 			fmt.Fprintf(os.Stderr, "%s for %s\n", err, ds.Name)
 			continue
 		}
-		dsPath := buildDataSourcePath(conf, slug.Make(ds.Name))
+		dsPath := buildDataSourcePath(s.configRef, slug.Make(ds.Name))
 		if err = ioutil.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
 			fmt.Fprintf(os.Stderr, "%s for %s\n", err, meta.Slug)
 		} else {
@@ -59,33 +58,33 @@ func ImportDataSources(client *sdk.Client, filter DatasourceFilter, conf *viper.
 }
 
 //Removes all current datasources
-func DeleteAllDataSources(client *sdk.Client, filter DatasourceFilter) []string {
+func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
 	ctx := context.Background()
 	var ds []string = make([]string, 0)
-	items := ListDataSources(client, filter)
+	items := s.ListDataSources(filter)
 	for _, item := range items {
-		client.DeleteDatasource(ctx, item.ID)
+		s.client.DeleteDatasource(ctx, item.ID)
 		ds = append(ds, item.Name)
 	}
 	return ds
 }
 
 //ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
-func ExportDataSources(client *sdk.Client, filter DatasourceFilter, conf *viper.Viper) []string {
+func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 	var datasources []sdk.Datasource
 	var status sdk.StatusMessage
 	var exported []string = make([]string, 0)
 
 	ctx := context.Background()
-	filesInDir, err := ioutil.ReadDir(getResourcePath(conf, "ds"))
-	datasources = ListDataSources(client, filter)
+	filesInDir, err := ioutil.ReadDir(getResourcePath(s.configRef, "ds"))
+	datasources = s.ListDataSources(filter)
 
 	var rawDS []byte
 	if err != nil {
 		fmt.Fprint(os.Stderr, err)
 	}
 	for _, file := range filesInDir {
-		fileLocation := fmt.Sprintf("%s/%s", getResourcePath(conf, "ds"), file.Name())
+		fileLocation := fmt.Sprintf("%s/%s", getResourcePath(s.configRef, "ds"), file.Name())
 		if strings.HasSuffix(file.Name(), ".json") {
 			if rawDS, err = ioutil.ReadFile(fileLocation); err != nil {
 				fmt.Fprint(os.Stderr, err)
@@ -97,7 +96,8 @@ func ExportDataSources(client *sdk.Client, filter DatasourceFilter, conf *viper.
 				fmt.Fprint(os.Stderr, err)
 				continue
 			}
-			if !filter.ValidateDatasource(GetSlug(newDS.Name)) {
+
+			if !filter.Validate(map[string]string{Name: GetSlug(newDS.Name)}) {
 				continue
 			}
 			dsConfig := config.GetDefaultGrafanaConfig()
@@ -122,13 +122,13 @@ func ExportDataSources(client *sdk.Client, filter DatasourceFilter, conf *viper.
 
 			for _, existingDS := range datasources {
 				if existingDS.Name == newDS.Name {
-					if status, err = client.DeleteDatasource(ctx, existingDS.ID); err != nil {
+					if status, err = s.client.DeleteDatasource(ctx, existingDS.ID); err != nil {
 						fmt.Fprintf(os.Stderr, "error on deleting datasource %s with %s", newDS.Name, err)
 					}
 					break
 				}
 			}
-			if status, err = client.CreateDatasource(ctx, newDS); err != nil {
+			if status, err = s.client.CreateDatasource(ctx, newDS); err != nil {
 				fmt.Fprintf(os.Stderr, "error on importing datasource %s with %s (%s)", newDS.Name, err, *status.Message)
 			} else {
 				exported = append(exported, fileLocation)

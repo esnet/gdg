@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/grafana-dashboard-manager/api"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -15,7 +14,7 @@ var ImportDataSources = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Importing datasources for context: '%s'", config.GetContext())
 		filters := getDatasourcesGlobalFlags(cmd)
-		savedFiles := api.ImportDataSources(client, filters, configProvider)
+		savedFiles := client.ImportDataSources(filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"datasource", file})

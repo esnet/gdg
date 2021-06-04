@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/grafana-dashboard-manager/api"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -14,10 +13,10 @@ var exportDashboard = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		filter := getDashboardGlobalFlags(cmd)
-		api.ExportDashboards(client, filter, configProvider)
+		client.ExportDashboards(filter)
 
 		tableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
-		boards := api.ListDashboards(client, &filter)
+		boards := client.ListDashboards(filter)
 
 		for _, link := range boards {
 			tableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})

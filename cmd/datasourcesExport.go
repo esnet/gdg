@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/grafana-dashboard-manager/api"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -14,7 +13,7 @@ var exportDataSources = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Exporting datasources")
 		filters := getDatasourcesGlobalFlags(cmd)
-		exportedList := api.ExportDataSources(client, filters, configProvider)
+		exportedList := client.ExportDataSources(filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range exportedList {
 			tableObj.AppendRow(table.Row{"datasource", file})

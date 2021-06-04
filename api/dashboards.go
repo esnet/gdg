@@ -7,10 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
-	"github.com/spf13/viper"
 	"github.com/tidwall/pretty"
 
 	"github.com/netsage-project/sdk"
@@ -21,10 +19,10 @@ import (
 
 //ListDashboards: List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
-func ListDashboards(client *sdk.Client, filters *DashboardFilter) []sdk.FoundBoard {
+func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	ctx := context.Background()
 	var boardsList []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
-	boardLinks, err := client.SearchDashboards(ctx, "", false)
+	boardLinks, err := s.client.SearchDashboards(ctx, "", false)
 	if err != nil {
 		panic(err)
 	}
@@ -47,8 +45,8 @@ func ListDashboards(client *sdk.Client, filters *DashboardFilter) []sdk.FoundBoa
 			continue
 		}
 		updateSlug(&link)
-		if filters.DashFilter != "" {
-			if link.Slug == filters.DashFilter {
+		if filters.GetFilter("DashFilter") != "" {
+			if link.Slug == filters.GetFilter("DashFilter") {
 				validUid = true
 			} else {
 				validUid = false
@@ -70,7 +68,7 @@ func ListDashboards(client *sdk.Client, filters *DashboardFilter) []sdk.FoundBoa
 }
 
 //ImportDashboards saves all dashboards matching query to configured location
-func ImportDashboards(client *sdk.Client, filter DashboardFilter, conf *viper.Viper) []string {
+func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 	var (
 		boardLinks []sdk.FoundBoard
 		rawBoard   []byte
@@ -79,14 +77,14 @@ func ImportDashboards(client *sdk.Client, filter DashboardFilter, conf *viper.Vi
 	)
 	ctx := context.Background()
 
-	boardLinks = ListDashboards(client, &filter)
+	boardLinks = s.ListDashboards(filter)
 	var boards []string = make([]string, 0)
 	for _, link := range boardLinks {
-		if rawBoard, meta, err = client.GetRawDashboardByUID(ctx, link.UID); err != nil {
+		if rawBoard, meta, err = s.client.GetRawDashboardByUID(ctx, link.UID); err != nil {
 			fmt.Fprintf(os.Stderr, "%s for %s\n", err, link.URI)
 			continue
 		}
-		fileName := fmt.Sprintf("%s/%s.json", buildDashboardPath(conf, link.FolderTitle), meta.Slug)
+		fileName := fmt.Sprintf("%s/%s.json", buildDashboardPath(s.configRef, link.FolderTitle), meta.Slug)
 		if err = ioutil.WriteFile(fileName, pretty.Pretty(rawBoard), os.FileMode(int(0666))); err != nil {
 			fmt.Fprintf(os.Stderr, "%s for %s\n", err, meta.Slug)
 		} else {
@@ -97,24 +95,14 @@ func ImportDashboards(client *sdk.Client, filter DashboardFilter, conf *viper.Vi
 	return boards
 }
 
-//getFolderNameIDMap helper function to build a mapping for name to folderID
-func getFolderNameIDMap(client *sdk.Client, ctx context.Context) map[string]int {
-
-	folders, _ := client.GetAllFolders(ctx)
-	var folderMap map[string]int = make(map[string]int, 0)
-	for _, folder := range folders {
-		folderMap[folder.Title] = folder.ID
-	}
-	return folderMap
-}
-
 //ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folde doesn't exist, it'll be created.
-func ExportDashboards(client *sdk.Client, filters DashboardFilter, conf *viper.Viper) {
-	filesInDir := findAllFiles(getResourcePath(conf, "dashboard"))
+// if the folde doesn't exist, it'll be created.
+func (s *DashNGoImpl) ExportDashboards(filters Filter) {
+	filesInDir := findAllFiles(getResourcePath(s.configRef, "dashboard"))
 	ctx := context.Background()
 	var rawBoard []byte
-	folderMap := getFolderNameIDMap(client, ctx)
+	folderMap := getFolderNameIDMap(s.client, ctx)
 	var err error
 	var folderName string = ""
 	var folderId int
@@ -142,6 +130,7 @@ func ExportDashboards(client *sdk.Client, filters DashboardFilter, conf *viper.V
 				folderId = sdk.DefaultFolderId
 				folderName = DefaultFolderName
 			}
+			validateMap := map[string]string{FolderFilter: folderName, DashFilter: baseFile}
 
 			if folderName == DefaultFolderName {
 				folderId = sdk.DefaultFolderId
@@ -149,12 +138,9 @@ func ExportDashboards(client *sdk.Client, filters DashboardFilter, conf *viper.V
 				if val, ok := folderMap[folderName]; ok {
 					folderId = val
 				} else {
-					createFolder := filters.ValidateFolder(folderName)
-					validUid := filters.ValidateDashboard(baseFile)
-
-					if createFolder && validUid {
+					if filters.Validate(validateMap) {
 						folder := sdk.Folder{Title: folderName}
-						folder, err = client.CreateFolder(ctx, folder)
+						folder, err = s.client.CreateFolder(ctx, folder)
 						if err != nil {
 							panic(err)
 						}
@@ -165,15 +151,18 @@ func ExportDashboards(client *sdk.Client, filters DashboardFilter, conf *viper.V
 			}
 
 			//If folder OR slug is filtered, then skip if it doesn't match
-			if !filters.Validate(folderName, baseFile) {
+			if !filters.Validate(validateMap) {
 				continue
 			}
 
 			title, err := jsonpath.Read(board, "$.title")
+			if err != nil {
+				log.Warn("Could not get dashboard title")
+			}
 
 			rawTitle := fmt.Sprintf("%v", title)
 			slugName := GetSlug(rawTitle)
-			if _, err = client.DeleteDashboard(ctx, slugName); err != nil {
+			if _, err = s.client.DeleteDashboard(ctx, slugName); err != nil {
 				log.Println(err)
 				continue
 			}
@@ -186,7 +175,7 @@ func ExportDashboards(client *sdk.Client, filters DashboardFilter, conf *viper.V
 				Dashboard:  rawBoard,
 			}
 
-			_, err = client.SetRawDashboardWithParam(ctx, request)
+			_, err = s.client.SetRawDashboardWithParam(ctx, request)
 			if err != nil {
 				log.Printf("error on Exporting dashboard %s", rawTitle)
 				continue
@@ -197,14 +186,14 @@ func ExportDashboards(client *sdk.Client, filters DashboardFilter, conf *viper.V
 
 //DeleteAllDashboards clears all current dashboards being monitored.  Any folder not white listed
 // will not be affected
-func DeleteAllDashboards(client *sdk.Client, filter DashboardFilter) []string {
+func (s *DashNGoImpl) DeleteAllDashboards(filter Filter) []string {
 	ctx := context.Background()
 	var dashboards []string = make([]string, 0)
 
-	items := ListDashboards(client, &filter)
+	items := s.ListDashboards(filter)
 	for _, item := range items {
-		if filter.Validate(item.FolderTitle, item.Slug) {
-			_, err := client.DeleteDashboardByUID(ctx, item.UID)
+		if filter.Validate(map[string]string{FolderFilter: item.FolderTitle, DashFilter: item.Slug}) {
+			_, err := s.client.DeleteDashboardByUID(ctx, item.UID)
 			if err == nil {
 				dashboards = append(dashboards, item.Title)
 			}
@@ -212,10 +201,4 @@ func DeleteAllDashboards(client *sdk.Client, filter DashboardFilter) []string {
 	}
 	return dashboards
 
-}
-
-var quoteRegex *regexp.Regexp
-
-func init() {
-	quoteRegex, _ = regexp.Compile("['\"]+")
 }

@@ -17,7 +17,7 @@ var listDataSources = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"id", "name", "slug", "type", "default", "url"})
 		filters := getDatasourcesGlobalFlags(cmd)
-		datasources := api.ListDataSources(client, filters)
+		datasources := client.ListDataSources(filters)
 		log.Infof("Listing datasources for context: '%s'", config.GetContext())
 		if len(datasources) == 0 {
 			log.Info("No datasources found")
