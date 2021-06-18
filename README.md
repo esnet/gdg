@@ -51,6 +51,8 @@ Every namespace has three functions: list, import, export, clear operating on on
 
 #### Dashboards
 
+Dashboards are imported or exported from _organization_ specified in configuration file otherwise current organitazione user is used.
+
 All commands can use `dashboards` or `dash` to manage dashboards
 
 ```sh
@@ -62,7 +64,8 @@ All commands can use `dashboards` or `dash` to manage dashboards
 
 #### DataSources
 
-DataSources credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml).  If the datasource JSON doesn't have auth enabled, the credentials are igored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.  
+DataSources credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml).  If the datasource JSON doesn't have auth enabled, the credentials are igored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
+Datasources are imported or exported from _organization_ specified in configuration file otherwise current organitazione user is used.
 
 
 All commands can use `datasources` or `ds` to manage datasources
@@ -72,6 +75,13 @@ All commands can use `datasources` or `ds` to manage datasources
 ./bin/grafana-dashboard-manager ds import -- Import all datasources from grafana to local file system
 ./bin/grafana-dashboard-manager ds export -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
 ./bin/grafana-dashboard-manager ds clear -- Deletes all datasources
+```
+
+#### Organizations
+Command can use `organizations` or `org` to manage organizations.
+
+```sh
+./bin/grafana-dashboard-manager org list -- Lists all organizations
 ```
 
 ## Making a release

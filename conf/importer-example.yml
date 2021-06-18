@@ -17,6 +17,7 @@ contexts:
     url: https://grafana.com
     user_name: admin
     password: admin
+    organization: your-org
     watched:
       - General
   qa:
@@ -34,6 +35,7 @@ contexts:
         user: abcd
     datasources_output: qa/datasources
     url: https://staging.grafana.com
+    organization: your-org
     watched:
       - Folder1
       - Folder2
