@@ -4,3 +4,4 @@ vendor
 grafana-dashboard-manager
 importer.yml
 dist/
+prod/

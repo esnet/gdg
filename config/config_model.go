@@ -13,6 +13,7 @@ type GrafanaConfig struct {
 	APIToken           string   `yaml:"token"`
 	UserName           string   `yaml:"user_name"`
 	Password           string   `yaml:"password"`
+	Organization       string   `yaml:"organization"`
 	MonitoredFolders   []string `yaml:"watched"`
 	DefaultDataSource  *GrafanaDataSource
 	DataSourceSettings map[string]*GrafanaDataSource `yaml:"datasources"`

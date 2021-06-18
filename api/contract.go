@@ -7,6 +7,8 @@ import (
 )
 
 type ApiService interface {
+	//Organizations
+	ListOrganizations() []sdk.Org
 	//Dashboard
 	ListDashboards(filter Filter) []sdk.FoundBoard
 	ImportDashboards(filter Filter) []string
