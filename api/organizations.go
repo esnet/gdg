@@ -2,10 +2,9 @@ package api
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/netsage-project/sdk"
+	log "github.com/sirupsen/logrus"
 )
 
 //ListOrganizations: List all dashboards
@@ -18,7 +17,7 @@ func (s *DashNGoImpl) ListOrganizations() []sdk.Org {
 	if s.grafanaConf.Organization != "" {
 		var ID uint
 		for _, org := range orgs {
-			fmt.Fprintf(os.Stderr, "%d %s\n", org.ID, org.Name)
+			log.Errorf("%d %s\n", org.ID, org.Name)
 			if org.Name == s.grafanaConf.Organization {
 				ID = org.ID
 			}
@@ -26,8 +25,7 @@ func (s *DashNGoImpl) ListOrganizations() []sdk.Org {
 		if ID > 0 {
 			status, err := s.client.SwitchActualUserContext(ctx, ID)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "%s for %v\n", err, status)
-				panic(err)
+				log.Fatalf("%s for %v\n", err, status)
 			}
 		}
 	}
