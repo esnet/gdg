@@ -6,7 +6,7 @@ import (
 
 var orgCmd = &cobra.Command{
 	Use:     "organizations",
-	Aliases: []string{"org"},
+	Aliases: []string{"org", "orgs"},
 	Short:   "Manage Organizations",
 	Long:    `Manage Grafana Organizations.`,
 }

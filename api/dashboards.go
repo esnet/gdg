@@ -28,7 +28,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	if s.grafanaConf.Organization != "" {
 		var ID uint
 		for _, org := range orgs {
-			fmt.Fprintf(os.Stderr, "%d %s\n", org.ID, org.Name)
+			log.Errorf("%d %s\n", org.ID, org.Name)
 			if org.Name == s.grafanaConf.Organization {
 				ID = org.ID
 			}
@@ -36,15 +36,14 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 		if ID > 0 {
 			status, err := s.client.SwitchActualUserContext(ctx, ID)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "%s for %v\n", err, status)
-				panic(err)
+				log.Fatalf("%s for %v\n", err, status)
 			}
 		}
 	}
 	var boardsList []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
 	boardLinks, err := s.client.SearchDashboards(ctx, "", false)
 	if err != nil {
-		panic(err)
+		log.Fatal("Failed to retreive dashboards", err)
 	}
 	//Fallback on defaults
 	if filters == nil {
@@ -101,12 +100,12 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 	var boards []string = make([]string, 0)
 	for _, link := range boardLinks {
 		if rawBoard, meta, err = s.client.GetRawDashboardByUID(ctx, link.UID); err != nil {
-			fmt.Fprintf(os.Stderr, "%s for %s\n", err, link.URI)
+			log.Errorf("%s for %s\n", err, link.URI)
 			continue
 		}
 		fileName := fmt.Sprintf("%s/%s.json", buildDashboardPath(s.configRef, link.FolderTitle), meta.Slug)
 		if err = ioutil.WriteFile(fileName, pretty.Pretty(rawBoard), os.FileMode(int(0666))); err != nil {
-			fmt.Fprintf(os.Stderr, "%s for %s\n", err, meta.Slug)
+			log.Errorf("%s for %s\n", err, meta.Slug)
 		} else {
 			boards = append(boards, fileName)
 		}

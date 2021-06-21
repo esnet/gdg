@@ -11,6 +11,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/netsage-project/sdk"
+	log "github.com/sirupsen/logrus"
 )
 
 //ListDataSources: list all the currently configured datasources
@@ -44,12 +45,12 @@ func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 	datasources = s.ListDataSources(filter)
 	for _, ds := range datasources {
 		if dsPacked, err = json.MarshalIndent(ds, "", "	"); err != nil {
-			fmt.Fprintf(os.Stderr, "%s for %s\n", err, ds.Name)
+			log.Errorf("%s for %s\n", err, ds.Name)
 			continue
 		}
 		dsPath := buildDataSourcePath(s.configRef, slug.Make(ds.Name))
 		if err = ioutil.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
-			fmt.Fprintf(os.Stderr, "%s for %s\n", err, meta.Slug)
+			log.Errorf("%s for %s\n", err, meta.Slug)
 		} else {
 			dataFiles = append(dataFiles, dsPath)
 		}
@@ -123,13 +124,13 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 			for _, existingDS := range datasources {
 				if existingDS.Name == newDS.Name {
 					if status, err = s.client.DeleteDatasource(ctx, existingDS.ID); err != nil {
-						fmt.Fprintf(os.Stderr, "error on deleting datasource %s with %s", newDS.Name, err)
+						log.Errorf("error on deleting datasource %s with %s", newDS.Name, err)
 					}
 					break
 				}
 			}
 			if status, err = s.client.CreateDatasource(ctx, newDS); err != nil {
-				fmt.Fprintf(os.Stderr, "error on importing datasource %s with %s (%s)", newDS.Name, err, *status.Message)
+				log.Errorf("error on importing datasource %s with %s (%s)", newDS.Name, err, *status.Message)
 			} else {
 				exported = append(exported, fileLocation)
 			}
