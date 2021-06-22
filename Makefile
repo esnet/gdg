@@ -37,6 +37,12 @@ build:
 	@echo "GOPATH=${GOPATH}"
 	go build -ldflags "-X github.com/netsage-project/grafana-dashboard-manager/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/grafana-dashboard-manager/version.BuildDate=${BUILD_DATE}" -o bin/${BIN_NAME}
 
+install:
+	@echo "installing ${BIN_NAME} ${VERSION}"
+	@echo "GOPATH=${GOPATH}"
+	go install -ldflags "-X github.com/netsage-project/grafana-dashboard-manager/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/grafana-dashboard-manager/version.BuildDate=${BUILD_DATE}"
+	mv ${GOPATH}/bin/grafana-dashboard-manager ${GOPATH}/bin/${BIN_NAME}
+
 get-deps:
 	go mod tidy
 
