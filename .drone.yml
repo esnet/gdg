@@ -2,9 +2,15 @@ kind: pipeline
 name: default
 
 steps:
+  - name: grafana
+    image: grafana/grafana:7.5.6-ubuntu
+    detach: true
   - name: build
     image: golang:1.16
     commands:
+      - echo "Waiting for Grafana to come up"
+      - sleep 30
+      - curl http://grafana:3000
       - make linux
       - cp conf/importer-example.yml conf/importer.yml
       - make test
@@ -23,7 +29,8 @@ steps:
     image: docker:git
     commands:
       - git fetch --tags
-
+    when:
+      event: tag
   - name: release
     image: golang
     environment:
@@ -40,4 +47,3 @@ steps:
 volumes:
   - name: deps
     temp: {}
-
