@@ -1,0 +1,22 @@
+{
+	"id": 24,
+	"orgId": 1,
+	"name": "netsage",
+	"type": "elasticsearch",
+	"access": "proxy",
+	"url": "https://netsage-elk1.grnoc.iu.edu/esproxy2/",
+	"password": "",
+	"user": "",
+	"database": "om-netsage-irnc-*",
+	"basicAuth": true,
+	"isDefault": true,
+	"jsonData": {
+		"esVersion": 70,
+		"keepCookies": [],
+		"logLevelField": "",
+		"logMessageField": "",
+		"maxConcurrentShardRequests": "256",
+		"timeField": "start"
+	},
+	"secureJsonData": null
+}

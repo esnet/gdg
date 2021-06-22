@@ -78,5 +78,5 @@ release: clean
 	goreleaser release
 
 test:
-	go test ./...
+	go test -v ./... -cover
 

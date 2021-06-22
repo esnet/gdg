@@ -1,0 +1,1237 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations \u0026 Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 337,
+  "iteration": 1620854336704,
+  "links": [],
+  "panels": [
+    {
+      "__netsage_template": "navigation",
+      "choices": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "cycleview": true,
+      "dashboardselection": true,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "grafanafavorites": true,
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 0
+      },
+      "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
+      "id": 1,
+      "link_text": [
+        "What is the current state of the network?", 
+        "What are the top sources/destinations of flows?", 
+        "What are the top flows by organization?", 
+        "What do individual flows look like?", 
+        "What are the top flows by country?", 
+        "What are the flows by science discipline?", 
+        "What are the flows by project?", 
+        "Who are the top talkers over time?", 
+        "What are the patterns in science data transfers in the network?", 
+        "What are the bandwidth patterns in the network?", 
+        "What are the current flow data summary statistics?", 
+        "Advanced Flow Analysis"
+      ],
+      "link_url": [
+        "/grafana/d/000000003/bandwidth-dashboard", 
+        "/grafana/d/xk26IFhmk/flow-data", 
+        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
+        "/grafana/d/-l3_u8nWk/individual-flows", 
+        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
+        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
+        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
+        "/grafana/d/000000004/bandwidth-patterns", 
+        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/VuuXrnPWz/flow-analysis"
+      ],
+      "links": [],
+      "sharescreen": true,
+      "sideLogoPath": "https://portal.netsage.global/netsage-header-logo.png",
+      "sidebar": true,
+      "tablefilters": true,
+      "title": "",
+      "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
+      "transparent": true,
+      "type": "netsagenavigation"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 20,
+        "x": 2,
+        "y": 0
+      },
+      "id": 19,
+      "links": [],
+      "options": {
+        "content": "\n\u003ch1\u003e\u003ccenter\u003e\u003cb\u003eIndividual Flow Information\u003c/b\u003e\u003c/center\u003e\u003c/h1\u003e\n\u003ccenter\u003eThis dashboard shows additional flow information for the selected flow.\u003c/center\u003e\n\u003ccenter\u003eThe first table shows information common to both endpoints, while the other tables show information unique to each endpoint.\u003c/center\u003e\n\u003ccenter\u003e\u003cb\u003ePlease note that retransmit and RTT information are only available for archive flow data;\u003cbr\u003e\nand rate and duration will be zero for flows where only one sample was detected.\u003c/b\u003e\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\n\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e\n",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 3,
+        "y": 5
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["mean"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1195",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "365d",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:1193",
+              "field": "values.num_bits",
+              "id": "1",
+              "inlineScript": "_value/8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value/8"
+                }
+              },
+              "type": "sum"
+            }
+          ],
+          "query": "_id:$flow",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Volume",
+      "transparent": true,
+      "type": "stat"
+    }, 
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "mappings": [
+            {
+              "$$hashKey": "object:178",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }, 
+              {
+                "color": "light-blue",
+                "value": 0
+              }, 
+              {
+                "color": "light-blue",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 9,
+        "y": 5
+      },
+      "id": 9,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": ["mean"]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["mean"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:130",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:128",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "max"
+            }
+          ],
+          "query": "_id:$flow",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Rate",
+      "transparent": true,
+      "type": "stat"
+    }, 
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "mappings": [
+            {
+              "$$hashKey": "object:254",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }, 
+              {
+                "color": "light-blue",
+                "value": 0
+              }, 
+              {
+                "color": "light-blue",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 16,
+        "y": 5
+      },
+      "id": 11,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": ["mean"]
+        },
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["mean"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:206",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:204",
+              "field": "values.tcp_rexmit_pkts",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "max"
+            }
+          ],
+          "query": "_id:$flow",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Retransmits",
+      "transparent": true,
+      "type": "stat"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }, 
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Timestamp"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Flow ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 175
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5-Tuple Hash"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 510
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 15,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1749",
+              "fake": true,
+              "field": "meta.protocol",
+              "id": "4",
+              "settings": {
+                "min_doc_count": "1",
+                "missing": "No Data",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1864",
+              "fake": true,
+              "field": "_id",
+              "id": "7",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:2243",
+              "fake": true,
+              "field": "meta.sensor_id",
+              "id": "9",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:106",
+              "fake": true,
+              "field": "meta.id",
+              "id": "10",
+              "settings": {
+                "min_doc_count": "1",
+                "missing": null,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1764",
+              "fake": true,
+              "field": "start",
+              "id": "5",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:1843",
+              "field": "select field",
+              "id": "6",
+              "type": "count"
+            }, 
+            {
+              "$$hashKey": "object:1906",
+              "field": "values.duration",
+              "id": "8",
+              "meta": {},
+              "settings": {},
+              "type": "avg"
+            }
+          ],
+          "query": "_id:$flow",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Common Information",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Count": true
+            },
+            "indexByName": {
+              "Average": 6,
+              "Count": 5,
+              "_id": 2,
+              "meta.id": 3,
+              "meta.protocol": 4,
+              "meta.sensor_id": 1,
+              "start": 0
+            },
+            "renameByName": {
+              "Average": "Duration",
+              "Count": "",
+              "_id": "Flow ID",
+              "meta.id": "5-Tuple Hash",
+              "meta.protocol": "Protocol",
+              "meta.sensor_id": "Sensor",
+              "start": "Timestamp"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }, 
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last (not null)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Data"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 11
+      },
+      "id": 4,
+      "links": [],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Total Volume"
+          }
+        ]
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:701",
+              "fake": true,
+              "field": "start",
+              "id": "16",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "asc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:702",
+              "fake": true,
+              "field": "end",
+              "id": "17",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:703",
+              "fake": true,
+              "field": "meta.src_organization",
+              "id": "28",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:704",
+              "fake": true,
+              "field": "meta.src_ip",
+              "id": "32",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1601",
+              "fake": true,
+              "field": "meta.src_country_name",
+              "id": "39",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:2258",
+              "fake": true,
+              "field": "meta.src_asn",
+              "id": "41",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:761",
+              "fake": true,
+              "field": "meta.src_port",
+              "id": "42",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:141",
+              "fake": true,
+              "field": "meta.scireg.src.org_name",
+              "id": "43",
+              "settings": {
+                "min_doc_count": "1",
+                "missing": "No Data",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:393",
+              "fake": true,
+              "field": "meta.scireg.src.project_names",
+              "id": "46",
+              "settings": {
+                "min_doc_count": "1",
+                "missing": "No Data",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1614",
+              "fake": true,
+              "field": "meta.scireg.src.discipline",
+              "id": "40",
+              "settings": {
+                "min_doc_count": "1",
+                "missing": "No Data",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }
+          ],
+          "hide": false,
+          "metrics": [
+            {
+              "$$hashKey": "object:688",
+              "field": "values.num_bits",
+              "id": "12",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "_id:$flow",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "title": "Source Information",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Average values.num_packets": true,
+              "Count": true,
+              "end": true,
+              "meta.id": true,
+              "start": true
+            },
+            "indexByName": {
+              "Count": 14,
+              "end": 2,
+              "meta.scireg.src.discipline": 8,
+              "meta.scireg.src.ip_block_id": 11,
+              "meta.scireg.src.org_abbr": 10,
+              "meta.scireg.src.org_name": 9,
+              "meta.scireg.src.project_names": 12,
+              "meta.scireg.src.projects.project_abbr": 13,
+              "meta.sensor_id": 1,
+              "meta.src_asn": 5,
+              "meta.src_country_name": 4,
+              "meta.src_ip": 6,
+              "meta.src_organization": 3,
+              "meta.src_port": 7,
+              "start": 0
+            },
+            "renameByName": {
+              "Average values.duration": "Duration",
+              "Average values.num_packets": "",
+              "Average values.tcp_rexmit_pkts": "Retransmits",
+              "Average values.tcp_rtt_min": "RTT",
+              "Count": "",
+              "Max": "Rate",
+              "Sum": "Total Volume",
+              "end": "",
+              "meta.dst_ip": "Destination Subnet",
+              "meta.dst_organization": "Destination Organization",
+              "meta.scireg.src.discipline": "Science Registry Discipline",
+              "meta.scireg.src.ip_block_id": "Science Registry Subnet",
+              "meta.scireg.src.org_abbr": "Science Registry Org Abbreviation",
+              "meta.scireg.src.org_name": "Science Registry Org Name",
+              "meta.scireg.src.project_names": "Science Registry Project Name",
+              "meta.scireg.src.projects.project_abbr": "Science Registry Project Abbreviation",
+              "meta.sensor_id": "Sensor",
+              "meta.src_asn": "ASN",
+              "meta.src_country_name": "Country",
+              "meta.src_ip": "Subnet",
+              "meta.src_organization": "Organization",
+              "meta.src_port": "Port",
+              "start": "Timestamp"
+            }
+          }
+        }, 
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": ["lastNotNull"]
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }, 
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last (not null)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Data"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 11
+      },
+      "id": 13,
+      "links": [],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Total Volume"
+          }
+        ]
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:701",
+              "fake": true,
+              "field": "start",
+              "id": "16",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "asc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:702",
+              "fake": true,
+              "field": "end",
+              "id": "17",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:703",
+              "fake": true,
+              "field": "meta.dst_organization",
+              "id": "28",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:704",
+              "fake": true,
+              "field": "meta.dst_ip",
+              "id": "32",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1601",
+              "fake": true,
+              "field": "meta.dst_country_name",
+              "id": "39",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:2258",
+              "fake": true,
+              "field": "meta.dst_asn",
+              "id": "41",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:761",
+              "fake": true,
+              "field": "meta.dst_port",
+              "id": "42",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:141",
+              "fake": true,
+              "field": "meta.scireg.dst.org_name",
+              "id": "43",
+              "settings": {
+                "min_doc_count": "1",
+                "missing": "No Data",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:393",
+              "fake": true,
+              "field": "meta.scireg.dst.project_names",
+              "id": "46",
+              "settings": {
+                "min_doc_count": "1",
+                "missing": "No Data",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1614",
+              "fake": true,
+              "field": "meta.scireg.dst.discipline",
+              "id": "40",
+              "settings": {
+                "min_doc_count": "1",
+                "missing": "No Data",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }
+          ],
+          "hide": false,
+          "metrics": [
+            {
+              "$$hashKey": "object:688",
+              "field": "values.num_bits",
+              "id": "12",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "_id:$flow",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "title": "Destination Information",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Average values.num_packets": true,
+              "Count": true,
+              "end": true,
+              "meta.id": true,
+              "start": true
+            },
+            "indexByName": {
+              "Count": 14,
+              "end": 2,
+              "meta.dst_asn": 5,
+              "meta.dst_country_name": 4,
+              "meta.dst_ip": 6,
+              "meta.dst_organization": 3,
+              "meta.dst_port": 7,
+              "meta.scireg.dst.discipline": 8,
+              "meta.scireg.dst.ip_block_id": 11,
+              "meta.scireg.dst.org_abbr": 10,
+              "meta.scireg.dst.org_name": 9,
+              "meta.scireg.dst.project_names": 12,
+              "meta.scireg.dst.projects.project_abbr": 13,
+              "meta.sensor_id": 1,
+              "start": 0
+            },
+            "renameByName": {
+              "Average values.duration": "Duration",
+              "Average values.num_packets": "",
+              "Average values.tcp_rexmit_pkts": "Retransmits",
+              "Average values.tcp_rtt_min": "RTT",
+              "Count": "",
+              "Max": "Rate",
+              "Sum": "Total Volume",
+              "end": "",
+              "meta.dst_asn": "ASN",
+              "meta.dst_country_name": "Country",
+              "meta.dst_ip": "Subnet",
+              "meta.dst_organization": "Organization",
+              "meta.dst_port": "Port",
+              "meta.scireg.dst.discipline": "Science Registry Discipline",
+              "meta.scireg.dst.ip_block_id": "Science Registry Subnet",
+              "meta.scireg.dst.org_abbr": "Science Registry Org Abbreviation",
+              "meta.scireg.dst.org_name": "Science Registry Org Name",
+              "meta.scireg.dst.project_names": "Science Registry Project Name",
+              "meta.scireg.dst.projects.project_abbr": "Science Registry Project Abbreviation",
+              "meta.scireg.src.discipline": "Science Registry Discipline",
+              "meta.scireg.src.ip_block_id": "Science Registry Subnet",
+              "meta.scireg.src.org_abbr": "Science Registry Org Abbreviation",
+              "meta.scireg.src.org_name": "Science Registry Org Name",
+              "meta.scireg.src.project_names": "Science Registry Project Name",
+              "meta.scireg.src.projects.project_abbr": "Science Registry Project Abbreviation",
+              "meta.sensor_id": "Sensor",
+              "meta.src_asn": "ASN",
+              "meta.src_country_name": "Country",
+              "meta.src_ip": "Subnet",
+              "meta.src_organization": "Organization",
+              "meta.src_port": "Port",
+              "start": "Timestamp"
+            }
+          }
+        }, 
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": ["lastNotNull"]
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 21,
+      "links": [],
+      "options": {
+        "content": "\u003cdiv\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@iu.edu\"\u003enetsage@iu.edu\u003c/a\u003e.  Thanks!  \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "blank",
+          "value": "blank"
+        },
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "Flow",
+        "multi": false,
+        "name": "flow",
+        "options": [
+          {
+            "selected": true,
+            "text": "blank",
+            "value": "blank"
+          }
+        ],
+        "query": "blank",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Flow Information",
+  "uid": "nzuMyBcGk",
+  "version": 1
+}
