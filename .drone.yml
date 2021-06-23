@@ -22,6 +22,40 @@ trigger:
     - pull_request
 ---
 kind: pipeline
+name: documentation_release
+
+steps:
+  - name: Submodule sync
+    image: alpine/git
+    commands:
+      - "git submodule update --init"
+  - name: build
+    image: golang:1.16
+    commands:
+      - "cd documentation"
+      - "rm -fr hugo"
+      - "wget --continue https://github.com/gohugoio/hugo/releases/download/v0.84.0/hugo_extended_0.84.0_Linux-64bit.tar.gz"
+      - "tar xvfz hugo_extended_0.84.0_Linux-64bit.tar.gz"
+      - "./hugo --destination public --baseURL https://netsage-project.github.io/grafana-dashboard-manager/"
+      - "ls -lh public"
+  - name: publish
+    image: plugins/gh-pages
+    settings:
+      pages_directory: documentation/public
+      upstream_name: origin
+      remote_url: https://github.com/netsage-project/grafana-dashboard-manager.git
+      target_branch: gh-pages
+      force_push: true
+      delete: true
+      username:
+        from_secret: gh_username
+      password:
+        from_secret: gh_password
+      when:
+        branch: feature/documentation
+        event: push
+---
+kind: pipeline
 name: release
 
 steps:
