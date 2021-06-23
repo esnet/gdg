@@ -27,6 +27,19 @@
             ]
         },
         {
+            "name": "dash import single",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "dash",
+                "import",
+                "-d",
+                "test_deploy",
+            ]
+        },
+        {
             "name": "dash export",
             "type": "go",
             "request": "launch",
@@ -35,6 +48,19 @@
             "args": [
                 "dash",
                 "export",
+            ]
+        },
+        {
+            "name": "dash export single",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "dash",
+                "export",
+                "-d",
+                "test_deploy",
             ]
         },
         {

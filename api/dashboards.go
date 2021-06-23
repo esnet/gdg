@@ -118,7 +118,8 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 // if the folde doesn't exist, it'll be created.
 // if the folde doesn't exist, it'll be created.
 func (s *DashNGoImpl) ExportDashboards(filters Filter) {
-	filesInDir := findAllFiles(getResourcePath(s.configRef, "dashboard"))
+	path := getResourcePath(s.configRef, "dashboard")
+	filesInDir := findAllFiles(path)
 	ctx := context.Background()
 	var rawBoard []byte
 	folderMap := getFolderNameIDMap(s.client, ctx)
