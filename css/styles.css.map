@@ -3,15 +3,15 @@
 	"file": "styles.css",
 	"sourceRoot": "/drone/src/documentation",
 	"sources": [
-		"themes/compose/assets/sass/main.sass",
-		"themes/compose/assets/sass/_variables.sass",
-		"themes/compose/assets/sass/_base.sass",
-		"themes/compose/assets/sass/_nav.sass",
-		"themes/compose/assets/sass/_components.sass",
-		"themes/compose/assets/sass/_utils.sass",
-		"themes/compose/assets/sass/_syntax.sass",
-		"themes/compose/assets/sass/_fonts.sass",
-		"themes/compose/assets/sass/_chart.sass"
+		"themes/compose_hack/assets/sass/main.sass",
+		"themes/compose_hack/assets/sass/_variables.sass",
+		"themes/compose_hack/assets/sass/_base.sass",
+		"themes/compose_hack/assets/sass/_nav.sass",
+		"themes/compose_hack/assets/sass/_components.sass",
+		"themes/compose_hack/assets/sass/_utils.sass",
+		"themes/compose_hack/assets/sass/_syntax.sass",
+		"themes/compose_hack/assets/sass/_fonts.sass",
+		"themes/compose_hack/assets/sass/_chart.sass"
 	],
 	"sourcesContent": [
 		"@import \"variables\";\n@import \"base\";\n@import \"nav\";\n@import \"components\";\n@import \"utils\";\n@import \"syntax\";\n@import \"fonts\";\n@import \"chart\";\n",
