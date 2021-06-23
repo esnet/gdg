@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="{{ site.Language.Lang }}"{{ with site.Params.enableDarkMode }} class="dark"{{ end }}>
+<head>
+  {{- partial "head" . }}
+</head>
+<body class="page-{{ .Kind }}" id="pagetop">
+  <header class="nav_header">
+    {{- partial "nav" . }}
+  </header>
+  <div class="main wrap pt-4">
+    {{- if or (eq .Section "docs") (and (ne site.Params.uniqueHomepage true) .IsHome) }}
+    {{- partial "document" . }}
+    {{- else }}
+    {{- block "main" . }}{{ end }}
+    {{- end -}}
+  </div>
+  {{- partialCached "footer" . -}}
+  {{- partialCached "sprites" . -}}
+  {{- partialCached "scripts/bundle" . -}}
+  {{- partial "scripts/other" . -}}
+</body>
+</html>

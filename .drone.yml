@@ -22,7 +22,7 @@ trigger:
     - pull_request
 ---
 kind: pipeline
-name: documentation_release
+name: documentation
 
 steps:
   - name: Submodule sync
@@ -52,7 +52,7 @@ steps:
       password:
         from_secret: gh_password
       when:
-        branch: feature/documentation
+        branch: master
         event: push
 ---
 kind: pipeline
