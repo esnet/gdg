@@ -5,3 +5,5 @@ grafana-dashboard-manager
 importer.yml
 dist/
 prod/
+public
+resources

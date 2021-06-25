@@ -1,0 +1,18 @@
+[docs_menu]
+  other = "Belgeleme menüsü"
+[no_matches]
+  other = "Eşleşme bulunamadı"
+[quick_links]
+  other = "Hızlı bağlantılar"
+[search_field_placeholder]
+  other = "Belgelerde arayın"
+[search_results_label]
+  other = "Arama sonuçları"
+[short_search_query]
+  other = "Sorgu çok kısa"
+[site_menu]
+  other = "Site menüsü"
+[to_top]
+  other = "Retour au sommet"
+[type_to_search]
+  other = "Aramak için yazın"
