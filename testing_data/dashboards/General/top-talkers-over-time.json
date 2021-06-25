@@ -1,0 +1,494 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "$$hashKey": "object:368",
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations \u0026 Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 330,
+  "iteration": 1620855245251,
+  "links": [],
+  "panels": [
+    {
+      "__netsage_template": "navigation",
+      "choices": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "cycleview": true,
+      "dashboardselection": true,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "grafanafavorites": true,
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 0
+      },
+      "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
+      "id": 1,
+      "link_text": [
+        "What is the current state of the network?", 
+        "What are the top sources/destinations of flows?", 
+        "What are the top flows by organization?", 
+        "What do individual flows look like?", 
+        "What are the top flows by country?", 
+        "What are the flows by science discipline?", 
+        "What are the flows by project?", 
+        "Who are the top talkers over time?", 
+        "What are the patterns in science data transfers in the network?", 
+        "What are the bandwidth patterns in the network?", 
+        "What are the current flow data summary statistics?", 
+        "Advanced Flow Analysis"
+      ],
+      "link_url": [
+        "/grafana/d/000000003/bandwidth-dashboard", 
+        "/grafana/d/xk26IFhmk/flow-data", 
+        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
+        "/grafana/d/-l3_u8nWk/individual-flows", 
+        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
+        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
+        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
+        "/grafana/d/000000004/bandwidth-patterns", 
+        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/VuuXrnPWz/flow-analysis"
+      ],
+      "links": [],
+      "sharescreen": true,
+      "sideLogoPath": "https://portal.netsage.global/netsage-header-logo.png",
+      "sidebar": true,
+      "tablefilters": true,
+      "title": "",
+      "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
+      "transparent": true,
+      "type": "netsagenavigation"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 23,
+        "x": 1,
+        "y": 3
+      },
+      "id": 5,
+      "options": {
+        "content": "\u003ccenter\u003e\u003ch1\u003e\u003cb\u003eTop Talkers Over Time\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003eThis dashboard displays top sending and receiving Organizations over time, ranked by flow data volume.\u003c/center\u003e\n\u003ccenter\u003eTo see top talkers to a specific organization, select it from the Organizations list.\u003c/center\u003e\n\u003ccenter\u003e(Start typing to find an organization not in the initial list.)\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:25",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:23",
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "header1": "Source Organization",
+      "id": 2,
+      "num_top_talkers": "10",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:382",
+              "fake": true,
+              "field": "meta.src_organization",
+              "id": "3",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "20"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:383",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "$Interval",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:380",
+              "field": "values.num_bits",
+              "id": "1",
+              "inlineScript": "_value/8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value/8"
+                }
+              },
+              "type": "sum"
+            }
+          ],
+          "query": "meta.sensor_id:$Sensors AND meta.dst_organization:$org",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top Senders Over Time",
+      "type": "netsage-bumpchart-panel"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 18,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "header1": "Destination Organization",
+      "id": 3,
+      "num_top_talkers": 10,
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:382",
+              "fake": true,
+              "field": "meta.dst_organization",
+              "id": "3",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "20"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:383",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "$Interval",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:380",
+              "field": "values.num_bits",
+              "id": "1",
+              "inlineScript": "_value/8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value/8"
+                }
+              },
+              "type": "sum"
+            }
+          ],
+          "query": "meta.sensor_id:$Sensors AND meta.src_organization:$org",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top Receivers Over Time",
+      "type": "netsage-bumpchart-panel"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "id": 7,
+      "links": [],
+      "options": {
+        "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": "*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": ["$__all"]
+        },
+        "datasource": "netsage",
+        "definition": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\"}",
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Sensors",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\"}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }, 
+      {
+        "auto": false,
+        "auto_count": 30,
+        "auto_min": "10s",
+        "current": {
+          "selected": false,
+          "text": "14d",
+          "value": "14d"
+        },
+        "error": null,
+        "hide": 0,
+        "label": "Days per Interval",
+        "name": "Interval",
+        "options": [
+          {
+            "selected": false,
+            "text": "1d",
+            "value": "1d"
+          }, 
+          {
+            "selected": false,
+            "text": "7d",
+            "value": "7d"
+          }, 
+          {
+            "selected": true,
+            "text": "14d",
+            "value": "14d"
+          }, 
+          {
+            "selected": false,
+            "text": "30d",
+            "value": "30d"
+          }
+        ],
+        "query": "1d, 7d, 14d, 30d",
+        "queryValue": "",
+        "refresh": 2,
+        "skipUrlSync": false,
+        "type": "interval"
+      }, 
+      {
+        "allValue": "*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": ["$__all"]
+        },
+        "datasource": "netsage",
+        "definition": "{\"find\":\"terms\", \"field\":\"meta.src_organization\", \"size\": 10000000}",
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Organization(s)",
+        "multi": false,
+        "name": "org",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"meta.src_organization\", \"size\": 10000000}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        },
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "Number of Top Talkers to Display",
+        "multi": false,
+        "name": "num_lines",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }, 
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          }, 
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          }, 
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          }, 
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          }, 
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          }, 
+          {
+            "selected": false,
+            "text": "7",
+            "value": "7"
+          }, 
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          }, 
+          {
+            "selected": false,
+            "text": "9",
+            "value": "9"
+          }, 
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          }
+        ],
+        "query": "1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3M",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s", 
+      "30s", 
+      "1m", 
+      "5m", 
+      "15m", 
+      "30m", 
+      "1h", 
+      "2h", 
+      "1d"
+    ],
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+  },
+  "timezone": "",
+  "title": "Top Talkers Over Time",
+  "uid": "b35BWxAZz",
+  "version": 1
+}

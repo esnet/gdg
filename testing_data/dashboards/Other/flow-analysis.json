@@ -1,0 +1,2930 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "$$hashKey": "object:303",
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations \u0026 Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 332,
+  "iteration": 1620857595778,
+  "links": [],
+  "panels": [
+    {
+      "__netsage_template": "navigation",
+      "choices": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "cycleview": true,
+      "dashboardselection": true,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "grafanafavorites": true,
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 0
+      },
+      "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
+      "id": 1,
+      "link_text": [
+        "What is the current state of the network?", 
+        "What are the top sources/destinations of flows?", 
+        "What are the top flows by organization?", 
+        "What do individual flows look like?", 
+        "What are the top flows by country?", 
+        "What are the flows by science discipline?", 
+        "What are the flows by project?", 
+        "Who are the top talkers over time?", 
+        "What are the patterns in science data transfers in the network?", 
+        "What are the bandwidth patterns in the network?", 
+        "What are the current flow data summary statistics?", 
+        "Advanced Flow Analysis"
+      ],
+      "link_url": [
+        "/grafana/d/000000003/bandwidth-dashboard", 
+        "/grafana/d/xk26IFhmk/flow-data", 
+        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
+        "/grafana/d/-l3_u8nWk/individual-flows", 
+        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
+        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
+        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
+        "/grafana/d/000000004/bandwidth-patterns", 
+        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/VuuXrnPWz/flow-analysis"
+      ],
+      "links": [],
+      "sharescreen": true,
+      "sideLogoPath": "https://portal.netsage.global/netsage-header-logo.png",
+      "sidebar": true,
+      "tablefilters": true,
+      "title": "",
+      "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
+      "transparent": true,
+      "type": "netsagenavigation"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 22,
+        "x": 2,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "content": "\u003cdiv style=\"padding-right: 10%;\"\u003e\n\u003ch1  style=\"margin-top:35px;\"\u003e\u003ccenter\u003e\u003cb\u003eFlow Analysis\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003eThis dashboard shows graphical SNMP data for the selected link and flow data from related flow sensors.\u003c/center\u003e\n\u003ccenter\u003eIt also shows flow pairs and top flows, organized by the selected source and destination scopes as well as the volume above and rate under.\u003c/center\u003e\n\u003ccenter\u003eSelect a link from the list above, along with source and destination scopes as well as the volume above and rate under.\u003c/center\u003e\n\u003ccenter\u003eClicking and dragging on the SNMP graph below will replace the current time range with a custom range based on the selected portion of the graph.\u003c/center\u003e\n\u003ccenter\u003e\u003cstrong\u003ePlease note that the flow rate in the flow pairs table will be zero if only one sampled flow was detected.\u003c/strong\u003e\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\u003c/div\u003e\n\n\n\n\u003cbr\u003e\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e\n\n\n\n",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Netsage TSDS",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "hiddenSeries": false,
+      "id": 3,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "aggregate_all": true,
+          "combineAllBy": "nothing",
+          "condition": [],
+          "dateFormat": "",
+          "displayFormat": "series",
+          "func": [
+            {
+              "alias": "",
+              "align": "",
+              "bucket": "",
+              "expanded": false,
+              "method": "average",
+              "operation": "",
+              "percentile": "85",
+              "root": true,
+              "target": "input",
+              "template": "",
+              "title": "Aggregate",
+              "type": "Aggregate",
+              "wrapper": []
+            }
+          ],
+          "groupby_field": "link_name",
+          "inlineGroupOperator": [[""]],
+          "metricValueAliases": [""],
+          "metricValues_array": ["Select Metric Value"],
+          "metric_array": ["link_name"],
+          "orderby_field": "",
+          "outerGroupOperator": [""],
+          "refId": "A",
+          "series": "interface",
+          "target_alias": "$VALUE",
+          "templateVariableValue": [""],
+          "type": "timeserie",
+          "whereClauseGroup": [
+            [
+              {
+                "$$hashKey": "object:485",
+                "left": "link_name",
+                "op": "like",
+                "right": "$links"
+              }
+            ]
+          ]
+        }, 
+        {
+          "aggregate_all": true,
+          "combineAllBy": "nothing",
+          "condition": [],
+          "dateFormat": "",
+          "displayFormat": "series",
+          "func": [
+            {
+              "alias": "",
+              "align": "",
+              "bucket": "",
+              "expanded": false,
+              "method": "average",
+              "operation": "",
+              "percentile": "85",
+              "root": true,
+              "target": "output",
+              "template": "",
+              "title": "Aggregate",
+              "type": "Aggregate",
+              "wrapper": []
+            }
+          ],
+          "groupby_field": "link_name",
+          "inlineGroupOperator": [[""]],
+          "metricValueAliases": [""],
+          "metricValues_array": ["Select Metric Value"],
+          "metric_array": ["link_name"],
+          "orderby_field": "",
+          "outerGroupOperator": [""],
+          "refId": "B",
+          "series": "interface",
+          "target_alias": "$VALUE",
+          "templateVariableValue": [""],
+          "type": "timeserie",
+          "whereClauseGroup": [
+            [
+              {
+                "$$hashKey": "object:520",
+                "left": "link_name",
+                "op": "like",
+                "right": "$links"
+              }
+            ]
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "SNMP data related to $sensors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:311",
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }, 
+        {
+          "$$hashKey": "object:312",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 4,
+      "options": {
+        "content": "\u003ch1  style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Flow Pairs\u003c/center\u003e\u003c/h1\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }, 
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# Flows"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 100
+              }, 
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Rate"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bps"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 115
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Peak Rate"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bps"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 115
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Vol."
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Largest Flow"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 5,
+      "links": [],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Total Vol."
+          }
+        ]
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:394",
+              "fake": true,
+              "field": "$src_scope",
+              "id": "4",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "10"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:395",
+              "fake": true,
+              "field": "$dst_scope",
+              "id": "3",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "10"
+              },
+              "type": "terms"
+            }
+          ],
+          "hide": false,
+          "metrics": [
+            {
+              "$$hashKey": "object:384",
+              "field": "values.num_bits",
+              "id": "1",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value / 8"
+                }
+              },
+              "type": "sum"
+            }, 
+            {
+              "$$hashKey": "object:385",
+              "field": "values.num_bits",
+              "id": "5",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value / 8"
+                }
+              },
+              "type": "max"
+            }, 
+            {
+              "$$hashKey": "object:386",
+              "field": "values.bits_per_second",
+              "id": "6",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }, 
+            {
+              "$$hashKey": "object:387",
+              "field": "values.bits_per_second",
+              "id": "7",
+              "meta": {},
+              "settings": {},
+              "type": "avg"
+            }, 
+            {
+              "$$hashKey": "object:388",
+              "field": "values.bits_per_second",
+              "id": "8",
+              "meta": {},
+              "settings": {},
+              "type": "max"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND -$src_scope:\"\" AND -$dst_scope:\"\" AND values.num_bits:\u003e$volume_over AND values.bits_per_second:\u003c$rate_under AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "title": "Flow Pairs",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "$dst_scope": "Destination",
+              "$src_scope": "Source",
+              "Average": "Avg Rate",
+              "Count": "# Flows",
+              "Max values.bits_per_second": "Peak Rate",
+              "Max values.num_bits": "Largest Flow",
+              "Sum": "Total Vol."
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 6,
+      "options": {
+        "content": "\u003ch1  style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Sources of Flows\u003c/center\u003e\u003c/h1\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "datasource": "netsage",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Vol."
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 440
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# Flows"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 200
+              }, 
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Largest Flow"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 7,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:616",
+              "field": "$src_scope",
+              "id": "2",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "10"
+              },
+              "type": "terms"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:610",
+              "field": "values.num_bits",
+              "id": "1",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value / 8"
+                }
+              },
+              "type": "sum"
+            }, 
+            {
+              "$$hashKey": "object:611",
+              "field": "values.num_bits",
+              "id": "4",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value / 8"
+                }
+              },
+              "type": "max"
+            }, 
+            {
+              "$$hashKey": "object:612",
+              "field": "meta.id",
+              "id": "5",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND -$src_scope:\"\" AND values.num_bits:\u003e$volume_over AND values.bits_per_second:\u003c$rate_under AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "By Volume",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "$src_scope": "Source",
+              "Count": "# Flows",
+              "Max": "Largest Flow",
+              "Sum": "Total Vol.",
+              "Unique Count": "# Flows"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# Flows"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 200
+              }, 
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Peak"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 440
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 49
+      },
+      "id": 9,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:753",
+              "field": "$src_scope",
+              "id": "2",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "10"
+              },
+              "type": "terms"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:747",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "max"
+            }, 
+            {
+              "$$hashKey": "object:748",
+              "field": "values.bits_per_second",
+              "id": "3",
+              "meta": {},
+              "settings": {},
+              "type": "avg"
+            }, 
+            {
+              "$$hashKey": "object:749",
+              "field": "meta.id",
+              "id": "4",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND -$src_scope:\"\" AND values.num_bits:\u003e$volume_over AND values.bits_per_second:\u003c$rate_under AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "By Rate",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "$src_scope": "Source",
+              "Count": "# Flows",
+              "Max": "Peak",
+              "Unique Count": "# Flows"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 61
+      },
+      "id": 11,
+      "options": {
+        "content": "\u003ch1  style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Destinations of Flows\u003c/center\u003e\u003c/h1\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "datasource": "netsage",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# Flows"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 200
+              }, 
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Vol."
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 440
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Largest Flow"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 64
+      },
+      "id": 12,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:887",
+              "field": "$dst_scope",
+              "id": "2",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "10"
+              },
+              "type": "terms"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:881",
+              "field": "values.num_bits",
+              "id": "1",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value / 8"
+                }
+              },
+              "type": "sum"
+            }, 
+            {
+              "$$hashKey": "object:882",
+              "field": "values.num_bits",
+              "id": "4",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value / 8"
+                }
+              },
+              "type": "max"
+            }, 
+            {
+              "$$hashKey": "object:883",
+              "field": "meta.id",
+              "id": "5",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND -$dst_scope:\"\" AND values.num_bits:\u003e$volume_over AND values.bits_per_second:\u003c$rate_under AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "By Volume",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "$dst_scope": "Destination",
+              "Count": "# Flows",
+              "Max": "Largest Flow",
+              "Sum": "Total Vol.",
+              "Unique Count": "# Flows"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# Flows"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 200
+              }, 
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Peak"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 440
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 76
+      },
+      "id": 14,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1016",
+              "field": "$dst_scope",
+              "id": "2",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "10"
+              },
+              "type": "terms"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:1010",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "max"
+            }, 
+            {
+              "$$hashKey": "object:1011",
+              "field": "values.bits_per_second",
+              "id": "3",
+              "meta": {},
+              "settings": {},
+              "type": "avg"
+            }, 
+            {
+              "$$hashKey": "object:1012",
+              "field": "meta.id",
+              "id": "4",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND -$dst_scope:\"\" AND values.num_bits:\u003e$volume_over AND values.bits_per_second:\u003c$rate_under AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "By Rate",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "$dst_scope": "Destination",
+              "Average": "",
+              "Count": "# Flows",
+              "Max": "Peak",
+              "Unique Count": "# Flows"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 88
+      },
+      "id": 16,
+      "options": {
+        "content": "\u003ch1  style=\"margin-top:35px;\"\u003e\u003ccenter\u003eIndividual Flows\u003c/center\u003e\u003c/h1\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "noValue": "N/A",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }, 
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Timestamp"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 200
+              }, 
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show more information about this flow",
+                    "url": "/grafana/d/nzuMyBcGk/flow-information?var-flow=${__data.fields[\"Flow ID\"]}\u0026from=${__from}\u0026to=${__to}"
+                  }
+                ]
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Rate"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bps"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 115
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Retransmits"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "right"
+              }, 
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }, 
+              {
+                "id": "decimals",
+                "value": 0
+              }, 
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source Subnet"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination Subnet"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Vol."
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Flow ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 91
+      },
+      "id": 17,
+      "links": [],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Timestamp"
+          }
+        ]
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1188",
+              "fake": true,
+              "field": "meta.id",
+              "id": "15",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "1000"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1189",
+              "fake": true,
+              "field": "start",
+              "id": "16",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "asc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1190",
+              "fake": true,
+              "field": "end",
+              "id": "17",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1191",
+              "fake": true,
+              "field": "$src_scope",
+              "id": "28",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1192",
+              "fake": true,
+              "field": "meta.src_ip",
+              "id": "32",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1193",
+              "fake": true,
+              "field": "$dst_scope",
+              "id": "33",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:138",
+              "fake": true,
+              "field": "_id",
+              "id": "35",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:1194",
+              "fake": true,
+              "field": "meta.dst_ip",
+              "id": "31",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_term",
+                "size": "0"
+              },
+              "type": "terms"
+            }
+          ],
+          "hide": false,
+          "metrics": [
+            {
+              "$$hashKey": "object:1176",
+              "field": "values.num_bits",
+              "id": "12",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value / 8"
+                }
+              },
+              "type": "sum"
+            }, 
+            {
+              "$$hashKey": "object:1177",
+              "field": "values.bits_per_second",
+              "id": "30",
+              "meta": {},
+              "settings": {},
+              "type": "max"
+            }, 
+            {
+              "$$hashKey": "object:1178",
+              "field": "values.num_packets",
+              "id": "25",
+              "meta": {},
+              "settings": {},
+              "type": "avg"
+            }, 
+            {
+              "$$hashKey": "object:1179",
+              "field": "values.duration",
+              "id": "27",
+              "meta": {},
+              "settings": {},
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND -$src_scope:\"\" AND -$dst_scope:\"\" AND values.num_bits:\u003e$volume_over AND values.bits_per_second:\u003c$rate_under AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "title": "Flow Pairs",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Average values.num_packets": true,
+              "Max": false,
+              "end": true,
+              "meta.id": true
+            },
+            "indexByName": {
+              "$dst_scope": 5,
+              "$src_scope": 3,
+              "Average values.duration": 10,
+              "Average values.num_packets": 9,
+              "Average values.tcp_rexmit_pkts": 11,
+              "Max": 8,
+              "Sum": 7,
+              "_id": 12,
+              "end": 2,
+              "meta.dst_ip": 6,
+              "meta.id": 0,
+              "meta.src_ip": 4,
+              "start": 1
+            },
+            "renameByName": {
+              "$dst_scope": "Destination",
+              "$src_scope": "Source",
+              "Average values.duration": "Duration",
+              "Average values.num_packets": "",
+              "Average values.tcp_rexmit_pkts": "Retransmits",
+              "Average values.tcp_rtt_min": "RTT",
+              "Max": "Rate",
+              "Sum": "Total Vol.",
+              "_id": "Flow ID",
+              "end": "",
+              "meta.dst_ip": "Destination Subnet",
+              "meta.id": "",
+              "meta.src_ip": "Source Subnet",
+              "start": "Timestamp"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 106
+      },
+      "id": 18,
+      "links": [],
+      "options": {
+        "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eOther Flow Statistics\u003c/center\u003e\u003c/h1\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "noValue": "N/A",
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }, 
+              {
+                "color": "light-blue",
+                "value": 0
+              }, 
+              {
+                "color": "light-blue",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 109
+      },
+      "id": 19,
+      "interval": "1h",
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": ["sum"]
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["sum"],
+          "fields": "/^Count$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1520",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:1518",
+              "field": "meta.id",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "title": "Total Large Flows Observed",
+      "transparent": true,
+      "type": "stat"
+    }, 
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "netsage",
+      "decimals": 1,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 112
+      },
+      "hiddenSeries": false,
+      "id": 20,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": true,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:65",
+              "fake": true,
+              "field": "meta.protocol",
+              "id": "3",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_count",
+                "size": "10"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:66",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:63",
+              "field": "meta.id",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Top Protocols",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "series",
+        "name": null,
+        "show": true,
+        "values": ["total"]
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:117",
+          "decimals": null,
+          "format": "short",
+          "label": "Number of Flows",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }, 
+        {
+          "$$hashKey": "object:118",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }, 
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "netsage",
+      "decimals": 1,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 112
+      },
+      "hiddenSeries": false,
+      "id": 21,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": true,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": true,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:146",
+              "fake": true,
+              "field": "meta.src_port",
+              "id": "3",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_count",
+                "size": "5"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:147",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:144",
+              "field": "meta.id",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Top Source Ports",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "series",
+        "name": null,
+        "show": true,
+        "values": ["total"]
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:200",
+          "format": "short",
+          "label": "Number of Flows",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }, 
+        {
+          "$$hashKey": "object:201",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }, 
+    {
+      "aliasColors": {},
+      "bars": true,
+      "cacheTimeout": null,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 1,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 112
+      },
+      "hiddenSeries": false,
+      "id": 22,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:451",
+              "fake": true,
+              "field": "meta.dst_port",
+              "id": "3",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "_count",
+                "size": "5"
+              },
+              "type": "terms"
+            }, 
+            {
+              "$$hashKey": "object:452",
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:449",
+              "field": "meta.id",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Top Destination Ports",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "series",
+        "name": null,
+        "show": true,
+        "values": ["total"]
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Number of Flows",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }, 
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }, 
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 121
+      },
+      "id": 23,
+      "links": [],
+      "options": {
+        "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eFlow Data Summary For Selected Sensors\u003c/center\u003e\u003c/h1\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }, 
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Fastest Flow"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bps"
+              }
+            ]
+          }, 
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# Flows"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }, 
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 124
+      },
+      "hideTimeOverride": false,
+      "id": 24,
+      "links": [],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Largest Flow"
+          }
+        ]
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1597",
+              "fake": true,
+              "field": "meta.sensor_id",
+              "id": "3",
+              "settings": {
+                "min_doc_count": 1,
+                "order": "desc",
+                "orderBy": "1",
+                "size": "10"
+              },
+              "type": "terms"
+            }
+          ],
+          "dsType": "elasticsearch",
+          "metrics": [
+            {
+              "$$hashKey": "object:1589",
+              "field": "values.num_bits",
+              "id": "1",
+              "inlineScript": "_value/8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value/8"
+                }
+              },
+              "type": "sum"
+            }, 
+            {
+              "$$hashKey": "object:1590",
+              "field": "values.num_bits",
+              "id": "5",
+              "inlineScript": "_value / 8",
+              "meta": {},
+              "settings": {
+                "script": {
+                  "inline": "_value / 8"
+                }
+              },
+              "type": "max"
+            }, 
+            {
+              "$$hashKey": "object:1591",
+              "field": "values.bits_per_second",
+              "id": "6",
+              "meta": {},
+              "settings": {},
+              "type": "max"
+            }, 
+            {
+              "$$hashKey": "object:1592",
+              "field": "meta.id",
+              "id": "7",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "title": " ",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Count": "# Flows",
+              "Max values.bits_per_second": "Fastest Flow",
+              "Max values.num_bits": "Largest Flow",
+              "Sum": "Total Vol.",
+              "Unique Count": "# Flows",
+              "meta.sensor_id": "Sensor"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }, 
+    {
+      "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 132
+      },
+      "id": 25,
+      "options": {
+        "content": "\u003cdiv\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@iu.edu\"\u003enetsage@iu.edu\u003c/a\u003e.  Thanks!  \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e",
+        "mode": "html"
+      },
+      "pluginVersion": "7.3.3",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": ["netsage", "flow"],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "NEAAR: New York to London 100GE",
+          "value": "NEAAR: New York to London 100GE"
+        },
+        "datasource": "Netsage TSDS",
+        "definition": "get link_name between($START, $END) by link_name from interface where link_name like \".+\" and flow_sensors !=null",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Link",
+        "multi": false,
+        "name": "links",
+        "options": [],
+        "query": "get link_name between($START, $END) by link_name from interface where link_name like \".+\" and flow_sensors !=null",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "NEAAR NY-London",
+          "value": "NEAAR NY-London"
+        },
+        "datasource": "Netsage TSDS",
+        "definition": "get flow_sensors between($START, $END) by flow_sensors from interface where link_name = \"$links\"",
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "link_sensor",
+        "options": [],
+        "query": "get flow_sensors between($START, $END) by flow_sensors from interface where link_name = \"$links\"",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "NEAAR NY-London",
+          "value": "NEAAR NY-London"
+        },
+        "datasource": "netsage",
+        "definition": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\", \"query\":\"meta.sensor_id:$link_sensor\"}",
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "Sensor",
+        "multi": false,
+        "name": "sensors",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\", \"query\":\"meta.sensor_id:$link_sensor\"}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "meta.src_organization",
+          "value": "meta.src_organization"
+        },
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Source Scope",
+        "multi": false,
+        "name": "src_scope",
+        "options": [
+          {
+            "selected": true,
+            "text": "meta.src_organization",
+            "value": "meta.src_organization"
+          }, 
+          {
+            "selected": false,
+            "text": "meta.src_country_name",
+            "value": "meta.src_country_name"
+          }, 
+          {
+            "selected": false,
+            "text": "meta.src_continent",
+            "value": "meta.src_continent"
+          }, 
+          {
+            "selected": false,
+            "text": "meta.src_asn",
+            "value": "meta.src_asn"
+          }, 
+          {
+            "selected": false,
+            "text": "meta.src_port",
+            "value": "meta.src_port"
+          }
+        ],
+        "query": "meta.src_organization, meta.src_country_name, meta.src_continent, meta.src_asn, meta.src_port",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "meta.dst_organization",
+          "value": "meta.dst_organization"
+        },
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Destination Scope",
+        "multi": false,
+        "name": "dst_scope",
+        "options": [
+          {
+            "selected": true,
+            "text": "meta.dst_organization",
+            "value": "meta.dst_organization"
+          }, 
+          {
+            "selected": false,
+            "text": "meta.dst_country_name",
+            "value": "meta.dst_country_name"
+          }, 
+          {
+            "selected": false,
+            "text": "meta.dst_continent",
+            "value": "meta.dst_continent"
+          }, 
+          {
+            "selected": false,
+            "text": "meta.dst_asn",
+            "value": "meta.dst_asn"
+          }, 
+          {
+            "selected": false,
+            "text": "meta.dst_port",
+            "value": "meta.dst_port"
+          }
+        ],
+        "query": "meta.dst_organization, meta.dst_country_name, meta.dst_continent, meta.dst_asn, meta.dst_port",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "yes",
+          "value": "yes"
+        },
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Show Test Traffic",
+        "multi": false,
+        "name": "is_net_test",
+        "options": [
+          {
+            "selected": true,
+            "text": "yes",
+            "value": "yes"
+          }, 
+          {
+            "selected": false,
+            "text": "no",
+            "value": "no"
+          }
+        ],
+        "query": "yes,no",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "0",
+          "value": "0"
+        },
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Individual Flow Volume Over",
+        "multi": false,
+        "name": "volume_over",
+        "options": [
+          {
+            "selected": true,
+            "text": "0",
+            "value": "0"
+          }, 
+          {
+            "selected": false,
+            "text": "100 MB",
+            "value": "800000000"
+          }, 
+          {
+            "selected": false,
+            "text": "1 GB",
+            "value": "8000000000"
+          }, 
+          {
+            "selected": false,
+            "text": "10 GB",
+            "value": "80000000000"
+          }, 
+          {
+            "selected": false,
+            "text": "100 GB",
+            "value": "800000000000"
+          }, 
+          {
+            "selected": false,
+            "text": "1 TB",
+            "value": "8000000000000"
+          }
+        ],
+        "query": "0 : 0, 100 MB : 800000000, 1 GB : 8000000000, 10 GB : 80000000000, 100 GB : 800000000000, 1 TB : 8000000000000",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "No Limit",
+          "value": "10000000000000000"
+        },
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Individual Flow Rate Under",
+        "multi": false,
+        "name": "rate_under",
+        "options": [
+          {
+            "selected": false,
+            "text": "1 Mb/s",
+            "value": "1000000"
+          }, 
+          {
+            "selected": false,
+            "text": "10 Mb/s",
+            "value": "10000000"
+          }, 
+          {
+            "selected": false,
+            "text": "100 Mb/s",
+            "value": "100000000"
+          }, 
+          {
+            "selected": false,
+            "text": "1 Gb/s",
+            "value": "1000000000"
+          }, 
+          {
+            "selected": false,
+            "text": "10 Gb/s",
+            "value": "10000000000"
+          }, 
+          {
+            "selected": false,
+            "text": "40 Gb/s",
+            "value": "40000000000"
+          }, 
+          {
+            "selected": false,
+            "text": "100 Gb/s",
+            "value": "100000000000"
+          }, 
+          {
+            "selected": true,
+            "text": "No Limit",
+            "value": "10000000000000000"
+          }
+        ],
+        "query": "1 Mb/s : 1000000, 10 Mb/s : 10000000, 100 Mb/s : 100000000, 1 Gb/s : 1000000000, 10 Gb/s : 10000000000, 40 Gb/s : 40000000000, 100 Gb/s : 100000000000, No Limit : 10000000000000000",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }, 
+      {
+        "datasource": "netsage",
+        "error": null,
+        "filters": [],
+        "hide": 0,
+        "label": "Filters",
+        "name": "filters",
+        "skipUrlSync": false,
+        "type": "adhoc"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s", 
+      "30s", 
+      "1m", 
+      "5m", 
+      "15m", 
+      "30m", 
+      "1h", 
+      "2h", 
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Flow Analysis",
+  "uid": "VuuXrnPWz",
+  "version": 1
+}

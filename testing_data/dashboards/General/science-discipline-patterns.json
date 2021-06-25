@@ -1,0 +1,1840 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
+        "name": "Annotations \u0026 Alerts",
+        "showIn": 0,
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 329,
+  "iteration": 1599169029902,
+  "links": [],
+  "panels": [
+    {
+      "__netsage_template": "navigation",
+      "choices": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "cycleview": true,
+      "dashboardselection": true,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "grafanafavorites": true,
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 0
+      },
+      "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
+      "id": 1,
+      "link_text": [
+        "What is the current state of the network?", 
+        "What are the top sources/destinations of flows?", 
+        "What are the top flows by organization?", 
+        "What do individual flows look like?", 
+        "What are the top flows by country?", 
+        "What are the flows by science discipline?", 
+        "What are the flows by project?", 
+        "Who are the top talkers over time?", 
+        "What are the patterns in science data transfers in the network?", 
+        "What are the bandwidth patterns in the network?", 
+        "What are the current flow data summary statistics?", 
+        "Advanced Flow Analysis"
+      ],
+      "link_url": [
+        "/grafana/d/000000003/bandwidth-dashboard", 
+        "/grafana/d/xk26IFhmk/flow-data", 
+        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
+        "/grafana/d/-l3_u8nWk/individual-flows", 
+        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
+        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
+        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
+        "/grafana/d/000000004/bandwidth-patterns", 
+        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/VuuXrnPWz/flow-analysis"
+      ],
+      "links": [],
+      "sharescreen": true,
+      "sideLogoPath": "https://portal.netsage.global/netsage-header-logo.png",
+      "sidebar": true,
+      "tablefilters": true,
+      "title": "",
+      "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
+      "transparent": true,
+      "type": "netsagenavigation"
+    }, 
+    {
+      "content": "\u003ccenter\u003e\u003ch1\u003e\u003cb\u003eScience Discipline Patterns\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003e This dashboard shows heatmaps for the flow data by science discipline. \u003c/center\u003e\n\u003ccenter\u003eThe horizontal axis represents days and the vertical axis represents time of day.\u003c/center\u003e\n\u003ccenter\u003eDarker squares show higher data transmission rates at those hours.\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e",
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "links": [],
+      "mode": "html",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "rgb(169, 169, 169)"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 3,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": "disciplines",
+      "repeatDirection": "v",
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "BIO.Environmental",
+          "value": "BIO.Environmental"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 23,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "BIO.General",
+          "value": "BIO.General"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 24,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "BIO.Genomics and Bioinformatics",
+          "value": "BIO.Genomics and Bioinformatics"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 25,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "BIO.Medical",
+          "value": "BIO.Medical"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 26,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "CS.General",
+          "value": "CS.General"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 27,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "CS.Intelligent Systems",
+          "value": "CS.Intelligent Systems"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
+      "id": 28,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "CS.Network Testing and Monitoring",
+          "value": "CS.Network Testing and Monitoring"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 61
+      },
+      "id": 29,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "GEO.Atmospheric",
+          "value": "GEO.Atmospheric"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 69
+      },
+      "id": 30,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "GEO.Climate",
+          "value": "GEO.Climate"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 77
+      },
+      "id": 31,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "GEO.Earth",
+          "value": "GEO.Earth"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 85
+      },
+      "id": 32,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "GEO.General",
+          "value": "GEO.General"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 93
+      },
+      "id": 33,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "GEO.Ocean",
+          "value": "GEO.Ocean"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 101
+      },
+      "id": 34,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "MPS.Astronomy",
+          "value": "MPS.Astronomy"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 109
+      },
+      "id": 35,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "MPS.Chemistry",
+          "value": "MPS.Chemistry"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 117
+      },
+      "id": 36,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "MPS.Materials",
+          "value": "MPS.Materials"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 125
+      },
+      "id": 37,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "MPS.Physics",
+          "value": "MPS.Physics"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 133
+      },
+      "id": 38,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "MPS.Physics.High Energy",
+          "value": "MPS.Physics.High Energy"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "datasource": "netsage",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "calculation": "mean",
+            "colorPalette": "interpolateBlues",
+            "colorSpace": "rgb",
+            "groupBy": 60,
+            "invertPalette": false,
+            "nullValueColor": "orange"
+          },
+          "decimals": 1,
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Average values.bits_per_second"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 141
+      },
+      "id": 39,
+      "links": [],
+      "options": {
+        "from": "0",
+        "showLegend": false,
+        "to": "0"
+      },
+      "repeat": null,
+      "repeatDirection": "v",
+      "repeatIteration": 1599169029902,
+      "repeatPanelId": 3,
+      "scopedVars": {
+        "disciplines": {
+          "selected": false,
+          "text": "Multi-Science Facility",
+          "value": "Multi-Science Facility"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:17",
+              "fake": true,
+              "field": "start",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 1,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:15",
+              "field": "values.bits_per_second",
+              "id": "1",
+              "inlineScript": null,
+              "meta": {},
+              "settings": {
+                "missing": null
+              },
+              "type": "avg"
+            }
+          ],
+          "query": "meta.sensor_id:$sensors AND meta.scireg.src.discipline:$disciplines AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope)",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$disciplines",
+      "type": "marcusolsson-hourly-heatmap-panel"
+    }, 
+    {
+      "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 149
+      },
+      "id": 22,
+      "links": [],
+      "mode": "html",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "schemaVersion": 25,
+  "style": "dark",
+  "tags": ["flow", "netsage"],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": ["$__all"]
+        },
+        "datasource": "netsage",
+        "definition": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\"}",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Sensors",
+        "multi": true,
+        "name": "sensors",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\"}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }, 
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": ["$__all"]
+        },
+        "datasource": "netsage",
+        "definition": "{\"find\":\"terms\", \"field\":\"meta.scireg.src.discipline\"}",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Disciplines",
+        "multi": true,
+        "name": "disciplines",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"meta.scireg.src.discipline\"}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }, 
+      {
+        "allValue": "*",
+        "current": {
+          "selected": true,
+          "tags": [],
+          "text": "All",
+          "value": ["$__all"]
+        },
+        "datasource": "netsage",
+        "definition": "{\"find\":\"terms\", \"field\":\"meta.country_scope\"}",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Scope",
+        "multi": true,
+        "name": "country_scope",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"meta.country_scope\"}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s", 
+      "10s", 
+      "30s", 
+      "1m", 
+      "5m", 
+      "15m", 
+      "30m", 
+      "1h", 
+      "2h", 
+      "1d"
+    ],
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+  },
+  "timezone": "",
+  "title": "Science Discipline Patterns",
+  "uid": "ufIS9W7Zk",
+  "version": 1
+}

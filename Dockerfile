@@ -28,14 +28,14 @@ ENV PATH=$PATH:/opt/grafana-dashboard-manager/bin
 
 WORKDIR /opt/grafana-dashboard-manager/bin
 
-COPY --from=build-stage /go/src/github.com/netsage-project/grafana-dashboard-manager/bin/grafana-dashboard-manager /opt/grafana-dashboard-manager/bin/
+COPY --from=build-stage /go/src/github.com/netsage-project/grafana-dashboard-manager/bin/gdg /opt/grafana-dashboard-manager/bin/
 RUN \
     apt-get update && \
     apt install -y dumb-init  && \
     apt-get clean autoclean && \
     apt-get autoremove --yes && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/ && \
-    chmod +x /opt/grafana-dashboard-manager/bin/grafana-dashboard-manager 
+    chmod +x /opt/grafana-dashboard-manager/bin/gdg
 
 # Create appuser
 RUN useradd -m  grafana-dashboard-manager
@@ -43,4 +43,4 @@ USER grafana-dashboard-manager
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-CMD ["/opt/grafana-dashboard-manager/bin/grafana-dashboard-manager"]
+CMD ["/opt/grafana-dashboard-manager/bin/gdg"]
