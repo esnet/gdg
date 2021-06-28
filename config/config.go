@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -29,6 +30,10 @@ func GetContext() string {
 
 func SetContext(context string) {
 	v := LoadConfigProvider("importer")
+	m := v.GetStringMap(fmt.Sprintf("contexts.%s", context))
+	if len(m) == 0 {
+		log.Fatal("Cannot set context.  No valid configuration found in importer.yml")
+	}
 	v.Set("context_name", context)
 	v.WriteConfig()
 }
