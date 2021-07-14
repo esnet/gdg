@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/netsage-project/grafana-dashboard-manager/api"
-	"github.com/netsage-project/sdk"
+	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )

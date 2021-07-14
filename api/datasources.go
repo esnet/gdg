@@ -10,7 +10,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
-	"github.com/netsage-project/sdk"
+	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 )
 

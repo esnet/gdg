@@ -2,8 +2,9 @@ package api
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/netsage-project/sdk"
+	"github.com/grafana-tools/sdk"
 )
 
 //Login: Logs into grafana returning a client instance using Token or Basic Auth
@@ -31,11 +32,21 @@ func (s *DashNGoImpl) AdminLogin() *sdk.Client {
 
 //tokenLogin: given a URL and token return the client
 func (s *DashNGoImpl) tokenLogin() *sdk.Client {
-	return sdk.NewClient(s.grafanaConf.URL, s.grafanaConf.APIToken, sdk.DefaultHTTPClient)
+	client, err := sdk.NewClient(s.grafanaConf.URL, s.grafanaConf.APIToken, sdk.DefaultHTTPClient)
+
+	if err != nil {
+		log.Fatal("failed to get a valid client using token auth")
+	}
+
+	return client
 }
 
 //AuthLogin: Login using a username/password
 func (s *DashNGoImpl) authLogin() *sdk.Client {
 	basicAuth := fmt.Sprintf("%s:%s", s.grafanaConf.UserName, s.grafanaConf.Password)
-	return sdk.NewClient(s.grafanaConf.URL, basicAuth, sdk.DefaultHTTPClient)
+	client, err := sdk.NewClient(s.grafanaConf.URL, basicAuth, sdk.DefaultHTTPClient)
+	if err != nil {
+		log.Fatal("failed to get a valid client using basic auth")
+	}
+	return client
 }

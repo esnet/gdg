@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	"github.com/netsage-project/sdk"
+	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 )
 

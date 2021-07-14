@@ -11,7 +11,7 @@ import (
 
 	"github.com/tidwall/pretty"
 
-	"github.com/netsage-project/sdk"
+	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/thoas/go-funk"
 	"github.com/yalp/jsonpath"
