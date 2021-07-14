@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/netsage-project/grafana-dashboard-manager/config"
-	"github.com/netsage-project/sdk"
+	"github.com/grafana-tools/sdk"
 	"github.com/spf13/viper"
 )
 
