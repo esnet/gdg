@@ -56,3 +56,4 @@ contexts:
 
 global:
   debug: true
+  ignore_ssl_errors: false ##when set to true will ignore invalid SSL errors

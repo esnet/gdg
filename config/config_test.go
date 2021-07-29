@@ -9,7 +9,7 @@ import (
 )
 
 func TestSetup(t *testing.T) {
-	conf := config.Config()
+	conf := config.Config().ViperConfig()
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "qa")

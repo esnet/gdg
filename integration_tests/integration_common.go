@@ -12,7 +12,7 @@ import (
 )
 
 func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
-	conf := config.Config()
+	conf := config.Config().ViperConfig()
 	assert.NotNil(t, conf)
 	conf.Set("context_name", "testing")
 	//Hack for Local testing
