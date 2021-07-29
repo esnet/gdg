@@ -23,7 +23,8 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	ctx := context.Background()
 	orgs, err := s.client.GetAllOrgs(ctx)
 	if err != nil {
-		log.Fatalf("Error getting organizations: %s", err.Error())
+		log.Warnf("Error getting organizations: %s", err.Error())
+		orgs = make([]sdk.Org, 0)
 	}
 	if s.grafanaConf.Organization != "" {
 		var ID uint

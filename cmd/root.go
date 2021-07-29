@@ -46,7 +46,7 @@ func init() {
 }
 
 func initConfig() {
-	configProvider := config.Config()
+	configProvider := config.Config().ViperConfig()
 	setupGrafanaClient()
 	log.Debug("Creating output locations")
 	dir := configProvider.GetString("env.output.datasources")

@@ -18,16 +18,34 @@ type ConfigStruct struct {
 
 var configData *ConfigStruct
 
-// Config returns a default config providers
-func Config() *viper.Viper {
-	return configData.defaultConfig
+//ViperConfig returns the the loaded configuration via a viper reference
+func (s *ConfigStruct) ViperConfig() *viper.Viper {
+	return s.defaultConfig
 }
 
+//IsDebug returns true if debug mode is enabled
+func (s ConfigStruct) IsDebug() bool {
+	return s.defaultConfig.GetBool("global.debug")
+}
+
+//IgnoreSSL returns true if SSL errors should be ignored
+func (s ConfigStruct) IgnoreSSL() bool {
+	return s.defaultConfig.GetBool("global.ignore_ssl_errors")
+}
+
+// func Config
+func Config() *ConfigStruct {
+	return configData
+}
+
+//GetContext returns the name of the selected context
 func GetContext() string {
-	name := Config().GetString("context_name")
+	name := Config().ViperConfig().GetString("context_name")
 	return name
 }
 
+//SetContext will try to find the specified context, if it exists in the file, will re-write the importer.yml
+//with the selected context
 func SetContext(context string) {
 	v := LoadConfigProvider("importer")
 	m := v.GetStringMap(fmt.Sprintf("contexts.%s", context))
@@ -38,10 +56,12 @@ func SetContext(context string) {
 	v.WriteConfig()
 }
 
+//GetContexts returns all available contexts
 func GetContexts() []string {
 	return funk.Keys(configData.contextMap).([]string)
 }
 
+//GetGrafanaConfig returns the selected context or terminates app if not found
 func GetGrafanaConfig(name string) *GrafanaConfig {
 	val, ok := configData.contextMap[name]
 	if ok {
@@ -54,6 +74,7 @@ func GetGrafanaConfig(name string) *GrafanaConfig {
 	return nil
 }
 
+//GetDefaultGrafanaConfig returns the default aka. selected grafana config
 func GetDefaultGrafanaConfig() *GrafanaConfig {
 	return GetGrafanaConfig(GetContext())
 }
@@ -78,6 +99,7 @@ func init() {
 
 }
 
+//readViperConfig utilizes the viper library to load the config from the selected paths
 func readViperConfig(appName string) *viper.Viper {
 	v := viper.New()
 	v.SetEnvPrefix(appName)
@@ -88,7 +110,6 @@ func readViperConfig(appName string) *viper.Viper {
 	v.AutomaticEnv()
 
 	// global defaults
-
 	v.SetDefault("json_logs", false)
 	v.SetDefault("loglevel", "debug")
 
