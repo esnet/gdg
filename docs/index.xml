@@ -6,15 +6,40 @@
     <description>Recent content in GDG Docs on Grafana Dash-n-Go</description>
     <generator>Hugo -- gohugo.io</generator><atom:link href="https://netsage-project.github.io/grafana-dashboard-manager/docs/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Configuration</title>
+      <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/</guid>
+      <description>Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
+make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
+Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
+Watched folders under grafana is a white list of folders that are being managed by the tool.</description>
+    </item>
+    
+    <item>
+      <title>Developer Guide</title>
+      <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/</guid>
+      <description>Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
+1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
+NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
+NOTE: mac binary are not signed so will likely complain.</description>
+    </item>
+    
+    <item>
       <title>Usage Guide</title>
       <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/</guid>
-      <description>Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
-Configuring Auth make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need administrative privileges to proceed.
-You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
-Watched folders under grafana is a white list of folders that are being managed by the tool.</description>
+      <description>Every namespace has three functions: list, import, export, clear operating on only the monitored folders.
+Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
+ctx is shorthand for context
+1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value.</description>
     </item>
     
   </channel>

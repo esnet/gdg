@@ -9,29 +9,29 @@
 <link rel="mask-icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/safari-pinned-tab.svg'  color="#004750">
 <link rel="shortcut icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon.ico'>
 <meta name="msapplication-config" content='https://netsage-project.github.io/grafana-dashboard-manager/favicons/browserconfig.xml'>
-<title>Usage Guide | Grafana Dash-n-Go</title><meta property="og:title" content="Usage Guide" />
-<meta property="og:description" content="Every namespace has three functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context
-1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value." />
+<title>Configuration | Grafana Dash-n-Go</title><meta property="og:title" content="Configuration" />
+<meta property="og:description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
+make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
+Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
+Watched folders under grafana is a white list of folders that are being managed by the tool." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/" /><meta property="article:section" content="docs" />
 
 <meta property="article:modified_time" content="2021-07-28T19:31:40-07:00" />
 
-<meta itemprop="name" content="Usage Guide">
-<meta itemprop="description" content="Every namespace has three functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context
-1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value.">
+<meta itemprop="name" content="Configuration">
+<meta itemprop="description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
+make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
+Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
+Watched folders under grafana is a white list of folders that are being managed by the tool.">
 <meta itemprop="dateModified" content="2021-07-28T19:31:40-07:00" />
-<meta itemprop="wordCount" content="352">
+<meta itemprop="wordCount" content="134">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Usage Guide"/>
-<meta name="twitter:description" content="Every namespace has three functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context
-1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value."/>
+<meta name="twitter:title" content="Configuration"/>
+<meta name="twitter:description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
+make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
+Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
+Watched folders under grafana is a white list of folders that are being managed by the tool."/>
 
 
 <link rel="stylesheet" href="https://netsage-project.github.io/grafana-dashboard-manager/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -39,10 +39,10 @@ ctx is shorthand for context
 
 
 
-  <meta name="description" content="Every namespace has three functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context
-1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value.">
+  <meta name="description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
+make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
+Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
+Watched folders under grafana is a white list of folders that are being managed by the tool.">
 
 
 </head>
@@ -110,7 +110,7 @@ ctx is shorthand for context
   <section class="section aside_inner">
     <h2 class="section_title"><a  href="https://netsage-project.github.io/grafana-dashboard-manager/docs/" class="group">GDG Docs</a></h2>
       <section class="" id="docs-gdg-docs">
-        <h3 class="section_link"><a id="docs-configuration" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
+        <h3 class="section_link active"><a id="docs-configuration" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#getting-started">Getting started</a>
       <ul>
@@ -126,7 +126,7 @@ ctx is shorthand for context
     <li><a href="#making-a-release">Making a release</a></li>
   </ul>
 </nav>
-        <h3 class="section_link active"><a id="docs-usage-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-usage-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -147,51 +147,29 @@ ctx is shorthand for context
 </aside>
 
   <main class="content">
-    <h1>Usage Guide</h1><p>Every namespace has three functions: list, import, export, clear operating on only the monitored folders.</p>
-<h3 id="contexts">Contexts</h3>
-<p>Starting with version 0.1.4 contexts are now supported.  Your config can contain one or multiple contexts which are essentially a grafana server configuration.</p>
-<p>ctx is shorthand for context</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager ctx list -- Lists all known contexts
-<span class="ln">2</span>./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration <span class="k">for</span> the selected context
-<span class="ln">3</span>./bin/grafana-dashboard-manager ctx <span class="nb">set</span> -c production -- updates the active config and sets it to the request value.
-</code></pre></div><h4 id="dashboards">Dashboards</h4>
-<p>Dashboards are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
-<p>All commands can use <code>dashboards</code> or <code>dash</code> to manage dashboards</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager dash list -- Lists all current dashboards
-<span class="ln">2</span>./bin/grafana-dashboard-manager dash import -- Import all dashboards from grafana to <span class="nb">local</span> file system
-<span class="ln">3</span>./bin/grafana-dashboard-manager dash <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
-<span class="ln">4</span>./bin/grafana-dashboard-manager dash clear -- Deletes all dashboards
-</code></pre></div><h4 id="datasources">DataSources</h4>
-<p>DataSources credentials are keyed by the name of the DataSource.  See see <a href="https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml">config example</a>.  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
-Datasources are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
-<p>All commands can use <code>datasources</code> or <code>ds</code> to manage datasources</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager ds list -- Lists all current datasources
-<span class="ln">2</span>./bin/grafana-dashboard-manager ds import -- Import all datasources from grafana to <span class="nb">local</span> file system
-<span class="ln">3</span>./bin/grafana-dashboard-manager ds <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
-<span class="ln">4</span>./bin/grafana-dashboard-manager ds clear -- Deletes all datasources
-</code></pre></div><h4 id="organizations">Organizations</h4>
-<p>Command can use <code>organizations</code> or <code>org</code> to manage organizations.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager org list -- Lists all organizations
-</code></pre></div><h3 id="users">Users</h3>
-<p>Only supported with basic auth.  Users is the only one where basic auth is given priority.  API Auth is not supported, so will try to use basic auth if configured otherwise will warn the user and exit.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager users list -- Lists all known users
-<span class="ln">2</span>./bin/grafana-dashboard-manager users promote -u user@foobar.com -- promotes the user to a grafana admin
+    <h1>Configuration</h1><h2 id="getting-started">Getting started</h2>
+<p>This project requires Go to be installed. On OS X with Homebrew you can just run <code>brew install go</code>.</p>
+<p>make a copy of <a href="https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml">conf/importer-example.yml</a> and name it <code>conf/importer.yml</code> You'll need GRAFANA ADMINISTRATIVE privileges to proceed.</p>
+<h3 id="authentication">Authentication</h3>
+<p>You can use either an Auth Token or username/password credentials.  If you configure both then the Token is given priority.</p>
+<p>Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only &quot;General&quot; is managed.</p>
+<p>env.output defines where the files will be saved and imported from.</p>
+<h3 id="global-flags">Global Flags</h3>
+<p><code>globals.debug</code> when set will print a more verbose output (Development In Progress)
+<code>globals.ignore_ssl_errors</code> when set will disregard any SSL errors and proceed as expected</p>
+<h3 id="buildingrunning-the-app">Building/Running the app</h3>
+<p>Running it then should be as simple as:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="ln">1</span>$ make build
+<span class="ln">2</span>$ ./bin/grafana-dashboard-manager
 </code></pre></div>
-    <div class="pager">
-  
-  <div class="pager_item prev">
-    
-    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/" class="pager_link button" title="Developer Guide" rel="prev">
-      <span class="pager_label">Developer Guide</span>
-    </a>
-  </div>
+    <div class="pager pager_lean">
   
 
   
   <div class="pager_item next">
     
-    <a href="https://netsage-project.github.io/grafana-dashboard-manager/search/" class="pager_link button" title="Search" rel="next">
-      <span class="pager_label">Search</span>
+    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/" class="pager_link button" title="Developer Guide" rel="next">
+      <span class="pager_label">Developer Guide</span>
     </a>
   </div>
   
