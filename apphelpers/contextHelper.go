@@ -141,6 +141,19 @@ func ShowContext(ctx string) {
 
 }
 
+//ClearContexts clear all contexts except a simple running example
+// (required for app not to error out)
+func ClearContexts() {
+	v := config.Config().ViperConfig()
+	newContext := make(map[string]*config.GrafanaConfig)
+	newContext["example"] = &config.GrafanaConfig{
+		APIToken: "dummy",
+	}
+	v.Set("context_name", "example")
+	v.Set("contexts", newContext)
+	v.WriteConfig()
+}
+
 func CopyContext(src, dest string) {
 	v, contexts := getContextReferences()
 	srcCtx := v.GetStringMap(fmt.Sprintf("contexts.%s", src))

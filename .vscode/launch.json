@@ -110,15 +110,14 @@
             ]
         },
         {
-            "name": "ctx new",
+            "name": "ctx clear",
             "type": "go",
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "ctx",
-                "new",
-                "foobar"
+                "clear"
             ]
         }
     ]

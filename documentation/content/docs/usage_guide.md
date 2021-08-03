@@ -17,6 +17,7 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 ./bin/gdg ctx set production -- updates the active config and sets it to the request value.
 ./bin/gdg ctx delete qa -- Deletes the QA context
 ./bin/gdg ctx cp qa staging -- copies the qa context to staging and sets it as active
+./bin/gdg ctx clear -- Will delete all active contexts leaving only a single example entry
 ```
 
 #### Dashboards
