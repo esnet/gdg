@@ -105,9 +105,19 @@
             "args": [
                 "ctx",
                 "cp",
-                "-s",
                 "qa",
-                "-d",
+                "foobar"
+            ]
+        },
+        {
+            "name": "ctx new",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "ctx",
+                "new",
                 "foobar"
             ]
         }
