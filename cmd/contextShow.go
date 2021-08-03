@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -12,15 +12,15 @@ import (
 
 var contextShow = &cobra.Command{
 	Use:   "show",
-	Short: "show context",
-	Long:  `show contexts.`,
+	Short: "show optional[context]",
+	Long:  `show contexts optional[context]`,
 	Run: func(cmd *cobra.Command, args []string) {
-		context, _ := cmd.Flags().GetString("context")
-		if context == "" {
-			context = config.GetContext()
+		context := apphelpers.GetContext()
+		if len(args) > 1 && len(args[0]) > 0 {
+			context = args[0]
 		}
 
-		grafana := config.GetGrafanaConfig(context)
+		grafana := apphelpers.GetCtxGrafanaConfig(context)
 		d, err := yaml.Marshal(grafana)
 		if err != nil {
 			log.Info("Failed to serialize context")
@@ -33,6 +33,4 @@ var contextShow = &cobra.Command{
 
 func init() {
 	context.AddCommand(contextShow)
-	contextShow.Flags().StringP("context", "c", "", "context")
-	// contextShow.MarkFlagRequired("context")
 }

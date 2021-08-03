@@ -3,6 +3,7 @@ package config_test
 import (
 	"testing"
 
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/thoas/go-funk"
@@ -13,7 +14,7 @@ func TestSetup(t *testing.T) {
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "qa")
-	grafanaConf := config.GetDefaultGrafanaConfig()
+	grafanaConf := apphelpers.GetCtxDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
 	validateGrafanaQA(t, grafanaConf)
 }

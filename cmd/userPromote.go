@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -13,7 +13,7 @@ var promoteUser = &cobra.Command{
 	Aliases: []string{"godmode"},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
+		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
 		userLogin, _ := cmd.Flags().GetString("user")
 
 		msg, err := client.PromoteUser(userLogin)

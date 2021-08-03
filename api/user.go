@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	"github.com/sirupsen/logrus"
 )
 
 func validateUserAPI(client *sdk.Client) {
-	if client == nil || !config.GetDefaultGrafanaConfig().AdminEnabled {
+	if client == nil || !apphelpers.GetCtxDefaultGrafanaConfig().AdminEnabled {
 		logrus.Fatal("Missing Admin client, please check your config and ensure basic auth is configured")
 		os.Exit(1)
 	}

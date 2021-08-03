@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/gosimple/slug"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -49,9 +49,9 @@ func buildDataSourcePath(conf *viper.Viper, name string) string {
 //getResourcePath for a gven resource type: ["dashboard", "ds"] it'll return the configured location
 func getResourcePath(conf *viper.Viper, resourceType string) string {
 	if resourceType == "dashboard" {
-		return config.GetDefaultGrafanaConfig().OutputDashboard
+		return apphelpers.GetCtxDefaultGrafanaConfig().OutputDashboard
 	} else if resourceType == "ds" {
-		return config.GetDefaultGrafanaConfig().OutputDataSource
+		return apphelpers.GetCtxDefaultGrafanaConfig().OutputDataSource
 	}
 	return ""
 }

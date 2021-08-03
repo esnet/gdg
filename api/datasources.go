@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/gosimple/slug"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/config"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -101,7 +101,7 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 			if !filter.Validate(map[string]string{Name: GetSlug(newDS.Name)}) {
 				continue
 			}
-			dsConfig := config.GetDefaultGrafanaConfig()
+			dsConfig := s.grafanaConf
 			var creds *config.GrafanaDataSource
 
 			if *newDS.BasicAuth {
