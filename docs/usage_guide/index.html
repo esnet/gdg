@@ -12,26 +12,26 @@
 <title>Usage Guide | Grafana Dash-n-Go</title><meta property="og:title" content="Usage Guide" />
 <meta property="og:description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context
-1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value." />
+ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
+1./bin/gdg ctx list -- Lists all known contexts 2." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-07-29T11:12:13-07:00" />
+<meta property="article:modified_time" content="2021-08-03T08:59:17-07:00" />
 
 <meta itemprop="name" content="Usage Guide">
 <meta itemprop="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context
-1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value.">
-<meta itemprop="dateModified" content="2021-07-29T11:12:13-07:00" />
-<meta itemprop="wordCount" content="355">
+ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
+1./bin/gdg ctx list -- Lists all known contexts 2.">
+<meta itemprop="dateModified" content="2021-08-03T08:59:17-07:00" />
+<meta itemprop="wordCount" content="399">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Usage Guide"/>
 <meta name="twitter:description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context
-1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value."/>
+ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
+1./bin/gdg ctx list -- Lists all known contexts 2."/>
 
 
 <link rel="stylesheet" href="https://netsage-project.github.io/grafana-dashboard-manager/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -41,8 +41,8 @@ ctx is shorthand for context
 
   <meta name="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context
-1./bin/grafana-dashboard-manager ctx list -- Lists all known contexts 2./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration for the selected context 3./bin/grafana-dashboard-manager ctx set -c production -- updates the active config and sets it to the request value.">
+ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
+1./bin/gdg ctx list -- Lists all known contexts 2.">
 
 
 </head>
@@ -150,32 +150,34 @@ ctx is shorthand for context
     <h1>Usage Guide</h1><p>Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.</p>
 <h3 id="contexts">Contexts</h3>
 <p>Starting with version 0.1.4 contexts are now supported.  Your config can contain one or multiple contexts which are essentially a grafana server configuration.</p>
-<p>ctx is shorthand for context</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager ctx list -- Lists all known contexts
-<span class="ln">2</span>./bin/grafana-dashboard-manager ctx show -c qa -- shows the configuration <span class="k">for</span> the selected context
-<span class="ln">3</span>./bin/grafana-dashboard-manager ctx <span class="nb">set</span> -c production -- updates the active config and sets it to the request value.
+<p>ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg ctx list -- Lists all known contexts
+<span class="ln">2</span>./bin/gdg ctx show qa -- shows the configuration <span class="k">for</span> the selected context
+<span class="ln">3</span>./bin/gdg ctx <span class="nb">set</span> production -- updates the active config and sets it to the request value.
+<span class="ln">4</span>./bin/gdg ctx delete qa -- Deletes the QA context
+<span class="ln">5</span>./bin/gdg ctx cp qa staging -- copies the qa context to staging and sets it as active
 </code></pre></div><h4 id="dashboards">Dashboards</h4>
 <p>Dashboards are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
 <p>All commands can use <code>dashboards</code> or <code>dash</code> to manage dashboards</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager dash list -- Lists all current dashboards
-<span class="ln">2</span>./bin/grafana-dashboard-manager dash import -- Import all dashboards from grafana to <span class="nb">local</span> file system
-<span class="ln">3</span>./bin/grafana-dashboard-manager dash <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
-<span class="ln">4</span>./bin/grafana-dashboard-manager dash clear -- Deletes all dashboards
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg dash list -- Lists all current dashboards
+<span class="ln">2</span>./bin/gdg dash import -- Import all dashboards from grafana to <span class="nb">local</span> file system
+<span class="ln">3</span>./bin/gdg dash <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
+<span class="ln">4</span>./bin/gdg dash clear -- Deletes all dashboards
 </code></pre></div><h4 id="datasources">DataSources</h4>
-<p>DataSources credentials are keyed by the name of the DataSource.  See see <a href="https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml">config example</a>.  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
+<p>DataSources credentials are keyed by the name of the DataSource.  See see <a href="https://github.com/netsage-project/gdg/blob/master/conf/importer-example.yml">config example</a>.  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
 <p>All commands can use <code>datasources</code> or <code>ds</code> to manage datasources</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager ds list -- Lists all current datasources
-<span class="ln">2</span>./bin/grafana-dashboard-manager ds import -- Import all datasources from grafana to <span class="nb">local</span> file system
-<span class="ln">3</span>./bin/grafana-dashboard-manager ds <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
-<span class="ln">4</span>./bin/grafana-dashboard-manager ds clear -- Deletes all datasources
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg ds list -- Lists all current datasources
+<span class="ln">2</span>./bin/gdg ds import -- Import all datasources from grafana to <span class="nb">local</span> file system
+<span class="ln">3</span>./bin/gdg ds <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
+<span class="ln">4</span>./bin/gdg ds clear -- Deletes all datasources
 </code></pre></div><h4 id="organizations">Organizations</h4>
 <p>Command can use <code>organizations</code> or <code>org</code> to manage organizations.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager org list -- Lists all organizations
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg org list -- Lists all organizations
 </code></pre></div><h3 id="users">Users</h3>
 <p>Only supported with basic auth.  Users is the only one where basic auth is given priority.  API Auth is not supported, so will try to use basic auth if configured otherwise will warn the user and exit.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/grafana-dashboard-manager users list -- Lists all known users
-<span class="ln">2</span>./bin/grafana-dashboard-manager users promote -u user@foobar.com -- promotes the user to a grafana admin
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg users list -- Lists all known users
+<span class="ln">2</span>./bin/gdg users promote -u user@foobar.com -- promotes the user to a grafana admin
 </code></pre></div>
     <div class="pager">
   
