@@ -17,15 +17,15 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-08-03T08:59:17-07:00" />
+<meta property="article:modified_time" content="2021-08-03T12:27:34-07:00" />
 
 <meta itemprop="name" content="Usage Guide">
 <meta itemprop="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
 ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
 1./bin/gdg ctx list -- Lists all known contexts 2.">
-<meta itemprop="dateModified" content="2021-08-03T08:59:17-07:00" />
-<meta itemprop="wordCount" content="399">
+<meta itemprop="dateModified" content="2021-08-03T12:27:34-07:00" />
+<meta itemprop="wordCount" content="414">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Usage Guide"/>
 <meta name="twitter:description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
@@ -156,6 +156,7 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 <span class="ln">3</span>./bin/gdg ctx <span class="nb">set</span> production -- updates the active config and sets it to the request value.
 <span class="ln">4</span>./bin/gdg ctx delete qa -- Deletes the QA context
 <span class="ln">5</span>./bin/gdg ctx cp qa staging -- copies the qa context to staging and sets it as active
+<span class="ln">6</span>./bin/gdg ctx clear -- Will delete all active contexts leaving only a single example entry
 </code></pre></div><h4 id="dashboards">Dashboards</h4>
 <p>Dashboards are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
 <p>All commands can use <code>dashboards</code> or <code>dash</code> to manage dashboards</p>
