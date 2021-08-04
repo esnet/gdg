@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	"github.com/netsage-project/grafana-dashboard-manager/config"
 	"github.com/spf13/viper"
 )
@@ -36,7 +37,7 @@ type DashNGoImpl struct {
 }
 
 func (s *DashNGoImpl) init() {
-	s.grafanaConf = config.GetDefaultGrafanaConfig()
+	s.grafanaConf = apphelpers.GetCtxDefaultGrafanaConfig()
 	s.configRef = config.Config().ViperConfig()
 	s.client = s.Login()
 	s.adminClient = s.AdminLogin()

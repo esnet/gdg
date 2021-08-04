@@ -9,13 +9,13 @@ import (
 //GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
 	AdminEnabled       bool
-	URL                string   `yaml:"url"`
-	APIToken           string   `yaml:"token"`
-	UserName           string   `yaml:"user_name"`
-	Password           string   `yaml:"password"`
-	Organization       string   `yaml:"organization"`
-	MonitoredFolders   []string `yaml:"watched"`
-	DefaultDataSource  *GrafanaDataSource
+	URL                string                        `yaml:"url"`
+	APIToken           string                        `yaml:"token"`
+	UserName           string                        `yaml:"user_name"`
+	Password           string                        `yaml:"password"`
+	Organization       string                        `yaml:"organization"`
+	MonitoredFolders   []string                      `yaml:"watched"`
+	DefaultDataSource  *GrafanaDataSource            `yaml:"-"`
 	DataSourceSettings map[string]*GrafanaDataSource `yaml:"datasources"`
 	OutputDashboard    string                        `yaml:"dashboards_output"`
 	OutputDataSource   string                        `yaml:"datasources_output"`

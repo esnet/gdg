@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	"github.com/thoas/go-funk"
 )
 
@@ -71,7 +71,7 @@ func (s *DashboardFilter) init() {
 //GetFolders splits the comma delimited folder list and returns a slice
 func (s *DashboardFilter) GetFolders() []string {
 	if s.GetFilter(FolderFilter) == "" {
-		return config.GetDefaultGrafanaConfig().GetMonitoredFolders()
+		return apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders()
 	}
 	folderFilter := s.GetFilter(FolderFilter)
 	folderFilter = s.quoteRegex.ReplaceAllString(folderFilter, "")

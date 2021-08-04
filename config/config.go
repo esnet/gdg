@@ -1,11 +1,7 @@
 package config
 
 import (
-	"fmt"
-	"os"
-
 	log "github.com/sirupsen/logrus"
-	"github.com/thoas/go-funk"
 
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -23,6 +19,11 @@ func (s *ConfigStruct) ViperConfig() *viper.Viper {
 	return s.defaultConfig
 }
 
+//Contexts returns map of all contexts
+func (s *ConfigStruct) Contexts() map[string]*GrafanaConfig {
+	return s.contextMap
+}
+
 //IsDebug returns true if debug mode is enabled
 func (s ConfigStruct) IsDebug() bool {
 	return s.defaultConfig.GetBool("global.debug")
@@ -36,47 +37,6 @@ func (s ConfigStruct) IgnoreSSL() bool {
 // func Config
 func Config() *ConfigStruct {
 	return configData
-}
-
-//GetContext returns the name of the selected context
-func GetContext() string {
-	name := Config().ViperConfig().GetString("context_name")
-	return name
-}
-
-//SetContext will try to find the specified context, if it exists in the file, will re-write the importer.yml
-//with the selected context
-func SetContext(context string) {
-	v := LoadConfigProvider("importer")
-	m := v.GetStringMap(fmt.Sprintf("contexts.%s", context))
-	if len(m) == 0 {
-		log.Fatal("Cannot set context.  No valid configuration found in importer.yml")
-	}
-	v.Set("context_name", context)
-	v.WriteConfig()
-}
-
-//GetContexts returns all available contexts
-func GetContexts() []string {
-	return funk.Keys(configData.contextMap).([]string)
-}
-
-//GetGrafanaConfig returns the selected context or terminates app if not found
-func GetGrafanaConfig(name string) *GrafanaConfig {
-	val, ok := configData.contextMap[name]
-	if ok {
-		return val
-	} else {
-		log.Error("Context is not found.  Please check your config")
-		os.Exit(1)
-	}
-
-	return nil
-}
-
-//GetDefaultGrafanaConfig returns the default aka. selected grafana config
-func GetDefaultGrafanaConfig() *GrafanaConfig {
-	return GetGrafanaConfig(GetContext())
 }
 
 // LoadConfigProvider returns a configured viper instance

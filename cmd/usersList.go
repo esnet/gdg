@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +15,7 @@ var listUserCmd = &cobra.Command{
 	Long:  `list users`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
+		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "grafanaAdmin", "disabled", "authLabels"})
 		users := client.ListUsers()
 		if len(users) == 0 {

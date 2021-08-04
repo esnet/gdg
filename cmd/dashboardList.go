@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -19,9 +19,9 @@ var listDashboards = &cobra.Command{
 		filters := getDashboardGlobalFlags(cmd)
 		boards := client.ListDashboards(filters)
 
-		log.Infof("Listing dashboards for context: '%s'", config.GetContext())
+		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
 		for _, link := range boards {
-			url := fmt.Sprintf("%s%s", config.GetDefaultGrafanaConfig().URL, link.URL)
+			url := fmt.Sprintf("%s%s", apphelpers.GetCtxDefaultGrafanaConfig().URL, link.URL)
 			tableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
 				link.UID, url})
 
