@@ -13,8 +13,7 @@
       <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/</guid>
       <description>Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
-Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
-Watched folders under grafana is a white list of folders that are being managed by the tool.</description>
+Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&amp;gt; Configuration =&amp;gt; API Keys. You can then use it in your configuration file (eg.</description>
     </item>
     
     <item>
@@ -28,6 +27,17 @@ Watched folders under grafana is a white list of folders that are being managed 
 1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
 NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
 NOTE: mac binary are not signed so will likely complain.</description>
+    </item>
+    
+    <item>
+      <title>Example Usage</title>
+      <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/</guid>
+      <description>Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &amp;quot;&amp;lt;&amp;lt;Grafana API Token&amp;gt;&amp;gt;&amp;quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:</description>
     </item>
     
     <item>

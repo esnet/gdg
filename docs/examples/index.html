@@ -9,32 +9,26 @@
 <link rel="mask-icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/safari-pinned-tab.svg'  color="#004750">
 <link rel="shortcut icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon.ico'>
 <meta name="msapplication-config" content='https://netsage-project.github.io/grafana-dashboard-manager/favicons/browserconfig.xml'>
-<title>Developer Guide | Grafana Dash-n-Go</title><meta property="og:title" content="Developer Guide" />
-<meta property="og:description" content="Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain." />
+<title>Example Usage | Grafana Dash-n-Go</title><meta property="og:title" content="Example Usage" />
+<meta property="og:description" content="Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-07-29T11:12:13-07:00" />
+<meta property="article:modified_time" content="2021-08-26T17:51:02&#43;02:00" />
 
-<meta itemprop="name" content="Developer Guide">
-<meta itemprop="description" content="Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain.">
-<meta itemprop="dateModified" content="2021-07-29T11:12:13-07:00" />
-<meta itemprop="wordCount" content="67">
+<meta itemprop="name" content="Example Usage">
+<meta itemprop="description" content="Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
+<meta itemprop="dateModified" content="2021-08-26T17:51:02&#43;02:00" />
+<meta itemprop="wordCount" content="488">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Developer Guide"/>
-<meta name="twitter:description" content="Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain."/>
+<meta name="twitter:title" content="Example Usage"/>
+<meta name="twitter:description" content="Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:"/>
 
 
 <link rel="stylesheet" href="https://netsage-project.github.io/grafana-dashboard-manager/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -42,11 +36,9 @@ NOTE: mac binary are not signed so will likely complain."/>
 
 
 
-  <meta name="description" content="Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain.">
+  <meta name="description" content="Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &amp;quot;&amp;lt;&amp;lt;Grafana API Token&amp;gt;&amp;gt;&amp;quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
 
 
 </head>
@@ -131,12 +123,12 @@ NOTE: mac binary are not signed so will likely complain.">
     </li>
   </ul>
 </nav>
-        <h3 class="section_link active"><a id="docs-developer-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-developer-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#making-a-release">Making a release</a></li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-example-usage" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/">Example Usage</a></h3><nav id="TableOfContents">
+        <h3 class="section_link active"><a id="docs-example-usage" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/">Example Usage</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -168,23 +160,87 @@ NOTE: mac binary are not signed so will likely complain.">
 </aside>
 
   <main class="content">
-    <h1>Developer Guide</h1><h2 id="making-a-release">Making a release</h2>
-<p>Install goreleaser.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>brew install goreleaser/tap/goreleaser
-<span class="ln">2</span>brew reinstall goreleaser<span class="sb">`</span>
-</code></pre></div><p>export your GITHUB_TOKEN.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span><span class="nb">export</span> <span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&#34;secret&#34;</span>
-</code></pre></div><p>git tag v0.1.0
-goreleaser release</p>
-<p>NOTE: CI/CD pipeline should do all this automatically.  <code>make release-snapshot</code> is used to test the release build process.  Once a build is tagged all artifacts should be built automatically and attached to the github release page.</p>
-<p>NOTE: mac binary are not signed so will likely complain.</p>
+    <h1>Example Usage</h1><h3 id="setup-new-configuration">Setup new configuration</h3>
+<p>You can create new context configuration using an interactive setup.</p>
+<pre><code>$ ./bin/gdg ctx new mycontext
+</code></pre><h3 id="import--download-dashboards">Import / Download Dashboards</h3>
+<p>Minimal configuration (eg. the <code>importer.yml</code> file) that you need to download your dashboards from your Grafana endpoint:</p>
+<pre><code>context_name: all
+
+contexts:
+  all:
+    url: https://grafana.example.org
+    token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot;
+    # user_name: admin
+    # password: admin
+    dashboards_output: dashboards
+    watched:
+      - Example
+      - Infrastructure
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+</code></pre><p>You need to adjust three parts in the configuration in order to function:</p>
+<ul>
+<li>Grafana URL: This is just a URL where your Grafana is available.</li>
+<li>API Key OR Username / Passoword for Admin user. See <a href="configuration.md">authentication</a> section if you need more information.</li>
+<li>Downloaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards &gt; Management. From there, you can simply define the folders you want to be downloaded in the <code>watched</code> list.</li>
+</ul>
+<p>After you are done, and you can execute <code>./bin/gdg dash list</code> successfully, eg.:</p>
+<pre><code>$ ./bin/gdg dash list
+time=&quot;2021-08-22T11:11:27+02:00&quot; level=warning msg=&quot;Error getting organizations: HTTP error 403: returns {\&quot;message\&quot;:\&quot;Permission denied\&quot;}&quot;
+time=&quot;2021-08-22T11:11:28+02:00&quot; level=info msg=&quot;Listing dashboards for context: 'all'&quot;
+┌────┬───────────────────────────────────┬───────────────────────────────────┬────────────────┬────────────┬────────────────────────────────────────────────────────────────────────────┐
+│ ID │ TITLE                             │ SLUG                              │ FOLDER         │ UID        │ URL                                                                        │
+├────┼───────────────────────────────────┼───────────────────────────────────┼────────────────┼────────────┼────────────────────────────────────────────────────────────────────────────┤
+│  8 │ AWS CloudWatch Logs               │ aws-cloudwatch-logs               │ Infrastructure │ AWSLogs00  │ https://grafana.example.org/d/AWSLogs00/aws-cloudwatch-logs                │
+│  6 │ AWS ECS                           │ aws-ecs                           │ Infrastructure │ ly9Y95XWk  │ https://grafana.example.org/d/ly9Y95XWk/aws-ecs                            │
+│  5 │ AWS ELB Application Load Balancer │ aws-elb-application-load-balancer │ Infrastructure │ bt8qGKJZz  │ https://grafana.example.org/d/bt8qGKJZz/aws-elb-application-load-balancer  │
+│  4 │ AWS RDS                           │ aws-rds                           │ Infrastructure │ kCDpC5uWk  │ https://grafana.example.org/d/kCDpC5uWk/aws-rds                            │
+│  3 │ AWS S3                            │ aws-s3                            │ Infrastructure │ AWSS31iWk  │ https://grafana.example.org/d/AWSS31iWk/aws-s3                             │
+│ 17 │ Cluster Autoscaling               │ cluster-autoscaling               │ Example        │ iHUYtABMk  │ https://grafana.example.org/d/iHUYtABMk/cluster-autoscaling                │
+└────┴───────────────────────────────────┴───────────────────────────────────┴────────────────┴────────────┴────────────────────────────────────────────────────────────────────────────┘
+</code></pre><p>You can execute <code>./bin/gdg dash import</code>, and you will be able to find your dashboards, the ones which were listed previously in the table, in <code>dashboards</code> folder.</p>
+<h3 id="export--upload-dashboards">Export / Upload Dashboards</h3>
+<p>Minimal configuration (eg. the <code>importer.yml</code> file) that you need to upload your dashboards from your Grafana endpoint:</p>
+<pre><code>context_name: all
+
+contexts:
+  all:
+    url: https://grafana.example.org
+    token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot;
+    # user_name: admin
+    # password: admin
+    dashboards_output: dashboards
+    watched:
+      - Example
+      - Infrastructure
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+</code></pre><p>You need to adjust three parts in the configuration in order to function:</p>
+<ul>
+<li>Grafana URL: This is just a URL where your Grafana is available.</li>
+<li>API Key OR Username / Passoword for Admin user. See <a href="configuration.md">authentication</a> section if you need more information.</li>
+<li>Uploaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. Those are the folders in <code>dashboards</code> folder, which contain the dashboard files (eg. <code>examples.json</code>). Example folder structure:</li>
+</ul>
+<pre><code>├── bin
+|   └── gdg
+└── dashboards
+    ├── Example
+    |   └── cluster-scaling.json
+    └── Infrastructure
+        └── aws-ecs.json
+</code></pre><p>You can execute <code>./bin/gdg dash export</code> to upload the local dashboards to your Grafana. Afterwards, you can try running <code>./bin/gdg dash list</code> in order to confirm that your dashboards were uploaded successfully.</p>
 
     <div class="pager">
   
   <div class="pager_item prev">
     
-    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/" class="pager_link button" title="Configuration" rel="prev">
-      <span class="pager_label">Configuration</span>
+    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/" class="pager_link button" title="Developer Guide" rel="prev">
+      <span class="pager_label">Developer Guide</span>
     </a>
   </div>
   
@@ -192,8 +248,8 @@ goreleaser release</p>
   
   <div class="pager_item next">
     
-    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/" class="pager_link button" title="Example Usage" rel="next">
-      <span class="pager_label">Example Usage</span>
+    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/" class="pager_link button" title="Usage Guide" rel="next">
+      <span class="pager_label">Usage Guide</span>
     </a>
   </div>
   
