@@ -15,8 +15,50 @@ make a copy of [conf/importer-example.yml](https://github.com/netsage-project/gr
 
 ### Authentication
 
+#### Authentication Token
 
-You can use either an Auth Token or username/password credentials.  If you configure both then the Token is given priority.
+You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI => Configuration => API Keys. You can then use it in your configuration file (eg. `importer.yml`).
+```
+context_name: main
+
+contexts:
+  main:
+    url: https://grafana.example.org
+    token: "<<Grafana API Token>>"
+    dashboards_output: "dashboards"
+    watched:
+      - Example
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+```
+
+#### Username / Password
+
+You can also use username/password credentials of an admin user to authenticate with the Grafana API. You can specify them in your configuration file (eg. `importer.yml`).
+```
+context_name: main
+
+contexts:
+  main:
+    url: https://grafana.example.org
+    user_name: <your username>
+    password: <your password>
+    dashboards_output: "dashboards"
+    watched:
+      - Example
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+```
+
+#### Notes
+
+If you configure both, Auth Token and Username/Password then the Token is given priority.
+
+You need to use Username/Password authentication for certain actions, such as creating a user, as using a Token is not supported.
 
 Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only "General" is managed.  
 

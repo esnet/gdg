@@ -3,6 +3,13 @@ title: "Example Usage"
 weight: 14
 ---
 
+### Setup new configuration
+
+You can create new context configuration using an interactive setup.
+```
+$ ./bin/gdg ctx new mycontext
+```
+
 ### Import / Download Dashboards
 
 Minimal configuration (eg. the `importer.yml` file) that you need to download your dashboards from your Grafana endpoint:
@@ -13,8 +20,9 @@ contexts:
   all:
     url: https://grafana.example.org
     token: "<<Grafana API Token>>"
-    dashboards_output: "dashboards"
-    datasources_output: "dashboards"
+    # user_name: admin
+    # password: admin
+    dashboards_output: dashboards
     watched:
       - Example
       - Infrastructure
@@ -25,7 +33,7 @@ global:
 ```
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
-- API Key: In your Grafana Web UI, go to Configuration, and API Keys. There you can create a new API token, which will be then used to authenticate with the Grafana API. Generate it, and paste it into the your configuration file (eg. `importer.yml`).
+- API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
 - Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list.
 
 After you are done, and you can execute `./bin/gdg dash list` successfully, eg.:
@@ -56,8 +64,9 @@ contexts:
   all:
     url: https://grafana.example.org
     token: "<<Grafana API Token>>"
-    dashboards_output: "dashboards"
-    datasources_output: "dashboards"
+    # user_name: admin
+    # password: admin
+    dashboards_output: dashboards
     watched:
       - Example
       - Infrastructure
@@ -68,7 +77,7 @@ global:
 ```
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
-- API Key: In your Grafana Web UI, go to Configuration, and API Keys. There you can create a new API token, which will be then used to authenticate with the Grafana API. Generate it, and paste it into the your configuration file (eg. `importer.yml`).
+- API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
 - Uploaded Folders: The `watched` field defines folders which will be considered for manipulation. Those are the folders in `dashboards` folder, which contain the dashboard files (eg. `examples.json`). Example folder structure:
 ```
 ├── bin
