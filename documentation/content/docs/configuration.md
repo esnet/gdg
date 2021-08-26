@@ -56,9 +56,7 @@ global:
 
 #### Notes
 
-If you configure both, Auth Token and Username/Password then the Token is given priority.
-
-You need to use Username/Password authentication for certain actions, such as creating a user, as using a Token is not supported.
+If you configure both, Auth Token and Username/Password, then the Token is given priority.
 
 Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only "General" is managed.  
 
