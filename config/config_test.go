@@ -28,8 +28,8 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	folders := grafana.GetMonitoredFolders()
 	assert.True(t, funk.Contains(folders, "Folder1"))
 	assert.True(t, funk.Contains(folders, "Folder2"))
-	assert.Equal(t, "qa/datasources", grafana.OutputDataSource)
-	assert.Equal(t, "qa/dashboards", grafana.OutputDashboard)
+	assert.Equal(t, "qa/datasources", grafana.GetDataSourceOutput())
+	assert.Equal(t, "qa/dashboards", grafana.GetDashboardOutput())
 	dsSettings := grafana.DataSourceSettings
 	defaultSettings := dsSettings["default"]
 	assert.Equal(t, "user", defaultSettings.User)

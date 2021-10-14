@@ -142,8 +142,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 				log.Printf("Failed to unmarshall file: %s", file)
 				continue
 			}
-
-			elements := strings.Split(file, "/")
+			elements := strings.Split(file, string(os.PathSeparator))
 			if len(elements) >= 2 {
 				folderName = elements[len(elements)-2]
 			}

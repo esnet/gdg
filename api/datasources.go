@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/gosimple/slug"
@@ -85,7 +86,7 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 		fmt.Fprint(os.Stderr, err)
 	}
 	for _, file := range filesInDir {
-		fileLocation := fmt.Sprintf("%s/%s", getResourcePath(s.configRef, "ds"), file.Name())
+		fileLocation := filepath.Join(getResourcePath(s.configRef, "ds"), file.Name())
 		if strings.HasSuffix(file.Name(), ".json") {
 			if rawDS, err = ioutil.ReadFile(fileLocation); err != nil {
 				fmt.Fprint(os.Stderr, err)

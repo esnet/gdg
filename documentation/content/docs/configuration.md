@@ -25,7 +25,7 @@ contexts:
   main:
     url: https://grafana.example.org
     token: "<<Grafana API Token>>"
-    dashboards_output: "dashboards"
+    output_path: "myFolder"
     watched:
       - Example
 
@@ -45,7 +45,7 @@ contexts:
     url: https://grafana.example.org
     user_name: <your username>
     password: <your password>
-    dashboards_output: "dashboards"
+    output_path: "myFolder"
     watched:
       - Example
 

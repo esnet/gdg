@@ -1,6 +1,7 @@
 package config
 
 import (
+	"path"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -17,8 +18,15 @@ type GrafanaConfig struct {
 	MonitoredFolders   []string                      `yaml:"watched"`
 	DefaultDataSource  *GrafanaDataSource            `yaml:"-"`
 	DataSourceSettings map[string]*GrafanaDataSource `yaml:"datasources"`
-	OutputDashboard    string                        `yaml:"dashboards_output"`
-	OutputDataSource   string                        `yaml:"datasources_output"`
+	OutputPath         string                        `yaml:"output_path"`
+}
+
+func (s *GrafanaConfig) GetDashboardOutput() string {
+	return path.Join(s.OutputPath, "dashboards")
+}
+
+func (s *GrafanaConfig) GetDataSourceOutput() string {
+	return path.Join(s.OutputPath, "datasources")
 }
 
 //GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.
