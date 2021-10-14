@@ -62,7 +62,7 @@ func findAllFiles(folder string) []string {
 		log.Warn("Output folder was not found")
 		return []string{}
 	}
-	fileList := []string{}
+	var fileList []string
 	err := filepath.Walk(folder, func(path string, f os.FileInfo, err error) error {
 		if !f.IsDir() {
 			fileList = append(fileList, path)

@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/netsage-project/grafana-dashboard-manager/api"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/api"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -51,6 +51,8 @@ func TestDashboardCRUD(t *testing.T) {
 	boards = apiClient.ListDashboards(filters)
 	assert.Equal(t, len(boards), 0)
 }
+
+
 
 func validateOtherBoard(t *testing.T, board sdk.FoundBoard) {
 	assert.True(t, board.UID != "")

@@ -10,9 +10,9 @@ import (
 
 //Currently supported filters
 const (
-	DashFilter   = "DashFilter"
-	FolderFilter = "FolderFilter"
-	Name         = "Name"
+	DashFilter    = "DashFilter"
+	FolderFilter  = "FolderFilter"
+	Name          = "Name"
 )
 
 type Filter interface {
@@ -67,6 +67,7 @@ func (s *DashboardFilter) init() {
 	s.BaseFilter.Init()
 	s.quoteRegex, _ = regexp.Compile("['\"]+")
 }
+
 
 //GetFolders splits the comma delimited folder list and returns a slice
 func (s *DashboardFilter) GetFolders() []string {

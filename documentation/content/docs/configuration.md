@@ -26,6 +26,7 @@ contexts:
     url: https://grafana.example.org
     token: "<<Grafana API Token>>"
     output_path: "myFolder"
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - Example
 
