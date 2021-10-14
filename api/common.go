@@ -49,9 +49,9 @@ func buildDataSourcePath(conf *viper.Viper, name string) string {
 //getResourcePath for a gven resource type: ["dashboard", "ds"] it'll return the configured location
 func getResourcePath(conf *viper.Viper, resourceType string) string {
 	if resourceType == "dashboard" {
-		return apphelpers.GetCtxDefaultGrafanaConfig().OutputDashboard
+		return apphelpers.GetCtxDefaultGrafanaConfig().GetDashboardOutput()
 	} else if resourceType == "ds" {
-		return apphelpers.GetCtxDefaultGrafanaConfig().OutputDataSource
+		return apphelpers.GetCtxDefaultGrafanaConfig().GetDataSourceOutput()
 	}
 	return ""
 }

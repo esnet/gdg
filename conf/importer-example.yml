@@ -2,12 +2,11 @@ context_name: qa
 
 contexts:
   testing:
-    dashboards_output: testing_data/dashboards
+    output_path: testing_data
     datasources:
       default:
         user: user
         password: password
-    datasources_output: testing_data/datasources
     url: http://grafana:3000
     user_name: admin
     password: admin
@@ -16,7 +15,7 @@ contexts:
       - Other
 
   production:
-    dashboards_output: prod/dashboards
+    output_path: prod
     datasources:
       complex name:
         password: secret
@@ -27,7 +26,6 @@ contexts:
       ds_name:
         password: secret
         user: abcd
-    datasources_output: prod/datasources
     url: https://grafana.com
     user_name: admin
     password: admin
@@ -35,7 +33,7 @@ contexts:
     watched:
       - General
   qa:
-    dashboards_output: qa/dashboards
+    output_path: qa
     token: <CHANGEME>
     datasources:
       complex name:
@@ -47,7 +45,6 @@ contexts:
       ds_name:
         password: secret
         user: abcd
-    datasources_output: qa/datasources
     url: https://staging.grafana.com
     organization: your-org
     watched:

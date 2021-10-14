@@ -7,3 +7,4 @@ dist/
 prod/
 public
 resources
+.idea

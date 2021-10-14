@@ -81,12 +81,8 @@ func NewContext(name string) {
 			Prompt: &survey.Input{Message: "What is the Grafana URL include http(s)?"},
 		},
 		{
-			Name:   "OutputDashboard",
-			Prompt: &survey.Input{Message: "Dashboard destination folder?"},
-		},
-		{
-			Name:   "OutputDataSource",
-			Prompt: &survey.Input{Message: "Datasource destination folder?"},
+			Name:   "OutputPath",
+			Prompt: &survey.Input{Message: "Destination Folder?"},
 		},
 	}
 
