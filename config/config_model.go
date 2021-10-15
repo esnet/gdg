@@ -10,6 +10,7 @@ import (
 //GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
 	AdminEnabled       bool
+	IgnoreFilters      bool                          `yaml:"ignore_filters"`
 	URL                string                        `yaml:"url"`
 	APIToken           string                        `yaml:"token"`
 	UserName           string                        `yaml:"user_name"`

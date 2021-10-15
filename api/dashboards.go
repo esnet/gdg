@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
+
 	"github.com/tidwall/pretty"
 
 	"github.com/grafana-tools/sdk"
@@ -17,7 +19,7 @@ import (
 	"github.com/yalp/jsonpath"
 )
 
-//ListDashboards: List all dashboards optionally filtered by folder name. If folderFilters
+//ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
 func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	ctx := context.Background()
@@ -42,9 +44,9 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 		}
 	}
 	var boardsList []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
-	boardLinks, err := s.client.SearchDashboards(ctx, "", false)
+	boardLinks, err := s.client.Search(ctx, sdk.SearchType(sdk.SearchTypeDashboard))
 	if err != nil {
-		log.Fatal("Failed to retreive dashboards", err)
+		log.Fatal("Failed to retrieve dashboards", err)
 	}
 	//Fallback on defaults
 	if filters == nil {
@@ -55,9 +57,11 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	var validFolder bool = false
 	var validUid bool = false
 	for _, link := range boardLinks {
-		if funk.Contains(folderFilters, link.FolderTitle) {
+		if apphelpers.GetCtxDefaultGrafanaConfig().IgnoreFilters {
 			validFolder = true
-		} else if funk.Contains(folderFilters, DefaultFolderName) && link.FolderID == 0 {
+		} else if funk.ContainsString(folderFilters, link.FolderTitle) {
+			validFolder = true
+		} else if funk.ContainsString(folderFilters, DefaultFolderName) && link.FolderID == 0 {
 			link.FolderTitle = DefaultFolderName
 			validFolder = true
 		}
@@ -73,6 +77,9 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 			}
 		} else {
 			validUid = true
+		}
+		if link.FolderID == 0 {
+			link.FolderTitle = DefaultFolderName
 		}
 
 		if validFolder && validUid {
@@ -116,8 +123,7 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 }
 
 //ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
-// if the folde doesn't exist, it'll be created.
-// if the folde doesn't exist, it'll be created.
+// if the folder doesn't exist, it'll be created.
 func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 	path := getResourcePath(s.configRef, "dashboard")
 	filesInDir := findAllFiles(path)
@@ -128,6 +134,11 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 	var folderName string = ""
 	var folderId int
 
+	//Fallback on defaults
+	if filters == nil {
+		filters = &DashboardFilter{}
+	}
+	validFolders := filters.GetFolders()
 	for _, file := range filesInDir {
 		baseFile := filepath.Base(file)
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
@@ -149,6 +160,10 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 			if folderName == "" || folderName == DefaultFolderName {
 				folderId = sdk.DefaultFolderId
 				folderName = DefaultFolderName
+			}
+			if !funk.Contains(validFolders, folderName) && !apphelpers.GetCtxDefaultGrafanaConfig().IgnoreFilters {
+				log.Debugf("Skipping file %s, doesn't match any valid folders", file)
+				continue
 			}
 			validateMap := map[string]string{FolderFilter: folderName, DashFilter: baseFile}
 

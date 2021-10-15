@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/netsage-project/grafana-dashboard-manager/api"
 	"github.com/grafana-tools/sdk"
+	"github.com/netsage-project/grafana-dashboard-manager/api"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )

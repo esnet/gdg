@@ -10,6 +10,7 @@ contexts:
     url: http://grafana:3000
     user_name: admin
     password: admin
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - General
       - Other
@@ -30,6 +31,7 @@ contexts:
     user_name: admin
     password: admin
     organization: your-org
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - General
   qa:
@@ -47,6 +49,7 @@ contexts:
         user: abcd
     url: https://staging.grafana.com
     organization: your-org
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - Folder1
       - Folder2
