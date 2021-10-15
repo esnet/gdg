@@ -54,6 +54,8 @@ steps:
       when:
         branch: master
         event: push
+        repo:
+          - netsage-project/grafana-dashboard-manager
 ---
 kind: pipeline
 name: release
