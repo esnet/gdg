@@ -52,8 +52,6 @@ func TestDashboardCRUD(t *testing.T) {
 	assert.Equal(t, len(boards), 0)
 }
 
-
-
 func validateOtherBoard(t *testing.T, board sdk.FoundBoard) {
 	assert.True(t, board.UID != "")
 	assert.Equal(t, board.Title, "Flow Information")

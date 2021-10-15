@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
 
 	"github.com/tidwall/pretty"
 
@@ -17,8 +18,6 @@ import (
 	"github.com/thoas/go-funk"
 	"github.com/yalp/jsonpath"
 )
-
-
 
 //ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
@@ -60,9 +59,9 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	for _, link := range boardLinks {
 		if apphelpers.GetCtxDefaultGrafanaConfig().IgnoreFilters {
 			validFolder = true
-		} else if funk.Contains(folderFilters, link.FolderTitle) {
+		} else if funk.ContainsString(folderFilters, link.FolderTitle) {
 			validFolder = true
-		} else if funk.Contains(folderFilters, DefaultFolderName) && link.FolderID == 0 {
+		} else if funk.ContainsString(folderFilters, DefaultFolderName) && link.FolderID == 0 {
 			link.FolderTitle = DefaultFolderName
 			validFolder = true
 		}
@@ -139,7 +138,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 	if filters == nil {
 		filters = &DashboardFilter{}
 	}
-
+	validFolders := filters.GetFolders()
 	for _, file := range filesInDir {
 		baseFile := filepath.Base(file)
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
@@ -162,7 +161,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 				folderId = sdk.DefaultFolderId
 				folderName = DefaultFolderName
 			}
-			if !funk.Contains(filters.GetFolders(), folderName) && !apphelpers.GetCtxDefaultGrafanaConfig().IgnoreFilters {
+			if !funk.Contains(validFolders, folderName) && !apphelpers.GetCtxDefaultGrafanaConfig().IgnoreFilters {
 				log.Debugf("Skipping file %s, doesn't match any valid folders", file)
 				continue
 			}
