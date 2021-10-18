@@ -16,14 +16,14 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-10-14T20:21:49-04:00" />
+<meta property="article:modified_time" content="2021-10-18T13:33:51-04:00" />
 
 <meta itemprop="name" content="Configuration">
 <meta itemprop="description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
 Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg.">
-<meta itemprop="dateModified" content="2021-10-14T20:21:49-04:00" />
-<meta itemprop="wordCount" content="263">
+<meta itemprop="dateModified" content="2021-10-18T13:33:51-04:00" />
+<meta itemprop="wordCount" content="335">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configuration"/>
 <meta name="twitter:description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
@@ -114,6 +114,10 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
           <ul>
             <li><a href="#authentication-token">Authentication Token</a></li>
             <li><a href="#username--password">Username / Password</a></li>
+          </ul>
+        </li>
+        <li><a href="#datasource-credentials">DataSource Credentials.</a>
+          <ul>
             <li><a href="#notes">Notes</a></li>
           </ul>
         </li>
@@ -176,6 +180,15 @@ contexts:
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - Example
+    datasources:
+      default:
+        user: admin
+        password: secret
+        url_regex:    ## set to pattern to match as well as the name.
+      misc:
+        user: admin
+        password: secret
+        url_regex: .*esproxy2*      
 
 global:
   debug: true
@@ -196,7 +209,14 @@ contexts:
 global:
   debug: true
   ignore_ssl_errors: false
-</code></pre><h4 id="notes">Notes</h4>
+</code></pre><h3 id="datasource-credentials">DataSource Credentials.</h3>
+<p>If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:</p>
+<ol>
+<li>Match of DS credentials based on DS name.</li>
+<li>Match URL regex for the DS if regex specified.</li>
+<li>Use Default Credentials if the above two both failed.</li>
+</ol>
+<h4 id="notes">Notes</h4>
 <p>If you configure both, Auth Token and Username/Password, then the Token is given priority.</p>
 <p>Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only &quot;General&quot; is managed.</p>
 <p>env.output defines where the files will be saved and imported from.</p>
