@@ -7,6 +7,10 @@ contexts:
       default:
         user: user
         password: password
+      misc:
+        user: admin
+        password: secret
+        url_regex: .*esproxy2*
     url: http://grafana:3000
     user_name: admin
     password: admin

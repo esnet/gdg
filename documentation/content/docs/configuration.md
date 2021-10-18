@@ -29,6 +29,15 @@ contexts:
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - Example
+    datasources:
+      default:
+        user: admin
+        password: secret
+        url_regex:    ## set to pattern to match as well as the name.
+      misc:
+        user: admin
+        password: secret
+        url_regex: .*esproxy2*      
 
 global:
   debug: true
@@ -54,6 +63,14 @@ global:
   debug: true
   ignore_ssl_errors: false
 ```
+
+### DataSource Credentials.
+
+If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:
+
+1. Match of DS credentials based on DS name.
+2. Match URL regex for the DS if regex specified.
+3. Use Default Credentials if the above two both failed.
 
 #### Notes
 

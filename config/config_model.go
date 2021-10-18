@@ -1,7 +1,9 @@
 package config
 
 import (
+	"errors"
 	"path"
+	"regexp"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -40,14 +42,33 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 }
 
 //GetCredentials return credentials for a given datasource or falls back on default value
-func (s *GrafanaConfig) GetCredentials(dataSourceName string) *GrafanaDataSource {
+func (s *GrafanaConfig) GetCredentials(dataSourceName string) (*GrafanaDataSource, error) {
 	key := strings.ToLower(dataSourceName)
 	if val, ok := s.DataSourceSettings[key]; ok {
-		return val
+		return val, nil
 	} else {
 		log.Infof("No datasource credentials found for '%s', falling back on default", dataSourceName)
-		return s.GetDefaultCredentials()
+		return s.GetDefaultCredentials(), errors.New("no valid configuration found, falling back on default")
 	}
+}
+
+//GetCredentialByUrl attempts to match URL by regex
+func (s *GrafanaConfig) GetCredentialByUrl(fullUrl string) (*GrafanaDataSource, error) {
+	for key, val := range s.DataSourceSettings {
+		if val.UrlRegex != "" {
+			r, err := regexp.Compile(val.UrlRegex)
+			if err != nil {
+				log.Warnf("Invalid regex for DS: %s using regex: %s", key, val.UrlRegex)
+				continue
+			}
+			match := r.MatchString(fullUrl)
+			if match {
+				return val, nil
+			}
+		}
+	}
+	log.Warn("No valid regex detected, falling back on default")
+	return s.GetDefaultCredentials(), errors.New("no valid configuration found, falling back on default")
 
 }
 
@@ -68,4 +89,5 @@ func (s *GrafanaConfig) GetDefaultCredentials() *GrafanaDataSource {
 type GrafanaDataSource struct {
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
+	UrlRegex string `yaml:"url_regex"`
 }
