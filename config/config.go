@@ -14,7 +14,7 @@ type ConfigStruct struct {
 
 var configData *ConfigStruct
 
-//ViperConfig returns the the loaded configuration via a viper reference
+//ViperConfig returns the loaded configuration via a viper reference
 func (s *ConfigStruct) ViperConfig() *viper.Viper {
 	return s.defaultConfig
 }
@@ -34,7 +34,6 @@ func (s ConfigStruct) IgnoreSSL() bool {
 	return s.defaultConfig.GetBool("global.ignore_ssl_errors")
 }
 
-// func Config
 func Config() *ConfigStruct {
 	return configData
 }

@@ -106,7 +106,10 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 			var creds *config.GrafanaDataSource
 
 			if *newDS.BasicAuth {
-				creds = dsConfig.GetCredentials(newDS.Name)
+				creds, err = dsConfig.GetCredentials(newDS.Name)
+				if err != nil { //Attempt to get Credentials by URL regex
+					creds, _ = dsConfig.GetCredentialByUrl(newDS.URL)
+				}
 			} else {
 				creds = nil
 			}
