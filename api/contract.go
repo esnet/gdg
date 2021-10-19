@@ -26,6 +26,8 @@ type ApiService interface {
 	//User
 	ListUsers() []sdk.User
 	PromoteUser(userLogin string) (*sdk.StatusMessage, error)
+	//MetaData
+	GetServerInfo() map[string]interface{}
 }
 
 type DashNGoImpl struct {
