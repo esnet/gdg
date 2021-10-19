@@ -8,7 +8,7 @@ require (
 	github.com/go-openapi/errors v0.20.0 // indirect
 	github.com/go-openapi/strfmt v0.20.1 // indirect
 	github.com/gosimple/slug v1.9.0
-	github.com/grafana-tools/sdk v0.0.0-20210714133701-11b1efc100c9
+	github.com/grafana-tools/sdk v0.0.0-20211015115518-56cdea6a09d6
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
