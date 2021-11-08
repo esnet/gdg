@@ -6,3 +6,9 @@ Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager.  The purpose of this 
 
 Please find the pretty documentation [here](https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/) and the code for updating the docs is available [here](https://github.com/netsage-project/grafana-dashboard-manager/blob/master/documentation/content/docs/usage_guide.md)
 
+
+## Quickstart 
+
+![Quickstart screen](assets/quickstart.gif)
+
+
