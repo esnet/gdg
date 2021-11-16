@@ -2,27 +2,27 @@
 <html lang="en" class="dark">
 <head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.84.0" />
-<link rel="apple-touch-icon" sizes="180x180" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/apple-touch-icon.png'>
-<link rel="icon" type="image/png" sizes="32x32" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon-32x32.png'>
-<link rel="icon" type="image/png" sizes="16x16" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon-16x16.png'>
-<link rel="manifest" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/site.webmanifest'>
-<link rel="mask-icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/safari-pinned-tab.svg'  color="#004750">
-<link rel="shortcut icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon.ico'>
-<meta name="msapplication-config" content='https://netsage-project.github.io/grafana-dashboard-manager/favicons/browserconfig.xml'>
+<link rel="apple-touch-icon" sizes="180x180" href='https://netsage-project.github.io/gdg/favicons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='https://netsage-project.github.io/gdg/favicons/favicon-32x32.png'>
+<link rel="icon" type="image/png" sizes="16x16" href='https://netsage-project.github.io/gdg/favicons/favicon-16x16.png'>
+<link rel="manifest" href='https://netsage-project.github.io/gdg/favicons/site.webmanifest'>
+<link rel="mask-icon" href='https://netsage-project.github.io/gdg/favicons/safari-pinned-tab.svg'  color="#004750">
+<link rel="shortcut icon" href='https://netsage-project.github.io/gdg/favicons/favicon.ico'>
+<meta name="msapplication-config" content='https://netsage-project.github.io/gdg/favicons/browserconfig.xml'>
 <title>Configuration | Grafana Dash-n-Go</title><meta property="og:title" content="Configuration" />
 <meta property="og:description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
 Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://netsage-project.github.io/gdg/docs/configuration/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-10-18T17:11:32-04:00" />
+<meta property="article:modified_time" content="2021-11-16T10:10:17-05:00" />
 
 <meta itemprop="name" content="Configuration">
 <meta itemprop="description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
 Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg.">
-<meta itemprop="dateModified" content="2021-10-18T17:11:32-04:00" />
+<meta itemprop="dateModified" content="2021-11-16T10:10:17-05:00" />
 <meta itemprop="wordCount" content="335">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configuration"/>
@@ -31,7 +31,7 @@ make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;l
 Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg."/>
 
 
-<link rel="stylesheet" href="https://netsage-project.github.io/grafana-dashboard-manager/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
+<link rel="stylesheet" href="https://netsage-project.github.io/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
 
 
 
@@ -45,12 +45,12 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
 <body class="page-page" id="pagetop">
   <header class="nav_header">
 <nav class="wrap nav menu">
-	<a href="https://netsage-project.github.io/grafana-dashboard-manager/" class="nav_brand">
-		<picture data-lit="https://netsage-project.github.io/grafana-dashboard-manager/images/compose.svg" data-dark="https://netsage-project.github.io/grafana-dashboard-manager/images/compose-light.svg">
+	<a href="https://netsage-project.github.io/gdg/" class="nav_brand">
+		<picture data-lit="https://netsage-project.github.io/gdg/images/compose.svg" data-dark="https://netsage-project.github.io/gdg/images/compose-light.svg">
 			
-			<source srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/compose-light.svg' media="(prefers-color-scheme: dark)">
+			<source srcset = 'https://netsage-project.github.io/gdg/images/compose-light.svg' media="(prefers-color-scheme: dark)">
 			
-			<img srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/compose.svg' alt = 'Grafana Dash-n-Go Logo'>
+			<img srcset = 'https://netsage-project.github.io/gdg/images/compose.svg' alt = 'Grafana Dash-n-Go Logo'>
 		</picture>
 		<label class="nav_toggle toggle" title='Site Menu' role="button">
 			<svg class="icon icon_harmburger">
@@ -73,17 +73,17 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
 
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/"><span>Docs</span></a>
+			<a class="nav-link" href="https://netsage-project.github.io/gdg/docs/"><span>Docs</span></a>
 		</li>
 		
 		<li class="nav-item nav_repo">
-			<a class="nav-link" href="https://github.com/netsage-project/grafana-dashboard-manager" target="_blank">
+			<a class="nav-link" href="https://github.com/netsage-project/gdg" target="_blank">
 				
-					<picture data-lit="https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkLight.svg" data-dark="https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkDark.svg">
+					<picture data-lit="https://netsage-project.github.io/gdg/images/GitHubMarkLight.svg" data-dark="https://netsage-project.github.io/gdg/images/GitHubMarkDark.svg">
 						
-							<source srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkDark.svg' media="(prefers-color-scheme: dark)">
+							<source srcset = 'https://netsage-project.github.io/gdg/images/GitHubMarkDark.svg' media="(prefers-color-scheme: dark)">
 						
-						<img srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkLight.svg' alt = 'GitHub Repo'>
+						<img srcset = 'https://netsage-project.github.io/gdg/images/GitHubMarkLight.svg' alt = 'GitHub Repo'>
 					</picture>
 				
 			</a>
@@ -104,9 +104,9 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
 </svg></label>
   </div>
   <section class="section aside_inner">
-    <h2 class="section_title"><a  href="https://netsage-project.github.io/grafana-dashboard-manager/docs/" class="group">GDG Docs</a></h2>
+    <h2 class="section_title"><a  href="https://netsage-project.github.io/gdg/docs/" class="group">GDG Docs</a></h2>
       <section class="" id="docs-gdg-docs">
-        <h3 class="section_link active"><a id="docs-configuration" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
+        <h3 class="section_link active"><a id="docs-configuration" href="https://netsage-project.github.io/gdg/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#getting-started">Getting started</a>
       <ul>
@@ -127,12 +127,12 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
     </li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-developer-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-developer-guide" href="https://netsage-project.github.io/gdg/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#making-a-release">Making a release</a></li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-example-usage" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/">Example Usage</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-example-usage" href="https://netsage-project.github.io/gdg/docs/examples/">Example Usage</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -143,7 +143,7 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
     </li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-usage-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-usage-guide" href="https://netsage-project.github.io/gdg/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -166,7 +166,7 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
   <main class="content">
     <h1>Configuration</h1><h2 id="getting-started">Getting started</h2>
 <p>This project requires Go to be installed. On OS X with Homebrew you can just run <code>brew install go</code>.</p>
-<p>make a copy of <a href="https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml">conf/importer-example.yml</a> and name it <code>conf/importer.yml</code> You'll need GRAFANA ADMINISTRATIVE privileges to proceed.</p>
+<p>make a copy of <a href="https://github.com/netsage-project/gdg/blob/master/conf/importer-example.yml">conf/importer-example.yml</a> and name it <code>conf/importer.yml</code> You'll need GRAFANA ADMINISTRATIVE privileges to proceed.</p>
 <h3 id="authentication">Authentication</h3>
 <h4 id="authentication-token">Authentication Token</h4>
 <p>You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg. <code>importer.yml</code>).</p>
@@ -226,7 +226,7 @@ global:
 <h3 id="buildingrunning-the-app">Building/Running the app</h3>
 <p>Running it then should be as simple as:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="ln">1</span>$ make build
-<span class="ln">2</span>$ ./bin/grafana-dashboard-manager
+<span class="ln">2</span>$ ./bin/gdg
 </code></pre></div>
     <div class="pager pager_lean">
   
@@ -234,7 +234,7 @@ global:
   
   <div class="pager_item next">
     
-    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/" class="pager_link button" title="Developer Guide" rel="next">
+    <a href="https://netsage-project.github.io/gdg/docs/developer/" class="pager_link button" title="Developer Guide" rel="next">
       <span class="pager_label">Developer Guide</span>
     </a>
   </div>
@@ -319,6 +319,6 @@ global:
   </symbol>
 </svg>
 
-<script src="https://netsage-project.github.io/grafana-dashboard-manager/js/bundle.min.3d80d27c63bd8186c1bcfdb1a56981a6956ec7fbded2f9de0131e1606d7c591b7d9e01d6dfb11d96dab426f1fcbae41de3f5e39e165ac5968002767d4335aed2.js"></script>
+<script src="https://netsage-project.github.io/gdg/js/bundle.min.8281de6c927b09654f52384b181eb264fa03abd65d186309e7abaf64ebf9dc1a47ac06f1491fa54cdcf0406ac253966301b11ef5da6d4a1007aae60e391b2355.js"></script>
 </body>
 </html>

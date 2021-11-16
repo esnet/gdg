@@ -2,15 +2,15 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>GDG Docs on Grafana Dash-n-Go</title>
-    <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/</link>
+    <link>https://netsage-project.github.io/gdg/docs/</link>
     <description>Recent content in GDG Docs on Grafana Dash-n-Go</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://netsage-project.github.io/grafana-dashboard-manager/docs/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator><atom:link href="https://netsage-project.github.io/gdg/docs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Configuration</title>
-      <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/</link>
+      <link>https://netsage-project.github.io/gdg/docs/configuration/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/</guid>
+      <guid>https://netsage-project.github.io/gdg/docs/configuration/</guid>
       <description>Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
 Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&amp;gt; Configuration =&amp;gt; API Keys. You can then use it in your configuration file (eg.</description>
@@ -18,10 +18,10 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
     
     <item>
       <title>Developer Guide</title>
-      <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/</link>
+      <link>https://netsage-project.github.io/gdg/docs/developer/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/</guid>
+      <guid>https://netsage-project.github.io/gdg/docs/developer/</guid>
       <description>Making a release Install goreleaser.
 1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
@@ -31,10 +31,10 @@ NOTE: mac binary are not signed so will likely complain.</description>
     
     <item>
       <title>Example Usage</title>
-      <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/</link>
+      <link>https://netsage-project.github.io/gdg/docs/examples/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/examples/</guid>
+      <guid>https://netsage-project.github.io/gdg/docs/examples/</guid>
       <description>Setup new configuration You can create new context configuration using an interactive setup.
 $ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
 context_name: all contexts: all: url: https://grafana.example.org token: &amp;quot;&amp;lt;&amp;lt;Grafana API Token&amp;gt;&amp;gt;&amp;quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:</description>
@@ -42,10 +42,10 @@ context_name: all contexts: all: url: https://grafana.example.org token: &amp;qu
     
     <item>
       <title>Usage Guide</title>
-      <link>https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/</link>
+      <link>https://netsage-project.github.io/gdg/docs/usage_guide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/</guid>
+      <guid>https://netsage-project.github.io/gdg/docs/usage_guide/</guid>
       <description>Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
 ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
