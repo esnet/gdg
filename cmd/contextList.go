@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/netsage-project/gdg/apphelpers"
@@ -18,8 +19,8 @@ var contextList = &cobra.Command{
 		activeContext := apphelpers.GetContext()
 		for _, item := range contexts {
 			active := false
-			if item == activeContext {
-				item = fmt.Sprintf("*%s", item)
+			if item == strings.ToLower(activeContext) {
+				item = fmt.Sprintf("*%s", activeContext)
 				active = true
 			}
 			tableObj.AppendRow(table.Row{item, active})

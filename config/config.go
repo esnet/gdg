@@ -1,6 +1,9 @@
 package config
 
 import (
+	"path/filepath"
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/viper"
@@ -38,14 +41,15 @@ func Config() *ConfigStruct {
 	return configData
 }
 
-// LoadConfigProvider returns a configured viper instance
-func LoadConfigProvider(appName string) *viper.Viper {
-	return readViperConfig(appName)
-}
-
-func init() {
+func InitConfig(override string) {
 	configData = &ConfigStruct{}
-	configData.defaultConfig = readViperConfig("importer")
+	appName := "importer"
+	if override != "" {
+		appName = filepath.Base(override)
+		appName = strings.TrimSuffix(appName, filepath.Ext(appName))
+	}
+
+	configData.defaultConfig = readViperConfig(appName)
 	contexts := configData.defaultConfig.GetStringMap("contexts")
 	contextMaps, err := yaml.Marshal(contexts)
 	if err != nil {

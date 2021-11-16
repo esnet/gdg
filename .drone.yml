@@ -3,7 +3,7 @@ name: default
 
 steps:
   - name: build
-    image: golang:1.16
+    image: golang:1.17
     commands:
       - echo "Waiting for Grafana to come up"
       - timeout=$(($(date +%s) + 10))

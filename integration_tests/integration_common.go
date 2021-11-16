@@ -12,6 +12,7 @@ import (
 )
 
 func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
+	config.InitConfig("")
 	conf := config.Config().ViperConfig()
 	assert.NotNil(t, conf)
 	conf.Set("context_name", "testing")
