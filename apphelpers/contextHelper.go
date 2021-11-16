@@ -17,7 +17,7 @@ import (
 //GetContext returns the name of the selected context
 func GetContext() string {
 	name := config.Config().ViperConfig().GetString("context_name")
-	return name
+	return strings.ToLower(name)
 }
 
 func NewContext(name string) {
@@ -174,6 +174,7 @@ func SetContext(context string) {
 	}
 	v.Set("context_name", context)
 	v.WriteConfig()
+
 }
 
 //getContextReferences Helper method to get viper and context map
@@ -188,7 +189,7 @@ func getContextReferences() (*viper.Viper, map[string]interface{}) {
 //DeleteContext Delete a specific
 func DeleteContext(context string) {
 	activeCtx := GetContext()
-	if activeCtx == context {
+	if activeCtx == strings.ToLower(context) {
 		log.Fatalf("Cannot delete context since it's currently active, please change context before deleting %s", context)
 	}
 	v, contextMap := getContextReferences()

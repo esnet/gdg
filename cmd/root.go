@@ -43,9 +43,13 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringP("config", "c", "", "Configuration Override")
 }
 
 func initConfig() {
+	configOverride, _ := rootCmd.Flags().GetString("config")
+	config.InitConfig(configOverride)
+
 	configProvider := config.Config().ViperConfig()
 	setupGrafanaClient()
 	log.Debug("Creating output locations")

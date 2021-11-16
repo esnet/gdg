@@ -5,6 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Config override test",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "ctx",
+                "show",
+                "-c",
+                "conf/testing.yml",
+            ]
+        },
+        {
             "name": "Dash list",
             "type": "go",
             "request": "launch",
@@ -94,6 +107,28 @@
             "args": [
                 "org",
                 "list",
+            ]
+        },
+        {
+            "name": "ctx show",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "ctx",
+                "show"
+            ]
+        },
+        {
+            "name": "ctx list",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "ctx",
+                "list"
             ]
         },
         {

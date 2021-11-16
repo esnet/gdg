@@ -18,6 +18,10 @@ make a copy of [conf/importer-example.yml](https://github.com/netsage-project/gd
 #### Authentication Token
 
 You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI => Configuration => API Keys. You can then use it in your configuration file (eg. `importer.yml`).
+
+WARNING: gdg is currently using viper to read in the config.  Since viper makes all keys lowercase, we also have the same limitation.  Camel case will be read in but be aware that a section named fooBar == Foobar == foobar etc.
+
+
 ```
 context_name: main
 
