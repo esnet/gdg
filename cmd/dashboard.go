@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/netsage-project/grafana-dashboard-manager/api"
+	"github.com/netsage-project/gdg/api"
 	"github.com/spf13/cobra"
 )
 

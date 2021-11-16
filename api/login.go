@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/gdg/config"
 	log "github.com/sirupsen/logrus"
 )
 

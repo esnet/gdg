@@ -1,4 +1,4 @@
-baseURL = "https://netsage-project.github.io/grafana-dashboard-manager/"
+baseURL = "https://netsage-project.github.io/gdg/"
 title = "Grafana Dash-n-Go"
 enableRobotsTXT = true
 # this example loads the theme as hugo module

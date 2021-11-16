@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/netsage-project/grafana-dashboard-manager/cmd"
-	applogger "github.com/netsage-project/grafana-dashboard-manager/log"
+	"github.com/netsage-project/gdg/cmd"
+	applogger "github.com/netsage-project/gdg/log"
 )
 
 func main() {

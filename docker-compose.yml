@@ -1,11 +1,11 @@
 version: '3.8'
 services:
-    grafana-dashboard-manager:
+    gdg:
         build:
             context: . 
-        image: netsage/grafana-dashboard-manager:latest
+        image: netsage/gdg:latest
         volumes:
-          - ./conf:/opt/grafana-dashboard-manager/bin/conf
+          - ./conf:/opt/gdg/bin/conf
 ## Mainly used for integration tests (Coming soon)
     grafana:
         image: grafana/grafana:7.5.6-ubuntu

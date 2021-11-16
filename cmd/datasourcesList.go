@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/grafana-dashboard-manager/api"
-	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
+	"github.com/netsage-project/gdg/api"
+	"github.com/netsage-project/gdg/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

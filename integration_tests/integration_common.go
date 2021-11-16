@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/netsage-project/grafana-dashboard-manager/api"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/gdg/api"
+	"github.com/netsage-project/gdg/config"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )

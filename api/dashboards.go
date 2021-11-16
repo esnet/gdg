@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
+	"github.com/netsage-project/gdg/apphelpers"
 
 	"github.com/tidwall/pretty"
 

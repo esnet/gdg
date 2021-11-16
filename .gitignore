@@ -1,7 +1,7 @@
 bin
 vendor
 .history
-grafana-dashboard-manager
+gdg
 importer.yml
 dist/
 prod/

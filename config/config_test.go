@@ -3,8 +3,8 @@ package config_test
 import (
 	"testing"
 
-	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/gdg/apphelpers"
+	"github.com/netsage-project/gdg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/thoas/go-funk"
 )

@@ -7,7 +7,7 @@ import (
 
 	// "github.com/labstack/gommon/log"
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/gdg/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/thoas/go-funk"

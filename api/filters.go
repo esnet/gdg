@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
+	"github.com/netsage-project/gdg/apphelpers"
 	"github.com/thoas/go-funk"
 )
 
