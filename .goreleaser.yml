@@ -10,7 +10,7 @@ builds:
   - env:
       - CGO_ENABLED=0
     binary: gdg
-    ldflags: -X github.com/netsage-project/grafana-dashboard-manager/version.GitCommit={{ .Commit }} -X github.com/netsage-project/grafana-dashboard-manager/version.BuildDate={{ .Date }}  -X github.com/netsage-project/grafana-dashboard-manager/version.Version={{ .Tag }}
+    ldflags: -X github.com/netsage-project/gdg/version.GitCommit={{ .Commit }} -X github.com/netsage-project/gdg/version.BuildDate={{ .Date }}  -X github.com/netsage-project/gdg/version.Version={{ .Tag }}
     goos:
       - linux
       - windows

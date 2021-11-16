@@ -1,16 +1,16 @@
 # Build Stage
 FROM golang:1.16.0  AS build-stage
 
-LABEL app="build-grafana-dashboard-manager"
-LABEL REPO="https://github.com/netsage-project/grafana-dashboard-manager"
+LABEL app="build-gdg"
+LABEL REPO="https://github.com/netsage-project/gdg"
 
-ENV PROJPATH=/go/src/github.com/netsage-project/grafana-dashboard-manager
+ENV PROJPATH=/go/src/github.com/netsage-project/gdg
 
 # Because of https://github.com/docker/docker/issues/14914
 ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
-ADD . /go/src/github.com/netsage-project/grafana-dashboard-manager
-WORKDIR /go/src/github.com/netsage-project/grafana-dashboard-manager
+ADD . /go/src/github.com/netsage-project/gdg
+WORKDIR /go/src/github.com/netsage-project/gdg
 
 RUN make build-alpine
 
@@ -19,28 +19,28 @@ FROM golang:1.16.0
 
 ARG GIT_COMMIT
 ARG VERSION
-LABEL REPO="https://github.com/netsage-project/grafana-dashboard-manager"
+LABEL REPO="https://github.com/netsage-project/gdg"
 LABEL GIT_COMMIT=$GIT_COMMIT
 LABEL VERSION=$VERSION
 
 # Because of https://github.com/docker/docker/issues/14914
-ENV PATH=$PATH:/opt/grafana-dashboard-manager/bin
+ENV PATH=$PATH:/opt/gdg/bin
 
-WORKDIR /opt/grafana-dashboard-manager/bin
+WORKDIR /opt/gdg/bin
 
-COPY --from=build-stage /go/src/github.com/netsage-project/grafana-dashboard-manager/bin/gdg /opt/grafana-dashboard-manager/bin/
+COPY --from=build-stage /go/src/github.com/netsage-project/gdg/bin/gdg /opt/gdg/bin/
 RUN \
     apt-get update && \
     apt install -y dumb-init  && \
     apt-get clean autoclean && \
     apt-get autoremove --yes && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/ && \
-    chmod +x /opt/grafana-dashboard-manager/bin/gdg
+    chmod +x /opt/gdg/bin/gdg
 
 # Create appuser
-RUN useradd -m  grafana-dashboard-manager
-USER grafana-dashboard-manager
+RUN useradd -m  gdg
+USER gdg
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-CMD ["/opt/grafana-dashboard-manager/bin/gdg"]
+CMD ["/opt/gdg/bin/gdg"]

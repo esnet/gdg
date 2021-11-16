@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
-	"github.com/netsage-project/grafana-dashboard-manager/config"
+	"github.com/netsage-project/gdg/apphelpers"
+	"github.com/netsage-project/gdg/config"
 	"github.com/spf13/viper"
 )
 

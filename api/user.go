@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
+	"github.com/netsage-project/gdg/apphelpers"
 	"github.com/sirupsen/logrus"
 )
 

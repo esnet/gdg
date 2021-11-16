@@ -10,7 +10,7 @@ This project requires Go to be installed. On OS X with Homebrew you can just run
 
 
 
-make a copy of [conf/importer-example.yml](https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml) and name it `conf/importer.yml` You'll need GRAFANA ADMINISTRATIVE privileges to proceed.
+make a copy of [conf/importer-example.yml](https://github.com/netsage-project/gdg/blob/master/conf/importer-example.yml) and name it `conf/importer.yml` You'll need GRAFANA ADMINISTRATIVE privileges to proceed.
 
 
 ### Authentication
@@ -92,5 +92,5 @@ Running it then should be as simple as:
 
 ```bash
 $ make build
-$ ./bin/grafana-dashboard-manager
+$ ./bin/gdg
 ```

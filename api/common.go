@@ -9,7 +9,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/grafana-dashboard-manager/apphelpers"
+	"github.com/netsage-project/gdg/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
