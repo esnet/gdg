@@ -21,6 +21,7 @@ func GetContext() string {
 }
 
 func NewContext(name string) {
+	name = strings.ToLower(name) // forces lowercase contexts
 	answers := config.GrafanaConfig{
 		DataSourceSettings: make(map[string]*config.GrafanaDataSource),
 	}
