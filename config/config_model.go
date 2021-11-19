@@ -32,6 +32,10 @@ func (s *GrafanaConfig) GetDataSourceOutput() string {
 	return path.Join(s.OutputPath, "datasources")
 }
 
+func (s *GrafanaConfig) GetAlertNotificationOutput() string {
+	return path.Join(s.OutputPath, "alertnotifications")
+}
+
 //GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.
 func (s *GrafanaConfig) GetMonitoredFolders() []string {
 	if len(s.MonitoredFolders) == 0 {

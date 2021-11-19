@@ -46,12 +46,22 @@ func buildDataSourcePath(conf *viper.Viper, name string) string {
 	return v
 }
 
-//getResourcePath for a gven resource type: ["dashboard", "ds"] it'll return the configured location
+//buildAlertNotificationPath returns the expected file for a given alertnotification
+func buildAlertNotificationPath(conf *viper.Viper, name string) string {
+	anPath := getResourcePath(conf, "an")
+	v := fmt.Sprintf("%s/%s.json", anPath, name)
+	os.MkdirAll(anPath, 0755)
+	return v
+}
+
+//getResourcePath for a gven resource type: ["dashboard", "ds", "an"] it'll return the configured location
 func getResourcePath(conf *viper.Viper, resourceType string) string {
 	if resourceType == "dashboard" {
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetDashboardOutput()
 	} else if resourceType == "ds" {
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetDataSourceOutput()
+	} else if resourceType == "an" {
+		return apphelpers.GetCtxDefaultGrafanaConfig().GetAlertNotificationOutput()
 	}
 	return ""
 }
