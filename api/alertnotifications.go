@@ -109,8 +109,8 @@ func (s *DashNGoImpl) ExportAlertNotifications(filter Filter) []string {
 					break
 				}
 			}
-			if status, err = s.client.CreateAlertNotification(ctx, newAN); err != nil {
-				log.Errorf("error on importing datasource %s with %s (status %s)", newAN.Name, err, status)
+			if _, err = s.client.CreateAlertNotification(ctx, newAN); err != nil {
+				log.Errorf("error on importing datasource %s with %s", newAN.Name, err)
 			} else {
 				exported = append(exported, fileLocation)
 			}
