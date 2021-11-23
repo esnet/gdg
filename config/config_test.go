@@ -10,7 +10,7 @@ import (
 )
 
 func TestSetup(t *testing.T) {
-	config.InitConfig("")
+	config.InitConfig("testing.yml")
 	conf := config.Config().ViperConfig()
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")

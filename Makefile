@@ -11,6 +11,11 @@ GIT_DIRTY=$(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE=$(shell date '+%Y-%m-%d-%H:%M:%S')
 IMAGE_NAME := "netsage-project/gdg"
 
+
+authors:
+	echo "Authors\n=======\n" > AUTHORS.md
+	git log --raw | grep "^Author: " | sort | uniq | cut -d ' ' -f2- | sed 's/^/- /' >> AUTHORS.md
+
 default: build
 
 linux: clean 

@@ -16,21 +16,15 @@ If you are reporting a bug, please include:
 * Any details about your local setup that might be helpful in troubleshooting.
 * Detailed steps to reproduce the bug.
 
-### Fix Bugs
+### Code Submissions
 
-Look through the GitHub issues for bugs. Anything tagged with "bug"
-is open to whoever wants to implement it.
+Any code submitted to enhance this project is great appreciated, but here's a check list to look at which will help ensure a successful code review.
 
-### Implement Features
-
-Look through the GitHub issues for features. Anything tagged with "feature"
-is open to whoever wants to implement it.
-
-### Write Documentation
-
-gdg could always use more documentation, whether as part of the
-official gdg docs, in docstrings, or even on the web in blog posts,
-articles, and such.
+1. Make sure the code works, compiles and so on.  
+2. We have a docker-compose file that will bring up an instance of grafana.  A variety of integration tests exists under the `integration_tests` folder.  Ideally each new entity we introduce should have tests that go with it.  Please make sure you have a test for you code submission.
+3. Configuration Changes: Please update the conf/importer-example.yml if you are introducing any new configs 
+4. Document the code, not every line needs docs, but explaining what the function does is helpful for those that follow.
+5. The generated docs live under `documentation/content/docs/` Please update the md files to reflect your changes to let others know how to use the tool.  `usage_guide.md` is likely the only file you'll need to update.
 
 ### Submit Feedback
 
