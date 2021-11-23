@@ -22,11 +22,11 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://netsage-project.github.io/gdg/docs/developer/</guid>
-      <description>Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
+      <description>Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
+1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain.</description>
+NOTE: CI/CD pipeline should do all this automatically.</description>
     </item>
     
     <item>

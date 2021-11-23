@@ -10,31 +10,31 @@
 <link rel="shortcut icon" href='https://netsage-project.github.io/gdg/favicons/favicon.ico'>
 <meta name="msapplication-config" content='https://netsage-project.github.io/gdg/favicons/browserconfig.xml'>
 <title>Developer Guide | Grafana Dash-n-Go</title><meta property="og:title" content="Developer Guide" />
-<meta property="og:description" content="Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
+<meta property="og:description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
+1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain." />
+NOTE: CI/CD pipeline should do all this automatically." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://netsage-project.github.io/gdg/docs/developer/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-07-29T11:12:13-07:00" />
+<meta property="article:modified_time" content="2021-11-23T09:07:42-05:00" />
 
 <meta itemprop="name" content="Developer Guide">
-<meta itemprop="description" content="Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
+<meta itemprop="description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
+1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain.">
-<meta itemprop="dateModified" content="2021-07-29T11:12:13-07:00" />
-<meta itemprop="wordCount" content="67">
+NOTE: CI/CD pipeline should do all this automatically.">
+<meta itemprop="dateModified" content="2021-11-23T09:07:42-05:00" />
+<meta itemprop="wordCount" content="110">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Developer Guide"/>
-<meta name="twitter:description" content="Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
+<meta name="twitter:description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
+1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain."/>
+NOTE: CI/CD pipeline should do all this automatically."/>
 
 
 <link rel="stylesheet" href="https://netsage-project.github.io/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -42,11 +42,11 @@ NOTE: mac binary are not signed so will likely complain."/>
 
 
 
-  <meta name="description" content="Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
+  <meta name="description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
+1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
-NOTE: mac binary are not signed so will likely complain.">
+NOTE: CI/CD pipeline should do all this automatically.">
 
 
 </head>
@@ -137,6 +137,7 @@ NOTE: mac binary are not signed so will likely complain.">
 </nav>
         <h3 class="section_link active"><a id="docs-developer-guide" href="https://netsage-project.github.io/gdg/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
   <ul>
+    <li><a href="#running-tests">Running Tests</a></li>
     <li><a href="#making-a-release">Making a release</a></li>
   </ul>
 </nav>
@@ -172,10 +173,17 @@ NOTE: mac binary are not signed so will likely complain.">
 </aside>
 
   <main class="content">
-    <h1>Developer Guide</h1><h2 id="making-a-release">Making a release</h2>
+    <h1>Developer Guide</h1><h2 id="running-tests">Running Tests</h2>
+<ol>
+<li>Bring up a grafana instance locally with default credentials of admin/admin.  <code>docker-compose up -d grafana</code></li>
+<li>Once the instance is up simply run <code>go test ./...</code> or <code>make test</code></li>
+</ol>
+<h2 id="making-a-release">Making a release</h2>
 <p>Install goreleaser.</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>brew install goreleaser/tap/goreleaser
 <span class="ln">2</span>brew reinstall goreleaser<span class="sb">`</span>
+</code></pre></div><p>Alternatively if you have a more recent version of Go.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>go install github.com/goreleaser/goreleaser@latest
 </code></pre></div><p>export your GITHUB_TOKEN.</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span><span class="nb">export</span> <span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&#34;secret&#34;</span>
 </code></pre></div><p>git tag v0.1.0
