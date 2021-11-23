@@ -2,6 +2,10 @@
 title: "Developer Guide"
 weight: 14
 ---
+## Running Tests
+1. Bring up a grafana instance locally with default credentials of admin/admin.  `docker-compose up -d grafana`
+2. Once the instance is up simply run `go test ./...` or `make test`
+
 ## Making a release
 
 Install goreleaser.
@@ -9,6 +13,12 @@ Install goreleaser.
 ```sh
 brew install goreleaser/tap/goreleaser
 brew reinstall goreleaser`
+```
+
+Alternatively if you have a more recent version of Go.
+
+```sh
+go install github.com/goreleaser/goreleaser@latest
 ```
 
 export your GITHUB_TOKEN.

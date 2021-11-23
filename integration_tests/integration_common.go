@@ -12,7 +12,7 @@ import (
 )
 
 func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
-	config.InitConfig("")
+	config.InitConfig("testing.yml")
 	conf := config.Config().ViperConfig()
 	assert.NotNil(t, conf)
 	conf.Set("context_name", "testing")
