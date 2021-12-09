@@ -44,19 +44,24 @@ func Config() *ConfigStruct {
 }
 
 //setMapValueEnvOverride recursively iterate over the keys and updates the map value accordingly
-func setMapValueEnvOverride(keys []string, mapValue map[string]interface{}, value interface{}) map[string]interface{} {
-	if len(keys) > 1  {
-		innerMapType := fmt.Sprintf("%T", mapValue[keys[0]])
-		if innerMapType  != "map[string]interface {}" {
-			log.Warn("cannot traverse full map path.  Unable to set ENV override. Returning ")
-			return mapValue
+func setMapValueEnvOverride(keys []string, mapValue map[string]interface{}, value interface{}) {
+	if len(keys) > 1 {
+		rawInnerObject, ok := mapValue[keys[0]]
+		if !ok {
+			log.Warn("No Inner map exists, cannot set Env Override")
+			return
 		}
-		setMapValueEnvOverride(keys[1:], mapValue[keys[0]].(map[string]interface{}), value)
+
+		innerMap, ok := rawInnerObject.(map[string]interface{})
+		if !ok {
+			log.Warn("cannot traverse full map path.  Unable to set ENV override. Returning ")
+			return
+		}
+		setMapValueEnvOverride(keys[1:], innerMap, value)
 	} else {
 		mapValue[keys[0]] = value
 	}
 
-	return mapValue
 }
 
 //applyEnvOverrides a bit of a hack to get around a viper limitation.
@@ -64,12 +69,12 @@ func setMapValueEnvOverride(keys []string, mapValue map[string]interface{}, valu
 // and reset missing values
 func applyEnvOverrides(contexts map[string]interface{}, mapName string, config *viper.Viper) map[string]interface{} {
 	keys := config.AllKeys()
-	filteredKeys := funk.Filter(keys, func(s string) bool { return strings.Contains(s, "contexts.testing")})
+	filteredKeys := funk.Filter(keys, func(s string) bool { return strings.Contains(s, "contexts.testing") })
 	keys = filteredKeys.([]string)
 	for _, key := range keys {
 		value := config.Get(key)
 		newKey := strings.Replace(key, fmt.Sprintf("%s.", mapName), "", 1)
-		contexts = setMapValueEnvOverride(strings.Split(newKey, "."), contexts, value)
+		setMapValueEnvOverride(strings.Split(newKey, "."), contexts, value)
 	}
 
 	return contexts
