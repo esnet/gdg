@@ -1,6 +1,7 @@
 package config_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/netsage-project/gdg/apphelpers"
@@ -20,6 +21,17 @@ func TestSetup(t *testing.T) {
 	validateGrafanaQA(t, grafanaConf)
 }
 
+func TestConfigEnv(t *testing.T) {
+	os.Setenv("GDG_CONTEXT_NAME", "testing")
+	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
+	config.InitConfig("testing.yml")
+	conf := config.Config().ViperConfig()
+	context := conf.GetString("context_name")
+	assert.Equal(t, context, "testing")
+	url := conf.GetString("contexts.testing.url")
+	assert.Equal(t, url, "www.google.com")
+
+}
 func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	assert.False(t, grafana.AdminEnabled)
 	assert.Equal(t, "https://staging.grafana.com", grafana.URL)

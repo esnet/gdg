@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+	"github.com/thoas/go-funk"
 	"path/filepath"
 	"strings"
 
@@ -41,6 +43,38 @@ func Config() *ConfigStruct {
 	return configData
 }
 
+//setMapValueEnvOverride recursively iterate over the keys and updates the map value accordingly
+func setMapValueEnvOverride(keys []string, mapValue map[string]interface{}, value interface{}) map[string]interface{} {
+	if len(keys) > 1  {
+		innerMapType := fmt.Sprintf("%T", mapValue[keys[0]])
+		if innerMapType  != "map[string]interface {}" {
+			log.Warn("cannot traverse full map path.  Unable to set ENV override. Returning ")
+			return mapValue
+		}
+		setMapValueEnvOverride(keys[1:], mapValue[keys[0]].(map[string]interface{}), value)
+	} else {
+		mapValue[keys[0]] = value
+	}
+
+	return mapValue
+}
+
+//applyEnvOverrides a bit of a hack to get around a viper limitation.
+// GetStringMap does not apply env overrides, so we have to traverse it again
+// and reset missing values
+func applyEnvOverrides(contexts map[string]interface{}, mapName string, config *viper.Viper) map[string]interface{} {
+	keys := config.AllKeys()
+	filteredKeys := funk.Filter(keys, func(s string) bool { return strings.Contains(s, "contexts.testing")})
+	keys = filteredKeys.([]string)
+	for _, key := range keys {
+		value := config.Get(key)
+		newKey := strings.Replace(key, fmt.Sprintf("%s.", mapName), "", 1)
+		contexts = setMapValueEnvOverride(strings.Split(newKey, "."), contexts, value)
+	}
+
+	return contexts
+}
+
 func InitConfig(override string) {
 	configData = &ConfigStruct{}
 	appName := "importer"
@@ -51,6 +85,8 @@ func InitConfig(override string) {
 
 	configData.defaultConfig = readViperConfig(appName)
 	contexts := configData.defaultConfig.GetStringMap("contexts")
+	contexts = applyEnvOverrides(contexts, "contexts", configData.defaultConfig)
+
 	contextMaps, err := yaml.Marshal(contexts)
 	if err != nil {
 		log.Fatal("Failed to decode context map, please check your configuration")
@@ -65,7 +101,9 @@ func InitConfig(override string) {
 //readViperConfig utilizes the viper library to load the config from the selected paths
 func readViperConfig(appName string) *viper.Viper {
 	v := viper.New()
-	v.SetEnvPrefix(appName)
+	v.SetEnvPrefix("GDG")
+	replacer := strings.NewReplacer(".", "__")
+	v.SetEnvKeyReplacer(replacer)
 	v.SetConfigName(appName)
 	v.AddConfigPath(".")
 	v.AddConfigPath("../conf")
