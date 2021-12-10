@@ -12,11 +12,13 @@ BUILD_DATE=$(shell date '+%Y-%m-%d-%H:%M:%S')
 IMAGE_NAME := "netsage-project/gdg"
 
 
+
+default: build
+
 authors:
 	echo "Authors\n=======\n" > AUTHORS.md
 	git log --raw | grep "^Author: " | sort | uniq | cut -d ' ' -f2- | sed 's/^/- /' >> AUTHORS.md
 
-default: build
 
 linux: clean 
 	env GOOS='linux' GOARCH='amd64' go build -ldflags "-X github.com/netsage-project/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/gdg/version.BuildDate=${BUILD_DATE}" -o bin/${BIN_NAME}_linux
