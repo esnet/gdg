@@ -12,11 +12,10 @@ var clearAlertNotifications = &cobra.Command{
 	Short: "delete all alert notification channels",
 	Long:  `clear all alert notification channels from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
-		filter := getAlertNotificationsGlobalFlags(cmd)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 
 		log.Infof("Clearing all alert notification channels for context: '%s'", apphelpers.GetContext())
-		deleted := client.DeleteAllAlertNotifications(filter)
+		deleted := client.DeleteAllAlertNotifications()
 		for _, item := range deleted {
 			tableObj.AppendRow(table.Row{"alertnotification", item})
 		}

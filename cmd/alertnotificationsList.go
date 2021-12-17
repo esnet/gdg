@@ -16,8 +16,7 @@ var listAlertNotifications = &cobra.Command{
 	Long:  `List all alert notification channels`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"id", "name", "slug", "type", "default", "url"})
-		filters := getAlertNotificationsGlobalFlags(cmd)
-		alertnotifications := client.ListAlertNotifications(filters)
+		alertnotifications := client.ListAlertNotifications()
 
 		log.Infof("Listing alert notifications channels for context: '%s'", apphelpers.GetContext())
 		if len(alertnotifications) == 0 {

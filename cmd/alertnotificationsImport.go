@@ -12,11 +12,10 @@ var importAlertNotifications = &cobra.Command{
 	Short: "import all alert notification channels",
 	Long:  `import all alert notification channels from grafana to local filesystem`,
 	Run: func(cmd *cobra.Command, args []string) {
-		filters := getAlertNotificationsGlobalFlags(cmd)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 
 		log.Infof("Importing alert notification channels for context: '%s'", apphelpers.GetContext())
-		savedFiles := client.ImportAlertNotifications(filters)
+		savedFiles := client.ImportAlertNotifications()
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"alertnotification", file})
 		}

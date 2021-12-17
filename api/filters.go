@@ -129,20 +129,3 @@ func (s DatasourceFilter) Validate(items map[string]string) bool {
 	return items[Name] == s.GetFilter(Name)
 
 }
-
-type AlertNotificationFilter struct {
-	BaseFilter
-}
-
-//GetFolders return empty list since Folders NA for alert notifications
-func (s AlertNotificationFilter) GetFolders() []string {
-	return []string{}
-}
-
-//Validate returns true if mapped values are valid
-func (s AlertNotificationFilter) Validate(items map[string]string) bool {
-	if s.GetFilter(Name) == "" {
-		return true
-	}
-	return items[Name] == s.GetFilter(Name)
-}

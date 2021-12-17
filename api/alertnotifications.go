@@ -3,10 +3,8 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/gosimple/slug"
@@ -15,25 +13,17 @@ import (
 )
 
 //ListAlertNotifications: list all currently configured notification channels
-func (s *DashNGoImpl) ListAlertNotifications(filter Filter) []sdk.AlertNotification {
+func (s *DashNGoImpl) ListAlertNotifications() []sdk.AlertNotification {
 	ctx := context.Background()
-	an, err := s.client.GetAllAlertNotifications(ctx)
+	ans, err := s.client.GetAllAlertNotifications(ctx)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
-	result := make([]sdk.AlertNotification, 0)
-	for _, item := range an {
-		if filter.Validate(map[string]string{Name: GetSlug(item.Name)}) {
-			result = append(result, item)
-		}
-	}
-
-	return result
+	return ans
 }
 
 //ImportAlertNotifications: will read in all the configured alert notification channels.
-//NOTE: sensitive fields cannot be retrieved and need to be set via configuration
-func (s *DashNGoImpl) ImportAlertNotifications(filter Filter) []string {
+func (s *DashNGoImpl) ImportAlertNotifications() []string {
 	var (
 		alertnotifications []sdk.AlertNotification
 		anPacked           []byte
@@ -41,15 +31,15 @@ func (s *DashNGoImpl) ImportAlertNotifications(filter Filter) []string {
 		err                error
 		dataFiles          []string
 	)
-	alertnotifications = s.ListAlertNotifications(filter)
+	alertnotifications = s.ListAlertNotifications()
 	for _, an := range alertnotifications {
 		if anPacked, err = json.Marshal(an); err != nil {
-			log.Errorf("%s for %s\n", err, an.Name)
+			log.Errorf("error marshalling %s to json with %s", an.Name, err)
 			continue
 		}
 		anPath := buildAlertNotificationPath(s.configRef, slug.Make(an.Name))
 		if err = ioutil.WriteFile(anPath, anPacked, os.FileMode(int(0666))); err != nil {
-			log.Errorf("%s for %s\n", err, meta.Slug)
+			log.Errorf("error writing %s to file with %s", meta.Slug, err)
 		} else {
 			dataFiles = append(dataFiles, anPath)
 		}
@@ -58,10 +48,10 @@ func (s *DashNGoImpl) ImportAlertNotifications(filter Filter) []string {
 }
 
 //Removes all current alert notification channels
-func (s *DashNGoImpl) DeleteAllAlertNotifications(filter Filter) []string {
+func (s *DashNGoImpl) DeleteAllAlertNotifications() []string {
 	ctx := context.Background()
 	var an []string = make([]string, 0)
-	items := s.ListAlertNotifications(filter)
+	items := s.ListAlertNotifications()
 	for _, item := range items {
 		s.client.DeleteAlertNotificationID(ctx, uint(item.ID))
 		an = append(an, item.Name)
@@ -69,52 +59,47 @@ func (s *DashNGoImpl) DeleteAllAlertNotifications(filter Filter) []string {
 	return an
 }
 
-//ExportDataSources: exports all alert notification channels to grafana.
-func (s *DashNGoImpl) ExportAlertNotifications(filter Filter) []string {
+//ExportAlertNotifications: exports all alert notification channels to grafana.
+//NOTE: credentials will be missing and need to be set manually after export
+//TODO implement configuring sensitive fields for different kinds of alert notification channels
+func (s *DashNGoImpl) ExportAlertNotifications() []string {
 	var alertnotifications []sdk.AlertNotification
-	var status int64
 	var exported []string = make([]string, 0)
 
 	ctx := context.Background()
-	filesInDir, err := ioutil.ReadDir(getResourcePath(s.configRef, "an"))
-	alertnotifications = s.ListAlertNotifications(filter)
+	dirPath := getResourcePath(s.configRef, "an")
+	filesInDir := findAllFiles(dirPath)
+	alertnotifications = s.ListAlertNotifications()
 
-	var rawAN []byte
-	if err != nil {
-		fmt.Fprint(os.Stderr, err)
-	}
+	var raw []byte
+	var err error
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(getResourcePath(s.configRef, "an"), file.Name())
-		if strings.HasSuffix(file.Name(), ".json") {
-			if rawAN, err = ioutil.ReadFile(fileLocation); err != nil {
-				fmt.Fprint(os.Stderr, err)
-				continue
-			}
-			var newAN sdk.AlertNotification
-
-			if err = json.Unmarshal(rawAN, &newAN); err != nil {
-				fmt.Fprint(os.Stderr, err)
+		if strings.HasSuffix(file, ".json") {
+			if raw, err = ioutil.ReadFile(file); err != nil {
+				log.Errorf("error reading file %s with %s", file, err)
 				continue
 			}
 
-			if !filter.Validate(map[string]string{Name: GetSlug(newAN.Name)}) {
+			var new sdk.AlertNotification
+			if err = json.Unmarshal(raw, &new); err != nil {
+				log.Errorf("error unmarshalling json with %s", err)
 				continue
 			}
 
-			for _, existingAN := range alertnotifications {
-				if existingAN.Name == newAN.Name {
-					if err = s.client.DeleteAlertNotificationID(ctx, uint(existingAN.ID)); err != nil {
-						log.Errorf("error on deleting datasource %s with %s", newAN.Name, err)
+			for _, existing := range alertnotifications {
+				if existing.Name == new.Name {
+					if err = s.client.DeleteAlertNotificationID(ctx, uint(existing.ID)); err != nil {
+						log.Errorf("error on deleting datasource %s with %s", new.Name, err)
 					}
 					break
 				}
 			}
-			if _, err = s.client.CreateAlertNotification(ctx, newAN); err != nil {
-				log.Errorf("error on importing datasource %s with %s", newAN.Name, err)
-			} else {
-				exported = append(exported, fileLocation)
-			}
 
+			if _, err = s.client.CreateAlertNotification(ctx, new); err != nil {
+				log.Errorf("error on importing datasource %s with %s", new.Name, err)
+				continue
+			}
+			exported = append(exported, file)
 		}
 	}
 	return exported

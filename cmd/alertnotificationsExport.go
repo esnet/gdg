@@ -12,12 +12,11 @@ var exportAlertNotifications = &cobra.Command{
 	Short: "export all alert notification channels",
 	Long:  `export all alert notification channels`,
 	Run: func(cmd *cobra.Command, args []string) {
-		filter := getAlertNotificationsGlobalFlags(cmd)
 		tableObj.AppendHeader(table.Row{"name", "id", "UID"})
 
 		log.Infof("Exporting alert notification channels for context: '%s'", apphelpers.GetContext())
-		client.ExportAlertNotifications(filter)
-		items := client.ListAlertNotifications(filter)
+		client.ExportAlertNotifications()
+		items := client.ListAlertNotifications()
 		for _, item := range items {
 			tableObj.AppendRow(table.Row{item.Name, item.ID, item.UID})
 		}
