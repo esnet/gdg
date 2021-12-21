@@ -20,6 +20,11 @@ type ApiService interface {
 	ImportDataSources(filter Filter) []string
 	ExportDataSources(filter Filter) []string
 	DeleteAllDataSources(filter Filter) []string
+	//AlertNotifications
+	ListAlertNotifications() []sdk.AlertNotification
+	ImportAlertNotifications() []string
+	ExportAlertNotifications() []string
+	DeleteAllAlertNotifications() []string
 	//Login
 	Login() *sdk.Client
 	AdminLogin() *sdk.Client
