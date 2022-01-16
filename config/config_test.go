@@ -30,6 +30,14 @@ func TestConfigEnv(t *testing.T) {
 	assert.Equal(t, context, "testing")
 	url := conf.GetString("contexts.testing.url")
 	assert.Equal(t, url, "www.google.com")
+	grafanaConfig := apphelpers.GetCtxDefaultGrafanaConfig()
+	assert.Equal(t, grafanaConfig.URL, url)
+	os.Setenv("GDG_CONTEXT_NAME", "production")
+	os.Setenv("GDG_CONTEXTS__PRODUCTION__URL", "grafana.com")
+	config.InitConfig("testing.yml")
+	conf = config.Config().ViperConfig()
+	url = conf.GetString("contexts.production.url")
+	assert.Equal(t, url, "grafana.com")
 
 }
 func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {

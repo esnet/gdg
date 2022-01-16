@@ -69,7 +69,8 @@ func setMapValueEnvOverride(keys []string, mapValue map[string]interface{}, valu
 // and reset missing values
 func applyEnvOverrides(contexts map[string]interface{}, mapName string, config *viper.Viper) map[string]interface{} {
 	keys := config.AllKeys()
-	filteredKeys := funk.Filter(keys, func(s string) bool { return strings.Contains(s, "contexts.testing") })
+	matchKey := fmt.Sprintf("contexts.%s", config.GetString("context_name"))
+	filteredKeys := funk.Filter(keys, func(s string) bool { return strings.Contains(s, matchKey) })
 	keys = filteredKeys.([]string)
 	for _, key := range keys {
 		value := config.Get(key)
