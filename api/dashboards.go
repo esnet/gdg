@@ -44,10 +44,22 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 		}
 	}
 	var boardsList []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
-	boardLinks, err := s.client.Search(ctx, sdk.SearchType(sdk.SearchTypeDashboard))
-	if err != nil {
-		log.Fatal("Failed to retrieve dashboards", err)
+	var boardLinks []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
+
+	var page uint = 1
+	var limit uint = 5000 // Upper bound of Grafana API call
+	for {
+		pageBoardLinks, err := s.client.Search(ctx, sdk.SearchType(sdk.SearchTypeDashboard), sdk.SearchLimit(limit), sdk.SearchPage(page))
+		if err != nil {
+			log.Fatal("Failed to retrieve dashboards", err)
+		}
+		boardLinks = append(boardLinks, pageBoardLinks...)
+		if len(pageBoardLinks) < int(limit) {
+			break
+		}
+		page += 1
 	}
+
 	//Fallback on defaults
 	if filters == nil {
 		filters = &DashboardFilter{}
