@@ -13,7 +13,7 @@ steps:
       - ./bin/gdg_linux --config conf/testing.yml version
 services:
   - name: grafana
-    image: grafana/grafana:7.5.6-ubuntu
+    image: grafana/grafana:8.3.6-ubuntu
 
 trigger:
   event:
