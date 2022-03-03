@@ -3,6 +3,7 @@ services:
     gdg:
         build:
             context: . 
+            dockerfile: docker/Dockerfile
         image: netsage/gdg:latest
         volumes:
           - ./conf:/opt/gdg/bin/conf

@@ -11,7 +11,7 @@ import (
 )
 
 func TestSetup(t *testing.T) {
-	config.InitConfig("testing.yml")
+	config.InitConfig("testing.yml", "")
 	conf := config.Config().ViperConfig()
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
@@ -24,7 +24,7 @@ func TestSetup(t *testing.T) {
 func TestConfigEnv(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
-	config.InitConfig("testing.yml")
+	config.InitConfig("testing.yml", "")
 	conf := config.Config().ViperConfig()
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "testing")
@@ -34,7 +34,7 @@ func TestConfigEnv(t *testing.T) {
 	assert.Equal(t, grafanaConfig.URL, url)
 	os.Setenv("GDG_CONTEXT_NAME", "production")
 	os.Setenv("GDG_CONTEXTS__PRODUCTION__URL", "grafana.com")
-	config.InitConfig("testing.yml")
+	config.InitConfig("testing.yml", "")
 	conf = config.Config().ViperConfig()
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")

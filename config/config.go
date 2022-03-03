@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"github.com/thoas/go-funk"
+	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -81,15 +83,30 @@ func applyEnvOverrides(contexts map[string]interface{}, mapName string, config *
 	return contexts
 }
 
-func InitConfig(override string) {
+func InitConfig(override, defaultConfig string) {
 	configData = &ConfigStruct{}
 	appName := "importer"
 	if override != "" {
 		appName = filepath.Base(override)
 		appName = strings.TrimSuffix(appName, filepath.Ext(appName))
 	}
+	var err error
 
-	configData.defaultConfig = readViperConfig(appName)
+	configData.defaultConfig, err = readViperConfig(appName)
+	if err != nil {
+		err := os.MkdirAll("conf", os.ModePerm)
+		err = ioutil.WriteFile("conf/importer.yml", []byte(defaultConfig), 0644)
+		if err != nil {
+			log.Panic("Could not persist default config locally")
+		}
+		appName = "importer"
+
+		configData.defaultConfig, err = readViperConfig(appName)
+		if err != nil {
+			log.Panic(err)
+		}
+
+	}
 	contexts := configData.defaultConfig.GetStringMap("contexts")
 	contexts = applyEnvOverrides(contexts, "contexts", configData.defaultConfig)
 
@@ -105,7 +122,7 @@ func InitConfig(override string) {
 }
 
 //readViperConfig utilizes the viper library to load the config from the selected paths
-func readViperConfig(appName string) *viper.Viper {
+func readViperConfig(appName string) (*viper.Viper, error) {
 	v := viper.New()
 	v.SetEnvPrefix("GDG")
 	replacer := strings.NewReplacer(".", "__")
@@ -121,9 +138,6 @@ func readViperConfig(appName string) *viper.Viper {
 	v.SetDefault("loglevel", "debug")
 
 	err := v.ReadInConfig()
-	if err != nil {
-		panic(err)
-	}
 
-	return v
+	return v, err
 }

@@ -1,0 +1,3 @@
+FROM scratch
+COPY gdg /
+ENTRYPOINT ["/gdg"]
