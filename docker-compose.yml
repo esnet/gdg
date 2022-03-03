@@ -7,9 +7,9 @@ services:
         image: netsage/gdg:latest
         volumes:
           - ./conf:/opt/gdg/bin/conf
-## Mainly used for integration tests (Coming soon)
+## Mainly used for integration tests 
     grafana:
-        image: grafana/grafana:7.5.6-ubuntu
+        image: grafana/grafana:8.3.6-ubuntu
         ports:
             - 3000:3000
 

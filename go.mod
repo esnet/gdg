@@ -30,3 +30,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 
 )
+
+replace github.com/grafana-tools/sdk => github.com/safaci2000/sdk v0.1.5
