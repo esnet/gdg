@@ -3,7 +3,7 @@ name: default
 
 steps:
   - name: build
-    image: golang:1.17
+    image: golang:1.18
     commands:
       - echo "Waiting for Grafana to come up"
       - timeout=$(($(date +%s) + 10))
@@ -29,7 +29,7 @@ steps:
     commands:
       - "git submodule update --init"
   - name: build
-    image: golang:1.16
+    image: golang:1.18
     commands:
       - "cd documentation"
       - "rm -fr hugo"
@@ -67,7 +67,7 @@ steps:
     when:
       event: tag
   - name: release
-    image: golang
+    image: golang:1.18
     environment:
       GITHUB_TOKEN:
         from_secret: gh_secret
