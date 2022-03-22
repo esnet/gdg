@@ -1,0 +1,3 @@
+FROM alpine
+COPY gdg /usr/bin/gdg
+ENTRYPOINT ["/usr/bin/gdg"]

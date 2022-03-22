@@ -11,7 +11,3 @@ Please find the pretty documentation [here](https://netsage-project.github.io/gd
 
 ![Quickstart screen](assets/quickstart.gif)
 
-## Notes:
-
-  - 2022/03/03: Temporarily switched SDK Reference to a local fork while waiting for a [pull request](https://github.com/grafana-tools/sdk/pull/195) to be accepted.
-
