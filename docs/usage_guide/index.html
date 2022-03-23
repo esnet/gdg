@@ -17,14 +17,14 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://netsage-project.github.io/gdg/docs/usage_guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-08-04T15:04:07-07:00" />
+<meta property="article:modified_time" content="2022-03-23T11:53:47-04:00" />
 
 <meta itemprop="name" content="Usage Guide">
 <meta itemprop="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
 ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
 1./bin/gdg ctx list -- Lists all known contexts 2.">
-<meta itemprop="dateModified" content="2021-08-04T15:04:07-07:00" />
+<meta itemprop="dateModified" content="2022-03-23T11:53:47-04:00" />
 <meta itemprop="wordCount" content="414">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Usage Guide"/>
@@ -81,7 +81,7 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 		</li>
 		
 		<li class="nav-item nav_repo">
-			<a class="nav-link" href="https://github.com/netsage-project/gdg" target="_blank">
+			<a class="nav-link" href="https://github.com/esnet/gdg" target="_blank">
 				
 					<picture data-lit="https://netsage-project.github.io/gdg/images/GitHubMarkLight.svg" data-dark="https://netsage-project.github.io/gdg/images/GitHubMarkDark.svg">
 						
@@ -188,7 +188,7 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 <span class="ln">3</span>./bin/gdg dash <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
 <span class="ln">4</span>./bin/gdg dash clear -- Deletes all dashboards
 </code></pre></div><h4 id="datasources">DataSources</h4>
-<p>DataSources credentials are keyed by the name of the DataSource.  See see <a href="https://github.com/netsage-project/gdg/blob/master/conf/importer-example.yml">config example</a>.  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
+<p>DataSources credentials are keyed by the name of the DataSource.  See see <a href="https://github.com/esnet/gdg/blob/master/conf/importer-example.yml">config example</a>.  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
 <p>All commands can use <code>datasources</code> or <code>ds</code> to manage datasources</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg ds list -- Lists all current datasources
