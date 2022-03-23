@@ -1,0 +1,94 @@
+name: Go
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  lint:
+    strategy:
+      matrix:
+        go: [1.18, 1.17,1.16]
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Run linters
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.41
+
+  test:
+    strategy:
+      matrix:
+        go: [1.18, 1.17,1.16]
+        grafana: [latest, 8.3.6, 7.5.15, 6.4.5]
+
+    env:
+      GRAFANA_INTEGRATION: 1
+
+    services:
+      grafana:
+        # Docker Hub image
+        image: "grafana/grafana:${{ matrix.grafana }}"
+        ports:
+          - 3000:3000
+        options: >-
+          -e GF_AUTH_ANONYMOUS_ENABLED=true
+      chromedp:
+        image: "chromedp/headless-shell:91.0.4472.69"
+        ports:
+          - 9222:9222
+        options: >-
+          --shm-size 2G
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      # Calculate coverage with the newest Go version.
+      - name: Calc coverage
+        if: "${{ matrix.go == '1.16' && matrix.grafana == '6.7.1' }}"
+        run: |
+          go test -v -covermode=atomic -coverprofile=coverage.out ./...
+      - name: Test
+        if: "${{ matrix.go != '1.16' && matrix.grafana != '6.7.1' }}"
+        run: go test -v ./...
+      - name: Convert coverage.out to coverage.lcov
+        if: "${{ matrix.go == '1.16' && matrix.grafana == '6.7.1' }}"
+        uses: jandelgado/gcov2lcov-action@v1.0.6
+     #- name: Coveralls
+     #  if: "${{ matrix.go == '1.16' && matrix.grafana == '6.7.1' }}"
+     #  uses: coverallsapp/github-action@v1.1.2
+     #  with:
+     #    github-token: ${{ secrets.github_token }}
+     #    path-to-lcov: coverage.lcov
