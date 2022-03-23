@@ -35,7 +35,7 @@ steps:
       - "rm -fr hugo"
       - "wget --continue https://github.com/gohugoio/hugo/releases/download/v0.84.0/hugo_extended_0.84.0_Linux-64bit.tar.gz"
       - "tar xvfz hugo_extended_0.84.0_Linux-64bit.tar.gz"
-      - "./hugo --destination public --baseURL https://esnet.github.io/gdg/"
+      - "./hugo --destination public --baseURL https://software.es.net/gdg/"
       - "ls -lh public"
   - name: publish
     image: plugins/gh-pages
