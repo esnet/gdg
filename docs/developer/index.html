@@ -2,63 +2,63 @@
 <html lang="en" class="dark">
 <head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.84.0" />
-<link rel="apple-touch-icon" sizes="180x180" href='https://software.es.net/gdg/favicons/apple-touch-icon.png'>
-<link rel="icon" type="image/png" sizes="32x32" href='https://software.es.net/gdg/favicons/favicon-32x32.png'>
-<link rel="icon" type="image/png" sizes="16x16" href='https://software.es.net/gdg/favicons/favicon-16x16.png'>
-<link rel="manifest" href='https://software.es.net/gdg/favicons/site.webmanifest'>
-<link rel="mask-icon" href='https://software.es.net/gdg/favicons/safari-pinned-tab.svg'  color="#004750">
-<link rel="shortcut icon" href='https://software.es.net/gdg/favicons/favicon.ico'>
-<meta name="msapplication-config" content='https://software.es.net/gdg/favicons/browserconfig.xml'>
+<link rel="apple-touch-icon" sizes="180x180" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon-32x32.png'>
+<link rel="icon" type="image/png" sizes="16x16" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon-16x16.png'>
+<link rel="manifest" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/site.webmanifest'>
+<link rel="mask-icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/safari-pinned-tab.svg'  color="#004750">
+<link rel="shortcut icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon.ico'>
+<meta name="msapplication-config" content='https://netsage-project.github.io/grafana-dashboard-manager/favicons/browserconfig.xml'>
 <title>Developer Guide | Grafana Dash-n-Go</title><meta property="og:title" content="Developer Guide" />
-<meta property="og:description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
+<meta property="og:description" content="Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically." />
+NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
+NOTE: mac binary are not signed so will likely complain." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://software.es.net/gdg/docs/developer/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-11-23T13:39:54-05:00" />
+<meta property="article:modified_time" content="2021-07-29T11:12:13-07:00" />
 
 <meta itemprop="name" content="Developer Guide">
-<meta itemprop="description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
+<meta itemprop="description" content="Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically.">
-<meta itemprop="dateModified" content="2021-11-23T13:39:54-05:00" />
-<meta itemprop="wordCount" content="110">
+NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
+NOTE: mac binary are not signed so will likely complain.">
+<meta itemprop="dateModified" content="2021-07-29T11:12:13-07:00" />
+<meta itemprop="wordCount" content="67">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Developer Guide"/>
-<meta name="twitter:description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
+<meta name="twitter:description" content="Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically."/>
+NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
+NOTE: mac binary are not signed so will likely complain."/>
 
 
-<link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
+<link rel="stylesheet" href="https://netsage-project.github.io/grafana-dashboard-manager/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
 
 
 
 
-  <meta name="description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
+  <meta name="description" content="Making a release Install goreleaser.
+1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` export your GITHUB_TOKEN.
 1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically.">
+NOTE: CI/CD pipeline should do all this automatically. make release-snapshot is used to test the release build process. Once a build is tagged all artifacts should be built automatically and attached to the github release page.
+NOTE: mac binary are not signed so will likely complain.">
 
 
 </head>
 <body class="page-page" id="pagetop">
   <header class="nav_header">
 <nav class="wrap nav menu">
-	<a href="https://software.es.net/gdg/" class="nav_brand">
-		<picture data-lit="https://software.es.net/gdg/images/compose.svg" data-dark="https://software.es.net/gdg/images/compose-light.svg">
+	<a href="https://netsage-project.github.io/grafana-dashboard-manager/" class="nav_brand">
+		<picture data-lit="https://netsage-project.github.io/grafana-dashboard-manager/images/compose.svg" data-dark="https://netsage-project.github.io/grafana-dashboard-manager/images/compose-light.svg">
 			
-			<source srcset = 'https://software.es.net/gdg/images/compose-light.svg' media="(prefers-color-scheme: dark)">
+			<source srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/compose-light.svg' media="(prefers-color-scheme: dark)">
 			
-			<img srcset = 'https://software.es.net/gdg/images/compose.svg' alt = 'Grafana Dash-n-Go Logo'>
+			<img srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/compose.svg' alt = 'Grafana Dash-n-Go Logo'>
 		</picture>
 		<label class="nav_toggle toggle" title='Site Menu' role="button">
 			<svg class="icon icon_harmburger">
@@ -81,17 +81,17 @@ NOTE: CI/CD pipeline should do all this automatically.">
 
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="https://software.es.net/gdg/docs/"><span>Docs</span></a>
+			<a class="nav-link" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/"><span>Docs</span></a>
 		</li>
 		
 		<li class="nav-item nav_repo">
-			<a class="nav-link" href="https://github.com/esnet/gdg" target="_blank">
+			<a class="nav-link" href="https://github.com/netsage-project/grafana-dashboard-manager" target="_blank">
 				
-					<picture data-lit="https://software.es.net/gdg/images/GitHubMarkLight.svg" data-dark="https://software.es.net/gdg/images/GitHubMarkDark.svg">
+					<picture data-lit="https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkLight.svg" data-dark="https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkDark.svg">
 						
-							<source srcset = 'https://software.es.net/gdg/images/GitHubMarkDark.svg' media="(prefers-color-scheme: dark)">
+							<source srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkDark.svg' media="(prefers-color-scheme: dark)">
 						
-						<img srcset = 'https://software.es.net/gdg/images/GitHubMarkLight.svg' alt = 'GitHub Repo'>
+						<img srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkLight.svg' alt = 'GitHub Repo'>
 					</picture>
 				
 			</a>
@@ -112,48 +112,25 @@ NOTE: CI/CD pipeline should do all this automatically.">
 </svg></label>
   </div>
   <section class="section aside_inner">
-    <h2 class="section_title"><a  href="https://software.es.net/gdg/docs/" class="group">GDG Docs</a></h2>
+    <h2 class="section_title"><a  href="https://netsage-project.github.io/grafana-dashboard-manager/docs/" class="group">GDG Docs</a></h2>
       <section class="" id="docs-gdg-docs">
-        <h3 class="section_link"><a id="docs-configuration" href="https://software.es.net/gdg/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-configuration" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#getting-started">Getting started</a>
       <ul>
-        <li><a href="#authentication">Authentication</a>
-          <ul>
-            <li><a href="#authentication-token">Authentication Token</a></li>
-            <li><a href="#username--password">Username / Password</a></li>
-          </ul>
-        </li>
-        <li><a href="#datasource-credentials">DataSource Credentials.</a>
-          <ul>
-            <li><a href="#notes">Notes</a></li>
-          </ul>
-        </li>
+        <li><a href="#authentication">Authentication</a></li>
         <li><a href="#global-flags">Global Flags</a></li>
-        <li><a href="#environment-overrides">Environment Overrides</a></li>
         <li><a href="#buildingrunning-the-app">Building/Running the app</a></li>
       </ul>
     </li>
   </ul>
 </nav>
-        <h3 class="section_link active"><a id="docs-developer-guide" href="https://software.es.net/gdg/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link active"><a id="docs-developer-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
   <ul>
-    <li><a href="#running-tests">Running Tests</a></li>
     <li><a href="#making-a-release">Making a release</a></li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-example-usage" href="https://software.es.net/gdg/docs/examples/">Example Usage</a></h3><nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#setup-new-configuration">Setup new configuration</a></li>
-        <li><a href="#import--download-dashboards">Import / Download Dashboards</a></li>
-        <li><a href="#export--upload-dashboards">Export / Upload Dashboards</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-        <h3 class="section_link"><a id="docs-usage-guide" href="https://software.es.net/gdg/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-usage-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -174,17 +151,10 @@ NOTE: CI/CD pipeline should do all this automatically.">
 </aside>
 
   <main class="content">
-    <h1>Developer Guide</h1><h2 id="running-tests">Running Tests</h2>
-<ol>
-<li>Bring up a grafana instance locally with default credentials of admin/admin.  <code>docker-compose up -d grafana</code></li>
-<li>Once the instance is up simply run <code>go test ./...</code> or <code>make test</code></li>
-</ol>
-<h2 id="making-a-release">Making a release</h2>
+    <h1>Developer Guide</h1><h2 id="making-a-release">Making a release</h2>
 <p>Install goreleaser.</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>brew install goreleaser/tap/goreleaser
 <span class="ln">2</span>brew reinstall goreleaser<span class="sb">`</span>
-</code></pre></div><p>Alternatively if you have a more recent version of Go.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>go install github.com/goreleaser/goreleaser@latest
 </code></pre></div><p>export your GITHUB_TOKEN.</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span><span class="nb">export</span> <span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&#34;secret&#34;</span>
 </code></pre></div><p>git tag v0.1.0
@@ -196,7 +166,7 @@ goreleaser release</p>
   
   <div class="pager_item prev">
     
-    <a href="https://software.es.net/gdg/docs/configuration/" class="pager_link button" title="Configuration" rel="prev">
+    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/" class="pager_link button" title="Configuration" rel="prev">
       <span class="pager_label">Configuration</span>
     </a>
   </div>
@@ -205,8 +175,8 @@ goreleaser release</p>
   
   <div class="pager_item next">
     
-    <a href="https://software.es.net/gdg/docs/examples/" class="pager_link button" title="Example Usage" rel="next">
-      <span class="pager_label">Example Usage</span>
+    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/" class="pager_link button" title="Usage Guide" rel="next">
+      <span class="pager_label">Usage Guide</span>
     </a>
   </div>
   
@@ -290,6 +260,6 @@ goreleaser release</p>
   </symbol>
 </svg>
 
-<script src="https://software.es.net/gdg/js/bundle.min.f8370a80f253ed759aa683261117b124270c88ff697bdf663bf1fd71b925a2971e1c837e0bbb7d62474d1cb0ac38c283dadffafde9527d8d4b5b9b25dc38fde4.js"></script>
+<script src="https://netsage-project.github.io/grafana-dashboard-manager/js/bundle.min.3d80d27c63bd8186c1bcfdb1a56981a6956ec7fbded2f9de0131e1606d7c591b7d9e01d6dfb11d96dab426f1fcbae41de3f5e39e165ac5968002767d4335aed2.js"></script>
 </body>
 </html>
