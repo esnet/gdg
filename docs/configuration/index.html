@@ -2,59 +2,55 @@
 <html lang="en" class="dark">
 <head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.84.0" />
-<link rel="apple-touch-icon" sizes="180x180" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/apple-touch-icon.png'>
-<link rel="icon" type="image/png" sizes="32x32" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon-32x32.png'>
-<link rel="icon" type="image/png" sizes="16x16" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon-16x16.png'>
-<link rel="manifest" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/site.webmanifest'>
-<link rel="mask-icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/safari-pinned-tab.svg'  color="#004750">
-<link rel="shortcut icon" href='https://netsage-project.github.io/grafana-dashboard-manager/favicons/favicon.ico'>
-<meta name="msapplication-config" content='https://netsage-project.github.io/grafana-dashboard-manager/favicons/browserconfig.xml'>
+<link rel="apple-touch-icon" sizes="180x180" href='https://software.es.net/gdg/favicons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='https://software.es.net/gdg/favicons/favicon-32x32.png'>
+<link rel="icon" type="image/png" sizes="16x16" href='https://software.es.net/gdg/favicons/favicon-16x16.png'>
+<link rel="manifest" href='https://software.es.net/gdg/favicons/site.webmanifest'>
+<link rel="mask-icon" href='https://software.es.net/gdg/favicons/safari-pinned-tab.svg'  color="#004750">
+<link rel="shortcut icon" href='https://software.es.net/gdg/favicons/favicon.ico'>
+<meta name="msapplication-config" content='https://software.es.net/gdg/favicons/browserconfig.xml'>
 <title>Configuration | Grafana Dash-n-Go</title><meta property="og:title" content="Configuration" />
 <meta property="og:description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
-Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
-Watched folders under grafana is a white list of folders that are being managed by the tool." />
+Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://software.es.net/gdg/docs/configuration/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-07-29T11:12:13-07:00" />
+<meta property="article:modified_time" content="2022-03-23T12:00:58-04:00" />
 
 <meta itemprop="name" content="Configuration">
 <meta itemprop="description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
-Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
-Watched folders under grafana is a white list of folders that are being managed by the tool.">
-<meta itemprop="dateModified" content="2021-07-29T11:12:13-07:00" />
-<meta itemprop="wordCount" content="134">
+Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg.">
+<meta itemprop="dateModified" content="2022-03-23T12:00:58-04:00" />
+<meta itemprop="wordCount" content="464">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configuration"/>
 <meta name="twitter:description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
-Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
-Watched folders under grafana is a white list of folders that are being managed by the tool."/>
+Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg."/>
 
 
-<link rel="stylesheet" href="https://netsage-project.github.io/grafana-dashboard-manager/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
+<link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
 
 
 
 
   <meta name="description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
-Authentication You can use either an Auth Token or username/password credentials. If you configure both then the Token is given priority.
-Watched folders under grafana is a white list of folders that are being managed by the tool.">
+Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&amp;gt; Configuration =&amp;gt; API Keys. You can then use it in your configuration file (eg.">
 
 
 </head>
 <body class="page-page" id="pagetop">
   <header class="nav_header">
 <nav class="wrap nav menu">
-	<a href="https://netsage-project.github.io/grafana-dashboard-manager/" class="nav_brand">
-		<picture data-lit="https://netsage-project.github.io/grafana-dashboard-manager/images/compose.svg" data-dark="https://netsage-project.github.io/grafana-dashboard-manager/images/compose-light.svg">
+	<a href="https://software.es.net/gdg/" class="nav_brand">
+		<picture data-lit="https://software.es.net/gdg/images/compose.svg" data-dark="https://software.es.net/gdg/images/compose-light.svg">
 			
-			<source srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/compose-light.svg' media="(prefers-color-scheme: dark)">
+			<source srcset = 'https://software.es.net/gdg/images/compose-light.svg' media="(prefers-color-scheme: dark)">
 			
-			<img srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/compose.svg' alt = 'Grafana Dash-n-Go Logo'>
+			<img srcset = 'https://software.es.net/gdg/images/compose.svg' alt = 'Grafana Dash-n-Go Logo'>
 		</picture>
 		<label class="nav_toggle toggle" title='Site Menu' role="button">
 			<svg class="icon icon_harmburger">
@@ -77,17 +73,17 @@ Watched folders under grafana is a white list of folders that are being managed 
 
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/"><span>Docs</span></a>
+			<a class="nav-link" href="https://software.es.net/gdg/docs/"><span>Docs</span></a>
 		</li>
 		
 		<li class="nav-item nav_repo">
-			<a class="nav-link" href="https://github.com/netsage-project/grafana-dashboard-manager" target="_blank">
+			<a class="nav-link" href="https://github.com/esnet/gdg" target="_blank">
 				
-					<picture data-lit="https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkLight.svg" data-dark="https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkDark.svg">
+					<picture data-lit="https://software.es.net/gdg/images/GitHubMarkLight.svg" data-dark="https://software.es.net/gdg/images/GitHubMarkDark.svg">
 						
-							<source srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkDark.svg' media="(prefers-color-scheme: dark)">
+							<source srcset = 'https://software.es.net/gdg/images/GitHubMarkDark.svg' media="(prefers-color-scheme: dark)">
 						
-						<img srcset = 'https://netsage-project.github.io/grafana-dashboard-manager/images/GitHubMarkLight.svg' alt = 'GitHub Repo'>
+						<img srcset = 'https://software.es.net/gdg/images/GitHubMarkLight.svg' alt = 'GitHub Repo'>
 					</picture>
 				
 			</a>
@@ -108,25 +104,48 @@ Watched folders under grafana is a white list of folders that are being managed 
 </svg></label>
   </div>
   <section class="section aside_inner">
-    <h2 class="section_title"><a  href="https://netsage-project.github.io/grafana-dashboard-manager/docs/" class="group">GDG Docs</a></h2>
+    <h2 class="section_title"><a  href="https://software.es.net/gdg/docs/" class="group">GDG Docs</a></h2>
       <section class="" id="docs-gdg-docs">
-        <h3 class="section_link active"><a id="docs-configuration" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
+        <h3 class="section_link active"><a id="docs-configuration" href="https://software.es.net/gdg/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#getting-started">Getting started</a>
       <ul>
-        <li><a href="#authentication">Authentication</a></li>
+        <li><a href="#authentication">Authentication</a>
+          <ul>
+            <li><a href="#authentication-token">Authentication Token</a></li>
+            <li><a href="#username--password">Username / Password</a></li>
+          </ul>
+        </li>
+        <li><a href="#datasource-credentials">DataSource Credentials.</a>
+          <ul>
+            <li><a href="#notes">Notes</a></li>
+          </ul>
+        </li>
         <li><a href="#global-flags">Global Flags</a></li>
+        <li><a href="#environment-overrides">Environment Overrides</a></li>
         <li><a href="#buildingrunning-the-app">Building/Running the app</a></li>
       </ul>
     </li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-developer-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-developer-guide" href="https://software.es.net/gdg/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
   <ul>
+    <li><a href="#running-tests">Running Tests</a></li>
     <li><a href="#making-a-release">Making a release</a></li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-usage-guide" href="https://netsage-project.github.io/grafana-dashboard-manager/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-example-usage" href="https://software.es.net/gdg/docs/examples/">Example Usage</a></h3><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#setup-new-configuration">Setup new configuration</a></li>
+        <li><a href="#import--download-dashboards">Import / Download Dashboards</a></li>
+        <li><a href="#export--upload-dashboards">Export / Upload Dashboards</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        <h3 class="section_link"><a id="docs-usage-guide" href="https://software.es.net/gdg/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -149,18 +168,79 @@ Watched folders under grafana is a white list of folders that are being managed 
   <main class="content">
     <h1>Configuration</h1><h2 id="getting-started">Getting started</h2>
 <p>This project requires Go to be installed. On OS X with Homebrew you can just run <code>brew install go</code>.</p>
-<p>make a copy of <a href="https://github.com/netsage-project/grafana-dashboard-manager/blob/master/conf/importer-example.yml">conf/importer-example.yml</a> and name it <code>conf/importer.yml</code> You'll need GRAFANA ADMINISTRATIVE privileges to proceed.</p>
+<p>make a copy of <a href="https://github.com/esnet/gdg/blob/master/conf/importer-example.yml">conf/importer-example.yml</a> and name it <code>conf/importer.yml</code> You'll need GRAFANA ADMINISTRATIVE privileges to proceed.</p>
 <h3 id="authentication">Authentication</h3>
-<p>You can use either an Auth Token or username/password credentials.  If you configure both then the Token is given priority.</p>
+<h4 id="authentication-token">Authentication Token</h4>
+<p>You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg. <code>importer.yml</code>).</p>
+<p>WARNING: gdg is currently using viper to read in the config.  Since viper makes all keys lowercase, we also have the same limitation.  Camel case will be read in but be aware that a section named fooBar == Foobar == foobar etc.</p>
+<pre><code>context_name: main
+
+contexts:
+  main:
+    url: https://grafana.example.org
+    token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot;
+    output_path: &quot;myFolder&quot;
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    watched:
+      - Example
+    datasources:
+      default:
+        user: admin
+        password: secret
+        url_regex:    ## set to pattern to match as well as the name.
+      misc:
+        user: admin
+        password: secret
+        url_regex: .*esproxy2*      
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+</code></pre><h4 id="username--password">Username / Password</h4>
+<p>You can also use username/password credentials of an admin user to authenticate with the Grafana API. You can specify them in your configuration file (eg. <code>importer.yml</code>).</p>
+<pre><code>context_name: main
+
+contexts:
+  main:
+    url: https://grafana.example.org
+    user_name: &lt;your username&gt;
+    password: &lt;your password&gt;
+    output_path: &quot;myFolder&quot;
+    watched:
+      - Example
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+</code></pre><h3 id="datasource-credentials">DataSource Credentials.</h3>
+<p>If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:</p>
+<ol>
+<li>Match of DS credentials based on DS name.</li>
+<li>Match URL regex for the DS if regex specified.</li>
+<li>Use Default Credentials if the above two both failed.</li>
+</ol>
+<h4 id="notes">Notes</h4>
+<p>If you configure both, Auth Token and Username/Password, then the Token is given priority.</p>
 <p>Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only &quot;General&quot; is managed.</p>
 <p>env.output defines where the files will be saved and imported from.</p>
 <h3 id="global-flags">Global Flags</h3>
 <p><code>globals.debug</code> when set will print a more verbose output (Development In Progress)
 <code>globals.ignore_ssl_errors</code> when set will disregard any SSL errors and proceed as expected</p>
+<h3 id="environment-overrides">Environment Overrides</h3>
+<p>If you wish to override certain value via the environment, like credentials and such you can do so.</p>
+<p>The pattern for GDG's is as follows:  &quot;GDG_SECTION__SECTION__keyname&quot;</p>
+<p>For example if I want to set the context name to a different value I can use:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span><span class="nv">GDG_CONTEXT_NAME</span><span class="o">=</span><span class="s2">&#34;testing&#34;</span> gdg ctx show <span class="c1">## Which will override the value from the context file.</span>
+<span class="ln">2</span><span class="nv">GDG_CONTEXTS__TESTING__URL</span><span class="o">=</span><span class="s2">&#34;www.google.com&#34;</span> Will override the URL with the one provided.
+</code></pre></div>
+<div class="tip tip_warning">
+  <strong>NOTE:</strong> Complex data type are not supported, so if the value is an array it can't be currently set.
+</div>
+
 <h3 id="buildingrunning-the-app">Building/Running the app</h3>
 <p>Running it then should be as simple as:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="ln">1</span>$ make build
-<span class="ln">2</span>$ ./bin/grafana-dashboard-manager
+<span class="ln">2</span>$ ./bin/gdg
 </code></pre></div>
     <div class="pager pager_lean">
   
@@ -168,7 +248,7 @@ Watched folders under grafana is a white list of folders that are being managed 
   
   <div class="pager_item next">
     
-    <a href="https://netsage-project.github.io/grafana-dashboard-manager/docs/developer/" class="pager_link button" title="Developer Guide" rel="next">
+    <a href="https://software.es.net/gdg/docs/developer/" class="pager_link button" title="Developer Guide" rel="next">
       <span class="pager_label">Developer Guide</span>
     </a>
   </div>
@@ -253,6 +333,6 @@ Watched folders under grafana is a white list of folders that are being managed 
   </symbol>
 </svg>
 
-<script src="https://netsage-project.github.io/grafana-dashboard-manager/js/bundle.min.3d80d27c63bd8186c1bcfdb1a56981a6956ec7fbded2f9de0131e1606d7c591b7d9e01d6dfb11d96dab426f1fcbae41de3f5e39e165ac5968002767d4335aed2.js"></script>
+<script src="https://software.es.net/gdg/js/bundle.min.f8370a80f253ed759aa683261117b124270c88ff697bdf663bf1fd71b925a2971e1c837e0bbb7d62474d1cb0ac38c283dadffafde9527d8d4b5b9b25dc38fde4.js"></script>
 </body>
 </html>

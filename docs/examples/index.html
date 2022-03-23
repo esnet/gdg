@@ -9,29 +9,26 @@
 <link rel="mask-icon" href='https://software.es.net/gdg/favicons/safari-pinned-tab.svg'  color="#004750">
 <link rel="shortcut icon" href='https://software.es.net/gdg/favicons/favicon.ico'>
 <meta name="msapplication-config" content='https://software.es.net/gdg/favicons/browserconfig.xml'>
-<title>Usage Guide | Grafana Dash-n-Go</title><meta property="og:title" content="Usage Guide" />
-<meta property="og:description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
-1./bin/gdg ctx list -- Lists all known contexts 2." />
+<title>Example Usage | Grafana Dash-n-Go</title><meta property="og:title" content="Example Usage" />
+<meta property="og:description" content="Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://software.es.net/gdg/docs/usage_guide/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://software.es.net/gdg/docs/examples/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-03-23T12:00:58-04:00" />
+<meta property="article:modified_time" content="2021-08-26T17:51:02&#43;02:00" />
 
-<meta itemprop="name" content="Usage Guide">
-<meta itemprop="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
-1./bin/gdg ctx list -- Lists all known contexts 2.">
-<meta itemprop="dateModified" content="2022-03-23T12:00:58-04:00" />
-<meta itemprop="wordCount" content="414">
+<meta itemprop="name" content="Example Usage">
+<meta itemprop="description" content="Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
+<meta itemprop="dateModified" content="2021-08-26T17:51:02&#43;02:00" />
+<meta itemprop="wordCount" content="488">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Usage Guide"/>
-<meta name="twitter:description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
-1./bin/gdg ctx list -- Lists all known contexts 2."/>
+<meta name="twitter:title" content="Example Usage"/>
+<meta name="twitter:description" content="Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:"/>
 
 
 <link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -39,10 +36,9 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 
 
 
-  <meta name="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
-1./bin/gdg ctx list -- Lists all known contexts 2.">
+  <meta name="description" content="Setup new configuration You can create new context configuration using an interactive setup.
+$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
+context_name: all contexts: all: url: https://grafana.example.org token: &amp;quot;&amp;lt;&amp;lt;Grafana API Token&amp;gt;&amp;gt;&amp;quot; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
 
 
 </head>
@@ -138,7 +134,7 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
     <li><a href="#making-a-release">Making a release</a></li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-example-usage" href="https://software.es.net/gdg/docs/examples/">Example Usage</a></h3><nav id="TableOfContents">
+        <h3 class="section_link active"><a id="docs-example-usage" href="https://software.es.net/gdg/docs/examples/">Example Usage</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -149,7 +145,7 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
     </li>
   </ul>
 </nav>
-        <h3 class="section_link active"><a id="docs-usage-guide" href="https://software.es.net/gdg/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-usage-guide" href="https://software.es.net/gdg/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -170,45 +166,87 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 </aside>
 
   <main class="content">
-    <h1>Usage Guide</h1><p>Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.</p>
-<h3 id="contexts">Contexts</h3>
-<p>Starting with version 0.1.4 contexts are now supported.  Your config can contain one or multiple contexts which are essentially a grafana server configuration.</p>
-<p>ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg ctx list -- Lists all known contexts
-<span class="ln">2</span>./bin/gdg ctx show qa -- shows the configuration <span class="k">for</span> the selected context
-<span class="ln">3</span>./bin/gdg ctx <span class="nb">set</span> production -- updates the active config and sets it to the request value.
-<span class="ln">4</span>./bin/gdg ctx delete qa -- Deletes the QA context
-<span class="ln">5</span>./bin/gdg ctx cp qa staging -- copies the qa context to staging and sets it as active
-<span class="ln">6</span>./bin/gdg ctx clear -- Will delete all active contexts leaving only a single example entry
-</code></pre></div><h4 id="dashboards">Dashboards</h4>
-<p>Dashboards are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
-<p>All commands can use <code>dashboards</code> or <code>dash</code> to manage dashboards</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg dash list -- Lists all current dashboards
-<span class="ln">2</span>./bin/gdg dash import -- Import all dashboards from grafana to <span class="nb">local</span> file system
-<span class="ln">3</span>./bin/gdg dash <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
-<span class="ln">4</span>./bin/gdg dash clear -- Deletes all dashboards
-</code></pre></div><h4 id="datasources">DataSources</h4>
-<p>DataSources credentials are keyed by the name of the DataSource.  See see <a href="https://github.com/esnet/gdg/blob/master/conf/importer-example.yml">config example</a>.  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
-Datasources are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
-<p>All commands can use <code>datasources</code> or <code>ds</code> to manage datasources</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg ds list -- Lists all current datasources
-<span class="ln">2</span>./bin/gdg ds import -- Import all datasources from grafana to <span class="nb">local</span> file system
-<span class="ln">3</span>./bin/gdg ds <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
-<span class="ln">4</span>./bin/gdg ds clear -- Deletes all datasources
-</code></pre></div><h4 id="organizations">Organizations</h4>
-<p>Command can use <code>organizations</code> or <code>org</code> to manage organizations.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg org list -- Lists all organizations
-</code></pre></div><h3 id="users">Users</h3>
-<p>Only supported with basic auth.  Users is the only one where basic auth is given priority.  API Auth is not supported, so will try to use basic auth if configured otherwise will warn the user and exit.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="ln">1</span>./bin/gdg users list -- Lists all known users
-<span class="ln">2</span>./bin/gdg users promote -u user@foobar.com -- promotes the user to a grafana admin
-</code></pre></div>
+    <h1>Example Usage</h1><h3 id="setup-new-configuration">Setup new configuration</h3>
+<p>You can create new context configuration using an interactive setup.</p>
+<pre><code>$ ./bin/gdg ctx new mycontext
+</code></pre><h3 id="import--download-dashboards">Import / Download Dashboards</h3>
+<p>Minimal configuration (eg. the <code>importer.yml</code> file) that you need to download your dashboards from your Grafana endpoint:</p>
+<pre><code>context_name: all
+
+contexts:
+  all:
+    url: https://grafana.example.org
+    token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot;
+    # user_name: admin
+    # password: admin
+    dashboards_output: dashboards
+    watched:
+      - Example
+      - Infrastructure
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+</code></pre><p>You need to adjust three parts in the configuration in order to function:</p>
+<ul>
+<li>Grafana URL: This is just a URL where your Grafana is available.</li>
+<li>API Key OR Username / Passoword for Admin user. See <a href="configuration.md">authentication</a> section if you need more information.</li>
+<li>Downloaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards &gt; Management. From there, you can simply define the folders you want to be downloaded in the <code>watched</code> list.</li>
+</ul>
+<p>After you are done, and you can execute <code>./bin/gdg dash list</code> successfully, eg.:</p>
+<pre><code>$ ./bin/gdg dash list
+time=&quot;2021-08-22T11:11:27+02:00&quot; level=warning msg=&quot;Error getting organizations: HTTP error 403: returns {\&quot;message\&quot;:\&quot;Permission denied\&quot;}&quot;
+time=&quot;2021-08-22T11:11:28+02:00&quot; level=info msg=&quot;Listing dashboards for context: 'all'&quot;
+┌────┬───────────────────────────────────┬───────────────────────────────────┬────────────────┬────────────┬────────────────────────────────────────────────────────────────────────────┐
+│ ID │ TITLE                             │ SLUG                              │ FOLDER         │ UID        │ URL                                                                        │
+├────┼───────────────────────────────────┼───────────────────────────────────┼────────────────┼────────────┼────────────────────────────────────────────────────────────────────────────┤
+│  8 │ AWS CloudWatch Logs               │ aws-cloudwatch-logs               │ Infrastructure │ AWSLogs00  │ https://grafana.example.org/d/AWSLogs00/aws-cloudwatch-logs                │
+│  6 │ AWS ECS                           │ aws-ecs                           │ Infrastructure │ ly9Y95XWk  │ https://grafana.example.org/d/ly9Y95XWk/aws-ecs                            │
+│  5 │ AWS ELB Application Load Balancer │ aws-elb-application-load-balancer │ Infrastructure │ bt8qGKJZz  │ https://grafana.example.org/d/bt8qGKJZz/aws-elb-application-load-balancer  │
+│  4 │ AWS RDS                           │ aws-rds                           │ Infrastructure │ kCDpC5uWk  │ https://grafana.example.org/d/kCDpC5uWk/aws-rds                            │
+│  3 │ AWS S3                            │ aws-s3                            │ Infrastructure │ AWSS31iWk  │ https://grafana.example.org/d/AWSS31iWk/aws-s3                             │
+│ 17 │ Cluster Autoscaling               │ cluster-autoscaling               │ Example        │ iHUYtABMk  │ https://grafana.example.org/d/iHUYtABMk/cluster-autoscaling                │
+└────┴───────────────────────────────────┴───────────────────────────────────┴────────────────┴────────────┴────────────────────────────────────────────────────────────────────────────┘
+</code></pre><p>You can execute <code>./bin/gdg dash import</code>, and you will be able to find your dashboards, the ones which were listed previously in the table, in <code>dashboards</code> folder.</p>
+<h3 id="export--upload-dashboards">Export / Upload Dashboards</h3>
+<p>Minimal configuration (eg. the <code>importer.yml</code> file) that you need to upload your dashboards from your Grafana endpoint:</p>
+<pre><code>context_name: all
+
+contexts:
+  all:
+    url: https://grafana.example.org
+    token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot;
+    # user_name: admin
+    # password: admin
+    dashboards_output: dashboards
+    watched:
+      - Example
+      - Infrastructure
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+</code></pre><p>You need to adjust three parts in the configuration in order to function:</p>
+<ul>
+<li>Grafana URL: This is just a URL where your Grafana is available.</li>
+<li>API Key OR Username / Passoword for Admin user. See <a href="configuration.md">authentication</a> section if you need more information.</li>
+<li>Uploaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. Those are the folders in <code>dashboards</code> folder, which contain the dashboard files (eg. <code>examples.json</code>). Example folder structure:</li>
+</ul>
+<pre><code>├── bin
+|   └── gdg
+└── dashboards
+    ├── Example
+    |   └── cluster-scaling.json
+    └── Infrastructure
+        └── aws-ecs.json
+</code></pre><p>You can execute <code>./bin/gdg dash export</code> to upload the local dashboards to your Grafana. Afterwards, you can try running <code>./bin/gdg dash list</code> in order to confirm that your dashboards were uploaded successfully.</p>
+
     <div class="pager">
   
   <div class="pager_item prev">
     
-    <a href="https://software.es.net/gdg/docs/examples/" class="pager_link button" title="Example Usage" rel="prev">
-      <span class="pager_label">Example Usage</span>
+    <a href="https://software.es.net/gdg/docs/developer/" class="pager_link button" title="Developer Guide" rel="prev">
+      <span class="pager_label">Developer Guide</span>
     </a>
   </div>
   
@@ -216,8 +254,8 @@ Datasources are imported or exported from <em>organization</em> specified in con
   
   <div class="pager_item next">
     
-    <a href="https://software.es.net/gdg/search/" class="pager_link button" title="Search" rel="next">
-      <span class="pager_label">Search</span>
+    <a href="https://software.es.net/gdg/docs/usage_guide/" class="pager_link button" title="Usage Guide" rel="next">
+      <span class="pager_label">Usage Guide</span>
     </a>
   </div>
   
