@@ -1,4 +1,4 @@
-[![Build Status](https://cloud.drone.io/api/badges/netsage-project/gdg/status.svg)](https://cloud.drone.io/netsage-project/gdg)
+[![Build Status](https://cloud.drone.io/api/badges/esnet/gdg/status.svg)](https://cloud.drone.io/esnet/gdg)
 
 # Grafana dash-n-grab (formerly Grafana Dashboard Manager)
 
