@@ -30,5 +30,8 @@ var promoteUser = &cobra.Command{
 func init() {
 	userCmd.AddCommand(promoteUser)
 	promoteUser.Flags().StringP("user", "u", "", "user email")
-	promoteUser.MarkFlagRequired("user")
+	err := promoteUser.MarkFlagRequired("user")
+	if err != nil {
+		log.Debug("Failed to mark user flag as required")
+	}
 }

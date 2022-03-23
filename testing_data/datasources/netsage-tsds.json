@@ -1,14 +1,17 @@
 {
-	"id": 1,
+	"id": 9,
 	"orgId": 1,
+	"uid": "i6uqEqE7k",
 	"name": "Netsage TSDS",
 	"type": "globalnoc-tsds-datasource",
+	"typeLogoUrl": "public/img/icn-datasource.svg",
 	"access": "proxy",
 	"url": "https://netsage-archive.grnoc.iu.edu/irnc/services/",
 	"password": "",
 	"user": "",
 	"database": "",
 	"basicAuth": false,
+	"readOnly": false,
 	"isDefault": false,
 	"jsonData": {
 		"keepCookies": []

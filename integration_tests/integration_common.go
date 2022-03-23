@@ -1,6 +1,7 @@
 package integration_tests
 
 import (
+	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
 	"testing"
@@ -23,7 +24,10 @@ func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
 	client := api.NewApiService()
 	path, _ := os.Getwd()
 	if strings.Contains(path, "integration_tests") {
-		os.Chdir("..")
+		err := os.Chdir("..")
+		if err != nil {
+			logrus.Warning("unable to set directory to parent")
+		}
 	}
 	return client, conf
 }

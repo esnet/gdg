@@ -66,9 +66,10 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	}
 
 	folderFilters := filters.GetFolders()
-	var validFolder bool = false
-	var validUid bool = false
+	var validFolder bool
+	var validUid bool
 	for _, link := range boardLinks {
+		validFolder = false
 		if apphelpers.GetCtxDefaultGrafanaConfig().IgnoreFilters {
 			validFolder = true
 		} else if funk.ContainsString(folderFilters, link.FolderTitle) {
@@ -81,15 +82,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 			continue
 		}
 		updateSlug(&link)
-		if filters.GetFilter("DashFilter") != "" {
-			if link.Slug == filters.GetFilter("DashFilter") {
-				validUid = true
-			} else {
-				validUid = false
-			}
-		} else {
-			validUid = true
-		}
+		validUid = filters.GetFilter("DashFilter") == "" || link.Slug == filters.GetFilter("DashFilter")
 		if link.FolderID == 0 {
 			link.FolderTitle = DefaultFolderName
 		}
@@ -97,9 +90,6 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 		if validFolder && validUid {
 			boardsList = append(boardsList, link)
 		}
-
-		validFolder, validUid = false, false
-
 	}
 
 	return boardsList

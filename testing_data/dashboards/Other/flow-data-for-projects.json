@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 14,
+  "id": 72,
   "iteration": 1612300709330,
   "links": [],
   "panels": [
@@ -41,31 +41,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -77,7 +77,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "content": "\n\u003ccenter\u003e\u003ch1\u003e\u003cb\u003eFlow Data for Projects\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003eThis dashboard shows a summary of flow information for a selected project.\u003c/center\u003e\n\u003ccenter\u003e\u003cb\u003ePlease note that flows with either end tagged as part of the project are included\u003c/b\u003e\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\n\n \u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e",
       "datasource": null,
@@ -106,7 +106,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -186,7 +186,7 @@
       "title": "Total Volume",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -263,7 +263,7 @@
       "title": "# Flows",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "content": "\u003ch3 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Endpoint Pairs for $project_type\u003c/center\u003e\u003c/h3\u003e",
       "datasource": null,
@@ -292,7 +292,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -308,7 +308,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -326,7 +326,7 @@
               {
                 "id": "displayName",
                 "value": "Source Organization"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -338,7 +338,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -348,7 +348,7 @@
               {
                 "id": "displayName",
                 "value": "Destination Organization"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -360,7 +360,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -370,21 +370,21 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -394,21 +394,21 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -418,21 +418,21 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -442,21 +442,21 @@
               {
                 "id": "displayName",
                 "value": "Avg Rate"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 115
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -466,21 +466,21 @@
               {
                 "id": "displayName",
                 "value": "Peak Rate"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 115
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -492,7 +492,7 @@
                 "value": 209
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -540,7 +540,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1282",
               "fake": true,
@@ -569,7 +569,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:1272",
               "field": "values.num_bits",
@@ -582,7 +582,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1273",
               "field": "meta.id",
@@ -590,7 +590,7 @@
               "meta": {},
               "settings": {},
               "type": "count"
-            }, 
+            },
             {
               "$$hashKey": "object:1274",
               "field": "values.bits_per_second",
@@ -598,7 +598,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:1275",
               "field": "values.bits_per_second",
@@ -615,7 +615,7 @@
       ],
       "title": "By Organization Pair",
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -684,7 +684,7 @@
       ],
       "title": "By Volume",
       "type": "marcusolsson-hourly-heatmap-panel"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -748,7 +748,7 @@
       ],
       "title": "By Rate",
       "type": "marcusolsson-hourly-heatmap-panel"
-    }, 
+    },
     {
       "content": "\u003ch3 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eSummary of Organizations for $project_type\u003c/center\u003e\u003c/h3\u003e",
       "datasource": null,
@@ -777,7 +777,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -793,7 +793,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -811,7 +811,7 @@
               {
                 "id": "displayName",
                 "value": "Source Organization"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -821,13 +821,13 @@
                     "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -837,17 +837,17 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -857,17 +857,17 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -877,17 +877,17 @@
               {
                 "id": "displayName",
                 "value": "Peak Rate"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -897,17 +897,17 @@
               {
                 "id": "displayName",
                 "value": "Avg Rate"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -917,17 +917,17 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -992,7 +992,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:58",
               "field": "values.num_bits",
@@ -1005,7 +1005,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:59",
               "field": "meta.id",
@@ -1013,7 +1013,7 @@
               "meta": {},
               "settings": {},
               "type": "count"
-            }, 
+            },
             {
               "$$hashKey": "object:60",
               "field": "values.bits_per_second",
@@ -1021,7 +1021,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:61",
               "field": "values.bits_per_second",
@@ -1056,7 +1056,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -1072,7 +1072,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -1090,7 +1090,7 @@
               {
                 "id": "displayName",
                 "value": "Destination Organization"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -1100,13 +1100,13 @@
                     "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1116,17 +1116,17 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1136,17 +1136,17 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1156,17 +1156,17 @@
               {
                 "id": "displayName",
                 "value": "Peak Rate"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1176,17 +1176,17 @@
               {
                 "id": "displayName",
                 "value": "Avg Rate"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1196,17 +1196,17 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1271,7 +1271,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:58",
               "field": "values.num_bits",
@@ -1284,7 +1284,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:59",
               "field": "meta.id",
@@ -1292,7 +1292,7 @@
               "meta": {},
               "settings": {},
               "type": "count"
-            }, 
+            },
             {
               "$$hashKey": "object:60",
               "field": "values.bits_per_second",
@@ -1300,7 +1300,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:61",
               "field": "values.bits_per_second",
@@ -1335,7 +1335,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003ch3 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eNetSage Sensors Observing $project_type flows\u003c/center\u003e\u003c/h3\u003e",
       "datasource": null,
@@ -1364,7 +1364,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -1380,7 +1380,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -1400,7 +1400,7 @@
                 "value": "Link"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1410,17 +1410,17 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1430,17 +1430,17 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1450,17 +1450,17 @@
               {
                 "id": "displayName",
                 "value": "Fastest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1470,11 +1470,11 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
@@ -1533,7 +1533,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:787",
               "field": "values.num_bits",
@@ -1546,7 +1546,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:788",
               "field": "values.bits_per_second",
@@ -1554,7 +1554,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:789",
               "field": "meta.id",
@@ -1572,38 +1572,38 @@
       "timeFrom": null,
       "title": "Links Usage",
       "type": "table"
-    }, 
+    },
     {
       "DarkColorPallet": [
-        "#EA3788", 
-        "#89FC00", 
-        "#01FDF6", 
-        "#C200FB", 
-        "#731DD8", 
-        "#CEB9DA", 
-        "#D6FF79", 
-        "#FF206E", 
-        "#F5B700", 
-        "#00A1EA", 
-        "#8224E3", 
-        "#96F727", 
+        "#EA3788",
+        "#89FC00",
+        "#01FDF6",
+        "#C200FB",
+        "#731DD8",
+        "#CEB9DA",
+        "#D6FF79",
+        "#FF206E",
+        "#F5B700",
+        "#00A1EA",
+        "#8224E3",
+        "#96F727",
         "#C04D9B"
       ],
       "LightColorPallet": [
-        "#0A369D", 
-        "#D53675", 
-        "#0B9290", 
-        "#FB1919", 
-        "#610DA7", 
-        "#F8A824", 
-        "#EA1AE0", 
-        "#531014", 
-        "#EF810B", 
-        "#4472CA", 
-        "#C1292E", 
-        "#356E46", 
-        "#D086F5", 
-        "#2CCB7A", 
+        "#0A369D",
+        "#D53675",
+        "#0B9290",
+        "#FB1919",
+        "#610DA7",
+        "#F8A824",
+        "#EA1AE0",
+        "#531014",
+        "#EF810B",
+        "#4472CA",
+        "#C1292E",
+        "#356E46",
+        "#D086F5",
+        "#2CCB7A",
         "#6D5BDD"
       ],
       "animationPlaying": false,
@@ -1673,7 +1673,7 @@
           "to": [-82.32479858398438, 29.651599884033203],
           "valInBytes": 1876938953728,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [6.5980000495910645, 46.52880096435547],
@@ -1682,7 +1682,7 @@
           "to": [114.16670227050781, 22.25],
           "valInBytes": 17248267264,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [6.5980000495910645, 46.52880096435547],
@@ -1691,7 +1691,7 @@
           "to": [-73.90899658203125, 41.017799377441406],
           "valInBytes": 332342272,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [6.05019998550415, 46.232398986816406],
@@ -1700,7 +1700,7 @@
           "to": [114.16670227050781, 22.25],
           "valInBytes": 629720729600,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [6.05019998550415, 46.232398986816406],
@@ -1709,199 +1709,199 @@
           "to": [-82.32479858398438, 29.651599884033203],
           "valInBytes": 5530591232,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-72.88680267333984, 40.86949920654297],
           "labels": [
-            "Brookhaven National Laboratory (BNL)", 
+            "Brookhaven National Laboratory (BNL)",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 1435557031936,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-72.88680267333984, 40.86949920654297],
           "labels": [
-            "Brookhaven National Laboratory (BNL)", 
+            "Brookhaven National Laboratory (BNL)",
             "Max Planck Computing and Data Facility (MPCDF)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [11.649999618530273, 48.25],
           "valInBytes": 816442939904,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-72.88680267333984, 40.86949920654297],
           "labels": [
-            "Brookhaven National Laboratory (BNL)", 
+            "Brookhaven National Laboratory (BNL)",
             "University of Manchester"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-2.2367000579833984, 53.46969985961914],
           "valInBytes": 211960686592,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-72.88680267333984, 40.86949920654297],
           "labels": [
-            "Brookhaven National Laboratory (BNL)", 
+            "Brookhaven National Laboratory (BNL)",
             "University of Glasgow (U of G)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-4.252900123596191, 55.830101013183594],
           "valInBytes": 205846592512,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-72.88680267333984, 40.86949920654297],
           "labels": [
-            "Brookhaven National Laboratory (BNL)", 
+            "Brookhaven National Laboratory (BNL)",
             "Gesellschaft fÃ¼r wissenschaftliche Datenverarbeitung mbH GÃ¶ttingen  (GWDG)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [9.933300018310547, 51.53329849243164],
           "valInBytes": 139197142016,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-72.88680267333984, 40.86949920654297],
           "labels": [
-            "Brookhaven National Laboratory (BNL)", 
+            "Brookhaven National Laboratory (BNL)",
             "Technion - Israel Institute of Technology"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [34.75, 32.81560134887695],
           "valInBytes": 100957171712,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-72.88680267333984, 40.86949920654297],
           "labels": [
-            "Brookhaven National Laboratory (BNL)", 
+            "Brookhaven National Laboratory (BNL)",
             "Queen Mary University of London (QMUL)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-0.09309999644756317, 51.514198303222656],
           "valInBytes": 10540371968,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-87.60089874267578, 41.78860092163086],
           "labels": [
-            "University of Chicago (U of C)", 
+            "University of Chicago (U of C)",
             "National Energy Research Scientific Computing Center (NERSC)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.25360107421875, 37.866798400878906],
           "valInBytes": 1273062270235,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-87.60089874267578, 41.78860092163086],
           "labels": [
-            "University of Chicago (U of C)", 
+            "University of Chicago (U of C)",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 840852167680,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-1.25, 51.75],
           "labels": [
-            "Rutherford Appleton Laboratory (RAL)", 
+            "Rutherford Appleton Laboratory (RAL)",
             "Boston University (BU)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-71.09929656982422, 42.34510040283203],
           "valInBytes": 3917112307712,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-1.25, 51.75],
           "labels": [
-            "Rutherford Appleton Laboratory (RAL)", 
+            "Rutherford Appleton Laboratory (RAL)",
             "SLAC National Accelerator Laboratory"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.1781005859375, 37.45899963378906],
           "valInBytes": 547497499648,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-1.25, 51.75],
           "labels": [
-            "Rutherford Appleton Laboratory (RAL)", 
+            "Rutherford Appleton Laboratory (RAL)",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 510587407360,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-1.25, 51.75],
           "labels": [
-            "Rutherford Appleton Laboratory (RAL)", 
+            "Rutherford Appleton Laboratory (RAL)",
             "National Energy Research Scientific Computing Center (NERSC)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.25360107421875, 37.866798400878906],
           "valInBytes": 52859971881,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-1.25, 51.75],
           "labels": [
-            "Rutherford Appleton Laboratory (RAL)", 
+            "Rutherford Appleton Laboratory (RAL)",
             "Massachusetts Institute of Technology (MIT)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-71.0999984741211, 42.364601135253906],
           "valInBytes": 14143311360,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-1.25, 51.75],
           "labels": [
-            "Rutherford Appleton Laboratory (RAL)", 
+            "Rutherford Appleton Laboratory (RAL)",
             "University of Chicago (U of C)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-87.60089874267578, 41.78860092163086],
           "valInBytes": 1152928768,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-1.25, 51.75],
           "labels": [
-            "Rutherford Appleton Laboratory (RAL)", 
+            "Rutherford Appleton Laboratory (RAL)",
             "Columbia University"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-73.90899658203125, 41.017799377441406],
           "valInBytes": 810657792,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-2.2367000579833984, 53.46969985961914],
@@ -1910,55 +1910,55 @@
           "to": [-71.09929656982422, 42.34510040283203],
           "valInBytes": 3206422702592,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-2.2367000579833984, 53.46969985961914],
           "labels": [
-            "University of Manchester", 
+            "University of Manchester",
             "SLAC National Accelerator Laboratory"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.1781005859375, 37.45899963378906],
           "valInBytes": 164423961088,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-2.2367000579833984, 53.46969985961914],
           "labels": [
-            "University of Manchester", 
+            "University of Manchester",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 63762771968,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-2.2367000579833984, 53.46969985961914],
           "labels": [
-            "University of Manchester", 
+            "University of Manchester",
             "National Energy Research Scientific Computing Center (NERSC)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.25360107421875, 37.866798400878906],
           "valInBytes": 45562628096,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-2.2367000579833984, 53.46969985961914],
           "labels": [
-            "University of Manchester", 
+            "University of Manchester",
             "Brookhaven National Laboratory (BNL)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-72.88680267333984, 40.86949920654297],
           "valInBytes": 28186158080,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-2.2367000579833984, 53.46969985961914],
@@ -1967,415 +1967,415 @@
           "to": [-73.90899658203125, 41.017799377441406],
           "valInBytes": 52419584,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-76.49359893798828, 37.07360076904297],
           "labels": [
-            "Thomas Jefferson National Accelerator Facility (Jefferson Lab or TJNAF)", 
+            "Thomas Jefferson National Accelerator Facility (Jefferson Lab or TJNAF)",
             "National Energy Research Scientific Computing Center (NERSC)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.25360107421875, 37.866798400878906],
           "valInBytes": 1207923910136,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-4.252900123596191, 55.830101013183594],
           "labels": [
-            "University of Glasgow (U of G)", 
+            "University of Glasgow (U of G)",
             "Brookhaven National Laboratory (BNL)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-72.88680267333984, 40.86949920654297],
           "valInBytes": 1597904986624,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-4.252900123596191, 55.830101013183594],
           "labels": [
-            "University of Glasgow (U of G)", 
+            "University of Glasgow (U of G)",
             "SLAC National Accelerator Laboratory"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.1781005859375, 37.45899963378906],
           "valInBytes": 1067253124608,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-4.252900123596191, 55.830101013183594],
           "labels": [
-            "University of Glasgow (U of G)", 
+            "University of Glasgow (U of G)",
             "Boston University (BU)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-71.09929656982422, 42.34510040283203],
           "valInBytes": 68338200576,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-4.252900123596191, 55.830101013183594],
           "labels": [
-            "University of Glasgow (U of G)", 
+            "University of Glasgow (U of G)",
             "University of Chicago (U of C)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-87.60089874267578, 41.78860092163086],
           "valInBytes": 4243298304,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-4.252900123596191, 55.830101013183594],
           "labels": [
-            "University of Glasgow (U of G)", 
+            "University of Glasgow (U of G)",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 1067591680,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-0.09309999644756317, 51.514198303222656],
           "labels": [
-            "Queen Mary University of London (QMUL)", 
+            "Queen Mary University of London (QMUL)",
             "Boston University (BU)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-71.09929656982422, 42.34510040283203],
           "valInBytes": 1363163462144,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-0.09309999644756317, 51.514198303222656],
           "labels": [
-            "Queen Mary University of London (QMUL)", 
+            "Queen Mary University of London (QMUL)",
             "SLAC National Accelerator Laboratory"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.1781005859375, 37.45899963378906],
           "valInBytes": 1067545073152,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-0.09309999644756317, 51.514198303222656],
           "labels": [
-            "Queen Mary University of London (QMUL)", 
+            "Queen Mary University of London (QMUL)",
             "Brookhaven National Laboratory (BNL)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-72.88680267333984, 40.86949920654297],
           "valInBytes": 43684373504,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-0.09309999644756317, 51.514198303222656],
           "labels": [
-            "Queen Mary University of London (QMUL)", 
+            "Queen Mary University of London (QMUL)",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 36600773120,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-0.09309999644756317, 51.514198303222656],
           "labels": [
-            "Queen Mary University of London (QMUL)", 
+            "Queen Mary University of London (QMUL)",
             "National Energy Research Scientific Computing Center (NERSC)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.25360107421875, 37.866798400878906],
           "valInBytes": 13421770752,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-0.09309999644756317, 51.514198303222656],
           "labels": [
-            "Queen Mary University of London (QMUL)", 
+            "Queen Mary University of London (QMUL)",
             "Columbia University"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-73.90899658203125, 41.017799377441406],
           "valInBytes": 17719296,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-88.36119842529297, 41.83919906616211],
           "labels": [
-            "Fermi National Accelerator Laboratory (Fermilab)", 
+            "Fermi National Accelerator Laboratory (Fermilab)",
             "Interuniversity Institute for High Energies (IIHE)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [4.3333001136779785, 50.83330154418945],
           "valInBytes": 18215993856,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-88.36119842529297, 41.83919906616211],
           "labels": [
-            "Fermi National Accelerator Laboratory (Fermilab)", 
+            "Fermi National Accelerator Laboratory (Fermilab)",
             "National Centre for Nuclear Research  (Narodowe Centrum Badan Jadrowych - NCBJ)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [21.308000564575195, 52.118900299072266],
           "valInBytes": 154852864,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [34.75, 32.81560134887695],
           "labels": [
-            "Technion - Israel Institute of Technology", 
+            "Technion - Israel Institute of Technology",
             "Boston University (BU)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-71.09929656982422, 42.34510040283203],
           "valInBytes": 804807150592,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [34.75, 32.81560134887695],
           "labels": [
-            "Technion - Israel Institute of Technology", 
+            "Technion - Israel Institute of Technology",
             "SLAC National Accelerator Laboratory"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.1781005859375, 37.45899963378906],
           "valInBytes": 257476268544,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [34.75, 32.81560134887695],
           "labels": [
-            "Technion - Israel Institute of Technology", 
+            "Technion - Israel Institute of Technology",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 86424318976,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [34.75, 32.81560134887695],
           "labels": [
-            "Technion - Israel Institute of Technology", 
+            "Technion - Israel Institute of Technology",
             "Brookhaven National Laboratory (BNL)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-72.88680267333984, 40.86949920654297],
           "valInBytes": 38242923008,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [34.75, 32.81560134887695],
           "labels": [
-            "Technion - Israel Institute of Technology", 
+            "Technion - Israel Institute of Technology",
             "National Energy Research Scientific Computing Center (NERSC)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.25360107421875, 37.866798400878906],
           "valInBytes": 1475616768,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-122.1781005859375, 37.45899963378906],
           "labels": [
-            "SLAC National Accelerator Laboratory", 
+            "SLAC National Accelerator Laboratory",
             "Queen Mary University of London (QMUL)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-0.09309999644756317, 51.514198303222656],
           "valInBytes": 367689193984,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-122.1781005859375, 37.45899963378906],
           "labels": [
-            "SLAC National Accelerator Laboratory", 
+            "SLAC National Accelerator Laboratory",
             "Rutherford Appleton Laboratory (RAL)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-1.25, 51.75],
           "valInBytes": 190517144576,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-122.1781005859375, 37.45899963378906],
           "labels": [
-            "SLAC National Accelerator Laboratory", 
+            "SLAC National Accelerator Laboratory",
             "Technion - Israel Institute of Technology"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [34.75, 32.81560134887695],
           "valInBytes": 120404608512,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-122.1781005859375, 37.45899963378906],
           "labels": [
-            "SLAC National Accelerator Laboratory", 
+            "SLAC National Accelerator Laboratory",
             "Gesellschaft fÃ¼r wissenschaftliche Datenverarbeitung mbH GÃ¶ttingen  (GWDG)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [9.933300018310547, 51.53329849243164],
           "valInBytes": 14091851776,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-122.1781005859375, 37.45899963378906],
           "labels": [
-            "SLAC National Accelerator Laboratory", 
+            "SLAC National Accelerator Laboratory",
             "Max Planck Computing and Data Facility (MPCDF)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [11.649999618530273, 48.25],
           "valInBytes": 14055626752,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-122.1781005859375, 37.45899963378906],
           "labels": [
-            "SLAC National Accelerator Laboratory", 
+            "SLAC National Accelerator Laboratory",
             "University of Glasgow (U of G)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-4.252900123596191, 55.830101013183594],
           "valInBytes": 12382328832,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-122.1781005859375, 37.45899963378906],
           "labels": [
-            "SLAC National Accelerator Laboratory", 
+            "SLAC National Accelerator Laboratory",
             "University of Manchester"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-2.2367000579833984, 53.46969985961914],
           "valInBytes": 3045034496,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-122.1781005859375, 37.45899963378906],
           "labels": [
-            "SLAC National Accelerator Laboratory", 
+            "SLAC National Accelerator Laboratory",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 1031705600,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-71.09929656982422, 42.34510040283203],
           "labels": [
-            "Boston University (BU)", 
+            "Boston University (BU)",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 40849104896,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [11.33329963684082, 44.483299255371094],
           "labels": [
-            "National Institute for Nuclear Physics - National Center for Frame Analysis", 
+            "National Institute for Nuclear Physics - National Center for Frame Analysis",
             "University of Florida (UF)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-82.32479858398438, 29.651599884033203],
           "valInBytes": 282707399680,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [8.380000114440918, 49.00469970703125],
           "labels": [
-            "Karlsruhe Institute of Technology (KIT)", 
+            "Karlsruhe Institute of Technology (KIT)",
             "University of Florida (UF)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-82.32479858398438, 29.651599884033203],
           "valInBytes": 28199775232,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [37.6156005859375, 55.752201080322266],
           "labels": [
-            "Kurchatov Institute - National Research Center (NRC)", 
+            "Kurchatov Institute - National Research Center (NRC)",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 19270419456,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [37.6156005859375, 55.752201080322266],
           "labels": [
-            "Kurchatov Institute - National Research Center (NRC)", 
+            "Kurchatov Institute - National Research Center (NRC)",
             "National Energy Research Scientific Computing Center (NERSC)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-122.25360107421875, 37.866798400878906],
           "valInBytes": 872775680,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [24.728099822998047, 59.43389892578125],
           "labels": [
-            "National Institute of Chemical Physics and Biophysics (NICPB)", 
+            "National Institute of Chemical Physics and Biophysics (NICPB)",
             "University of Florida (UF)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [-82.32479858398438, 29.651599884033203],
           "valInBytes": 10519037952,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [-97.46029663085938, 35.25230026245117],
           "labels": [
-            "University of Oklahoma (OU)", 
+            "University of Oklahoma (OU)",
             "Chinese University of Hong Kong (CUHK)"
           ],
           "name": "MPS.Physics.High Energy",
           "to": [114.16670227050781, 22.25],
           "valInBytes": 11798056960,
           "value": 1
-        }, 
+        },
         {
           "color": "#0A369D",
           "from": [114.16670227050781, 22.25],
@@ -2402,7 +2402,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:190",
               "fake": true,
@@ -2416,7 +2416,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:191",
               "fake": true,
@@ -2430,7 +2430,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:192",
               "fake": true,
@@ -2444,7 +2444,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:193",
               "fake": true,
@@ -2457,7 +2457,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:194",
               "fake": true,
@@ -2470,7 +2470,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:195",
               "fake": true,
@@ -2484,7 +2484,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:196",
               "fake": true,
@@ -2498,7 +2498,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:257",
               "fake": true,
@@ -2511,7 +2511,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:197",
               "fake": true,
@@ -2560,7 +2560,7 @@
       "transparent": true,
       "type": "netsage-migrationmap",
       "zoom_lvl": 3
-    }, 
+    },
     {
       "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
       "datasource": null,
@@ -2621,7 +2621,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2647,7 +2647,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2665,7 +2665,7 @@
             "selected": true,
             "text": "yes",
             "value": "yes"
-          }, 
+          },
           {
             "selected": false,
             "text": "no",
@@ -2684,14 +2684,14 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "10s", 
-      "30s", 
-      "1m", 
-      "5m", 
-      "15m", 
-      "30m", 
-      "1h", 
-      "2h", 
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
       "1d"
     ]
   },

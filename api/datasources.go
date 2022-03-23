@@ -65,7 +65,11 @@ func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
 	var ds []string = make([]string, 0)
 	items := s.ListDataSources(filter)
 	for _, item := range items {
-		s.client.DeleteDatasource(ctx, item.ID)
+		msg, err := s.client.DeleteDatasource(ctx, item.ID)
+		if err != nil {
+			log.Warningf("Failed to delete datasource: %s, response: %s", item.Name, *msg.Message)
+			continue
+		}
 		ds = append(ds, item.Name)
 	}
 	return ds

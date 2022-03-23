@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 16,
+  "id": 74,
   "iteration": 1602793687200,
   "links": [],
   "panels": [
@@ -42,31 +42,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -78,7 +78,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "content": "\u003cdiv style=\"float:right;\"\u003e\n\u003ca class=\"btn navbar-button gf-timepicker-nav-btn\" target=\"_blank\" href=\"/grafana/d/-l3_u8nWk/individual-flows?var-src=$Organization\u0026from=${__from}\u0026to=${__to}\" style=\"text-decoration: none; color: #52545C; font-weight: bold;\"\u003eSee Individual Flows for $Organization\u003c/a\u003e\n\u003c/div\u003e\n\u003cbr clear=\"both\" /\u003e\n\u003cdiv style=\"padding-right: 10%;\"\u003e\n\u003ccenter\u003e\u003ch1\u003e\u003cb\u003eFlow Data by Organization\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003eThis dashboard shows top flows with the specified organization as the source or destination.\u003c/center\u003e\n\u003ccenter\u003eSelect an organization from the list above, or start typing the name of the specific organization since the dropdown menu will only show 1000 results at a time.\u003c/center\u003e\n\u003ccenter\u003eClick on the name of an institution in one of the tables to go to the individual flows dashboard for that institution and the one selected for the page.\u003c/center\u003e\n\u003ccenter\u003e\u003cb\u003ePlease note that rate will be zero if only one sampled flow was detected.\u003c/b\u003e\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\u003c/div\u003e\n\n\n\n\u003cbr\u003e\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e",
       "datasource": null,
@@ -105,7 +105,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "content": "\u003ch1\u003e\u003ccenter\u003eTop Flows Sent by $Organization\u003c/center\u003e\u003c/h1\u003e",
       "datasource": null,
@@ -132,7 +132,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -156,11 +156,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -232,7 +232,7 @@
       "title": "# Flows",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -257,11 +257,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -338,7 +338,7 @@
       "title": "Total Volume",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -355,7 +355,7 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 80
@@ -373,21 +373,21 @@
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -397,13 +397,13 @@
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -413,13 +413,13 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -435,7 +435,7 @@
                     "url": "/grafana/d/-l3_u8nWk/individual-flows?var-src=$Organization\u0026var-dest=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
@@ -494,7 +494,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:261",
               "field": "values.num_bits",
@@ -507,7 +507,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:262",
               "field": "meta.id",
@@ -541,7 +541,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -558,7 +558,7 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 80
@@ -576,21 +576,21 @@
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -600,13 +600,13 @@
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -616,13 +616,13 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -638,7 +638,7 @@
                     "url": "/grafana/d/-l3_u8nWk/individual-flows?var-src=$Organization\u0026var-dest=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
@@ -693,7 +693,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:463",
               "field": "values.bits_per_second",
@@ -701,7 +701,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:464",
               "field": "meta.id",
@@ -735,7 +735,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003ch1  style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Flows Received by $Organization\u003c/center\u003e\u003c/h1\u003e",
       "datasource": null,
@@ -762,7 +762,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -786,11 +786,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -862,7 +862,7 @@
       "title": "# Flows",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -887,11 +887,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -968,7 +968,7 @@
       "title": "Total Volume",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -1005,13 +1005,13 @@
                     "url": "/grafana/d/-l3_u8nWk/individual-flows?var-dest=$Organization\u0026var-src=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1021,21 +1021,21 @@
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1045,13 +1045,13 @@
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1116,7 +1116,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:829",
               "field": "values.num_bits",
@@ -1129,7 +1129,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:830",
               "field": "meta.id",
@@ -1163,7 +1163,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -1200,13 +1200,13 @@
                     "url": "/grafana/d/-l3_u8nWk/individual-flows?var-dest=$Organization\u0026var-src=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1216,21 +1216,21 @@
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1240,13 +1240,13 @@
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1307,7 +1307,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1017",
               "field": "values.bits_per_second",
@@ -1315,7 +1315,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:1018",
               "field": "meta.id",
@@ -1349,7 +1349,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eOther Statistics about $Organization Flows\u003c/center\u003e\u003c/h1\u003e",
       "datasource": null,
@@ -1376,7 +1376,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -1466,7 +1466,7 @@
       "title": "Total large flows observed",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -1533,7 +1533,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:525",
               "field": "start",
@@ -1589,7 +1589,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:599",
           "format": "short",
@@ -1604,7 +1604,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -1671,7 +1671,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:640",
               "field": "start",
@@ -1726,7 +1726,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:714",
           "format": "short",
@@ -1741,7 +1741,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -1808,7 +1808,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:755",
               "field": "start",
@@ -1863,7 +1863,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:829",
           "format": "short",
@@ -1878,7 +1878,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "content": "\u003ch3 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eNetSage Sensors Observing $Organization Flows\u003c/center\u003e\u003c/h3\u003e",
       "datasource": null,
@@ -1905,7 +1905,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -1922,7 +1922,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -1942,7 +1942,7 @@
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1954,7 +1954,7 @@
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1966,7 +1966,7 @@
                 "value": "bps"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2031,7 +2031,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:1294",
               "field": "values.num_bits",
@@ -2044,7 +2044,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1295",
               "field": "values.bits_per_second",
@@ -2052,7 +2052,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1296",
               "field": "meta.id",
@@ -2087,7 +2087,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
       "datasource": null,
@@ -2147,7 +2147,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2173,7 +2173,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": "*",
         "current": {
@@ -2199,7 +2199,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2217,7 +2217,7 @@
             "selected": true,
             "text": "yes",
             "value": "yes"
-          }, 
+          },
           {
             "selected": false,
             "text": "no",
@@ -2238,15 +2238,15 @@
   "timepicker": {
     "hidden": false,
     "refresh_intervals": [
-      "5s", 
-      "10s", 
-      "30s", 
-      "1m", 
-      "5m", 
-      "15m", 
-      "30m", 
-      "1h", 
-      "2h", 
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
       "1d"
     ],
     "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]

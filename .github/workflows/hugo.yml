@@ -1,0 +1,27 @@
+name: Publish Hugo Documentation
+on: 
+  create:
+    tags: 
+      - '*'
+
+jobs:
+  deployHugoPages:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v2
+       with:
+         submodules: true
+         fetch-depth: 0
+     - name: Setup Hugo
+       uses: peaceiris/actions-hugo@v2
+       with:
+         hugo-version: 'latest'
+         extended: true
+     - name: Build
+       run: hugo --minify
+     - name: Deploy
+       uses: peaceiris/actions-gh-pages@v3
+       with:
+         github_token: ${{ secrets.GITHUB_TOKEN }}
+         publish_dir: ./public
+

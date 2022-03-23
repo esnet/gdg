@@ -28,13 +28,21 @@ func updateSlug(board *sdk.FoundBoard) {
 	}
 }
 
+//CreateDestinationPath Handle osMkdir Errors
+func CreateDestinationPath(v string) {
+	err := os.MkdirAll(v, 0755)
+	if err != nil {
+		log.Fatalf("unable to create path %s", v)
+	}
+}
+
 //buildDashboardPath returns the dashboard path for a given folder
 func buildDashboardPath(conf *viper.Viper, folderName string) string {
 	if folderName == "" {
 		folderName = DefaultFolderName
 	}
 	v := fmt.Sprintf("%s/%s", getResourcePath(conf, "dashboard"), folderName)
-	os.MkdirAll(v, 0755)
+	CreateDestinationPath(v)
 	return v
 }
 
@@ -42,7 +50,7 @@ func buildDashboardPath(conf *viper.Viper, folderName string) string {
 func buildDataSourcePath(conf *viper.Viper, name string) string {
 	dsPath := getResourcePath(conf, "ds")
 	v := fmt.Sprintf("%s/%s.json", dsPath, name)
-	os.MkdirAll(dsPath, 0755)
+	CreateDestinationPath(dsPath)
 	return v
 }
 
@@ -50,7 +58,7 @@ func buildDataSourcePath(conf *viper.Viper, name string) string {
 func buildAlertNotificationPath(conf *viper.Viper, name string) string {
 	anPath := getResourcePath(conf, "an")
 	v := fmt.Sprintf("%s/%s.json", anPath, name)
-	os.MkdirAll(anPath, 0755)
+	CreateDestinationPath(anPath)
 	return v
 }
 
