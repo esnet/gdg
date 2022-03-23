@@ -6,8 +6,8 @@ import (
 
 	"net/http"
 
+	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/gdg/config"
 	log "github.com/sirupsen/logrus"
 )
 

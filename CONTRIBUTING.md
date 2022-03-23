@@ -8,7 +8,7 @@ You can contribute in many ways:
 
 ### Report Bugs
 
-Report bugs at https://github.com/netsage-project/gdg/issues.
+Report bugs at https://github.com/esnet/gdg/issues.
 
 If you are reporting a bug, please include:
 
@@ -28,7 +28,7 @@ Any code submitted to enhance this project is great appreciated, but here's a ch
 
 ### Submit Feedback
 
-The best way to send feedback is to file an issue at https://github.com/netsage-project/gdg/issues.
+The best way to send feedback is to file an issue at https://github.com/esnet/gdg/issues.
 
 If you are proposing a feature:
 

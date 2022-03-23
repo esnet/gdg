@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/netsage-project/gdg/version"
+	"github.com/esnet/gdg/version"
 	"github.com/spf13/cobra"
 )
 

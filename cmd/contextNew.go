@@ -3,7 +3,7 @@ package cmd
 import (
 	"errors"
 
-	"github.com/netsage-project/gdg/apphelpers"
+	"github.com/esnet/gdg/apphelpers"
 	"github.com/spf13/cobra"
 )
 

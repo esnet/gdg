@@ -35,7 +35,7 @@ All commands can use `dashboards` or `dash` to manage dashboards
 
 #### DataSources
 
-DataSources credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/netsage-project/gdg/blob/master/conf/importer-example.yml).  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
+DataSources credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/esnet/gdg/blob/master/conf/importer-example.yml).  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from _organization_ specified in configuration file otherwise current organization user is used.
 
 

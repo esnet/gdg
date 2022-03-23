@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/esnet/gdg/apphelpers"
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/gdg/apphelpers"
 	"github.com/sirupsen/logrus"
 )
 

@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/config"
 	"github.com/gosimple/slug"
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/gdg/config"
 	log "github.com/sirupsen/logrus"
 )
 

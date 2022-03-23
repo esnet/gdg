@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/netsage-project/gdg/api"
+	"github.com/esnet/gdg/api"
 	"github.com/spf13/cobra"
 )
 

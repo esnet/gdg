@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/netsage-project/gdg/apphelpers"
+	"github.com/esnet/gdg/apphelpers"
 
 	"github.com/tidwall/pretty"
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/esnet/gdg/apphelpers"
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/gdg/apphelpers"
 	"github.com/spf13/cobra"
 )
 
