@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/netsage-project/gdg/apphelpers"
+	"github.com/esnet/gdg/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

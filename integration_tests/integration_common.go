@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/netsage-project/gdg/api"
-	"github.com/netsage-project/gdg/config"
+	"github.com/esnet/gdg/api"
+	"github.com/esnet/gdg/config"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )

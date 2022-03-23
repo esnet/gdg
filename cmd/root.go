@@ -8,8 +8,8 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/netsage-project/gdg/api"
-	"github.com/netsage-project/gdg/config"
+	"github.com/esnet/gdg/api"
+	"github.com/esnet/gdg/config"
 	"github.com/spf13/cobra"
 )
 

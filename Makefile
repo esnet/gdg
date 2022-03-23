@@ -9,7 +9,7 @@ VERSION := $(shell grep "const Version " version/version.go | sed -E 's/.*"(.+)"
 GIT_COMMIT=$(shell git rev-parse HEAD)
 GIT_DIRTY=$(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE=$(shell date '+%Y-%m-%d-%H:%M:%S')
-IMAGE_NAME := "netsage-project/gdg"
+IMAGE_NAME := "esnet/gdg"
 
 
 
@@ -21,7 +21,7 @@ authors:
 
 
 linux: clean 
-	env GOOS='linux' GOARCH='amd64' go build -ldflags "-X github.com/netsage-project/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/gdg/version.BuildDate=${BUILD_DATE}" -o bin/${BIN_NAME}_linux
+	env GOOS='linux' GOARCH='amd64' go build -ldflags "-X github.com/esnet/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/esnet/gdg/version.BuildDate=${BUILD_DATE}" -o bin/${BIN_NAME}_linux
 
 help:
 	@echo 'Management commands for gdg:'
@@ -42,12 +42,12 @@ help:
 build:
 	@echo "building ${BIN_NAME} ${VERSION}"
 	@echo "GOPATH=${GOPATH}"
-	go build -ldflags "-X github.com/netsage-project/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/gdg/version.BuildDate=${BUILD_DATE}" -o bin/${BIN_NAME}
+	go build -ldflags "-X github.com/esnet/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/esnet/gdg/version.BuildDate=${BUILD_DATE}" -o bin/${BIN_NAME}
 
 install:
 	@echo "installing ${BIN_NAME} ${VERSION}"
 	@echo "GOPATH=${GOPATH}"
-	go install -ldflags "-X github.com/netsage-project/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/gdg/version.BuildDate=${BUILD_DATE}"
+	go install -ldflags "-X github.com/esnet/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/esnet/gdg/version.BuildDate=${BUILD_DATE}"
 	mv ${GOPATH}/bin/gdg ${GOPATH}/bin/${BIN_NAME}
 
 get-deps:
@@ -56,7 +56,7 @@ get-deps:
 build-alpine:
 	@echo "building ${BIN_NAME} ${VERSION}"
 	@echo "GOPATH=${GOPATH}"
-	go build -ldflags '-w -linkmode external -extldflags "-static" -X github.com/netsage-project/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/netsage-project/gdg/version.BuildDate=${BUILD_DATE}' -o bin/${BIN_NAME}
+	go build -ldflags '-w -linkmode external -extldflags "-static" -X github.com/esnet/gdg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/esnet/gdg/version.BuildDate=${BUILD_DATE}' -o bin/${BIN_NAME}
 
 package:
 	@echo "building image ${BIN_NAME} ${VERSION} $(GIT_COMMIT)"

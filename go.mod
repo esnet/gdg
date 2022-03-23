@@ -1,4 +1,4 @@
-module github.com/netsage-project/gdg
+module github.com/esnet/gdg
 
 go 1.18
 

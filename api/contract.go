@@ -1,9 +1,9 @@
 package api
 
 import (
+	"github.com/esnet/gdg/apphelpers"
+	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/gdg/apphelpers"
-	"github.com/netsage-project/gdg/config"
 	"github.com/spf13/viper"
 )
 

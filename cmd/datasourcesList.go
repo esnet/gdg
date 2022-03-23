@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/esnet/gdg/api"
+	"github.com/esnet/gdg/apphelpers"
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/netsage-project/gdg/api"
-	"github.com/netsage-project/gdg/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

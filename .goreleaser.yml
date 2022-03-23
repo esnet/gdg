@@ -10,7 +10,7 @@ builds:
   - env:
       - CGO_ENABLED=0
     binary: gdg
-    ldflags: -X github.com/netsage-project/gdg/version.GitCommit={{ .Commit }} -X github.com/netsage-project/gdg/version.BuildDate={{ .Date }}  -X github.com/netsage-project/gdg/version.Version={{ .Tag }}
+    ldflags: -X github.com/esnet/gdg/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/version.Version={{ .Tag }}
     goos:
       - linux
       - windows
@@ -25,10 +25,10 @@ dockers:
 
     # Templates of the Docker image names.
     image_templates:
-      - "netsage/gdg:latest"
-      - "netsage/gdg:{{ .Tag }}"
-      - "netsage/gdg:v{{ .Major }}"
-      - "gcr.io/netsage/gdg:latest"
+      - "esnet/gdg:latest"
+      - "esnet/gdg:{{ .Tag }}"
+      - "esnet/gdg:v{{ .Major }}"
+      - "gcr.io/esnet/gdg:latest"
 
     # Skips the docker push.
     # Could be useful if you also do draft releases.

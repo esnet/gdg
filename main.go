@@ -2,8 +2,9 @@ package main
 
 import (
 	_ "embed"
-	"github.com/netsage-project/gdg/cmd"
-	applogger "github.com/netsage-project/gdg/log"
+
+	"github.com/esnet/gdg/cmd"
+	applogger "github.com/esnet/gdg/log"
 )
 
 //go:embed conf/importer-example.yml

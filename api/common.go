@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/apphelpers"
 	"github.com/gosimple/slug"
 	"github.com/grafana-tools/sdk"
-	"github.com/netsage-project/gdg/apphelpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
