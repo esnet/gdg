@@ -1,8 +1,8 @@
 name: Publish Hugo Documentation
-on: 
-  create:
-    tags: 
-      - '*'
+on:
+  push:
+    branches: 
+      - master
 
 jobs:
   deployHugoPages:
