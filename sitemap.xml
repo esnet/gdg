@@ -2,25 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://esnet.github.io/gdg/docs/</loc>
+    <loc>https://software.es.net/gdg/docs/</loc>
     <lastmod>2021-07-29T11:12:13-07:00</lastmod>
   </url><url>
-    <loc>https://esnet.github.io/gdg/docs/configuration/</loc>
+    <loc>https://software.es.net/gdg/docs/configuration/</loc>
     <lastmod>2022-03-23T12:00:58-04:00</lastmod>
   </url><url>
-    <loc>https://esnet.github.io/gdg/docs/developer/</loc>
+    <loc>https://software.es.net/gdg/docs/developer/</loc>
     <lastmod>2021-11-23T13:39:54-05:00</lastmod>
   </url><url>
-    <loc>https://esnet.github.io/gdg/docs/examples/</loc>
+    <loc>https://software.es.net/gdg/docs/examples/</loc>
     <lastmod>2021-08-26T17:51:02+02:00</lastmod>
   </url><url>
-    <loc>https://esnet.github.io/gdg/docs/usage_guide/</loc>
+    <loc>https://software.es.net/gdg/docs/usage_guide/</loc>
     <lastmod>2022-03-23T12:00:58-04:00</lastmod>
   </url><url>
-    <loc>https://esnet.github.io/gdg/</loc>
+    <loc>https://software.es.net/gdg/</loc>
     <lastmod>2021-06-25T14:02:39-05:00</lastmod>
   </url><url>
-    <loc>https://esnet.github.io/gdg/search/</loc>
+    <loc>https://software.es.net/gdg/search/</loc>
     <lastmod>2021-06-25T14:02:39-05:00</lastmod>
   </url>
 </urlset>
