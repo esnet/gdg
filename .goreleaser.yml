@@ -16,53 +16,53 @@ builds:
       - windows
       - darwin
 
-dockers:
-  # You can have multiple Docker images.
-  - # ID of the image, needed if you want to filter by it later on (e.g. on custom publishers).
-    goos: linux
-    goarch: amd64
-    goarm: ""
-
-    # Templates of the Docker image names.
-    image_templates:
-      - "esnet/gdg:latest"
-      - "esnet/gdg:{{ .Tag }}"
-      - "esnet/gdg:v{{ .Major }}"
-      - "gcr.io/esnet/gdg:latest"
-
-    # Skips the docker push.
-    # Could be useful if you also do draft releases.
-    #
-    # If set to auto, the release will not be pushed to the Docker repository
-    #  in case there is an indicator of a prerelease in the tag, e.g. v1.0.0-rc1.
-    #
-    # Defaults to false.
-    skip_push: true
-
-    # Path to the Dockerfile (from the project root).
-    #
-    # Defaults to `Dockerfile`.
-    dockerfile: "docker/Dockerfile-gorelease"
-
-    # Set the "backend" for the Docker pipe.
-    # Valid options are: docker, buildx, podman, buildpacks
-    # podman is a GoReleaser Pro feature and is only available on Linux.
-    # Defaults to docker.
-    use: docker
-
-    # Template of the docker build flags.
-    build_flag_templates:
-      - "--pull"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.title={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-      - "--platform=linux/arm64"
-
-    # Extra flags to be passed down to the push command.
-    # Defaults to empty.
-    push_flags:
-      - --tls-verify=false
+#dockers:
+#  # You can have multiple Docker images.
+#  - # ID of the image, needed if you want to filter by it later on (e.g. on custom publishers).
+#    goos: linux
+#    goarch: amd64
+#    goarm: ""
+#
+#    # Templates of the Docker image names.
+#    image_templates:
+#      - "esnet/gdg:latest"
+#      - "esnet/gdg:{{ .Tag }}"
+#      - "esnet/gdg:v{{ .Major }}"
+#      - "gcr.io/esnet/gdg:latest"
+#
+#    # Skips the docker push.
+#    # Could be useful if you also do draft releases.
+#    #
+#    # If set to auto, the release will not be pushed to the Docker repository
+#    #  in case there is an indicator of a prerelease in the tag, e.g. v1.0.0-rc1.
+#    #
+#    # Defaults to false.
+#    skip_push: true
+#
+#    # Path to the Dockerfile (from the project root).
+#    #
+#    # Defaults to `Dockerfile`.
+#    dockerfile: "docker/Dockerfile-gorelease"
+#
+#    # Set the "backend" for the Docker pipe.
+#    # Valid options are: docker, buildx, podman, buildpacks
+#    # podman is a GoReleaser Pro feature and is only available on Linux.
+#    # Defaults to docker.
+#    use: docker
+#
+#    # Template of the docker build flags.
+#    build_flag_templates:
+#      - "--pull"
+#      - "--label=org.opencontainers.image.created={{.Date}}"
+#      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+#      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+#      - "--label=org.opencontainers.image.version={{.Version}}"
+#      - "--platform=linux/arm64"
+#
+#    # Extra flags to be passed down to the push command.
+#    # Defaults to empty.
+#    push_flags:
+#      - --tls-verify=false
 
 archives:
   - replacements:
