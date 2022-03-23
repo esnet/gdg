@@ -1,14 +1,17 @@
 {
-	"id": 2,
+	"id": 10,
 	"orgId": 1,
+	"uid": "rg9qPqP7z",
 	"name": "netsage",
 	"type": "elasticsearch",
+	"typeLogoUrl": "public/app/plugins/datasource/elasticsearch/img/elasticsearch.svg",
 	"access": "proxy",
 	"url": "https://netsage-elk1.grnoc.iu.edu/esproxy2/",
 	"password": "",
 	"user": "",
 	"database": "om-netsage-irnc-*",
 	"basicAuth": true,
+	"readOnly": false,
 	"isDefault": true,
 	"jsonData": {
 		"esVersion": 70,

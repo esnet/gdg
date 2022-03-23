@@ -120,7 +120,10 @@ func NewContext(name string) {
 
 	contextMap[name] = &answers
 	v.Set("contexts", contextMap)
-	v.WriteConfig()
+	err = v.WriteConfig()
+	if err != nil {
+		log.Fatal("could not save configuration.")
+	}
 	SetContext(name)
 	log.Infof("New configuration %s has been created", name)
 
@@ -148,7 +151,10 @@ func ClearContexts() {
 	}
 	v.Set("context_name", "example")
 	v.Set("contexts", newContext)
-	v.WriteConfig()
+	err := v.WriteConfig()
+	if err != nil {
+		log.Fatal("could not save configuration.")
+	}
 }
 
 func CopyContext(src, dest string) {
@@ -173,7 +179,10 @@ func SetContext(context string) {
 		log.Fatal("Cannot set context.  No valid configuration found in importer.yml")
 	}
 	v.Set("context_name", context)
-	v.WriteConfig()
+	err := v.WriteConfig()
+	if err != nil {
+		log.Fatal("could not save configuration.")
+	}
 
 }
 
@@ -195,7 +204,10 @@ func DeleteContext(context string) {
 	v, contextMap := getContextReferences()
 	delete(contextMap, context)
 	v.Set("contexts", contextMap)
-	v.WriteConfig()
+	err := v.WriteConfig()
+	if err != nil {
+		log.Fatal("could not save configuration.")
+	}
 }
 
 //GetContexts returns all available contexts

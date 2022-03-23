@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 17,
+  "id": 75,
   "iteration": 1620854336704,
   "links": [],
   "panels": [
@@ -41,31 +41,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -77,7 +77,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -104,7 +104,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -185,7 +185,7 @@
       "title": "Volume",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -210,11 +210,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -286,7 +286,7 @@
       "title": "Rate",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -311,11 +311,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -387,7 +387,7 @@
       "title": "Retransmits",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -403,7 +403,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -423,7 +423,7 @@
                 "value": "dthms"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -435,7 +435,7 @@
                 "value": "dateTimeAsIso"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -447,7 +447,7 @@
                 "value": 175
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -490,7 +490,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1864",
               "fake": true,
@@ -503,7 +503,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:2243",
               "fake": true,
@@ -516,7 +516,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:106",
               "fake": true,
@@ -530,7 +530,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1764",
               "fake": true,
@@ -551,7 +551,7 @@
               "field": "select field",
               "id": "6",
               "type": "count"
-            }, 
+            },
             {
               "$$hashKey": "object:1906",
               "field": "values.duration",
@@ -598,7 +598,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "description": "",
@@ -615,7 +615,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -673,7 +673,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:702",
               "fake": true,
@@ -686,7 +686,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:703",
               "fake": true,
@@ -699,7 +699,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:704",
               "fake": true,
@@ -712,7 +712,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1601",
               "fake": true,
@@ -725,7 +725,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:2258",
               "fake": true,
@@ -738,7 +738,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:761",
               "fake": true,
@@ -751,7 +751,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:141",
               "fake": true,
@@ -765,7 +765,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:393",
               "fake": true,
@@ -779,7 +779,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1614",
               "fake": true,
@@ -867,7 +867,7 @@
               "start": "Timestamp"
             }
           }
-        }, 
+        },
         {
           "id": "reduce",
           "options": {
@@ -876,7 +876,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "description": "",
@@ -893,7 +893,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -951,7 +951,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:702",
               "fake": true,
@@ -964,7 +964,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:703",
               "fake": true,
@@ -977,7 +977,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:704",
               "fake": true,
@@ -990,7 +990,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1601",
               "fake": true,
@@ -1003,7 +1003,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:2258",
               "fake": true,
@@ -1016,7 +1016,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:761",
               "fake": true,
@@ -1029,7 +1029,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:141",
               "fake": true,
@@ -1043,7 +1043,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:393",
               "fake": true,
@@ -1057,7 +1057,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1614",
               "fake": true,
@@ -1154,7 +1154,7 @@
               "start": "Timestamp"
             }
           }
-        }, 
+        },
         {
           "id": "reduce",
           "options": {
@@ -1163,7 +1163,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {

@@ -94,7 +94,10 @@ func InitConfig(override, defaultConfig string) {
 
 	configData.defaultConfig, err = readViperConfig(appName)
 	if err != nil {
-		err := os.MkdirAll("conf", os.ModePerm)
+		err = os.MkdirAll("conf", os.ModePerm)
+		if err != nil {
+			log.Fatal("unable to create configuration folder: 'conf'")
+		}
 		err = ioutil.WriteFile("conf/importer.yml", []byte(defaultConfig), 0644)
 		if err != nil {
 			log.Panic("Could not persist default config locally")

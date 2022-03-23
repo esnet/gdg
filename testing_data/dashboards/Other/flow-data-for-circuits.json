@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 13,
+  "id": 71,
   "iteration": 1619186241736,
   "links": [],
   "panels": [
@@ -42,31 +42,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -78,7 +78,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -103,7 +103,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -128,7 +128,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "description": "",
@@ -161,7 +161,7 @@
               {
                 "id": "displayName",
                 "value": "Source"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -172,7 +172,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -182,25 +182,25 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -210,17 +210,17 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -230,7 +230,7 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
@@ -289,7 +289,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:88",
               "field": "values.num_bits",
@@ -302,7 +302,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:89",
               "field": "meta.id",
@@ -320,7 +320,7 @@
       "timeFrom": null,
       "title": "By Volume",
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "description": "",
@@ -353,7 +353,7 @@
               {
                 "id": "displayName",
                 "value": "Source"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -364,7 +364,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -374,17 +374,17 @@
               {
                 "id": "displayName",
                 "value": "Peak"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -394,13 +394,13 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -456,7 +456,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:256",
               "field": "values.bits_per_second",
@@ -464,7 +464,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:257",
               "field": "meta.id",
@@ -482,7 +482,7 @@
       "timeFrom": null,
       "title": "By Rate",
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -507,7 +507,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "description": "",
@@ -540,7 +540,7 @@
               {
                 "id": "displayName",
                 "value": "Destination"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -551,7 +551,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -561,17 +561,17 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -583,7 +583,7 @@
                 "value": "Largest Flow"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -593,7 +593,7 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
@@ -652,7 +652,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:465",
               "field": "values.num_bits",
@@ -665,7 +665,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:466",
               "field": "meta.id",
@@ -683,7 +683,7 @@
       "timeFrom": null,
       "title": "By Volume",
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "description": "",
@@ -716,7 +716,7 @@
               {
                 "id": "displayName",
                 "value": "Destination"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -727,7 +727,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -737,17 +737,17 @@
               {
                 "id": "displayName",
                 "value": "Peak"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -757,13 +757,13 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -819,7 +819,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:618",
               "field": "values.bits_per_second",
@@ -827,7 +827,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:619",
               "field": "meta.id",
@@ -845,7 +845,7 @@
       "timeFrom": null,
       "title": "By Rate",
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -870,7 +870,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "description": "",
@@ -888,7 +888,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -907,7 +907,7 @@
               {
                 "id": "displayName",
                 "value": "Source"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -918,7 +918,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -928,7 +928,7 @@
               {
                 "id": "displayName",
                 "value": "Destination"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -939,7 +939,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -949,17 +949,17 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -969,17 +969,17 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -989,17 +989,17 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1009,13 +1009,13 @@
               {
                 "id": "displayName",
                 "value": "Avg Rate"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1025,7 +1025,7 @@
               {
                 "id": "displayName",
                 "value": "Peak Rate"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
@@ -1068,7 +1068,7 @@
                 "size": "50"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:775",
               "fake": true,
@@ -1098,7 +1098,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:765",
               "field": "values.num_bits",
@@ -1111,7 +1111,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:766",
               "field": "meta.id",
@@ -1119,7 +1119,7 @@
               "meta": {},
               "settings": {},
               "type": "count"
-            }, 
+            },
             {
               "$$hashKey": "object:767",
               "field": "values.bits_per_second",
@@ -1127,7 +1127,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:768",
               "field": "values.bits_per_second",
@@ -1145,7 +1145,7 @@
       "timeFrom": null,
       "title": "Top Pairs",
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1187,7 +1187,7 @@
                 "size": "50"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:366",
               "field": "meta.dst_organization",
@@ -1225,7 +1225,7 @@
       "timeShift": null,
       "title": "Top 30 Pairs by Data Volume",
       "type": "netsage-slopegraph-panel"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1284,7 +1284,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": "*",
         "current": {
@@ -1312,7 +1312,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -1331,7 +1331,7 @@
             "selected": false,
             "text": "yes",
             "value": "yes"
-          }, 
+          },
           {
             "selected": true,
             "text": "no",
@@ -1352,14 +1352,14 @@
   "timepicker": {
     "hidden": false,
     "refresh_intervals": [
-      "10s", 
-      "30s", 
-      "1m", 
-      "5m", 
-      "15m", 
-      "30m", 
-      "1h", 
-      "2h", 
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
       "1d"
     ],
     "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]

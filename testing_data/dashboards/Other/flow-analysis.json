@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 12,
+  "id": 70,
   "iteration": 1620857595778,
   "links": [],
   "panels": [
@@ -42,31 +42,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -78,7 +78,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -104,7 +104,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -199,7 +199,7 @@
               }
             ]
           ]
-        }, 
+        },
         {
           "aggregate_all": true,
           "combineAllBy": "nothing",
@@ -274,7 +274,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:312",
           "format": "short",
@@ -289,7 +289,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -315,7 +315,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -332,7 +332,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -351,17 +351,17 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -371,13 +371,13 @@
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 115
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -387,13 +387,13 @@
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 115
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -403,17 +403,17 @@
               {
                 "id": "unit",
                 "value": "none"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "left"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -423,17 +423,17 @@
               {
                 "id": "unit",
                 "value": "none"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "left"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -445,7 +445,7 @@
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -493,7 +493,7 @@
                 "size": "10"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:395",
               "fake": true,
@@ -522,7 +522,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:385",
               "field": "values.num_bits",
@@ -535,7 +535,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:386",
               "field": "values.bits_per_second",
@@ -543,7 +543,7 @@
               "meta": {},
               "settings": {},
               "type": "count"
-            }, 
+            },
             {
               "$$hashKey": "object:387",
               "field": "values.bits_per_second",
@@ -551,7 +551,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:388",
               "field": "values.bits_per_second",
@@ -586,7 +586,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -637,7 +637,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -669,13 +669,13 @@
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -685,17 +685,17 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -705,17 +705,17 @@
               {
                 "id": "unit",
                 "value": "none"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "left"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -770,7 +770,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:611",
               "field": "values.num_bits",
@@ -783,7 +783,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:612",
               "field": "meta.id",
@@ -818,7 +818,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -850,17 +850,17 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -870,13 +870,13 @@
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -886,17 +886,17 @@
               {
                 "id": "unit",
                 "value": "none"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "left"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -946,7 +946,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:748",
               "field": "values.bits_per_second",
@@ -954,7 +954,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:749",
               "field": "meta.id",
@@ -988,7 +988,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1039,7 +1039,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -1071,17 +1071,17 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1091,13 +1091,13 @@
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1107,17 +1107,17 @@
               {
                 "id": "unit",
                 "value": "none"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "left"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1172,7 +1172,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:882",
               "field": "values.num_bits",
@@ -1185,7 +1185,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:883",
               "field": "meta.id",
@@ -1220,7 +1220,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1252,17 +1252,17 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1272,13 +1272,13 @@
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1288,17 +1288,17 @@
               {
                 "id": "unit",
                 "value": "none"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "left"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1348,7 +1348,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1011",
               "field": "values.bits_per_second",
@@ -1356,7 +1356,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:1012",
               "field": "meta.id",
@@ -1391,7 +1391,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1417,7 +1417,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1435,7 +1435,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -1454,11 +1454,11 @@
               {
                 "id": "unit",
                 "value": "dateTimeAsIso"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -1470,7 +1470,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1480,13 +1480,13 @@
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 115
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1496,13 +1496,13 @@
               {
                 "id": "unit",
                 "value": "dthms"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1512,21 +1512,21 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "right"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1536,17 +1536,17 @@
               {
                 "id": "unit",
                 "value": "none"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "left"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1556,17 +1556,17 @@
               {
                 "id": "unit",
                 "value": "none"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 0
-              }, 
+              },
               {
                 "id": "custom.align",
                 "value": "left"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1578,7 +1578,7 @@
                 "value": 150
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1590,7 +1590,7 @@
                 "value": 150
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1602,7 +1602,7 @@
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1651,7 +1651,7 @@
                 "size": "1000"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1189",
               "fake": true,
@@ -1664,7 +1664,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1190",
               "fake": true,
@@ -1677,7 +1677,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1191",
               "fake": true,
@@ -1690,7 +1690,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1192",
               "fake": true,
@@ -1703,7 +1703,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1193",
               "fake": true,
@@ -1716,7 +1716,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:138",
               "fake": true,
@@ -1729,7 +1729,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1194",
               "fake": true,
@@ -1758,7 +1758,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:1177",
               "field": "values.bits_per_second",
@@ -1766,7 +1766,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1178",
               "field": "values.num_packets",
@@ -1774,7 +1774,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:1179",
               "field": "values.duration",
@@ -1835,7 +1835,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1860,7 +1860,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -1877,11 +1877,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -1951,7 +1951,7 @@
       "title": "Total Large Flows Observed",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -2018,7 +2018,7 @@
                 "size": "10"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:66",
               "field": "start",
@@ -2074,7 +2074,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:118",
           "format": "short",
@@ -2089,7 +2089,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -2156,7 +2156,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:147",
               "field": "start",
@@ -2211,7 +2211,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:201",
           "format": "short",
@@ -2226,7 +2226,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -2292,7 +2292,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:452",
               "field": "start",
@@ -2346,7 +2346,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "short",
           "label": null,
@@ -2360,7 +2360,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -2385,7 +2385,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "description": "",
@@ -2403,7 +2403,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -2424,7 +2424,7 @@
                 "value": "bps"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2434,7 +2434,7 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
@@ -2493,7 +2493,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:1590",
               "field": "values.num_bits",
@@ -2506,7 +2506,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1591",
               "field": "values.bits_per_second",
@@ -2514,7 +2514,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1592",
               "field": "meta.id",
@@ -2549,7 +2549,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
       "datasource": null,
@@ -2609,7 +2609,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2636,7 +2636,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2663,7 +2663,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2682,22 +2682,22 @@
             "selected": true,
             "text": "meta.src_organization",
             "value": "meta.src_organization"
-          }, 
+          },
           {
             "selected": false,
             "text": "meta.src_country_name",
             "value": "meta.src_country_name"
-          }, 
+          },
           {
             "selected": false,
             "text": "meta.src_continent",
             "value": "meta.src_continent"
-          }, 
+          },
           {
             "selected": false,
             "text": "meta.src_asn",
             "value": "meta.src_asn"
-          }, 
+          },
           {
             "selected": false,
             "text": "meta.src_port",
@@ -2708,7 +2708,7 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2727,22 +2727,22 @@
             "selected": true,
             "text": "meta.dst_organization",
             "value": "meta.dst_organization"
-          }, 
+          },
           {
             "selected": false,
             "text": "meta.dst_country_name",
             "value": "meta.dst_country_name"
-          }, 
+          },
           {
             "selected": false,
             "text": "meta.dst_continent",
             "value": "meta.dst_continent"
-          }, 
+          },
           {
             "selected": false,
             "text": "meta.dst_asn",
             "value": "meta.dst_asn"
-          }, 
+          },
           {
             "selected": false,
             "text": "meta.dst_port",
@@ -2753,7 +2753,7 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2772,7 +2772,7 @@
             "selected": true,
             "text": "yes",
             "value": "yes"
-          }, 
+          },
           {
             "selected": false,
             "text": "no",
@@ -2783,7 +2783,7 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2802,27 +2802,27 @@
             "selected": true,
             "text": "0",
             "value": "0"
-          }, 
+          },
           {
             "selected": false,
             "text": "100 MB",
             "value": "800000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "1 GB",
             "value": "8000000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "10 GB",
             "value": "80000000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "100 GB",
             "value": "800000000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "1 TB",
@@ -2833,7 +2833,7 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -2852,37 +2852,37 @@
             "selected": false,
             "text": "1 Mb/s",
             "value": "1000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "10 Mb/s",
             "value": "10000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "100 Mb/s",
             "value": "100000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "1 Gb/s",
             "value": "1000000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "10 Gb/s",
             "value": "10000000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "40 Gb/s",
             "value": "40000000000"
-          }, 
+          },
           {
             "selected": false,
             "text": "100 Gb/s",
             "value": "100000000000"
-          }, 
+          },
           {
             "selected": true,
             "text": "No Limit",
@@ -2893,7 +2893,7 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      }, 
+      },
       {
         "datasource": "netsage",
         "error": null,
@@ -2912,14 +2912,14 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "10s", 
-      "30s", 
-      "1m", 
-      "5m", 
-      "15m", 
-      "30m", 
-      "1h", 
-      "2h", 
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
       "1d"
     ]
   },

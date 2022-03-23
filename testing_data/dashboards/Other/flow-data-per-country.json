@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 15,
+  "id": 73,
   "iteration": 1602793778306,
   "links": [],
   "panels": [
@@ -42,31 +42,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -78,7 +78,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "content": "\u003cdiv style=\"float:right;\"\u003e\n\u003ca class=\"btn navbar-button gf-timepicker-nav-btn\" target=\"_blank\" href=\"/grafana/d/80IVUboZk/individual-flows-per-country?var-src=$Country\u0026from=${__from}\u0026to=${__to}\" style=\"text-decoration: none; color: #52545C; font-weight: bold;\"\u003eSee Individual Flows for $Country\u003c/a\u003e\n\u003c/div\u003e\n\u003cbr clear=\"both\" /\u003e\n\u003cdiv style=\"font-size: 0.9em\" \u003e\n\u003ccenter\u003e\u003ch1\u003e\u003cb\u003eFlow Data by Country\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003eThis dashboard shows the flow data for the selected country.\u003c/center\u003e\n\u003ccenter\u003eThe first set of tables show top ten data by both volume and rate and then the set of top pairs of organizations sharing data.\u003c/center\u003e\n\u003ccenter\u003eOther statistics about data to and from this country, including a Sankey graph for the top sources by volume, is then listed.\u003c/center\u003e\n\u003ccenter\u003e\u003cb\u003ePlease note that rate will be zero if only one sampled flow was detected.\u003c/b\u003e\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\u003c/div\u003e\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e",
       "datasource": null,
@@ -105,7 +105,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "content": "\u003ch1\u003e\u003ccenter\u003eTop Destinations from $Country\u003c/center\u003e\u003c/h1\u003e",
       "datasource": null,
@@ -132,7 +132,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -156,11 +156,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -232,7 +232,7 @@
       "title": "# Flows",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -257,11 +257,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -338,7 +338,7 @@
       "title": "Total Volume",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -355,11 +355,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -377,7 +377,7 @@
               {
                 "id": "displayName",
                 "value": "Destination Country"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -387,13 +387,13 @@
                     "url": "/grafana/d/80IVUboZk/individual-flows-per-country?var-dest=${__value.text:percentencode}\u0026var-src=${Country:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -403,21 +403,21 @@
               {
                 "id": "displayName",
                 "value": "Total Volume"
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -427,13 +427,13 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -443,7 +443,7 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
@@ -502,7 +502,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:3967",
               "field": "values.num_bits",
@@ -515,7 +515,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:3968",
               "field": "meta.id",
@@ -533,7 +533,7 @@
       "timeFrom": null,
       "title": "By Volume",
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -550,11 +550,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -573,7 +573,7 @@
               {
                 "id": "displayName",
                 "value": "Destination Country"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -583,13 +583,13 @@
                     "url": "/grafana/d/80IVUboZk/individual-flows-per-country?var-dest=${__value.text:percentencode}\u0026var-src=${Country:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -599,17 +599,17 @@
               {
                 "id": "displayName",
                 "value": "Peak"
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -619,7 +619,7 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "displayName",
                 "value": "# Flows"
@@ -674,7 +674,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:4334",
               "field": "values.bits_per_second",
@@ -682,7 +682,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:4335",
               "field": "meta.id",
@@ -700,7 +700,7 @@
       "timeFrom": null,
       "title": "By Rate",
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003ch1\u003e\u003ccenter style=\"margin-top: 35px;\"\u003eTop Sources to $Country\u003c/center\u003e\u003c/h1\u003e",
       "datasource": null,
@@ -727,7 +727,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -751,11 +751,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -827,7 +827,7 @@
       "title": "# Flows",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -852,11 +852,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -933,7 +933,7 @@
       "title": "Total Volume",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -950,11 +950,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -973,7 +973,7 @@
               {
                 "id": "displayName",
                 "value": "Source Country"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -983,13 +983,13 @@
                     "url": "/grafana/d/80IVUboZk/individual-flows-per-country?var-src=${__value.text:percentencode}\u0026var-dest=${Country:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -999,17 +999,17 @@
               {
                 "id": "displayName",
                 "value": "Total Volume"
-              }, 
+              },
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1021,7 +1021,7 @@
                 "value": "Largest Flow"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1031,7 +1031,7 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
@@ -1090,7 +1090,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:4557",
               "field": "values.num_bits",
@@ -1103,7 +1103,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:4558",
               "field": "meta.id",
@@ -1121,7 +1121,7 @@
       "timeFrom": null,
       "title": "By Volume",
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -1138,11 +1138,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -1161,7 +1161,7 @@
               {
                 "id": "displayName",
                 "value": "Source Country"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -1171,13 +1171,13 @@
                     "url": "/grafana/d/80IVUboZk/individual-flows-per-country?var-src=${__value.text:percentencode}\u0026var-dest=${Country:percentencode}\u0026from=${__from}\u0026to=${__to}"
                   }
                 ]
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1187,13 +1187,13 @@
               {
                 "id": "custom.displayMode",
                 "value": "gradient-gauge"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 440
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1203,7 +1203,7 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
@@ -1252,7 +1252,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:4908",
               "field": "values.bits_per_second",
@@ -1260,7 +1260,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:4909",
               "field": "meta.id",
@@ -1278,7 +1278,7 @@
       "timeFrom": null,
       "title": "By Rate",
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Flow Pairs with Endpoint(s) in $Country\u003c/center\u003e\u003c/h1\u003e",
       "datasource": null,
@@ -1305,7 +1305,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1322,11 +1322,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -1344,7 +1344,7 @@
               {
                 "id": "displayName",
                 "value": "Source Organization"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -1356,7 +1356,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1366,7 +1366,7 @@
               {
                 "id": "displayName",
                 "value": "Destination Organization"
-              }, 
+              },
               {
                 "id": "links",
                 "value": [
@@ -1378,7 +1378,7 @@
                 ]
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1388,17 +1388,17 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1408,17 +1408,17 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1428,17 +1428,17 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1448,17 +1448,17 @@
               {
                 "id": "displayName",
                 "value": "Avg Rate"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 115
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -1468,11 +1468,11 @@
               {
                 "id": "displayName",
                 "value": "Peak Rate"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 115
@@ -1514,7 +1514,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1282",
               "fake": true,
@@ -1543,7 +1543,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:1272",
               "field": "values.num_bits",
@@ -1556,7 +1556,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:1273",
               "field": "meta.id",
@@ -1564,7 +1564,7 @@
               "meta": {},
               "settings": {},
               "type": "count"
-            }, 
+            },
             {
               "$$hashKey": "object:1274",
               "field": "values.bits_per_second",
@@ -1572,7 +1572,7 @@
               "meta": {},
               "settings": {},
               "type": "avg"
-            }, 
+            },
             {
               "$$hashKey": "object:1275",
               "field": "values.bits_per_second",
@@ -1589,7 +1589,7 @@
       ],
       "title": " ",
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eOther Flow Statistics related to $Country\u003c/center\u003e\u003c/h1\u003e",
       "datasource": null,
@@ -1616,7 +1616,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -1640,11 +1640,11 @@
               {
                 "color": "light-blue",
                 "value": null
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 0
-              }, 
+              },
               {
                 "color": "light-blue",
                 "value": 1
@@ -1715,7 +1715,7 @@
       "title": "# Flows",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "content": "\u003ch3 style=\"margin-top:20px;\"\u003e\u003ccenter\u003eSankey Graph of Top Flows in and out of $Country\u003c/center\u003e\u003c/h3\u003e",
       "datasource": null,
@@ -1742,7 +1742,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "aggregated_data": [],
       "aggregation": "Total",
@@ -1761,107 +1761,107 @@
       "colorScheme": "NetSage",
       "colors": {
         "hex_values": [
-          "#f8ae63", 
-          "#f5ae66", 
-          "#f2ae69", 
-          "#efae6c", 
-          "#ecae6f", 
-          "#e9ae72", 
-          "#e6ae75", 
-          "#e3ae78", 
-          "#e0ae7b", 
-          "#ddae7e", 
-          "#daae81", 
-          "#d7ae84", 
-          "#d4ae87", 
-          "#d1ae8a", 
-          "#ceae8d", 
-          "#cbae90", 
-          "#c8ae93", 
-          "#c5ae96", 
-          "#c2ae99", 
-          "#bfae9c", 
-          "#bcae9f", 
-          "#b9aea2", 
-          "#b6aea5", 
-          "#b3aea8", 
-          "#b0aeab", 
-          "#adaeae", 
-          "#aaaeb1", 
-          "#a7aeb4", 
-          "#a4aeb7", 
-          "#a1aeba", 
-          "#9eaebd", 
-          "#9baec0", 
-          "#98aec3", 
-          "#95aec6", 
-          "#92aec9", 
-          "#8faecc", 
-          "#8caecf", 
-          "#89aed2", 
-          "#86aed5", 
-          "#83aed8", 
-          "#80aedb", 
-          "#7daede", 
-          "#7aaee1", 
-          "#77aee4", 
-          "#74aee7", 
-          "#71aeea", 
-          "#6eaeed", 
-          "#6baef0", 
-          "#68aef3", 
+          "#f8ae63",
+          "#f5ae66",
+          "#f2ae69",
+          "#efae6c",
+          "#ecae6f",
+          "#e9ae72",
+          "#e6ae75",
+          "#e3ae78",
+          "#e0ae7b",
+          "#ddae7e",
+          "#daae81",
+          "#d7ae84",
+          "#d4ae87",
+          "#d1ae8a",
+          "#ceae8d",
+          "#cbae90",
+          "#c8ae93",
+          "#c5ae96",
+          "#c2ae99",
+          "#bfae9c",
+          "#bcae9f",
+          "#b9aea2",
+          "#b6aea5",
+          "#b3aea8",
+          "#b0aeab",
+          "#adaeae",
+          "#aaaeb1",
+          "#a7aeb4",
+          "#a4aeb7",
+          "#a1aeba",
+          "#9eaebd",
+          "#9baec0",
+          "#98aec3",
+          "#95aec6",
+          "#92aec9",
+          "#8faecc",
+          "#8caecf",
+          "#89aed2",
+          "#86aed5",
+          "#83aed8",
+          "#80aedb",
+          "#7daede",
+          "#7aaee1",
+          "#77aee4",
+          "#74aee7",
+          "#71aeea",
+          "#6eaeed",
+          "#6baef0",
+          "#68aef3",
           "#65aef6"
         ],
         "rgb_values": [
-          "rgb(248,174,99)", 
-          "rgb(245,174,102)", 
-          "rgb(242,174,105)", 
-          "rgb(239,174,108)", 
-          "rgb(236,174,111)", 
-          "rgb(233,174,114)", 
-          "rgb(230,174,117)", 
-          "rgb(227,174,120)", 
-          "rgb(224,174,123)", 
-          "rgb(221,174,126)", 
-          "rgb(218,174,129)", 
-          "rgb(215,174,132)", 
-          "rgb(212,174,135)", 
-          "rgb(209,174,138)", 
-          "rgb(206,174,141)", 
-          "rgb(203,174,144)", 
-          "rgb(200,174,147)", 
-          "rgb(197,174,150)", 
-          "rgb(194,174,153)", 
-          "rgb(191,174,156)", 
-          "rgb(188,174,159)", 
-          "rgb(185,174,162)", 
-          "rgb(182,174,165)", 
-          "rgb(179,174,168)", 
-          "rgb(176,174,171)", 
-          "rgb(173,174,174)", 
-          "rgb(170,174,177)", 
-          "rgb(167,174,180)", 
-          "rgb(164,174,183)", 
-          "rgb(161,174,186)", 
-          "rgb(158,174,189)", 
-          "rgb(155,174,192)", 
-          "rgb(152,174,195)", 
-          "rgb(149,174,198)", 
-          "rgb(146,174,201)", 
-          "rgb(143,174,204)", 
-          "rgb(140,174,207)", 
-          "rgb(137,174,210)", 
-          "rgb(134,174,213)", 
-          "rgb(131,174,216)", 
-          "rgb(128,174,219)", 
-          "rgb(125,174,222)", 
-          "rgb(122,174,225)", 
-          "rgb(119,174,228)", 
-          "rgb(116,174,231)", 
-          "rgb(113,174,234)", 
-          "rgb(110,174,237)", 
-          "rgb(107,174,240)", 
-          "rgb(104,174,243)", 
+          "rgb(248,174,99)",
+          "rgb(245,174,102)",
+          "rgb(242,174,105)",
+          "rgb(239,174,108)",
+          "rgb(236,174,111)",
+          "rgb(233,174,114)",
+          "rgb(230,174,117)",
+          "rgb(227,174,120)",
+          "rgb(224,174,123)",
+          "rgb(221,174,126)",
+          "rgb(218,174,129)",
+          "rgb(215,174,132)",
+          "rgb(212,174,135)",
+          "rgb(209,174,138)",
+          "rgb(206,174,141)",
+          "rgb(203,174,144)",
+          "rgb(200,174,147)",
+          "rgb(197,174,150)",
+          "rgb(194,174,153)",
+          "rgb(191,174,156)",
+          "rgb(188,174,159)",
+          "rgb(185,174,162)",
+          "rgb(182,174,165)",
+          "rgb(179,174,168)",
+          "rgb(176,174,171)",
+          "rgb(173,174,174)",
+          "rgb(170,174,177)",
+          "rgb(167,174,180)",
+          "rgb(164,174,183)",
+          "rgb(161,174,186)",
+          "rgb(158,174,189)",
+          "rgb(155,174,192)",
+          "rgb(152,174,195)",
+          "rgb(149,174,198)",
+          "rgb(146,174,201)",
+          "rgb(143,174,204)",
+          "rgb(140,174,207)",
+          "rgb(137,174,210)",
+          "rgb(134,174,213)",
+          "rgb(131,174,216)",
+          "rgb(128,174,219)",
+          "rgb(125,174,222)",
+          "rgb(122,174,225)",
+          "rgb(119,174,228)",
+          "rgb(116,174,231)",
+          "rgb(113,174,234)",
+          "rgb(110,174,237)",
+          "rgb(107,174,240)",
+          "rgb(104,174,243)",
           "rgb(101,174,246)"
         ]
       },
@@ -1889,55 +1889,55 @@
         "y": 91
       },
       "hex_values": [
-        "#f8ae63", 
-        "#f5ae66", 
-        "#f2ae69", 
-        "#efae6c", 
-        "#ecae6f", 
-        "#e9ae72", 
-        "#e6ae75", 
-        "#e3ae78", 
-        "#e0ae7b", 
-        "#ddae7e", 
-        "#daae81", 
-        "#d7ae84", 
-        "#d4ae87", 
-        "#d1ae8a", 
-        "#ceae8d", 
-        "#cbae90", 
-        "#c8ae93", 
-        "#c5ae96", 
-        "#c2ae99", 
-        "#bfae9c", 
-        "#bcae9f", 
-        "#b9aea2", 
-        "#b6aea5", 
-        "#b3aea8", 
-        "#b0aeab", 
-        "#adaeae", 
-        "#aaaeb1", 
-        "#a7aeb4", 
-        "#a4aeb7", 
-        "#a1aeba", 
-        "#9eaebd", 
-        "#9baec0", 
-        "#98aec3", 
-        "#95aec6", 
-        "#92aec9", 
-        "#8faecc", 
-        "#8caecf", 
-        "#89aed2", 
-        "#86aed5", 
-        "#83aed8", 
-        "#80aedb", 
-        "#7daede", 
-        "#7aaee1", 
-        "#77aee4", 
-        "#74aee7", 
-        "#71aeea", 
-        "#6eaeed", 
-        "#6baef0", 
-        "#68aef3", 
+        "#f8ae63",
+        "#f5ae66",
+        "#f2ae69",
+        "#efae6c",
+        "#ecae6f",
+        "#e9ae72",
+        "#e6ae75",
+        "#e3ae78",
+        "#e0ae7b",
+        "#ddae7e",
+        "#daae81",
+        "#d7ae84",
+        "#d4ae87",
+        "#d1ae8a",
+        "#ceae8d",
+        "#cbae90",
+        "#c8ae93",
+        "#c5ae96",
+        "#c2ae99",
+        "#bfae9c",
+        "#bcae9f",
+        "#b9aea2",
+        "#b6aea5",
+        "#b3aea8",
+        "#b0aeab",
+        "#adaeae",
+        "#aaaeb1",
+        "#a7aeb4",
+        "#a4aeb7",
+        "#a1aeba",
+        "#9eaebd",
+        "#9baec0",
+        "#98aec3",
+        "#95aec6",
+        "#92aec9",
+        "#8faecc",
+        "#8caecf",
+        "#89aed2",
+        "#86aed5",
+        "#83aed8",
+        "#80aedb",
+        "#7daede",
+        "#7aaee1",
+        "#77aee4",
+        "#74aee7",
+        "#71aeea",
+        "#6eaeed",
+        "#6baef0",
+        "#68aef3",
         "#65aef6"
       ],
       "id": 4711113,
@@ -1953,68 +1953,68 @@
       "monochromaticColor": "#8AB8FF",
       "option_nodes": [],
       "rgb_values": [
-        "rgb(248,174,99)", 
-        "rgb(245,174,102)", 
-        "rgb(242,174,105)", 
-        "rgb(239,174,108)", 
-        "rgb(236,174,111)", 
-        "rgb(233,174,114)", 
-        "rgb(230,174,117)", 
-        "rgb(227,174,120)", 
-        "rgb(224,174,123)", 
-        "rgb(221,174,126)", 
-        "rgb(218,174,129)", 
-        "rgb(215,174,132)", 
-        "rgb(212,174,135)", 
-        "rgb(209,174,138)", 
-        "rgb(206,174,141)", 
-        "rgb(203,174,144)", 
-        "rgb(200,174,147)", 
-        "rgb(197,174,150)", 
-        "rgb(194,174,153)", 
-        "rgb(191,174,156)", 
-        "rgb(188,174,159)", 
-        "rgb(185,174,162)", 
-        "rgb(182,174,165)", 
-        "rgb(179,174,168)", 
-        "rgb(176,174,171)", 
-        "rgb(173,174,174)", 
-        "rgb(170,174,177)", 
-        "rgb(167,174,180)", 
-        "rgb(164,174,183)", 
-        "rgb(161,174,186)", 
-        "rgb(158,174,189)", 
-        "rgb(155,174,192)", 
-        "rgb(152,174,195)", 
-        "rgb(149,174,198)", 
-        "rgb(146,174,201)", 
-        "rgb(143,174,204)", 
-        "rgb(140,174,207)", 
-        "rgb(137,174,210)", 
-        "rgb(134,174,213)", 
-        "rgb(131,174,216)", 
-        "rgb(128,174,219)", 
-        "rgb(125,174,222)", 
-        "rgb(122,174,225)", 
-        "rgb(119,174,228)", 
-        "rgb(116,174,231)", 
-        "rgb(113,174,234)", 
-        "rgb(110,174,237)", 
-        "rgb(107,174,240)", 
-        "rgb(104,174,243)", 
+        "rgb(248,174,99)",
+        "rgb(245,174,102)",
+        "rgb(242,174,105)",
+        "rgb(239,174,108)",
+        "rgb(236,174,111)",
+        "rgb(233,174,114)",
+        "rgb(230,174,117)",
+        "rgb(227,174,120)",
+        "rgb(224,174,123)",
+        "rgb(221,174,126)",
+        "rgb(218,174,129)",
+        "rgb(215,174,132)",
+        "rgb(212,174,135)",
+        "rgb(209,174,138)",
+        "rgb(206,174,141)",
+        "rgb(203,174,144)",
+        "rgb(200,174,147)",
+        "rgb(197,174,150)",
+        "rgb(194,174,153)",
+        "rgb(191,174,156)",
+        "rgb(188,174,159)",
+        "rgb(185,174,162)",
+        "rgb(182,174,165)",
+        "rgb(179,174,168)",
+        "rgb(176,174,171)",
+        "rgb(173,174,174)",
+        "rgb(170,174,177)",
+        "rgb(167,174,180)",
+        "rgb(164,174,183)",
+        "rgb(161,174,186)",
+        "rgb(158,174,189)",
+        "rgb(155,174,192)",
+        "rgb(152,174,195)",
+        "rgb(149,174,198)",
+        "rgb(146,174,201)",
+        "rgb(143,174,204)",
+        "rgb(140,174,207)",
+        "rgb(137,174,210)",
+        "rgb(134,174,213)",
+        "rgb(131,174,216)",
+        "rgb(128,174,219)",
+        "rgb(125,174,222)",
+        "rgb(122,174,225)",
+        "rgb(119,174,228)",
+        "rgb(116,174,231)",
+        "rgb(113,174,234)",
+        "rgb(110,174,237)",
+        "rgb(107,174,240)",
+        "rgb(104,174,243)",
         "rgb(101,174,246)"
       ],
       "scales": ["linear", "sqrt"],
       "table_data": [
-        ["United States", "United States", 3109577.136389556], 
-        ["Brazil", "United States", 1135714.729841951], 
-        ["United Kingdom", "United States", 369216.241343265], 
-        ["Puerto Rico", "United States", 73707.379971724], 
-        ["Switzerland", "United States", 69796.032086287], 
-        ["Germany", "United States", 53394.095755418], 
-        ["France", "United States", 22400.11884186], 
-        ["Ireland", "United States", 15041.2438912], 
-        ["Norway", "United States", 14735.431368192], 
+        ["United States", "United States", 3109577.136389556],
+        ["Brazil", "United States", 1135714.729841951],
+        ["United Kingdom", "United States", 369216.241343265],
+        ["Puerto Rico", "United States", 73707.379971724],
+        ["Switzerland", "United States", 69796.032086287],
+        ["Germany", "United States", 53394.095755418],
+        ["France", "United States", 22400.11884186],
+        ["Ireland", "United States", 15041.2438912],
+        ["Norway", "United States", 14735.431368192],
         ["Belgium", "United States", 13407.918691568]
       ],
       "table_data_type": "Sum",
@@ -2026,47 +2026,47 @@
               "click": "menuItemSelected(0,0)",
               "text": "none",
               "value": "none"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,1)",
               "text": "short",
               "value": "short"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,2)",
               "text": "percent (0-100)",
               "value": "percent"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,3)",
               "text": "percent (0.0-1.0)",
               "value": "percentunit"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,4)",
               "text": "Humidity (%H)",
               "value": "humidity"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,5)",
               "text": "decibel",
               "value": "dB"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,6)",
               "text": "hexadecimal (0x)",
               "value": "hex0x"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,7)",
               "text": "hexadecimal",
               "value": "hex"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,8)",
               "text": "scientific notation",
               "value": "sci"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,9)",
               "text": "locale format",
@@ -2074,19 +2074,19 @@
             }
           ],
           "text": "Misc"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(1,0)",
               "text": "Meters/sec²",
               "value": "accMS2"
-            }, 
+            },
             {
               "click": "menuItemSelected(1,1)",
               "text": "Feet/sec²",
               "value": "accFS2"
-            }, 
+            },
             {
               "click": "menuItemSelected(1,2)",
               "text": "G unit",
@@ -2094,29 +2094,29 @@
             }
           ],
           "text": "Acceleration"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(2,0)",
               "text": "Degrees (°)",
               "value": "degree"
-            }, 
+            },
             {
               "click": "menuItemSelected(2,1)",
               "text": "Radians",
               "value": "radian"
-            }, 
+            },
             {
               "click": "menuItemSelected(2,2)",
               "text": "Gradian",
               "value": "grad"
-            }, 
+            },
             {
               "click": "menuItemSelected(2,3)",
               "text": "Arc Minutes",
               "value": "arcmin"
-            }, 
+            },
             {
               "click": "menuItemSelected(2,4)",
               "text": "Arc Seconds",
@@ -2124,19 +2124,19 @@
             }
           ],
           "text": "Angle"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(3,0)",
               "text": "Square Meters (m²)",
               "value": "areaM2"
-            }, 
+            },
             {
               "click": "menuItemSelected(3,1)",
               "text": "Square Feet (ft²)",
               "value": "areaF2"
-            }, 
+            },
             {
               "click": "menuItemSelected(3,2)",
               "text": "Square Miles (mi²)",
@@ -2144,34 +2144,34 @@
             }
           ],
           "text": "Area"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(4,0)",
               "text": "FLOP/s",
               "value": "flops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,1)",
               "text": "MFLOP/s",
               "value": "mflops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,2)",
               "text": "GFLOP/s",
               "value": "gflops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,3)",
               "text": "TFLOP/s",
               "value": "tflops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,4)",
               "text": "PFLOP/s",
               "value": "pflops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,5)",
               "text": "EFLOP/s",
@@ -2179,64 +2179,64 @@
             }
           ],
           "text": "Computation"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(5,0)",
               "text": "parts-per-million (ppm)",
               "value": "ppm"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,1)",
               "text": "parts-per-billion (ppb)",
               "value": "conppb"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,2)",
               "text": "nanogram per cubic meter (ng/m³)",
               "value": "conngm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,3)",
               "text": "nanogram per normal cubic meter (ng/Nm³)",
               "value": "conngNm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,4)",
               "text": "microgram per cubic meter (μg/m³)",
               "value": "conμgm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,5)",
               "text": "microgram per normal cubic meter (μg/Nm³)",
               "value": "conμgNm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,6)",
               "text": "milligram per cubic meter (mg/m³)",
               "value": "conmgm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,7)",
               "text": "milligram per normal cubic meter (mg/Nm³)",
               "value": "conmgNm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,8)",
               "text": "gram per cubic meter (g/m³)",
               "value": "congm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,9)",
               "text": "gram per normal cubic meter (g/Nm³)",
               "value": "congNm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,10)",
               "text": "milligrams per decilitre (mg/dL)",
               "value": "conmgdL"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,11)",
               "text": "millimoles per litre (mmol/L)",
@@ -2244,79 +2244,79 @@
             }
           ],
           "text": "Concentration"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(6,0)",
               "text": "Dollars ($)",
               "value": "currencyUSD"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,1)",
               "text": "Pounds (£)",
               "value": "currencyGBP"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,2)",
               "text": "Euro (€)",
               "value": "currencyEUR"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,3)",
               "text": "Yen (¥)",
               "value": "currencyJPY"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,4)",
               "text": "Rubles (₽)",
               "value": "currencyRUB"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,5)",
               "text": "Hryvnias (₴)",
               "value": "currencyUAH"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,6)",
               "text": "Real (R$)",
               "value": "currencyBRL"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,7)",
               "text": "Danish Krone (kr)",
               "value": "currencyDKK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,8)",
               "text": "Icelandic Króna (kr)",
               "value": "currencyISK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,9)",
               "text": "Norwegian Krone (kr)",
               "value": "currencyNOK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,10)",
               "text": "Swedish Krona (kr)",
               "value": "currencySEK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,11)",
               "text": "Czech koruna (czk)",
               "value": "currencyCZK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,12)",
               "text": "Swiss franc (CHF)",
               "value": "currencyCHF"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,13)",
               "text": "Polish Złoty (PLN)",
               "value": "currencyPLN"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,14)",
               "text": "Bitcoin (฿)",
@@ -2324,29 +2324,29 @@
             }
           ],
           "text": "Currency"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(7,0)",
               "text": "bits",
               "value": "bits"
-            }, 
+            },
             {
               "click": "menuItemSelected(7,1)",
               "text": "bytes",
               "value": "bytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(7,2)",
               "text": "kibibytes",
               "value": "kbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(7,3)",
               "text": "mebibytes",
               "value": "mbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(7,4)",
               "text": "gibibytes",
@@ -2354,29 +2354,29 @@
             }
           ],
           "text": "Data (IEC)"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(8,0)",
               "text": "bits",
               "value": "decbits"
-            }, 
+            },
             {
               "click": "menuItemSelected(8,1)",
               "text": "bytes",
               "value": "decbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(8,2)",
               "text": "kilobytes",
               "value": "deckbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(8,3)",
               "text": "megabytes",
               "value": "decmbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(8,4)",
               "text": "gigabytes",
@@ -2384,49 +2384,49 @@
             }
           ],
           "text": "Data (Metric)"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(9,0)",
               "text": "packets/sec",
               "value": "pps"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,1)",
               "text": "bits/sec",
               "value": "bps"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,2)",
               "text": "bytes/sec",
               "value": "Bps"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,3)",
               "text": "kilobytes/sec",
               "value": "KBs"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,4)",
               "text": "kilobits/sec",
               "value": "Kbits"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,5)",
               "text": "megabytes/sec",
               "value": "MBs"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,6)",
               "text": "megabits/sec",
               "value": "Mbits"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,7)",
               "text": "gigabytes/sec",
               "value": "GBs"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,8)",
               "text": "gigabits/sec",
@@ -2434,19 +2434,19 @@
             }
           ],
           "text": "Data Rate"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(10,0)",
               "text": "YYYY-MM-DD HH:mm:ss",
               "value": "dateTimeAsIso"
-            }, 
+            },
             {
               "click": "menuItemSelected(10,1)",
               "text": "DD/MM/YYYY h:mm:ss a",
               "value": "dateTimeAsUS"
-            }, 
+            },
             {
               "click": "menuItemSelected(10,2)",
               "text": "From Now",
@@ -2454,114 +2454,114 @@
             }
           ],
           "text": "Date \u0026 Time"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(11,0)",
               "text": "Watt (W)",
               "value": "watt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,1)",
               "text": "Kilowatt (kW)",
               "value": "kwatt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,2)",
               "text": "Milliwatt (mW)",
               "value": "mwatt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,3)",
               "text": "Watt per square meter (W/m²)",
               "value": "Wm2"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,4)",
               "text": "Volt-ampere (VA)",
               "value": "voltamp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,5)",
               "text": "Kilovolt-ampere (kVA)",
               "value": "kvoltamp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,6)",
               "text": "Volt-ampere reactive (var)",
               "value": "voltampreact"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,7)",
               "text": "Kilovolt-ampere reactive (kvar)",
               "value": "kvoltampreact"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,8)",
               "text": "Watt-hour (Wh)",
               "value": "watth"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,9)",
               "text": "Kilowatt-hour (kWh)",
               "value": "kwatth"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,10)",
               "text": "Kilowatt-min (kWm)",
               "value": "kwattm"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,11)",
               "text": "Joule (J)",
               "value": "joule"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,12)",
               "text": "Electron volt (eV)",
               "value": "ev"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,13)",
               "text": "Ampere (A)",
               "value": "amp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,14)",
               "text": "Kiloampere (kA)",
               "value": "kamp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,15)",
               "text": "Milliampere (mA)",
               "value": "mamp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,16)",
               "text": "Volt (V)",
               "value": "volt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,17)",
               "text": "Kilovolt (kV)",
               "value": "kvolt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,18)",
               "text": "Millivolt (mV)",
               "value": "mvolt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,19)",
               "text": "Decibel-milliwatt (dBm)",
               "value": "dBm"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,20)",
               "text": "Ohm (Ω)",
               "value": "ohm"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,21)",
               "text": "Lumens (Lm)",
@@ -2569,44 +2569,44 @@
             }
           ],
           "text": "Energy"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(12,0)",
               "text": "Gallons/min (gpm)",
               "value": "flowgpm"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,1)",
               "text": "Cubic meters/sec (cms)",
               "value": "flowcms"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,2)",
               "text": "Cubic feet/sec (cfs)",
               "value": "flowcfs"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,3)",
               "text": "Cubic feet/min (cfm)",
               "value": "flowcfm"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,4)",
               "text": "Litre/hour",
               "value": "litreh"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,5)",
               "text": "Litre/min (l/min)",
               "value": "flowlpm"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,6)",
               "text": "milliLitre/min (mL/min)",
               "value": "flowmlpm"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,7)",
               "text": "Lux (lx)",
@@ -2614,24 +2614,24 @@
             }
           ],
           "text": "Flow"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(13,0)",
               "text": "Newton-meters (Nm)",
               "value": "forceNm"
-            }, 
+            },
             {
               "click": "menuItemSelected(13,1)",
               "text": "Kilonewton-meters (kNm)",
               "value": "forcekNm"
-            }, 
+            },
             {
               "click": "menuItemSelected(13,2)",
               "text": "Newtons (N)",
               "value": "forceN"
-            }, 
+            },
             {
               "click": "menuItemSelected(13,3)",
               "text": "Kilonewtons (kN)",
@@ -2639,39 +2639,39 @@
             }
           ],
           "text": "Force"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(14,0)",
               "text": "hashes/sec",
               "value": "Hs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,1)",
               "text": "kilohashes/sec",
               "value": "KHs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,2)",
               "text": "megahashes/sec",
               "value": "MHs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,3)",
               "text": "gigahashes/sec",
               "value": "GHs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,4)",
               "text": "terahashes/sec",
               "value": "THs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,5)",
               "text": "petahashes/sec",
               "value": "PHs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,6)",
               "text": "exahashes/sec",
@@ -2679,24 +2679,24 @@
             }
           ],
           "text": "Hash Rate"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(15,0)",
               "text": "milligram (mg)",
               "value": "massmg"
-            }, 
+            },
             {
               "click": "menuItemSelected(15,1)",
               "text": "gram (g)",
               "value": "massg"
-            }, 
+            },
             {
               "click": "menuItemSelected(15,2)",
               "text": "kilogram (kg)",
               "value": "masskg"
-            }, 
+            },
             {
               "click": "menuItemSelected(15,3)",
               "text": "metric ton (t)",
@@ -2704,29 +2704,29 @@
             }
           ],
           "text": "Mass"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(16,0)",
               "text": "millimetre (mm)",
               "value": "lengthmm"
-            }, 
+            },
             {
               "click": "menuItemSelected(16,1)",
               "text": "feet (ft)",
               "value": "lengthft"
-            }, 
+            },
             {
               "click": "menuItemSelected(16,2)",
               "text": "meter (m)",
               "value": "lengthm"
-            }, 
+            },
             {
               "click": "menuItemSelected(16,3)",
               "text": "kilometer (km)",
               "value": "lengthkm"
-            }, 
+            },
             {
               "click": "menuItemSelected(16,4)",
               "text": "mile (mi)",
@@ -2734,39 +2734,39 @@
             }
           ],
           "text": "length"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(17,0)",
               "text": "Millibars",
               "value": "pressurembar"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,1)",
               "text": "Bars",
               "value": "pressurebar"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,2)",
               "text": "Kilobars",
               "value": "pressurekbar"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,3)",
               "text": "Hectopascals",
               "value": "pressurehpa"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,4)",
               "text": "Kilopascals",
               "value": "pressurekpa"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,5)",
               "text": "Inches of mercury",
               "value": "pressurehg"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,6)",
               "text": "PSI",
@@ -2774,49 +2774,49 @@
             }
           ],
           "text": "Pressure"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(18,0)",
               "text": "Becquerel (Bq)",
               "value": "radbq"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,1)",
               "text": "curie (Ci)",
               "value": "radci"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,2)",
               "text": "Gray (Gy)",
               "value": "radgy"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,3)",
               "text": "rad",
               "value": "radrad"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,4)",
               "text": "Sievert (Sv)",
               "value": "radsv"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,5)",
               "text": "rem",
               "value": "radrem"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,6)",
               "text": "Exposure (C/kg)",
               "value": "radexpckg"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,7)",
               "text": "roentgen (R)",
               "value": "radr"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,8)",
               "text": "Sievert/hour (Sv/h)",
@@ -2824,19 +2824,19 @@
             }
           ],
           "text": "Radiation"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(19,0)",
               "text": "Celsius (°C)",
               "value": "celsius"
-            }, 
+            },
             {
               "click": "menuItemSelected(19,1)",
               "text": "Farenheit (°F)",
               "value": "farenheit"
-            }, 
+            },
             {
               "click": "menuItemSelected(19,2)",
               "text": "Kelvin (K)",
@@ -2844,74 +2844,74 @@
             }
           ],
           "text": "Temperature"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(20,0)",
               "text": "Hertz (1/s)",
               "value": "hertz"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,1)",
               "text": "nanoseconds (ns)",
               "value": "ns"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,2)",
               "text": "microseconds (µs)",
               "value": "µs"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,3)",
               "text": "milliseconds (ms)",
               "value": "ms"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,4)",
               "text": "seconds (s)",
               "value": "s"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,5)",
               "text": "minutes (m)",
               "value": "m"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,6)",
               "text": "hours (h)",
               "value": "h"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,7)",
               "text": "days (d)",
               "value": "d"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,8)",
               "text": "duration (ms)",
               "value": "dtdurationms"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,9)",
               "text": "duration (s)",
               "value": "dtdurations"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,10)",
               "text": "duration (hh:mm:ss)",
               "value": "dthms"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,11)",
               "text": "Timeticks (s/100)",
               "value": "timeticks"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,12)",
               "text": "clock (ms)",
               "value": "clockms"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,13)",
               "text": "clock (s)",
@@ -2919,44 +2919,44 @@
             }
           ],
           "text": "Time"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(21,0)",
               "text": "ops/sec (ops)",
               "value": "ops"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,1)",
               "text": "requests/sec (rps)",
               "value": "reqps"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,2)",
               "text": "reads/sec (rps)",
               "value": "rps"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,3)",
               "text": "writes/sec (wps)",
               "value": "wps"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,4)",
               "text": "I/O ops/sec (iops)",
               "value": "iops"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,5)",
               "text": "ops/min (opm)",
               "value": "opm"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,6)",
               "text": "reads/min (rpm)",
               "value": "rpm"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,7)",
               "text": "writes/min (wpm)",
@@ -2964,24 +2964,24 @@
             }
           ],
           "text": "Throughput"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(22,0)",
               "text": "metres/second (m/s)",
               "value": "velocityms"
-            }, 
+            },
             {
               "click": "menuItemSelected(22,1)",
               "text": "kilometers/hour (km/h)",
               "value": "velocitykmh"
-            }, 
+            },
             {
               "click": "menuItemSelected(22,2)",
               "text": "miles/hour (mph)",
               "value": "velocitymph"
-            }, 
+            },
             {
               "click": "menuItemSelected(22,3)",
               "text": "knot (kn)",
@@ -2989,34 +2989,34 @@
             }
           ],
           "text": "Velocity"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(23,0)",
               "text": "millilitre (mL)",
               "value": "mlitre"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,1)",
               "text": "litre (L)",
               "value": "litre"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,2)",
               "text": "cubic metre",
               "value": "m3"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,3)",
               "text": "Normal cubic metre",
               "value": "Nm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,4)",
               "text": "cubic decimetre",
               "value": "dm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,5)",
               "text": "gallons",
@@ -3030,7 +3030,7 @@
       "table_editor_link_width_units": "",
       "table_editor_node_labels": ["Source Country", ""],
       "table_editor_option_nodes": [
-        "meta.src_country_name", 
+        "meta.src_country_name",
         "meta.dst_country_name"
       ],
       "table_editor_unitFormats": "decbytes",
@@ -3041,7 +3041,7 @@
               "click": "menuItemSelected(0,0)",
               "text": "Not implemented yet",
               "value": "kbn.getUnitFormats()"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,1)",
               "text": "test unit",
@@ -3066,7 +3066,7 @@
                 "size": "10"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:997",
               "fake": true,
@@ -3110,7 +3110,7 @@
         "showDefault": true
       },
       "type": "netsage-sankey"
-    }, 
+    },
     {
       "aggregated_data": [],
       "aggregation": "Total",
@@ -3129,107 +3129,107 @@
       "colorScheme": "NetSage",
       "colors": {
         "hex_values": [
-          "#f8ae63", 
-          "#f5ae66", 
-          "#f2ae69", 
-          "#efae6c", 
-          "#ecae6f", 
-          "#e9ae72", 
-          "#e6ae75", 
-          "#e3ae78", 
-          "#e0ae7b", 
-          "#ddae7e", 
-          "#daae81", 
-          "#d7ae84", 
-          "#d4ae87", 
-          "#d1ae8a", 
-          "#ceae8d", 
-          "#cbae90", 
-          "#c8ae93", 
-          "#c5ae96", 
-          "#c2ae99", 
-          "#bfae9c", 
-          "#bcae9f", 
-          "#b9aea2", 
-          "#b6aea5", 
-          "#b3aea8", 
-          "#b0aeab", 
-          "#adaeae", 
-          "#aaaeb1", 
-          "#a7aeb4", 
-          "#a4aeb7", 
-          "#a1aeba", 
-          "#9eaebd", 
-          "#9baec0", 
-          "#98aec3", 
-          "#95aec6", 
-          "#92aec9", 
-          "#8faecc", 
-          "#8caecf", 
-          "#89aed2", 
-          "#86aed5", 
-          "#83aed8", 
-          "#80aedb", 
-          "#7daede", 
-          "#7aaee1", 
-          "#77aee4", 
-          "#74aee7", 
-          "#71aeea", 
-          "#6eaeed", 
-          "#6baef0", 
-          "#68aef3", 
+          "#f8ae63",
+          "#f5ae66",
+          "#f2ae69",
+          "#efae6c",
+          "#ecae6f",
+          "#e9ae72",
+          "#e6ae75",
+          "#e3ae78",
+          "#e0ae7b",
+          "#ddae7e",
+          "#daae81",
+          "#d7ae84",
+          "#d4ae87",
+          "#d1ae8a",
+          "#ceae8d",
+          "#cbae90",
+          "#c8ae93",
+          "#c5ae96",
+          "#c2ae99",
+          "#bfae9c",
+          "#bcae9f",
+          "#b9aea2",
+          "#b6aea5",
+          "#b3aea8",
+          "#b0aeab",
+          "#adaeae",
+          "#aaaeb1",
+          "#a7aeb4",
+          "#a4aeb7",
+          "#a1aeba",
+          "#9eaebd",
+          "#9baec0",
+          "#98aec3",
+          "#95aec6",
+          "#92aec9",
+          "#8faecc",
+          "#8caecf",
+          "#89aed2",
+          "#86aed5",
+          "#83aed8",
+          "#80aedb",
+          "#7daede",
+          "#7aaee1",
+          "#77aee4",
+          "#74aee7",
+          "#71aeea",
+          "#6eaeed",
+          "#6baef0",
+          "#68aef3",
           "#65aef6"
         ],
         "rgb_values": [
-          "rgb(248,174,99)", 
-          "rgb(245,174,102)", 
-          "rgb(242,174,105)", 
-          "rgb(239,174,108)", 
-          "rgb(236,174,111)", 
-          "rgb(233,174,114)", 
-          "rgb(230,174,117)", 
-          "rgb(227,174,120)", 
-          "rgb(224,174,123)", 
-          "rgb(221,174,126)", 
-          "rgb(218,174,129)", 
-          "rgb(215,174,132)", 
-          "rgb(212,174,135)", 
-          "rgb(209,174,138)", 
-          "rgb(206,174,141)", 
-          "rgb(203,174,144)", 
-          "rgb(200,174,147)", 
-          "rgb(197,174,150)", 
-          "rgb(194,174,153)", 
-          "rgb(191,174,156)", 
-          "rgb(188,174,159)", 
-          "rgb(185,174,162)", 
-          "rgb(182,174,165)", 
-          "rgb(179,174,168)", 
-          "rgb(176,174,171)", 
-          "rgb(173,174,174)", 
-          "rgb(170,174,177)", 
-          "rgb(167,174,180)", 
-          "rgb(164,174,183)", 
-          "rgb(161,174,186)", 
-          "rgb(158,174,189)", 
-          "rgb(155,174,192)", 
-          "rgb(152,174,195)", 
-          "rgb(149,174,198)", 
-          "rgb(146,174,201)", 
-          "rgb(143,174,204)", 
-          "rgb(140,174,207)", 
-          "rgb(137,174,210)", 
-          "rgb(134,174,213)", 
-          "rgb(131,174,216)", 
-          "rgb(128,174,219)", 
-          "rgb(125,174,222)", 
-          "rgb(122,174,225)", 
-          "rgb(119,174,228)", 
-          "rgb(116,174,231)", 
-          "rgb(113,174,234)", 
-          "rgb(110,174,237)", 
-          "rgb(107,174,240)", 
-          "rgb(104,174,243)", 
+          "rgb(248,174,99)",
+          "rgb(245,174,102)",
+          "rgb(242,174,105)",
+          "rgb(239,174,108)",
+          "rgb(236,174,111)",
+          "rgb(233,174,114)",
+          "rgb(230,174,117)",
+          "rgb(227,174,120)",
+          "rgb(224,174,123)",
+          "rgb(221,174,126)",
+          "rgb(218,174,129)",
+          "rgb(215,174,132)",
+          "rgb(212,174,135)",
+          "rgb(209,174,138)",
+          "rgb(206,174,141)",
+          "rgb(203,174,144)",
+          "rgb(200,174,147)",
+          "rgb(197,174,150)",
+          "rgb(194,174,153)",
+          "rgb(191,174,156)",
+          "rgb(188,174,159)",
+          "rgb(185,174,162)",
+          "rgb(182,174,165)",
+          "rgb(179,174,168)",
+          "rgb(176,174,171)",
+          "rgb(173,174,174)",
+          "rgb(170,174,177)",
+          "rgb(167,174,180)",
+          "rgb(164,174,183)",
+          "rgb(161,174,186)",
+          "rgb(158,174,189)",
+          "rgb(155,174,192)",
+          "rgb(152,174,195)",
+          "rgb(149,174,198)",
+          "rgb(146,174,201)",
+          "rgb(143,174,204)",
+          "rgb(140,174,207)",
+          "rgb(137,174,210)",
+          "rgb(134,174,213)",
+          "rgb(131,174,216)",
+          "rgb(128,174,219)",
+          "rgb(125,174,222)",
+          "rgb(122,174,225)",
+          "rgb(119,174,228)",
+          "rgb(116,174,231)",
+          "rgb(113,174,234)",
+          "rgb(110,174,237)",
+          "rgb(107,174,240)",
+          "rgb(104,174,243)",
           "rgb(101,174,246)"
         ]
       },
@@ -3257,55 +3257,55 @@
         "y": 91
       },
       "hex_values": [
-        "#f8ae63", 
-        "#f5ae66", 
-        "#f2ae69", 
-        "#efae6c", 
-        "#ecae6f", 
-        "#e9ae72", 
-        "#e6ae75", 
-        "#e3ae78", 
-        "#e0ae7b", 
-        "#ddae7e", 
-        "#daae81", 
-        "#d7ae84", 
-        "#d4ae87", 
-        "#d1ae8a", 
-        "#ceae8d", 
-        "#cbae90", 
-        "#c8ae93", 
-        "#c5ae96", 
-        "#c2ae99", 
-        "#bfae9c", 
-        "#bcae9f", 
-        "#b9aea2", 
-        "#b6aea5", 
-        "#b3aea8", 
-        "#b0aeab", 
-        "#adaeae", 
-        "#aaaeb1", 
-        "#a7aeb4", 
-        "#a4aeb7", 
-        "#a1aeba", 
-        "#9eaebd", 
-        "#9baec0", 
-        "#98aec3", 
-        "#95aec6", 
-        "#92aec9", 
-        "#8faecc", 
-        "#8caecf", 
-        "#89aed2", 
-        "#86aed5", 
-        "#83aed8", 
-        "#80aedb", 
-        "#7daede", 
-        "#7aaee1", 
-        "#77aee4", 
-        "#74aee7", 
-        "#71aeea", 
-        "#6eaeed", 
-        "#6baef0", 
-        "#68aef3", 
+        "#f8ae63",
+        "#f5ae66",
+        "#f2ae69",
+        "#efae6c",
+        "#ecae6f",
+        "#e9ae72",
+        "#e6ae75",
+        "#e3ae78",
+        "#e0ae7b",
+        "#ddae7e",
+        "#daae81",
+        "#d7ae84",
+        "#d4ae87",
+        "#d1ae8a",
+        "#ceae8d",
+        "#cbae90",
+        "#c8ae93",
+        "#c5ae96",
+        "#c2ae99",
+        "#bfae9c",
+        "#bcae9f",
+        "#b9aea2",
+        "#b6aea5",
+        "#b3aea8",
+        "#b0aeab",
+        "#adaeae",
+        "#aaaeb1",
+        "#a7aeb4",
+        "#a4aeb7",
+        "#a1aeba",
+        "#9eaebd",
+        "#9baec0",
+        "#98aec3",
+        "#95aec6",
+        "#92aec9",
+        "#8faecc",
+        "#8caecf",
+        "#89aed2",
+        "#86aed5",
+        "#83aed8",
+        "#80aedb",
+        "#7daede",
+        "#7aaee1",
+        "#77aee4",
+        "#74aee7",
+        "#71aeea",
+        "#6eaeed",
+        "#6baef0",
+        "#68aef3",
         "#65aef6"
       ],
       "id": 4711114,
@@ -3321,68 +3321,68 @@
       "monochromaticColor": "#8AB8FF",
       "option_nodes": [],
       "rgb_values": [
-        "rgb(248,174,99)", 
-        "rgb(245,174,102)", 
-        "rgb(242,174,105)", 
-        "rgb(239,174,108)", 
-        "rgb(236,174,111)", 
-        "rgb(233,174,114)", 
-        "rgb(230,174,117)", 
-        "rgb(227,174,120)", 
-        "rgb(224,174,123)", 
-        "rgb(221,174,126)", 
-        "rgb(218,174,129)", 
-        "rgb(215,174,132)", 
-        "rgb(212,174,135)", 
-        "rgb(209,174,138)", 
-        "rgb(206,174,141)", 
-        "rgb(203,174,144)", 
-        "rgb(200,174,147)", 
-        "rgb(197,174,150)", 
-        "rgb(194,174,153)", 
-        "rgb(191,174,156)", 
-        "rgb(188,174,159)", 
-        "rgb(185,174,162)", 
-        "rgb(182,174,165)", 
-        "rgb(179,174,168)", 
-        "rgb(176,174,171)", 
-        "rgb(173,174,174)", 
-        "rgb(170,174,177)", 
-        "rgb(167,174,180)", 
-        "rgb(164,174,183)", 
-        "rgb(161,174,186)", 
-        "rgb(158,174,189)", 
-        "rgb(155,174,192)", 
-        "rgb(152,174,195)", 
-        "rgb(149,174,198)", 
-        "rgb(146,174,201)", 
-        "rgb(143,174,204)", 
-        "rgb(140,174,207)", 
-        "rgb(137,174,210)", 
-        "rgb(134,174,213)", 
-        "rgb(131,174,216)", 
-        "rgb(128,174,219)", 
-        "rgb(125,174,222)", 
-        "rgb(122,174,225)", 
-        "rgb(119,174,228)", 
-        "rgb(116,174,231)", 
-        "rgb(113,174,234)", 
-        "rgb(110,174,237)", 
-        "rgb(107,174,240)", 
-        "rgb(104,174,243)", 
+        "rgb(248,174,99)",
+        "rgb(245,174,102)",
+        "rgb(242,174,105)",
+        "rgb(239,174,108)",
+        "rgb(236,174,111)",
+        "rgb(233,174,114)",
+        "rgb(230,174,117)",
+        "rgb(227,174,120)",
+        "rgb(224,174,123)",
+        "rgb(221,174,126)",
+        "rgb(218,174,129)",
+        "rgb(215,174,132)",
+        "rgb(212,174,135)",
+        "rgb(209,174,138)",
+        "rgb(206,174,141)",
+        "rgb(203,174,144)",
+        "rgb(200,174,147)",
+        "rgb(197,174,150)",
+        "rgb(194,174,153)",
+        "rgb(191,174,156)",
+        "rgb(188,174,159)",
+        "rgb(185,174,162)",
+        "rgb(182,174,165)",
+        "rgb(179,174,168)",
+        "rgb(176,174,171)",
+        "rgb(173,174,174)",
+        "rgb(170,174,177)",
+        "rgb(167,174,180)",
+        "rgb(164,174,183)",
+        "rgb(161,174,186)",
+        "rgb(158,174,189)",
+        "rgb(155,174,192)",
+        "rgb(152,174,195)",
+        "rgb(149,174,198)",
+        "rgb(146,174,201)",
+        "rgb(143,174,204)",
+        "rgb(140,174,207)",
+        "rgb(137,174,210)",
+        "rgb(134,174,213)",
+        "rgb(131,174,216)",
+        "rgb(128,174,219)",
+        "rgb(125,174,222)",
+        "rgb(122,174,225)",
+        "rgb(119,174,228)",
+        "rgb(116,174,231)",
+        "rgb(113,174,234)",
+        "rgb(110,174,237)",
+        "rgb(107,174,240)",
+        "rgb(104,174,243)",
         "rgb(101,174,246)"
       ],
       "scales": ["linear", "sqrt"],
       "table_data": [
-        ["United States", "United States", 3109577.136389556], 
-        ["United States", "Brazil", 318008.945461937], 
-        ["United States", "Puerto Rico", 264743.018034504], 
-        ["United States", "United Kingdom", 217540.512866658], 
-        ["United States", "Germany", 106903.69582549299], 
-        ["United States", "Estonia", 44621.080361984], 
-        ["United States", "U.S. Virgin Islands", 41352.00514048], 
-        ["United States", "Belgium", 37168.576097672994], 
-        ["United States", "Netherlands", 34230.335259227], 
+        ["United States", "United States", 3109577.136389556],
+        ["United States", "Brazil", 318008.945461937],
+        ["United States", "Puerto Rico", 264743.018034504],
+        ["United States", "United Kingdom", 217540.512866658],
+        ["United States", "Germany", 106903.69582549299],
+        ["United States", "Estonia", 44621.080361984],
+        ["United States", "U.S. Virgin Islands", 41352.00514048],
+        ["United States", "Belgium", 37168.576097672994],
+        ["United States", "Netherlands", 34230.335259227],
         ["United States", "China", 20718.758793553]
       ],
       "table_data_type": "Sum",
@@ -3394,47 +3394,47 @@
               "click": "menuItemSelected(0,0)",
               "text": "none",
               "value": "none"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,1)",
               "text": "short",
               "value": "short"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,2)",
               "text": "percent (0-100)",
               "value": "percent"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,3)",
               "text": "percent (0.0-1.0)",
               "value": "percentunit"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,4)",
               "text": "Humidity (%H)",
               "value": "humidity"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,5)",
               "text": "decibel",
               "value": "dB"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,6)",
               "text": "hexadecimal (0x)",
               "value": "hex0x"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,7)",
               "text": "hexadecimal",
               "value": "hex"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,8)",
               "text": "scientific notation",
               "value": "sci"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,9)",
               "text": "locale format",
@@ -3442,19 +3442,19 @@
             }
           ],
           "text": "Misc"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(1,0)",
               "text": "Meters/sec²",
               "value": "accMS2"
-            }, 
+            },
             {
               "click": "menuItemSelected(1,1)",
               "text": "Feet/sec²",
               "value": "accFS2"
-            }, 
+            },
             {
               "click": "menuItemSelected(1,2)",
               "text": "G unit",
@@ -3462,29 +3462,29 @@
             }
           ],
           "text": "Acceleration"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(2,0)",
               "text": "Degrees (°)",
               "value": "degree"
-            }, 
+            },
             {
               "click": "menuItemSelected(2,1)",
               "text": "Radians",
               "value": "radian"
-            }, 
+            },
             {
               "click": "menuItemSelected(2,2)",
               "text": "Gradian",
               "value": "grad"
-            }, 
+            },
             {
               "click": "menuItemSelected(2,3)",
               "text": "Arc Minutes",
               "value": "arcmin"
-            }, 
+            },
             {
               "click": "menuItemSelected(2,4)",
               "text": "Arc Seconds",
@@ -3492,19 +3492,19 @@
             }
           ],
           "text": "Angle"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(3,0)",
               "text": "Square Meters (m²)",
               "value": "areaM2"
-            }, 
+            },
             {
               "click": "menuItemSelected(3,1)",
               "text": "Square Feet (ft²)",
               "value": "areaF2"
-            }, 
+            },
             {
               "click": "menuItemSelected(3,2)",
               "text": "Square Miles (mi²)",
@@ -3512,34 +3512,34 @@
             }
           ],
           "text": "Area"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(4,0)",
               "text": "FLOP/s",
               "value": "flops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,1)",
               "text": "MFLOP/s",
               "value": "mflops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,2)",
               "text": "GFLOP/s",
               "value": "gflops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,3)",
               "text": "TFLOP/s",
               "value": "tflops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,4)",
               "text": "PFLOP/s",
               "value": "pflops"
-            }, 
+            },
             {
               "click": "menuItemSelected(4,5)",
               "text": "EFLOP/s",
@@ -3547,64 +3547,64 @@
             }
           ],
           "text": "Computation"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(5,0)",
               "text": "parts-per-million (ppm)",
               "value": "ppm"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,1)",
               "text": "parts-per-billion (ppb)",
               "value": "conppb"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,2)",
               "text": "nanogram per cubic meter (ng/m³)",
               "value": "conngm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,3)",
               "text": "nanogram per normal cubic meter (ng/Nm³)",
               "value": "conngNm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,4)",
               "text": "microgram per cubic meter (μg/m³)",
               "value": "conμgm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,5)",
               "text": "microgram per normal cubic meter (μg/Nm³)",
               "value": "conμgNm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,6)",
               "text": "milligram per cubic meter (mg/m³)",
               "value": "conmgm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,7)",
               "text": "milligram per normal cubic meter (mg/Nm³)",
               "value": "conmgNm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,8)",
               "text": "gram per cubic meter (g/m³)",
               "value": "congm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,9)",
               "text": "gram per normal cubic meter (g/Nm³)",
               "value": "congNm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,10)",
               "text": "milligrams per decilitre (mg/dL)",
               "value": "conmgdL"
-            }, 
+            },
             {
               "click": "menuItemSelected(5,11)",
               "text": "millimoles per litre (mmol/L)",
@@ -3612,79 +3612,79 @@
             }
           ],
           "text": "Concentration"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(6,0)",
               "text": "Dollars ($)",
               "value": "currencyUSD"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,1)",
               "text": "Pounds (£)",
               "value": "currencyGBP"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,2)",
               "text": "Euro (€)",
               "value": "currencyEUR"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,3)",
               "text": "Yen (¥)",
               "value": "currencyJPY"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,4)",
               "text": "Rubles (₽)",
               "value": "currencyRUB"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,5)",
               "text": "Hryvnias (₴)",
               "value": "currencyUAH"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,6)",
               "text": "Real (R$)",
               "value": "currencyBRL"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,7)",
               "text": "Danish Krone (kr)",
               "value": "currencyDKK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,8)",
               "text": "Icelandic Króna (kr)",
               "value": "currencyISK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,9)",
               "text": "Norwegian Krone (kr)",
               "value": "currencyNOK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,10)",
               "text": "Swedish Krona (kr)",
               "value": "currencySEK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,11)",
               "text": "Czech koruna (czk)",
               "value": "currencyCZK"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,12)",
               "text": "Swiss franc (CHF)",
               "value": "currencyCHF"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,13)",
               "text": "Polish Złoty (PLN)",
               "value": "currencyPLN"
-            }, 
+            },
             {
               "click": "menuItemSelected(6,14)",
               "text": "Bitcoin (฿)",
@@ -3692,29 +3692,29 @@
             }
           ],
           "text": "Currency"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(7,0)",
               "text": "bits",
               "value": "bits"
-            }, 
+            },
             {
               "click": "menuItemSelected(7,1)",
               "text": "bytes",
               "value": "bytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(7,2)",
               "text": "kibibytes",
               "value": "kbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(7,3)",
               "text": "mebibytes",
               "value": "mbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(7,4)",
               "text": "gibibytes",
@@ -3722,29 +3722,29 @@
             }
           ],
           "text": "Data (IEC)"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(8,0)",
               "text": "bits",
               "value": "decbits"
-            }, 
+            },
             {
               "click": "menuItemSelected(8,1)",
               "text": "bytes",
               "value": "decbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(8,2)",
               "text": "kilobytes",
               "value": "deckbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(8,3)",
               "text": "megabytes",
               "value": "decmbytes"
-            }, 
+            },
             {
               "click": "menuItemSelected(8,4)",
               "text": "gigabytes",
@@ -3752,49 +3752,49 @@
             }
           ],
           "text": "Data (Metric)"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(9,0)",
               "text": "packets/sec",
               "value": "pps"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,1)",
               "text": "bits/sec",
               "value": "bps"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,2)",
               "text": "bytes/sec",
               "value": "Bps"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,3)",
               "text": "kilobytes/sec",
               "value": "KBs"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,4)",
               "text": "kilobits/sec",
               "value": "Kbits"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,5)",
               "text": "megabytes/sec",
               "value": "MBs"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,6)",
               "text": "megabits/sec",
               "value": "Mbits"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,7)",
               "text": "gigabytes/sec",
               "value": "GBs"
-            }, 
+            },
             {
               "click": "menuItemSelected(9,8)",
               "text": "gigabits/sec",
@@ -3802,19 +3802,19 @@
             }
           ],
           "text": "Data Rate"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(10,0)",
               "text": "YYYY-MM-DD HH:mm:ss",
               "value": "dateTimeAsIso"
-            }, 
+            },
             {
               "click": "menuItemSelected(10,1)",
               "text": "DD/MM/YYYY h:mm:ss a",
               "value": "dateTimeAsUS"
-            }, 
+            },
             {
               "click": "menuItemSelected(10,2)",
               "text": "From Now",
@@ -3822,114 +3822,114 @@
             }
           ],
           "text": "Date \u0026 Time"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(11,0)",
               "text": "Watt (W)",
               "value": "watt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,1)",
               "text": "Kilowatt (kW)",
               "value": "kwatt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,2)",
               "text": "Milliwatt (mW)",
               "value": "mwatt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,3)",
               "text": "Watt per square meter (W/m²)",
               "value": "Wm2"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,4)",
               "text": "Volt-ampere (VA)",
               "value": "voltamp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,5)",
               "text": "Kilovolt-ampere (kVA)",
               "value": "kvoltamp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,6)",
               "text": "Volt-ampere reactive (var)",
               "value": "voltampreact"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,7)",
               "text": "Kilovolt-ampere reactive (kvar)",
               "value": "kvoltampreact"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,8)",
               "text": "Watt-hour (Wh)",
               "value": "watth"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,9)",
               "text": "Kilowatt-hour (kWh)",
               "value": "kwatth"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,10)",
               "text": "Kilowatt-min (kWm)",
               "value": "kwattm"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,11)",
               "text": "Joule (J)",
               "value": "joule"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,12)",
               "text": "Electron volt (eV)",
               "value": "ev"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,13)",
               "text": "Ampere (A)",
               "value": "amp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,14)",
               "text": "Kiloampere (kA)",
               "value": "kamp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,15)",
               "text": "Milliampere (mA)",
               "value": "mamp"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,16)",
               "text": "Volt (V)",
               "value": "volt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,17)",
               "text": "Kilovolt (kV)",
               "value": "kvolt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,18)",
               "text": "Millivolt (mV)",
               "value": "mvolt"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,19)",
               "text": "Decibel-milliwatt (dBm)",
               "value": "dBm"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,20)",
               "text": "Ohm (Ω)",
               "value": "ohm"
-            }, 
+            },
             {
               "click": "menuItemSelected(11,21)",
               "text": "Lumens (Lm)",
@@ -3937,44 +3937,44 @@
             }
           ],
           "text": "Energy"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(12,0)",
               "text": "Gallons/min (gpm)",
               "value": "flowgpm"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,1)",
               "text": "Cubic meters/sec (cms)",
               "value": "flowcms"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,2)",
               "text": "Cubic feet/sec (cfs)",
               "value": "flowcfs"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,3)",
               "text": "Cubic feet/min (cfm)",
               "value": "flowcfm"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,4)",
               "text": "Litre/hour",
               "value": "litreh"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,5)",
               "text": "Litre/min (l/min)",
               "value": "flowlpm"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,6)",
               "text": "milliLitre/min (mL/min)",
               "value": "flowmlpm"
-            }, 
+            },
             {
               "click": "menuItemSelected(12,7)",
               "text": "Lux (lx)",
@@ -3982,24 +3982,24 @@
             }
           ],
           "text": "Flow"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(13,0)",
               "text": "Newton-meters (Nm)",
               "value": "forceNm"
-            }, 
+            },
             {
               "click": "menuItemSelected(13,1)",
               "text": "Kilonewton-meters (kNm)",
               "value": "forcekNm"
-            }, 
+            },
             {
               "click": "menuItemSelected(13,2)",
               "text": "Newtons (N)",
               "value": "forceN"
-            }, 
+            },
             {
               "click": "menuItemSelected(13,3)",
               "text": "Kilonewtons (kN)",
@@ -4007,39 +4007,39 @@
             }
           ],
           "text": "Force"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(14,0)",
               "text": "hashes/sec",
               "value": "Hs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,1)",
               "text": "kilohashes/sec",
               "value": "KHs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,2)",
               "text": "megahashes/sec",
               "value": "MHs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,3)",
               "text": "gigahashes/sec",
               "value": "GHs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,4)",
               "text": "terahashes/sec",
               "value": "THs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,5)",
               "text": "petahashes/sec",
               "value": "PHs"
-            }, 
+            },
             {
               "click": "menuItemSelected(14,6)",
               "text": "exahashes/sec",
@@ -4047,24 +4047,24 @@
             }
           ],
           "text": "Hash Rate"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(15,0)",
               "text": "milligram (mg)",
               "value": "massmg"
-            }, 
+            },
             {
               "click": "menuItemSelected(15,1)",
               "text": "gram (g)",
               "value": "massg"
-            }, 
+            },
             {
               "click": "menuItemSelected(15,2)",
               "text": "kilogram (kg)",
               "value": "masskg"
-            }, 
+            },
             {
               "click": "menuItemSelected(15,3)",
               "text": "metric ton (t)",
@@ -4072,29 +4072,29 @@
             }
           ],
           "text": "Mass"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(16,0)",
               "text": "millimetre (mm)",
               "value": "lengthmm"
-            }, 
+            },
             {
               "click": "menuItemSelected(16,1)",
               "text": "feet (ft)",
               "value": "lengthft"
-            }, 
+            },
             {
               "click": "menuItemSelected(16,2)",
               "text": "meter (m)",
               "value": "lengthm"
-            }, 
+            },
             {
               "click": "menuItemSelected(16,3)",
               "text": "kilometer (km)",
               "value": "lengthkm"
-            }, 
+            },
             {
               "click": "menuItemSelected(16,4)",
               "text": "mile (mi)",
@@ -4102,39 +4102,39 @@
             }
           ],
           "text": "length"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(17,0)",
               "text": "Millibars",
               "value": "pressurembar"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,1)",
               "text": "Bars",
               "value": "pressurebar"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,2)",
               "text": "Kilobars",
               "value": "pressurekbar"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,3)",
               "text": "Hectopascals",
               "value": "pressurehpa"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,4)",
               "text": "Kilopascals",
               "value": "pressurekpa"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,5)",
               "text": "Inches of mercury",
               "value": "pressurehg"
-            }, 
+            },
             {
               "click": "menuItemSelected(17,6)",
               "text": "PSI",
@@ -4142,49 +4142,49 @@
             }
           ],
           "text": "Pressure"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(18,0)",
               "text": "Becquerel (Bq)",
               "value": "radbq"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,1)",
               "text": "curie (Ci)",
               "value": "radci"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,2)",
               "text": "Gray (Gy)",
               "value": "radgy"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,3)",
               "text": "rad",
               "value": "radrad"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,4)",
               "text": "Sievert (Sv)",
               "value": "radsv"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,5)",
               "text": "rem",
               "value": "radrem"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,6)",
               "text": "Exposure (C/kg)",
               "value": "radexpckg"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,7)",
               "text": "roentgen (R)",
               "value": "radr"
-            }, 
+            },
             {
               "click": "menuItemSelected(18,8)",
               "text": "Sievert/hour (Sv/h)",
@@ -4192,19 +4192,19 @@
             }
           ],
           "text": "Radiation"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(19,0)",
               "text": "Celsius (°C)",
               "value": "celsius"
-            }, 
+            },
             {
               "click": "menuItemSelected(19,1)",
               "text": "Farenheit (°F)",
               "value": "farenheit"
-            }, 
+            },
             {
               "click": "menuItemSelected(19,2)",
               "text": "Kelvin (K)",
@@ -4212,74 +4212,74 @@
             }
           ],
           "text": "Temperature"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(20,0)",
               "text": "Hertz (1/s)",
               "value": "hertz"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,1)",
               "text": "nanoseconds (ns)",
               "value": "ns"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,2)",
               "text": "microseconds (µs)",
               "value": "µs"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,3)",
               "text": "milliseconds (ms)",
               "value": "ms"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,4)",
               "text": "seconds (s)",
               "value": "s"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,5)",
               "text": "minutes (m)",
               "value": "m"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,6)",
               "text": "hours (h)",
               "value": "h"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,7)",
               "text": "days (d)",
               "value": "d"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,8)",
               "text": "duration (ms)",
               "value": "dtdurationms"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,9)",
               "text": "duration (s)",
               "value": "dtdurations"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,10)",
               "text": "duration (hh:mm:ss)",
               "value": "dthms"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,11)",
               "text": "Timeticks (s/100)",
               "value": "timeticks"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,12)",
               "text": "clock (ms)",
               "value": "clockms"
-            }, 
+            },
             {
               "click": "menuItemSelected(20,13)",
               "text": "clock (s)",
@@ -4287,44 +4287,44 @@
             }
           ],
           "text": "Time"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(21,0)",
               "text": "ops/sec (ops)",
               "value": "ops"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,1)",
               "text": "requests/sec (rps)",
               "value": "reqps"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,2)",
               "text": "reads/sec (rps)",
               "value": "rps"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,3)",
               "text": "writes/sec (wps)",
               "value": "wps"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,4)",
               "text": "I/O ops/sec (iops)",
               "value": "iops"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,5)",
               "text": "ops/min (opm)",
               "value": "opm"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,6)",
               "text": "reads/min (rpm)",
               "value": "rpm"
-            }, 
+            },
             {
               "click": "menuItemSelected(21,7)",
               "text": "writes/min (wpm)",
@@ -4332,24 +4332,24 @@
             }
           ],
           "text": "Throughput"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(22,0)",
               "text": "metres/second (m/s)",
               "value": "velocityms"
-            }, 
+            },
             {
               "click": "menuItemSelected(22,1)",
               "text": "kilometers/hour (km/h)",
               "value": "velocitykmh"
-            }, 
+            },
             {
               "click": "menuItemSelected(22,2)",
               "text": "miles/hour (mph)",
               "value": "velocitymph"
-            }, 
+            },
             {
               "click": "menuItemSelected(22,3)",
               "text": "knot (kn)",
@@ -4357,34 +4357,34 @@
             }
           ],
           "text": "Velocity"
-        }, 
+        },
         {
           "submenu": [
             {
               "click": "menuItemSelected(23,0)",
               "text": "millilitre (mL)",
               "value": "mlitre"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,1)",
               "text": "litre (L)",
               "value": "litre"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,2)",
               "text": "cubic metre",
               "value": "m3"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,3)",
               "text": "Normal cubic metre",
               "value": "Nm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,4)",
               "text": "cubic decimetre",
               "value": "dm3"
-            }, 
+            },
             {
               "click": "menuItemSelected(23,5)",
               "text": "gallons",
@@ -4398,7 +4398,7 @@
       "table_editor_link_width_units": "",
       "table_editor_node_labels": ["", "Destination Country"],
       "table_editor_option_nodes": [
-        "meta.src_country_name", 
+        "meta.src_country_name",
         "meta.dst_country_name"
       ],
       "table_editor_unitFormats": "decbytes",
@@ -4409,7 +4409,7 @@
               "click": "menuItemSelected(0,0)",
               "text": "Not implemented yet",
               "value": "kbn.getUnitFormats()"
-            }, 
+            },
             {
               "click": "menuItemSelected(0,1)",
               "text": "test unit",
@@ -4434,7 +4434,7 @@
                 "size": "10"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:2458",
               "fake": true,
@@ -4478,7 +4478,7 @@
         "showDefault": true
       },
       "type": "netsage-sankey"
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -4545,7 +4545,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:2502",
               "field": "start",
@@ -4601,7 +4601,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:2576",
           "format": "short",
@@ -4616,7 +4616,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -4683,7 +4683,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:2617",
               "field": "start",
@@ -4738,7 +4738,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:2691",
           "format": "short",
@@ -4753,7 +4753,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -4820,7 +4820,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:2732",
               "field": "start",
@@ -4875,7 +4875,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:2806",
           "format": "short",
@@ -4890,7 +4890,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "content": "\u003ch3 style=\"margin-top:20px;\"\u003e\u003ccenter\u003eNetSage Sensors Observing $Country Flows\u003c/center\u003e\u003c/h3\u003e",
       "datasource": null,
@@ -4917,7 +4917,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -4948,13 +4948,13 @@
               {
                 "id": "displayName",
                 "value": "Sensor"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 500
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -4964,13 +4964,13 @@
               {
                 "id": "displayName",
                 "value": "Total Volume"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -4980,13 +4980,13 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -4996,13 +4996,13 @@
               {
                 "id": "displayName",
                 "value": "Fastest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -5012,7 +5012,7 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
@@ -5071,7 +5071,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:787",
               "field": "values.num_bits",
@@ -5084,7 +5084,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:788",
               "field": "values.bits_per_second",
@@ -5092,7 +5092,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:789",
               "field": "meta.id",
@@ -5110,7 +5110,7 @@
       "timeFrom": null,
       "title": "Sensor Usage",
       "type": "table"
-    }, 
+    },
     {
       "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
       "datasource": null,
@@ -5170,7 +5170,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -5196,7 +5196,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -5214,7 +5214,7 @@
             "selected": true,
             "text": "yes",
             "value": "yes"
-          }, 
+          },
           {
             "selected": false,
             "text": "no",
@@ -5234,15 +5234,15 @@
   "timepicker": {
     "hidden": false,
     "refresh_intervals": [
-      "5s", 
-      "10s", 
-      "30s", 
-      "1m", 
-      "5m", 
-      "15m", 
-      "30m", 
-      "1h", 
-      "2h", 
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
       "1d"
     ],
     "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]

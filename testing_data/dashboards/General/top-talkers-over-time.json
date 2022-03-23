@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 8,
+  "id": 69,
   "iteration": 1620855245251,
   "links": [],
   "panels": [
@@ -42,31 +42,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -78,7 +78,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -131,7 +131,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -164,7 +164,7 @@
                 "size": "20"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:383",
               "field": "start",
@@ -201,7 +201,7 @@
       "timeShift": null,
       "title": "Top Senders Over Time",
       "type": "netsage-bumpchart-panel"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -234,7 +234,7 @@
                 "size": "20"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:383",
               "field": "start",
@@ -271,7 +271,7 @@
       "timeShift": null,
       "title": "Top Receivers Over Time",
       "type": "netsage-bumpchart-panel"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -329,7 +329,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "auto": false,
         "auto_count": 30,
@@ -348,17 +348,17 @@
             "selected": false,
             "text": "1d",
             "value": "1d"
-          }, 
+          },
           {
             "selected": false,
             "text": "7d",
             "value": "7d"
-          }, 
+          },
           {
             "selected": true,
             "text": "14d",
             "value": "14d"
-          }, 
+          },
           {
             "selected": false,
             "text": "30d",
@@ -370,7 +370,7 @@
         "refresh": 2,
         "skipUrlSync": false,
         "type": "interval"
-      }, 
+      },
       {
         "allValue": "*",
         "current": {
@@ -397,7 +397,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -416,47 +416,47 @@
             "selected": true,
             "text": "1",
             "value": "1"
-          }, 
+          },
           {
             "selected": false,
             "text": "2",
             "value": "2"
-          }, 
+          },
           {
             "selected": false,
             "text": "3",
             "value": "3"
-          }, 
+          },
           {
             "selected": false,
             "text": "4",
             "value": "4"
-          }, 
+          },
           {
             "selected": false,
             "text": "5",
             "value": "5"
-          }, 
+          },
           {
             "selected": false,
             "text": "6",
             "value": "6"
-          }, 
+          },
           {
             "selected": false,
             "text": "7",
             "value": "7"
-          }, 
+          },
           {
             "selected": false,
             "text": "8",
             "value": "8"
-          }, 
+          },
           {
             "selected": false,
             "text": "9",
             "value": "9"
-          }, 
+          },
           {
             "selected": false,
             "text": "10",
@@ -475,14 +475,14 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "10s", 
-      "30s", 
-      "1m", 
-      "5m", 
-      "15m", 
-      "30m", 
-      "1h", 
-      "2h", 
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
       "1d"
     ],
     "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]

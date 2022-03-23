@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 6,
+  "id": 67,
   "iteration": 1612380024154,
   "links": [],
   "panels": [
@@ -42,31 +42,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -78,7 +78,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -103,7 +103,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "colors": ["#299c46", "rgba(237, 129, 40, 0.89)", "#d44a3a", "#4040a0"],
       "datasource": null,
@@ -127,7 +127,7 @@
           "$$hashKey": "object:268",
           "name": "value to text",
           "value": 1
-        }, 
+        },
         {
           "$$hashKey": "object:269",
           "name": "range to text",
@@ -158,7 +158,7 @@
             "color": "#d44a3a",
             "state": 2,
             "value": 0
-          }, 
+          },
           {
             "$$hashKey": "object:290",
             "color": "#299c46",
@@ -215,7 +215,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:128",
               "field": "start",
@@ -254,7 +254,7 @@
           "value": "null"
         }
       ]
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": "netsage",
@@ -346,7 +346,7 @@
       "title": "Large Flows Observed",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -425,7 +425,7 @@
               "meta": {},
               "settings": {},
               "type": "cardinality"
-            }, 
+            },
             {
               "$$hashKey": "object:168",
               "field": "meta.src_country_name",
@@ -433,7 +433,7 @@
               "meta": {},
               "settings": {},
               "type": "cardinality"
-            }, 
+            },
             {
               "$$hashKey": "object:1381",
               "field": "meta.src_asn",
@@ -441,7 +441,7 @@
               "meta": {},
               "settings": {},
               "type": "cardinality"
-            }, 
+            },
             {
               "$$hashKey": "object:1392",
               "field": "meta.dst_asn",
@@ -449,7 +449,7 @@
               "meta": {},
               "settings": {},
               "type": "cardinality"
-            }, 
+            },
             {
               "$$hashKey": "object:1403",
               "field": "meta.dst_organization",
@@ -457,7 +457,7 @@
               "meta": {},
               "settings": {},
               "type": "cardinality"
-            }, 
+            },
             {
               "$$hashKey": "object:1414",
               "field": "meta.dst_country_name",
@@ -479,7 +479,7 @@
         {
           "id": "seriesToColumns",
           "options": {}
-        }, 
+        },
         {
           "id": "organize",
           "options": {
@@ -497,7 +497,7 @@
       ],
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -550,7 +550,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": "-- Dashboard --",
@@ -619,7 +619,7 @@
         {
           "id": "seriesToColumns",
           "options": {}
-        }, 
+        },
         {
           "id": "organize",
           "options": {
@@ -637,7 +637,7 @@
       ],
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -691,7 +691,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": "-- Dashboard --",
@@ -761,7 +761,7 @@
         {
           "id": "seriesToColumns",
           "options": {}
-        }, 
+        },
         {
           "id": "organize",
           "options": {
@@ -780,7 +780,7 @@
       ],
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -834,7 +834,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": "-- Dashboard --",
@@ -903,7 +903,7 @@
         {
           "id": "seriesToColumns",
           "options": {}
-        }, 
+        },
         {
           "id": "organize",
           "options": {
@@ -923,7 +923,7 @@
       ],
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -977,7 +977,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": "-- Dashboard --",
@@ -1047,7 +1047,7 @@
         {
           "id": "seriesToColumns",
           "options": {}
-        }, 
+        },
         {
           "id": "organize",
           "options": {
@@ -1066,7 +1066,7 @@
       ],
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1120,7 +1120,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": "-- Dashboard --",
@@ -1189,7 +1189,7 @@
         {
           "id": "seriesToColumns",
           "options": {}
-        }, 
+        },
         {
           "id": "organize",
           "options": {
@@ -1208,7 +1208,7 @@
       ],
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1262,7 +1262,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -1355,7 +1355,7 @@
       "title": "",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1408,7 +1408,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "cacheTimeout": null,
       "datasource": null,
@@ -1499,7 +1499,7 @@
       "title": "",
       "transparent": true,
       "type": "stat"
-    }, 
+    },
     {
       "datasource": null,
       "fieldConfig": {
@@ -1552,7 +1552,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -1619,7 +1619,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:50",
               "field": "start",
@@ -1675,7 +1675,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:124",
           "format": "short",
@@ -1690,7 +1690,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -1757,7 +1757,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:285",
               "field": "start",
@@ -1813,7 +1813,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:359",
           "format": "short",
@@ -1828,7 +1828,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -1895,7 +1895,7 @@
                 "size": "5"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:406",
               "field": "start",
@@ -1951,7 +1951,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:480",
           "format": "short",
@@ -1966,7 +1966,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -1982,7 +1982,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -2002,7 +2002,7 @@
                 "value": "Source Organization"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2012,21 +2012,21 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2036,21 +2036,21 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2060,11 +2060,11 @@
               {
                 "id": "custom.align",
                 "value": "right"
-              }, 
+              },
               {
                 "id": "displayName",
                 "value": "Source IP"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
@@ -2107,7 +2107,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:417",
               "fake": true,
@@ -2137,7 +2137,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:234",
               "field": "meta.id",
@@ -2181,7 +2181,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -2197,7 +2197,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -2217,7 +2217,7 @@
                 "value": "Destination Organization"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2227,21 +2227,21 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2251,21 +2251,21 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2275,11 +2275,11 @@
               {
                 "id": "custom.align",
                 "value": "right"
-              }, 
+              },
               {
                 "id": "displayName",
                 "value": "Destination IP"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
@@ -2322,7 +2322,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:242",
               "fake": true,
@@ -2352,7 +2352,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:234",
               "field": "meta.id",
@@ -2396,7 +2396,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -2412,7 +2412,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -2432,7 +2432,7 @@
                 "value": "Source Organization"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2442,21 +2442,21 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2466,21 +2466,21 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2490,11 +2490,11 @@
               {
                 "id": "custom.align",
                 "value": "right"
-              }, 
+              },
               {
                 "id": "displayName",
                 "value": "Source IP"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
@@ -2588,7 +2588,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -2604,7 +2604,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -2624,7 +2624,7 @@
                 "value": "Source Organization"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2634,21 +2634,21 @@
               {
                 "id": "displayName",
                 "value": "Total Vol."
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2658,21 +2658,21 @@
               {
                 "id": "displayName",
                 "value": "# Flows"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "decimals",
                 "value": 1
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 100
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2682,11 +2682,11 @@
               {
                 "id": "custom.align",
                 "value": "right"
-              }, 
+              },
               {
                 "id": "displayName",
                 "value": "Source IP"
-              }, 
+              },
               {
                 "id": "custom.width",
                 "value": 200
@@ -2781,7 +2781,7 @@
         }
       ],
       "type": "table"
-    }, 
+    },
     {
       "datasource": "netsage",
       "fieldConfig": {
@@ -2798,7 +2798,7 @@
               {
                 "color": "green",
                 "value": null
-              }, 
+              },
               {
                 "color": "red",
                 "value": 80
@@ -2816,13 +2816,13 @@
               {
                 "id": "displayName",
                 "value": "Total Volume"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2832,13 +2832,13 @@
               {
                 "id": "displayName",
                 "value": "Largest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "decbytes"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2848,13 +2848,13 @@
               {
                 "id": "displayName",
                 "value": "Fastest Flow"
-              }, 
+              },
               {
                 "id": "unit",
                 "value": "bps"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2864,13 +2864,13 @@
               {
                 "id": "unit",
                 "value": "short"
-              }, 
+              },
               {
                 "id": "displayName",
                 "value": "# Flows"
               }
             ]
-          }, 
+          },
           {
             "matcher": {
               "id": "byName",
@@ -2929,7 +2929,7 @@
                 }
               },
               "type": "sum"
-            }, 
+            },
             {
               "$$hashKey": "object:213",
               "field": "values.num_bits",
@@ -2942,7 +2942,7 @@
                 }
               },
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:214",
               "field": "values.bits_per_second",
@@ -2950,7 +2950,7 @@
               "meta": {},
               "settings": {},
               "type": "max"
-            }, 
+            },
             {
               "$$hashKey": "object:215",
               "field": "meta.id",
@@ -2968,7 +2968,7 @@
       "timeFrom": null,
       "title": "Sensor Flow Stats",
       "type": "table"
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -3035,7 +3035,7 @@
                 "size": "0"
               },
               "type": "terms"
-            }, 
+            },
             {
               "$$hashKey": "object:1040",
               "field": "start",
@@ -3089,7 +3089,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "$$hashKey": "object:1110",
           "format": "short",
@@ -3104,7 +3104,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
       "datasource": null,
@@ -3164,7 +3164,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": "*",
         "current": {
@@ -3191,7 +3191,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -3210,7 +3210,7 @@
             "selected": false,
             "text": "yes",
             "value": "yes"
-          }, 
+          },
           {
             "selected": true,
             "text": "no",
@@ -3231,15 +3231,15 @@
   "timepicker": {
     "hidden": false,
     "refresh_intervals": [
-      "5s", 
-      "10s", 
-      "30s", 
-      "1m", 
-      "5m", 
-      "15m", 
-      "30m", 
-      "1h", 
-      "2h", 
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
       "1d"
     ],
     "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]

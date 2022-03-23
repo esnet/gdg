@@ -53,7 +53,11 @@ func (s *DashNGoImpl) DeleteAllAlertNotifications() []string {
 	var an []string = make([]string, 0)
 	items := s.ListAlertNotifications()
 	for _, item := range items {
-		s.client.DeleteAlertNotificationID(ctx, uint(item.ID))
+		err := s.client.DeleteAlertNotificationID(ctx, uint(item.ID))
+		if err != nil {
+			log.Error("Failed to delete notification")
+			continue
+		}
 		an = append(an, item.Name)
 	}
 	return an
