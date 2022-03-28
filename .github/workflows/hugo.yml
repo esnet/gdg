@@ -18,10 +18,10 @@ jobs:
          hugo-version: 'latest'
          extended: true
      - name: Build
-       run: hugo --minify
+       run: hugo --destination public --baseURL https://software.es.net/gdg -s documentation
      - name: Deploy
        uses: peaceiris/actions-gh-pages@v3
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
-         publish_dir: ./public
+         publish_dir: ./documentation/public
 
