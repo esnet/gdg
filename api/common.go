@@ -32,7 +32,7 @@ func updateSlug(board *sdk.FoundBoard) {
 func CreateDestinationPath(v string) {
 	err := os.MkdirAll(v, 0755)
 	if err != nil {
-		log.Fatalf("unable to create path %s", v)
+		log.WithError(err).Panicf("unable to create path %s", v)
 	}
 }
 

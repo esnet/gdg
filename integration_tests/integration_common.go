@@ -21,7 +21,7 @@ func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
 	conf.Set("context.testing.url", "http://localhost:3000")
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "testing")
-	client := api.NewApiService()
+	client := api.NewApiService("dummy")
 	path, _ := os.Getwd()
 	if strings.Contains(path, "integration_tests") {
 		err := os.Chdir("..")
