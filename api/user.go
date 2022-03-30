@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
-
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/grafana-tools/sdk"
 	"github.com/sirupsen/logrus"
@@ -14,7 +12,6 @@ import (
 func validateUserAPI(client *sdk.Client) {
 	if client == nil || !apphelpers.GetCtxDefaultGrafanaConfig().AdminEnabled {
 		logrus.Fatal("Missing Admin client, please check your config and ensure basic auth is configured")
-		os.Exit(1)
 	}
 }
 

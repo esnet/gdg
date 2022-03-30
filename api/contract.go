@@ -5,6 +5,7 @@ import (
 	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
 	"github.com/spf13/viper"
+	"sync"
 )
 
 type ApiService interface {
@@ -35,6 +36,11 @@ type ApiService interface {
 	GetServerInfo() map[string]interface{}
 }
 
+var (
+	instance *DashNGoImpl
+	once     sync.Once
+)
+
 type DashNGoImpl struct {
 	client      *sdk.Client
 	adminClient *sdk.Client
@@ -43,18 +49,27 @@ type DashNGoImpl struct {
 	debug       bool
 }
 
-func (s *DashNGoImpl) init() {
-	s.grafanaConf = apphelpers.GetCtxDefaultGrafanaConfig()
-	s.configRef = config.Config().ViperConfig()
-	s.client = s.Login()
-	s.adminClient = s.AdminLogin()
-	s.debug = config.Config().IsDebug()
-
+func NewDashNGoImpl() *DashNGoImpl {
+	once.Do(func() {
+		instance = newInstance()
+	})
+	return instance
 }
 
-func NewApiService() ApiService {
-	d := &DashNGoImpl{}
-	d.init()
-	return d
+func newInstance() *DashNGoImpl {
+	obj := &DashNGoImpl{}
+	obj.grafanaConf = apphelpers.GetCtxDefaultGrafanaConfig()
+	obj.configRef = config.Config().ViperConfig()
+	obj.client = obj.Login()
+	obj.adminClient = obj.AdminLogin()
+	obj.debug = config.Config().IsDebug()
+	return obj
+}
 
+func NewApiService(override ...string) ApiService {
+	//Used for Testing purposes
+	if len(override) > 0 {
+		return newInstance()
+	}
+	return NewDashNGoImpl()
 }

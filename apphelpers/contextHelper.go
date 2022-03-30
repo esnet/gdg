@@ -2,10 +2,8 @@ package apphelpers
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
-	// "github.com/labstack/gommon/log"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/esnet/gdg/config"
 	log "github.com/sirupsen/logrus"
@@ -134,8 +132,7 @@ func ShowContext(ctx string) {
 	grafana := GetCtxGrafanaConfig(ctx)
 	d, err := yaml.Marshal(grafana)
 	if err != nil {
-		log.Info("Failed to serialize context")
-		os.Exit(1)
+		log.WithError(err).Fatal("failed to serialize context")
 	}
 	fmt.Printf("---%s:\n%s\n\n", ctx, string(d))
 
@@ -178,10 +175,14 @@ func SetContext(context string) {
 	if len(m) == 0 {
 		log.Fatal("Cannot set context.  No valid configuration found in importer.yml")
 	}
-	v.Set("context_name", context)
-	err := v.WriteConfig()
-	if err != nil {
-		log.Fatal("could not save configuration.")
+	if funk.Contains(funk.Keys(m), context) {
+		v.Set("context_name", context)
+		err := v.WriteConfig()
+		if err != nil {
+			log.WithError(err).Fatal("could not save configuration.")
+		}
+	} else {
+		log.Fatal("invalid context specified.  Please check config file and try again.")
 	}
 
 }
@@ -222,8 +223,7 @@ func GetCtxGrafanaConfig(name string) *config.GrafanaConfig {
 	if ok {
 		return val
 	} else {
-		log.Error("Context is not found.  Please check your config")
-		os.Exit(1)
+		log.Fatal("Context is not found.  Please check your config")
 	}
 
 	return nil

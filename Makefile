@@ -15,6 +15,12 @@ IMAGE_NAME := "esnet/gdg"
 
 default: build
 
+format:
+	gofmt -w -s .
+
+lint:
+	golangci-lint run ./...
+
 authors:
 	echo "Authors\n=======\n" > AUTHORS.md
 	git log --raw | grep "^Author: " | sort | uniq | cut -d ' ' -f2- | sed 's/^/- /' >> AUTHORS.md
