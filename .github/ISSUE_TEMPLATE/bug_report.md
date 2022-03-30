@@ -23,6 +23,7 @@ A clear and concise description of what you expected to happen.
 **Desktop (please complete the following information):**
  - GDG Version: [e.g. 0.1.10 output of gdg version]
  - Grafana Version: [e.g. 8.3.6] 
+ - Configuration for Importer
 
 
 **Additional context**
