@@ -15,7 +15,7 @@ var listDataSources = &cobra.Command{
 	Short: "List all dashboards",
 	Long:  `List all dashboards`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tableObj.AppendHeader(table.Row{"id", "name", "slug", "type", "default", "url"})
+		tableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 		filters := getDatasourcesGlobalFlags(cmd)
 		datasources := client.ListDataSources(filters)
 		log.Infof("Listing datasources for context: '%s'", apphelpers.GetContext())
@@ -24,7 +24,7 @@ var listDataSources = &cobra.Command{
 		} else {
 			for _, link := range datasources {
 				url := fmt.Sprintf("%s/datasource/edit/%d", apphelpers.GetCtxDefaultGrafanaConfig().URL, link.ID)
-				tableObj.AppendRow(table.Row{link.ID, link.Name, api.GetSlug(link.Name), link.Type, link.IsDefault, url})
+				tableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, api.GetSlug(link.Name), link.Type, link.IsDefault, url})
 			}
 			tableObj.Render()
 		}
