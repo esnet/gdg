@@ -36,6 +36,13 @@ func CreateDestinationPath(v string) {
 	}
 }
 
+//buildUserPath
+func buildUserPath(conf *viper.Viper) string {
+	v := fmt.Sprintf("%s", getResourcePath(conf, "user"))
+	CreateDestinationPath(v)
+	return v
+}
+
 //buildDashboardPath returns the dashboard path for a given folder
 func buildDashboardPath(conf *viper.Viper, folderName string) string {
 	if folderName == "" {
@@ -43,6 +50,13 @@ func buildDashboardPath(conf *viper.Viper, folderName string) string {
 	}
 	v := fmt.Sprintf("%s/%s", getResourcePath(conf, "dashboard"), folderName)
 	CreateDestinationPath(v)
+	return v
+}
+
+func buildFolderSourcePath(conf *viper.Viper, name string) string {
+	folderPath := getResourcePath(conf, "folder")
+	v := fmt.Sprintf("%s/%s.json", folderPath, name)
+	CreateDestinationPath(folderPath)
 	return v
 }
 
@@ -64,14 +78,21 @@ func buildAlertNotificationPath(conf *viper.Viper, name string) string {
 
 //getResourcePath for a gven resource type: ["dashboard", "ds", "an"] it'll return the configured location
 func getResourcePath(conf *viper.Viper, resourceType string) string {
-	if resourceType == "dashboard" {
+	switch resourceType {
+	case "dashboard":
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetDashboardOutput()
-	} else if resourceType == "ds" {
+	case "ds":
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetDataSourceOutput()
-	} else if resourceType == "an" {
+	case "an":
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetAlertNotificationOutput()
+	case "folder":
+		return apphelpers.GetCtxDefaultGrafanaConfig().GetFolderOutput()
+	case "user":
+		return apphelpers.GetCtxDefaultGrafanaConfig().GetUserOutput()
+	default:
+		return ""
 	}
-	return ""
+
 }
 
 //findAllFiles recursively list all files for a given path

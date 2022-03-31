@@ -34,14 +34,15 @@ contexts:
     watched:
       - Example
     datasources:
-      default:
-        user: admin
-        password: secret
-        url_regex:    ## set to pattern to match as well as the name.
-      misc:
-        user: admin
-        password: secret
-        url_regex: .*esproxy2*      
+      credentials:
+        default:
+          user: admin
+          password: secret
+          url_regex:    ## set to pattern to match as well as the name.
+        misc:
+          user: admin
+          password: secret
+          url_regex: .*esproxy2*      
 
 global:
   debug: true
@@ -68,7 +69,9 @@ global:
   ignore_ssl_errors: false
 ```
 
-### DataSource Credentials.
+### DataSource 
+
+#### DataSource Credentials
 
 If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:
 
@@ -76,10 +79,64 @@ If the datasource has BasicAuth enabled, then we'll attempt to set the auth with
 2. Match URL regex for the DS if regex specified.
 3. Use Default Credentials if the above two both failed.
 
+An example of a configuration can be seen below
+
+```yaml
+  testing:
+    output_path: testing_data
+    datasources:
+      credentials:
+        default:
+          user: user
+          password: password
+        misc:
+          user: admin
+          password: secret
+          url_regex: .*esproxy2*
+    url: http://localhost:3000
+    user_name: admin
+    password: admin
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    watched:
+      - General
+      - Other 
+ 
+ ```
+
+#### DataSource Filters
+
+This feature allows you to exclude datasource by name or include them by type.  Please note that the logic switches based on the data type.
+
+**name filter:**
+
+```yaml
+...
+datasources:
+  filters:
+    name_exclusions: "DEV-*|-Dev-*"
+```
+
+Will exclude any datasource that matches the name regex.
+
+**Type Filter**
+
+Will ONLY include datasource that are listed. 
+
+```yaml
+datasources:
+  filters:
+    valid_types:
+      - elasticsearch
+```
+
+The snippet above will ONLY import datasources for elasticsearch
+
+
+
+
 #### Notes
 
 If you configure both, Auth Token and Username/Password, then the Token is given priority.
-
 Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only "General" is managed.  
 
 env.output defines where the files will be saved and imported from.

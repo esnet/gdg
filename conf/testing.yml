@@ -5,13 +5,14 @@ contexts:
   testing:
     output_path: testing_data
     datasources:
-      default:
-        user: user
-        password: password
-      misc:
-        user: admin
-        password: secret
-        url_regex: .*esproxy2*
+      credentials:
+        default:
+          user: user
+          password: password
+        misc:
+          user: admin
+          password: secret
+          url_regex: .*esproxy2*
     url: http://localhost:3000
     user_name: admin
     password: admin
@@ -23,15 +24,16 @@ contexts:
   production:
     output_path: prod
     datasources:
-      complex name:
-        password: secret
-        user: test
-      default:
-        password: password
-        user: user
-      ds_name:
-        password: secret
-        user: abcd
+      credentials:
+        complex name:
+          password: secret
+          user: test
+        default:
+          password: password
+          user: user
+        ds_name:
+          password: secret
+          user: abcd
     url: https://grafana.com
     user_name: admin
     password: admin
@@ -43,15 +45,16 @@ contexts:
     output_path: qa
     token: <CHANGEME>
     datasources:
-      complex name:
-        password: secret
-        user: test
-      default:
-        password: password
-        user: user
-      ds_name:
-        password: secret
-        user: abcd
+      credentials:
+        complex name:
+          password: secret
+          user: test
+        default:
+          password: password
+          user: user
+        ds_name:
+          password: secret
+          user: abcd
     url: https://staging.grafana.com
     organization: your-org
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on

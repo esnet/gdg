@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -50,6 +49,11 @@ func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 			continue
 		}
 		dsPath := buildDataSourcePath(s.configRef, slug.Make(ds.Name))
+		dsSettings := s.grafanaConf.GetDataSourceSettings()
+		if dsSettings.FiltersEnabled() && (!dsSettings.Filters.ValidName(ds.Name) || !dsSettings.Filters.ValidDataType(ds.Type)) {
+			log.Infof("Skipping data source: %s since it fails filter checks with dataType of: %s", ds.Name, ds.Type)
+			continue
+		}
 		if err = ioutil.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
 			log.Errorf("%s for %s\n", err, meta.Slug)
 		} else {
@@ -83,23 +87,24 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 
 	ctx := context.Background()
 	filesInDir, err := ioutil.ReadDir(getResourcePath(s.configRef, "ds"))
+	if err != nil {
+		log.WithError(err).Errorf("failed to list files in directory for datasources")
+	}
 	datasources = s.ListDataSources(filter)
 
 	var rawDS []byte
-	if err != nil {
-		fmt.Fprint(os.Stderr, err)
-	}
+
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(getResourcePath(s.configRef, "ds"), file.Name())
 		if strings.HasSuffix(file.Name(), ".json") {
 			if rawDS, err = ioutil.ReadFile(fileLocation); err != nil {
-				fmt.Fprint(os.Stderr, err)
+				log.WithError(err).Errorf("failed to read file: %s", fileLocation)
 				continue
 			}
 			var newDS sdk.Datasource
 
 			if err = json.Unmarshal(rawDS, &newDS); err != nil {
-				fmt.Fprint(os.Stderr, err)
+				log.WithError(err).Errorf("failed to unmarshall file: %s", fileLocation)
 				continue
 			}
 
