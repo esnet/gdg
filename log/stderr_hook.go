@@ -23,5 +23,10 @@ func (hook *StdErrLoggingHook) Fire(entry *log.Entry) error {
 }
 
 func (hook *StdErrLoggingHook) Levels() []log.Level {
-	return log.AllLevels
+	return []log.Level{
+		log.PanicLevel,
+		log.FatalLevel,
+		log.ErrorLevel,
+		log.WarnLevel,
+	}
 }

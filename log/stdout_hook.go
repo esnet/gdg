@@ -26,5 +26,6 @@ func (hook *StdOutLoggingHook) Levels() []log.Level {
 	return []log.Level{
 		log.InfoLevel,
 		log.DebugLevel,
+		log.TraceLevel,
 	}
 }
