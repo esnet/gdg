@@ -1,6 +1,8 @@
 module github.com/esnet/gdg
 
-go 1.18
+//#go 1.18
+//# Downgrading to allow goreleaser to work
+go 1.17
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.4

@@ -1,9 +1,8 @@
 name: Release GDG on Tag
-on: 
+on:
   create:
-    tags: 
-      - '*'
-
+    tags:
+      - "*"
 
 jobs:
   goreleaser:
@@ -19,11 +18,11 @@ jobs:
         with:
           go-version: '1.18' 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v2.9.1
         with:
           distribution: goreleaser
           version: latest
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          HOMEBREW_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
