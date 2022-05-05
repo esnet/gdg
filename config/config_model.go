@@ -63,8 +63,6 @@ func (filter DataSourceFilters) ValidDataType(dataType string) bool {
 	if len(filter.DataSourceTypes) == 0 {
 		return true
 	}
-	result := funk.Contains(filter.DataSourceTypes, dataType)
-	log.Debugf("datatype %s is %t", dataType, result)
 	return funk.Contains(filter.DataSourceTypes, dataType)
 }
 
@@ -78,9 +76,7 @@ func (filter *DataSourceFilters) ValidName(name string) bool {
 			return false
 		}
 	}
-	result := filter.pattern.Match([]byte(name))
-	log.Debugf("%s was %t valid", name, !result)
-	return !result
+	return !filter.pattern.Match([]byte(name))
 }
 
 func (s *GrafanaConfig) GetDataSourceSettings() *DataSourceSettings {

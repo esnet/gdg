@@ -65,7 +65,6 @@ func (s *DashNGoImpl) isAdmin(user sdk.User) bool {
 }
 
 func (s *DashNGoImpl) ExportUsers() []sdk.User {
-	log.Fatalf("Command is not yet fully supported.  Admin Status and a few other settings don't propegate properly")
 	ctx := context.Background()
 	validateUserAPI(s.adminClient)
 	filesInDir, err := ioutil.ReadDir(getResourcePath(config.UserResource))

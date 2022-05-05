@@ -47,6 +47,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.PersistentFlags().StringP("config", "c", "", "Configuration Override")
+
 }
 
 func initConfig() {
@@ -68,6 +69,9 @@ func initConfig() {
 	tableObj.SetOutputMirror(os.Stdout)
 	tableObj.SetStyle(table.StyleLight)
 
+	if config.Config().IsDebug() {
+		log.SetLevel(log.DebugLevel)
+	}
 }
 
 func setupGrafanaClient() {

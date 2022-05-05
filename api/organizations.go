@@ -10,9 +10,9 @@ import (
 //ListOrganizations: List all dashboards
 func (s *DashNGoImpl) ListOrganizations() []sdk.Org {
 	ctx := context.Background()
-	orgs, err := s.client.GetAllOrgs(ctx)
+	orgs, err := s.adminClient.GetAllOrgs(ctx)
 	if err != nil {
-		panic(err)
+		log.WithError(err).Errorf("Unable to retrieve Organization List")
 	}
 	if s.grafanaConf.Organization != "" {
 		var ID uint

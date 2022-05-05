@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+//Validates the paths for the various entity types using the common
+// code used to create folders and generate paths.
 func TestSlug(t *testing.T) {
 	result := GetSlug("thisTestMoo")
 	assert.Equal(t, "thistestmoo", result)

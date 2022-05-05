@@ -23,7 +23,12 @@ func (s *DashNGoImpl) ListDataSources(filter Filter) []sdk.Datasource {
 		panic(err)
 	}
 	result := make([]sdk.Datasource, 0)
+	dsSettings := s.grafanaConf.GetDataSourceSettings()
 	for _, item := range ds {
+		if dsSettings.FiltersEnabled() && (!dsSettings.Filters.ValidName(item.Name) || !dsSettings.Filters.ValidDataType(item.Type)) {
+			log.Debugf("Skipping data source: %s since it fails filter checks with dataType of: %s", item.Name, item.Type)
+			continue
+		}
 		if filter.Validate(map[string]string{Name: GetSlug(item.Name)}) {
 			result = append(result, item)
 		}
@@ -50,11 +55,7 @@ func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 		}
 
 		dsPath := buildResourcePath(slug.Make(ds.Name), config.DataSourceResource)
-		dsSettings := s.grafanaConf.GetDataSourceSettings()
-		if dsSettings.FiltersEnabled() && (!dsSettings.Filters.ValidName(ds.Name) || !dsSettings.Filters.ValidDataType(ds.Type)) {
-			log.Infof("Skipping data source: %s since it fails filter checks with dataType of: %s", ds.Name, ds.Type)
-			continue
-		}
+
 		if err = ioutil.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
 			log.Errorf("%s for %s\n", err, meta.Slug)
 		} else {
@@ -95,6 +96,7 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 
 	var rawDS []byte
 
+	dsSettings := s.grafanaConf.GetDataSourceSettings()
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(getResourcePath(config.DataSourceResource), file.Name())
 		if strings.HasSuffix(file.Name(), ".json") {
@@ -122,6 +124,11 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 				}
 			} else {
 				creds = nil
+			}
+
+			if dsSettings.FiltersEnabled() && (!dsSettings.Filters.ValidName(newDS.Name) || !dsSettings.Filters.ValidDataType(newDS.Type)) {
+				log.Debugf("Skipping local JSON file since source: %s since it fails filter checks with dataType of: %s", newDS.Name, newDS.Type)
+				continue
 			}
 
 			if creds != nil {
