@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"github.com/esnet/gdg/config"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -37,7 +38,7 @@ func (s *DashNGoImpl) ImportAlertNotifications() []string {
 			log.Errorf("error marshalling %s to json with %s", an.Name, err)
 			continue
 		}
-		anPath := buildAlertNotificationPath(s.configRef, slug.Make(an.Name))
+		anPath := buildResourcePath(slug.Make(an.Name), config.AlertNotificationResource)
 		if err = ioutil.WriteFile(anPath, anPacked, os.FileMode(int(0666))); err != nil {
 			log.Errorf("error writing %s to file with %s", meta.Slug, err)
 		} else {
@@ -71,7 +72,7 @@ func (s *DashNGoImpl) ExportAlertNotifications() []string {
 	var exported []string = make([]string, 0)
 
 	ctx := context.Background()
-	dirPath := getResourcePath(s.configRef, "an")
+	dirPath := getResourcePath(config.AlertNotificationResource)
 	filesInDir := findAllFiles(dirPath)
 	alertnotifications = s.ListAlertNotifications()
 

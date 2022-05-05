@@ -10,6 +10,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type ResourceType string
+
+const (
+	UserResource              = "users"
+	DashboardResource         = "dashboards"
+	DataSourceResource        = "datasources"
+	FolderResource            = "folders"
+	AlertNotificationResource = "alertnotifications"
+)
+
 //GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
 	AdminEnabled       bool
@@ -81,23 +91,23 @@ func (s *GrafanaConfig) GetDataSourceSettings() *DataSourceSettings {
 }
 
 func (s *GrafanaConfig) GetDashboardOutput() string {
-	return path.Join(s.OutputPath, "dashboards")
+	return path.Join(s.OutputPath, DashboardResource)
 }
 
 func (s *GrafanaConfig) GetDataSourceOutput() string {
-	return path.Join(s.OutputPath, "datasources")
+	return path.Join(s.OutputPath, DataSourceResource)
 }
 
 func (s *GrafanaConfig) GetAlertNotificationOutput() string {
-	return path.Join(s.OutputPath, "alertnotifications")
+	return path.Join(s.OutputPath, AlertNotificationResource)
 }
 
 func (s *GrafanaConfig) GetUserOutput() string {
-	return path.Join(s.OutputPath, "users")
+	return path.Join(s.OutputPath, UserResource)
 }
 
 func (s *GrafanaConfig) GetFolderOutput() string {
-	return path.Join(s.OutputPath, "folders")
+	return path.Join(s.OutputPath, FolderResource)
 }
 
 //GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.

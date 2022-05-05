@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/esnet/gdg/apphelpers"
+	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/pretty"
@@ -33,13 +34,14 @@ func (s *DashNGoImpl) ImportUsers() []string {
 		log.Fatal(err)
 	}
 	importedUsers := []string{}
-	userPath := buildUserPath(s.configRef)
+
+	userPath := buildResourceFolder("", config.UserResource)
 	for _, user := range users {
 		if s.isAdmin(user) {
 			log.Info("Skipping admin super user")
 			continue
 		}
-		fileName := fmt.Sprintf("%s/%s.json", userPath, GetSlug(user.Login))
+		fileName := filepath.Join(userPath, fmt.Sprintf("%s.json", GetSlug(user.Login)))
 		userData, err = json.Marshal(&user)
 		if err != nil {
 			log.Errorf("could not serialize user object for userId: %d", user.ID)
@@ -66,7 +68,7 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 	log.Fatalf("Command is not yet fully supported.  Admin Status and a few other settings don't propegate properly")
 	ctx := context.Background()
 	validateUserAPI(s.adminClient)
-	filesInDir, err := ioutil.ReadDir(getResourcePath(s.configRef, "user"))
+	filesInDir, err := ioutil.ReadDir(getResourcePath(config.UserResource))
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for users")
 	}
@@ -74,7 +76,7 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 	var rawUser []byte
 	h := sha1.New()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(getResourcePath(s.configRef, "user"), file.Name())
+		fileLocation := filepath.Join(getResourcePath(config.UserResource), file.Name())
 		if strings.HasSuffix(file.Name(), ".json") {
 			if rawUser, err = ioutil.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file: %s", fileLocation)

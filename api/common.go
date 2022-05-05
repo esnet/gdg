@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/esnet/gdg/config"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,7 +12,6 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 var DefaultFolderName = "General"
@@ -36,58 +36,35 @@ func CreateDestinationPath(v string) {
 	}
 }
 
-//buildUserPath
-func buildUserPath(conf *viper.Viper) string {
-	v := fmt.Sprintf("%s", getResourcePath(conf, "user"))
-	CreateDestinationPath(v)
-	return v
-}
-
-//buildDashboardPath returns the dashboard path for a given folder
-func buildDashboardPath(conf *viper.Viper, folderName string) string {
-	if folderName == "" {
+func buildResourceFolder(folderName string, resourceType config.ResourceType) string {
+	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
 	}
-	v := fmt.Sprintf("%s/%s", getResourcePath(conf, "dashboard"), folderName)
+
+	v := fmt.Sprintf("%s/%s", getResourcePath(resourceType), folderName)
 	CreateDestinationPath(v)
 	return v
 }
 
-func buildFolderSourcePath(conf *viper.Viper, name string) string {
-	folderPath := getResourcePath(conf, "folder")
-	v := fmt.Sprintf("%s/%s.json", folderPath, name)
-	CreateDestinationPath(folderPath)
+func buildResourcePath(folderName string, resourceType config.ResourceType) string {
+	v := fmt.Sprintf("%s/%s.json", getResourcePath(resourceType), folderName)
+	CreateDestinationPath(filepath.Dir(v))
 	return v
+
 }
 
-//buildDataSourcePath returns the expected file for a given datasource
-func buildDataSourcePath(conf *viper.Viper, name string) string {
-	dsPath := getResourcePath(conf, "ds")
-	v := fmt.Sprintf("%s/%s.json", dsPath, name)
-	CreateDestinationPath(dsPath)
-	return v
-}
-
-//buildAlertNotificationPath returns the expected file for a given alertnotification
-func buildAlertNotificationPath(conf *viper.Viper, name string) string {
-	anPath := getResourcePath(conf, "an")
-	v := fmt.Sprintf("%s/%s.json", anPath, name)
-	CreateDestinationPath(anPath)
-	return v
-}
-
-//getResourcePath for a gven resource type: ["dashboard", "ds", "an"] it'll return the configured location
-func getResourcePath(conf *viper.Viper, resourceType string) string {
+//getResourcePath for a given resource type: config.ResourceType it'll return the configured location
+func getResourcePath(resourceType config.ResourceType) string {
 	switch resourceType {
-	case "dashboard":
+	case config.DashboardResource:
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetDashboardOutput()
-	case "ds":
+	case config.DataSourceResource:
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetDataSourceOutput()
-	case "an":
+	case config.AlertNotificationResource:
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetAlertNotificationOutput()
-	case "folder":
+	case config.FolderResource:
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetFolderOutput()
-	case "user":
+	case config.UserResource:
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetUserOutput()
 	default:
 		return ""

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/esnet/gdg/config"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -113,7 +114,8 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 			log.Errorf("%s for %s\n", err, link.URI)
 			continue
 		}
-		fileName := fmt.Sprintf("%s/%s.json", buildDashboardPath(s.configRef, link.FolderTitle), meta.Slug)
+
+		fileName := fmt.Sprintf("%s/%s.json", buildResourceFolder(link.FolderTitle, config.DashboardResource), meta.Slug)
 		if err = ioutil.WriteFile(fileName, pretty.Pretty(rawBoard), os.FileMode(int(0666))); err != nil {
 			log.Errorf("%s for %s\n", err, meta.Slug)
 		} else {
@@ -127,7 +129,7 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 //ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folder doesn't exist, it'll be created.
 func (s *DashNGoImpl) ExportDashboards(filters Filter) {
-	path := getResourcePath(s.configRef, "dashboard")
+	path := getResourcePath(config.DashboardResource)
 	filesInDir := findAllFiles(path)
 	ctx := context.Background()
 	var rawBoard []byte
