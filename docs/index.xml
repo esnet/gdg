@@ -6,6 +6,18 @@
     <description>Recent content in GDG Docs on Grafana Dash-n-Go</description>
     <generator>Hugo -- gohugo.io</generator><atom:link href="https://software.es.net/gdg/docs/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Installation</title>
+      <link>https://software.es.net/gdg/docs/installation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://software.es.net/gdg/docs/installation/</guid>
+      <description>Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
+Planned package support for:
+ HomeBrew Debian RPMs APK  If you have go install you may run the following command to install gdg
+1go install github.com/esnet/gdg@latest You can verify the version by running gdg version.</description>
+    </item>
+    
+    <item>
       <title>Configuration</title>
       <link>https://software.es.net/gdg/docs/configuration/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -47,9 +59,8 @@ context_name: all contexts: all: url: https://grafana.example.org token: &amp;#3
       
       <guid>https://software.es.net/gdg/docs/usage_guide/</guid>
       <description>Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Contexts Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.
-ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
-1./bin/gdg ctx list -- Lists all known contexts 2.</description>
+Alert Notifications Allows you to manage alertnotifications (an) if you have any setup
+1./bin/gdg an list -- Lists all alert notifications 2./bin/gdg an import -- retrieve and save all alertnotifications from grafana 3./bin/gdg an export -- writes all local alert notifications to grafana 4./bin/gdg an clear -- Deletes all alert notifications Contexts Starting with version 0.</description>
     </item>
     
   </channel>

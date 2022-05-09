@@ -9,32 +9,29 @@
 <link rel="mask-icon" href='https://software.es.net/gdg/favicons/safari-pinned-tab.svg'  color="#004750">
 <link rel="shortcut icon" href='https://software.es.net/gdg/favicons/favicon.ico'>
 <meta name="msapplication-config" content='https://software.es.net/gdg/favicons/browserconfig.xml'>
-<title>Developer Guide | Grafana Dash-n-Go</title><meta property="og:title" content="Developer Guide" />
-<meta property="og:description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically." />
+<title>Installation | Grafana Dash-n-Go</title><meta property="og:title" content="Installation" />
+<meta property="og:description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
+Planned package support for:
+ HomeBrew Debian RPMs APK  If you have go install you may run the following command to install gdg
+1go install github.com/esnet/gdg@latest You can verify the version by running gdg version." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://software.es.net/gdg/docs/developer/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://software.es.net/gdg/docs/installation/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2021-11-23T13:39:54-05:00" />
+<meta property="article:modified_time" content="2022-05-09T11:34:54-04:00" />
 
-<meta itemprop="name" content="Developer Guide">
-<meta itemprop="description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically.">
-<meta itemprop="dateModified" content="2021-11-23T13:39:54-05:00" />
-<meta itemprop="wordCount" content="110">
+<meta itemprop="name" content="Installation">
+<meta itemprop="description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
+Planned package support for:
+ HomeBrew Debian RPMs APK  If you have go install you may run the following command to install gdg
+1go install github.com/esnet/gdg@latest You can verify the version by running gdg version.">
+<meta itemprop="dateModified" content="2022-05-09T11:34:54-04:00" />
+<meta itemprop="wordCount" content="116">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Developer Guide"/>
-<meta name="twitter:description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&#34;secret&#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically."/>
+<meta name="twitter:title" content="Installation"/>
+<meta name="twitter:description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
+Planned package support for:
+ HomeBrew Debian RPMs APK  If you have go install you may run the following command to install gdg
+1go install github.com/esnet/gdg@latest You can verify the version by running gdg version."/>
 
 
 <link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -42,11 +39,10 @@ NOTE: CI/CD pipeline should do all this automatically."/>
 
 
 
-  <meta name="description" content="Running Tests  Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test  Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically.">
+  <meta name="description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
+Planned package support for:
+ HomeBrew Debian RPMs APK  If you have go install you may run the following command to install gdg
+1go install github.com/esnet/gdg@latest You can verify the version by running gdg version.">
 
 
 </head>
@@ -114,7 +110,7 @@ NOTE: CI/CD pipeline should do all this automatically.">
   <section class="section aside_inner">
     <h2 class="section_title"><a  href="https://software.es.net/gdg/docs/" class="group">GDG Docs</a></h2>
       <section class="" id="docs-gdg-docs">
-        <h3 class="section_link"><a id="docs-installation" href="https://software.es.net/gdg/docs/installation/">Installation</a></h3><nav id="TableOfContents">
+        <h3 class="section_link active"><a id="docs-installation" href="https://software.es.net/gdg/docs/installation/">Installation</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#installation">Installation</a></li>
     <li><a href="#configuration">Configuration</a></li>
@@ -144,7 +140,7 @@ NOTE: CI/CD pipeline should do all this automatically.">
     </li>
   </ul>
 </nav>
-        <h3 class="section_link active"><a id="docs-developer-guide" href="https://software.es.net/gdg/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-developer-guide" href="https://software.es.net/gdg/docs/developer/">Developer Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#running-tests">Running Tests</a></li>
     <li><a href="#making-a-release">Making a release</a></li>
@@ -186,39 +182,29 @@ NOTE: CI/CD pipeline should do all this automatically.">
 </aside>
 
   <main class="content">
-    <h1>Developer Guide</h1><h2 id="running-tests">Running Tests</h2>
-<ol>
-<li>Bring up a grafana instance locally with default credentials of admin/admin.  <code>docker-compose up -d grafana</code></li>
-<li>Once the instance is up simply run <code>go test ./...</code> or <code>make test</code></li>
-</ol>
-<h2 id="making-a-release">Making a release</h2>
-<p>Install goreleaser.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">brew install goreleaser/tap/goreleaser
-</span></span><span class="line"><span class="ln">2</span><span class="cl">brew reinstall goreleaser<span class="sb">`</span>
-</span></span></code></pre></div><p>Alternatively if you have a more recent version of Go.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">go install github.com/goreleaser/goreleaser@latest
-</span></span></code></pre></div><p>export your GITHUB_TOKEN.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl"><span class="nb">export</span> <span class="nv">GITHUB_TOKEN</span><span class="o">=</span><span class="s2">&#34;secret&#34;</span>
-</span></span></code></pre></div><p>git tag v0.1.0
-goreleaser release</p>
-<p>NOTE: CI/CD pipeline should do all this automatically.  <code>make release-snapshot</code> is used to test the release build process.  Once a build is tagged all artifacts should be built automatically and attached to the github release page.</p>
-<p>NOTE: mac binary are not signed so will likely complain.</p>
+    <h1>Installation</h1><h2 id="installation">Installation</h2>
+<p>The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found <a href="https://github.com/esnet/gdg/releases">here</a>.  Packages are not yet supported but will be coming soon since goreleaser has that feature.</p>
+<p>Planned package <a href="https://github.com/esnet/gdg/issues/89">support</a> for:</p>
+<ul>
+<li>HomeBrew</li>
+<li>Debian</li>
+<li>RPMs</li>
+<li>APK</li>
+</ul>
+<p>If you have go install you may run the following command to install gdg</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">go install github.com/esnet/gdg@latest
+</span></span></code></pre></div><p>You can verify the version by running <code>gdg version</code>.</p>
+<h2 id="configuration">Configuration</h2>
+<p>You can then create a simple configuration using <code>gdg ctx new</code> which will do a best effort to guide to setup a basic config that will get you up and going or read the more detailed documentation that can be found <a href="/gdg/docs/configuration/">here</a></p>
 
-    <div class="pager">
-  
-  <div class="pager_item prev">
-    
-    <a href="https://software.es.net/gdg/docs/configuration/" class="pager_link button" title="Configuration" rel="prev">
-      <span class="pager_label">Configuration</span>
-    </a>
-  </div>
+    <div class="pager pager_lean">
   
 
   
   <div class="pager_item next">
     
-    <a href="https://software.es.net/gdg/docs/examples/" class="pager_link button" title="Example Usage" rel="next">
-      <span class="pager_label">Example Usage</span>
+    <a href="https://software.es.net/gdg/docs/configuration/" class="pager_link button" title="Configuration" rel="next">
+      <span class="pager_label">Configuration</span>
     </a>
   </div>
   

@@ -16,14 +16,14 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://software.es.net/gdg/docs/configuration/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-03-23T12:00:58-04:00" />
+<meta property="article:modified_time" content="2022-05-09T11:34:54-04:00" />
 
 <meta itemprop="name" content="Configuration">
 <meta itemprop="description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
 Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg.">
-<meta itemprop="dateModified" content="2022-03-23T12:00:58-04:00" />
-<meta itemprop="wordCount" content="464">
+<meta itemprop="dateModified" content="2022-05-09T11:34:54-04:00" />
+<meta itemprop="wordCount" content="553">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configuration"/>
 <meta name="twitter:description" content="Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
@@ -106,6 +106,12 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
   <section class="section aside_inner">
     <h2 class="section_title"><a  href="https://software.es.net/gdg/docs/" class="group">GDG Docs</a></h2>
       <section class="" id="docs-gdg-docs">
+        <h3 class="section_link"><a id="docs-installation" href="https://software.es.net/gdg/docs/installation/">Installation</a></h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#configuration">Configuration</a></li>
+  </ul>
+</nav>
         <h3 class="section_link active"><a id="docs-configuration" href="https://software.es.net/gdg/docs/configuration/">Configuration</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#getting-started">Getting started</a>
@@ -116,8 +122,10 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
             <li><a href="#username--password">Username / Password</a></li>
           </ul>
         </li>
-        <li><a href="#datasource-credentials">DataSource Credentials.</a>
+        <li><a href="#datasource">DataSource</a>
           <ul>
+            <li><a href="#datasource-credentials">DataSource Credentials</a></li>
+            <li><a href="#datasource-filters">DataSource Filters</a></li>
             <li><a href="#notes">Notes</a></li>
           </ul>
         </li>
@@ -149,14 +157,18 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
   <ul>
     <li>
       <ul>
+        <li><a href="#alert-notifications">Alert Notifications</a></li>
         <li><a href="#contexts">Contexts</a>
           <ul>
             <li><a href="#dashboards">Dashboards</a></li>
             <li><a href="#datasources">DataSources</a></li>
+            <li><a href="#devel">Devel</a></li>
+            <li><a href="#folders">Folders</a></li>
             <li><a href="#organizations">Organizations</a></li>
           </ul>
         </li>
         <li><a href="#users">Users</a></li>
+        <li><a href="#version">Version</a></li>
       </ul>
     </li>
   </ul>
@@ -184,14 +196,15 @@ contexts:
     watched:
       - Example
     datasources:
-      default:
-        user: admin
-        password: secret
-        url_regex:    ## set to pattern to match as well as the name.
-      misc:
-        user: admin
-        password: secret
-        url_regex: .*esproxy2*      
+      credentials:
+        default:
+          user: admin
+          password: secret
+          url_regex:    ## set to pattern to match as well as the name.
+        misc:
+          user: admin
+          password: secret
+          url_regex: .*esproxy2*      
 
 global:
   debug: true
@@ -212,16 +225,52 @@ contexts:
 global:
   debug: true
   ignore_ssl_errors: false
-</code></pre><h3 id="datasource-credentials">DataSource Credentials.</h3>
+</code></pre><h3 id="datasource">DataSource</h3>
+<h4 id="datasource-credentials">DataSource Credentials</h4>
 <p>If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:</p>
 <ol>
 <li>Match of DS credentials based on DS name.</li>
 <li>Match URL regex for the DS if regex specified.</li>
 <li>Use Default Credentials if the above two both failed.</li>
 </ol>
+<p>An example of a configuration can be seen below</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="w">  </span><span class="nt">testing</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w">    </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l">testing_data</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w">    </span><span class="nt">datasources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w">      </span><span class="nt">credentials</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w">          </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l">user</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w">          </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l">password</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w">        </span><span class="nt">misc</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="w">          </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l">admin</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w">          </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l">secret</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">          </span><span class="nt">url_regex</span><span class="p">:</span><span class="w"> </span><span class="l">.*esproxy2*</span><span class="w">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">http://localhost:3000</span><span class="w">
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="w">    </span><span class="nt">user_name</span><span class="p">:</span><span class="w"> </span><span class="l">admin</span><span class="w">
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l">admin</span><span class="w">
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="w">    </span><span class="nt">ignore_filters</span><span class="p">:</span><span class="w"> </span><span class="kc">False</span><span class="w">  </span><span class="c"># When set to true all Watched filtered folders will be ignored and ALL folders will be acted on</span><span class="w">
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="w">    </span><span class="nt">watched</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="w">      </span>- <span class="l">General</span><span class="w">
+</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="w">      </span>- <span class="l">Other </span><span class="w">
+</span></span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="w"> 
+</span></span></span></code></pre></div><h4 id="datasource-filters">DataSource Filters</h4>
+<p>This feature allows you to exclude datasource by name or include them by type.  Please note that the logic switches based on the data type.</p>
+<p><strong>name filter:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="nn">...</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w"></span><span class="nt">datasources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">  </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">    </span><span class="nt">name_exclusions</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;DEV-*|-Dev-*&#34;</span><span class="w">
+</span></span></span></code></pre></div><p>Will exclude any datasource that matches the name regex.</p>
+<p><strong>Type Filter</strong></p>
+<p>Will ONLY include datasource that are listed.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="nt">datasources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">  </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">    </span><span class="nt">valid_types</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">      </span>- <span class="l">elasticsearch</span><span class="w">
+</span></span></span></code></pre></div><p>The snippet above will ONLY import datasources for elasticsearch</p>
 <h4 id="notes">Notes</h4>
-<p>If you configure both, Auth Token and Username/Password, then the Token is given priority.</p>
-<p>Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only &quot;General&quot; is managed.</p>
+<p>If you configure both, Auth Token and Username/Password, then the Token is given priority.
+Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only &quot;General&quot; is managed.</p>
 <p>env.output defines where the files will be saved and imported from.</p>
 <h3 id="global-flags">Global Flags</h3>
 <p><code>globals.debug</code> when set will print a more verbose output (Development In Progress)
@@ -242,7 +291,14 @@ global:
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ make build
 </span></span><span class="line"><span class="ln">2</span><span class="cl">$ ./bin/gdg
 </span></span></code></pre></div>
-    <div class="pager pager_lean">
+    <div class="pager">
+  
+  <div class="pager_item prev">
+    
+    <a href="https://software.es.net/gdg/docs/installation/" class="pager_link button" title="Installation" rel="prev">
+      <span class="pager_label">Installation</span>
+    </a>
+  </div>
   
 
   
