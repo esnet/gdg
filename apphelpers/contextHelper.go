@@ -21,7 +21,9 @@ func GetContext() string {
 func NewContext(name string) {
 	name = strings.ToLower(name) // forces lowercase contexts
 	answers := config.GrafanaConfig{
-		DataSourceSettings: make(map[string]*config.GrafanaDataSource),
+		DataSourceSettings: &config.DataSourceSettings{
+			Credentials: make(map[string]*config.GrafanaDataSource),
+		},
 	}
 	promptAnswers := struct {
 		AuthType   string
@@ -70,7 +72,7 @@ func NewContext(name string) {
 			User:     promptAnswers.DSUser,
 			Password: promptAnswers.DSPassword,
 		}
-		answers.DataSourceSettings["default"] = &ds
+		answers.GetDataSourceSettings().Credentials["default"] = &ds
 	}
 
 	//Setup grafana required field based on responses

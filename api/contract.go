@@ -31,9 +31,17 @@ type ApiService interface {
 	AdminLogin() *sdk.Client
 	//User
 	ListUsers() []sdk.User
+	ImportUsers() []string
+	ExportUsers() []sdk.User
 	PromoteUser(userLogin string) (*sdk.StatusMessage, error)
+	DeleteAllUsers() []string
 	//MetaData
 	GetServerInfo() map[string]interface{}
+	//Folder
+	ListFolder(filter Filter) []sdk.Folder
+	ImportFolder(filter Filter) []string
+	ExportFolder(filter Filter) []string
+	DeleteAllFolder(filter Filter) []string
 }
 
 var (

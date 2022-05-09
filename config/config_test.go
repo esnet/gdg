@@ -52,10 +52,10 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	assert.Equal(t, "qa/datasources", grafana.GetDataSourceOutput())
 	assert.Equal(t, "qa/dashboards", grafana.GetDashboardOutput())
 	dsSettings := grafana.DataSourceSettings
-	defaultSettings := dsSettings["default"]
+	defaultSettings, _ := dsSettings.GetCredentials("default")
 	assert.Equal(t, "user", defaultSettings.User)
 	assert.Equal(t, "password", defaultSettings.Password)
-	defaultSettings = dsSettings["complex name"]
+	defaultSettings, _ = dsSettings.GetCredentials("complex name")
 	assert.Equal(t, "test", defaultSettings.User)
 	assert.Equal(t, "secret", defaultSettings.Password)
 }
