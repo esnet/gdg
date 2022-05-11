@@ -16,6 +16,40 @@ builds:
       - windows
       - darwin
 
+nfpms:
+  -
+    id: gdg
+    package_name: gdg
+    file_name_template: "{{ .ConventionalFileName }}"
+    homepage: https://software.es.net/gdg/
+    maintainer: csgeek <samir+gdg@es.net>
+    description: |-
+      GDG is a tool used to manage dashboards, datasources, orgs and various entities of the Grafana application.
+    license: BSD License
+    formats:
+      - apk
+      - deb
+      - rpm
+
+    # Template to the path that the binaries should be installed.
+    # Defaults to `/usr/bin`.
+    bindir: /usr/bin
+
+    # Section.
+    section: default
+
+    # Priority.
+    priority: extra
+
+    # Contents to add to the package.
+    # GoReleaser will automatically add the binaries.
+    contents:
+      # Simple config file
+      - src: conf/importer-example.yml
+        dst: /etc/gdg/importer.yml
+        type: config
+
+
 #dockers:
 #  # You can have multiple Docker images.
 #  - # ID of the image, needed if you want to filter by it later on (e.g. on custom publishers).

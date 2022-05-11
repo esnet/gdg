@@ -134,6 +134,7 @@ func readViperConfig(appName string) (*viper.Viper, error) {
 	v.AddConfigPath(".")
 	v.AddConfigPath("../conf")
 	v.AddConfigPath("conf")
+	v.AddConfigPath("/etc/gdg/")
 	v.AutomaticEnv()
 
 	// global defaults
