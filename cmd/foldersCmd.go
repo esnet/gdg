@@ -15,9 +15,9 @@ var foldersCmd = &cobra.Command{
 }
 
 var foldersDeleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "delete Folders",
-	Long:  `delete Folders`,
+	Use:   "clear",
+	Short: "clear Folders",
+	Long:  `clear Folders`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Deleting all Folders for context: '%s'", apphelpers.GetContext())

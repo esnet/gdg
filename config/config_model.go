@@ -122,7 +122,7 @@ func (s *GrafanaConfig) GetCredentials(dataSourceName string) (*GrafanaDataSourc
 		return source, nil
 	}
 
-	log.Infof("No datasource credentials found for '%s', falling back on default", dataSourceName)
+	log.Debugf("No datasource credentials found for '%s', falling back on default", dataSourceName)
 	return s.GetDefaultCredentials(), nil
 }
 
