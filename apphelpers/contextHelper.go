@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/thoas/go-funk"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 //GetContext returns the name of the selected context
