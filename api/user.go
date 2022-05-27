@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -36,13 +36,13 @@ func (s *DashNGoImpl) ImportUsers() []string {
 	importedUsers := []string{}
 
 	userPath := buildResourceFolder("", config.UserResource)
-	for _, user := range users {
+	for ndx, user := range users {
 		if s.isAdmin(user) {
 			log.Info("Skipping admin super user")
 			continue
 		}
 		fileName := filepath.Join(userPath, fmt.Sprintf("%s.json", GetSlug(user.Login)))
-		userData, err = json.Marshal(&user)
+		userData, err = json.Marshal(&users[ndx])
 		if err != nil {
 			log.Errorf("could not serialize user object for userId: %d", user.ID)
 			continue
@@ -73,7 +73,7 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 	}
 	var users []sdk.User
 	var rawUser []byte
-	h := sha1.New()
+	h := sha256.New()
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(getResourcePath(config.UserResource), file.Name())
 		if strings.HasSuffix(file.Name(), ".json") {
@@ -163,9 +163,9 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (*sdk.StatusMessage, error) 
 	//Get all users
 	users := s.ListUsers()
 	var user *sdk.User
-	for _, item := range users {
+	for ndx, item := range users {
 		if item.Login == userLogin {
-			user = &item
+			user = &users[ndx]
 			break
 		}
 

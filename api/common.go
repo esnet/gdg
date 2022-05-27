@@ -21,16 +21,18 @@ func GetSlug(title string) string {
 }
 
 //Update the slug in the board returned
-func updateSlug(board *sdk.FoundBoard) {
+func updateSlug(board sdk.FoundBoard) string {
 	elements := strings.Split(board.URI, "/")
 	if len(elements) > 1 {
-		board.Slug = elements[len(elements)-1]
+		return elements[len(elements)-1]
 	}
+
+	return ""
 }
 
 //CreateDestinationPath Handle osMkdir Errors
 func CreateDestinationPath(v string) {
-	err := os.MkdirAll(v, 0755)
+	err := os.MkdirAll(v, 0750)
 	if err != nil {
 		log.WithError(err).Panicf("unable to create path %s", v)
 	}

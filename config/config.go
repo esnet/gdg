@@ -98,7 +98,7 @@ func InitConfig(override, defaultConfig string) {
 		if err != nil {
 			log.Fatal("unable to create configuration folder: 'conf'")
 		}
-		err = ioutil.WriteFile("conf/importer.yml", []byte(defaultConfig), 0644)
+		err = ioutil.WriteFile("conf/importer.yml", []byte(defaultConfig), 0600)
 		if err != nil {
 			log.Panic("Could not persist default config locally")
 		}
