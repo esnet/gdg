@@ -82,7 +82,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 		if !validFolder {
 			continue
 		}
-		updateSlug(&link)
+		link.Slug = updateSlug(link)
 		validUid = filters.GetFilter("DashFilter") == "" || link.Slug == filters.GetFilter("DashFilter")
 		if link.FolderID == 0 {
 			link.FolderTitle = DefaultFolderName

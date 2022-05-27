@@ -24,15 +24,15 @@ func TestDashboardCRUD(t *testing.T) {
 	ignoredSkipped := true
 	var generalBoard sdk.FoundBoard
 	var otherBoard sdk.FoundBoard
-	for _, board := range boards {
+	for ndx, board := range boards {
 		if board.Slug == "latency-patterns" {
 			ignoredSkipped = false
 		}
 		if board.Slug == "individual-flows" {
-			generalBoard = board
+			generalBoard = boards[ndx]
 		}
 		if board.Slug == "flow-information" {
-			otherBoard = board
+			otherBoard = boards[ndx]
 		}
 	}
 	assert.NotNil(t, otherBoard)
