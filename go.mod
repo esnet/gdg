@@ -9,7 +9,7 @@ require (
 	github.com/go-openapi/strfmt v0.21.2 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gosimple/slug v1.12.0
-	github.com/grafana-tools/sdk v0.0.0-20220402173226-77f22ba83269
+	github.com/grafana-tools/sdk v0.0.0-20220603080608-a80b27bdd7ce
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
@@ -53,5 +53,3 @@ require (
 	github.com/subosito/gotenv v1.3.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-replace github.com/grafana-tools/sdk => github.com/esnet/sdk v0.0.0-20220426172253-e7a651736c8d
