@@ -1,6 +1,8 @@
 package api
 
 import (
+	"context"
+	"fmt"
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
@@ -55,6 +57,7 @@ type DashNGoImpl struct {
 	grafanaConf *config.GrafanaConfig
 	configRef   *viper.Viper
 	debug       bool
+	storage     Storage
 }
 
 func NewDashNGoImpl() *DashNGoImpl {
@@ -71,7 +74,32 @@ func newInstance() *DashNGoImpl {
 	obj.client = obj.Login()
 	obj.adminClient = obj.AdminLogin()
 	obj.debug = config.Config().IsDebug()
+	configureStorage(obj)
+
 	return obj
+}
+
+//Testing Only
+func (s *DashNGoImpl) SetStorage(v Storage) {
+	s.storage = v
+}
+
+func configureStorage(obj *DashNGoImpl) {
+	//config
+	appData := config.Config().ViperConfig().GetStringMap(fmt.Sprintf("storage_engine.%s", obj.grafanaConf.Storage))
+
+	storageType := "local"
+	if len(appData) != 0 {
+		storageType = appData["kind"].(string)
+	}
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, StorageContext, appData)
+	switch storageType {
+	case "cloud":
+		obj.storage = NewCloudStorage(ctx)
+	default:
+		obj.storage = NewLocalStorage(ctx)
+	}
 }
 
 func NewApiService(override ...string) ApiService {

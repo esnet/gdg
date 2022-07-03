@@ -74,26 +74,6 @@ func getResourcePath(resourceType config.ResourceType) string {
 
 }
 
-//findAllFiles recursively list all files for a given path
-func findAllFiles(folder string) []string {
-	if _, err := os.Stat(folder); os.IsNotExist(err) {
-		log.Warn("Output folder was not found")
-		return []string{}
-	}
-	var fileList []string
-	err := filepath.Walk(folder, func(path string, f os.FileInfo, err error) error {
-		if !f.IsDir() {
-			fileList = append(fileList, path)
-		}
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	return fileList
-}
-
 //getFolderNameIDMap helper function to build a mapping for name to folderID
 func getFolderNameIDMap(client *sdk.Client, ctx context.Context) map[string]int {
 

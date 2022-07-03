@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/esnet/gdg/config"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -39,7 +38,7 @@ func (s *DashNGoImpl) ImportAlertNotifications() []string {
 			continue
 		}
 		anPath := buildResourcePath(slug.Make(an.Name), config.AlertNotificationResource)
-		if err = ioutil.WriteFile(anPath, anPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(anPath, anPacked, os.FileMode(int(0666))); err != nil {
 			log.Errorf("error writing %s to file with %s", meta.Slug, err)
 		} else {
 			dataFiles = append(dataFiles, anPath)
@@ -68,19 +67,25 @@ func (s *DashNGoImpl) DeleteAllAlertNotifications() []string {
 //NOTE: credentials will be missing and need to be set manually after export
 //TODO implement configuring sensitive fields for different kinds of alert notification channels
 func (s *DashNGoImpl) ExportAlertNotifications() []string {
-	var alertnotifications []sdk.AlertNotification
-	var exported []string = make([]string, 0)
+	var (
+		alertnotifications []sdk.AlertNotification
+		exported           []string
+		filesInDir         []string
+		err                error
+	)
 
 	ctx := context.Background()
 	dirPath := getResourcePath(config.AlertNotificationResource)
-	filesInDir := findAllFiles(dirPath)
+	filesInDir, err = s.storage.FindAllFiles(dirPath)
+	if err != nil {
+		log.WithError(err).Fatalf("Unable to find Alert data in Storage System %s", s.storage.Name())
+	}
 	alertnotifications = s.ListAlertNotifications()
 
 	var raw []byte
-	var err error
 	for _, file := range filesInDir {
 		if strings.HasSuffix(file, ".json") {
-			if raw, err = ioutil.ReadFile(file); err != nil {
+			if raw, err = s.storage.ReadFile(file); err != nil {
 				log.Errorf("error reading file %s with %s", file, err)
 				continue
 			}
