@@ -9,26 +9,26 @@
 <link rel="mask-icon" href='https://software.es.net/gdg/favicons/safari-pinned-tab.svg'  color="#004750">
 <link rel="shortcut icon" href='https://software.es.net/gdg/favicons/favicon.ico'>
 <meta name="msapplication-config" content='https://software.es.net/gdg/favicons/browserconfig.xml'>
-<title>Usage Guide | Grafana Dash-n-Go</title><meta property="og:title" content="Usage Guide" />
-<meta property="og:description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Alert Notifications Allows you to manage alertnotifications (an) if you have any setup
-1./bin/gdg an list -- Lists all alert notifications 2./bin/gdg an import -- retrieve and save all alertnotifications from grafana 3./bin/gdg an export -- writes all local alert notifications to grafana 4./bin/gdg an clear -- Deletes all alert notifications Contexts Starting with version 0." />
+<title>Cloud Configuration | Grafana Dash-n-Go</title><meta property="og:title" content="Cloud Configuration" />
+<meta property="og:description" content="Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
+Currently the following providers are supported:
+AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://software.es.net/gdg/docs/usage_guide/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://software.es.net/gdg/docs/cloud_configuration/" /><meta property="article:section" content="docs" />
 
 <meta property="article:modified_time" content="2022-07-06T15:53:02-04:00" />
 
-<meta itemprop="name" content="Usage Guide">
-<meta itemprop="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Alert Notifications Allows you to manage alertnotifications (an) if you have any setup
-1./bin/gdg an list -- Lists all alert notifications 2./bin/gdg an import -- retrieve and save all alertnotifications from grafana 3./bin/gdg an export -- writes all local alert notifications to grafana 4./bin/gdg an clear -- Deletes all alert notifications Contexts Starting with version 0.">
+<meta itemprop="name" content="Cloud Configuration">
+<meta itemprop="description" content="Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
+Currently the following providers are supported:
+AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers.">
 <meta itemprop="dateModified" content="2022-07-06T15:53:02-04:00" />
-<meta itemprop="wordCount" content="615">
+<meta itemprop="wordCount" content="241">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Usage Guide"/>
-<meta name="twitter:description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Alert Notifications Allows you to manage alertnotifications (an) if you have any setup
-1./bin/gdg an list -- Lists all alert notifications 2./bin/gdg an import -- retrieve and save all alertnotifications from grafana 3./bin/gdg an export -- writes all local alert notifications to grafana 4./bin/gdg an clear -- Deletes all alert notifications Contexts Starting with version 0."/>
+<meta name="twitter:title" content="Cloud Configuration"/>
+<meta name="twitter:description" content="Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
+Currently the following providers are supported:
+AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers."/>
 
 
 <link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -36,9 +36,9 @@ Alert Notifications Allows you to manage alertnotifications (an) if you have any
 
 
 
-  <meta name="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Alert Notifications Allows you to manage alertnotifications (an) if you have any setup
-1./bin/gdg an list -- Lists all alert notifications 2./bin/gdg an import -- retrieve and save all alertnotifications from grafana 3./bin/gdg an export -- writes all local alert notifications to grafana 4./bin/gdg an clear -- Deletes all alert notifications Contexts Starting with version 0.">
+  <meta name="description" content="Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
+Currently the following providers are supported:
+AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers.">
 
 
 </head>
@@ -136,7 +136,7 @@ Alert Notifications Allows you to manage alertnotifications (an) if you have any
     </li>
   </ul>
 </nav>
-        <h3 class="section_link"><a id="docs-cloud-configuration" href="https://software.es.net/gdg/docs/cloud_configuration/">Cloud Configuration</a></h3><nav id="TableOfContents">
+        <h3 class="section_link active"><a id="docs-cloud-configuration" href="https://software.es.net/gdg/docs/cloud_configuration/">Cloud Configuration</a></h3><nav id="TableOfContents">
   <ul>
     <li><a href="#general-configuration">General Configuration</a></li>
     <li><a href="#context-configuration">Context Configuration</a></li>
@@ -159,7 +159,7 @@ Alert Notifications Allows you to manage alertnotifications (an) if you have any
     </li>
   </ul>
 </nav>
-        <h3 class="section_link active"><a id="docs-usage-guide" href="https://software.es.net/gdg/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
+        <h3 class="section_link"><a id="docs-usage-guide" href="https://software.es.net/gdg/docs/usage_guide/">Usage Guide</a></h3><nav id="TableOfContents">
   <ul>
     <li>
       <ul>
@@ -184,73 +184,56 @@ Alert Notifications Allows you to manage alertnotifications (an) if you have any
 </aside>
 
   <main class="content">
-    <h1>Usage Guide</h1><p>Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.</p>
-<h3 id="alert-notifications">Alert Notifications</h3>
-<p>Allows you to manage alertnotifications (an) if you have any setup</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg an list -- Lists all alert notifications
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg an import -- retrieve and save all alertnotifications from grafana
-</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg an <span class="nb">export</span>  -- writes all <span class="nb">local</span> alert notifications to grafana
-</span></span><span class="line"><span class="ln">4</span><span class="cl">./bin/gdg an clear -- Deletes all alert notifications
-</span></span></code></pre></div><h3 id="contexts">Contexts</h3>
-<p>Starting with version 0.1.4 contexts are now supported.  Your config can contain one or multiple contexts which are essentially a grafana server configuration.</p>
-<p>ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg ctx list -- Lists all known contexts
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg ctx show qa -- shows the configuration <span class="k">for</span> the selected context
-</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg ctx <span class="nb">set</span> production -- updates the active config and sets it to the request value.
-</span></span><span class="line"><span class="ln">4</span><span class="cl">./bin/gdg ctx delete qa -- Deletes the QA context
-</span></span><span class="line"><span class="ln">5</span><span class="cl">./bin/gdg ctx cp qa staging -- copies the qa context to staging and sets it as active
-</span></span><span class="line"><span class="ln">6</span><span class="cl">./bin/gdg ctx clear -- Will delete all active contexts leaving only a single example entry
-</span></span></code></pre></div><h4 id="dashboards">Dashboards</h4>
-<p>Dashboards are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
-<p>All commands can use <code>dashboards</code> or <code>dash</code> to manage dashboards</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg dash list -- Lists all current dashboards
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg dash import -- Import all dashboards from grafana to <span class="nb">local</span> file system
-</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg dash <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
-</span></span><span class="line"><span class="ln">4</span><span class="cl">./bin/gdg dash clear -- Deletes all dashboards
-</span></span></code></pre></div><h4 id="datasources">DataSources</h4>
-<p>DataSources credentials are keyed by the name of the DataSource.  See see <a href="https://github.com/esnet/gdg/blob/master/conf/importer-example.yml">config example</a>.  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
-Datasources are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
-<p>All commands can use <code>datasources</code> or <code>ds</code> to manage datasources</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg ds list -- Lists all current datasources
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg ds import -- Import all datasources from grafana to <span class="nb">local</span> file system
-</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg ds <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
-</span></span><span class="line"><span class="ln">4</span><span class="cl">./bin/gdg ds clear -- Deletes all datasources
-</span></span></code></pre></div><h4 id="devel">Devel</h4>
-<p>Some developer helper utilities</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg devel completion  <span class="o">[</span>bash<span class="p">|</span>fish<span class="p">|</span>powershell<span class="p">|</span>zsh<span class="o">]</span> --  Will generate autocompletion <span class="k">for</span> GDG <span class="k">for</span> your favorite shell
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg devel srvinfo -- print grafana server info
-</span></span></code></pre></div><h4 id="folders">Folders</h4>
-<p>Mostly optional as Dashboards will create/delete these are needed but if there is additional metadata you wish to persist you can use this to manage them.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg folders list -- Lists all current folders
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg folders import -- Import all folders from grafana to <span class="nb">local</span> file system
-</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg folders <span class="nb">export</span> -- Exports all folders from <span class="nb">local</span> filesystem 
-</span></span><span class="line"><span class="ln">4</span><span class="cl">./bin/gdg folders clear -- Deletes all folders
-</span></span></code></pre></div><h4 id="organizations">Organizations</h4>
-<p>Command can use <code>organizations</code> or <code>org</code> to manage organizations.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg org list -- Lists all organizations
-</span></span></code></pre></div><h3 id="users">Users</h3>
-<p>Only supported with basic auth.  Users is the only one where basic auth is given priority.  API Auth is not supported, so will try to use basic auth if configured otherwise will warn the user and exit.</p>
-<p>NOTE: admin user is always ignored.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg users list -- Lists all known users
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg users promote -u user@foobar.com -- promotes the user to a grafana admin
-</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg users import -- Lists all known users
-</span></span><span class="line"><span class="ln">4</span><span class="cl">./bin/gdg users <span class="nb">export</span> -- Export all users <span class="o">(</span>Not yet supported<span class="o">)</span>
-</span></span><span class="line"><span class="ln">5</span><span class="cl">./bin/gdg users clear -- Delete all known users except admin
-</span></span></code></pre></div><h3 id="version">Version</h3>
-<p>Print the applications release version</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg version
-</span></span></code></pre></div><pre tabindex="0"><code>Build Date: 2022-05-05-13:27:08
-Git Commit: 34cc84b3d80080aa93e74ed37739bddc3638997c+CHANGES
-Version: 0.1.11
-Go Version: go1.18
-OS / Arch: darwin amd64
-</code></pre>
+    <h1>Cloud Configuration</h1><h1 id="cloud-support">Cloud Support</h1>
+<p>Support for using a few cloud providers as a storage engine is now supported.  When enabled, the local file system is only used for reading configuration files.  Everything else relies on the data from the cloud provider matching up to your configuration.</p>
+<p>Currently the following providers are supported:</p>
+<ul>
+<li>AWS S3</li>
+<li>Google Storage (GS)</li>
+<li>Azure</li>
+<li>SFTP (Not exactly cloud, but useful)</li>
+</ul>
+<p>NOTE:  the <a href="https://github.com/graymeta/stow">stow</a> was used to support all of these providers.  They should all work, but only S3 and Google have been properly tested.</p>
+<h2 id="general-configuration">General Configuration</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="nt">storage_engine</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">  </span><span class="nt">any_label</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">cloud</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">    </span><span class="nt">cloud_type</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">s3, google, azure, sftp]</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">    </span><span class="nt">bucket_name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;dummy&#34;</span><span class="w">
+</span></span></span></code></pre></div><p>Additional configuration for the respective engines are dependent on the cloud providers.</p>
+<p>S3 <a href="https://github.com/graymeta/stow/blob/master/s3/config.go">config</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">    </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">    </span><span class="nt">secret_key</span><span class="p">:</span><span class="w">  </span><span class="s2">&#34;&#34;</span><span class="w">
+</span></span></span></code></pre></div><p>Google <a href="https://github.com/graymeta/stow/blob/master/google/config.go">config</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">        </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l">esnet-sd-dev</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">        </span><span class="nt">json</span><span class="p">:</span><span class="w"> </span><span class="l">keys/service.json</span><span class="w">
+</span></span></span></code></pre></div><p>Azure <a href="https://github.com/graymeta/stow/blob/master/azure/config.go">config</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">    </span><span class="nt">account</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
+</span></span></span></code></pre></div><p>SFTP <a href="https://github.com/graymeta/stow/blob/master/sftp/config.go">config</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">    </span><span class="nt">private_key</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">    </span><span class="nt">base_path</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w">    </span><span class="nt">host_public_key</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></div><h2 id="context-configuration">Context Configuration</h2>
+<p>The only additional change to the context is to provide a storage label to use:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">  </span><span class="nt">testing</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">    </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l">testing_data</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">    </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">    </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l">any_label</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">    </span><span class="l">...</span><span class="w">
+</span></span></span></code></pre></div><p>So given the bucket name of <code>foo</code> with a prefix of <code>bar</code> with the output_path configured as <code>testing_data</code> the datasources will be imported to:</p>
+<p><code>s3://foo/bar/testing_data/datasources/</code> and exported from the same location.  If you need it to be in a different location you can update the prefix accordingly but at destination will follow the typical app patterns.</p>
+
     <div class="pager">
   
   <div class="pager_item prev">
     
-    <a href="https://software.es.net/gdg/docs/examples/" class="pager_link button" title="Example Usage" rel="prev">
-      <span class="pager_label">Example Usage</span>
+    <a href="https://software.es.net/gdg/docs/configuration/" class="pager_link button" title="Configuration" rel="prev">
+      <span class="pager_label">Configuration</span>
     </a>
   </div>
   
@@ -258,8 +241,8 @@ OS / Arch: darwin amd64
   
   <div class="pager_item next">
     
-    <a href="https://software.es.net/gdg/search/" class="pager_link button" title="Search" rel="next">
-      <span class="pager_label">Search</span>
+    <a href="https://software.es.net/gdg/docs/developer/" class="pager_link button" title="Developer Guide" rel="next">
+      <span class="pager_label">Developer Guide</span>
     </a>
   </div>
   
