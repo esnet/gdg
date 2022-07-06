@@ -1,6 +1,6 @@
 ---
 title: "Developer Guide"
-weight: 14
+weight: 16
 ---
 ## Running Tests
 1. Bring up a grafana instance locally with default credentials of admin/admin.  `docker-compose up -d grafana`

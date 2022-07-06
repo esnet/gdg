@@ -1,7 +1,16 @@
 context_name: qa
 
+storage_engine:
+  any_label:
+    kind: cloud
+    cloud_type: s3
+    access_key_id: ""
+    secret_key:  ""
+    bucket_name: ""
+
 contexts:
   testing:
+    storage: "any_label"
     output_path: testing_data
     datasources:
       filters:

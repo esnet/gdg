@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/esnet/gdg/config"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -116,7 +115,7 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 		}
 
 		fileName := fmt.Sprintf("%s/%s.json", buildResourceFolder(link.FolderTitle, config.DashboardResource), meta.Slug)
-		if err = ioutil.WriteFile(fileName, pretty.Pretty(rawBoard), os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard), os.FileMode(int(0666))); err != nil {
 			log.Errorf("%s for %s\n", err, meta.Slug)
 		} else {
 			boards = append(boards, fileName)
@@ -129,14 +128,19 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 //ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folder doesn't exist, it'll be created.
 func (s *DashNGoImpl) ExportDashboards(filters Filter) {
+	var (
+		rawBoard   []byte
+		folderName string = ""
+		folderId   int
+	)
 	path := getResourcePath(config.DashboardResource)
-	filesInDir := findAllFiles(path)
+	filesInDir, err := s.storage.FindAllFiles(path, true)
+	if err != nil {
+		log.WithError(err).Fatal("unable to find any files to export from storage engine")
+	}
 	ctx := context.Background()
-	var rawBoard []byte
+
 	folderMap := getFolderNameIDMap(s.client, ctx)
-	var err error
-	var folderName string = ""
-	var folderId int
 
 	//Fallback on defaults
 	if filters == nil {
@@ -147,7 +151,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 		baseFile := filepath.Base(file)
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
 		if strings.HasSuffix(file, ".json") {
-			if rawBoard, err = ioutil.ReadFile(file); err != nil {
+			if rawBoard, err = s.storage.ReadFile(file); err != nil {
 				log.Println(err)
 				continue
 			}

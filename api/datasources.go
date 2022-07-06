@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -56,7 +56,7 @@ func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 
 		dsPath := buildResourcePath(slug.Make(ds.Name), config.DataSourceResource)
 
-		if err = ioutil.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
 			log.Errorf("%s for %s\n", err, meta.Slug)
 		} else {
 			dataFiles = append(dataFiles, dsPath)
@@ -88,19 +88,22 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 	var exported []string = make([]string, 0)
 
 	ctx := context.Background()
-	filesInDir, err := ioutil.ReadDir(getResourcePath(config.DataSourceResource))
+	log.Infof("Reading files from folder: %s", getResourcePath(config.DataSourceResource))
+	fmt.Printf("Reading files from folder: %s", getResourcePath(config.DataSourceResource))
+	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.DataSourceResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for datasources")
 	}
+	//fmt.Printf("There are %d found from S3", len(filesInDir))
 	datasources = s.ListDataSources(filter)
 
 	var rawDS []byte
 
 	dsSettings := s.grafanaConf.GetDataSourceSettings()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(getResourcePath(config.DataSourceResource), file.Name())
-		if strings.HasSuffix(file.Name(), ".json") {
-			if rawDS, err = ioutil.ReadFile(fileLocation); err != nil {
+		fileLocation := filepath.Join(getResourcePath(config.DataSourceResource), file)
+		if strings.HasSuffix(file, ".json") {
+			if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file: %s", fileLocation)
 				continue
 			}

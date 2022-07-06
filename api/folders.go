@@ -7,7 +7,6 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -39,7 +38,7 @@ func (s *DashNGoImpl) ImportFolder(filter Filter) []string {
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(folder.Title), config.FolderResource)
-		if err = ioutil.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
 			log.Errorf("%s for %s\n", err.Error(), slug.Make(folder.Title))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
@@ -55,16 +54,16 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 		rawFolder []byte
 	)
 	ctx := context.Background()
-	filesInDir, err := ioutil.ReadDir(getResourcePath(config.FolderResource))
+	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.FolderResource), false)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to read folders imports")
 	}
 	folders := s.ListFolder(filter)
 
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(getResourcePath(config.FolderResource), file.Name())
-		if strings.HasSuffix(file.Name(), ".json") {
-			if rawFolder, err = ioutil.ReadFile(fileLocation); err != nil {
+		fileLocation := filepath.Join(getResourcePath(config.FolderResource), file)
+		if strings.HasSuffix(file, ".json") {
+			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file %s", fileLocation)
 				continue
 			}

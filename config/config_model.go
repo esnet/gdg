@@ -22,6 +22,7 @@ const (
 
 //GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
+	Storage            string `yaml:"storage"`
 	AdminEnabled       bool
 	IgnoreFilters      bool                `yaml:"ignore_filters"`
 	URL                string              `yaml:"url"`

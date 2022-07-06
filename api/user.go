@@ -11,7 +11,6 @@ import (
 	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/pretty"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -47,7 +46,7 @@ func (s *DashNGoImpl) ImportUsers() []string {
 			log.Errorf("could not serialize user object for userId: %d", user.ID)
 			continue
 		}
-		if err = ioutil.WriteFile(fileName, pretty.Pretty(userData), os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(fileName, pretty.Pretty(userData), os.FileMode(int(0666))); err != nil {
 			log.WithError(err).Errorf("for %s\n", user.Login)
 		} else {
 			importedUsers = append(importedUsers, fileName)
@@ -67,7 +66,7 @@ func (s *DashNGoImpl) isAdmin(user sdk.User) bool {
 func (s *DashNGoImpl) ExportUsers() []sdk.User {
 	ctx := context.Background()
 	validateUserAPI(s.adminClient)
-	filesInDir, err := ioutil.ReadDir(getResourcePath(config.UserResource))
+	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.UserResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for users")
 	}
@@ -75,9 +74,9 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 	var rawUser []byte
 	h := sha256.New()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(getResourcePath(config.UserResource), file.Name())
-		if strings.HasSuffix(file.Name(), ".json") {
-			if rawUser, err = ioutil.ReadFile(fileLocation); err != nil {
+		fileLocation := filepath.Join(getResourcePath(config.UserResource), file)
+		if strings.HasSuffix(file, ".json") {
+			if rawUser, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file: %s", fileLocation)
 				continue
 			}
@@ -85,7 +84,7 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 
 			//generate user password
 			password := func() string {
-				h.Write([]byte(file.Name()))
+				h.Write([]byte(file))
 				hash := h.Sum(nil)
 				password := fmt.Sprintf("%x", hash)
 				return password

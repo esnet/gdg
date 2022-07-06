@@ -1,6 +1,6 @@
 ---
 title: "Example Usage"
-weight: 14
+weight: 16
 ---
 
 ### Setup new configuration

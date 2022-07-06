@@ -1,6 +1,6 @@
 ---
 title: "Usage Guide"
-weight: 14
+weight: 16
 ---
 
 Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
