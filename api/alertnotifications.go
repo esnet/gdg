@@ -13,6 +13,7 @@ import (
 )
 
 //ListAlertNotifications: list all currently configured notification channels
+
 func (s *DashNGoImpl) ListAlertNotifications() []sdk.AlertNotification {
 	ctx := context.Background()
 	ans, err := s.client.GetAllAlertNotifications(ctx)

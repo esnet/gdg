@@ -78,14 +78,17 @@ func SetupCloudFunction(apiClient api.ApiService, cloudType string) context.Cont
 			log.Infof("bucket %s already exists skipping", container.Name())
 
 		} else {
-			container, err = location.CreateContainer(bucketName)
+			_, err = location.CreateContainer(bucketName)
 			if err != nil {
-				log.WithError(err).Fatal("Ignoring failure to bucket creation")
+				log.WithError(err).Fatalf("Ignoring failure to bucket creation %s", bucketName)
 			}
 		}
 	}
 
-	s := api.NewCloudStorage(ctx)
+	s, err := api.NewCloudStorage(ctx)
+	if err != nil {
+		log.Fatalf("Could not instantiate cloud storage for type: %s", cloudType)
+	}
 	dash := apiClient.(*api.DashNGoImpl)
 	dash.SetStorage(s)
 

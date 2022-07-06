@@ -6,6 +6,7 @@ import (
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"sync"
 )
@@ -92,11 +93,19 @@ func configureStorage(obj *DashNGoImpl) {
 	if len(appData) != 0 {
 		storageType = appData["kind"].(string)
 	}
+	var err error
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, StorageContext, appData)
 	switch storageType {
 	case "cloud":
-		obj.storage = NewCloudStorage(ctx)
+		{
+			obj.storage, err = NewCloudStorage(ctx)
+			if err != nil {
+				log.Warn("falling back on Local Storage, Cloud storage configuration error")
+				obj.storage = NewLocalStorage(ctx)
+			}
+
+		}
 	default:
 		obj.storage = NewLocalStorage(ctx)
 	}

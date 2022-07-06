@@ -21,7 +21,7 @@ type TestStorage struct {
 }
 
 func (s *TestStorage) getTestFileLocation(fileName string) string {
-	if fileName[len(fileName)-2] != '/' {
+	if fileName[0] != '/' {
 		return path.Join(s.Prefix, "/", fileName)
 	}
 	return path.Join(s.Prefix, fileName)

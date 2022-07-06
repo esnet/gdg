@@ -6,17 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/graymeta/stow"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"io/fs"
 	"io/ioutil"
-	"os"
-	"os/signal"
 	"path"
 	"path/filepath"
-	"syscall"
-
-	"github.com/graymeta/stow"
-	log "github.com/sirupsen/logrus"
 )
 
 type CloudStorage struct {
@@ -38,7 +34,7 @@ func (s *CloudStorage) getCloudLocation(fileName string) string {
 	if s.Prefix == "<nil>" {
 		s.Prefix = ""
 	}
-	if fileName[len(fileName)-2] != '/' && s.Prefix != "" {
+	if fileName[0] != '/' && s.Prefix != "" {
 		return path.Join(s.Prefix, "/", fileName)
 	}
 	return path.Join(s.Prefix, fileName)
@@ -101,7 +97,7 @@ func (s CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, erro
 	return result, err
 }
 
-func NewCloudStorage(c context.Context) Storage {
+func NewCloudStorage(c context.Context) (Storage, error) {
 	var (
 		item     stow.Container
 		location stow.Location
@@ -110,11 +106,11 @@ func NewCloudStorage(c context.Context) Storage {
 	)
 	contextVal := c.Value(StorageContext)
 	if contextVal == nil {
-		log.Fatal("Cannot configure GCP storage, context missing")
+		return nil, errors.New("cannot configure GCP storage, context missing")
 	}
 	appData, ok := contextVal.(map[string]interface{})
 	if !ok {
-		log.Fatal("Cannot convert appData to string map")
+		return nil, errors.New("cannot convert appData to string map")
 	}
 	config := stow.ConfigMap{}
 	for key, value := range appData {
@@ -126,17 +122,17 @@ func NewCloudStorage(c context.Context) Storage {
 	}
 
 	jsonKey, ok := config["json"]
-	if ok && !isJSON(jsonKey) {
+	if ok && !json.Valid([]byte(jsonKey)) {
 		data, err = ioutil.ReadFile(jsonKey)
 		if err != nil {
-			log.WithError(err).Errorf("Failed to read service key file")
+			log.WithError(err).Errorf("failed to read service key file")
 		}
 		config["json"] = string(data)
 	}
 
 	location, err = stow.Dial(config["cloud_type"], config)
 	if err != nil {
-		log.WithError(err).Fatal("Unable to connect to Cloud")
+		return nil, fmt.Errorf("unable to connect to Cloud: %s", err.Error())
 	}
 	entity := &CloudStorage{
 		Location:   location,
@@ -146,26 +142,8 @@ func NewCloudStorage(c context.Context) Storage {
 
 	entity.BucketRef, err = location.Container(entity.BucketName)
 	if err != nil {
-		log.WithError(err).Fatalf("Bucket %s is either not found or not accessible", item.Name())
+		return nil, fmt.Errorf("bucket %s is either not found or not accessible: %s", item.Name(), err.Error())
 	}
 
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		<-sigs
-		err = location.Close()
-		if err != nil {
-			log.Error("Failed to close location")
-		}
-		os.Exit(0)
-	}()
-
-	return entity
-}
-
-//isJSON Utility function to test if string is a JSON object
-func isJSON(s string) bool {
-	var js map[string]interface{}
-	return json.Unmarshal([]byte(s), &js) == nil
-
+	return entity, nil
 }

@@ -91,9 +91,10 @@ jobs:
         if: "${{ matrix.go == '1.18' && matrix.grafana == '8.3.6' }}"
         run: |
           go test -v -covermode=atomic -coverprofile=coverage.out ./...
-      - name: Test
-        if: "${{ matrix.go != '1.18' && matrix.grafana != '8.3.6' }}"
-        run: go test -v ./...
       - name: Convert coverage.out to coverage.lcov
         if: "${{ matrix.go == '1.18' && matrix.grafana == '8.3.6' }}"
         uses: jandelgado/gcov2lcov-action@v1.0.6
+      - name: Test
+        if: "${{ matrix.grafana != '8.3.6' }}"
+        run: go test -v ./...
+
