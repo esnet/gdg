@@ -90,7 +90,7 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 	ctx := context.Background()
 	log.Infof("Reading files from folder: %s", getResourcePath(config.DataSourceResource))
 	fmt.Printf("Reading files from folder: %s", getResourcePath(config.DataSourceResource))
-	filesInDir, err := s.storage.ReadDir(getResourcePath(config.DataSourceResource))
+	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.DataSourceResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for datasources")
 	}

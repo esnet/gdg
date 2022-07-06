@@ -134,7 +134,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 		folderId   int
 	)
 	path := getResourcePath(config.DashboardResource)
-	filesInDir, err := s.storage.FindAllFiles(path)
+	filesInDir, err := s.storage.FindAllFiles(path, true)
 	if err != nil {
 		log.WithError(err).Fatal("unable to find any files to export from storage engine")
 	}

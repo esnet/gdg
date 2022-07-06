@@ -54,7 +54,7 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 		rawFolder []byte
 	)
 	ctx := context.Background()
-	filesInDir, err := s.storage.ReadDir(getResourcePath(config.FolderResource))
+	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.FolderResource), false)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to read folders imports")
 	}

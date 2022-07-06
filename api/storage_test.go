@@ -47,8 +47,8 @@ func (s *TestStorage) WriteFile(filename string, data []byte, mode fs.FileMode) 
 	return errors.New("Cannot save file")
 }
 
-func (s *TestStorage) ReadDir(dir string) ([]string, error) {
-	folderName := s.getTestFileLocation(dir)
+func (s *TestStorage) FindAllFiles(folder string, fullPath bool) ([]string, error) {
+	folderName := s.getTestFileLocation(folder)
 	val, ok := s.m["fileList"]
 	if ok {
 		data := val.(map[string][]string)
@@ -56,10 +56,6 @@ func (s *TestStorage) ReadDir(dir string) ([]string, error) {
 	}
 
 	return nil, errors.New("No file list test data was found")
-}
-
-func (TestStorage) FindAllFiles(folder string) ([]string, error) {
-	return []string{}, nil
 }
 
 func (TestStorage) Name() string {

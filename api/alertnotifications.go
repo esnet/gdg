@@ -76,7 +76,7 @@ func (s *DashNGoImpl) ExportAlertNotifications() []string {
 
 	ctx := context.Background()
 	dirPath := getResourcePath(config.AlertNotificationResource)
-	filesInDir, err = s.storage.FindAllFiles(dirPath)
+	filesInDir, err = s.storage.FindAllFiles(dirPath, true)
 	if err != nil {
 		log.WithError(err).Fatalf("Unable to find Alert data in Storage System %s", s.storage.Name())
 	}

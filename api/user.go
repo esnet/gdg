@@ -66,7 +66,7 @@ func (s *DashNGoImpl) isAdmin(user sdk.User) bool {
 func (s *DashNGoImpl) ExportUsers() []sdk.User {
 	ctx := context.Background()
 	validateUserAPI(s.adminClient)
-	filesInDir, err := s.storage.ReadDir(getResourcePath(config.UserResource))
+	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.UserResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for users")
 	}

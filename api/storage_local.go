@@ -28,7 +28,7 @@ func (LocalStorage) Name() string {
 	return "LocalStorage"
 }
 
-func (s *LocalStorage) FindAllFiles(folder string) ([]string, error) {
+func (s *LocalStorage) FindAllFiles(folder string, fullPath bool) ([]string, error) {
 	if _, err := os.Stat(folder); os.IsNotExist(err) {
 		log.Warn("Output folder was not found")
 		return []string{}, errors.New("unable to find requested folder")
@@ -36,7 +36,11 @@ func (s *LocalStorage) FindAllFiles(folder string) ([]string, error) {
 	var fileList []string
 	err := filepath.Walk(folder, func(path string, f os.FileInfo, err error) error {
 		if !f.IsDir() {
-			fileList = append(fileList, path)
+			if fullPath {
+				fileList = append(fileList, path)
+			} else {
+				fileList = append(fileList, filepath.Base(path))
+			}
 		}
 		return nil
 	})
@@ -45,20 +49,6 @@ func (s *LocalStorage) FindAllFiles(folder string) ([]string, error) {
 	}
 
 	return fileList, nil
-}
-
-//ReadDir returns the basename of all files
-func (s *LocalStorage) ReadDir(dir string) ([]string, error) {
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return nil, err
-	}
-	var result []string
-	for _, file := range files {
-		result = append(result, file.Name())
-	}
-
-	return result, nil
 }
 
 func NewLocalStorage(ctx context.Context) Storage {

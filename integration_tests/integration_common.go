@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/graymeta/stow"
 	"github.com/graymeta/stow/s3"
+	"github.com/graymeta/stow/sftp"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"strings"
@@ -36,34 +37,51 @@ func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
 	return client, conf
 }
 
-func SetupCloudFunction(apiClient api.ApiService) context.Context {
+func SetupCloudFunction(apiClient api.ApiService, cloudType string) context.Context {
 	bucketName := "testing"
-	m := map[string]interface{}{
-		s3.ConfigAccessKeyID: "test",
-		s3.ConfigSecretKey:   "secretsss",
-		s3.ConfigEndpoint:    "127.0.0.1:9000",
-		api.CloudType:        "s3",
-		api.BucketName:       bucketName,
-		s3.ConfigDisableSSL:  "true",
+	var m map[string]interface{}
+	if cloudType == "s3" {
+		m = map[string]interface{}{
+			s3.ConfigAccessKeyID: "test",
+			s3.ConfigSecretKey:   "secretsss",
+			s3.ConfigEndpoint:    "127.0.0.1:9000",
+			api.CloudType:        "s3",
+			api.BucketName:       bucketName,
+			s3.ConfigDisableSSL:  "true",
+		}
+	} else {
+		m = map[string]interface{}{
+			api.CloudType:       "sftp",
+			sftp.ConfigPort:     "2222",
+			sftp.ConfigHost:     "127.0.0.1",
+			sftp.ConfigUsername: "foo",
+			sftp.ConfigPassword: "pass",
+			api.BucketName:      bucketName,
+		}
 	}
+
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, api.StorageContext, m)
 	configMap := stow.ConfigMap{}
 	for key, value := range m {
 		configMap[key] = fmt.Sprintf("%v", value)
 	}
-	location, err := stow.Dial(s3.Kind, configMap)
-	if err != nil {
-		log.Panic("Unable to connect to S3 Minio Storage")
-	}
-	container, err := location.Container(bucketName)
-	if err == nil {
-		log.Infof("bucket %s already exists skipping", container.Name())
 
-	} else {
-		container, err = location.CreateContainer(bucketName)
+	//Initiate S3
+	if cloudType == "s3" {
+		location, err := stow.Dial(m[api.CloudType].(string), configMap)
 		if err != nil {
-			log.WithError(err).Fatal("Ignoring failure to bucket creation")
+			log.Panic("Unable to connect to S3 Minio Storage")
+		}
+		container, err := location.Container(bucketName)
+		if err == nil {
+			log.Infof("bucket %s already exists skipping", container.Name())
+
+		} else {
+			container, err = location.CreateContainer(bucketName)
+			if err != nil {
+				log.WithError(err).Fatal("Ignoring failure to bucket creation")
+			}
 		}
 	}
 

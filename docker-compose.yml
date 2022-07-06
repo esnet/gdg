@@ -6,10 +6,15 @@ services:
             - 9000:9000
             - 9001:9001
         environment:
-            - MINIO_ROOT_USER=testing
+            - MINIO_ROOT_USER=test
             - MINIO_ROOT_PASSWORD=secretsss
     grafana:
         image: grafana/grafana:8.3.6-ubuntu
         ports:
             - 3000:3000
+    sftp:
+        command: "foo:pass:::testing"
+        image: atmoz/sftp
+        ports:
+          - 2222:22
 

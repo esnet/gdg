@@ -16,7 +16,6 @@ const StorageContext = ContextStorage("storage")
 type Storage interface {
 	WriteFile(filename string, data []byte, mode fs.FileMode) error // WriteFile returns error or writes byte array to destination
 	ReadFile(filename string) ([]byte, error)                       // ReadFile returns byte array or error with data from file
-	ReadDir(dir string) ([]string, error)                           // ReadDir returns a list of filenames only (No path information)
-	FindAllFiles(folder string) ([]string, error)                   // FindAllFiles recursively list all files for a given path
+	FindAllFiles(folder string, fullPath bool) ([]string, error)    // FindAllFiles recursively list all files for a given path
 	Name() string                                                   // Name of storage engine
 }

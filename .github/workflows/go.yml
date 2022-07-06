@@ -81,8 +81,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Starting SFTP Server
+        run: docker run -p 2222:22 -d atmoz/sftp "foo:pass:::testing"
       - name: Wait for Minio to come up.
         run: nc -z -v -w15 127.0.0.1 9000
+      - name: Wait for SSH to come up.
+        run: nc -z -v -w15 127.0.0.1 2222
       - name: Calc coverage
         if: "${{ matrix.go == '1.18' && matrix.grafana == '8.3.6' }}"
         run: |

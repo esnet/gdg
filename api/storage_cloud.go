@@ -75,32 +75,23 @@ func (s *CloudStorage) WriteFile(filename string, data []byte, mode fs.FileMode)
 	return nil
 }
 
-//ReadDir returns a list of all files (base filename only) for a given path.
-func (s *CloudStorage) ReadDir(dir string) ([]string, error) {
-	result, err := s.readDirectoryData(dir)
-	if err != nil {
-		return nil, err
-	}
-	var truncated []string
-	for _, item := range result {
-		name := filepath.Base(item)
-		truncated = append(truncated, name)
-
-	}
-
-	return truncated, nil
-
+func (s CloudStorage) Name() string {
+	return s.StorageName
 }
 
-func (s CloudStorage) readDirectoryData(dir string) ([]string, error) {
-	folderName := s.getCloudLocation(dir)
+func (s CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, error) {
+	folderName := s.getCloudLocation(folder)
 	var result []string
 	err := stow.Walk(s.BucketRef, folderName, 100, func(c stow.Item, err error) error {
 		if err != nil {
 			return err
 		}
 		if c != nil {
-			result = append(result, c.Name())
+			if fullPath {
+				result = append(result, c.Name())
+			} else {
+				result = append(result, filepath.Base(c.Name()))
+			}
 			return nil
 		} else {
 			return errors.New("could not append file")
@@ -108,14 +99,6 @@ func (s CloudStorage) readDirectoryData(dir string) ([]string, error) {
 	})
 
 	return result, err
-}
-
-func (s CloudStorage) Name() string {
-	return s.StorageName
-}
-
-func (s CloudStorage) FindAllFiles(folder string) ([]string, error) {
-	return s.readDirectoryData(folder)
 }
 
 func NewCloudStorage(c context.Context) Storage {
