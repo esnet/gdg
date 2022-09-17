@@ -19,7 +19,7 @@ import (
 	"github.com/yalp/jsonpath"
 )
 
-//ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
+// ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
 func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	ctx := context.Background()
@@ -43,13 +43,27 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 			}
 		}
 	}
+
+	// Fallback on defaults
+	if filters == nil {
+		filters = &DashboardFilter{}
+	}
+
 	var boardsList []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
 	var boardLinks []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
 
 	var page uint = 1
 	var limit uint = 5000 // Upper bound of Grafana API call
+
+	var tagsParams []sdk.SearchParam = []sdk.SearchParam{}
+	for _, t := range filters.GetTags() {
+		tagsParams = append(tagsParams, sdk.SearchTag(t))
+	}
+	var searchParams []sdk.SearchParam
+
 	for {
-		pageBoardLinks, err := s.client.Search(ctx, sdk.SearchType(sdk.SearchTypeDashboard), sdk.SearchLimit(limit), sdk.SearchPage(page))
+		searchParams = append(tagsParams, sdk.SearchType(sdk.SearchTypeDashboard), sdk.SearchLimit(limit), sdk.SearchPage(page))
+		pageBoardLinks, err := s.client.Search(ctx, searchParams...)
 		if err != nil {
 			log.Fatal("Failed to retrieve dashboards", err)
 		}
@@ -58,11 +72,6 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 			break
 		}
 		page += 1
-	}
-
-	//Fallback on defaults
-	if filters == nil {
-		filters = &DashboardFilter{}
 	}
 
 	folderFilters := filters.GetFolders()
@@ -96,7 +105,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 
 }
 
-//ImportDashboards saves all dashboards matching query to configured location
+// ImportDashboards saves all dashboards matching query to configured location
 func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 	var (
 		boardLinks []sdk.FoundBoard
@@ -125,7 +134,7 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 	return boards
 }
 
-//ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
+// ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folder doesn't exist, it'll be created.
 func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 	var (
@@ -142,7 +151,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 
 	folderMap := getFolderNameIDMap(s.client, ctx)
 
-	//Fallback on defaults
+	// Fallback on defaults
 	if filters == nil {
 		filters = &DashboardFilter{}
 	}
@@ -227,7 +236,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 	}
 }
 
-//DeleteAllDashboards clears all current dashboards being monitored.  Any folder not white listed
+// DeleteAllDashboards clears all current dashboards being monitored.  Any folder not white listed
 // will not be affected
 func (s *DashNGoImpl) DeleteAllDashboards(filter Filter) []string {
 	ctx := context.Background()

@@ -8,8 +8,9 @@ import (
 	"github.com/thoas/go-funk"
 )
 
-//Currently supported filters
+// Currently supported filters
 const (
+	TagsFilter   = "TagsFilter"
 	DashFilter   = "DashFilter"
 	FolderFilter = "FolderFilter"
 	Name         = "Name"
@@ -21,19 +22,20 @@ type Filter interface {
 	AddFilter(key, value string)           //Add a filter query
 	Validate(items map[string]string) bool //Validate if Entry is valid
 	GetFolders() []string                  //List of supported folders if Any
+	GetTags() []string                     //List of tags
 }
 
 type BaseFilter struct {
 	Filters map[string]string
 }
 
-//GetTypes returns all the current keys for the configured Filter
+// GetTypes returns all the current keys for the configured Filter
 func (s BaseFilter) GetTypes() []string {
 	keys := funk.Keys(s.Filters)
 	return keys.([]string)
 }
 
-//GetFilter returns the value of the filter
+// GetFilter returns the value of the filter
 func (s BaseFilter) GetFilter(key string) string {
 	if val, ok := s.Filters[key]; ok {
 		return val
@@ -41,7 +43,7 @@ func (s BaseFilter) GetFilter(key string) string {
 	return ""
 }
 
-//AddFilter adds a filter and the corresponding value
+// AddFilter adds a filter and the corresponding value
 func (s BaseFilter) AddFilter(key, value string) {
 	s.Filters[key] = value
 }
@@ -55,7 +57,7 @@ type DashboardFilter struct {
 	BaseFilter
 }
 
-//NewDashboardFilter creates a new dashboard filter
+// NewDashboardFilter creates a new dashboard filter
 func NewDashboardFilter() *DashboardFilter {
 	s := DashboardFilter{}
 	s.init()
@@ -68,7 +70,7 @@ func (s *DashboardFilter) init() {
 	s.quoteRegex, _ = regexp.Compile("['\"]+")
 }
 
-//GetFolders splits the comma delimited folder list and returns a slice
+// GetFolders splits the comma delimited folder list and returns a slice
 func (s *DashboardFilter) GetFolders() []string {
 	if s.GetFilter(FolderFilter) == "" {
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders()
@@ -80,6 +82,17 @@ func (s *DashboardFilter) GetFolders() []string {
 	return strings.Split(folderFilter, ",")
 }
 
+func (s *DashboardFilter) GetTags() []string {
+	if s.GetFilter(TagsFilter) == "" {
+		return []string{}
+	}
+	tagsFilter := s.GetFilter(TagsFilter)
+	tagsFilter = s.quoteRegex.ReplaceAllString(tagsFilter, "")
+	s.AddFilter(TagsFilter, tagsFilter)
+
+	return strings.Split(tagsFilter, ",")
+}
+
 func (s DashboardFilter) validateDashboard(dashUid string) bool {
 	if s.GetFilter(DashFilter) == "" {
 		return true
@@ -88,12 +101,19 @@ func (s DashboardFilter) validateDashboard(dashUid string) bool {
 }
 
 func (s DashboardFilter) Validate(items map[string]string) bool {
-	var folderCheck, dashboardCheck bool
+	var folderCheck, tagsCheck, dashboardCheck bool
 	//Check folder
 	if folderFilter, ok := items[FolderFilter]; ok {
 		folderCheck = s.validateFolder(folderFilter)
 	} else {
 		folderCheck = true
+	}
+
+	//check tags
+	if tagsFilter, ok := items[TagsFilter]; ok {
+		tagsCheck = s.validateTags(tagsFilter)
+	} else {
+		tagsCheck = true
 	}
 
 	//check Dash
@@ -102,7 +122,7 @@ func (s DashboardFilter) Validate(items map[string]string) bool {
 	} else {
 		dashboardCheck = true
 	}
-	return folderCheck && dashboardCheck
+	return folderCheck && tagsCheck && dashboardCheck
 }
 
 func (s DashboardFilter) validateFolder(folder string) bool {
@@ -112,16 +132,28 @@ func (s DashboardFilter) validateFolder(folder string) bool {
 	return folder == s.GetFilter(FolderFilter)
 }
 
+func (s DashboardFilter) validateTags(tags string) bool {
+	if s.GetFilter(TagsFilter) == "" {
+		return true
+	}
+	return tags == s.GetFilter(TagsFilter)
+}
+
 type DatasourceFilter struct {
 	BaseFilter
 }
 
-//GetFolders return empty list since Folders NA for datasources
+// GetFolders return empty list since Folders NA for datasources
 func (s DatasourceFilter) GetFolders() []string {
 	return []string{}
 }
 
-//Validate returns true if mapped values are valid
+// GetTags return empty list since Tags NA for datasources
+func (s DatasourceFilter) GetTags() []string {
+	return []string{}
+}
+
+// Validate returns true if mapped values are valid
 func (s DatasourceFilter) Validate(items map[string]string) bool {
 	if s.GetFilter(Name) == "" {
 		return true
