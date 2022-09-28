@@ -34,7 +34,7 @@ global:
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
 - API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
-- Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list.
+- Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list. The dashboards are downloaded as JSON files in the `$DASHBOARDS_OUTPUT/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$DASHBOARDS_OUTPUT` is the path defined in the `dashbourd_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder from which the dashboards were downloaded
 
 After you are done, and you can execute `./bin/gdg dash list` successfully, eg.:
 ```
@@ -52,7 +52,7 @@ time="2021-08-22T11:11:28+02:00" level=info msg="Listing dashboards for context:
 │ 17 │ Cluster Autoscaling               │ cluster-autoscaling               │ Example        │ iHUYtABMk  │ https://grafana.example.org/d/iHUYtABMk/cluster-autoscaling                │
 └────┴───────────────────────────────────┴───────────────────────────────────┴────────────────┴────────────┴────────────────────────────────────────────────────────────────────────────┘
 ```
-You can execute `./bin/gdg dash import`, and you will be able to find your dashboards, the ones which were listed previously in the table, in `dashboards` folder.
+After executing `./bin/gdg dash import` you can find the dashboards of the `Infrastructure` folder in the local directory `dashboards/dashboards/Infrastructure` and the dashboards of the `Example` directory in the local directory `dashboards/dashboards/Example`.
 
 ### Export / Upload Dashboards
 
@@ -78,14 +78,16 @@ global:
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
 - API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
-- Uploaded Folders: The `watched` field defines folders which will be considered for manipulation. Those are the folders in `dashboards` folder, which contain the dashboard files (eg. `examples.json`). Example folder structure:
+- Uploaded Folders: The `watched` field defines folders which will be considered for manipulation. The dashboards should be stored as JSON files in the `$DASHBOARDS_OUTPUT/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$DASHBOARDS_OUTPUT` is the path defined in the `dashbourd_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder to which the dashboards will be uploaded. In case of the above configuration file, the dashboards should be stored locally in the `dashboards/dashboards/Example` and `dashboards/dashboards/Infrastructure/` directories.
+
 ```
 ├── bin
 |   └── gdg
 └── dashboards
-    ├── Example
-    |   └── cluster-scaling.json
-    └── Infrastructure
-        └── aws-ecs.json
+    └── dashboards
+        ├── Example
+        |   └── cluster-scaling.json
+        └── Infrastructure
+            └── aws-ecs.json
 ```
 You can execute `./bin/gdg dash export` to upload the local dashboards to your Grafana. Afterwards, you can try running `./bin/gdg dash list` in order to confirm that your dashboards were uploaded successfully.
