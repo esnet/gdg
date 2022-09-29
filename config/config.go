@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"github.com/thoas/go-funk"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -98,7 +97,7 @@ func InitConfig(override, defaultConfig string) {
 		if err != nil {
 			log.Fatal("unable to create configuration folder: 'conf'")
 		}
-		err = ioutil.WriteFile("conf/importer.yml", []byte(defaultConfig), 0600)
+		err = os.WriteFile("conf/importer.yml", []byte(defaultConfig), 0600)
 		if err != nil {
 			log.Panic("Could not persist default config locally")
 		}

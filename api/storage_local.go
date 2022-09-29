@@ -5,7 +5,6 @@ import (
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -16,12 +15,12 @@ type LocalStorage struct {
 
 //ReadFile returns a byte array of file content
 func (s *LocalStorage) ReadFile(filename string) ([]byte, error) {
-	return ioutil.ReadFile(filename)
+	return os.ReadFile(filename)
 }
 
 //WriteFile writes file to disk and returns an error if operation failed
 func (s *LocalStorage) WriteFile(filename string, data []byte, mode fs.FileMode) error {
-	return ioutil.WriteFile(filename, data, mode)
+	return os.WriteFile(filename, data, mode)
 }
 
 func (LocalStorage) Name() string {

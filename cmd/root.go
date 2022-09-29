@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/jedib0t/go-pretty/table"
@@ -53,7 +52,7 @@ func init() {
 func initConfig() {
 	configOverride, _ := rootCmd.Flags().GetString("config")
 	if DefaultConfig == "" {
-		raw, err := ioutil.ReadFile("conf/importer-example.yml")
+		raw, err := os.ReadFile("conf/importer-example.yml")
 		if err == nil {
 			DefaultConfig = string(raw)
 		} else {

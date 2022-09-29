@@ -10,7 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io"
 	"io/fs"
-	"io/ioutil"
+	"os"
+
 	"path"
 	"path/filepath"
 )
@@ -123,7 +124,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 
 	jsonKey, ok := config["json"]
 	if ok && !json.Valid([]byte(jsonKey)) {
-		data, err = ioutil.ReadFile(jsonKey)
+		data, err = os.ReadFile(jsonKey)
 		if err != nil {
 			log.WithError(err).Errorf("failed to read service key file")
 		}
