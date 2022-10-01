@@ -52,6 +52,41 @@ func TestDashboardCRUD(t *testing.T) {
 	assert.Equal(t, len(boards), 0)
 }
 
+func TestDashboardTagsFilter(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+	apiClient, _ := initTest(t)
+	emptyFilter := api.NewDashboardFilter()
+
+	filters := api.NewDashboardFilter()
+	filters.AddFilter(api.TagsFilter, strings.Join(["flow", "netsage"], ","))
+
+	log.Info("Exporting all dashboards")
+	apiClient.ExportDashboards(emptyFilter)
+
+	log.Info("Listing all dashboards")
+	boards := apiClient.ListDashboards(filters)
+
+	log.Infof("Imported %d dashboards", len(boards))
+	for _, board := range boards {
+		validateTags(t, board)
+	}
+
+	//Import Dashboards
+	log.Info("Importing Dashboards")
+	list := apiClient.ImportDashboards(filters)
+	assert.Equal(t, len(list), len(boards))
+
+	log.Info("Deleting Dashboards")
+	deleteList := apiClient.DeleteAllDashboards(filters)
+	assert.Equal(t, len(deleteList), len(boards))
+
+	log.Info("List Dashboards again")
+	boards = apiClient.ListDashboards(filters)
+	assert.Equal(t, len(boards), 0)
+}
+
 func validateOtherBoard(t *testing.T, board sdk.FoundBoard) {
 	assert.True(t, board.UID != "")
 	assert.Equal(t, board.Title, "Flow Information")
@@ -74,4 +109,11 @@ func validateGeneralBoard(t *testing.T, board sdk.FoundBoard) {
 	assert.Equal(t, board.FolderID, 0)
 	assert.Equal(t, board.FolderTitle, "General")
 
+}
+
+func validateTags(t *testing.T, board sdk.FoundBoard) {
+	assert.True(t, board.UID != "")
+	assert.Equal(t, len(board.Tags), 2)
+	assert.Equal(t, board.Tags[0], "netsage")
+	assert.Equal(t, board.Tags[1], "flow")
 }
