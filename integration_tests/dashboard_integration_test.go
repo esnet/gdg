@@ -1,13 +1,13 @@
 package integration_tests
 
 import (
-	"strings"
-	"testing"
-
 	"github.com/esnet/gdg/api"
 	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/exp/slices"
+	"strings"
+	"testing"
 )
 
 func TestDashboardCRUD(t *testing.T) {
@@ -60,7 +60,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	emptyFilter := api.NewDashboardFilter()
 
 	filters := api.NewDashboardFilter()
-	filters.AddFilter(api.TagsFilter, strings.Join(["flow", "netsage"], ","))
+	filters.AddFilter(api.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
 
 	log.Info("Exporting all dashboards")
 	apiClient.ExportDashboards(emptyFilter)
@@ -114,6 +114,6 @@ func validateGeneralBoard(t *testing.T, board sdk.FoundBoard) {
 func validateTags(t *testing.T, board sdk.FoundBoard) {
 	assert.True(t, board.UID != "")
 	assert.Equal(t, len(board.Tags), 2)
-	assert.Equal(t, board.Tags[0], "netsage")
-	assert.Equal(t, board.Tags[1], "flow")
+	assert.True(t, slices.Contains(board.Tags, "netsage"))
+	assert.True(t, slices.Contains(board.Tags, "flow"))
 }

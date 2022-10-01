@@ -21,7 +21,7 @@ require (
 	github.com/tidwall/pretty v1.2.0
 	github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0
 	go.mongodb.org/mongo-driver v1.9.1 // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/ini.v1 v1.66.6 // indirect
@@ -29,7 +29,10 @@ require (
 
 )
 
-require github.com/graymeta/stow v0.2.8
+require (
+	github.com/graymeta/stow v0.2.8
+	golang.org/x/exp v0.0.0-20220930202632-ec3f01382ef9
+)
 
 require (
 	cloud.google.com/go v0.100.2 // indirect
@@ -42,7 +45,6 @@ require (
 	github.com/Azure/go-autorest/autorest/date v0.1.0 // indirect
 	github.com/Azure/go-autorest/logger v0.1.0 // indirect
 	github.com/Azure/go-autorest/tracing v0.5.0 // indirect
-	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/aws/aws-sdk-go v1.23.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect

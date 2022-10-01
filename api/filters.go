@@ -82,6 +82,7 @@ func (s *DashboardFilter) GetFolders() []string {
 	return strings.Split(folderFilter, ",")
 }
 
+// GetTags returns a list of all tags to filter on
 func (s *DashboardFilter) GetTags() []string {
 	if s.GetFilter(TagsFilter) == "" {
 		return []string{}
