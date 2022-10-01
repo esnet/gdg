@@ -7,18 +7,20 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func getDashboardGlobalFlags(cmd *cobra.Command) api.Filter {
 	folderFilter, _ := cmd.Flags().GetString("folder")
 	dashboardFilter, _ := cmd.Flags().GetString("dashboard")
+	tagsFilter, _ := cmd.Flags().GetStringSlice("tags")
 
 	filters := api.NewDashboardFilter()
 	filters.AddFilter(api.FolderFilter, folderFilter)
 	filters.AddFilter(api.DashFilter, dashboardFilter)
+	filters.AddFilter(api.TagsFilter, strings.Join(tagsFilter, ","))
 
 	return filters
-
 }
 
 var dashboard = &cobra.Command{
@@ -121,6 +123,7 @@ func init() {
 	rootCmd.AddCommand(dashboard)
 	dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
 	dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
+	dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by Tags (does not apply on export)")
 	dashboard.AddCommand(clearDashboards)
 	dashboard.AddCommand(exportDashboard)
 	dashboard.AddCommand(importDashboard)
