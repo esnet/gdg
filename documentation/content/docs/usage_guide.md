@@ -45,6 +45,14 @@ All commands can use `dashboards` or `dash` to manage dashboards
 ./bin/gdg dash clear -- Deletes all dashboards
 ```
 
+You can also use filtering options to list or import your daashboard by folder or by tags.
+
+```sh
+./bin/gdg dash import -f myFolder
+./bin/gdg dash import -t myTag
+./bin/gdg dash import -t tagA -t tagB -t tagC
+```
+
 #### DataSources
 
 DataSources credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/esnet/gdg/blob/master/conf/importer-example.yml).  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
@@ -64,7 +72,7 @@ All commands can use `datasources` or `ds` to manage datasources
 Some developer helper utilities
 
 
-```sh 
+```sh
 ./bin/gdg devel completion  [bash|fish|powershell|zsh] --  Will generate autocompletion for GDG for your favorite shell
 ./bin/gdg devel srvinfo -- print grafana server info
 ```
@@ -76,7 +84,7 @@ Mostly optional as Dashboards will create/delete these are needed but if there i
 ```sh
 ./bin/gdg folders list -- Lists all current folders
 ./bin/gdg folders import -- Import all folders from grafana to local file system
-./bin/gdg folders export -- Exports all folders from local filesystem 
+./bin/gdg folders export -- Exports all folders from local filesystem
 ./bin/gdg folders clear -- Deletes all folders
 ```
 
@@ -91,7 +99,7 @@ Command can use `organizations` or `org` to manage organizations.
 
 Only supported with basic auth.  Users is the only one where basic auth is given priority.  API Auth is not supported, so will try to use basic auth if configured otherwise will warn the user and exit.
 
-NOTE: admin user is always ignored.  
+NOTE: admin user is always ignored.
 
 ```sh
 ./bin/gdg users list -- Lists all known users
@@ -104,7 +112,7 @@ NOTE: admin user is always ignored.
 
 Print the applications release version
 
-```sh 
+```sh
 ./bin/gdg version
 ```
 
