@@ -16,14 +16,14 @@ Alert Notifications Allows you to manage alertnotifications (an) if you have any
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://software.es.net/gdg/docs/usage_guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-07-06T15:53:02-04:00" />
+<meta property="article:modified_time" content="2022-10-01T17:02:51+02:00" />
 
 <meta itemprop="name" content="Usage Guide">
 <meta itemprop="description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Alert Notifications Allows you to manage alertnotifications (an) if you have any setup
 1./bin/gdg an list -- Lists all alert notifications 2./bin/gdg an import -- retrieve and save all alertnotifications from grafana 3./bin/gdg an export -- writes all local alert notifications to grafana 4./bin/gdg an clear -- Deletes all alert notifications Contexts Starting with version 0.">
-<meta itemprop="dateModified" content="2022-07-06T15:53:02-04:00" />
-<meta itemprop="wordCount" content="615">
+<meta itemprop="dateModified" content="2022-10-01T17:02:51+02:00" />
+<meta itemprop="wordCount" content="651">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Usage Guide"/>
 <meta name="twitter:description" content="Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
@@ -207,6 +207,10 @@ Alert Notifications Allows you to manage alertnotifications (an) if you have any
 </span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg dash import -- Import all dashboards from grafana to <span class="nb">local</span> file system
 </span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg dash <span class="nb">export</span> -- Exports all dashboard from <span class="nb">local</span> filesystem <span class="o">(</span>matching folder filter<span class="o">)</span> to Grafana
 </span></span><span class="line"><span class="ln">4</span><span class="cl">./bin/gdg dash clear -- Deletes all dashboards
+</span></span></code></pre></div><p>You can also use filtering options to list or import your daashboard by folder or by tags.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg dash import -f myFolder
+</span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg dash import -t myTag
+</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg dash import -t tagA -t tagB -t tagC
 </span></span></code></pre></div><h4 id="datasources">DataSources</h4>
 <p>DataSources credentials are keyed by the name of the DataSource.  See see <a href="https://github.com/esnet/gdg/blob/master/conf/importer-example.yml">config example</a>.  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from <em>organization</em> specified in configuration file otherwise current organization user is used.</p>
@@ -223,7 +227,7 @@ Datasources are imported or exported from <em>organization</em> specified in con
 <p>Mostly optional as Dashboards will create/delete these are needed but if there is additional metadata you wish to persist you can use this to manage them.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">./bin/gdg folders list -- Lists all current folders
 </span></span><span class="line"><span class="ln">2</span><span class="cl">./bin/gdg folders import -- Import all folders from grafana to <span class="nb">local</span> file system
-</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg folders <span class="nb">export</span> -- Exports all folders from <span class="nb">local</span> filesystem 
+</span></span><span class="line"><span class="ln">3</span><span class="cl">./bin/gdg folders <span class="nb">export</span> -- Exports all folders from <span class="nb">local</span> filesystem
 </span></span><span class="line"><span class="ln">4</span><span class="cl">./bin/gdg folders clear -- Deletes all folders
 </span></span></code></pre></div><h4 id="organizations">Organizations</h4>
 <p>Command can use <code>organizations</code> or <code>org</code> to manage organizations.</p>
