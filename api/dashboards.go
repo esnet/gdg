@@ -160,7 +160,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 		baseFile := filepath.Base(file)
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
 		if strings.HasSuffix(file, ".json") {
-			if rawBoard, err = s.storage.ReadFile(file); err != nil {
+			if rawBoard, err = s.storage.ReadFileAbsolute(file); err != nil {
 				log.Println(err)
 				continue
 			}

@@ -41,9 +41,20 @@ func (s *CloudStorage) getCloudLocation(fileName string) string {
 	return path.Join(s.Prefix, fileName)
 }
 
+//ReadFileAbsolute Ignores Prefix
+func (s *CloudStorage) ReadFileAbsolute(filename string) ([]byte, error) {
+	return s.ReadFile(filename)
+}
+
 //ReadFile read file from Cloud Provider and return byte array
 func (s *CloudStorage) ReadFile(filename string) ([]byte, error) {
-	item, err := s.BucketRef.Item(s.getCloudLocation(filename))
+	prefixedName := s.getCloudLocation(filename)
+	return s.ReadFile(prefixedName)
+}
+
+//ReadFile reads file from Cloud Provider and return byte array
+func (s *CloudStorage) readFile(filename string) ([]byte, error) {
+	item, err := s.BucketRef.Item(filename)
 	if err != nil {
 		return nil, errors.New("file not found on Cloud")
 	}
