@@ -22,7 +22,7 @@ contexts:
     token: "<<Grafana API Token>>"
     # user_name: admin
     # password: admin
-    dashboards_output: dashboards
+    output_path: exports
     watched:
       - Example
       - Infrastructure
@@ -34,7 +34,7 @@ global:
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
 - API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
-- Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list. The dashboards are downloaded as JSON files in the `$DASHBOARDS_OUTPUT/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$DASHBOARDS_OUTPUT` is the path defined in the `dashbourd_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder from which the dashboards were downloaded
+- Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list. The dashboards are downloaded as JSON files in the `$OUTPUT_PATH/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$OUTPUT_PATH` is the path defined in the `dashbourd_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder from which the dashboards were downloaded
 
 After you are done, and you can execute `./bin/gdg dash list` successfully, eg.:
 ```
@@ -66,7 +66,7 @@ contexts:
     token: "<<Grafana API Token>>"
     # user_name: admin
     # password: admin
-    dashboards_output: dashboards
+    output_path: exports
     watched:
       - Example
       - Infrastructure
@@ -78,12 +78,12 @@ global:
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
 - API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
-- Uploaded Folders: The `watched` field defines folders which will be considered for manipulation. The dashboards should be stored as JSON files in the `$DASHBOARDS_OUTPUT/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$DASHBOARDS_OUTPUT` is the path defined in the `dashbourd_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder to which the dashboards will be uploaded. In case of the above configuration file, the dashboards should be stored locally in the `dashboards/dashboards/Example` and `dashboards/dashboards/Infrastructure/` directories.
+- Uploaded Folders: The `watched` field defines folders which will be considered for manipulation. The dashboards should be stored as JSON files in the `$OUTPUT_PATH/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$OUTPUT_PATH` is the path defined in the `dashbourd_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder to which the dashboards will be uploaded. In case of the above configuration file, the dashboards should be stored locally in the `dashboards/dashboards/Example` and `dashboards/dashboards/Infrastructure/` directories.
 
 ```
 ├── bin
 |   └── gdg
-└── dashboards
+└── exports
     └── dashboards
         ├── Example
         |   └── cluster-scaling.json
