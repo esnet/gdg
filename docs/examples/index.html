@@ -209,7 +209,7 @@ global:
 <ul>
 <li>Grafana URL: This is just a URL where your Grafana is available.</li>
 <li>API Key OR Username / Passoword for Admin user. See <a href="configuration.md">authentication</a> section if you need more information.</li>
-<li>Downloaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards &gt; Management. From there, you can simply define the folders you want to be downloaded in the <code>watched</code> list. The dashboards are downloaded as JSON files in the <code>$OUTPUTY_PATH/dashboards/$GRAFANA_FOLDER_NAME</code> directory. Where <code>$OUTPUTY_PATH</code> is the path defined in the <code>dashbourd_output</code> configuration property and <code>$GRAFANA_FOLDER_NAME</code> the name of the folder from which the dashboards were downloaded</li>
+<li>Downloaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards &gt; Management. From there, you can simply define the folders you want to be downloaded in the <code>watched</code> list. The dashboards are downloaded as JSON files in the <code>$OUTPUT_PATH/dashboards/$GRAFANA_FOLDER_NAME</code> directory. Where <code>$OUTPUT_PATH</code> is the path defined in the <code>dashbourd_output</code> configuration property and <code>$GRAFANA_FOLDER_NAME</code> the name of the folder from which the dashboards were downloaded</li>
 </ul>
 <p>After you are done, and you can execute <code>./bin/gdg dash list</code> successfully, eg.:</p>
 <pre tabindex="0"><code>$ ./bin/gdg dash list
