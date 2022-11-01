@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" class="dark">
 <head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.104.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.105.0">
 <link rel="apple-touch-icon" sizes="180x180" href='https://software.es.net/gdg/favicons/apple-touch-icon.png'>
 <link rel="icon" type="image/png" sizes="32x32" href='https://software.es.net/gdg/favicons/favicon-32x32.png'>
 <link rel="icon" type="image/png" sizes="16x16" href='https://software.es.net/gdg/favicons/favicon-16x16.png'>
@@ -12,23 +12,23 @@
 <title>Example Usage | Grafana Dash-n-Go</title><meta property="og:title" content="Example Usage" />
 <meta property="og:description" content="Setup new configuration You can create new context configuration using an interactive setup.
 $ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:" />
+context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://software.es.net/gdg/docs/examples/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-07-06T15:53:02-04:00" />
+<meta property="article:modified_time" content="2022-11-01T12:45:19-04:00" />
 
 <meta itemprop="name" content="Example Usage">
 <meta itemprop="description" content="Setup new configuration You can create new context configuration using an interactive setup.
 $ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
-<meta itemprop="dateModified" content="2022-07-06T15:53:02-04:00" />
-<meta itemprop="wordCount" content="488">
+context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
+<meta itemprop="dateModified" content="2022-11-01T12:45:19-04:00" />
+<meta itemprop="wordCount" content="568">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Example Usage"/>
 <meta name="twitter:description" content="Setup new configuration You can create new context configuration using an interactive setup.
 $ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:"/>
+context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:"/>
 
 
 <link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -38,7 +38,7 @@ context_name: all contexts: all: url: https://grafana.example.org token: &#34;&l
 
   <meta name="description" content="Setup new configuration You can create new context configuration using an interactive setup.
 $ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &amp;#34;&amp;lt;&amp;lt;Grafana API Token&amp;gt;&amp;gt;&amp;#34; # user_name: admin # password: admin dashboards_output: dashboards watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
+context_name: all contexts: all: url: https://grafana.example.org token: &amp;#34;&amp;lt;&amp;lt;Grafana API Token&amp;gt;&amp;gt;&amp;#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
 
 
 </head>
@@ -197,7 +197,7 @@ contexts:
     token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34;
     # user_name: admin
     # password: admin
-    dashboards_output: dashboards
+    output_path: exports
     watched:
       - Example
       - Infrastructure
@@ -209,7 +209,7 @@ global:
 <ul>
 <li>Grafana URL: This is just a URL where your Grafana is available.</li>
 <li>API Key OR Username / Passoword for Admin user. See <a href="configuration.md">authentication</a> section if you need more information.</li>
-<li>Downloaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards &gt; Management. From there, you can simply define the folders you want to be downloaded in the <code>watched</code> list.</li>
+<li>Downloaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards &gt; Management. From there, you can simply define the folders you want to be downloaded in the <code>watched</code> list. The dashboards are downloaded as JSON files in the <code>$OUTPUTY_PATH/dashboards/$GRAFANA_FOLDER_NAME</code> directory. Where <code>$OUTPUTY_PATH</code> is the path defined in the <code>dashbourd_output</code> configuration property and <code>$GRAFANA_FOLDER_NAME</code> the name of the folder from which the dashboards were downloaded</li>
 </ul>
 <p>After you are done, and you can execute <code>./bin/gdg dash list</code> successfully, eg.:</p>
 <pre tabindex="0"><code>$ ./bin/gdg dash list
@@ -225,7 +225,7 @@ time=&#34;2021-08-22T11:11:28+02:00&#34; level=info msg=&#34;Listing dashboards 
 │  3 │ AWS S3                            │ aws-s3                            │ Infrastructure │ AWSS31iWk  │ https://grafana.example.org/d/AWSS31iWk/aws-s3                             │
 │ 17 │ Cluster Autoscaling               │ cluster-autoscaling               │ Example        │ iHUYtABMk  │ https://grafana.example.org/d/iHUYtABMk/cluster-autoscaling                │
 └────┴───────────────────────────────────┴───────────────────────────────────┴────────────────┴────────────┴────────────────────────────────────────────────────────────────────────────┘
-</code></pre><p>You can execute <code>./bin/gdg dash import</code>, and you will be able to find your dashboards, the ones which were listed previously in the table, in <code>dashboards</code> folder.</p>
+</code></pre><p>After executing <code>./bin/gdg dash import</code> you can find the dashboards of the <code>Infrastructure</code> folder in the local directory <code>dashboards/dashboards/Infrastructure</code> and the dashboards of the <code>Example</code> directory in the local directory <code>dashboards/dashboards/Example</code>.</p>
 <h3 id="export--upload-dashboards">Export / Upload Dashboards</h3>
 <p>Minimal configuration (eg. the <code>importer.yml</code> file) that you need to upload your dashboards from your Grafana endpoint:</p>
 <pre tabindex="0"><code>context_name: all
@@ -236,7 +236,7 @@ contexts:
     token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34;
     # user_name: admin
     # password: admin
-    dashboards_output: dashboards
+    output_path: exports
     watched:
       - Example
       - Infrastructure
@@ -248,15 +248,16 @@ global:
 <ul>
 <li>Grafana URL: This is just a URL where your Grafana is available.</li>
 <li>API Key OR Username / Passoword for Admin user. See <a href="configuration.md">authentication</a> section if you need more information.</li>
-<li>Uploaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. Those are the folders in <code>dashboards</code> folder, which contain the dashboard files (eg. <code>examples.json</code>). Example folder structure:</li>
+<li>Uploaded Folders: The <code>watched</code> field defines folders which will be considered for manipulation. The dashboards should be stored as JSON files in the <code>$OUTPUT_PATH/dashboards/$GRAFANA_FOLDER_NAME</code> directory. Where <code>$OUTPUT_PATH</code> is the path defined in the <code>dashbourd_output</code> configuration property and <code>$GRAFANA_FOLDER_NAME</code> the name of the folder to which the dashboards will be uploaded. In case of the above configuration file, the dashboards should be stored locally in the <code>dashboards/dashboards/Example</code> and <code>dashboards/dashboards/Infrastructure/</code> directories.</li>
 </ul>
 <pre tabindex="0"><code>├── bin
 |   └── gdg
-└── dashboards
-    ├── Example
-    |   └── cluster-scaling.json
-    └── Infrastructure
-        └── aws-ecs.json
+└── exports
+    └── dashboards
+        ├── Example
+        |   └── cluster-scaling.json
+        └── Infrastructure
+            └── aws-ecs.json
 </code></pre><p>You can execute <code>./bin/gdg dash export</code> to upload the local dashboards to your Grafana. Afterwards, you can try running <code>./bin/gdg dash list</code> in order to confirm that your dashboards were uploaded successfully.</p>
 
     <div class="pager">
