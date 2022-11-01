@@ -18,6 +18,11 @@ func (s *LocalStorage) ReadFile(filename string) ([]byte, error) {
 	return os.ReadFile(filename)
 }
 
+//ReadFileAbsolute returns the byte array of file content ignoring the prefix
+func (s *LocalStorage) ReadFileAbsolute(filename string) ([]byte, error) {
+	return s.ReadFile(filename)
+}
+
 //WriteFile writes file to disk and returns an error if operation failed
 func (s *LocalStorage) WriteFile(filename string, data []byte, mode fs.FileMode) error {
 	return os.WriteFile(filename, data, mode)
