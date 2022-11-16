@@ -27,3 +27,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  docker-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker Build Tag Publish
+        uses: bitovi/github-actions-docker-publish@v1.0.3
+        with:
+          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          docker_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          org_name: esnet
+          repo_name: gdg
+          working-directory: ./docker
+      - run: |
+          echo "Image Created:  ${{ env.image }}"
+          echo "Tag Created: ${{ env.tag }}"
