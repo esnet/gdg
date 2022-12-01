@@ -60,7 +60,7 @@ dockers:
 #
     image_templates:
       - "ghcr.io/esnet/gdg:latest"
-      - "ghcr.io/esnet/gdg:{{ .Tag }}"
+      - "ghcr.io/esnet/gdg:{{ .RawVersion }}"
       - "ghcr.io/esnet/gdg:{{ .Major }}.{{ .Minor }}"
 
     skip_push: false
