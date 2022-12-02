@@ -11,10 +11,8 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://software.es.net/gdg/docs/installation/</guid>
-      <description>Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
-Planned package support for:
-HomeBrew Debian RPMs APK If you have go install you may run the following command to install gdg
-1go install github.com/esnet/gdg@latest You can verify the version by running gdg version.</description>
+      <description>Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
+The following packages are currently supported:</description>
     </item>
     
     <item>

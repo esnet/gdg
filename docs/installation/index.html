@@ -10,28 +10,22 @@
 <link rel="shortcut icon" href='https://software.es.net/gdg/favicons/favicon.ico'>
 <meta name="msapplication-config" content='https://software.es.net/gdg/favicons/browserconfig.xml'>
 <title>Installation | Grafana Dash-n-Go</title><meta property="og:title" content="Installation" />
-<meta property="og:description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
-Planned package support for:
-HomeBrew Debian RPMs APK If you have go install you may run the following command to install gdg
-1go install github.com/esnet/gdg@latest You can verify the version by running gdg version." />
+<meta property="og:description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
+The following packages are currently supported:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://software.es.net/gdg/docs/installation/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-05-09T11:34:54-04:00" />
+<meta property="article:modified_time" content="2022-12-02T14:25:59-06:00" />
 
 <meta itemprop="name" content="Installation">
-<meta itemprop="description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
-Planned package support for:
-HomeBrew Debian RPMs APK If you have go install you may run the following command to install gdg
-1go install github.com/esnet/gdg@latest You can verify the version by running gdg version.">
-<meta itemprop="dateModified" content="2022-05-09T11:34:54-04:00" />
-<meta itemprop="wordCount" content="116">
+<meta itemprop="description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
+The following packages are currently supported:">
+<meta itemprop="dateModified" content="2022-12-02T14:25:59-06:00" />
+<meta itemprop="wordCount" content="332">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Installation"/>
-<meta name="twitter:description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
-Planned package support for:
-HomeBrew Debian RPMs APK If you have go install you may run the following command to install gdg
-1go install github.com/esnet/gdg@latest You can verify the version by running gdg version."/>
+<meta name="twitter:description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
+The following packages are currently supported:"/>
 
 
 <link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -39,10 +33,8 @@ HomeBrew Debian RPMs APK If you have go install you may run the following comman
 
 
 
-  <meta name="description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages are not yet supported but will be coming soon since goreleaser has that feature.
-Planned package support for:
-HomeBrew Debian RPMs APK If you have go install you may run the following command to install gdg
-1go install github.com/esnet/gdg@latest You can verify the version by running gdg version.">
+  <meta name="description" content="Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
+The following packages are currently supported:">
 
 
 </head>
@@ -112,7 +104,12 @@ HomeBrew Debian RPMs APK If you have go install you may run the following comman
       <section class="" id="docs-gdg-docs">
         <h3 class="section_link active"><a id="docs-installation" href="https://software.es.net/gdg/docs/installation/">Installation</a></h3><nav id="TableOfContents">
   <ul>
-    <li><a href="#installation">Installation</a></li>
+    <li><a href="#installation">Installation</a>
+      <ul>
+        <li><a href="#package-installation">Package Installation</a></li>
+        <li><a href="#docker-usage">Docker usage</a></li>
+      </ul>
+    </li>
     <li><a href="#configuration">Configuration</a></li>
   </ul>
 </nav>
@@ -189,19 +186,46 @@ HomeBrew Debian RPMs APK If you have go install you may run the following comman
 
   <main class="content">
     <h1>Installation</h1><h2 id="installation">Installation</h2>
-<p>The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found <a href="https://github.com/esnet/gdg/releases">here</a>.  Packages are not yet supported but will be coming soon since goreleaser has that feature.</p>
-<p>Planned package <a href="https://github.com/esnet/gdg/issues/89">support</a> for:</p>
+<p>The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found <a href="https://github.com/esnet/gdg/releases">here</a>.  Packages for a few distributions have been added.  The release cycle relies on goreleaser so anything that is well supported can be added it at some point.  There is no APT or such you can connect to but the packages are available for download.</p>
+<p>The following packages are currently supported:</p>
 <ul>
-<li>HomeBrew</li>
-<li>Debian</li>
-<li>RPMs</li>
+<li>RPM</li>
 <li>APK</li>
+<li>Docker</li>
 </ul>
-<p>If you have go install you may run the following command to install gdg</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">go install github.com/esnet/gdg@latest
+<h3 id="package-installation">Package Installation</h3>
+<p>Install from package involves downloading the appropriate package from the <a href="https://github.com/esnet/gdg/releases">release</a> and installing it as you usually do on your favorite Distro.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">rpm -Uvh ./gdg_0.3.1_amd64.rpm
+</span></span><span class="line"><span class="ln">2</span><span class="cl">dpkg -i ./gdg_0.3.1_amd64.deb
+</span></span></code></pre></div><h3 id="docker-usage">Docker usage</h3>
+<p>The docker tags are released started with 0.3.1.  Each release will generate a major version and minor version tag.</p>
+<p>You can see the available images <a href="https://github.com/esnet/gdg/pkgs/container/gdg">here</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">docker pull ghcr.io/esnet/gdg:0.3.1
+</span></span></code></pre></div><p>NOTE: ghcr.io/esnet/gdg:0.3 will also point to 0.3.1 until 0.3.2 is released after which it'll point to 0.3.2</p>
+<p>Example compose.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;3.7&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">  </span><span class="nt">gdg</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w">  </span><span class="l">ghcr.io/esnet/gdg:0.3.1</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;--help&#34;</span><span class="w">            </span><span class="c">## Add additional parameters here</span><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w"></span><span class="c">#    command: &#34;ds export&#34;       ## Pass any commands on here.</span><span class="w">
+</span></span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="w">      </span>- <span class="l">./conf:/app/conf        </span><span class="w"> </span><span class="c">## where the configuration lives</span><span class="w">
+</span></span></span><span class="line"><span class="ln">9</span><span class="cl"><span class="w">      </span>- <span class="l">./exports:/app/exports </span><span class="w"> </span><span class="c">## doesn&#39;t need to be /app/exports but you should export the destination of where exports are being written out to.</span><span class="w">
+</span></span></span></code></pre></div><p>From the CLI:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">docker run -it --rm -v <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/conf:/app/conf -v <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/exports:/app/exports ghcr.io/esnet/gdg:latest  ds --help
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1">### Installing via Go</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">
+</span></span><span class="line"><span class="ln">5</span><span class="cl">If you have go install you may run the following <span class="nb">command</span> to install gdg
+</span></span><span class="line"><span class="ln">6</span><span class="cl">
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="sb">```</span>sh 
+</span></span><span class="line"><span class="ln">8</span><span class="cl">go install github.com/esnet/gdg@latest  <span class="c1">#for latest</span>
+</span></span><span class="line"><span class="ln">9</span><span class="cl">go install github.com/esnet/gdg@v0.3.1  <span class="c1">#for a specific version</span>
 </span></span></code></pre></div><p>You can verify the version by running <code>gdg version</code>.</p>
 <h2 id="configuration">Configuration</h2>
 <p>You can then create a simple configuration using <code>gdg ctx new</code> which will do a best effort to guide to setup a basic config that will get you up and going or read the more detailed documentation that can be found <a href="/gdg/docs/configuration/">here</a></p>
+<p><strong>NOTE</strong>: wizard doesn't currently support ALL features but it should help you get a head start.</p>
 
     <div class="pager pager_lean">
   
