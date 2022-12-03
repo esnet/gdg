@@ -50,6 +50,7 @@ From the CLI:
 
 ```sh
 docker run -it --rm -v $(pwd)/conf:/app/conf -v $(pwd)/exports:/app/exports ghcr.io/esnet/gdg:latest  ds --help
+```
 
 ### Installing via Go
 
