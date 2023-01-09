@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
@@ -16,19 +15,12 @@ import (
 	"strings"
 )
 
-func validateUserAPI(client *sdk.Client) {
-	if client == nil || !apphelpers.GetCtxDefaultGrafanaConfig().AdminEnabled {
-		log.Fatal("Missing Admin client, please check your config and ensure basic auth is configured")
-	}
-}
-
 func (s *DashNGoImpl) ImportUsers() []string {
 	var (
 		userData []byte
 	)
 	ctx := context.Background()
-	validateUserAPI(s.adminClient)
-	users, err := s.adminClient.GetAllUsers(ctx)
+	users, err := s.GetAdminClient().GetAllUsers(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,7 +57,6 @@ func (s *DashNGoImpl) isAdmin(user sdk.User) bool {
 
 func (s *DashNGoImpl) ExportUsers() []sdk.User {
 	ctx := context.Background()
-	validateUserAPI(s.adminClient)
 	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.UserResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for users")
@@ -111,7 +102,7 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 				log.Info("Skipping admin user")
 				continue
 			}
-			_, err = s.adminClient.CreateUser(ctx, newUser)
+			_, err = s.GetAdminClient().CreateUser(ctx, newUser)
 			if err != nil {
 				log.WithError(err).Errorf("Failed to create user for file: %s", fileLocation)
 				continue
@@ -126,8 +117,7 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 //ListUsers list all grafana users
 func (s *DashNGoImpl) ListUsers() []sdk.User {
 	ctx := context.Background()
-	validateUserAPI(s.adminClient)
-	users, err := s.adminClient.GetAllUsers(ctx)
+	users, err := s.GetAdminClient().GetAllUsers(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -145,7 +135,7 @@ func (s *DashNGoImpl) DeleteAllUsers() []string {
 			continue
 
 		}
-		_, err := s.adminClient.DeleteUser(ctx, user.ID)
+		_, err := s.GetAdminClient().DeleteUser(ctx, user.ID)
 		if err == nil {
 			deletedUsers = append(deletedUsers, user.Email)
 		}
@@ -157,7 +147,6 @@ func (s *DashNGoImpl) DeleteAllUsers() []string {
 //PromoteUser promote the user to have Admin Access
 func (s *DashNGoImpl) PromoteUser(userLogin string) (*sdk.StatusMessage, error) {
 
-	validateUserAPI(s.adminClient)
 	ctx := context.Background()
 	//Get all users
 	users := s.ListUsers()
@@ -177,7 +166,7 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (*sdk.StatusMessage, error) 
 	role := sdk.UserPermissions{
 		IsGrafanaAdmin: true,
 	}
-	msg, err := s.adminClient.UpdateUserPermissions(ctx, role, user.ID)
+	msg, err := s.GetAdminClient().UpdateUserPermissions(ctx, role, user.ID)
 	if err != nil {
 		errorMsg := fmt.Sprintf("failed to promote user: '%s'", userLogin)
 		log.Error(errorMsg)

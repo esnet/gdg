@@ -61,6 +61,13 @@ type DashNGoImpl struct {
 	storage     Storage
 }
 
+func (s *DashNGoImpl) GetAdminClient() *sdk.Client {
+	if s.adminClient == nil {
+		log.Fatal("Requested API requires admin to have basic http auth (username/password) configured. Token access is not supported")
+	}
+	return s.adminClient
+}
+
 func NewDashNGoImpl() *DashNGoImpl {
 	once.Do(func() {
 		instance = newInstance()

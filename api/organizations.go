@@ -10,7 +10,7 @@ import (
 //ListOrganizations: List all dashboards
 func (s *DashNGoImpl) ListOrganizations() []sdk.Org {
 	ctx := context.Background()
-	orgs, err := s.adminClient.GetAllOrgs(ctx)
+	orgs, err := s.GetAdminClient().GetAllOrgs(ctx)
 	if err != nil {
 		log.WithError(err).Errorf("Unable to retrieve Organization List")
 	}
