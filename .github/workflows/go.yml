@@ -10,14 +10,14 @@ jobs:
   lint:
     strategy:
       matrix:
-        go: [ 1.18 ]
+        go: [ 1.20 ]
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
 
@@ -29,15 +29,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Run linters
-        uses: golangci/golangci-lint-action@v3.1.0
+      - name: Fetch Packages
+        uses:  docker://golang:1.20
         with:
-          version: v1.45.2
+          entrypoint: go
+          args: mod download
+
+      - name: Run linters
+        uses: golangci/golangci-lint-action@v3.4.0
+        with:
+          version: v1.51.2
 
   test:
     strategy:
       matrix:
-        go: [ 1.18]
+        go: [ 1.20]
         grafana: [ latest, 8.3.6, 7.5.15 ]
 
     env:
@@ -69,7 +75,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
 
@@ -88,11 +94,11 @@ jobs:
       - name: Wait for SSH to come up.
         run: nc -z -v -w15 127.0.0.1 2222
       - name: Calc coverage
-        if: "${{ matrix.go == '1.18' && matrix.grafana == '8.3.6' }}"
+        if: "${{ matrix.go == '1.20' && matrix.grafana == '8.3.6' }}"
         run: |
           go test -v -covermode=atomic -coverprofile=coverage.out ./...
       - name: Convert coverage.out to coverage.lcov
-        if: "${{ matrix.go == '1.18' && matrix.grafana == '8.3.6' }}"
+        if: "${{ matrix.go == '1.20' && matrix.grafana == '8.3.6' }}"
         uses: jandelgado/gcov2lcov-action@v1.0.6
       - name: Test
         if: "${{ matrix.grafana != '8.3.6' }}"
