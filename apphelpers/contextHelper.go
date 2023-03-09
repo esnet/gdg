@@ -9,10 +9,11 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/thoas/go-funk"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 )
 
-//GetContext returns the name of the selected context
+// GetContext returns the name of the selected context
 func GetContext() string {
 	name := config.Config().ViperConfig().GetString("context_name")
 	return strings.ToLower(name)
@@ -42,16 +43,20 @@ func NewContext(name string) {
 			},
 		},
 		{
-			Name:   "Folders",
-			Prompt: &survey.Input{Message: "List the folders you wish to manage (example: folder1,folder2)? (Blank for General)?"},
-		},
-		{
 			Name:   "DSUser",
 			Prompt: &survey.Input{Message: "Please enter your datasource default username"},
 		},
 		{
 			Name:   "DSPassword",
 			Prompt: &survey.Password{Message: "Please enter your datasource default password"},
+		},
+		{
+			Name: "Folders",
+			Prompt: &survey.Select{
+				Message: "Do you want to monitor a list of folders or monitor all folders?",
+				Options: []string{"list", "all folders"},
+				Default: "list",
+			},
 		},
 	}
 	err := survey.Ask(behaviorQuestions, &promptAnswers)
@@ -60,12 +65,38 @@ func NewContext(name string) {
 	}
 
 	//Set Watched Folders
-	foldersList := strings.Split(promptAnswers.Folders, ",")
-	if len(foldersList) > 0 && foldersList[0] != "" {
-		answers.MonitoredFolders = foldersList
+	if promptAnswers.Folders == "list" {
+		folderAnswer := struct {
+			Folders string
+		}{}
+		var folderListQuestion = []*survey.Question{
+			{
+				Name:   "Folder List",
+				Prompt: &survey.Input{Message: "List the folders you wish to manage (example: folder1,folder2)? (Blank for General)?"},
+			},
+		}
+		err := survey.Ask(folderListQuestion, &folderAnswer)
+		if err != nil {
+			log.Fatal("Failed to get valid answers to generate a new context")
+		}
+		foldersList := strings.Split(folderAnswer.Folders, ",")
+		if len(foldersList) > 0 && foldersList[0] != "" {
+			answers.MonitoredFolders = foldersList
+		} else {
+			answers.MonitoredFolders = []string{"General"}
+		}
 	} else {
-		answers.MonitoredFolders = []string{"General"}
+		answers.MonitoredFolders = []string{}
+		for _, currentConfig := range config.Config().Contexts() {
+			// need to guarantee folders are only included once
+			for _, folder := range currentConfig.MonitoredFolders {
+				if !slices.Contains(answers.MonitoredFolders, folder) {
+					answers.MonitoredFolders = append(answers.MonitoredFolders, folder)
+				}
+			}
+		}
 	}
+
 	//Set Default Datasource
 	if promptAnswers.DSUser != "" && promptAnswers.DSPassword != "" {
 		ds := config.GrafanaDataSource{
@@ -129,7 +160,7 @@ func NewContext(name string) {
 
 }
 
-//ShowContext displays the selected context
+// ShowContext displays the selected context
 func ShowContext(ctx string) {
 	grafana := GetCtxGrafanaConfig(ctx)
 	d, err := yaml.Marshal(grafana)
@@ -140,7 +171,7 @@ func ShowContext(ctx string) {
 
 }
 
-//ClearContexts clear all contexts except a simple running example
+// ClearContexts clear all contexts except a simple running example
 // (required for app not to error out)
 func ClearContexts() {
 	v := config.Config().ViperConfig()
@@ -169,8 +200,8 @@ func CopyContext(src, dest string) {
 	log.Infof("Copied %s context to %s please check your config to confirm", src, dest)
 }
 
-//SetContext will try to find the specified context, if it exists in the file, will re-write the importer.yml
-//with the selected context
+// SetContext will try to find the specified context, if it exists in the file, will re-write the importer.yml
+// with the selected context
 func SetContext(context string) {
 	v, _ := getContextReferences()
 	m := config.Config().Contexts()
@@ -189,7 +220,7 @@ func SetContext(context string) {
 
 }
 
-//getContextReferences Helper method to get viper and context map
+// getContextReferences Helper method to get viper and context map
 func getContextReferences() (*viper.Viper, map[string]interface{}) {
 	v := config.Config().ViperConfig()
 	contexts := config.Config().ViperConfig().GetStringMap("contexts")
@@ -198,7 +229,7 @@ func getContextReferences() (*viper.Viper, map[string]interface{}) {
 
 }
 
-//DeleteContext Delete a specific
+// DeleteContext Delete a specific
 func DeleteContext(context string) {
 	activeCtx := GetContext()
 	if activeCtx == strings.ToLower(context) {
@@ -213,13 +244,13 @@ func DeleteContext(context string) {
 	}
 }
 
-//GetContexts returns all available contexts
+// GetContexts returns all available contexts
 func GetContexts() []string {
 	contextMap := config.Config().ViperConfig().GetStringMap("contexts")
 	return funk.Keys(contextMap).([]string)
 }
 
-//GetCtxGrafanaConfig returns the selected context or terminates app if not found
+// GetCtxGrafanaConfig returns the selected context or terminates app if not found
 func GetCtxGrafanaConfig(name string) *config.GrafanaConfig {
 	val, ok := config.Config().Contexts()[name]
 	if ok {
@@ -231,7 +262,7 @@ func GetCtxGrafanaConfig(name string) *config.GrafanaConfig {
 	return nil
 }
 
-//GetCtxDefaultGrafanaConfig returns the default aka. selected grafana config
+// GetCtxDefaultGrafanaConfig returns the default aka. selected grafana config
 func GetCtxDefaultGrafanaConfig() *config.GrafanaConfig {
 	return GetCtxGrafanaConfig(GetContext())
 }
