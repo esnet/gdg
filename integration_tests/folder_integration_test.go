@@ -1,9 +1,10 @@
 package integration_tests
 
 import (
+	"testing"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestFolderCRUD(t *testing.T) {
@@ -15,9 +16,11 @@ func TestFolderCRUD(t *testing.T) {
 	apiClient.ExportFolder(nil)
 	log.Info("Listing all Folders")
 	folders := apiClient.ListFolder(nil)
-	assert.Equal(t, len(folders), 1)
-	var dsItem = folders[0]
-	assert.Equal(t, dsItem.Title, "Other")
+	assert.Equal(t, len(folders), 2)
+	var firstDsItem = folders[0]
+	assert.Equal(t, firstDsItem.Title, "Ignored")
+	var secondDsItem = folders[1]
+	assert.Equal(t, secondDsItem.Title, "Other")
 	//Import Folders
 	log.Info("Importing folders")
 	list := apiClient.ImportFolder(nil)

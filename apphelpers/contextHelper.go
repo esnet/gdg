@@ -9,7 +9,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/thoas/go-funk"
-	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 )
 
@@ -22,6 +21,9 @@ func GetContext() string {
 func NewContext(name string) {
 	name = strings.ToLower(name) // forces lowercase contexts
 	answers := config.GrafanaConfig{
+		FilterOverrides: &config.FilterOverrides{
+			IgnoreDashboardFilters: false,
+		},
 		DataSourceSettings: &config.DataSourceSettings{
 			Credentials: make(map[string]*config.GrafanaDataSource),
 		},
@@ -87,14 +89,7 @@ func NewContext(name string) {
 		}
 	} else {
 		answers.MonitoredFolders = []string{}
-		for _, currentConfig := range config.Config().Contexts() {
-			// need to guarantee folders are only included once
-			for _, folder := range currentConfig.MonitoredFolders {
-				if !slices.Contains(answers.MonitoredFolders, folder) {
-					answers.MonitoredFolders = append(answers.MonitoredFolders, folder)
-				}
-			}
-		}
+		answers.FilterOverrides.IgnoreDashboardFilters = true
 	}
 
 	//Set Default Datasource

@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/esnet/gdg/config"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/esnet/gdg/config"
 
 	"github.com/esnet/gdg/apphelpers"
 
@@ -56,8 +57,10 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	var limit uint = 5000 // Upper bound of Grafana API call
 
 	var tagsParams []sdk.SearchParam = []sdk.SearchParam{}
-	for _, t := range filters.GetTags() {
-		tagsParams = append(tagsParams, sdk.SearchTag(t))
+	if !apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+		for _, t := range filters.GetTags() {
+			tagsParams = append(tagsParams, sdk.SearchTag(t))
+		}
 	}
 	var searchParams []sdk.SearchParam
 
@@ -79,7 +82,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	var validUid bool
 	for _, link := range boardLinks {
 		validFolder = false
-		if apphelpers.GetCtxDefaultGrafanaConfig().IgnoreFilters {
+		if apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
 			validFolder = true
 		} else if funk.ContainsString(folderFilters, link.FolderTitle) {
 			validFolder = true
@@ -170,6 +173,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 				log.Printf("Failed to unmarshall file: %s", file)
 				continue
 			}
+
 			elements := strings.Split(file, string(os.PathSeparator))
 			if len(elements) >= 2 {
 				folderName = elements[len(elements)-2]
@@ -178,7 +182,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 				folderId = sdk.DefaultFolderId
 				folderName = DefaultFolderName
 			}
-			if !funk.Contains(validFolders, folderName) && !apphelpers.GetCtxDefaultGrafanaConfig().IgnoreFilters {
+			if !funk.Contains(validFolders, folderName) && !apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
 				log.Debugf("Skipping file %s, doesn't match any valid folders", file)
 				continue
 			}
