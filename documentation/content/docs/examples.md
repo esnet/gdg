@@ -14,7 +14,7 @@ When creating a new context, you will be asked for authorization type, your defa
 
 1. Default option ("General")
 2. List of folders you wish to manage
-3. Wildcard configuration (all monitored folders)
+3. Wildcard configuration (all folders)
 
 ### Import / Download Dashboards
 
