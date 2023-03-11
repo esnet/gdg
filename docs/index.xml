@@ -57,8 +57,8 @@ NOTE: CI/CD pipeline should do all this automatically.</description>
       
       <guid>https://software.es.net/gdg/docs/examples/</guid>
       <description>Setup new configuration You can create new context configuration using an interactive setup.
-$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &amp;#34;&amp;lt;&amp;lt;Grafana API Token&amp;gt;&amp;gt;&amp;#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:</description>
+$ ./bin/gdg ctx new mycontext When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
+Default option (&amp;quot;General&amp;quot;) List of folders you wish to manage Wildcard configuration (all folders) Import / Download Dashboards Minimal configuration (eg.</description>
     </item>
     
     <item>

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" class="dark">
 <head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.110.0">
+<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.111.2">
 <link rel="apple-touch-icon" sizes="180x180" href='https://software.es.net/gdg/favicons/apple-touch-icon.png'>
 <link rel="icon" type="image/png" sizes="32x32" href='https://software.es.net/gdg/favicons/favicon-32x32.png'>
 <link rel="icon" type="image/png" sizes="16x16" href='https://software.es.net/gdg/favicons/favicon-16x16.png'>
@@ -11,23 +11,23 @@
 <meta name="msapplication-config" content='https://software.es.net/gdg/favicons/browserconfig.xml'>
 <title>Example Usage | Grafana Dash-n-Go</title><meta property="og:title" content="Example Usage" />
 <meta property="og:description" content="Setup new configuration You can create new context configuration using an interactive setup.
-$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:" />
+$ ./bin/gdg ctx new mycontext When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
+Default option (&quot;General&quot;) List of folders you wish to manage Wildcard configuration (all folders) Import / Download Dashboards Minimal configuration (eg." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://software.es.net/gdg/docs/examples/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-11-01T12:45:19-04:00" />
+<meta property="article:modified_time" content="2023-03-11T15:51:26-08:00" />
 <meta itemprop="name" content="Example Usage">
 <meta itemprop="description" content="Setup new configuration You can create new context configuration using an interactive setup.
-$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
-<meta itemprop="dateModified" content="2022-11-01T12:45:19-04:00" />
-<meta itemprop="wordCount" content="568">
+$ ./bin/gdg ctx new mycontext When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
+Default option (&quot;General&quot;) List of folders you wish to manage Wildcard configuration (all folders) Import / Download Dashboards Minimal configuration (eg.">
+<meta itemprop="dateModified" content="2023-03-11T15:51:26-08:00" />
+<meta itemprop="wordCount" content="614">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Example Usage"/>
 <meta name="twitter:description" content="Setup new configuration You can create new context configuration using an interactive setup.
-$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &#34;&lt;&lt;Grafana API Token&gt;&gt;&#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:"/>
+$ ./bin/gdg ctx new mycontext When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
+Default option (&quot;General&quot;) List of folders you wish to manage Wildcard configuration (all folders) Import / Download Dashboards Minimal configuration (eg."/>
 
 
 <link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -36,8 +36,8 @@ context_name: all contexts: all: url: https://grafana.example.org token: &#34;&l
 
 
   <meta name="description" content="Setup new configuration You can create new context configuration using an interactive setup.
-$ ./bin/gdg ctx new mycontext Import / Download Dashboards Minimal configuration (eg. the importer.yml file) that you need to download your dashboards from your Grafana endpoint:
-context_name: all contexts: all: url: https://grafana.example.org token: &amp;#34;&amp;lt;&amp;lt;Grafana API Token&amp;gt;&amp;gt;&amp;#34; # user_name: admin # password: admin output_path: exports watched: - Example - Infrastructure global: debug: true ignore_ssl_errors: false You need to adjust three parts in the configuration in order to function:">
+$ ./bin/gdg ctx new mycontext When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
+Default option (&amp;quot;General&amp;quot;) List of folders you wish to manage Wildcard configuration (all folders) Import / Download Dashboards Minimal configuration (eg.">
 
 
 </head>
@@ -192,7 +192,13 @@ context_name: all contexts: all: url: https://grafana.example.org token: &amp;#3
     <h1>Example Usage</h1><h3 id="setup-new-configuration">Setup new configuration</h3>
 <p>You can create new context configuration using an interactive setup.</p>
 <pre tabindex="0"><code>$ ./bin/gdg ctx new mycontext
-</code></pre><h3 id="import--download-dashboards">Import / Download Dashboards</h3>
+</code></pre><p>When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:</p>
+<ol>
+<li>Default option (&quot;General&quot;)</li>
+<li>List of folders you wish to manage</li>
+<li>Wildcard configuration (all folders)</li>
+</ol>
+<h3 id="import--download-dashboards">Import / Download Dashboards</h3>
 <p>Minimal configuration (eg. the <code>importer.yml</code> file) that you need to download your dashboards from your Grafana endpoint:</p>
 <pre tabindex="0"><code>context_name: all
 
