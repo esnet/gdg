@@ -12,7 +12,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//GetContext returns the name of the selected context
+// GetContext returns the name of the selected context
 func GetContext() string {
 	name := config.Config().ViperConfig().GetString("context_name")
 	return strings.ToLower(name)
@@ -129,7 +129,7 @@ func NewContext(name string) {
 
 }
 
-//ShowContext displays the selected context
+// ShowContext displays the selected context
 func ShowContext(ctx string) {
 	grafana := GetCtxGrafanaConfig(ctx)
 	d, err := yaml.Marshal(grafana)
@@ -140,7 +140,7 @@ func ShowContext(ctx string) {
 
 }
 
-//ClearContexts clear all contexts except a simple running example
+// ClearContexts clear all contexts except a simple running example
 // (required for app not to error out)
 func ClearContexts() {
 	v := config.Config().ViperConfig()
@@ -169,8 +169,8 @@ func CopyContext(src, dest string) {
 	log.Infof("Copied %s context to %s please check your config to confirm", src, dest)
 }
 
-//SetContext will try to find the specified context, if it exists in the file, will re-write the importer.yml
-//with the selected context
+// SetContext will try to find the specified context, if it exists in the file, will re-write the importer.yml
+// with the selected context
 func SetContext(context string) {
 	v, _ := getContextReferences()
 	m := config.Config().Contexts()
@@ -189,7 +189,7 @@ func SetContext(context string) {
 
 }
 
-//getContextReferences Helper method to get viper and context map
+// getContextReferences Helper method to get viper and context map
 func getContextReferences() (*viper.Viper, map[string]interface{}) {
 	v := config.Config().ViperConfig()
 	contexts := config.Config().ViperConfig().GetStringMap("contexts")
@@ -198,7 +198,7 @@ func getContextReferences() (*viper.Viper, map[string]interface{}) {
 
 }
 
-//DeleteContext Delete a specific
+// DeleteContext Delete a specific
 func DeleteContext(context string) {
 	activeCtx := GetContext()
 	if activeCtx == strings.ToLower(context) {
@@ -213,13 +213,13 @@ func DeleteContext(context string) {
 	}
 }
 
-//GetContexts returns all available contexts
+// GetContexts returns all available contexts
 func GetContexts() []string {
 	contextMap := config.Config().ViperConfig().GetStringMap("contexts")
 	return funk.Keys(contextMap).([]string)
 }
 
-//GetCtxGrafanaConfig returns the selected context or terminates app if not found
+// GetCtxGrafanaConfig returns the selected context or terminates app if not found
 func GetCtxGrafanaConfig(name string) *config.GrafanaConfig {
 	val, ok := config.Config().Contexts()[name]
 	if ok {
@@ -231,7 +231,7 @@ func GetCtxGrafanaConfig(name string) *config.GrafanaConfig {
 	return nil
 }
 
-//GetCtxDefaultGrafanaConfig returns the default aka. selected grafana config
+// GetCtxDefaultGrafanaConfig returns the default aka. selected grafana config
 func GetCtxDefaultGrafanaConfig() *config.GrafanaConfig {
 	return GetCtxGrafanaConfig(GetContext())
 }

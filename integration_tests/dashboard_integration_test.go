@@ -1,13 +1,15 @@
 package integration_tests
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/esnet/gdg/api"
+	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/exp/slices"
-	"strings"
-	"testing"
 )
 
 func TestDashboardCRUD(t *testing.T) {
@@ -25,6 +27,7 @@ func TestDashboardCRUD(t *testing.T) {
 	var generalBoard sdk.FoundBoard
 	var otherBoard sdk.FoundBoard
 	for ndx, board := range boards {
+		log.Infof(board.Slug)
 		if board.Slug == "latency-patterns" {
 			ignoredSkipped = false
 		}
@@ -80,6 +83,54 @@ func TestDashboardTagsFilter(t *testing.T) {
 
 	log.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(filters)
+	assert.Equal(t, len(deleteList), len(boards))
+
+	log.Info("List Dashboards again")
+	boards = apiClient.ListDashboards(filters)
+	assert.Equal(t, len(boards), 0)
+}
+
+func TestWildcardFilter(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
+	// Setup Filters
+	apiClient, _ := initTest(t)
+	emptyFilter := api.NewDashboardFilter()
+
+	filters := api.NewDashboardFilter()
+	filters.AddFilter(api.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
+
+	// Enable Wildcard
+	testingContext := config.Config().Contexts()["testing"]
+	testingContext.GetFilterOverrides().IgnoreDashboardFilters = true
+	assert.True(t, testingContext.GetFilterOverrides().IgnoreDashboardFilters)
+
+	// Testing Exporting with Wildcard
+	apiClient.ExportDashboards(emptyFilter)
+	boards := apiClient.ListDashboards(emptyFilter)
+
+	apiClient.ExportDashboards(filters)
+	boards_filtered := apiClient.ListDashboards(emptyFilter)
+
+	assert.Equal(t, len(boards), len(boards_filtered))
+
+	// Testing Listing with Wildcard
+	log.Info("Listing all dashboards without filter")
+	boards = apiClient.ListDashboards(emptyFilter)
+
+	log.Info("Listing all dashboards ignoring filter")
+	boards_filtered = apiClient.ListDashboards(filters)
+
+	assert.Equal(t, len(boards), len(boards_filtered))
+
+	log.Info("Importing Dashboards")
+	list := apiClient.ImportDashboards(emptyFilter)
+	assert.Equal(t, len(list), len(boards))
+
+	log.Info("Deleting Dashboards")
+	deleteList := apiClient.DeleteAllDashboards(emptyFilter)
 	assert.Equal(t, len(deleteList), len(boards))
 
 	log.Info("List Dashboards again")

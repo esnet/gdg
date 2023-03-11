@@ -2,10 +2,11 @@ package config
 
 import (
 	"errors"
-	"github.com/thoas/go-funk"
 	"path"
 	"regexp"
 	"strings"
+
+	"github.com/thoas/go-funk"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -20,11 +21,10 @@ const (
 	AlertNotificationResource = "alertnotifications"
 )
 
-//GrafanaConfig model wraps auth and watched list for grafana
+// GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
 	Storage            string `yaml:"storage"`
 	AdminEnabled       bool
-	IgnoreFilters      bool                `yaml:"ignore_filters"`
 	URL                string              `yaml:"url"`
 	APIToken           string              `yaml:"token"`
 	UserName           string              `yaml:"user_name"`
@@ -33,12 +33,17 @@ type GrafanaConfig struct {
 	MonitoredFolders   []string            `yaml:"watched"`
 	DefaultDataSource  *GrafanaDataSource  `yaml:"-"`
 	DataSourceSettings *DataSourceSettings `yaml:"datasources"`
+	FilterOverrides    *FilterOverrides    `yaml:"filter_override"`
 	OutputPath         string              `yaml:"output_path"`
 }
 
 type DataSourceSettings struct {
 	Filters     *DataSourceFilters            `yaml:"filters"`
 	Credentials map[string]*GrafanaDataSource `yaml:"credentials"`
+}
+
+type FilterOverrides struct {
+	IgnoreDashboardFilters bool `yaml:"ignore_dashboard_filters"`
 }
 
 func (ds DataSourceSettings) FiltersEnabled() bool {
@@ -80,6 +85,13 @@ func (filter *DataSourceFilters) ValidName(name string) bool {
 	return !filter.pattern.Match([]byte(name))
 }
 
+func (s *GrafanaConfig) GetFilterOverrides() *FilterOverrides {
+	if s.FilterOverrides == nil {
+		s.FilterOverrides = &FilterOverrides{IgnoreDashboardFilters: false}
+	}
+	return s.FilterOverrides
+}
+
 func (s *GrafanaConfig) GetDataSourceSettings() *DataSourceSettings {
 	if s.DataSourceSettings == nil {
 		s.DataSourceSettings = &DataSourceSettings{}
@@ -107,7 +119,7 @@ func (s *GrafanaConfig) GetFolderOutput() string {
 	return path.Join(s.OutputPath, FolderResource)
 }
 
-//GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.
+// GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.
 func (s *GrafanaConfig) GetMonitoredFolders() []string {
 	if len(s.MonitoredFolders) == 0 {
 		return []string{"General"}
@@ -116,7 +128,7 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 	return s.MonitoredFolders
 }
 
-//GetCredentials return credentials for a given datasource or falls back on default value
+// GetCredentials return credentials for a given datasource or falls back on default value
 func (s *GrafanaConfig) GetCredentials(dataSourceName string) (*GrafanaDataSource, error) {
 	source, err := s.GetDataSourceSettings().GetCredentials(dataSourceName)
 	if err == nil {
@@ -127,7 +139,7 @@ func (s *GrafanaConfig) GetCredentials(dataSourceName string) (*GrafanaDataSourc
 	return s.GetDefaultCredentials(), nil
 }
 
-//GetCredentialByUrl attempts to match URL by regex
+// GetCredentialByUrl attempts to match URL by regex
 func (s *GrafanaConfig) GetCredentialByUrl(fullUrl string) (*GrafanaDataSource, error) {
 	for key, val := range s.GetDataSourceSettings().Credentials {
 		if val.UrlRegex != "" {
@@ -147,7 +159,7 @@ func (s *GrafanaConfig) GetCredentialByUrl(fullUrl string) (*GrafanaDataSource, 
 
 }
 
-//GetDefaultCredentials returns the default credentials
+// GetDefaultCredentials returns the default credentials
 func (s *GrafanaConfig) GetDefaultCredentials() *GrafanaDataSource {
 	if s.DefaultDataSource == nil {
 		if val, ok := s.GetDataSourceSettings().Credentials["default"]; ok {
@@ -160,7 +172,7 @@ func (s *GrafanaConfig) GetDefaultCredentials() *GrafanaDataSource {
 	return s.DefaultDataSource
 }
 
-//Default datasource credentials
+// Default datasource credentials
 type GrafanaDataSource struct {
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`

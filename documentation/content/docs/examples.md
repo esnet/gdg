@@ -10,6 +10,12 @@ You can create new context configuration using an interactive setup.
 $ ./bin/gdg ctx new mycontext
 ```
 
+When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
+
+1. Default option ("General")
+2. List of folders you wish to manage
+3. Wildcard configuration (all folders)
+
 ### Import / Download Dashboards
 
 Minimal configuration (eg. the `importer.yml` file) that you need to download your dashboards from your Grafana endpoint:
