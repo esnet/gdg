@@ -21,9 +21,6 @@ func GetContext() string {
 func NewContext(name string) {
 	name = strings.ToLower(name) // forces lowercase contexts
 	answers := config.GrafanaConfig{
-		FilterOverrides: &config.FilterOverrides{
-			IgnoreDashboardFilters: false,
-		},
 		DataSourceSettings: &config.DataSourceSettings{
 			Credentials: make(map[string]*config.GrafanaDataSource),
 		},
@@ -45,20 +42,16 @@ func NewContext(name string) {
 			},
 		},
 		{
+			Name:   "Folders",
+			Prompt: &survey.Input{Message: "List the folders you wish to manage (example: folder1,folder2)? (Blank for General)?"},
+		},
+		{
 			Name:   "DSUser",
 			Prompt: &survey.Input{Message: "Please enter your datasource default username"},
 		},
 		{
 			Name:   "DSPassword",
 			Prompt: &survey.Password{Message: "Please enter your datasource default password"},
-		},
-		{
-			Name: "Folders",
-			Prompt: &survey.Select{
-				Message: "Do you want to monitor a list of folders or monitor all folders?",
-				Options: []string{"list", "all folders"},
-				Default: "list",
-			},
 		},
 	}
 	err := survey.Ask(behaviorQuestions, &promptAnswers)
@@ -67,31 +60,12 @@ func NewContext(name string) {
 	}
 
 	//Set Watched Folders
-	if promptAnswers.Folders == "list" {
-		folderAnswer := struct {
-			Folders string
-		}{}
-		var folderListQuestion = []*survey.Question{
-			{
-				Name:   "Folder List",
-				Prompt: &survey.Input{Message: "List the folders you wish to manage (example: folder1,folder2)? (Blank for General)?"},
-			},
-		}
-		err := survey.Ask(folderListQuestion, &folderAnswer)
-		if err != nil {
-			log.Fatal("Failed to get valid answers to generate a new context")
-		}
-		foldersList := strings.Split(folderAnswer.Folders, ",")
-		if len(foldersList) > 0 && foldersList[0] != "" {
-			answers.MonitoredFolders = foldersList
-		} else {
-			answers.MonitoredFolders = []string{"General"}
-		}
+	foldersList := strings.Split(promptAnswers.Folders, ",")
+	if len(foldersList) > 0 && foldersList[0] != "" {
+		answers.MonitoredFolders = foldersList
 	} else {
-		answers.MonitoredFolders = []string{}
-		answers.FilterOverrides.IgnoreDashboardFilters = true
+		answers.MonitoredFolders = []string{"General"}
 	}
-
 	//Set Default Datasource
 	if promptAnswers.DSUser != "" && promptAnswers.DSPassword != "" {
 		ds := config.GrafanaDataSource{
