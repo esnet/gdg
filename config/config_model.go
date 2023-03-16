@@ -15,6 +15,7 @@ type ResourceType string
 
 const (
 	UserResource              = "users"
+	TeamResource              = "teams"
 	DashboardResource         = "dashboards"
 	DataSourceResource        = "datasources"
 	FolderResource            = "folders"
@@ -117,6 +118,10 @@ func (s *GrafanaConfig) GetUserOutput() string {
 
 func (s *GrafanaConfig) GetFolderOutput() string {
 	return path.Join(s.OutputPath, FolderResource)
+}
+
+func (s *GrafanaConfig) GetTeamOutput() string {
+	return path.Join(s.OutputPath, TeamResource)
 }
 
 // GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.

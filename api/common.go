@@ -3,10 +3,11 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/esnet/gdg/config"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/esnet/gdg/config"
 
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/gosimple/slug"
@@ -20,7 +21,7 @@ func GetSlug(title string) string {
 	return strings.ToLower(slug.Make(title))
 }
 
-//Update the slug in the board returned
+// Update the slug in the board returned
 func updateSlug(board sdk.FoundBoard) string {
 	elements := strings.Split(board.URI, "/")
 	if len(elements) > 1 {
@@ -30,7 +31,7 @@ func updateSlug(board sdk.FoundBoard) string {
 	return ""
 }
 
-//CreateDestinationPath Handle osMkdir Errors
+// CreateDestinationPath Handle osMkdir Errors
 func CreateDestinationPath(v string) {
 	err := os.MkdirAll(v, 0750)
 	if err != nil {
@@ -55,7 +56,7 @@ func buildResourcePath(folderName string, resourceType config.ResourceType) stri
 
 }
 
-//getResourcePath for a given resource type: config.ResourceType it'll return the configured location
+// getResourcePath for a given resource type: config.ResourceType it'll return the configured location
 func getResourcePath(resourceType config.ResourceType) string {
 	switch resourceType {
 	case config.DashboardResource:
@@ -68,13 +69,15 @@ func getResourcePath(resourceType config.ResourceType) string {
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetFolderOutput()
 	case config.UserResource:
 		return apphelpers.GetCtxDefaultGrafanaConfig().GetUserOutput()
+	case config.TeamResource:
+		return apphelpers.GetCtxDefaultGrafanaConfig().GetTeamOutput()
 	default:
 		return ""
 	}
 
 }
 
-//getFolderNameIDMap helper function to build a mapping for name to folderID
+// getFolderNameIDMap helper function to build a mapping for name to folderID
 func getFolderNameIDMap(client *sdk.Client, ctx context.Context) map[string]int {
 
 	folders, _ := client.GetAllFolders(ctx)
