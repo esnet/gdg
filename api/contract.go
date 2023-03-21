@@ -9,42 +9,74 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"sync"
+
+	gclient "github.com/grafana/grafana-api-golang-client"
 )
 
-type ApiService interface {
+type OrganizationsApi interface {
 	//Organizations
 	ListOrganizations() []sdk.Org
+}
+
+type DashboardsApi interface {
 	//Dashboard
 	ListDashboards(filter Filter) []sdk.FoundBoard
 	ImportDashboards(filter Filter) []string
 	ExportDashboards(filter Filter)
 	DeleteAllDashboards(filter Filter) []string
+}
+
+type DataSourcesApi interface {
 	//DataSources
 	ListDataSources(filter Filter) []sdk.Datasource
 	ImportDataSources(filter Filter) []string
 	ExportDataSources(filter Filter) []string
 	DeleteAllDataSources(filter Filter) []string
+}
+
+// AlertNotificationsApi
+// Deprecated: Marked as Deprecated as of Grafana 9.0, Moving to ContactPoints is recommended
+type AlertNotificationsApi interface {
 	//AlertNotifications
 	ListAlertNotifications() []sdk.AlertNotification
 	ImportAlertNotifications() []string
 	ExportAlertNotifications() []string
 	DeleteAllAlertNotifications() []string
-	//Login
-	Login() *sdk.Client
-	AdminLogin() *sdk.Client
+}
+
+type AuthenticationApi interface {
+	//Auth
+	Login()
+	AdminLogin()
+}
+
+type UsersApi interface {
 	//User
 	ListUsers() []sdk.User
 	ImportUsers() []string
 	ExportUsers() []sdk.User
 	PromoteUser(userLogin string) (*sdk.StatusMessage, error)
 	DeleteAllUsers() []string
-	//MetaData
-	GetServerInfo() map[string]interface{}
+}
+
+type FoldersApi interface {
 	//Folder
-	ListFolder(filter Filter) []sdk.Folder
+	ListFolder(filter Filter) []gclient.Folder
 	ImportFolder(filter Filter) []string
 	ExportFolder(filter Filter) []string
 	DeleteAllFolder(filter Filter) []string
+}
+
+type ApiService interface {
+	OrganizationsApi
+	DashboardsApi
+	DataSourcesApi
+	AlertNotificationsApi
+	UsersApi
+	FoldersApi
+
+	//MetaData
+	GetServerInfo() map[string]interface{}
 }
 
 var (
@@ -53,19 +85,21 @@ var (
 )
 
 type DashNGoImpl struct {
-	client      *sdk.Client
-	adminClient *sdk.Client
-	grafanaConf *config.GrafanaConfig
-	configRef   *viper.Viper
-	debug       bool
-	storage     Storage
+	legacyClient      *sdk.Client
+	legacyAdminClient *sdk.Client
+	client            *gclient.Client
+	adminClient       *gclient.Client
+	grafanaConf       *config.GrafanaConfig
+	configRef         *viper.Viper
+	debug             bool
+	storage           Storage
 }
 
-func (s *DashNGoImpl) GetAdminClient() *sdk.Client {
-	if s.adminClient == nil {
+func (s *DashNGoImpl) GetLegacyAdminClient() *sdk.Client {
+	if s.legacyAdminClient == nil {
 		log.Fatal("Requested API requires admin to have basic http auth (username/password) configured. Token access is not supported")
 	}
-	return s.adminClient
+	return s.legacyAdminClient
 }
 
 func NewDashNGoImpl() *DashNGoImpl {
@@ -79,8 +113,9 @@ func newInstance() *DashNGoImpl {
 	obj := &DashNGoImpl{}
 	obj.grafanaConf = apphelpers.GetCtxDefaultGrafanaConfig()
 	obj.configRef = config.Config().ViperConfig()
-	obj.client = obj.Login()
-	obj.adminClient = obj.AdminLogin()
+	obj.Login()
+	obj.AdminLogin()
+
 	obj.debug = config.Config().IsDebug()
 	configureStorage(obj)
 

@@ -24,7 +24,7 @@ import (
 // is blank, defaults to the configured Monitored folders
 func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	ctx := context.Background()
-	orgs, err := s.client.GetAllOrgs(ctx)
+	orgs, err := s.legacyClient.GetAllOrgs(ctx)
 	if err != nil {
 		log.Warnf("Error getting organizations: %s", err.Error())
 		orgs = make([]sdk.Org, 0)
@@ -38,7 +38,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 			}
 		}
 		if ID > 0 {
-			status, err := s.client.SwitchActualUserContext(ctx, ID)
+			status, err := s.legacyClient.SwitchActualUserContext(ctx, ID)
 			if err != nil {
 				log.Fatalf("%s for %v\n", err, status)
 			}
@@ -66,7 +66,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 
 	for {
 		searchParams = append(tagsParams, sdk.SearchType(sdk.SearchTypeDashboard), sdk.SearchLimit(limit), sdk.SearchPage(page))
-		pageBoardLinks, err := s.client.Search(ctx, searchParams...)
+		pageBoardLinks, err := s.legacyClient.Search(ctx, searchParams...)
 		if err != nil {
 			log.Fatal("Failed to retrieve dashboards", err)
 		}
@@ -121,7 +121,7 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 	boardLinks = s.ListDashboards(filter)
 	var boards []string = make([]string, 0)
 	for _, link := range boardLinks {
-		if rawBoard, meta, err = s.client.GetRawDashboardByUID(ctx, link.UID); err != nil {
+		if rawBoard, meta, err = s.legacyClient.GetRawDashboardByUID(ctx, link.UID); err != nil {
 			log.Errorf("%s for %s\n", err, link.URI)
 			continue
 		}
@@ -152,7 +152,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 	}
 	ctx := context.Background()
 
-	folderMap := getFolderNameIDMap(s.client, ctx)
+	folderMap := getFolderNameIDMap(s.legacyClient, ctx)
 
 	// Fallback on defaults
 	if filters == nil {
@@ -196,7 +196,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 				} else {
 					if filters.Validate(validateMap) {
 						folder := sdk.Folder{Title: folderName}
-						folder, err = s.client.CreateFolder(ctx, folder)
+						folder, err = s.legacyClient.CreateFolder(ctx, folder)
 						if err != nil {
 							panic(err)
 						}
@@ -218,7 +218,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 
 			rawTitle := fmt.Sprintf("%v", title)
 			slugName := GetSlug(rawTitle)
-			if _, err = s.client.DeleteDashboard(ctx, slugName); err != nil {
+			if _, err = s.legacyClient.DeleteDashboard(ctx, slugName); err != nil {
 				log.Println(err)
 				continue
 			}
@@ -231,7 +231,7 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 				Dashboard:  rawBoard,
 			}
 
-			_, err = s.client.SetRawDashboardWithParam(ctx, request)
+			_, err = s.legacyClient.SetRawDashboardWithParam(ctx, request)
 			if err != nil {
 				log.Printf("error on Exporting dashboard %s", rawTitle)
 				continue
@@ -249,7 +249,7 @@ func (s *DashNGoImpl) DeleteAllDashboards(filter Filter) []string {
 	items := s.ListDashboards(filter)
 	for _, item := range items {
 		if filter.Validate(map[string]string{FolderFilter: item.FolderTitle, DashFilter: item.Slug}) {
-			_, err := s.client.DeleteDashboardByUID(ctx, item.UID)
+			_, err := s.legacyClient.DeleteDashboardByUID(ctx, item.UID)
 			if err == nil {
 				dashboards = append(dashboards, item.Title)
 			}

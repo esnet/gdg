@@ -18,7 +18,7 @@ import (
 func (s *DashNGoImpl) ListDataSources(filter Filter) []sdk.Datasource {
 
 	ctx := context.Background()
-	ds, err := s.client.GetAllDatasources(ctx)
+	ds, err := s.legacyClient.GetAllDatasources(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +71,7 @@ func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
 	var ds []string = make([]string, 0)
 	items := s.ListDataSources(filter)
 	for _, item := range items {
-		msg, err := s.client.DeleteDatasource(ctx, item.ID)
+		msg, err := s.legacyClient.DeleteDatasource(ctx, item.ID)
 		if err != nil {
 			log.Warningf("Failed to delete datasource: %s, response: %s", item.Name, *msg.Message)
 			continue
@@ -147,13 +147,13 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 
 			for _, existingDS := range datasources {
 				if existingDS.Name == newDS.Name {
-					if status, err = s.client.DeleteDatasource(ctx, existingDS.ID); err != nil {
+					if status, err = s.legacyClient.DeleteDatasource(ctx, existingDS.ID); err != nil {
 						log.Errorf("error on deleting datasource %s with %s", newDS.Name, err)
 					}
 					break
 				}
 			}
-			if status, err = s.client.CreateDatasource(ctx, newDS); err != nil {
+			if status, err = s.legacyClient.CreateDatasource(ctx, newDS); err != nil {
 				log.Errorf("error on importing datasource %s with %s (%s)", newDS.Name, err, *status.Message)
 			} else {
 				exported = append(exported, fileLocation)

@@ -10,7 +10,7 @@ import (
 //ListOrganizations: List all dashboards
 func (s *DashNGoImpl) ListOrganizations() []sdk.Org {
 	ctx := context.Background()
-	orgs, err := s.GetAdminClient().GetAllOrgs(ctx)
+	orgs, err := s.GetLegacyAdminClient().GetAllOrgs(ctx)
 	if err != nil {
 		log.WithError(err).Errorf("Unable to retrieve Organization List")
 	}
@@ -23,13 +23,13 @@ func (s *DashNGoImpl) ListOrganizations() []sdk.Org {
 			}
 		}
 		if ID > 0 {
-			status, err := s.client.SwitchActualUserContext(ctx, ID)
+			status, err := s.legacyClient.SwitchActualUserContext(ctx, ID)
 			if err != nil {
 				log.Fatalf("%s for %v\n", err, status)
 			}
 		}
 	}
-	orgs, err = s.client.GetAllOrgs(ctx)
+	orgs, err = s.legacyClient.GetAllOrgs(ctx)
 	if err != nil {
 		panic(err)
 	}

@@ -20,7 +20,7 @@ func (s *DashNGoImpl) ImportUsers() []string {
 		userData []byte
 	)
 	ctx := context.Background()
-	users, err := s.GetAdminClient().GetAllUsers(ctx)
+	users, err := s.GetLegacyAdminClient().GetAllUsers(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -102,7 +102,7 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 				log.Info("Skipping admin user")
 				continue
 			}
-			_, err = s.GetAdminClient().CreateUser(ctx, newUser)
+			_, err = s.GetLegacyAdminClient().CreateUser(ctx, newUser)
 			if err != nil {
 				log.WithError(err).Errorf("Failed to create user for file: %s", fileLocation)
 				continue
@@ -117,7 +117,7 @@ func (s *DashNGoImpl) ExportUsers() []sdk.User {
 //ListUsers list all grafana users
 func (s *DashNGoImpl) ListUsers() []sdk.User {
 	ctx := context.Background()
-	users, err := s.GetAdminClient().GetAllUsers(ctx)
+	users, err := s.GetLegacyAdminClient().GetAllUsers(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -135,7 +135,7 @@ func (s *DashNGoImpl) DeleteAllUsers() []string {
 			continue
 
 		}
-		_, err := s.GetAdminClient().DeleteUser(ctx, user.ID)
+		_, err := s.GetLegacyAdminClient().DeleteUser(ctx, user.ID)
 		if err == nil {
 			deletedUsers = append(deletedUsers, user.Email)
 		}
@@ -166,7 +166,7 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (*sdk.StatusMessage, error) 
 	role := sdk.UserPermissions{
 		IsGrafanaAdmin: true,
 	}
-	msg, err := s.GetAdminClient().UpdateUserPermissions(ctx, role, user.ID)
+	msg, err := s.GetLegacyAdminClient().UpdateUserPermissions(ctx, role, user.ID)
 	if err != nil {
 		errorMsg := fmt.Sprintf("failed to promote user: '%s'", userLogin)
 		log.Error(errorMsg)

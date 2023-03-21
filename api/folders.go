@@ -1,20 +1,18 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
 	"github.com/esnet/gdg/config"
 	"github.com/gosimple/slug"
-	"github.com/grafana-tools/sdk"
+	gclient "github.com/grafana/grafana-api-golang-client"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func (s *DashNGoImpl) ListFolder(filter Filter) []sdk.Folder {
-	ctx := context.Background()
-	folders, err := s.client.GetAllFolders(ctx)
+func (s *DashNGoImpl) ListFolder(filter Filter) []gclient.Folder {
+	folders, err := s.client.Folders()
 	if err != nil {
 		log.WithError(err).Fatal("Failed to retrieve folders")
 	}
@@ -27,10 +25,9 @@ func (s *DashNGoImpl) ImportFolder(filter Filter) []string {
 		err       error
 		dataFiles []string
 	)
-	ctx := context.Background()
-	folders, err := s.client.GetAllFolders(ctx)
+	folders, err := s.client.Folders()
 	if err != nil {
-		log.WithError(err).Fatal("failed to create folders")
+		log.WithError(err).Fatal("failed to list current folders")
 	}
 	for _, folder := range folders {
 		if dsPacked, err = json.MarshalIndent(folder, "", "	"); err != nil {
@@ -53,7 +50,6 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 		result    []string
 		rawFolder []byte
 	)
-	ctx := context.Background()
 	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.FolderResource), false)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to read folders imports")
@@ -68,7 +64,7 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 				continue
 			}
 		}
-		var newFolder sdk.Folder
+		var newFolder gclient.Folder
 		if err = json.Unmarshal(rawFolder, &newFolder); err != nil {
 			log.WithError(err).Warn("failed to unmarshall folder")
 			continue
@@ -84,7 +80,7 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 		if skipCreate {
 			continue
 		}
-		f, err := s.client.CreateFolder(ctx, newFolder)
+		f, err := s.client.NewFolder(newFolder.Title, newFolder.UID)
 		if err != nil {
 			log.Errorf("failed to create folder %s", newFolder.Title)
 			continue
@@ -98,11 +94,10 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 
 func (s *DashNGoImpl) DeleteAllFolder(filter Filter) []string {
 	var result []string
-	ctx := context.Background()
 	folders := s.ListFolder(filter)
 	for _, folder := range folders {
-		success, err := s.client.DeleteFolderByUID(ctx, folder.UID)
-		if err == nil && success {
+		err := s.client.DeleteFolder(folder.UID)
+		if err == nil {
 			result = append(result, folder.Title)
 		}
 	}

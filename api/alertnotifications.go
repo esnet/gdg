@@ -16,7 +16,7 @@ import (
 
 func (s *DashNGoImpl) ListAlertNotifications() []sdk.AlertNotification {
 	ctx := context.Background()
-	ans, err := s.client.GetAllAlertNotifications(ctx)
+	ans, err := s.legacyClient.GetAllAlertNotifications(ctx)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -54,7 +54,7 @@ func (s *DashNGoImpl) DeleteAllAlertNotifications() []string {
 	var an []string = make([]string, 0)
 	items := s.ListAlertNotifications()
 	for _, item := range items {
-		err := s.client.DeleteAlertNotificationID(ctx, uint(item.ID))
+		err := s.legacyClient.DeleteAlertNotificationID(ctx, uint(item.ID))
 		if err != nil {
 			log.Error("Failed to delete notification")
 			continue
@@ -99,14 +99,14 @@ func (s *DashNGoImpl) ExportAlertNotifications() []string {
 
 			for _, existing := range alertnotifications {
 				if existing.Name == new.Name {
-					if err = s.client.DeleteAlertNotificationID(ctx, uint(existing.ID)); err != nil {
+					if err = s.legacyClient.DeleteAlertNotificationID(ctx, uint(existing.ID)); err != nil {
 						log.Errorf("error on deleting datasource %s with %s", new.Name, err)
 					}
 					break
 				}
 			}
 
-			if _, err = s.client.CreateAlertNotification(ctx, new); err != nil {
+			if _, err = s.legacyClient.CreateAlertNotification(ctx, new); err != nil {
 				log.Errorf("error on importing datasource %s with %s", new.Name, err)
 				continue
 			}
