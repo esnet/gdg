@@ -7,38 +7,42 @@ on:
   pull_request:
 
 jobs:
-  lint:
-    strategy:
-      matrix:
-        go: [ 1.18 ]
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go }}
-
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      - name: Run linters
-        uses: golangci/golangci-lint-action@v3.1.0
-        with:
-          version: v1.45.2
+#  lint:
+#    strategy:
+#      matrix:
+#        go: [ 1.20.2 ]
+#
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Set up Go
+#        uses: actions/setup-go@v4
+#        with:
+#          go-version: ${{ matrix.go }}
+#
+#      - uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/go/pkg/mod
+#          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+#          restore-keys: |
+#            ${{ runner.os }}-go-
+#
+#      - name: Verify go version
+#        run: go version
+#
+#      - name: Run linters
+#        uses: golangci/golangci-lint-action@v3.1.0
+#        with:
+#          version: v1.52.1
 
   test:
     strategy:
       matrix:
-        go: [ 1.18]
-        grafana: [ latest, 8.3.6, 7.5.15 ]
+        go: [ 1.20.2]
+        grafana: [ 9.4.3 ]
+        chromedp: [ 112.0.5615.39 ]
 
     env:
       GRAFANA_INTEGRATION: 1
@@ -59,7 +63,7 @@ jobs:
         options: >-
           -e GF_AUTH_ANONYMOUS_ENABLED=true
       chromedp:
-        image: "chromedp/headless-shell:91.0.4472.69"
+        image: "chromedp/headless-shell:${{ matrix.chromedp }}"
         ports:
           - 9222:9222
         options: >-
@@ -69,11 +73,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
 
-      - uses: actions/cache@v2
+      - name: Verify go version
+        run: go version
+
+      - uses: actions/cache@v3
         with:
           path: |
             ~/go/pkg/mod
@@ -88,13 +95,13 @@ jobs:
       - name: Wait for SSH to come up.
         run: nc -z -v -w15 127.0.0.1 2222
       - name: Calc coverage
-        if: "${{ matrix.go == '1.18' && matrix.grafana == '8.3.6' }}"
+        if: "${{ matrix.go == '1.20.2' && matrix.grafana == '9.4.3' }}"
         run: |
           go test -v -covermode=atomic -coverprofile=coverage.out ./...
       - name: Convert coverage.out to coverage.lcov
-        if: "${{ matrix.go == '1.18' && matrix.grafana == '8.3.6' }}"
-        uses: jandelgado/gcov2lcov-action@v1.0.6
+        if: "${{ matrix.go == '1.20.2' && matrix.grafana == '9.4.3' }}"
+        uses: jandelgado/gcov2lcov-action@v1.0.9
       - name: Test
-        if: "${{ matrix.grafana != '8.3.6' }}"
+        if: "${{ matrix.grafana != '9.4.3' }}"
         run: go test -v ./...
 

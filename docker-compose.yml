@@ -9,6 +9,6 @@ services:
             - MINIO_ROOT_USER=test
             - MINIO_ROOT_PASSWORD=secretsss
     grafana:
-        image: grafana/grafana:8.3.6-ubuntu
+        image: grafana/grafana:9.4.3-ubuntu
         ports:
             - 3000:3000

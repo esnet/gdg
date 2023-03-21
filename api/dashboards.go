@@ -1,44 +1,61 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/esnet/gdg/config"
+	gapi "github.com/esnet/grafana-swagger-api-golang"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/dashboards"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folders"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/orgs"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/search"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/signed_in_user"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"golang.org/x/exp/slices"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/esnet/gdg/config"
 
 	"github.com/esnet/gdg/apphelpers"
 
 	"github.com/tidwall/pretty"
 
-	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/thoas/go-funk"
-	"github.com/yalp/jsonpath"
 )
+
+// DashboardsApi Contract definition
+type DashboardsApi interface {
+	ListDashboards(filter Filter) []*models.Hit
+	ImportDashboards(filter Filter) []string
+	ExportDashboards(filter Filter)
+	DeleteAllDashboards(filter Filter) []string
+}
 
 // ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
-func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
-	ctx := context.Background()
-	orgs, err := s.client.GetAllOrgs(ctx)
+func (s *DashNGoImpl) ListDashboards(filters Filter) []*models.Hit {
+
+	var orgsPayload []*models.OrgDTO
+	orgList, err := s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getAdminAuth())
 	if err != nil {
 		log.Warnf("Error getting organizations: %s", err.Error())
-		orgs = make([]sdk.Org, 0)
+		orgsPayload = make([]*models.OrgDTO, 0)
+	} else {
+		orgsPayload = orgList.GetPayload()
 	}
 	if s.grafanaConf.Organization != "" {
-		var ID uint
-		for _, org := range orgs {
+		var ID int64
+		for _, org := range orgsPayload {
 			log.Errorf("%d %s\n", org.ID, org.Name)
 			if org.Name == s.grafanaConf.Organization {
 				ID = org.ID
 			}
 		}
 		if ID > 0 {
-			status, err := s.client.SwitchActualUserContext(ctx, ID)
+			params := signed_in_user.NewUserSetUsingOrgParams()
+			params.OrgID = ID
+			status, err := s.client.SignedInUser.UserSetUsingOrg(params, s.getAuth())
 			if err != nil {
 				log.Fatalf("%s for %v\n", err, status)
 			}
@@ -50,28 +67,30 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 		filters = &DashboardFilter{}
 	}
 
-	var boardsList []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
-	var boardLinks []sdk.FoundBoard = make([]sdk.FoundBoard, 0)
+	var boardsList = make([]*models.Hit, 0)
+	var boardLinks = make([]*models.Hit, 0)
 
 	var page uint = 1
 	var limit uint = 5000 // Upper bound of Grafana API call
 
-	var tagsParams []sdk.SearchParam = make([]sdk.SearchParam, 0)
+	var tagsParams = make([]string, 0)
 	if !apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
-		for _, t := range filters.GetTags() {
-			tagsParams = append(tagsParams, sdk.SearchTag(t))
-		}
+		tagsParams = append(tagsParams, filters.GetTags()...)
 	}
-	var searchParams []sdk.SearchParam
 
 	for {
-		searchParams = append(tagsParams, sdk.SearchType(sdk.SearchTypeDashboard), sdk.SearchLimit(limit), sdk.SearchPage(page))
-		pageBoardLinks, err := s.client.Search(ctx, searchParams...)
+		searchParams := search.NewSearchParams()
+		searchParams.Tag = tagsParams
+		searchParams.Limit = gapi.ToPtr(int64(limit))
+		searchParams.Page = gapi.ToPtr(int64(page))
+		searchParams.Type = gapi.ToPtr("dash-db")
+
+		pageBoardLinks, err := s.client.Search.Search(searchParams, s.getAuth())
 		if err != nil {
 			log.Fatal("Failed to retrieve dashboards", err)
 		}
-		boardLinks = append(boardLinks, pageBoardLinks...)
-		if len(pageBoardLinks) < int(limit) {
+		boardLinks = append(boardLinks, pageBoardLinks.GetPayload()...)
+		if len(pageBoardLinks.GetPayload()) < int(limit) {
 			break
 		}
 		page += 1
@@ -93,7 +112,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 		if !validFolder {
 			continue
 		}
-		link.Slug = updateSlug(link)
+		link.Slug = updateSlug(link.URI)
 		validUid = filters.GetFilter("DashFilter") == "" || link.Slug == filters.GetFilter("DashFilter")
 		if link.FolderID == 0 {
 			link.FolderTitle = DefaultFolderName
@@ -111,24 +130,32 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 // ImportDashboards saves all dashboards matching query to configured location
 func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 	var (
-		boardLinks []sdk.FoundBoard
+		boardLinks []*models.Hit
 		rawBoard   []byte
-		meta       sdk.BoardProperties
 		err        error
+		metaData   *dashboards.GetDashboardByUIDOK
 	)
-	ctx := context.Background()
 
 	boardLinks = s.ListDashboards(filter)
 	var boards []string = make([]string, 0)
 	for _, link := range boardLinks {
-		if rawBoard, meta, err = s.client.GetRawDashboardByUID(ctx, link.UID); err != nil {
+		dp := dashboards.NewGetDashboardByUIDParams()
+		dp.UID = link.UID
+
+		if metaData, err = s.client.Dashboards.GetDashboardByUID(dp, s.getAuth()); err != nil {
 			log.Errorf("%s for %s\n", err, link.URI)
 			continue
 		}
 
-		fileName := fmt.Sprintf("%s/%s.json", buildResourceFolder(link.FolderTitle, config.DashboardResource), meta.Slug)
+		rawBoard, err = json.Marshal(metaData.Payload.Dashboard)
+		if err != nil {
+			log.Errorf("unable to serialize dashboard %s", dp.UID)
+			continue
+		}
+
+		fileName := fmt.Sprintf("%s/%s.json", buildResourceFolder(link.FolderTitle, config.DashboardResource), metaData.Payload.Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard), os.FileMode(int(0666))); err != nil {
-			log.Errorf("%s for %s\n", err, meta.Slug)
+			log.Errorf("%s for %s\n", err, metaData.Payload.Meta.Slug)
 		} else {
 			boards = append(boards, fileName)
 		}
@@ -137,22 +164,38 @@ func (s *DashNGoImpl) ImportDashboards(filter Filter) []string {
 	return boards
 }
 
+// createFolder Creates a new folder with the given name.
+func (s *DashNGoImpl) createdFolder(folderName string) (int64, error) {
+	createdFolderRequest := folders.NewCreateFolderParams()
+	createdFolderRequest.Body = &models.CreateFolderCommand{
+		Title: folderName,
+	}
+	folder, err := s.client.Folders.CreateFolder(createdFolderRequest, s.getAuth())
+	if err != nil {
+		return 0, err
+	}
+	return folder.GetPayload().ID, nil
+
+}
+
 // ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folder doesn't exist, it'll be created.
 func (s *DashNGoImpl) ExportDashboards(filters Filter) {
+
 	var (
 		rawBoard   []byte
 		folderName string = ""
-		folderId   int
+		folderId   int64
 	)
-	path := getResourcePath(config.DashboardResource)
+	path := apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DashboardResource)
 	filesInDir, err := s.storage.FindAllFiles(path, true)
 	if err != nil {
 		log.WithError(err).Fatal("unable to find any files to export from storage engine")
 	}
-	ctx := context.Background()
+	//Delete all dashboards that match prior to import
+	s.DeleteAllDashboards(filters)
 
-	folderMap := getFolderNameIDMap(s.client, ctx)
+	folderMap := getFolderNameIDMap(s.ListFolder(nil))
 
 	// Fallback on defaults
 	if filters == nil {
@@ -162,99 +205,93 @@ func (s *DashNGoImpl) ExportDashboards(filters Filter) {
 	for _, file := range filesInDir {
 		baseFile := filepath.Base(file)
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
-		if strings.HasSuffix(file, ".json") {
-			if rawBoard, err = s.storage.ReadFile(file); err != nil {
-				log.Println(err)
-				continue
-			}
-			var board = make(map[string]interface{})
-			if err = json.Unmarshal(rawBoard, &board); err != nil {
-				log.Println(err)
-				log.Printf("Failed to unmarshall file: %s", file)
-				continue
-			}
+		validateMap := map[string]string{FolderFilter: folderName, DashFilter: baseFile}
+		//If folder OR slug is filtered, then skip if it doesn't match
+		if !filters.Validate(validateMap) {
+			continue
+		}
+		if !strings.HasSuffix(file, ".json") {
+			log.Warnf("Only json files are supported, skipping %s", file)
+			continue
+		}
 
-			elements := strings.Split(file, string(os.PathSeparator))
-			if len(elements) >= 2 {
-				folderName = elements[len(elements)-2]
-			}
-			if folderName == "" || folderName == DefaultFolderName {
-				folderId = sdk.DefaultFolderId
-				folderName = DefaultFolderName
-			}
-			if !funk.Contains(validFolders, folderName) && !apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
-				log.Debugf("Skipping file %s, doesn't match any valid folders", file)
-				continue
-			}
-			validateMap := map[string]string{FolderFilter: folderName, DashFilter: baseFile}
+		if rawBoard, err = s.storage.ReadFile(file); err != nil {
+			log.Println(err)
+			continue
+		}
+		var board = make(map[string]interface{})
+		if err = json.Unmarshal(rawBoard, &board); err != nil {
+			log.WithError(err).Printf("Failed to unmarshall file: %s", file)
+			continue
+		}
 
-			if folderName == DefaultFolderName {
-				folderId = sdk.DefaultFolderId
+		elements := strings.Split(file, string(os.PathSeparator))
+		if len(elements) >= 2 {
+			folderName = elements[len(elements)-2]
+		}
+		if folderName == "" || folderName == DefaultFolderName {
+			folderId = DefaultFolderId
+			folderName = DefaultFolderName
+		}
+		if !slices.Contains(validFolders, folderName) && !apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+			log.Debugf("Skipping file %s, doesn't match any valid folders", file)
+			continue
+		}
+
+		if folderName == DefaultFolderName {
+			folderId = DefaultFolderId
+		} else {
+			if val, ok := folderMap[folderName]; ok {
+				folderId = val
 			} else {
-				if val, ok := folderMap[folderName]; ok {
-					folderId = val
-				} else {
-					if filters.Validate(validateMap) {
-						folder := sdk.Folder{Title: folderName}
-						folder, err = s.client.CreateFolder(ctx, folder)
-						if err != nil {
-							panic(err)
-						}
-						folderMap[folderName] = folder.ID
-						folderId = folder.ID
+				if filters.Validate(validateMap) {
+					id, folderErr := s.createdFolder(folderName)
+					if folderErr != nil {
+						log.Panic("Unable to create required folder")
+					} else {
+						folderMap[folderName] = id
+						folderId = id
 					}
 				}
 			}
-
-			//If folder OR slug is filtered, then skip if it doesn't match
-			if !filters.Validate(validateMap) {
-				continue
-			}
-
-			title, err := jsonpath.Read(board, "$.title")
-			if err != nil {
-				log.Warn("Could not get dashboard title")
-			}
-
-			rawTitle := fmt.Sprintf("%v", title)
-			slugName := GetSlug(rawTitle)
-			if _, err = s.client.DeleteDashboard(ctx, slugName); err != nil {
-				log.Println(err)
-				continue
-			}
-			defaultParams := sdk.SetDashboardParams{
-				Overwrite: true,
-				FolderID:  folderId,
-			}
-			request := sdk.RawBoardRequest{
-				Parameters: defaultParams,
-				Dashboard:  rawBoard,
-			}
-
-			_, err = s.client.SetRawDashboardWithParam(ctx, request)
-			if err != nil {
-				log.Printf("error on Exporting dashboard %s", rawTitle)
-				continue
-			}
 		}
+
+		data := make(map[string]interface{}, 0)
+
+		err = json.Unmarshal(rawBoard, &data)
+		//zero out ID.  Can't create a new dashboard if an ID already exists.
+		data["id"] = nil
+		importDashReq := dashboards.NewImportDashboardParams()
+		importDashReq.Body = &models.ImportDashboardRequest{
+			FolderID:  folderId,
+			Overwrite: true,
+			Dashboard: data,
+		}
+
+		if _, exportError := s.client.Dashboards.ImportDashboard(importDashReq, s.getAuth()); exportError != nil {
+			log.WithError(err).Printf("error on Exporting dashboard %s", file)
+			continue
+		}
+
 	}
 }
 
 // DeleteAllDashboards clears all current dashboards being monitored.  Any folder not white listed
 // will not be affected
 func (s *DashNGoImpl) DeleteAllDashboards(filter Filter) []string {
-	ctx := context.Background()
-	var dashboards []string = make([]string, 0)
+	var dashboardListing = make([]string, 0)
 
 	items := s.ListDashboards(filter)
 	for _, item := range items {
 		if filter.Validate(map[string]string{FolderFilter: item.FolderTitle, DashFilter: item.Slug}) {
-			_, err := s.client.DeleteDashboardByUID(ctx, item.UID)
+			dp := dashboards.NewDeleteDashboardByUIDParams()
+			dp.UID = item.UID
+			_, err := s.client.Dashboards.DeleteDashboardByUID(dp, s.getAuth())
 			if err == nil {
-				dashboards = append(dashboards, item.Title)
+				dashboardListing = append(dashboardListing, item.Title)
 			}
 		}
 	}
-	return dashboards
+	return dashboardListing
 
 }

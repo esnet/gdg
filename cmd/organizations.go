@@ -21,13 +21,13 @@ var listOrgCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Listing organizations for context: '%s'", apphelpers.GetContext())
-		tableObj.AppendHeader(table.Row{"id", "org", "address1", "address2", "city"})
-		orgs := client.ListOrganizations()
-		if len(orgs) == 0 {
+		tableObj.AppendHeader(table.Row{"id", "org"})
+		listOrganizations := client.ListOrganizations()
+		if len(listOrganizations) == 0 {
 			log.Info("No organizations found")
 		} else {
-			for _, org := range orgs {
-				tableObj.AppendRow(table.Row{org.ID, org.Name, org.Address.Address1, org.Address.Address2, org.Address.City})
+			for _, org := range listOrganizations {
+				tableObj.AppendRow(table.Row{org.ID, org.Name})
 			}
 			tableObj.Render()
 		}

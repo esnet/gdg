@@ -1,34 +1,44 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
+	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/legacy_alerts_notification_channels"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"os"
 	"strings"
 
 	"github.com/gosimple/slug"
-	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 )
 
+// AlertNotificationsApi Contract definition
+// Deprecated: Marked as Deprecated as of Grafana 9.0, Moving to ContactPoints is recommended
+type AlertNotificationsApi interface {
+	//AlertNotifications
+	ListAlertNotifications() []*models.AlertNotification
+	ImportAlertNotifications() []string
+	ExportAlertNotifications() []string
+	DeleteAllAlertNotifications() []string
+}
+
 //ListAlertNotifications: list all currently configured notification channels
 
-func (s *DashNGoImpl) ListAlertNotifications() []sdk.AlertNotification {
-	ctx := context.Background()
-	ans, err := s.client.GetAllAlertNotifications(ctx)
+func (s *DashNGoImpl) ListAlertNotifications() []*models.AlertNotification {
+	params := legacy_alerts_notification_channels.NewGetAlertNotificationChannelsParams()
+	channels, err := s.client.LegacyAlertsNotificationChannels.GetAlertNotificationChannels(params, s.getAuth())
 	if err != nil {
 		log.Panic(err)
 	}
-	return ans
+	return channels.Payload
 }
 
-//ImportAlertNotifications: will read in all the configured alert notification channels.
+// ImportAlertNotifications: will read in all the configured alert notification channels.
 func (s *DashNGoImpl) ImportAlertNotifications() []string {
 	var (
-		alertnotifications []sdk.AlertNotification
+		alertnotifications []*models.AlertNotification
 		anPacked           []byte
-		meta               sdk.BoardProperties
 		err                error
 		dataFiles          []string
 	)
@@ -40,7 +50,7 @@ func (s *DashNGoImpl) ImportAlertNotifications() []string {
 		}
 		anPath := buildResourcePath(slug.Make(an.Name), config.AlertNotificationResource)
 		if err = s.storage.WriteFile(anPath, anPacked, os.FileMode(int(0666))); err != nil {
-			log.Errorf("error writing %s to file with %s", meta.Slug, err)
+			log.Errorf("error writing %s to file with %s", slug.Make(an.Name), err)
 		} else {
 			dataFiles = append(dataFiles, anPath)
 		}
@@ -48,13 +58,14 @@ func (s *DashNGoImpl) ImportAlertNotifications() []string {
 	return dataFiles
 }
 
-//Removes all current alert notification channels
+// Removes all current alert notification channels
 func (s *DashNGoImpl) DeleteAllAlertNotifications() []string {
-	ctx := context.Background()
 	var an []string = make([]string, 0)
 	items := s.ListAlertNotifications()
 	for _, item := range items {
-		err := s.client.DeleteAlertNotificationID(ctx, uint(item.ID))
+		params := legacy_alerts_notification_channels.NewDeleteAlertNotificationChannelParams()
+		params.NotificationChannelID = item.ID
+		_, err := s.client.LegacyAlertsNotificationChannels.DeleteAlertNotificationChannel(params, s.getAuth())
 		if err != nil {
 			log.Error("Failed to delete notification")
 			continue
@@ -64,19 +75,18 @@ func (s *DashNGoImpl) DeleteAllAlertNotifications() []string {
 	return an
 }
 
-//ExportAlertNotifications: exports all alert notification channels to grafana.
-//NOTE: credentials will be missing and need to be set manually after export
-//TODO implement configuring sensitive fields for different kinds of alert notification channels
+// ExportAlertNotifications: exports all alert notification channels to grafana.
+// NOTE: credentials will be missing and need to be set manually after export
+// TODO implement configuring sensitive fields for different kinds of alert notification channels
 func (s *DashNGoImpl) ExportAlertNotifications() []string {
 	var (
-		alertnotifications []sdk.AlertNotification
+		alertnotifications []*models.AlertNotification
 		exported           []string
 		filesInDir         []string
 		err                error
 	)
 
-	ctx := context.Background()
-	dirPath := getResourcePath(config.AlertNotificationResource)
+	dirPath := apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.AlertNotificationResource)
 	filesInDir, err = s.storage.FindAllFiles(dirPath, true)
 	if err != nil {
 		log.WithError(err).Fatalf("Unable to find Alert data in Storage System %s", s.storage.Name())
@@ -91,23 +101,27 @@ func (s *DashNGoImpl) ExportAlertNotifications() []string {
 				continue
 			}
 
-			var new sdk.AlertNotification
-			if err = json.Unmarshal(raw, &new); err != nil {
+			var newAlertNotification models.CreateAlertNotificationCommand
+			if err = json.Unmarshal(raw, &newAlertNotification); err != nil {
 				log.Errorf("error unmarshalling json with %s", err)
 				continue
 			}
 
 			for _, existing := range alertnotifications {
-				if existing.Name == new.Name {
-					if err = s.client.DeleteAlertNotificationID(ctx, uint(existing.ID)); err != nil {
-						log.Errorf("error on deleting datasource %s with %s", new.Name, err)
+				if existing.Name == newAlertNotification.Name {
+					dp := legacy_alerts_notification_channels.NewDeleteAlertNotificationChannelByUIDParams()
+					dp.NotificationChannelUID = existing.UID
+					if _, err := s.client.LegacyAlertsNotificationChannels.DeleteAlertNotificationChannelByUID(dp, s.getAuth()); err != nil {
+						log.Errorf("error on deleting datasource %s with %s", newAlertNotification.Name, err)
 					}
 					break
 				}
 			}
 
-			if _, err = s.client.CreateAlertNotification(ctx, new); err != nil {
-				log.Errorf("error on importing datasource %s with %s", new.Name, err)
+			params := legacy_alerts_notification_channels.NewCreateAlertNotificationChannelParams()
+			params.Body = &newAlertNotification
+			if _, err = s.client.LegacyAlertsNotificationChannels.CreateAlertNotificationChannel(params, s.getAuth()); err != nil {
+				log.Errorf("error on importing datasource %s with %s", newAlertNotification.Name, err)
 				continue
 			}
 			exported = append(exported, file)

@@ -86,11 +86,11 @@ var foldersListCmd = &cobra.Command{
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "uid", "title"})
-		orgs := client.ListFolder(nil)
-		if len(orgs) == 0 {
+		folders := client.ListFolder(nil)
+		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
-			for _, folder := range orgs {
+			for _, folder := range folders {
 				tableObj.AppendRow(table.Row{folder.ID, folder.UID, folder.Title})
 			}
 			tableObj.Render()

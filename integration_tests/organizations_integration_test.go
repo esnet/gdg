@@ -14,7 +14,7 @@ func TestOrgs(t *testing.T) {
 	orgs := apiClient.ListOrganizations()
 	assert.Equal(t, len(orgs), 1)
 	mainOrg := orgs[0]
-	assert.Equal(t, mainOrg.ID, uint(1))
+	assert.Equal(t, mainOrg.ID, int64(1))
 	assert.Equal(t, mainOrg.Name, "Main Org.")
 
 }

@@ -21,7 +21,8 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	apiClient.ExportDataSources(dsFilter)
 	dsList := apiClient.ListDataSources(dsFilter)
 	assert.True(t, len(dsList) > 0)
-	SetupCloudFunction(apiClient, []string{"mem", "testing"})
+	SetupCloudFunction(apiClient, []string{"minio", "testing"})
+	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
 
 	log.Info("Importing DataSources")
 	dsStringList := apiClient.ImportDataSources(dsFilter) //Saving to S3
@@ -54,9 +55,8 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	boards := apiClient.ListDashboards(dashFilter)
 	assert.True(t, len(boards) > 0)
 
-	SetupCloudFunction(apiClient, []string{"mem", "testing"})
-	//SetupCloudFunction(apiClient, []string{"minio", "testing"})
-	//SetupCloudFunction(apiClient, []string{"s3", "samir-testing"})
+	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
+	SetupCloudFunction(apiClient, []string{"minio", "testing"})
 
 	//At this point all operations are reading/writing from Minio
 	log.Info("Importing Dashboards")

@@ -1,16 +1,5 @@
 {
-	"id": 62,
-	"uid": "CWSuYt_nk",
+	"id": 2,
 	"title": "Other",
-	"url": "",
-	"hasAcl": false,
-	"canSave": false,
-	"canEdit": false,
-	"canAdmin": false,
-	"createdBy": "",
-	"created": "",
-	"updatedBy": "",
-	"updated": "",
-	"version": 0,
-	"overwrite": false
+	"uid": "CWSuYt_nk"
 }

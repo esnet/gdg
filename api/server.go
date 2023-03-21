@@ -1,15 +1,12 @@
 package api
 
 import (
-	"context"
-
 	log "github.com/sirupsen/logrus"
 )
 
-//GetServerInfo returns basic Grafana Server info
+// GetServerInfo returns basic Grafana Server info
 func (s *DashNGoImpl) GetServerInfo() map[string]interface{} {
-	ctx := context.Background()
-	t, err := s.client.GetHealth(ctx)
+	t, err := s.extended.Health()
 	if err != nil {
 		log.Panic("Unable to get server health info")
 	}

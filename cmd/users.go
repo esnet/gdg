@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/esnet/gdg/api"
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/jedib0t/go-pretty/table"
 	log "github.com/sirupsen/logrus"
@@ -13,7 +14,8 @@ var userCmd = &cobra.Command{
 	Use:     "users",
 	Aliases: []string{"user"},
 	Short:   "Manage users",
-	Long:    `Manage users.`,
+	Long: `Provides some utility to manage grafana users from the CLI.  Please note, as the credentials cannot be imported, 
+              the export with generate a default password for any user not already present`,
 }
 
 var promoteUser = &cobra.Command{
@@ -30,7 +32,7 @@ var promoteUser = &cobra.Command{
 		if err != nil {
 			log.Error(err.Error())
 		} else {
-			log.Info(*msg.Message)
+			log.Info(msg)
 			log.Info("Please note user is a grafana admin, not necessarily an Org admin.  You may need to promote yourself manually per org")
 		}
 
@@ -64,8 +66,8 @@ var exportUserCmd = &cobra.Command{
 
 		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
 		savedFiles := client.ExportUsers()
-		log.Infof("Importing Users for context: '%s'", apphelpers.GetContext())
-		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "grafanaAdmin", "disabled", "authLabels"})
+		log.Infof("Exporting Users for context: '%s'", apphelpers.GetContext())
+		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "grafanaAdmin", "disabled", "default Password", "authLabels"})
 		if len(savedFiles) == 0 {
 			log.Info("No users found")
 		} else {
@@ -75,7 +77,7 @@ var exportUserCmd = &cobra.Command{
 					labels = strings.Join(user.AuthLabels, ", ")
 
 				}
-				tableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsAdmin, user.IsAdmin, user.IsDisabled, labels})
+				tableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsGrafanaAdmin, user.IsDisabled, api.DefaultUserPassword(user.Login), labels})
 			}
 			tableObj.Render()
 		}
@@ -109,8 +111,9 @@ var listUserCmd = &cobra.Command{
 	Long:  `list users`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		log.Info("all credentials for imported users defaults to the sha256 of login.")
 		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
-		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "grafanaAdmin", "disabled", "authLabels"})
+		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "disabled", "default Password", "authLabels"})
 		users := client.ListUsers()
 		if len(users) == 0 {
 			log.Info("No users found")
@@ -121,7 +124,7 @@ var listUserCmd = &cobra.Command{
 					labels = strings.Join(user.AuthLabels, ", ")
 
 				}
-				tableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsAdmin, user.IsAdmin, user.IsDisabled, labels})
+				tableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsAdmin, user.IsDisabled, api.DefaultUserPassword(user.Login), labels})
 			}
 			tableObj.Render()
 		}

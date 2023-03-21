@@ -94,14 +94,14 @@ func (s *DashboardFilter) GetTags() []string {
 	return strings.Split(tagsFilter, ",")
 }
 
-func (s DashboardFilter) validateDashboard(dashUid string) bool {
+func (s *DashboardFilter) validateDashboard(dashUid string) bool {
 	if s.GetFilter(DashFilter) == "" {
 		return true
 	}
 	return dashUid == s.GetFilter(DashFilter)
 }
 
-func (s DashboardFilter) Validate(items map[string]string) bool {
+func (s *DashboardFilter) Validate(items map[string]string) bool {
 	var folderCheck, tagsCheck, dashboardCheck bool
 	//Check folder
 	if folderFilter, ok := items[FolderFilter]; ok {
@@ -126,14 +126,14 @@ func (s DashboardFilter) Validate(items map[string]string) bool {
 	return folderCheck && tagsCheck && dashboardCheck
 }
 
-func (s DashboardFilter) validateFolder(folder string) bool {
+func (s *DashboardFilter) validateFolder(folder string) bool {
 	if s.GetFilter(FolderFilter) == "" {
 		return true
 	}
 	return folder == s.GetFilter(FolderFilter)
 }
 
-func (s DashboardFilter) validateTags(tags string) bool {
+func (s *DashboardFilter) validateTags(tags string) bool {
 	if s.GetFilter(TagsFilter) == "" {
 		return true
 	}

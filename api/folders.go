@@ -1,24 +1,33 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
+	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folders"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
-	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func (s *DashNGoImpl) ListFolder(filter Filter) []sdk.Folder {
-	ctx := context.Background()
-	folders, err := s.client.GetAllFolders(ctx)
+// FoldersApi Contract definition
+type FoldersApi interface {
+	ListFolder(filter Filter) []*models.FolderSearchHit
+	ImportFolder(filter Filter) []string
+	ExportFolder(filter Filter) []string
+	DeleteAllFolder(filter Filter) []string
+}
+
+func (s *DashNGoImpl) ListFolder(filter Filter) []*models.FolderSearchHit {
+	folderListing, err := s.client.Folders.GetFolders(folders.NewGetFoldersParams(), s.getAuth())
 	if err != nil {
-		log.WithError(err).Fatal("Failed to retrieve folders")
+		log.Fatal("unable to retrieve folder list.")
 	}
-	return folders
+
+	return folderListing.Payload
 
 }
 func (s *DashNGoImpl) ImportFolder(filter Filter) []string {
@@ -27,11 +36,7 @@ func (s *DashNGoImpl) ImportFolder(filter Filter) []string {
 		err       error
 		dataFiles []string
 	)
-	ctx := context.Background()
-	folders, err := s.client.GetAllFolders(ctx)
-	if err != nil {
-		log.WithError(err).Fatal("failed to create folders")
-	}
+	folders := s.ListFolder(filter)
 	for _, folder := range folders {
 		if dsPacked, err = json.MarshalIndent(folder, "", "	"); err != nil {
 			log.Errorf("%s for %s\n", err, folder.Title)
@@ -53,28 +58,27 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 		result    []string
 		rawFolder []byte
 	)
-	ctx := context.Background()
-	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.FolderResource), false)
+	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.FolderResource), false)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to read folders imports")
 	}
-	folders := s.ListFolder(filter)
+	folderItems := s.ListFolder(filter)
 
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(getResourcePath(config.FolderResource), file)
+		fileLocation := filepath.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.FolderResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file %s", fileLocation)
 				continue
 			}
 		}
-		var newFolder sdk.Folder
+		var newFolder models.CreateFolderCommand
 		if err = json.Unmarshal(rawFolder, &newFolder); err != nil {
 			log.WithError(err).Warn("failed to unmarshall folder")
 			continue
 		}
 		skipCreate := false
-		for _, existingFolder := range folders {
+		for _, existingFolder := range folderItems {
 			if existingFolder.UID == newFolder.UID {
 				log.Warnf("Folder '%s' already exists, skipping", existingFolder.Title)
 				skipCreate = true
@@ -84,13 +88,14 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 		if skipCreate {
 			continue
 		}
-		f, err := s.client.CreateFolder(ctx, newFolder)
+		params := folders.NewCreateFolderParams()
+		params.Body = &newFolder
+		f, err := s.client.Folders.CreateFolder(params, s.getAuth())
 		if err != nil {
 			log.Errorf("failed to create folder %s", newFolder.Title)
 			continue
 		}
-
-		result = append(result, f.Title)
+		result = append(result, f.Payload.Title)
 
 	}
 	return result
@@ -98,11 +103,12 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 
 func (s *DashNGoImpl) DeleteAllFolder(filter Filter) []string {
 	var result []string
-	ctx := context.Background()
-	folders := s.ListFolder(filter)
-	for _, folder := range folders {
-		success, err := s.client.DeleteFolderByUID(ctx, folder.UID)
-		if err == nil && success {
+	folderListing := s.ListFolder(filter)
+	for _, folder := range folderListing {
+		params := folders.NewDeleteFolderParams()
+		params.FolderUID = folder.UID
+		_, err := s.client.Folders.DeleteFolder(params, s.getAuth())
+		if err == nil {
 			result = append(result, folder.Title)
 		}
 	}
