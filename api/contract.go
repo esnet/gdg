@@ -40,8 +40,8 @@ type ApiService interface {
 	PromoteUser(userLogin string) (*sdk.StatusMessage, error)
 	DeleteAllUsers() []string
 	//Team
-	ImportTeams() map[string][]sdk.TeamMember
-	ExportTeams() map[string][]sdk.TeamMember
+	ImportTeams() map[sdk.Team][]sdk.TeamMember
+	ExportTeams() map[sdk.Team][]sdk.TeamMember
 	ListTeams() []sdk.Team
 	DeleteTeam(teamName string) (*sdk.StatusMessage, error)
 	//TeamMembers

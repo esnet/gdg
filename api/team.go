@@ -18,7 +18,7 @@ import (
 )
 
 // Import Teams
-func (s *DashNGoImpl) ImportTeams() map[string][]sdk.TeamMember {
+func (s *DashNGoImpl) ImportTeams() map[sdk.Team][]sdk.TeamMember {
 	var (
 		teamData []byte
 	)
@@ -29,7 +29,7 @@ func (s *DashNGoImpl) ImportTeams() map[string][]sdk.TeamMember {
 		log.Fatal(err)
 	}
 	teams := pageTeams.Teams
-	importedTeams := make(map[string][]sdk.TeamMember)
+	importedTeams := make(map[sdk.Team][]sdk.TeamMember)
 	teamPath := buildResourceFolder("", config.TeamResource)
 	for ndx, team := range teams {
 		//Teams
@@ -57,20 +57,20 @@ func (s *DashNGoImpl) ImportTeams() map[string][]sdk.TeamMember {
 		} else if err = s.storage.WriteFile(memberFileName, pretty.Pretty(membersData), os.FileMode(int(0666))); err != nil {
 			log.WithError(err).Errorf("for %s\n", team.Name)
 		} else {
-			importedTeams[team.Name] = members
+			importedTeams[team] = members
 		}
 	}
 	return importedTeams
 }
 
 // Export Teams
-func (s *DashNGoImpl) ExportTeams() map[string][]sdk.TeamMember {
+func (s *DashNGoImpl) ExportTeams() map[sdk.Team][]sdk.TeamMember {
 	ctx := context.Background()
 	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.TeamResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for teams")
 	}
-	exportedTeams := make(map[string][]sdk.TeamMember)
+	exportedTeams := make(map[sdk.Team][]sdk.TeamMember)
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(getResourcePath(config.TeamResource), file)
 		if strings.HasSuffix(file, "team.json") {
@@ -111,7 +111,7 @@ func (s *DashNGoImpl) ExportTeams() map[string][]sdk.TeamMember {
 					currentMembers = append(currentMembers, member)
 				}
 			}
-			exportedTeams[newTeam.Name] = currentMembers
+			exportedTeams[newTeam] = currentMembers
 		}
 	}
 	return exportedTeams
