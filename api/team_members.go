@@ -12,7 +12,7 @@ import (
 // List Team Members of specific Team
 func (s *DashNGoImpl) ListTeamMembers(teamName string) []sdk.TeamMember {
 	ctx := context.Background()
-	team := s.GetTeam(teamName)
+	team := s.getTeam(teamName)
 	if team == nil {
 		log.Fatal(fmt.Errorf("team:  '%s' could not be found", teamName))
 	}
@@ -27,7 +27,7 @@ func (s *DashNGoImpl) ListTeamMembers(teamName string) []sdk.TeamMember {
 func (s *DashNGoImpl) AddTeamMember(teamName string, userLogin string) (*sdk.StatusMessage, error) {
 	ctx := context.Background()
 	// Get team from name
-	team := s.GetTeam(teamName)
+	team := s.getTeam(teamName)
 	if team == nil {
 		log.Fatal(fmt.Errorf("team:  '%s' could not be found", teamName))
 	}
@@ -56,7 +56,7 @@ func (s *DashNGoImpl) AddTeamMember(teamName string, userLogin string) (*sdk.Sta
 func (s *DashNGoImpl) DeleteTeamMember(teamName string, userLogin string) (*sdk.StatusMessage, error) {
 	ctx := context.Background()
 	// Get team from name
-	team := s.GetTeam(teamName)
+	team := s.getTeam(teamName)
 	if team == nil {
 		log.Fatal(fmt.Errorf("team:  '%s' could not be found", teamName))
 	}

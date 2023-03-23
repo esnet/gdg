@@ -3,12 +3,13 @@ package api
 import (
 	"context"
 	"fmt"
+	"sync"
+
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
 	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"sync"
 )
 
 type ApiService interface {
@@ -38,6 +39,15 @@ type ApiService interface {
 	ExportUsers() []sdk.User
 	PromoteUser(userLogin string) (*sdk.StatusMessage, error)
 	DeleteAllUsers() []string
+	//Team
+	ImportTeams() map[string][]sdk.TeamMember
+	ExportTeams() map[string][]sdk.TeamMember
+	ListTeams() []sdk.Team
+	DeleteTeam(teamName string) (*sdk.StatusMessage, error)
+	//TeamMembers
+	ListTeamMembers(teamName string) []sdk.TeamMember
+	AddTeamMember(teamName string, userLogin string) (*sdk.StatusMessage, error)
+	DeleteTeamMember(teamName string, userLogin string) (*sdk.StatusMessage, error)
 	//MetaData
 	GetServerInfo() map[string]interface{}
 	//Folder
@@ -87,7 +97,7 @@ func newInstance() *DashNGoImpl {
 	return obj
 }
 
-//Testing Only
+// Testing Only
 func (s *DashNGoImpl) SetStorage(v Storage) {
 	s.storage = v
 }

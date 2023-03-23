@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math"
 	"os"
 	"strings"
 
@@ -19,54 +18,71 @@ import (
 )
 
 // Import Teams
-func (s *DashNGoImpl) ImportTeams() []string {
+func (s *DashNGoImpl) ImportTeams() map[string][]sdk.TeamMember {
 	var (
 		teamData []byte
 	)
 	ctx := context.Background()
-	searchParams := sdk.WithPagesize(math.MaxUint64)
+	searchParams := sdk.WithPagesize(99999)
 	pageTeams, err := s.GetAdminClient().SearchTeams(ctx, searchParams)
 	if err != nil {
 		log.Fatal(err)
 	}
 	teams := pageTeams.Teams
-	importedTeams := []string{}
+	importedTeams := make(map[string][]sdk.TeamMember)
 	teamPath := buildResourceFolder("", config.TeamResource)
 	for ndx, team := range teams {
-		fileName := filepath.Join(teamPath, fmt.Sprintf("%s.json", GetSlug(team.Name)))
+		//Teams
+		teamFileName := filepath.Join(teamPath, GetSlug(team.Name), "team.json")
 		teamData, err = json.Marshal(&teams[ndx])
 		if err != nil {
-			log.Errorf("could not serialize team object for team name: %d", team.Name)
+			log.Errorf("could not serialize team object for team name: %s", team.Name)
 			continue
 		}
-		if err = s.storage.WriteFile(fileName, pretty.Pretty(teamData), os.FileMode(int(0666))); err != nil {
+		//Members
+		memberFileName := filepath.Join(teamPath, GetSlug(team.Name), "members.json")
+		members, err := s.GetAdminClient().GetTeamMembers(ctx, team.ID)
+		if err != nil {
+			log.Errorf("could not get team members object for team name: %s", team.Name)
+			continue
+		}
+		membersData, err := json.Marshal(members)
+		if err != nil {
+			log.Errorf("could not serialize team members object for team name: %s", team.Name)
+			continue
+		}
+		//Writing Files
+		if err = s.storage.WriteFile(teamFileName, pretty.Pretty(teamData), os.FileMode(int(0666))); err != nil {
+			log.WithError(err).Errorf("for %s\n", team.Name)
+		} else if err = s.storage.WriteFile(memberFileName, pretty.Pretty(membersData), os.FileMode(int(0666))); err != nil {
 			log.WithError(err).Errorf("for %s\n", team.Name)
 		} else {
-			importedTeams = append(importedTeams, fileName)
+			importedTeams[team.Name] = members
 		}
 	}
 	return importedTeams
 }
 
 // Export Teams
-func (s *DashNGoImpl) ExportTeams() []sdk.Team {
+func (s *DashNGoImpl) ExportTeams() map[string][]sdk.TeamMember {
 	ctx := context.Background()
 	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.TeamResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for teams")
 	}
-	var teams []sdk.Team
-	var rawTeam []byte
+	exportedTeams := make(map[string][]sdk.TeamMember)
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(getResourcePath(config.TeamResource), file)
-		if strings.HasSuffix(file, ".json") {
+		if strings.HasSuffix(file, "team.json") {
+			//Export Team
+			var rawTeam []byte
 			if rawTeam, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file: %s", fileLocation)
 				continue
 			}
 			var newTeam sdk.Team
 			if err = json.Unmarshal(rawTeam, &newTeam); err != nil {
-				log.WithError(err).Errorf("failed to unmarshall file: %s", fileLocation)
+				log.WithError(err).Errorf("failed to unmarshal file: %s", fileLocation)
 				continue
 			}
 			_, err = s.GetAdminClient().CreateTeam(ctx, newTeam)
@@ -74,16 +90,37 @@ func (s *DashNGoImpl) ExportTeams() []sdk.Team {
 				log.WithError(err).Errorf("failed to create team for file: %s", fileLocation)
 				continue
 			}
-			teams = append(teams, newTeam)
+			//Export Team Members (if exist)
+			var currentMembers []sdk.TeamMember
+			var rawMembers []byte
+			teamMemberLocation := filepath.Join(getResourcePath(config.TeamResource), GetSlug(newTeam.Name), "members.json")
+			if rawMembers, err = s.storage.ReadFile(teamMemberLocation); err != nil {
+				log.WithError(err).Errorf("failed to find team members: %s", fileLocation)
+				continue
+			}
+			var newMembers []sdk.TeamMember
+			if err = json.Unmarshal(rawMembers, &newMembers); err != nil {
+				log.WithError(err).Errorf("failed to unmarshal file: %s", fileLocation)
+				continue
+			}
+			for _, member := range newMembers {
+				_, err = s.GetAdminClient().AddTeamMember(ctx, member.TeamId, member.UserId)
+				if err != nil {
+					log.WithError(err).Errorf("failed to create team member for team %s with ID %s", newTeam.Name, member.UserId)
+				} else {
+					currentMembers = append(currentMembers, member)
+				}
+			}
+			exportedTeams[newTeam.Name] = currentMembers
 		}
 	}
-	return teams
+	return exportedTeams
 }
 
 // List all Teams
 func (s *DashNGoImpl) ListTeams() []sdk.Team {
 	ctx := context.Background()
-	searchParams := sdk.WithPagesize(math.MaxUint64)
+	searchParams := sdk.WithPagesize(99999)
 	pageTeams, err := s.GetAdminClient().SearchTeams(ctx, searchParams)
 	if err != nil {
 		log.Fatal(err)
@@ -93,7 +130,7 @@ func (s *DashNGoImpl) ListTeams() []sdk.Team {
 
 // Get a specific Team
 // Return nil if team cannot be found
-func (s *DashNGoImpl) GetTeam(teamName string) *sdk.Team {
+func (s *DashNGoImpl) getTeam(teamName string) *sdk.Team {
 	teams := s.ListTeams()
 	var team *sdk.Team
 	for ndx, item := range teams {
@@ -108,7 +145,7 @@ func (s *DashNGoImpl) GetTeam(teamName string) *sdk.Team {
 // Delete a specific Team
 func (s *DashNGoImpl) DeleteTeam(teamName string) (*sdk.StatusMessage, error) {
 	ctx := context.Background()
-	team := s.GetTeam(teamName)
+	team := s.getTeam(teamName)
 	if team == nil {
 		return nil, fmt.Errorf("team:  '%s' could not be found", teamName)
 	}
