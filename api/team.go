@@ -106,7 +106,7 @@ func (s *DashNGoImpl) ExportTeams() map[sdk.Team][]sdk.TeamMember {
 			for _, member := range newMembers {
 				_, err = s.GetAdminClient().AddTeamMember(ctx, member.TeamId, member.UserId)
 				if err != nil {
-					log.WithError(err).Errorf("failed to create team member for team %s with ID %s", newTeam.Name, member.UserId)
+					log.WithError(err).Errorf("failed to create team member for team %s with ID %d", newTeam.Name, member.UserId)
 				} else {
 					currentMembers = append(currentMembers, member)
 				}
