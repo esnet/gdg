@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,7 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-//ListDataSources: list all the currently configured datasources
+// ListDataSources: list all the currently configured datasources
 func (s *DashNGoImpl) ListDataSources(filter Filter) []sdk.Datasource {
 
 	ctx := context.Background()
@@ -37,8 +36,8 @@ func (s *DashNGoImpl) ListDataSources(filter Filter) []sdk.Datasource {
 	return result
 }
 
-//ImportDataSources: will read in all the configured datasources.
-//NOTE: credentials cannot be retrieved and need to be set via configuration
+// ImportDataSources: will read in all the configured datasources.
+// NOTE: credentials cannot be retrieved and need to be set via configuration
 func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 	var (
 		datasources []sdk.Datasource
@@ -65,7 +64,7 @@ func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 	return dataFiles
 }
 
-//Removes all current datasources
+// Removes all current datasources
 func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
 	ctx := context.Background()
 	var ds []string = make([]string, 0)
@@ -81,7 +80,7 @@ func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
 	return ds
 }
 
-//ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
+// ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
 func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 	var datasources []sdk.Datasource
 	var status sdk.StatusMessage
@@ -89,7 +88,6 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 
 	ctx := context.Background()
 	log.Infof("Reading files from folder: %s", getResourcePath(config.DataSourceResource))
-	fmt.Printf("Reading files from folder: %s", getResourcePath(config.DataSourceResource))
 	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.DataSourceResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for datasources")

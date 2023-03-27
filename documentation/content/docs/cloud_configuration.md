@@ -12,9 +12,17 @@ Currently the following providers are supported:
   - AWS S3
   - Google Storage (GS)
   - Azure
-  - SFTP (Not exactly cloud, but useful)
 
-NOTE:  the [stow](https://github.com/graymeta/stow) was used to support all of these providers.  They should all work, but only S3 and Google have been properly tested.
+NOTE:  the [go-cloud](https://github.com/google/go-cloud) was used to support all of these providers.  They should all work, but only S3 and Google have been properly tested.
+
+Most of these rely on the system configuration.  Here are some references for each respective environment:
+
+  * Google Storage:  
+    * https://cloud.google.com/docs/authentication#service-accounts
+    * https://cloud.google.com/docs/authentication/provide-credentials-adc#local-user-cred
+  * S3: https://docs.aws.amazon.com/sdk-for-go/api/aws/session/
+  * Azure: https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/storage/azblob
+
 
 ## General Configuration
 
@@ -22,44 +30,12 @@ NOTE:  the [stow](https://github.com/graymeta/stow) was used to support all of t
 storage_engine:
   any_label:
     kind: cloud
-    cloud_type: [s3, google, azure, sftp]
+    cloud_type: [s3, gs,  azblob]
     bucket_name: ""
     prefix: "dummy"
 ```
 
-Additional configuration for the respective engines are dependent on the cloud providers.
-
-S3 [config](https://github.com/graymeta/stow/blob/master/s3/config.go):
-```yaml 
-    access_key_id: ""
-    secret_key:  ""
-```
-
-Google [config](https://github.com/graymeta/stow/blob/master/google/config.go):
-
-```yaml 
-        project_id: esnet-sd-dev
-        json: keys/service.json
-```
-
-Azure [config](https://github.com/graymeta/stow/blob/master/azure/config.go):
-
-```yaml 
-    account: ""
-    key: ""
-```
-
-SFTP [config](https://github.com/graymeta/stow/blob/master/sftp/config.go):
-
-```yaml 
-    host:
-    port:
-    password:
-    private_key:
-    base_path:
-    host_public_key:
-
-```
+All authentication and authorization is done outside of GDG.  
 
 ## Context Configuration
 
