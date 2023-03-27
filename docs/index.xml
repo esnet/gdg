@@ -34,7 +34,7 @@ Authentication Authentication Token You can use an Authentication Token / API Ke
       <guid>https://software.es.net/gdg/docs/cloud_configuration/</guid>
       <description>Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
 Currently the following providers are supported:
-AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers.</description>
+AWS S3 Google Storage (GS) Azure NOTE: the go-cloud was used to support all of these providers. They should all work, but only S3 and Google have been properly tested.</description>
     </item>
     
     <item>

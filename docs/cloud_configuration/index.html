@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" class="dark">
 <head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.111.2">
+<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.111.3">
 <link rel="apple-touch-icon" sizes="180x180" href='https://software.es.net/gdg/favicons/apple-touch-icon.png'>
 <link rel="icon" type="image/png" sizes="32x32" href='https://software.es.net/gdg/favicons/favicon-32x32.png'>
 <link rel="icon" type="image/png" sizes="16x16" href='https://software.es.net/gdg/favicons/favicon-16x16.png'>
@@ -12,22 +12,22 @@
 <title>Cloud Configuration | Grafana Dash-n-Go</title><meta property="og:title" content="Cloud Configuration" />
 <meta property="og:description" content="Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
 Currently the following providers are supported:
-AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers." />
+AWS S3 Google Storage (GS) Azure NOTE: the go-cloud was used to support all of these providers. They should all work, but only S3 and Google have been properly tested." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://software.es.net/gdg/docs/cloud_configuration/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-07-06T15:53:02-04:00" />
+<meta property="article:modified_time" content="2023-03-27T17:29:58-04:00" />
 <meta itemprop="name" content="Cloud Configuration">
 <meta itemprop="description" content="Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
 Currently the following providers are supported:
-AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers.">
-<meta itemprop="dateModified" content="2022-07-06T15:53:02-04:00" />
-<meta itemprop="wordCount" content="241">
+AWS S3 Google Storage (GS) Azure NOTE: the go-cloud was used to support all of these providers. They should all work, but only S3 and Google have been properly tested.">
+<meta itemprop="dateModified" content="2023-03-27T17:29:58-04:00" />
+<meta itemprop="wordCount" content="217">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Cloud Configuration"/>
 <meta name="twitter:description" content="Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
 Currently the following providers are supported:
-AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers."/>
+AWS S3 Google Storage (GS) Azure NOTE: the go-cloud was used to support all of these providers. They should all work, but only S3 and Google have been properly tested."/>
 
 
 <link rel="stylesheet" href="https://software.es.net/gdg/css/styles.3c1c2e57871ba783a4d85c82cb38c2dfd4be3ee80d6cbdbaa129405d9af1b18c43afa4f48e280dc331df5f85a5ee0949e4757cf2a98b54a8125d4bbb0dea11c5.css" integrity="sha512-PBwuV4cbp4Ok2FyCyzjC39S&#43;PugNbL26oSlAXZrxsYxDr6T0jigNwzHfX4Wl7glJ5HV88qmLVKgSXUu7DeoRxQ==">
@@ -37,7 +37,7 @@ AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the 
 
   <meta name="description" content="Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
 Currently the following providers are supported:
-AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the stow was used to support all of these providers.">
+AWS S3 Google Storage (GS) Azure NOTE: the go-cloud was used to support all of these providers. They should all work, but only S3 and Google have been properly tested.">
 
 
 </head>
@@ -196,34 +196,28 @@ AWS S3 Google Storage (GS) Azure SFTP (Not exactly cloud, but useful) NOTE: the 
 <li>AWS S3</li>
 <li>Google Storage (GS)</li>
 <li>Azure</li>
-<li>SFTP (Not exactly cloud, but useful)</li>
 </ul>
-<p>NOTE:  the <a href="https://github.com/graymeta/stow">stow</a> was used to support all of these providers.  They should all work, but only S3 and Google have been properly tested.</p>
+<p>NOTE:  the <a href="https://github.com/google/go-cloud">go-cloud</a> was used to support all of these providers.  They should all work, but only S3 and Google have been properly tested.</p>
+<p>Most of these rely on the system configuration.  Here are some references for each respective environment:</p>
+<ul>
+<li>Google Storage:
+<ul>
+<li><a href="https://cloud.google.com/docs/authentication#service-accounts">https://cloud.google.com/docs/authentication#service-accounts</a></li>
+<li><a href="https://cloud.google.com/docs/authentication/provide-credentials-adc#local-user-cred">https://cloud.google.com/docs/authentication/provide-credentials-adc#local-user-cred</a></li>
+</ul>
+</li>
+<li>S3: <a href="https://docs.aws.amazon.com/sdk-for-go/api/aws/session/">https://docs.aws.amazon.com/sdk-for-go/api/aws/session/</a></li>
+<li>Azure: <a href="https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/storage/azblob">https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/storage/azblob</a></li>
+</ul>
 <h2 id="general-configuration">General Configuration</h2>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="nt">storage_engine</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">  </span><span class="nt">any_label</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">cloud</span><span class="w">
-</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">    </span><span class="nt">cloud_type</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">s3, google, azure, sftp]</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">    </span><span class="nt">cloud_type</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">s3, gs,  azblob]</span><span class="w">
 </span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">    </span><span class="nt">bucket_name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;dummy&#34;</span><span class="w">
-</span></span></span></code></pre></div><p>Additional configuration for the respective engines are dependent on the cloud providers.</p>
-<p>S3 <a href="https://github.com/graymeta/stow/blob/master/s3/config.go">config</a>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">    </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">    </span><span class="nt">secret_key</span><span class="p">:</span><span class="w">  </span><span class="s2">&#34;&#34;</span><span class="w">
-</span></span></span></code></pre></div><p>Google <a href="https://github.com/graymeta/stow/blob/master/google/config.go">config</a>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">        </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l">esnet-sd-dev</span><span class="w">
-</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">        </span><span class="nt">json</span><span class="p">:</span><span class="w"> </span><span class="l">keys/service.json</span><span class="w">
-</span></span></span></code></pre></div><p>Azure <a href="https://github.com/graymeta/stow/blob/master/azure/config.go">config</a>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">    </span><span class="nt">account</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
-</span></span></span></code></pre></div><p>SFTP <a href="https://github.com/graymeta/stow/blob/master/sftp/config.go">config</a>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">    </span><span class="nt">private_key</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">    </span><span class="nt">base_path</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w">    </span><span class="nt">host_public_key</span><span class="p">:</span><span class="w">
-</span></span></span></code></pre></div><h2 id="context-configuration">Context Configuration</h2>
+</span></span></span></code></pre></div><p>All authentication and authorization is done outside of GDG.</p>
+<h2 id="context-configuration">Context Configuration</h2>
 <p>The only additional change to the context is to provide a storage label to use:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="w">  </span><span class="nt">testing</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">    </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l">testing_data</span><span class="w">
