@@ -1,25 +1,20 @@
 package api
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/graymeta/stow"
 	log "github.com/sirupsen/logrus"
-	"io"
+	"gocloud.dev/blob"
 	"io/fs"
-	"os"
-
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 type CloudStorage struct {
-	Location    stow.Location
+	BucketRef   *blob.Bucket
 	BucketName  string
-	BucketRef   stow.Container
 	Prefix      string
 	StorageName string
 }
@@ -30,10 +25,14 @@ const (
 	Prefix     = "prefix"
 )
 
-//getCloudLocation appends prefix to path
+// getCloudLocation appends prefix to path
 func (s *CloudStorage) getCloudLocation(fileName string) string {
 	if s.Prefix == "<nil>" {
 		s.Prefix = ""
+	}
+	//Skip if prefix is already in Path.
+	if len(s.Prefix) > 0 && strings.Contains(fileName, s.Prefix) {
+		return fileName
 	}
 	if fileName[0] != '/' && s.Prefix != "" {
 		return path.Join(s.Prefix, "/", fileName)
@@ -41,70 +40,61 @@ func (s *CloudStorage) getCloudLocation(fileName string) string {
 	return path.Join(s.Prefix, fileName)
 }
 
-//ReadFile read file from Cloud Provider and return byte array
+// ReadFile read file from Cloud Provider and return byte array
 func (s *CloudStorage) ReadFile(filename string) ([]byte, error) {
-	item, err := s.BucketRef.Item(s.getCloudLocation(filename))
-	if err != nil {
-		return nil, errors.New("file not found on Cloud")
+	if s.BucketRef == nil {
+		return nil, errors.New("unable to find valid bucket to read file from")
 	}
-	r, err := item.Open()
-	defer func() {
-		err = r.Close()
-		if err != nil {
-			log.Error("Failed to close Cloud file")
-		}
-	}()
-	if err != nil {
-		return nil, err
-	}
-	return io.ReadAll(r)
+	ctx := context.Background()
+	return s.BucketRef.ReadAll(ctx, s.getCloudLocation(filename))
+
 }
 
-//WriteFile persists data to Cloud Provider Storage returning error if operation failed
+// WriteFile persists data to Cloud Provider Storage returning error if operation failed
 func (s *CloudStorage) WriteFile(filename string, data []byte, mode fs.FileMode) error {
-	reader := bytes.NewReader(data)
-	size := int64(len(data))
-	item, err := s.BucketRef.Put(s.getCloudLocation(filename), reader, size, nil)
-	if err != nil {
-		log.WithError(err).Errorf("failed to write %s to Cloud at location: %s", filename, item.URL())
-		return err
+	if s.BucketRef == nil {
+		return errors.New("unable to get valid bucket ")
 	}
-	return nil
+	return s.BucketRef.WriteAll(context.Background(), s.getCloudLocation(filename), data, nil)
 }
 
-func (s CloudStorage) Name() string {
+func (s *CloudStorage) Name() string {
 	return s.StorageName
 }
 
-func (s CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, error) {
+func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, error) {
+	if s.BucketRef == nil {
+		return nil, errors.New("unable to find valid bucket to list files from")
+	}
 	folderName := s.getCloudLocation(folder)
-	var result []string
-	err := stow.Walk(s.BucketRef, folderName, 100, func(c stow.Item, err error) error {
-		if err != nil {
-			return err
-		}
-		if c != nil {
-			if fullPath {
-				result = append(result, c.Name())
-			} else {
-				result = append(result, filepath.Base(c.Name()))
-			}
-			return nil
-		} else {
-			return errors.New("could not append file")
-		}
-	})
 
-	return result, err
+	var fileList []string
+	opts := blob.ListOptions{}
+	if s.Prefix != "" {
+		opts.Prefix = folderName
+	}
+
+	iterator := s.BucketRef.List(&opts)
+	for {
+		obj, err := iterator.Next(context.Background())
+		if err != nil {
+			break
+		}
+		if fullPath {
+			fileList = append(fileList, obj.Key)
+		} else {
+			fileList = append(fileList, filepath.Base(obj.Key))
+		}
+	}
+
+	return fileList, nil
 }
 
 func NewCloudStorage(c context.Context) (Storage, error) {
 	var (
-		item     stow.Container
-		location stow.Location
-		err      error
-		data     []byte
+		err error
 	)
+
 	contextVal := c.Value(StorageContext)
 	if contextVal == nil {
 		return nil, errors.New("cannot configure GCP storage, context missing")
@@ -113,7 +103,16 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 	if !ok {
 		return nil, errors.New("cannot convert appData to string map")
 	}
-	config := stow.ConfigMap{}
+
+	var cloudURL = fmt.Sprintf("%s://%s", appData["cloud_type"], appData["bucket_name"])
+
+	bucketObj, err := blob.OpenBucket(context.Background(), cloudURL)
+	if err != nil {
+		log.Panicf("failed to open bucket %s", cloudURL)
+	}
+
+	config := map[string]string{}
+
 	for key, value := range appData {
 		stringVal := fmt.Sprintf("%v", value)
 		if stringVal == "<nil>" {
@@ -122,28 +121,12 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		config[key] = stringVal
 	}
 
-	jsonKey, ok := config["json"]
-	if ok && !json.Valid([]byte(jsonKey)) {
-		data, err = os.ReadFile(jsonKey)
-		if err != nil {
-			log.WithError(err).Errorf("failed to read service key file")
-		}
-		config["json"] = string(data)
-	}
-
-	location, err = stow.Dial(config["cloud_type"], config)
-	if err != nil {
-		return nil, fmt.Errorf("unable to connect to Cloud: %s", err.Error())
-	}
 	entity := &CloudStorage{
-		Location:   location,
 		BucketName: config[BucketName],
+		BucketRef:  bucketObj,
 	}
-	entity.Prefix = config[Prefix]
-
-	entity.BucketRef, err = location.Container(entity.BucketName)
-	if err != nil {
-		return nil, fmt.Errorf("bucket %s is either not found or not accessible: %s", item.Name(), err.Error())
+	if val, ok := config["prefix"]; ok {
+		entity.Prefix = val
 	}
 
 	return entity, nil

@@ -56,7 +56,7 @@ func (s *DashNGoImpl) ListDashboards(filters Filter) []sdk.FoundBoard {
 	var page uint = 1
 	var limit uint = 5000 // Upper bound of Grafana API call
 
-	var tagsParams []sdk.SearchParam = []sdk.SearchParam{}
+	var tagsParams []sdk.SearchParam = make([]sdk.SearchParam, 0)
 	if !apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
 		for _, t := range filters.GetTags() {
 			tagsParams = append(tagsParams, sdk.SearchTag(t))

@@ -3,9 +3,6 @@ package integration_tests
 import (
 	"context"
 	"fmt"
-	"github.com/graymeta/stow"
-	"github.com/graymeta/stow/s3"
-	"github.com/graymeta/stow/sftp"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"strings"
@@ -37,57 +34,24 @@ func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
 	return client, conf
 }
 
-func SetupCloudFunction(apiClient api.ApiService, cloudType string) context.Context {
-	bucketName := "testing"
-	var m map[string]interface{}
-	if cloudType == "s3" {
-		m = map[string]interface{}{
-			s3.ConfigAccessKeyID: "test",
-			s3.ConfigSecretKey:   "secretsss",
-			s3.ConfigEndpoint:    "127.0.0.1:9000",
-			api.CloudType:        "s3",
-			api.BucketName:       bucketName,
-			s3.ConfigDisableSSL:  "true",
-		}
-	} else {
-		m = map[string]interface{}{
-			api.CloudType:       "sftp",
-			sftp.ConfigPort:     "2222",
-			sftp.ConfigHost:     "127.0.0.1",
-			sftp.ConfigUsername: "foo",
-			sftp.ConfigPassword: "pass",
-			api.BucketName:      bucketName,
-		}
+func SetupCloudFunction(apiClient api.ApiService, params []string) context.Context {
+	bucketName := params[1]
+	var m = map[string]interface{}{
+		api.CloudType:  params[0],
+		api.Prefix:     "dummy",
+		api.BucketName: bucketName,
 	}
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, api.StorageContext, m)
-	configMap := stow.ConfigMap{}
+	configMap := map[string]string{}
 	for key, value := range m {
 		configMap[key] = fmt.Sprintf("%v", value)
 	}
 
-	//Initiate S3
-	if cloudType == "s3" {
-		location, err := stow.Dial(m[api.CloudType].(string), configMap)
-		if err != nil {
-			log.Panic("Unable to connect to S3 Minio Storage")
-		}
-		container, err := location.Container(bucketName)
-		if err == nil {
-			log.Infof("bucket %s already exists skipping", container.Name())
-
-		} else {
-			_, err = location.CreateContainer(bucketName)
-			if err != nil {
-				log.WithError(err).Fatalf("Ignoring failure to bucket creation %s", bucketName)
-			}
-		}
-	}
-
 	s, err := api.NewCloudStorage(ctx)
 	if err != nil {
-		log.Fatalf("Could not instantiate cloud storage for type: %s", cloudType)
+		log.Fatalf("Could not instantiate cloud storage for type: %s", params[0])
 	}
 	dash := apiClient.(*api.DashNGoImpl)
 	dash.SetStorage(s)

@@ -12,9 +12,3 @@ services:
         image: grafana/grafana:8.3.6-ubuntu
         ports:
             - 3000:3000
-    sftp:
-        command: "foo:pass:::testing"
-        image: atmoz/sftp
-        ports:
-          - 2222:22
-
