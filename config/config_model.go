@@ -21,6 +21,14 @@ const (
 	AlertNotificationResource = "alertnotifications"
 )
 
+func (s *ResourceType) String() string {
+	return string(*s)
+}
+
+func (s *ResourceType) GetPath(basePath string) string {
+	return path.Join(basePath, s.String())
+}
+
 // GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
 	Storage            string `yaml:"storage"`
@@ -97,6 +105,10 @@ func (s *GrafanaConfig) GetDataSourceSettings() *DataSourceSettings {
 		s.DataSourceSettings = &DataSourceSettings{}
 	}
 	return s.DataSourceSettings
+}
+
+func (s *GrafanaConfig) GetPath(r ResourceType) string {
+	return r.GetPath(s.OutputPath)
 }
 
 func (s *GrafanaConfig) GetDashboardOutput() string {

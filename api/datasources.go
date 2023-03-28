@@ -1,35 +1,45 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/esnet/gdg/apphelpers"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/datasources"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/esnet/gdg/config"
 	"github.com/gosimple/slug"
-	"github.com/grafana-tools/sdk"
 	log "github.com/sirupsen/logrus"
 )
 
-// ListDataSources: list all the currently configured datasources
-func (s *DashNGoImpl) ListDataSources(filter Filter) []sdk.Datasource {
+// DataSourcesApi Contract definition
+type DataSourcesApi interface {
+	ListDataSources(filter Filter) []models.DataSourceListItemDTO
+	ImportDataSources(filter Filter) []string
+	ExportDataSources(filter Filter) []string
+	DeleteAllDataSources(filter Filter) []string
+}
 
-	ctx := context.Background()
-	ds, err := s.client.GetAllDatasources(ctx)
+// ListDataSources: list all the currently configured datasources
+
+func (s *DashNGoImpl) ListDataSources(filter Filter) []models.DataSourceListItemDTO {
+	ds, err := s.client.Datasources.GetDataSources(datasources.NewGetDataSourcesParams(), s.getAuth())
 	if err != nil {
 		panic(err)
 	}
-	result := make([]sdk.Datasource, 0)
+	result := make([]models.DataSourceListItemDTO, 0)
+
 	dsSettings := s.grafanaConf.GetDataSourceSettings()
-	for _, item := range ds {
+	for _, item := range ds.GetPayload() {
 		if dsSettings.FiltersEnabled() && (!dsSettings.Filters.ValidName(item.Name) || !dsSettings.Filters.ValidDataType(item.Type)) {
 			log.Debugf("Skipping data source: %s since it fails filter checks with dataType of: %s", item.Name, item.Type)
 			continue
 		}
 		if filter.Validate(map[string]string{Name: GetSlug(item.Name)}) {
-			result = append(result, item)
+			result = append(result, *item)
 		}
 	}
 
@@ -40,14 +50,13 @@ func (s *DashNGoImpl) ListDataSources(filter Filter) []sdk.Datasource {
 // NOTE: credentials cannot be retrieved and need to be set via configuration
 func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 	var (
-		datasources []sdk.Datasource
-		dsPacked    []byte
-		meta        sdk.BoardProperties
-		err         error
-		dataFiles   []string
+		dsListing []models.DataSourceListItemDTO
+		dsPacked  []byte
+		err       error
+		dataFiles []string
 	)
-	datasources = s.ListDataSources(filter)
-	for _, ds := range datasources {
+	dsListing = s.ListDataSources(filter)
+	for _, ds := range dsListing {
 		if dsPacked, err = json.MarshalIndent(ds, "", "	"); err != nil {
 			log.Errorf("%s for %s\n", err, ds.Name)
 			continue
@@ -56,7 +65,7 @@ func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 		dsPath := buildResourcePath(slug.Make(ds.Name), config.DataSourceResource)
 
 		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
-			log.Errorf("%s for %s\n", err, meta.Slug)
+			log.Errorf("%s for %s\n", err, slug.Make(ds.Name))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
 		}
@@ -66,13 +75,15 @@ func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 
 // Removes all current datasources
 func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
-	ctx := context.Background()
 	var ds []string = make([]string, 0)
 	items := s.ListDataSources(filter)
 	for _, item := range items {
-		msg, err := s.client.DeleteDatasource(ctx, item.ID)
+		p := datasources.NewDeleteDataSourceByIDParams()
+		p.ID = fmt.Sprintf("%d", item.ID)
+
+		dsItem, err := s.client.Datasources.DeleteDataSourceByID(p, s.getAuth())
 		if err != nil {
-			log.Warningf("Failed to delete datasource: %s, response: %s", item.Name, *msg.Message)
+			log.Warningf("Failed to delete datasource: %s, response: %s", item.Name, dsItem.Error())
 			continue
 		}
 		ds = append(ds, item.Name)
@@ -82,30 +93,29 @@ func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
 
 // ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
 func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
-	var datasources []sdk.Datasource
-	var status sdk.StatusMessage
+	var dsListing []models.DataSourceListItemDTO
+
 	var exported []string = make([]string, 0)
 
-	ctx := context.Background()
-	log.Infof("Reading files from folder: %s", getResourcePath(config.DataSourceResource))
-	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.DataSourceResource), false)
+	log.Infof("Reading files from folder: %s", apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DataSourceResource))
+	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DataSourceResource), false)
+
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for datasources")
 	}
-	//fmt.Printf("There are %d found from S3", len(filesInDir))
-	datasources = s.ListDataSources(filter)
+	dsListing = s.ListDataSources(filter)
 
 	var rawDS []byte
 
 	dsSettings := s.grafanaConf.GetDataSourceSettings()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(getResourcePath(config.DataSourceResource), file)
+		fileLocation := filepath.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DataSourceResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file: %s", fileLocation)
 				continue
 			}
-			var newDS sdk.Datasource
+			var newDS models.AddDataSourceCommand
 
 			if err = json.Unmarshal(rawDS, &newDS); err != nil {
 				log.WithError(err).Errorf("failed to unmarshall file: %s", fileLocation)
@@ -118,7 +128,7 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 			dsConfig := s.grafanaConf
 			var creds *config.GrafanaDataSource
 
-			if *newDS.BasicAuth {
+			if newDS.BasicAuth {
 				creds, err = dsConfig.GetCredentials(newDS.Name)
 				if err != nil { //Attempt to get Credentials by URL regex
 					creds, _ = dsConfig.GetCredentialByUrl(newDS.URL)
@@ -135,24 +145,26 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 			if creds != nil {
 				user := creds.User
 				var secureData map[string]string = make(map[string]string)
-				newDS.BasicAuthUser = &user
+				newDS.BasicAuthUser = user
 				secureData["basicAuthPassword"] = creds.Password
 				newDS.SecureJSONData = secureData
 			} else {
-				enabledAuth := false
-				newDS.BasicAuth = &enabledAuth
+				newDS.BasicAuth = false
 			}
 
-			for _, existingDS := range datasources {
+			for _, existingDS := range dsListing {
 				if existingDS.Name == newDS.Name {
-					if status, err = s.client.DeleteDatasource(ctx, existingDS.ID); err != nil {
+					deleteParam := datasources.NewDeleteDataSourceByIDParams()
+					deleteParam.ID = fmt.Sprintf("%d", existingDS.ID)
+					if _, err := s.client.Datasources.DeleteDataSourceByID(deleteParam, s.getAdminAuth()); err != nil {
 						log.Errorf("error on deleting datasource %s with %s", newDS.Name, err)
 					}
 					break
 				}
 			}
-			if status, err = s.client.CreateDatasource(ctx, newDS); err != nil {
-				log.Errorf("error on importing datasource %s with %s (%s)", newDS.Name, err, *status.Message)
+			p := datasources.NewAddDataSourceParams().WithBody(&newDS)
+			if createStatus, err := s.client.Datasources.AddDataSource(p, s.getAuth()); err != nil {
+				log.Errorf("error on importing datasource %s with %s (%s)", newDS.Name, err, createStatus.Error())
 			} else {
 				exported = append(exported, fileLocation)
 			}

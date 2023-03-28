@@ -106,7 +106,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 
 	var cloudURL = fmt.Sprintf("%s://%s", appData["cloud_type"], appData["bucket_name"])
 
-	bucketObj, err := blob.OpenBucket(context.Background(), cloudURL)
+	bucketObj, err := blob.OpenBucket(c, cloudURL)
 	if err != nil {
 		log.Panicf("failed to open bucket %s", cloudURL)
 	}

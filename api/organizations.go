@@ -1,37 +1,46 @@
 package api
 
 import (
-	"context"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/signed_in_user"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 
-	"github.com/grafana-tools/sdk"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/orgs"
 	log "github.com/sirupsen/logrus"
 )
 
-//ListOrganizations: List all dashboards
-func (s *DashNGoImpl) ListOrganizations() []sdk.Org {
-	ctx := context.Background()
-	orgs, err := s.GetAdminClient().GetAllOrgs(ctx)
+// OrganizationsApi Contract definition
+type OrganizationsApi interface {
+	ListOrganizations() []*models.OrgDTO
+}
+
+// ListOrganizations: List all dashboards
+func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
+
+	orgList, err := s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getAdminAuth())
 	if err != nil {
 		log.WithError(err).Errorf("Unable to retrieve Organization List")
 	}
 	if s.grafanaConf.Organization != "" {
-		var ID uint
-		for _, org := range orgs {
+		var ID int64
+		for _, org := range orgList.Payload {
 			log.Errorf("%d %s\n", org.ID, org.Name)
 			if org.Name == s.grafanaConf.Organization {
 				ID = org.ID
 			}
 		}
 		if ID > 0 {
-			status, err := s.client.SwitchActualUserContext(ctx, ID)
+			params := signed_in_user.NewUserSetUsingOrgParams()
+			params.OrgID = ID
+			status, err := s.client.SignedInUser.UserSetUsingOrg(params, s.getAuth())
 			if err != nil {
 				log.Fatalf("%s for %v\n", err, status)
 			}
 		}
 	}
-	orgs, err = s.client.GetAllOrgs(ctx)
+
+	orgList, err = s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getAuth())
 	if err != nil {
 		panic(err)
 	}
-	return orgs
+	return orgList.GetPayload()
 }

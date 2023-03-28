@@ -14,7 +14,7 @@ func TestUsers(t *testing.T) {
 	users := apiClient.ListUsers()
 	assert.Equal(t, len(users), 1)
 	adminUser := users[0]
-	assert.Equal(t, adminUser.ID, uint(1))
+	assert.Equal(t, adminUser.ID, int64(1))
 	assert.Equal(t, adminUser.Login, "admin")
 	assert.Equal(t, adminUser.IsAdmin, true)
 

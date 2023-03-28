@@ -5,46 +5,24 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
-	"github.com/grafana-tools/sdk"
+	"github.com/esnet/gdg/internal/apiExtend"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"sync"
+	//gclient "github.com/grafana/grafana-api-golang-client"
 )
 
 type ApiService interface {
-	//Organizations
-	ListOrganizations() []sdk.Org
-	//Dashboard
-	ListDashboards(filter Filter) []sdk.FoundBoard
-	ImportDashboards(filter Filter) []string
-	ExportDashboards(filter Filter)
-	DeleteAllDashboards(filter Filter) []string
-	//DataSources
-	ListDataSources(filter Filter) []sdk.Datasource
-	ImportDataSources(filter Filter) []string
-	ExportDataSources(filter Filter) []string
-	DeleteAllDataSources(filter Filter) []string
-	//AlertNotifications
-	ListAlertNotifications() []sdk.AlertNotification
-	ImportAlertNotifications() []string
-	ExportAlertNotifications() []string
-	DeleteAllAlertNotifications() []string
-	//Login
-	Login() *sdk.Client
-	AdminLogin() *sdk.Client
-	//User
-	ListUsers() []sdk.User
-	ImportUsers() []string
-	ExportUsers() []sdk.User
-	PromoteUser(userLogin string) (*sdk.StatusMessage, error)
-	DeleteAllUsers() []string
+	OrganizationsApi
+	DashboardsApi
+	DataSourcesApi
+	AlertNotificationsApi
+	UsersApi
+	FoldersApi
+
 	//MetaData
 	GetServerInfo() map[string]interface{}
-	//Folder
-	ListFolder(filter Filter) []sdk.Folder
-	ImportFolder(filter Filter) []string
-	ExportFolder(filter Filter) []string
-	DeleteAllFolder(filter Filter) []string
 }
 
 var (
@@ -53,19 +31,13 @@ var (
 )
 
 type DashNGoImpl struct {
-	client      *sdk.Client
-	adminClient *sdk.Client
+	client   *client.GrafanaHTTPAPI
+	extended *apiExtend.ExtendedApi
+
 	grafanaConf *config.GrafanaConfig
 	configRef   *viper.Viper
 	debug       bool
 	storage     Storage
-}
-
-func (s *DashNGoImpl) GetAdminClient() *sdk.Client {
-	if s.adminClient == nil {
-		log.Fatal("Requested API requires admin to have basic http auth (username/password) configured. Token access is not supported")
-	}
-	return s.adminClient
 }
 
 func NewDashNGoImpl() *DashNGoImpl {
@@ -79,15 +51,15 @@ func newInstance() *DashNGoImpl {
 	obj := &DashNGoImpl{}
 	obj.grafanaConf = apphelpers.GetCtxDefaultGrafanaConfig()
 	obj.configRef = config.Config().ViperConfig()
-	obj.client = obj.Login()
-	obj.adminClient = obj.AdminLogin()
+	obj.Login()
+
 	obj.debug = config.Config().IsDebug()
 	configureStorage(obj)
 
 	return obj
 }
 
-//Testing Only
+// Testing Only
 func (s *DashNGoImpl) SetStorage(v Storage) {
 	s.storage = v
 }

@@ -35,6 +35,9 @@ func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
 }
 
 func SetupCloudFunction(apiClient api.ApiService, params []string) context.Context {
+	_ = os.Setenv("AWS_ACCESS_KEY", "test")
+	_ = os.Setenv("AWS_SECRET_KEY", "secretsss")
+
 	bucketName := params[1]
 	var m = map[string]interface{}{
 		api.CloudType:  params[0],
@@ -43,6 +46,8 @@ func SetupCloudFunction(apiClient api.ApiService, params []string) context.Conte
 	}
 
 	ctx := context.Background()
+	//ctx = context.WithValue(ctx, MINIO_HOST, "https://localhost:9000")
+	//ctx = context.WithValue(ctx, MINIO_SSL, false)
 	ctx = context.WithValue(ctx, api.StorageContext, m)
 	configMap := map[string]string{}
 	for key, value := range m {

@@ -2,69 +2,74 @@ package api
 
 import (
 	"crypto/tls"
-	"fmt"
-
-	"net/http"
+	"github.com/esnet/gdg/internal/apiExtend"
+	gapi "github.com/esnet/grafana-swagger-api-golang"
+	"github.com/go-openapi/runtime/client"
+	"net/url"
 
 	"github.com/esnet/gdg/config"
-	"github.com/grafana-tools/sdk"
+	gclient "github.com/esnet/grafana-swagger-api-golang/goclient/client"
+	"github.com/go-openapi/runtime"
 	log "github.com/sirupsen/logrus"
+	"net/http"
 )
 
-//Login: Logs into grafana returning a client instance using Token or Basic Auth
-func (s *DashNGoImpl) Login() *sdk.Client {
+// AuthenticationApi Contract definition
+type AuthenticationApi interface {
+	Login()
+	AdminLogin()
+}
 
-	//If ignoreSSL create custom http client
+// Login Logs into grafana returning a legacyClient instance using Token or Basic Auth
+func (s *DashNGoImpl) Login() {
+	var err error
+	u, err := url.Parse(s.grafanaConf.URL)
+	if err != nil {
+		log.Fatal("invalid Grafana URL")
+	}
+	httpClient := http.DefaultClient
 	if config.Config().IgnoreSSL() {
-		ignoreSSLErrors()
+		httpClient = ignoreSSLErrors()
 	}
+
+	runtimeClient := client.NewWithClient(u.Host, "/api", []string{u.Scheme}, httpClient)
+	s.client = gclient.New(runtimeClient, nil)
+
+	s.extended = apiExtend.NewExtendedApi()
+
+}
+
+func (s *DashNGoImpl) getAdminAuth() runtime.ClientAuthInfoWriter {
+	if s.grafanaConf.UserName == "" {
+		log.Fatal("Unable to get Admin Auth.  Credentials are missing")
+	}
+	return &gapi.BasicAuthenticator{
+		Username: s.grafanaConf.UserName,
+		Password: s.grafanaConf.Password,
+	}
+
+}
+
+func (s *DashNGoImpl) getAuth() runtime.ClientAuthInfoWriter {
 	if s.grafanaConf.APIToken != "" {
-		return s.tokenLogin()
-	} else if s.grafanaConf.UserName != "" && s.grafanaConf.Password != "" {
-		return s.authLogin()
-	}
+		return gapi.APIKeyAuthenticator{
+			APIKey: s.grafanaConf.APIToken,
+		}
 
-	panic("Invalid auth configuration.  Either Token or password based credentials required")
-
-}
-
-func (s *DashNGoImpl) AdminLogin() *sdk.Client {
-	if s.grafanaConf.UserName != "" && s.grafanaConf.Password != "" {
-		s.grafanaConf.AdminEnabled = true
-		return s.authLogin()
 	} else {
-		s.grafanaConf.AdminEnabled = false
-		return nil
+		return gapi.BasicAuthenticator{
+			Username: s.grafanaConf.UserName,
+			Password: s.grafanaConf.Password,
+		}
 	}
-
 }
 
-//ignoreSSLErrors when called replaces the default http client to ignore invalid SSL issues.
-//only to be used for testing, highly discouraged in production.
-func ignoreSSLErrors() {
+// ignoreSSLErrors when called replaces the default http legacyClient to ignore invalid SSL issues.
+// only to be used for testing, highly discouraged in production.
+func ignoreSSLErrors() *http.Client {
 	customTransport := http.DefaultTransport.(*http.Transport).Clone()
 	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	httpclient := &http.Client{Transport: customTransport}
-	sdk.DefaultHTTPClient = httpclient
+	return httpclient
 
-}
-
-//tokenLogin: given a URL and token return the client
-func (s *DashNGoImpl) tokenLogin() *sdk.Client {
-	client, err := sdk.NewClient(s.grafanaConf.URL, s.grafanaConf.APIToken, sdk.DefaultHTTPClient)
-	if err != nil {
-		log.Fatal("failed to get a valid client using token auth")
-	}
-
-	return client
-}
-
-//AuthLogin: Login using a username/password
-func (s *DashNGoImpl) authLogin() *sdk.Client {
-	basicAuth := fmt.Sprintf("%s:%s", s.grafanaConf.UserName, s.grafanaConf.Password)
-	client, err := sdk.NewClient(s.grafanaConf.URL, basicAuth, sdk.DefaultHTTPClient)
-	if err != nil {
-		log.Fatal("failed to get a valid client using basic auth")
-	}
-	return client
 }
