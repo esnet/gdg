@@ -20,6 +20,7 @@ type ApiService interface {
 	AlertNotificationsApi
 	UsersApi
 	FoldersApi
+	LibraryElementsApi
 
 	//MetaData
 	GetServerInfo() map[string]interface{}

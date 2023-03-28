@@ -2,8 +2,9 @@ package main
 
 import (
 	_ "embed"
-	"github.com/esnet/gdg/cmd"
 	"sync"
+
+	"github.com/esnet/gdg/cmd"
 
 	applogger "github.com/esnet/gdg/log"
 )

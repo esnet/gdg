@@ -31,6 +31,7 @@ require (
 	github.com/carlmjohnson/requests v0.23.2
 	github.com/esnet/grafana-swagger-api-golang v0.0.0-20230321221207-0889360737aa
 	github.com/go-openapi/runtime v0.25.0
+	github.com/tidwall/gjson v1.14.4
 	gocloud.dev v0.29.0
 	golang.org/x/exp v0.0.0-20230124195608-d38c7dcee874
 )
@@ -110,6 +111,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/otel v1.14.0 // indirect
 	go.opentelemetry.io/otel/trace v1.14.0 // indirect

@@ -1,0 +1,131 @@
+{
+	"id": 29,
+	"kind": 1,
+	"meta": {
+		"created": "2023-03-30T17:18:08.000Z",
+		"createdBy": {
+			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"id": 1,
+			"name": "admin"
+		},
+		"folderName": "General",
+		"updated": "2023-03-30T17:18:08.000Z",
+		"updatedBy": {
+			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"id": 1,
+			"name": "admin"
+		}
+	},
+	"model": {
+		"datasource": {
+			"type": "grafana-googlesheets-datasource",
+			"uid": "uL86Byf4k"
+		},
+		"description": "",
+		"fieldConfig": {
+			"defaults": {
+				"color": {
+					"mode": "thresholds"
+				},
+				"custom": {
+					"align": "auto",
+					"displayMode": "auto",
+					"inspect": false
+				},
+				"decimals": 1,
+				"mappings": [],
+				"thresholds": {
+					"mode": "absolute",
+					"steps": [
+						{
+							"color": "green"
+						},
+						{
+							"color": "red",
+							"value": 80
+						}
+					]
+				},
+				"unit": "m"
+			},
+			"overrides": [
+				{
+					"matcher": {
+						"id": "byName",
+						"options": "Image"
+					},
+					"properties": [
+						{
+							"id": "custom.displayMode",
+							"value": "image"
+						},
+						{
+							"id": "custom.width",
+							"value": 72
+						}
+					]
+				}
+			]
+		},
+		"gridPos": {
+			"h": 8,
+			"w": 11,
+			"x": 13,
+			"y": 23
+		},
+		"id": 9,
+		"interval": "",
+		"libraryPanel": {
+			"uid": "T47RSwQnz"
+		},
+		"links": [],
+		"options": {
+			"footer": {
+				"fields": "",
+				"reducer": [
+					"sum"
+				],
+				"show": false
+			},
+			"showHeader": true,
+			"sortBy": []
+		},
+		"pluginVersion": "8.5.0",
+		"targets": [
+			{
+				"cacheDurationSeconds": 0,
+				"datasource": {
+					"type": "grafana-googlesheets-datasource",
+					"uid": "uL86Byf4k"
+				},
+				"expr": "web_http_5xx_errors",
+				"legendFormat": "500",
+				"range": "ExtraCleaningDuty!G1:J6",
+				"refId": "A",
+				"spreadsheet": "1uoZrXcnv_ZeKoLk56eaBdTOI8kMYaulZdMxFNQUxmGs",
+				"useTimeFilter": false
+			}
+		],
+		"title": "Extra Cleaning Duty Assignment Today",
+		"transformations": [
+			{
+				"id": "organize",
+				"options": {
+					"excludeByName": {
+						"Value": true
+					},
+					"indexByName": {},
+					"renameByName": {
+						"Duty": ""
+					}
+				}
+			}
+		],
+		"type": "table"
+	},
+	"name": "Dashboard Makeover - Extra Cleaning Duty Assignment Today",
+	"orgId": 1,
+	"type": "table",
+	"uid": "T47RSwQnz",
+	"version": 1
+}

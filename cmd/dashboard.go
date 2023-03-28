@@ -10,17 +10,12 @@ import (
 	"strings"
 )
 
-func getDashboardGlobalFlags(cmd *cobra.Command) api.Filter {
+func parseDashboardGlobalFlags(cmd *cobra.Command) []string {
 	folderFilter, _ := cmd.Flags().GetString("folder")
 	dashboardFilter, _ := cmd.Flags().GetString("dashboard")
 	tagsFilter, _ := cmd.Flags().GetStringSlice("tags")
 
-	filters := api.NewDashboardFilter()
-	filters.AddFilter(api.FolderFilter, folderFilter)
-	filters.AddFilter(api.DashFilter, dashboardFilter)
-	filters.AddFilter(api.TagsFilter, strings.Join(tagsFilter, ","))
-
-	return filters
+	return []string{folderFilter, dashboardFilter, strings.Join(tagsFilter, ",")}
 }
 
 var dashboard = &cobra.Command{
@@ -35,7 +30,7 @@ var clearDashboards = &cobra.Command{
 	Short: "delete all monitored dashboards",
 	Long:  `clear all monitored dashboards from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
-		filter := getDashboardGlobalFlags(cmd)
+		filter := api.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 		deletedDashboards := client.DeleteAllDashboards(filter)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range deletedDashboards {
@@ -58,7 +53,7 @@ var exportDashboard = &cobra.Command{
 	Long:  `export all dashboards`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		filter := getDashboardGlobalFlags(cmd)
+		filter := api.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 		client.ExportDashboards(filter)
 
 		tableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
@@ -82,7 +77,7 @@ var importDashboard = &cobra.Command{
 	Short: "Import all dashboards",
 	Long:  `Import all dashboards from grafana to local file system`,
 	Run: func(cmd *cobra.Command, args []string) {
-		filter := getDashboardGlobalFlags(cmd)
+		filter := api.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 		savedFiles := client.ImportDashboards(filter)
 		log.Infof("Importing dashboards for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
@@ -98,16 +93,16 @@ var listDashboards = &cobra.Command{
 	Short: "List all dashboards",
 	Long:  `List all dashboards`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "URL"})
+		tableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "Tags", "URL"})
 
-		filters := getDashboardGlobalFlags(cmd)
+		filters := api.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 		boards := client.ListDashboards(filters)
 
 		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
 		for _, link := range boards {
 			url := fmt.Sprintf("%s%s", apphelpers.GetCtxDefaultGrafanaConfig().URL, link.URL)
 			tableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
-				link.UID, url})
+				link.UID, strings.Join(link.Tags, ","), url})
 
 		}
 		if len(boards) > 0 {

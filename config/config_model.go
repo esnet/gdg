@@ -19,6 +19,7 @@ const (
 	DataSourceResource        = "datasources"
 	FolderResource            = "folders"
 	AlertNotificationResource = "alertnotifications"
+	LibraryElementResource    = "libraryelements"
 )
 
 func (s *ResourceType) String() string {

@@ -16,7 +16,6 @@ import (
 // AlertNotificationsApi Contract definition
 // Deprecated: Marked as Deprecated as of Grafana 9.0, Moving to ContactPoints is recommended
 type AlertNotificationsApi interface {
-	//AlertNotifications
 	ListAlertNotifications() []*models.AlertNotification
 	ImportAlertNotifications() []string
 	ExportAlertNotifications() []string

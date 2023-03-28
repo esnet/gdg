@@ -5,7 +5,9 @@ weight: 16
 
 Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 
-### Alert Notifications
+### Alert Notifications (DEPRECATED)
+
+This will stop working soon both as a concept in grafana and something that GDG will support.
 
 Allows you to manage alertnotifications (an) if you have any setup
 
@@ -32,7 +34,7 @@ ctx is shorthand for context and basic CRUD is supported which is mainly tooling
 ```
 
 
-#### Dashboards
+### Dashboards
 
 Dashboards are imported or exported from _organization_ specified in configuration file otherwise current organization user is used.
 
@@ -53,7 +55,7 @@ You can also use filtering options to list or import your daashboard by folder o
 ./bin/gdg dash import -t tagA -t tagB -t tagC
 ```
 
-#### DataSources
+### DataSources
 
 DataSources credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/esnet/gdg/blob/master/conf/importer-example.yml).  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from _organization_ specified in configuration file otherwise current organization user is used.
@@ -68,7 +70,22 @@ All commands can use `datasources` or `ds` to manage datasources
 ./bin/gdg ds clear -- Deletes all datasources
 ```
 
-#### Devel
+### Library Elements
+
+Library elements are components that can be shared among multiple dashboards.  Folder matching will still be applied, so any folders not monitored will be ignored unless explicitly specified.  If wildcard flag is enabled, all elements will be acted on irrelevant of folder location
+
+All commands can use `libraryelements` aliased to `library` and `lib` for laziness purposes.
+
+```sh
+./bin/gdg lib list -- Lists all library components
+./bin/gdg lib import -- Import all library components from grafana to local file system
+./bin/gdg lib export -- Exports all library components from local filesystem (matching folder filter) to Grafana
+./bin/gdg lib clear -- Deletes all library components
+```
+
+
+
+### Devel
 Some developer helper utilities
 
 
@@ -77,7 +94,7 @@ Some developer helper utilities
 ./bin/gdg devel srvinfo -- print grafana server info
 ```
 
-#### Folders
+### Folders
 
 Mostly optional as Dashboards will create/delete these are needed but if there is additional metadata you wish to persist you can use this to manage them.
 
@@ -88,7 +105,7 @@ Mostly optional as Dashboards will create/delete these are needed but if there i
 ./bin/gdg folders clear -- Deletes all folders
 ```
 
-#### Organizations
+### Organizations
 Command can use `organizations` or `org` to manage organizations.
 
 ```sh

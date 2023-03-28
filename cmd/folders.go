@@ -1,17 +1,29 @@
 package cmd
 
 import (
+	"github.com/esnet/gdg/api"
+	"github.com/esnet/gdg/api/filters"
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/jedib0t/go-pretty/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
+var useFolderFilters bool
+
 var foldersCmd = &cobra.Command{
 	Use:     "folders",
 	Aliases: []string{"fld", "folder"},
 	Short:   "Folders Tooling",
 	Long:    `Folders Tooling`,
+}
+
+func getFolderFilter() filters.Filter {
+	if !useFolderFilters {
+		return nil
+	}
+	return api.NewFolderFilter()
+
 }
 
 var foldersDeleteCmd = &cobra.Command{
@@ -23,7 +35,7 @@ var foldersDeleteCmd = &cobra.Command{
 		log.Infof("Deleting all Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"title"})
 
-		folders := client.DeleteAllFolder(nil)
+		folders := client.DeleteAllFolder(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No Folders found")
 		} else {
@@ -44,7 +56,7 @@ var foldersExportCmd = &cobra.Command{
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"file"})
-		folders := client.ExportFolder(nil)
+		folders := client.ExportFolder(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
@@ -65,7 +77,7 @@ var foldersImportCmd = &cobra.Command{
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"file"})
-		folders := client.ImportFolder(nil)
+		folders := client.ImportFolder(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
@@ -86,7 +98,8 @@ var foldersListCmd = &cobra.Command{
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "uid", "title"})
-		folders := client.ListFolder(nil)
+		folders := client.ListFolder(getFolderFilter())
+
 		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
@@ -105,4 +118,6 @@ func init() {
 	foldersCmd.AddCommand(foldersExportCmd)
 	foldersCmd.AddCommand(foldersImportCmd)
 	foldersCmd.AddCommand(foldersListCmd)
+	foldersCmd.PersistentFlags().BoolVar(&useFolderFilters, "use-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
+
 }

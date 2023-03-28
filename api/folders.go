@@ -2,12 +2,15 @@ package api
 
 import (
 	"encoding/json"
+	"github.com/esnet/gdg/api/filters"
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folders"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/search"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/exp/slices"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,22 +18,57 @@ import (
 
 // FoldersApi Contract definition
 type FoldersApi interface {
-	ListFolder(filter Filter) []*models.FolderSearchHit
-	ImportFolder(filter Filter) []string
-	ExportFolder(filter Filter) []string
-	DeleteAllFolder(filter Filter) []string
+	ListFolder(filter filters.Filter) []*models.Hit
+	ImportFolder(filter filters.Filter) []string
+	ExportFolder(filter filters.Filter) []string
+	DeleteAllFolder(filter filters.Filter) []string
 }
 
-func (s *DashNGoImpl) ListFolder(filter Filter) []*models.FolderSearchHit {
-	folderListing, err := s.client.Folders.GetFolders(folders.NewGetFoldersParams(), s.getAuth())
+func NewFolderFilter() filters.Filter {
+	filterObj := filters.NewBaseFilter()
+
+	//filterObj.AddFilter(filters.FolderFilter, folders)
+	//Add Folder Validation
+	filterObj.AddValidation(filters.FolderFilter, func(i interface{}) bool {
+		val, ok := i.(map[filters.FilterType]string)
+		if !ok {
+			return ok
+		}
+		//Check folder
+		if folderFilter, ok := val[filters.FolderFilter]; ok {
+			return slices.Contains(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), folderFilter)
+		} else {
+			return true
+		}
+	})
+	return filterObj
+
+}
+
+func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
+	var result = make([]*models.Hit, 0)
+	if apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+		filter = nil
+	}
+	p := search.NewSearchParams()
+	p.Type = &searchTypeFolder
+	folderListing, err := s.client.Search.Search(p, s.getAuth())
+	folderListing.GetPayload()
 	if err != nil {
 		log.Fatal("unable to retrieve folder list.")
 	}
+	for ndx, val := range folderListing.GetPayload() {
+		if filter == nil {
+			result = append(result, folderListing.GetPayload()[ndx])
+		} else if filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: val.Title}) {
+			result = append(result, folderListing.GetPayload()[ndx])
+		}
+	}
 
-	return folderListing.Payload
+	return result
 
 }
-func (s *DashNGoImpl) ImportFolder(filter Filter) []string {
+func (s *DashNGoImpl) ImportFolder(filter filters.Filter) []string {
 	var (
 		dsPacked  []byte
 		err       error
@@ -53,7 +91,7 @@ func (s *DashNGoImpl) ImportFolder(filter Filter) []string {
 	return dataFiles
 }
 
-func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
+func (s *DashNGoImpl) ExportFolder(filter filters.Filter) []string {
 	var (
 		result    []string
 		rawFolder []byte
@@ -101,7 +139,7 @@ func (s *DashNGoImpl) ExportFolder(filter Filter) []string {
 	return result
 }
 
-func (s *DashNGoImpl) DeleteAllFolder(filter Filter) []string {
+func (s *DashNGoImpl) DeleteAllFolder(filter filters.Filter) []string {
 	var result []string
 	folderListing := s.ListFolder(filter)
 	for _, folder := range folderListing {
@@ -113,4 +151,22 @@ func (s *DashNGoImpl) DeleteAllFolder(filter Filter) []string {
 		}
 	}
 	return result
+}
+
+// getFolderNameIDMap helper function to build a mapping for name to folderID
+func getFolderNameIDMap(folders []*models.Hit) map[string]int64 {
+	var folderMap = make(map[string]int64)
+	for _, folder := range folders {
+		folderMap[folder.Title] = folder.ID
+	}
+	return folderMap
+}
+
+func reverseLookUp[T comparable, Y comparable](m map[T]Y) map[Y]T {
+	reverse := make(map[Y]T, 0)
+	for key, val := range m {
+		reverse[val] = key
+	}
+
+	return reverse
 }

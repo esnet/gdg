@@ -15,11 +15,11 @@ func TestDataSourceCRUD(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	apiClient, _ := initTest(t)
-	filters := api.NewDashboardFilter()
+	filtersEntity := api.NewDataSourceFilter("")
 	log.Info("Exporting all datasources")
-	apiClient.ExportDataSources(filters)
+	apiClient.ExportDataSources(filtersEntity)
 	log.Info("Listing all datasources")
-	dataSources := apiClient.ListDataSources(filters)
+	dataSources := apiClient.ListDataSources(filtersEntity)
 	assert.Equal(t, len(dataSources), 3)
 	var dsItem *models.DataSourceListItemDTO
 	for _, ds := range dataSources {
@@ -32,13 +32,13 @@ func TestDataSourceCRUD(t *testing.T) {
 	validateDataSource(t, *dsItem)
 	//Import Dashboards
 	log.Info("Importing datasources")
-	list := apiClient.ImportDataSources(filters)
+	list := apiClient.ImportDataSources(filtersEntity)
 	assert.Equal(t, len(list), len(dataSources))
 	log.Info("Deleting datasources")
-	deleteList := apiClient.DeleteAllDataSources(filters)
+	deleteList := apiClient.DeleteAllDataSources(filtersEntity)
 	assert.Equal(t, len(deleteList), len(dataSources))
 	log.Info("List datasources again")
-	dataSources = apiClient.ListDataSources(filters)
+	dataSources = apiClient.ListDataSources(filtersEntity)
 	assert.Equal(t, len(dataSources), 0)
 }
 
@@ -59,11 +59,11 @@ func TestDataSourceFilter(t *testing.T) {
 
 	apiClient := api.NewApiService("dummy")
 
-	filters := api.NewDashboardFilter()
+	filtersEntity := api.NewDataSourceFilter("")
 	log.Info("Exporting all datasources")
-	apiClient.ExportDataSources(filters)
+	apiClient.ExportDataSources(filtersEntity)
 	log.Info("Listing all datasources")
-	dataSources := apiClient.ListDataSources(filters)
+	dataSources := apiClient.ListDataSources(filtersEntity)
 	assert.Equal(t, len(dataSources), 2)
 	var dsItem *models.DataSourceListItemDTO
 	for _, ds := range dataSources {
@@ -76,13 +76,13 @@ func TestDataSourceFilter(t *testing.T) {
 	validateDataSource(t, *dsItem)
 	//Import Dashboards
 	log.Info("Importing datasources")
-	list := apiClient.ImportDataSources(filters)
+	list := apiClient.ImportDataSources(filtersEntity)
 	assert.Equal(t, len(list), len(dataSources))
 	log.Info("Deleting datasources")
-	deleteList := apiClient.DeleteAllDataSources(filters)
+	deleteList := apiClient.DeleteAllDataSources(filtersEntity)
 	assert.Equal(t, len(deleteList), len(dataSources))
 	log.Info("List datasources again")
-	dataSources = apiClient.ListDataSources(filters)
+	dataSources = apiClient.ListDataSources(filtersEntity)
 	assert.Equal(t, len(dataSources), 0)
 }
 
