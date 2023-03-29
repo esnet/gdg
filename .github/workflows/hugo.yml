@@ -17,6 +17,11 @@ jobs:
        with:
          hugo-version: 'latest'
          extended: true
+     - name: NPM Dependencies
+       run: |
+         cd documentation && npm install
+     - name: NPM Dependencies
+       run: npm install postcss postcss-cli autoprefixer
      - name: Build
        run: hugo --destination public --baseURL https://software.es.net/gdg -s documentation
      - name: Deploy

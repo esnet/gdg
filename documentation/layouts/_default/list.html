@@ -1,0 +1,14 @@
+{{ define "main" }}
+<div class="row justify-content-center">
+  <div class="col-md-12 col-lg-9">
+    <h1 class="text-center">{{ .Title }}</h1>
+    {{ with .Content -}}<div class="text-center">{{ . }}</div>{{ end -}}
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-md-12 col-lg-9">
+    {{ $.Scratch.Set "paginator" true }}
+    {{ template "_internal/pagination.html" . }}
+  </div>
+</div>
+{{ end }}

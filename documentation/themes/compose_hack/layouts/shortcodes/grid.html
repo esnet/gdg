@@ -1,5 +1,0 @@
-{{- $grids := .Get 0 }}
-{{- $modifiers := .Get 1 }}
-<div class="grid-{{ $grids }}{{ with $modifiers }} {{ . }}{{ end }}">
-  {{ .Inner }}
-</div>
