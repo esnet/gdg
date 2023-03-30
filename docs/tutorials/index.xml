@@ -1,18 +1,1 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Tutorials on </title>
-    <link>https://software.es.net/gdg/docs/tutorials/</link>
-    <description>Recent content in Tutorials on </description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://software.es.net/gdg/docs/tutorials/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Coming Soon</title>
-      <link>https://software.es.net/gdg/docs/tutorials/coming_soon/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/tutorials/coming_soon/</guid>
-      <description>This section is intended to be a more comprehensive guides on using GDG, as more advanced and more complex features come about.</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorials on</title><link>https://software.es.net/gdg/docs/tutorials/</link><description>Recent content in Tutorials on</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://software.es.net/gdg/docs/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Coming Soon</title><link>https://software.es.net/gdg/docs/tutorials/coming_soon/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/coming_soon/</guid><description>This section is intended to be a more comprehensive guides on using GDG, as more advanced and more complex features come about.</description></item></channel></rss>

@@ -1,20 +1,2 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Releases on </title>
-    <link>https://software.es.net/gdg/docs/releases/</link>
-    <description>Recent content in Releases on </description>
-    <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 13 Oct 2020 15:21:01 +0200</lastBuildDate><atom:link href="https://software.es.net/gdg/docs/releases/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>0.4.0</title>
-      <link>https://software.es.net/gdg/docs/releases/gdg_0.4.0/</link>
-      <pubDate>Tue, 13 Oct 2020 15:21:01 +0200</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/releases/gdg_0.4.0/</guid>
-      <description>DRAFT: Release Notes for v0.4.0 # This is a major change from the previous one, I&amp;rsquo;ll likely cut the 1.x soon and start following the more typical Semver conventions. Aka Major version is a breaking change, Minor is just that, patches for previous versions.
-API SDK Changes: # I have been trying to find a proper library to use so I&amp;rsquo;m not re-writing and reinventing the wheel so to speak.</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on</title><link>https://software.es.net/gdg/docs/releases/</link><description>Recent content in Releases on</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Tue, 13 Oct 2020 15:21:01 +0200</lastBuildDate><atom:link href="https://software.es.net/gdg/docs/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>0.4.0</title><link>https://software.es.net/gdg/docs/releases/gdg_0.4.0/</link><pubDate>Tue, 13 Oct 2020 15:21:01 +0200</pubDate><guid>https://software.es.net/gdg/docs/releases/gdg_0.4.0/</guid><description>DRAFT: Release Notes for v0.4.0 # This is a major change from the previous one, I&amp;rsquo;ll likely cut the 1.x soon and start following the more typical Semver conventions. Aka Major version is a breaking change, Minor is just that, patches for previous versions.
+API SDK Changes: # I have been trying to find a proper library to use so I&amp;rsquo;m not re-writing and reinventing the wheel so to speak.</description></item></channel></rss>

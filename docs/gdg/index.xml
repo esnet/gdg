@@ -1,76 +1,14 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>GDG Docs on </title>
-    <link>https://software.es.net/gdg/docs/gdg/</link>
-    <description>Recent content in GDG Docs on </description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://software.es.net/gdg/docs/gdg/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Installation</title>
-      <link>https://software.es.net/gdg/docs/gdg/installation/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/gdg/installation/</guid>
-      <description>Installation # The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
-The following packages are currently supported:</description>
-    </item>
-    
-    <item>
-      <title>Configuration</title>
-      <link>https://software.es.net/gdg/docs/gdg/configuration/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/gdg/configuration/</guid>
-      <description>Getting started # This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GDG Docs on</title><link>https://software.es.net/gdg/docs/gdg/</link><description>Recent content in GDG Docs on</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://software.es.net/gdg/docs/gdg/index.xml" rel="self" type="application/rss+xml"/><item><title>Installation</title><link>https://software.es.net/gdg/docs/gdg/installation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/installation/</guid><description>Installation # The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
+The following packages are currently supported:</description></item><item><title>Configuration</title><link>https://software.es.net/gdg/docs/gdg/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/</guid><description>Getting started # This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
 make a copy of conf/importer-example.yml and name it conf/importer.yml You&amp;rsquo;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
-Authentication # Authentication Token # You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&amp;gt; Configuration =&amp;gt; API Keys.</description>
-    </item>
-    
-    <item>
-      <title>Cloud Configuration</title>
-      <link>https://software.es.net/gdg/docs/gdg/cloud_configuration/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/gdg/cloud_configuration/</guid>
-      <description>Cloud Support # Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
+Authentication # Authentication Token # You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&amp;gt; Configuration =&amp;gt; API Keys.</description></item><item><title>Cloud Configuration</title><link>https://software.es.net/gdg/docs/gdg/cloud_configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/cloud_configuration/</guid><description>Cloud Support # Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
 Currently the following providers are supported:
-AWS S3 Google Storage (GS) Azure NOTE: the go-cloud was used to support all of these providers. They should all work, but only S3 and Google have been properly tested.</description>
-    </item>
-    
-    <item>
-      <title>Developer Guide</title>
-      <link>https://software.es.net/gdg/docs/gdg/developer/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/gdg/developer/</guid>
-      <description>Running Tests # Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test Making a release # Install goreleaser.
+AWS S3 Google Storage (GS) Azure NOTE: the go-cloud was used to support all of these providers. They should all work, but only S3 and Google have been properly tested.</description></item><item><title>Developer Guide</title><link>https://software.es.net/gdg/docs/gdg/developer/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/developer/</guid><description>Running Tests # Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test Making a release # Install goreleaser.
 brew install goreleaser/tap/goreleaser brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
 go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
 export GITHUB_TOKEN=&amp;quot;secret&amp;quot; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically.</description>
-    </item>
-    
-    <item>
-      <title>Example Usage</title>
-      <link>https://software.es.net/gdg/docs/gdg/examples/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/gdg/examples/</guid>
-      <description>Setup new configuration # You can create new context configuration using an interactive setup.
+NOTE: CI/CD pipeline should do all this automatically.</description></item><item><title>Example Usage</title><link>https://software.es.net/gdg/docs/gdg/examples/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/examples/</guid><description>Setup new configuration # You can create new context configuration using an interactive setup.
 $ ./bin/gdg ctx new mycontext When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
-Default option (&amp;ldquo;General&amp;rdquo;) List of folders you wish to manage Wildcard configuration (all folders) Import / Download Dashboards # Minimal configuration (eg.</description>
-    </item>
-    
-    <item>
-      <title>Usage Guide</title>
-      <link>https://software.es.net/gdg/docs/gdg/usage_guide/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/gdg/usage_guide/</guid>
-      <description>Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
+Default option (&amp;ldquo;General&amp;rdquo;) List of folders you wish to manage Wildcard configuration (all folders) Import / Download Dashboards # Minimal configuration (eg.</description></item><item><title>Usage Guide</title><link>https://software.es.net/gdg/docs/gdg/usage_guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/usage_guide/</guid><description>Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 Alert Notifications # Allows you to manage alertnotifications (an) if you have any setup
-./bin/gdg an list -- Lists all alert notifications ./bin/gdg an import -- retrieve and save all alertnotifications from grafana ./bin/gdg an export -- writes all local alert notifications to grafana ./bin/gdg an clear -- Deletes all alert notifications Contexts # Starting with version 0.</description>
-    </item>
-    
-  </channel>
-</rss>
+./bin/gdg an list -- Lists all alert notifications ./bin/gdg an import -- retrieve and save all alertnotifications from grafana ./bin/gdg an export -- writes all local alert notifications to grafana ./bin/gdg an clear -- Deletes all alert notifications Contexts # Starting with version 0.</description></item></channel></rss>
