@@ -1,4 +1,4 @@
-baseurl = "https://doks.netlify.app/"
+baseurl = "https://software.es.net/gdg/"
 canonifyURLs = false
 disableAliases = true
 disableHugoGeneratorInject = true
