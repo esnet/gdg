@@ -1,83 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Grafana Dash-n-Go</title>
+    <title>Modern Documentation Theme on </title>
     <link>https://software.es.net/gdg/</link>
-    <description>Recent content on Grafana Dash-n-Go</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://software.es.net/gdg/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Installation</title>
-      <link>https://software.es.net/gdg/docs/installation/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/installation/</guid>
-      <description>Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
-The following packages are currently supported:</description>
-    </item>
+    <description>Recent content in Modern Documentation Theme on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <copyright>Copyright (c) 2020-2021 Henk Verlinde</copyright>
+    <lastBuildDate>Tue, 06 Oct 2020 08:47:36 +0000</lastBuildDate>
+    
+        <atom:link href="https://software.es.net/gdg/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
-      <title>Configuration</title>
-      <link>https://software.es.net/gdg/docs/configuration/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>Docs</title>
+      <link>https://software.es.net/gdg/docs/</link>
+      <pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate>
       
-      <guid>https://software.es.net/gdg/docs/configuration/</guid>
-      <description>Getting started This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
-make a copy of conf/importer-example.yml and name it conf/importer.yml You&#39;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
-Authentication Authentication Token You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&amp;gt; Configuration =&amp;gt; API Keys. You can then use it in your configuration file (eg.</description>
-    </item>
-    
-    <item>
-      <title>Cloud Configuration</title>
-      <link>https://software.es.net/gdg/docs/cloud_configuration/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/cloud_configuration/</guid>
-      <description>Cloud Support Support for using a few cloud providers as a storage engine is now supported. When enabled, the local file system is only used for reading configuration files. Everything else relies on the data from the cloud provider matching up to your configuration.
-Currently the following providers are supported:
-AWS S3 Google Storage (GS) Azure NOTE: the go-cloud was used to support all of these providers. They should all work, but only S3 and Google have been properly tested.</description>
-    </item>
-    
-    <item>
-      <title>Developer Guide</title>
-      <link>https://software.es.net/gdg/docs/developer/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/developer/</guid>
-      <description>Running Tests Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test Making a release Install goreleaser.
-1brew install goreleaser/tap/goreleaser 2brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
-1go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
-1export GITHUB_TOKEN=&amp;#34;secret&amp;#34; git tag v0.1.0 goreleaser release
-NOTE: CI/CD pipeline should do all this automatically.</description>
-    </item>
-    
-    <item>
-      <title>Example Usage</title>
-      <link>https://software.es.net/gdg/docs/examples/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/examples/</guid>
-      <description>Setup new configuration You can create new context configuration using an interactive setup.
-$ ./bin/gdg ctx new mycontext When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
-Default option (&amp;quot;General&amp;quot;) List of folders you wish to manage Wildcard configuration (all folders) Import / Download Dashboards Minimal configuration (eg.</description>
-    </item>
-    
-    <item>
-      <title>Usage Guide</title>
-      <link>https://software.es.net/gdg/docs/usage_guide/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/docs/usage_guide/</guid>
-      <description>Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
-Alert Notifications Allows you to manage alertnotifications (an) if you have any setup
-1./bin/gdg an list -- Lists all alert notifications 2./bin/gdg an import -- retrieve and save all alertnotifications from grafana 3./bin/gdg an export -- writes all local alert notifications to grafana 4./bin/gdg an clear -- Deletes all alert notifications Contexts Starting with version 0.</description>
-    </item>
-    
-    <item>
-      <title>Search</title>
-      <link>https://software.es.net/gdg/search/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://software.es.net/gdg/search/</guid>
+      <guid>https://software.es.net/gdg/docs/</guid>
       <description></description>
     </item>
     

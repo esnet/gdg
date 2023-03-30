@@ -1,32 +1,113 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/releases/</loc>
+    <lastmod>2020-10-13T15:21:01+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/gdg/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/gdg/installation/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/tutorials/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/gdg/configuration/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/gdg/cloud_configuration/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/tutorials/coming_soon/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/gdg/developer/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/gdg/examples/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/gdg/usage_guide/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/docs/releases/gdg_0.4.0/</loc>
+    <lastmod>2020-10-13T15:21:01+02:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/contributors/henk-verlinde/</loc>
+    <lastmod>2020-10-06T08:50:45+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/contributors/</loc>
+    <lastmod>2020-10-06T08:50:29+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
   <url>
     <loc>https://software.es.net/gdg/docs/</loc>
-    <lastmod>2021-07-29T11:12:13-07:00</lastmod>
-  </url><url>
-    <loc>https://software.es.net/gdg/docs/installation/</loc>
-    <lastmod>2022-12-03T11:15:07-06:00</lastmod>
-  </url><url>
-    <loc>https://software.es.net/gdg/docs/configuration/</loc>
-    <lastmod>2022-05-09T11:34:54-04:00</lastmod>
-  </url><url>
-    <loc>https://software.es.net/gdg/docs/cloud_configuration/</loc>
-    <lastmod>2023-03-27T17:29:58-04:00</lastmod>
-  </url><url>
-    <loc>https://software.es.net/gdg/docs/developer/</loc>
-    <lastmod>2022-07-06T15:53:02-04:00</lastmod>
-  </url><url>
-    <loc>https://software.es.net/gdg/docs/examples/</loc>
-    <lastmod>2023-03-11T15:51:26-08:00</lastmod>
-  </url><url>
-    <loc>https://software.es.net/gdg/docs/usage_guide/</loc>
-    <lastmod>2022-10-01T17:02:51+02:00</lastmod>
-  </url><url>
-    <loc>https://software.es.net/gdg/</loc>
-    <lastmod>2021-06-25T14:02:39-05:00</lastmod>
-  </url><url>
-    <loc>https://software.es.net/gdg/search/</loc>
-    <lastmod>2021-06-25T14:02:39-05:00</lastmod>
+    <lastmod>2020-10-06T08:48:23+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/</loc>
+    <lastmod>2020-10-06T08:47:36+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/categories/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://software.es.net/gdg/tags/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
 </urlset>

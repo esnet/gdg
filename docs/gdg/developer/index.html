@@ -15,30 +15,35 @@
   <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-  <title>Docs - GDG</title>
-<meta name="description" content="Docs Doks.">
-<link rel="canonical" href="https://software.es.net/gdg/docs/">
+  <title>Developer Guide - GDG</title>
+<meta name="description" content="Running Tests # Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test Making a release # Install goreleaser.
+brew install goreleaser/tap/goreleaser brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
+go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
+export GITHUB_TOKEN=&amp;quot;secret&amp;quot; git tag v0.1.0 goreleaser release
+NOTE: CI/CD pipeline should do all this automatically.">
+  <link rel="canonical" href="https://software.es.net/gdg/docs/gdg/developer/">
 <meta property="og:locale" content="en_US">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Docs">
-<meta property="og:description" content="Docs Doks.">
-<meta property="og:url" content="https://software.es.net/gdg/docs/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Developer Guide">
+<meta property="og:description" content="Running Tests # Bring up a grafana instance locally with default credentials of admin/admin. docker-compose up -d grafana Once the instance is up simply run go test ./... or make test Making a release # Install goreleaser.
+brew install goreleaser/tap/goreleaser brew reinstall goreleaser` Alternatively if you have a more recent version of Go.
+go install github.com/goreleaser/goreleaser@latest export your GITHUB_TOKEN.
+export GITHUB_TOKEN=&quot;secret&quot; git tag v0.1.0 goreleaser release
+NOTE: CI/CD pipeline should do all this automatically.">
+<meta property="og:url" content="https://software.es.net/gdg/docs/gdg/developer/">
 <meta property="og:site_name" content="GDG">
-<meta property="og:updated_time" content="2020-10-06T08:48:23+00:00">
-  
+
   <meta property="og:image" content="https://software.es.net/gdg/doks.png"/>
       <meta property="og:image:alt" content="GDG">
     
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@getdoks">
 <meta name="twitter:creator" content="@henkverlinde">
-<meta name="twitter:title" content="Docs">
-<meta name="twitter:description" content="Docs Doks.">
+<meta name="twitter:title" content="Developer Guide">
+<meta name="twitter:description" content="">
 <meta name="twitter:image" content="https://software.es.net/gdg/doks.png">
-    <meta name="twitter:image:alt" content="Docs">
+    <meta name="twitter:image:alt" content="Developer Guide">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://software.es.net/gdg/docs/index.xml">
-<link rel="sitemap" type="application/xml" href="https://software.es.net/gdg/docs/sitemap.xml">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -76,32 +81,32 @@
       },
     {
       "@type": "WebPage",
-      "@id": "https://software.es.net/gdg/docs/",
-      "url": "https://software.es.net/gdg/docs/",
-      "name": "Docs",
-      "description": "Docs Doks.",
+      "@id": "https://software.es.net/gdg/docs/gdg/developer/",
+      "url": "https://software.es.net/gdg/docs/gdg/developer/",
+      "name": "Developer Guide",
+      "description": "",
       "isPartOf": {
         "@id": "https://software.es.net/#/schema/website/1"
       },
       "about": {
           "@id": "https://software.es.net/#/schema/organization/1"
         },
-      "datePublished": "2020-10-06T08:48:23CET",
-      "dateModified": "2020-10-06T08:48:23CET",
+      "datePublished": "0001-01-01T00:00:00CET",
+      "dateModified": "0001-01-01T00:00:00CET",
       "breadcrumb": {
-        "@id": "https://software.es.net/gdg/docs/#/schema/breadcrumb/1"
+        "@id": "https://software.es.net/gdg/docs/gdg/developer/#/schema/breadcrumb/1"
       },
       "primaryImageOfPage": {
-        "@id": "https://software.es.net/gdg/docs/#/schema/image/2"
+        "@id": "https://software.es.net/gdg/docs/gdg/developer/#/schema/image/2"
       },
       "inLanguage": "en-US",
       "potentialAction": [{
-        "@type": "ReadAction", "target": ["https://software.es.net/gdg/docs/"]
+        "@type": "ReadAction", "target": ["https://software.es.net/gdg/docs/gdg/developer/"]
       }]
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://software.es.net/gdg/docs/#/schema/breadcrumb/1",
+      "@id": "https://software.es.net/gdg/docs/gdg/developer/#/schema/breadcrumb/1",
       "name": "Breadcrumbs",
       "itemListElement": [{
         "@type": "ListItem",
@@ -116,7 +121,25 @@
         "@type": "ListItem",
         "position":  3 ,
         "item": {
-          "@id": "https://software.es.net/gdg/docs/"
+          "@type": "WebPage",
+          "@id": "https://software.es.net/gdg/docs/",
+          "url": "https://software.es.net/gdg/docs/",
+          "name": "Docs"
+          }
+        },{
+        "@type": "ListItem",
+        "position":  4 ,
+        "item": {
+          "@type": "WebPage",
+          "@id": "https://software.es.net/gdg/docs/gdg/",
+          "url": "https://software.es.net/gdg/docs/gdg/",
+          "name": "Gdg"
+          }
+        },{
+        "@type": "ListItem",
+        "position":  5 ,
+        "item": {
+          "@id": "https://software.es.net/gdg/docs/gdg/developer/"
           }
         }]
     },
@@ -125,11 +148,54 @@
       "@context": "https://schema.org",
       "@graph": [
         {
+          "@type": "Article",
+          "@id": "https://software.es.net/#/schema/article/1",
+          "headline": "Developer Guide",
+          "description": "",
+          "isPartOf": {
+            "@id": "https://software.es.net/gdg/docs/gdg/developer/"
+          },
+          "mainEntityOfPage": {
+            "@id": "https://software.es.net/gdg/docs/gdg/developer/"
+          },
+          "datePublished": "0001-01-01T00:00:00CET",
+          "dateModified": "0001-01-01T00:00:00CET",
+          "author": {
+            "@id": "https://software.es.net/#/schema/person/2"
+          },
+          "publisher": {
+              "@id": "https://software.es.net/#/schema/organization/1"
+            },
+          "image": {
+            "@id": "https://software.es.net/gdg/docs/gdg/developer/#/schema/image/2"
+          }
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://software.es.net/#/schema/person/2",
+          "name": "Henk Verlinde",
+          "sameAs": [
+            "https://twitter.com/henkverlinde"
+            , "https://www.linkedin.com/in/henkverlinde/"
+            , "https://github.com/h-enk"
+            ]
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
           "@type": "ImageObject",
-          "@id": "https://software.es.net/gdg/docs/#/schema/image/2",
+          "@id": "https://software.es.net/gdg/docs/gdg/developer/#/schema/image/2",
           "url": "https://software.es.net/gdg/doks.png",
           "contentUrl": "https://software.es.net/gdg/doks.png",
-          "caption": "Docs"
+          "caption": "Developer Guide"
         }
       ]
     }
@@ -150,7 +216,7 @@
 
 </head>
 
-  <body class="docs list">
+  <body class="docs single">
     <div class="sticky-top">
 <div class="header-bar"></div>
 
@@ -196,10 +262,10 @@
     
       
       <li class="mb-1">
-        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-b32c37c1ba8ae3a68e84c11792757b03" aria-expanded="false">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-b32c37c1ba8ae3a68e84c11792757b03" aria-expanded="true">
           GDG Docs
         </button>
-        <div class="collapse" id="section-b32c37c1ba8ae3a68e84c11792757b03">
+        <div class="collapse show" id="section-b32c37c1ba8ae3a68e84c11792757b03">
           <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
             
               
@@ -219,7 +285,7 @@
             
               
                 
-                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/developer/">Developer Guide</a></li>
+                <li><a class="docs-link rounded active" href="https://software.es.net/gdg/docs/gdg/developer/">Developer Guide</a></li>
               
             
               
@@ -327,10 +393,10 @@
     
       
       <li class="mb-1">
-        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-b32c37c1ba8ae3a68e84c11792757b03" aria-expanded="false">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-b32c37c1ba8ae3a68e84c11792757b03" aria-expanded="true">
           GDG Docs
         </button>
-        <div class="collapse" id="section-b32c37c1ba8ae3a68e84c11792757b03">
+        <div class="collapse show" id="section-b32c37c1ba8ae3a68e84c11792757b03">
           <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
             
               
@@ -350,7 +416,7 @@
             
               
                 
-                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/developer/">Developer Guide</a></li>
+                <li><a class="docs-link rounded active" href="https://software.es.net/gdg/docs/gdg/developer/">Developer Guide</a></li>
               
             
               
@@ -395,82 +461,208 @@
     <div class="wrap container-xxl" role="document">
       <div class="content">
         
-<div class="row justify-content-center">
-  <div class="col-md-12 col-lg-10 col-xl-8">
-    <article>
-      <h1 class="text-center">Docs</h1>
-      <div class="text-center"></div>
-			<div class="card-list">
+	<div class="row flex-xl-nowrap">
+		<div class="col-lg-5 col-xl-4 docs-sidebar d-none d-lg-block">
+			<nav class="docs-links" aria-label="Main navigation">
 				
-				
-					
-						<div class="card my-3">
-							<div class="card-body">
-								<a class="stretched-link" href="/gdg/docs/releases/gdg_0.4.0/">0.4.0 &rarr;</a>
-							</div>
-						</div>
-					
-				
-					
-						<div class="card my-3">
-							<div class="card-body">
-								<a class="stretched-link" href="/gdg/docs/gdg/cloud_configuration/">Cloud Configuration &rarr;</a>
-							</div>
-						</div>
-					
-				
-					
-						<div class="card my-3">
-							<div class="card-body">
-								<a class="stretched-link" href="/gdg/docs/tutorials/coming_soon/">Coming Soon &rarr;</a>
-							</div>
-						</div>
-					
-				
-					
-						<div class="card my-3">
-							<div class="card-body">
-								<a class="stretched-link" href="/gdg/docs/gdg/configuration/">Configuration &rarr;</a>
-							</div>
-						</div>
-					
-				
-					
-						<div class="card my-3">
-							<div class="card-body">
-								<a class="stretched-link" href="/gdg/docs/gdg/developer/">Developer Guide &rarr;</a>
-							</div>
-						</div>
-					
-				
-					
-						<div class="card my-3">
-							<div class="card-body">
-								<a class="stretched-link" href="/gdg/docs/gdg/examples/">Example Usage &rarr;</a>
-							</div>
-						</div>
-					
-				
-					
-						<div class="card my-3">
-							<div class="card-body">
-								<a class="stretched-link" href="/gdg/docs/gdg/installation/">Installation &rarr;</a>
-							</div>
-						</div>
-					
-				
-					
-						<div class="card my-3">
-							<div class="card-body">
-								<a class="stretched-link" href="/gdg/docs/gdg/usage_guide/">Usage Guide &rarr;</a>
-							</div>
-						</div>
-					
-				
-			</div>
-    </article>
+<ul class="list-unstyled collapsible-sidebar">
+  
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-d50ae403cb49a205bdf789f377f5cfe6" aria-expanded="false">
+          Releases
+        </button>
+        <div class="collapse" id="section-d50ae403cb49a205bdf789f377f5cfe6">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/releases/gdg_0.4.0/">0.4.0</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-b32c37c1ba8ae3a68e84c11792757b03" aria-expanded="true">
+          GDG Docs
+        </button>
+        <div class="collapse show" id="section-b32c37c1ba8ae3a68e84c11792757b03">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/installation/">Installation</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/configuration/">Configuration</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/cloud_configuration/">Cloud Configuration</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded active" href="https://software.es.net/gdg/docs/gdg/developer/">Developer Guide</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/examples/">Example Usage</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/usage_guide/">Usage Guide</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-130ddfce9c28453883ccfe2da8b6d5ac" aria-expanded="false">
+          Tutorials
+        </button>
+        <div class="collapse" id="section-130ddfce9c28453883ccfe2da8b6d5ac">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/tutorials/coming_soon/">Coming Soon</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+  
+</ul>
+
+			</nav>
+		</div>
+		<nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+			<div class="d-xl-none">
+  <button class="btn btn-outline-primary btn-sm doks-toc-toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#onThisPage" aria-controls="doks-docs-nav" aria-expanded="false" aria-label="Toggle On this page navigation">
+    <span>On this page</span>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-expand" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Expand</title><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Collapse</title><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+    </span>
+  </button>
+  <div class="collapse" id="onThisPage">
+    <div class="card card-body mt-3 py-1">
+      <div class="page-links">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#running-tests">Running Tests</a></li>
+    <li><a href="#making-a-release">Making a release</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
   </div>
 </div>
+<div class="page-links d-none d-xl-block">
+  <h3>On this page</h3>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#running-tests">Running Tests</a></li>
+    <li><a href="#making-a-release">Making a release</a></li>
+  </ul>
+</nav>
+  </div>
+
+		</nav>
+		<main class="docs-content col-lg-11 col-xl-9 mx-xl-auto">
+		
+			<h1>Developer Guide</h1>
+			<p class="lead"></p>
+			<nav class="d-xl-none" aria-label="Quaternary navigation">
+				<div class="d-xl-none">
+  <button class="btn btn-outline-primary btn-sm doks-toc-toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#onThisPage" aria-controls="doks-docs-nav" aria-expanded="false" aria-label="Toggle On this page navigation">
+    <span>On this page</span>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-expand" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Expand</title><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Collapse</title><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+    </span>
+  </button>
+  <div class="collapse" id="onThisPage">
+    <div class="card card-body mt-3 py-1">
+      <div class="page-links">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#running-tests">Running Tests</a></li>
+    <li><a href="#making-a-release">Making a release</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page-links d-none d-xl-block">
+  <h3>On this page</h3>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#running-tests">Running Tests</a></li>
+    <li><a href="#making-a-release">Making a release</a></li>
+  </ul>
+</nav>
+  </div>
+
+			</nav>
+			<h2 id="running-tests">Running Tests <a href="#running-tests" class="anchor" aria-hidden="true">#</a></h2>
+<ol>
+<li>Bring up a grafana instance locally with default credentials of admin/admin.  <code>docker-compose up -d grafana</code></li>
+<li>Once the instance is up simply run <code>go test ./...</code> or <code>make test</code></li>
+</ol>
+<h2 id="making-a-release">Making a release <a href="#making-a-release" class="anchor" aria-hidden="true">#</a></h2>
+<p>Install goreleaser.</p>
+<pre><code class="language-sh">brew install goreleaser/tap/goreleaser
+brew reinstall goreleaser`
+</code></pre>
+<p>Alternatively if you have a more recent version of Go.</p>
+<pre><code class="language-sh">go install github.com/goreleaser/goreleaser@latest
+</code></pre>
+<p>export your GITHUB_TOKEN.</p>
+<pre><code class="language-sh">export GITHUB_TOKEN=&quot;secret&quot;
+</code></pre>
+<p>git tag v0.1.0
+goreleaser release</p>
+<p>NOTE: CI/CD pipeline should do all this automatically.  <code>make release-snapshot</code> is used to test the release build process.  Once a build is tagged all artifacts should be built automatically and attached to the github release page.</p>
+<p>NOTE: mac binary are not signed so will likely complain.</p>
+
+			<div class="page-footer-meta d-flex flex-column flex-md-row justify-content-between">
+				</div>
+			<div class="docs-navigation d-flex justify-content-between">
+	
+	<a href="/gdg/docs/tutorials/coming_soon/">
+			<div class="card my-1">
+				<div class="card-body py-2">
+					&larr; Coming Soon
+				</div>
+			</div>
+		</a>
+	<a class="ms-auto" href="/gdg/docs/gdg/examples/">
+			<div class="card my-1">
+				<div class="card-body py-2">
+					Example Usage &rarr;
+				</div>
+			</div>
+		</a>
+	</div>
+
+			
+		</main>
+	</div>
 
       </div>
     </div>

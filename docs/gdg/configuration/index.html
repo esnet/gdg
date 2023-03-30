@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="preload" as="font" href="https://software.es.net/gdg/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+<link rel="preload" as="font" href="https://software.es.net/gdg/fonts/vendor/jost/jost-v4-latin-500.woff2" type="font/woff2" crossorigin>
+<link rel="preload" as="font" href="https://software.es.net/gdg/fonts/vendor/jost/jost-v4-latin-700.woff2" type="font/woff2" crossorigin>
+
+  <script>(()=>{var t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,e=localStorage.getItem("theme");t&&e===null&&(localStorage.setItem("theme","dark"),document.documentElement.setAttribute("data-dark-mode","")),t&&e==="dark"&&document.documentElement.setAttribute("data-dark-mode",""),e==="dark"&&document.documentElement.setAttribute("data-dark-mode","")})()</script>
+
+  <link rel="stylesheet" href="https://software.es.net/gdg/main.e77ff2fb3833bef0269565d7971352e8331111754807c9fbe76fa31f7b3012c901a42c3e57458f6f392a0c627331e239e32eb497b29838895c761605b0b0b2b5.css" integrity="sha512-53/y&#43;zgzvvAmlWXXlxNS6DMREXVIB8n752&#43;jH3swEskBpCw&#43;V0WPbzkqDGJzMeI54y60l7KYOIlcdhYFsLCytQ==" crossorigin="anonymous">
+<noscript><style>img.lazyload { display: none; }</style></noscript>
+  <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <title>Configuration - GDG</title>
+<meta name="description" content="Getting started # This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
+make a copy of conf/importer-example.yml and name it conf/importer.yml You&amp;rsquo;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
+Authentication # Authentication Token # You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&amp;gt; Configuration =&amp;gt; API Keys.">
+  <link rel="canonical" href="https://software.es.net/gdg/docs/gdg/configuration/">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Configuration">
+<meta property="og:description" content="Getting started # This project requires Go to be installed. On OS X with Homebrew you can just run brew install go.
+make a copy of conf/importer-example.yml and name it conf/importer.yml You&rsquo;ll need GRAFANA ADMINISTRATIVE privileges to proceed.
+Authentication # Authentication Token # You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys.">
+<meta property="og:url" content="https://software.es.net/gdg/docs/gdg/configuration/">
+<meta property="og:site_name" content="GDG">
+
+  <meta property="og:image" content="https://software.es.net/gdg/doks.png"/>
+      <meta property="og:image:alt" content="GDG">
+    
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@getdoks">
+<meta name="twitter:creator" content="@henkverlinde">
+<meta name="twitter:title" content="Configuration">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://software.es.net/gdg/doks.png">
+    <meta name="twitter:image:alt" content="Configuration">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+        "@id": "https://software.es.net/#/schema/organization/1",
+      "name": "Doks",
+      "url": "https://software.es.net/",
+      "sameAs": [
+        "https://twitter.com/getdoks"
+        , "https://github.com/h-enk/doks"
+        ],
+      "logo": {
+          "@type": "ImageObject",
+          "@id": "https://software.es.net/#/schema/image/1",
+          "url": "https://software.es.net/logo-doks.png",
+          "width":  512 ,
+          "height":  512 ,
+          "caption": "Doks"
+        },
+        "image": {
+          "@id": "https://software.es.net/#/schema/image/1"
+        }
+      },
+    {
+      "@type": "WebSite",
+      "@id": "https://software.es.net/#/schema/website/1",
+      "url": "https://software.es.net/",
+      "name": "GDG",
+      "description": "GDG is a CLI tool enabeling the user to import, manage, and backup various entities of Grafana",
+      "publisher": {
+          "@id": "https://software.es.net/#/schema/organization/1"
+        }
+      },
+    {
+      "@type": "WebPage",
+      "@id": "https://software.es.net/gdg/docs/gdg/configuration/",
+      "url": "https://software.es.net/gdg/docs/gdg/configuration/",
+      "name": "Configuration",
+      "description": "",
+      "isPartOf": {
+        "@id": "https://software.es.net/#/schema/website/1"
+      },
+      "about": {
+          "@id": "https://software.es.net/#/schema/organization/1"
+        },
+      "datePublished": "0001-01-01T00:00:00CET",
+      "dateModified": "0001-01-01T00:00:00CET",
+      "breadcrumb": {
+        "@id": "https://software.es.net/gdg/docs/gdg/configuration/#/schema/breadcrumb/1"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://software.es.net/gdg/docs/gdg/configuration/#/schema/image/2"
+      },
+      "inLanguage": "en-US",
+      "potentialAction": [{
+        "@type": "ReadAction", "target": ["https://software.es.net/gdg/docs/gdg/configuration/"]
+      }]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://software.es.net/gdg/docs/gdg/configuration/#/schema/breadcrumb/1",
+      "name": "Breadcrumbs",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position":  1 ,
+        "item": {
+          "@type": "WebPage",
+          "@id": "https://software.es.net/gdg",
+          "url": "https://software.es.net/gdg",
+          "name": "Home"
+          }
+        },{
+        "@type": "ListItem",
+        "position":  3 ,
+        "item": {
+          "@type": "WebPage",
+          "@id": "https://software.es.net/gdg/docs/",
+          "url": "https://software.es.net/gdg/docs/",
+          "name": "Docs"
+          }
+        },{
+        "@type": "ListItem",
+        "position":  4 ,
+        "item": {
+          "@type": "WebPage",
+          "@id": "https://software.es.net/gdg/docs/gdg/",
+          "url": "https://software.es.net/gdg/docs/gdg/",
+          "name": "Gdg"
+          }
+        },{
+        "@type": "ListItem",
+        "position":  5 ,
+        "item": {
+          "@id": "https://software.es.net/gdg/docs/gdg/configuration/"
+          }
+        }]
+    },
+
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Article",
+          "@id": "https://software.es.net/#/schema/article/1",
+          "headline": "Configuration",
+          "description": "",
+          "isPartOf": {
+            "@id": "https://software.es.net/gdg/docs/gdg/configuration/"
+          },
+          "mainEntityOfPage": {
+            "@id": "https://software.es.net/gdg/docs/gdg/configuration/"
+          },
+          "datePublished": "0001-01-01T00:00:00CET",
+          "dateModified": "0001-01-01T00:00:00CET",
+          "author": {
+            "@id": "https://software.es.net/#/schema/person/2"
+          },
+          "publisher": {
+              "@id": "https://software.es.net/#/schema/organization/1"
+            },
+          "image": {
+            "@id": "https://software.es.net/gdg/docs/gdg/configuration/#/schema/image/2"
+          }
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://software.es.net/#/schema/person/2",
+          "name": "Henk Verlinde",
+          "sameAs": [
+            "https://twitter.com/henkverlinde"
+            , "https://www.linkedin.com/in/henkverlinde/"
+            , "https://github.com/h-enk"
+            ]
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "ImageObject",
+          "@id": "https://software.es.net/gdg/docs/gdg/configuration/#/schema/image/2",
+          "url": "https://software.es.net/gdg/doks.png",
+          "contentUrl": "https://software.es.net/gdg/doks.png",
+          "caption": "Configuration"
+        }
+      ]
+    }
+
+  ]
+}
+</script>
+
+  <meta name="theme-color" content="#fff">
+<link rel="icon" href="https://software.es.net/gdg/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="https://software.es.net/gdg/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="https://software.es.net/gdg/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://software.es.net/gdg/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://software.es.net/gdg/favicon-16x16.png">
+<link rel="manifest" crossorigin="use-credentials" href="https://software.es.net/gdg/site.webmanifest">
+
+  
+
+</head>
+
+  <body class="docs single">
+    <div class="sticky-top">
+<div class="header-bar"></div>
+
+<header class="navbar navbar-expand-lg navbar-light doks-navbar">
+  <nav class="container-xxl flex-wrap flex-lg-nowrap" aria-label="Main navigation">
+
+    <a class="navbar-brand order-0" href="/gdg" aria-label="GDG">
+      GDG
+    </a>
+
+    <button class="btn btn-link order-0 ms-auto d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+    </button>
+    <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+      <div class="header-bar"></div>
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Browse docs</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <aside class="doks-sidebar mt-n3">
+          <nav id="doks-docs-nav" aria-label="Tertiary navigation">
+            
+<ul class="list-unstyled collapsible-sidebar">
+  
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-d50ae403cb49a205bdf789f377f5cfe6" aria-expanded="false">
+          Releases
+        </button>
+        <div class="collapse" id="section-d50ae403cb49a205bdf789f377f5cfe6">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/releases/gdg_0.4.0/">0.4.0</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-b32c37c1ba8ae3a68e84c11792757b03" aria-expanded="true">
+          GDG Docs
+        </button>
+        <div class="collapse show" id="section-b32c37c1ba8ae3a68e84c11792757b03">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/installation/">Installation</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded active" href="https://software.es.net/gdg/docs/gdg/configuration/">Configuration</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/cloud_configuration/">Cloud Configuration</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/developer/">Developer Guide</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/examples/">Example Usage</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/usage_guide/">Usage Guide</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-130ddfce9c28453883ccfe2da8b6d5ac" aria-expanded="false">
+          Tutorials
+        </button>
+        <div class="collapse" id="section-130ddfce9c28453883ccfe2da8b6d5ac">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/tutorials/coming_soon/">Coming Soon</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+  
+</ul>
+
+          </nav>
+        </aside>
+      </div>
+    </div>
+    <button class="btn btn-menu order-2 d-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDoks" aria-controls="offcanvasDoks" aria-label="Open main menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <div class="offcanvas offcanvas-end border-0 py-lg-1" tabindex="-1" id="offcanvasDoks" data-bs-backdrop="true" aria-labelledby="offcanvasDoksLabel">
+      <div class="header-bar d-lg-none"></div>
+      <div class="offcanvas-header d-lg-none">
+        <h2 class="h5 offcanvas-title ps-2" id="offcanvasDoksLabel"><a class="text-dark" href="/">GDG</a></h2>
+        <button type="button" class="btn-close text-reset me-2" data-bs-dismiss="offcanvas" aria-label="Close main menu"></button>
+      </div>
+      <div class="offcanvas-body p-4 p-lg-0">
+        <ul class="nav flex-column flex-lg-row align-items-lg-center mt-2 mt-lg-0 ms-lg-2 me-lg-auto">
+              <li class="nav-item">
+                <a class="nav-link ps-0 py-1 active" href="/gdg/docs/gdg/installation/">Docs</a>
+              </li>
+            
+          </ul>
+
+        <hr class="text-black-50 my-4 d-lg-none">
+        <form class="doks-search position-relative flex-grow-1 ms-lg-auto me-lg-2">
+          <input id="search" class="form-control is-search" type="search" placeholder="Search docs..." aria-label="Search docs..." autocomplete="off">
+          <div id="suggestions" class="shadow bg-white rounded d-none"></div>
+        </form>
+        <hr class="text-black-50 my-4 d-lg-none">
+        <ul class="nav flex-column flex-lg-row">
+          <li class="nav-item">
+              <a class="nav-link social-link" href="https://github.com/esnet/gdg"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><small class="ms-2 d-lg-none">GitHub</small></a>
+            </li>
+          </ul>
+
+        <hr class="text-black-50 my-4 d-lg-none">
+        <button id="mode" class="btn btn-link" type="button" aria-label="Toggle user interface mode">
+          <span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+          <span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+        </button>
+        </div>
+    </div>
+  </nav>
+</header>
+
+
+</div>
+<div class="container-xxl">
+  <aside class="doks-sidebar">
+    <nav id="doks-docs-nav" class="collapse d-lg-none" aria-label="Tertiary navigation">
+      
+<ul class="list-unstyled collapsible-sidebar">
+  
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-d50ae403cb49a205bdf789f377f5cfe6" aria-expanded="false">
+          Releases
+        </button>
+        <div class="collapse" id="section-d50ae403cb49a205bdf789f377f5cfe6">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/releases/gdg_0.4.0/">0.4.0</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-b32c37c1ba8ae3a68e84c11792757b03" aria-expanded="true">
+          GDG Docs
+        </button>
+        <div class="collapse show" id="section-b32c37c1ba8ae3a68e84c11792757b03">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/installation/">Installation</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded active" href="https://software.es.net/gdg/docs/gdg/configuration/">Configuration</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/cloud_configuration/">Cloud Configuration</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/developer/">Developer Guide</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/examples/">Example Usage</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/usage_guide/">Usage Guide</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-130ddfce9c28453883ccfe2da8b6d5ac" aria-expanded="false">
+          Tutorials
+        </button>
+        <div class="collapse" id="section-130ddfce9c28453883ccfe2da8b6d5ac">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/tutorials/coming_soon/">Coming Soon</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+  
+</ul>
+
+    </nav>
+  </aside>
+</div>
+
+
+    <div class="wrap container-xxl" role="document">
+      <div class="content">
+        
+	<div class="row flex-xl-nowrap">
+		<div class="col-lg-5 col-xl-4 docs-sidebar d-none d-lg-block">
+			<nav class="docs-links" aria-label="Main navigation">
+				
+<ul class="list-unstyled collapsible-sidebar">
+  
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-d50ae403cb49a205bdf789f377f5cfe6" aria-expanded="false">
+          Releases
+        </button>
+        <div class="collapse" id="section-d50ae403cb49a205bdf789f377f5cfe6">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/releases/gdg_0.4.0/">0.4.0</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-b32c37c1ba8ae3a68e84c11792757b03" aria-expanded="true">
+          GDG Docs
+        </button>
+        <div class="collapse show" id="section-b32c37c1ba8ae3a68e84c11792757b03">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/installation/">Installation</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded active" href="https://software.es.net/gdg/docs/gdg/configuration/">Configuration</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/cloud_configuration/">Cloud Configuration</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/developer/">Developer Guide</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/examples/">Example Usage</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/gdg/usage_guide/">Usage Guide</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-130ddfce9c28453883ccfe2da8b6d5ac" aria-expanded="false">
+          Tutorials
+        </button>
+        <div class="collapse" id="section-130ddfce9c28453883ccfe2da8b6d5ac">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://software.es.net/gdg/docs/tutorials/coming_soon/">Coming Soon</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+  
+</ul>
+
+			</nav>
+		</div>
+		<nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+			<div class="d-xl-none">
+  <button class="btn btn-outline-primary btn-sm doks-toc-toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#onThisPage" aria-controls="doks-docs-nav" aria-expanded="false" aria-label="Toggle On this page navigation">
+    <span>On this page</span>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-expand" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Expand</title><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Collapse</title><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+    </span>
+  </button>
+  <div class="collapse" id="onThisPage">
+    <div class="card card-body mt-3 py-1">
+      <div class="page-links">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#getting-started">Getting started</a>
+      <ul>
+        <li><a href="#authentication">Authentication</a></li>
+        <li><a href="#datasource">DataSource</a></li>
+        <li><a href="#global-flags">Global Flags</a></li>
+        <li><a href="#environment-overrides">Environment Overrides</a></li>
+        <li><a href="#buildingrunning-the-app">Building/Running the app</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page-links d-none d-xl-block">
+  <h3>On this page</h3>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#getting-started">Getting started</a>
+      <ul>
+        <li><a href="#authentication">Authentication</a></li>
+        <li><a href="#datasource">DataSource</a></li>
+        <li><a href="#global-flags">Global Flags</a></li>
+        <li><a href="#environment-overrides">Environment Overrides</a></li>
+        <li><a href="#buildingrunning-the-app">Building/Running the app</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+
+		</nav>
+		<main class="docs-content col-lg-11 col-xl-9 mx-xl-auto">
+		
+			<h1>Configuration</h1>
+			<p class="lead"></p>
+			<nav class="d-xl-none" aria-label="Quaternary navigation">
+				<div class="d-xl-none">
+  <button class="btn btn-outline-primary btn-sm doks-toc-toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#onThisPage" aria-controls="doks-docs-nav" aria-expanded="false" aria-label="Toggle On this page navigation">
+    <span>On this page</span>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-expand" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Expand</title><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Collapse</title><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+    </span>
+  </button>
+  <div class="collapse" id="onThisPage">
+    <div class="card card-body mt-3 py-1">
+      <div class="page-links">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#getting-started">Getting started</a>
+      <ul>
+        <li><a href="#authentication">Authentication</a></li>
+        <li><a href="#datasource">DataSource</a></li>
+        <li><a href="#global-flags">Global Flags</a></li>
+        <li><a href="#environment-overrides">Environment Overrides</a></li>
+        <li><a href="#buildingrunning-the-app">Building/Running the app</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page-links d-none d-xl-block">
+  <h3>On this page</h3>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#getting-started">Getting started</a>
+      <ul>
+        <li><a href="#authentication">Authentication</a></li>
+        <li><a href="#datasource">DataSource</a></li>
+        <li><a href="#global-flags">Global Flags</a></li>
+        <li><a href="#environment-overrides">Environment Overrides</a></li>
+        <li><a href="#buildingrunning-the-app">Building/Running the app</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+
+			</nav>
+			<h2 id="getting-started">Getting started <a href="#getting-started" class="anchor" aria-hidden="true">#</a></h2>
+<p>This project requires Go to be installed. On OS X with Homebrew you can just run <code>brew install go</code>.</p>
+<p>make a copy of <a href="https://github.com/esnet/gdg/blob/master/conf/importer-example.yml">conf/importer-example.yml</a> and name it <code>conf/importer.yml</code> You&rsquo;ll need GRAFANA ADMINISTRATIVE privileges to proceed.</p>
+<h3 id="authentication">Authentication <a href="#authentication" class="anchor" aria-hidden="true">#</a></h3>
+<h4 id="authentication-token">Authentication Token <a href="#authentication-token" class="anchor" aria-hidden="true">#</a></h4>
+<p>You can use an Authentication Token / API Key to authenticate with the Grafana API, which can be generated in your Grafana Web UI =&gt; Configuration =&gt; API Keys. You can then use it in your configuration file (eg. <code>importer.yml</code>).</p>
+<p>WARNING: gdg is currently using viper to read in the config.  Since viper makes all keys lowercase, we also have the same limitation.  Camel case will be read in but be aware that a section named fooBar == Foobar == foobar etc.</p>
+<pre><code>context_name: main
+
+contexts:
+  main:
+    url: https://grafana.example.org
+    token: &quot;&lt;&lt;Grafana API Token&gt;&gt;&quot;
+    output_path: &quot;myFolder&quot;
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    watched:
+      - Example
+    datasources:
+      credentials:
+        default:
+          user: admin
+          password: secret
+          url_regex:    ## set to pattern to match as well as the name.
+        misc:
+          user: admin
+          password: secret
+          url_regex: .*esproxy2*      
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+</code></pre>
+<h4 id="username--password">Username / Password <a href="#username--password" class="anchor" aria-hidden="true">#</a></h4>
+<p>You can also use username/password credentials of an admin user to authenticate with the Grafana API. You can specify them in your configuration file (eg. <code>importer.yml</code>).</p>
+<pre><code>context_name: main
+
+contexts:
+  main:
+    url: https://grafana.example.org
+    user_name: &lt;your username&gt;
+    password: &lt;your password&gt;
+    output_path: &quot;myFolder&quot;
+    watched:
+      - Example
+
+global:
+  debug: true
+  ignore_ssl_errors: false
+</code></pre>
+<h3 id="datasource">DataSource <a href="#datasource" class="anchor" aria-hidden="true">#</a></h3>
+<h4 id="datasource-credentials">DataSource Credentials <a href="#datasource-credentials" class="anchor" aria-hidden="true">#</a></h4>
+<p>If the datasource has BasicAuth enabled, then we&rsquo;ll attempt to set the auth with the following precedence on matches:</p>
+<ol>
+<li>Match of DS credentials based on DS name.</li>
+<li>Match URL regex for the DS if regex specified.</li>
+<li>Use Default Credentials if the above two both failed.</li>
+</ol>
+<p>An example of a configuration can be seen below</p>
+<pre><code class="language-yaml">  testing:
+    output_path: testing_data
+    datasources:
+      credentials:
+        default:
+          user: user
+          password: password
+        misc:
+          user: admin
+          password: secret
+          url_regex: .*esproxy2*
+    url: http://localhost:3000
+    user_name: admin
+    password: admin
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    watched:
+      - General
+      - Other 
+ 
+</code></pre>
+<h4 id="datasource-filters">DataSource Filters <a href="#datasource-filters" class="anchor" aria-hidden="true">#</a></h4>
+<p>This feature allows you to exclude datasource by name or include them by type.  Please note that the logic switches based on the data type.</p>
+<p><strong>name filter:</strong></p>
+<pre><code class="language-yaml">...
+datasources:
+  filters:
+    name_exclusions: &quot;DEV-*|-Dev-*&quot;
+</code></pre>
+<p>Will exclude any datasource that matches the name regex.</p>
+<p><strong>Type Filter</strong></p>
+<p>Will ONLY include datasource that are listed.</p>
+<pre><code class="language-yaml">datasources:
+  filters:
+    valid_types:
+      - elasticsearch
+</code></pre>
+<p>The snippet above will ONLY import datasources for elasticsearch</p>
+<h4 id="notes">Notes <a href="#notes" class="anchor" aria-hidden="true">#</a></h4>
+<p>If you configure both, Auth Token and Username/Password, then the Token is given priority.
+Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only &ldquo;General&rdquo; is managed.</p>
+<p>env.output defines where the files will be saved and imported from.</p>
+<h3 id="global-flags">Global Flags <a href="#global-flags" class="anchor" aria-hidden="true">#</a></h3>
+<p><code>globals.debug</code> when set will print a more verbose output (Development In Progress)
+<code>globals.ignore_ssl_errors</code> when set will disregard any SSL errors and proceed as expected</p>
+<h3 id="environment-overrides">Environment Overrides <a href="#environment-overrides" class="anchor" aria-hidden="true">#</a></h3>
+<p>If you wish to override certain value via the environment, like credentials and such you can do so.</p>
+<p>The pattern for GDG&rsquo;s is as follows:  &ldquo;GDG_SECTION__SECTION__keyname&rdquo;</p>
+<p>For example if I want to set the context name to a different value I can use:</p>
+<pre><code class="language-sh">GDG_CONTEXT_NAME=&quot;testing&quot; gdg ctx show ## Which will override the value from the context file.
+GDG_CONTEXTS__TESTING__URL=&quot;www.google.com&quot; Will override the URL with the one provided.
+</code></pre>
+<p><strong>NOTE:</strong> Complex data type are not supported, so if the value is an array it can&rsquo;t be currently set.</p>
+<h3 id="buildingrunning-the-app">Building/Running the app <a href="#buildingrunning-the-app" class="anchor" aria-hidden="true">#</a></h3>
+<p>Running it then should be as simple as:</p>
+<pre><code class="language-bash">$ make build
+$ ./bin/gdg
+</code></pre>
+
+			<div class="page-footer-meta d-flex flex-column flex-md-row justify-content-between">
+				</div>
+			<div class="docs-navigation d-flex justify-content-between">
+	
+	<a href="/gdg/docs/gdg/installation/">
+			<div class="card my-1">
+				<div class="card-body py-2">
+					&larr; Installation
+				</div>
+			</div>
+		</a>
+	<a class="ms-auto" href="/gdg/docs/gdg/cloud_configuration/">
+			<div class="card my-1">
+				<div class="card-body py-2">
+					Cloud Configuration &rarr;
+				</div>
+			</div>
+		</a>
+	</div>
+
+			
+		</main>
+	</div>
+
+      </div>
+    </div>
+    
+    
+    <footer class="footer text-muted">
+  <div class="container-xxl">
+    <div class="row">
+      <div class="col-lg-8 order-last order-lg-first">
+        <ul class="list-inline">
+          <li class="list-inline-item">Powered by <a class="text-muted" href="https://www.netlify.com/">Netlify</a>, <a class="text-muted" href="https://gohugo.io/">Hugo</a>, and <a class="text-muted" href="https://getdoks.org/">Doks</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-8 order-first order-lg-last text-lg-end">
+        <ul class="list-inline">
+          </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+
+<script src="/gdg/js/bootstrap.min.886b4263ccb8e2351b1a8bc5562f93094a9d7b273224c85597c97b391198d91c5cb5f011e0a7be98fb2cce323be1673b94566b3c83c8e719475bbfb0f8f69c0f.js" integrity="sha512-iGtCY8y44jUbGovFVi&#43;TCUqdeycyJMhVl8l7ORGY2RxctfAR4Ke&#43;mPsszjI74Wc7lFZrPIPI5xlHW7&#43;w&#43;PacDw==" crossorigin="anonymous" defer></script>
+  <script src="/gdg/js/highlight.min.3cbd866ada261635504728c63dbdd8573a8d912f0e9e888f22a335998542d0a0fa1ab30ea7f2ee3293a38956c7292292264db633f94dc5b924ea1fbd7dde4129.js" integrity="sha512-PL2GatomFjVQRyjGPb3YVzqNkS8OnoiPIqM1mYVC0KD6GrMOp/LuMpOjiVbHKSKSJk22M/lNxbkk6h&#43;9fd5BKQ==" crossorigin="anonymous" defer></script>
+  <script src="/gdg/main.min.c8c645fc1941271a055d522e74704c29d0b230bf594c3d33a2a655eaeafa90c6d1141704a52acc56eb6acba5b34e1049aff25b7aa8be10c9ae24fa0940688c6a.js" integrity="sha512-yMZF/BlBJxoFXVIudHBMKdCyML9ZTD0zoqZV6ur6kMbRFBcEpSrMVutqy6WzThBJr/Jbeqi&#43;EMmuJPoJQGiMag==" crossorigin="anonymous" defer></script>
+  <script src="https://software.es.net/gdg/index.min.12055fa97357f8777f6b34ec5de8da5923375aa5d0cbf25613396a19433965ab6e49c10191670631b3499cde1c33524817a8e92346ad017842bf07e75f5a64e8.js" integrity="sha512-EgVfqXNX&#43;Hd/azTsXejaWSM3WqXQy/JWEzlqGUM5ZatuScEBkWcGMbNJnN4cM1JIF6jpI0atAXhCvwfnX1pk6A==" crossorigin="anonymous" defer></script>
+  
+    
+  </body>
+</html>
