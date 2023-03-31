@@ -1,27 +1,32 @@
 package integration_tests
 
 import (
+	"github.com/esnet/gdg/api"
+	"github.com/esnet/gdg/api/filters"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/api"
 	"github.com/esnet/gdg/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/exp/slices"
 )
 
+//TODO: with full CRUD.
+// - Add single dashboard test -d <>
+// - Add Folder dashboard test -f <>
+
 func TestDashboardCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
 	apiClient, _ := initTest(t)
-	filters := api.NewDashboardFilter()
+	filtersEntity := api.NewDashboardFilter("", "", "")
 	log.Info("Exporting all dashboards")
-	apiClient.ExportDashboards(filters)
+	apiClient.ExportDashboards(filtersEntity)
 	log.Info("Listing all dashboards")
-	boards := apiClient.ListDashboards(filters)
+	boards := apiClient.ListDashboards(filtersEntity)
 	log.Infof("Imported %d dashboards", len(boards))
 	ignoredSkipped := true
 	var generalBoard *models.Hit
@@ -45,13 +50,13 @@ func TestDashboardCRUD(t *testing.T) {
 	validateOtherBoard(t, otherBoard)
 	//Import Dashboards
 	log.Info("Importing Dashboards")
-	list := apiClient.ImportDashboards(filters)
+	list := apiClient.ImportDashboards(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
 	log.Info("Deleting Dashboards")
-	deleteList := apiClient.DeleteAllDashboards(filters)
+	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
 	assert.Equal(t, len(deleteList), len(boards))
 	log.Info("List Dashboards again")
-	boards = apiClient.ListDashboards(filters)
+	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }
 
@@ -60,16 +65,16 @@ func TestDashboardTagsFilter(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	apiClient, _ := initTest(t)
-	emptyFilter := api.NewDashboardFilter()
+	emptyFilter := filters.NewBaseFilter()
 
-	filters := api.NewDashboardFilter()
-	filters.AddFilter(api.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
+	filtersEntity := api.NewDashboardFilter("", "", "")
+	filtersEntity.AddFilter(filters.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
 
 	log.Info("Exporting all dashboards")
 	apiClient.ExportDashboards(emptyFilter)
 
 	log.Info("Listing all dashboards")
-	boards := apiClient.ListDashboards(filters)
+	boards := apiClient.ListDashboards(filtersEntity)
 
 	log.Infof("Imported %d dashboards", len(boards))
 	for _, board := range boards {
@@ -78,15 +83,15 @@ func TestDashboardTagsFilter(t *testing.T) {
 
 	//Import Dashboards
 	log.Info("Importing Dashboards")
-	list := apiClient.ImportDashboards(filters)
+	list := apiClient.ImportDashboards(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
 
 	log.Info("Deleting Dashboards")
-	deleteList := apiClient.DeleteAllDashboards(filters)
+	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
 	assert.Equal(t, len(deleteList), len(boards))
 
 	log.Info("List Dashboards again")
-	boards = apiClient.ListDashboards(filters)
+	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }
 
@@ -97,10 +102,10 @@ func TestWildcardFilter(t *testing.T) {
 
 	// Setup Filters
 	apiClient, _ := initTest(t)
-	emptyFilter := api.NewDashboardFilter()
+	emptyFilter := filters.NewBaseFilter()
 
-	filters := api.NewDashboardFilter()
-	filters.AddFilter(api.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
+	filtersEntity := api.NewDashboardFilter("", "", "")
+	filtersEntity.AddFilter(filters.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
 
 	// Enable Wildcard
 	testingContext := config.Config().Contexts()["testing"]
@@ -111,7 +116,7 @@ func TestWildcardFilter(t *testing.T) {
 	apiClient.ExportDashboards(emptyFilter)
 	boards := apiClient.ListDashboards(emptyFilter)
 
-	apiClient.ExportDashboards(filters)
+	apiClient.ExportDashboards(filtersEntity)
 	boards_filtered := apiClient.ListDashboards(emptyFilter)
 
 	assert.Equal(t, len(boards), len(boards_filtered))
@@ -121,7 +126,7 @@ func TestWildcardFilter(t *testing.T) {
 	boards = apiClient.ListDashboards(emptyFilter)
 
 	log.Info("Listing all dashboards ignoring filter")
-	boards_filtered = apiClient.ListDashboards(filters)
+	boards_filtered = apiClient.ListDashboards(filtersEntity)
 
 	assert.Equal(t, len(boards), len(boards_filtered))
 
@@ -134,7 +139,7 @@ func TestWildcardFilter(t *testing.T) {
 	assert.Equal(t, len(deleteList), len(boards))
 
 	log.Info("List Dashboards again")
-	boards = apiClient.ListDashboards(filters)
+	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }
 

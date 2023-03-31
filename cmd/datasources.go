@@ -9,18 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getDatasourcesGlobalFlags(cmd *cobra.Command) api.Filter {
-	dashboardFilter, _ := cmd.Flags().GetString("datasource")
-
-	filters := api.DatasourceFilter{}
-	filters.Init()
-	filters.AddFilter("Name", dashboardFilter)
-
-	return filters
-
-}
-
-// versionCmd represents the version command
 var datasources = &cobra.Command{
 	Use:     "datasources",
 	Aliases: []string{"ds", "datasource"},
@@ -34,7 +22,8 @@ var clearDataSources = &cobra.Command{
 	Long:  `clear all datasources from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Delete datasources")
-		filters := getDatasourcesGlobalFlags(cmd)
+		dashboardFilter, _ := cmd.Flags().GetString("datasource")
+		filters := api.NewDataSourceFilter(dashboardFilter)
 		savedFiles := client.DeleteAllDataSources(filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
@@ -51,7 +40,8 @@ var exportDataSources = &cobra.Command{
 	Long:  `export all datasources`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Exporting datasources")
-		filters := getDatasourcesGlobalFlags(cmd)
+		dashboardFilter, _ := cmd.Flags().GetString("datasource")
+		filters := api.NewDataSourceFilter(dashboardFilter)
 		exportedList := client.ExportDataSources(filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range exportedList {
@@ -68,7 +58,8 @@ var ImportDataSources = &cobra.Command{
 	Long:  `import all datasources from grafana to local filesystem`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Importing datasources for context: '%s'", apphelpers.GetContext())
-		filters := getDatasourcesGlobalFlags(cmd)
+		dashboardFilter, _ := cmd.Flags().GetString("datasource")
+		filters := api.NewDataSourceFilter(dashboardFilter)
 		savedFiles := client.ImportDataSources(filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
@@ -85,13 +76,14 @@ var listDataSources = &cobra.Command{
 	Long:  `List all dashboards`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
-		filters := getDatasourcesGlobalFlags(cmd)
-		datasources := client.ListDataSources(filters)
+		dashboardFilter, _ := cmd.Flags().GetString("datasource")
+		filters := api.NewDataSourceFilter(dashboardFilter)
+		dsListing := client.ListDataSources(filters)
 		log.Infof("Listing datasources for context: '%s'", apphelpers.GetContext())
-		if len(datasources) == 0 {
+		if len(dsListing) == 0 {
 			log.Info("No datasources found")
 		} else {
-			for _, link := range datasources {
+			for _, link := range dsListing {
 				url := fmt.Sprintf("%s/datasource/edit/%d", apphelpers.GetCtxDefaultGrafanaConfig().URL, link.ID)
 				tableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, api.GetSlug(link.Name), link.Type, link.IsDefault, url})
 			}

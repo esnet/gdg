@@ -1,0 +1,127 @@
+{
+	"id": 33,
+	"kind": 1,
+	"meta": {
+		"created": "2023-03-30T17:18:08.000Z",
+		"createdBy": {
+			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"id": 1,
+			"name": "admin"
+		},
+		"folderName": "General",
+		"updated": "2023-03-30T17:18:08.000Z",
+		"updatedBy": {
+			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"id": 1,
+			"name": "admin"
+		}
+	},
+	"model": {
+		"aliasColors": {},
+		"bars": false,
+		"dashLength": 10,
+		"dashes": false,
+		"datasource": {
+			"type": "testdata",
+			"uid": "EJHgYyf4z"
+		},
+		"description": "",
+		"fieldConfig": {
+			"defaults": {
+				"unit": "fahrenheit"
+			},
+			"overrides": []
+		},
+		"fill": 1,
+		"fillGradient": 0,
+		"gridPos": {
+			"h": 8,
+			"w": 12,
+			"x": 0,
+			"y": 0
+		},
+		"hiddenSeries": false,
+		"id": 13,
+		"interval": "",
+		"legend": {
+			"avg": false,
+			"current": false,
+			"max": false,
+			"min": false,
+			"show": true,
+			"total": false,
+			"values": false
+		},
+		"libraryPanel": {
+			"uid": "y1C0A5unz"
+		},
+		"lines": true,
+		"linewidth": 1,
+		"links": [],
+		"nullPointMode": "null",
+		"options": {
+			"alertThreshold": true
+		},
+		"percentage": false,
+		"pluginVersion": "8.5.5",
+		"pointradius": 2,
+		"points": false,
+		"renderer": "flot",
+		"seriesOverrides": [],
+		"spaceLength": 10,
+		"stack": false,
+		"steppedLine": false,
+		"targets": [
+			{
+				"alias": "Grill",
+				"datasource": {
+					"type": "testdata",
+					"uid": "EJHgYyf4z"
+				},
+				"max": 394,
+				"min": 380,
+				"refId": "A",
+				"scenarioId": "random_walk",
+				"startValue": 383
+			}
+		],
+		"thresholds": [],
+		"timeRegions": [],
+		"title": "Grill",
+		"tooltip": {
+			"shared": true,
+			"sort": 0,
+			"value_type": "individual"
+		},
+		"transformations": [],
+		"transparent": true,
+		"type": "graph",
+		"xaxis": {
+			"mode": "time",
+			"show": true,
+			"values": []
+		},
+		"yaxes": [
+			{
+				"$$hashKey": "object:63",
+				"format": "fahrenheit",
+				"logBase": 1,
+				"show": true
+			},
+			{
+				"$$hashKey": "object:64",
+				"format": "short",
+				"logBase": 1,
+				"show": true
+			}
+		],
+		"yaxis": {
+			"align": false
+		}
+	},
+	"name": "Extreme Dashboard Makeover - Grill",
+	"orgId": 1,
+	"type": "graph",
+	"uid": "y1C0A5unz",
+	"version": 1
+}

@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/esnet/gdg/api/filters"
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/datasources"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
@@ -17,15 +18,34 @@ import (
 
 // DataSourcesApi Contract definition
 type DataSourcesApi interface {
-	ListDataSources(filter Filter) []models.DataSourceListItemDTO
-	ImportDataSources(filter Filter) []string
-	ExportDataSources(filter Filter) []string
-	DeleteAllDataSources(filter Filter) []string
+	ListDataSources(filter filters.Filter) []models.DataSourceListItemDTO
+	ImportDataSources(filter filters.Filter) []string
+	ExportDataSources(filter filters.Filter) []string
+	DeleteAllDataSources(filter filters.Filter) []string
+}
+
+//Filters
+
+func NewDataSourceFilter(name string) filters.Filter {
+	filterEntity := filters.NewBaseFilter()
+	filterEntity.AddFilter("Name", name)
+	filterEntity.AddValidation(filters.DefaultFilter, func(i interface{}) bool {
+		val, ok := i.(map[filters.FilterType]string)
+		if !ok {
+			return ok
+		}
+		if filterEntity.GetFilter(filters.Name) == "" {
+			return true
+		}
+		return val[filters.Name] == filterEntity.GetFilter(filters.Name)
+	})
+
+	return filterEntity
 }
 
 // ListDataSources: list all the currently configured datasources
 
-func (s *DashNGoImpl) ListDataSources(filter Filter) []models.DataSourceListItemDTO {
+func (s *DashNGoImpl) ListDataSources(filter filters.Filter) []models.DataSourceListItemDTO {
 	ds, err := s.client.Datasources.GetDataSources(datasources.NewGetDataSourcesParams(), s.getAuth())
 	if err != nil {
 		panic(err)
@@ -38,7 +58,7 @@ func (s *DashNGoImpl) ListDataSources(filter Filter) []models.DataSourceListItem
 			log.Debugf("Skipping data source: %s since it fails filter checks with dataType of: %s", item.Name, item.Type)
 			continue
 		}
-		if filter.Validate(map[string]string{Name: GetSlug(item.Name)}) {
+		if filter.ValidateAll(map[filters.FilterType]string{filters.Name: GetSlug(item.Name)}) {
 			result = append(result, *item)
 		}
 	}
@@ -48,7 +68,7 @@ func (s *DashNGoImpl) ListDataSources(filter Filter) []models.DataSourceListItem
 
 // ImportDataSources: will read in all the configured datasources.
 // NOTE: credentials cannot be retrieved and need to be set via configuration
-func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
+func (s *DashNGoImpl) ImportDataSources(filter filters.Filter) []string {
 	var (
 		dsListing []models.DataSourceListItemDTO
 		dsPacked  []byte
@@ -74,7 +94,7 @@ func (s *DashNGoImpl) ImportDataSources(filter Filter) []string {
 }
 
 // Removes all current datasources
-func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
+func (s *DashNGoImpl) DeleteAllDataSources(filter filters.Filter) []string {
 	var ds []string = make([]string, 0)
 	items := s.ListDataSources(filter)
 	for _, item := range items {
@@ -92,7 +112,7 @@ func (s *DashNGoImpl) DeleteAllDataSources(filter Filter) []string {
 }
 
 // ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
-func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
+func (s *DashNGoImpl) ExportDataSources(filter filters.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
 	var exported []string = make([]string, 0)
@@ -122,7 +142,7 @@ func (s *DashNGoImpl) ExportDataSources(filter Filter) []string {
 				continue
 			}
 
-			if !filter.Validate(map[string]string{Name: GetSlug(newDS.Name)}) {
+			if !filter.ValidateAll(map[filters.FilterType]string{filters.Name: GetSlug(newDS.Name)}) {
 				continue
 			}
 			dsConfig := s.grafanaConf

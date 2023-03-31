@@ -10,7 +10,7 @@ builds:
   - env:
       - CGO_ENABLED=0
     binary: gdg
-    ldflags: -X github.com/esnet/gdg/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/version.Version={{ .Tag }}
+    ldflags: -s -w -X github.com/esnet/gdg/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/version.Version={{ .Tag }}
     goos:
       - linux
       - windows

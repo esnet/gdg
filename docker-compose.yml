@@ -12,3 +12,6 @@ services:
         image: grafana/grafana:9.4.3-ubuntu
         ports:
             - 3000:3000
+        environment:
+            - GF_INSTALL_PLUGINS=grafana-googlesheets-datasource
+

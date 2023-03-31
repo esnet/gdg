@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"github.com/esnet/gdg/config"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,8 +13,10 @@ import (
 )
 
 var (
-	DefaultFolderName = "General"
-	DefaultFolderId   = int64(0)
+	DefaultFolderName   = "General"
+	DefaultFolderId     = int64(0)
+	searchTypeDashboard = "dash-db"
+	searchTypeFolder    = "dash-folder"
 )
 
 func GetSlug(title string) string {
@@ -55,13 +56,4 @@ func buildResourcePath(folderName string, resourceType config.ResourceType) stri
 	CreateDestinationPath(filepath.Dir(v))
 	return v
 
-}
-
-// getFolderNameIDMap helper function to build a mapping for name to folderID
-func getFolderNameIDMap(folders []*models.FolderSearchHit) map[string]int64 {
-	var folderMap = make(map[string]int64)
-	for _, folder := range folders {
-		folderMap[folder.Title] = folder.ID
-	}
-	return folderMap
 }

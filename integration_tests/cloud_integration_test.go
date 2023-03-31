@@ -15,7 +15,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	apiClient, _ := initTest(t)
 
 	//Wipe all data from grafana
-	dsFilter := api.DatasourceFilter{}
+	dsFilter := api.NewDataSourceFilter("")
 	apiClient.DeleteAllDataSources(dsFilter)
 
 	apiClient.ExportDataSources(dsFilter)
@@ -48,7 +48,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	apiClient, _ := initTest(t)
 
 	//Wipe all data from grafana
-	dashFilter := api.NewDashboardFilter()
+	dashFilter := api.NewDashboardFilter("", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
 	//Load data into grafana
 	apiClient.ExportDashboards(dashFilter)

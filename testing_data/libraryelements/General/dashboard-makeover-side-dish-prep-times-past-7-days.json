@@ -1,0 +1,163 @@
+{
+	"id": 31,
+	"kind": 1,
+	"meta": {
+		"created": "2023-03-30T17:18:08.000Z",
+		"createdBy": {
+			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"id": 1,
+			"name": "admin"
+		},
+		"folderName": "General",
+		"updated": "2023-03-30T17:18:08.000Z",
+		"updatedBy": {
+			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"id": 1,
+			"name": "admin"
+		}
+	},
+	"model": {
+		"datasource": {
+			"type": "testdata",
+			"uid": "EJHgYyf4z"
+		},
+		"description": "",
+		"fieldConfig": {
+			"defaults": {
+				"color": {
+					"mode": "thresholds"
+				},
+				"decimals": 1,
+				"mappings": [
+					{
+						"options": {
+							"4000": {
+								"index": 0,
+								"text": "Max Time Allotted"
+							}
+						},
+						"type": "value"
+					}
+				],
+				"thresholds": {
+					"mode": "absolute",
+					"steps": [
+						{
+							"color": "green"
+						},
+						{
+							"color": "#EAB839",
+							"value": 4000
+						}
+					]
+				},
+				"unit": "s"
+			},
+			"overrides": []
+		},
+		"gridPos": {
+			"h": 11,
+			"w": 8,
+			"x": 5,
+			"y": 27
+		},
+		"id": 4,
+		"interval": "6h",
+		"libraryPanel": {
+			"uid": "WDs3jUQ7k"
+		},
+		"links": [],
+		"options": {
+			"orientation": "auto",
+			"reduceOptions": {
+				"calcs": [
+					"lastNotNull"
+				],
+				"fields": "",
+				"values": false
+			},
+			"showThresholdLabels": false,
+			"showThresholdMarkers": true
+		},
+		"pluginVersion": "8.5.3",
+		"targets": [
+			{
+				"alias": "Rick",
+				"datasource": {
+					"type": "testdata",
+					"uid": "EJHgYyf4z"
+				},
+				"max": 5400,
+				"min": 3800,
+				"refId": "A",
+				"scenarioId": "random_walk",
+				"spread": 100,
+				"startValue": 4500
+			},
+			{
+				"alias": "Jose",
+				"datasource": {
+					"type": "testdata",
+					"uid": "EJHgYyf4z"
+				},
+				"hide": false,
+				"max": 3800,
+				"min": 3400,
+				"refId": "B",
+				"scenarioId": "random_walk",
+				"spread": 50,
+				"startValue": 3600
+			},
+			{
+				"alias": "Kaitlyn",
+				"datasource": {
+					"type": "testdata",
+					"uid": "EJHgYyf4z"
+				},
+				"hide": false,
+				"max": 3800,
+				"min": 3400,
+				"refId": "C",
+				"scenarioId": "random_walk",
+				"spread": 50,
+				"startValue": 3600
+			},
+			{
+				"alias": "Raj",
+				"datasource": {
+					"type": "testdata",
+					"uid": "EJHgYyf4z"
+				},
+				"hide": false,
+				"max": 3800,
+				"min": 3400,
+				"refId": "D",
+				"scenarioId": "random_walk",
+				"spread": 50,
+				"startValue": 3600
+			},
+			{
+				"alias": "Lee",
+				"datasource": {
+					"type": "testdata",
+					"uid": "EJHgYyf4z"
+				},
+				"hide": false,
+				"max": 3800,
+				"min": 3400,
+				"refId": "E",
+				"scenarioId": "random_walk",
+				"spread": 50,
+				"startValue": 3600
+			}
+		],
+		"title": "Side Dish Prep Times, past 7 days",
+		"transformations": [],
+		"type": "gauge"
+	},
+	"name": "Dashboard Makeover - Side Dish Prep Times, past 7 days",
+	"orgId": 1,
+	"type": "gauge",
+	"uid": "WDs3jUQ7k",
+	"version": 1
+}
