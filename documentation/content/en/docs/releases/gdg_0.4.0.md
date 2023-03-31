@@ -2,17 +2,13 @@
 title: "0.4.0"
 description: "Release Notes for v0.4.0"
 #lead: "Doks comes with commands for common tasks."
-date: 2020-10-13T15:21:01+02:00
-lastmod: 2020-10-13T15:21:01+02:00
+date: 2023-03-31T15:21:01+02:00
 draft: false
 images: []
-#menu:
-#  docs:
-#    parent: "prologue"
-weight: 130
+weight: 199
 toc: true
 ---
-# DRAFT: Release Notes for v0.4.0
+# Release Notes for v0.4.0
 
 This is a major change from the previous one, I'll likely cut the 1.x soon and start following the more typical Semver conventions.  Aka Major version is a breaking change, Minor is just that, patches for previous versions.  
 
