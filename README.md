@@ -9,7 +9,7 @@ The following remote backup locations are supported:
   - Google Storage
   - Azure Storage
 
-Please find the pretty documentation [here](https://software.es.net/gdg/docs/usage_guide/) and the code for updating the docs is available [here](https://github.com/esnet/gdg/blob/master/documentation/content/docs/usage_guide.md)
+Please find the pretty documentation [here](https://software.es.net/gdg/) and the code for updating the docs is available [here](https://github.com/esnet/gdg/blob/master/documentation/content/docs/usage_guide.md)
 
 ## Breaking Changes
 
