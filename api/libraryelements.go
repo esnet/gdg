@@ -19,6 +19,7 @@ import (
 
 type LibraryElementsApi interface {
 	ListLibraryElements(filter filters.Filter) []*models.LibraryElementDTO
+	ListLibraryElementsConnections(filter filters.Filter, connectionID string) []*models.DashboardFullWithMeta
 	ImportLibraryElements(filter filters.Filter) []string
 	ExportLibraryElements(filter filters.Filter) []string
 	DeleteAllLibraryElements(filter filters.Filter) []string
@@ -28,6 +29,26 @@ var (
 	listLibraryPanels int64 = 1
 	listLibraryVars   int64 = 2
 )
+
+func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.Filter, connectionID string) []*models.DashboardFullWithMeta {
+	params := library_elements.NewGetLibraryElementConnectionsParams()
+	params.SetLibraryElementUID(connectionID)
+	payload, err := s.client.LibraryElements.GetLibraryElementConnections(params, s.getAuth())
+	if err != nil {
+		log.Fatalf("unable to retrieve a valid connection for %s", connectionID)
+	}
+	var results []*models.DashboardFullWithMeta
+
+	for _, item := range payload.GetPayload().Result {
+		dashboard, err := s.getDashboardByUid(filter, item.ConnectionUID)
+		if err != nil {
+			log.WithField("UID", item.ConnectionUID).Errorf("failed to retrieve linked Dashboard")
+		}
+		results = append(results, dashboard)
+	}
+
+	return results
+}
 
 func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.LibraryElementDTO {
 	ignoreFilters := apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters

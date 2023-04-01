@@ -1,14 +1,14 @@
 ---
-title: "0.4.1 DRAFT"
-description: "DRAFT Release Notes for v0.4.1"
+title: "0.4.1"
+description: "Release Notes for v0.4.1"
 date: 2023-03-31T15:21:01+02:00
 lastmod: 2020-10-13T15:21:01+02:00
-draft: true
+draft: false
 images: []
 weight: 198
 toc: true
 ---
-#  DRAFT: Release Notes for v0.4.1
+#  Release Notes for v0.4.1
 
 
 ### New Features

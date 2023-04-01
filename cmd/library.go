@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"github.com/esnet/gdg/api/filters"
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/jedib0t/go-pretty/table"
@@ -99,10 +100,39 @@ var listLibraries = &cobra.Command{
 	},
 }
 
+var listLibraryConnections = &cobra.Command{
+	Use:   "list-connections",
+	Short: "List all library Connection given a valid library Connection UID",
+	Long:  `List all library Connection`,
+	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+	Run: func(cmd *cobra.Command, args []string) {
+		tableObj.AppendHeader(table.Row{"id", "UID", "Slug", "Title", "Folder"})
+
+		libElmentUid := args[0]
+		elements := client.ListLibraryElementsConnections(nil, libElmentUid)
+		log.Infof("Listing library for context: '%s'", apphelpers.GetContext())
+		for _, link := range elements {
+			dash := link.Dashboard.(map[string]interface{})
+			tableObj.AppendRow(table.Row{dash["id"].(json.Number), dash["uid"].(string), link.Meta.Slug, dash["title"].(string), link.Meta.FolderTitle})
+		}
+		if len(elements) > 0 {
+			tableObj.Render()
+		} else {
+			log.Info("No library found")
+		}
+		/*
+
+
+		 */
+
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(libraryElements)
 	libraryElements.AddCommand(importLibrary)
 	libraryElements.AddCommand(listLibraries)
 	libraryElements.AddCommand(clearLibrary)
 	libraryElements.AddCommand(exportLibrary)
+	libraryElements.AddCommand(listLibraryConnections)
 }

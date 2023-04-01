@@ -81,6 +81,7 @@ All commands can use `libraryelements` aliased to `library` and `lib` for lazine
 ./bin/gdg lib import -- Import all library components from grafana to local file system
 ./bin/gdg lib export -- Exports all library components from local filesystem (matching folder filter) to Grafana
 ./bin/gdg lib clear -- Deletes all library components
+./bin/gdg lib  list-connections <Lib Element UID> -- Will list all of the dashboards connected to the Lib Element (Coming in v0.4.2)
 ```
 
 
