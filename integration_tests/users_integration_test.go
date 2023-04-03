@@ -10,7 +10,7 @@ func TestUsers(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 	users := apiClient.ListUsers()
 	assert.Equal(t, len(users), 1)
 	adminUser := users[0]

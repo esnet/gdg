@@ -14,7 +14,7 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 	apiClient.DeleteAllDashboards(api.NewDashboardFilter("", "", ""))
 	filtersEntity := api.NewDashboardFilter("", "", "")
 	log.Info("Exporting all Library Elements")

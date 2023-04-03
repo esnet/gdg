@@ -4,6 +4,8 @@ import (
 	"github.com/esnet/gdg/api"
 	"github.com/esnet/gdg/api/filters"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"gopkg.in/yaml.v3"
+	"os"
 	"strings"
 	"testing"
 
@@ -17,11 +19,78 @@ import (
 // - Add single dashboard test -d <>
 // - Add Folder dashboard test -f <>
 
+func TestDashboardAPIKeyCRUD(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
+	//TODO: convert to a token based pattern
+	apiClient, _ := initTest(t, nil)
+	testData, _ := os.ReadFile("conf/testing.yml")
+	data := map[string]interface{}{}
+	err := yaml.Unmarshal(testData, &data)
+	assert.Nil(t, err)
+
+	apiClient.ClearAPIKeys() //Remove any old data
+	newKey := apiClient.CreateAdminAPIKey("testing")
+
+	level1 := data["contexts"].(map[string]interface{})
+	level2 := level1["testing"].(map[string]interface{})
+	level2["token"] = newKey.Key
+	level2["user_name"] = ""
+	level2["password"] = ""
+
+	updatedCfg, err := yaml.Marshal(data)
+	assert.Nil(t, err)
+	newCfg := "conf/tokenTest.yml"
+	err = os.WriteFile(newCfg, updatedCfg, 0644)
+	assert.Nil(t, err)
+
+	apiClient, _ = initTest(t, &newCfg)
+
+	filtersEntity := api.NewDashboardFilter("", "", "")
+	log.Info("Exporting all dashboards")
+	apiClient.ExportDashboards(filtersEntity)
+	log.Info("Listing all dashboards")
+	boards := apiClient.ListDashboards(filtersEntity)
+	log.Infof("Imported %d dashboards", len(boards))
+	ignoredSkipped := true
+	var generalBoard *models.Hit
+	var otherBoard *models.Hit
+	for ndx, board := range boards {
+		log.Infof(board.Slug)
+		if board.Slug == "latency-patterns" {
+			ignoredSkipped = false
+		}
+		if board.Slug == "individual-flows" {
+			generalBoard = boards[ndx]
+		}
+		if board.Slug == "flow-information" {
+			otherBoard = boards[ndx]
+		}
+	}
+	assert.NotNil(t, otherBoard)
+	assert.NotNil(t, generalBoard)
+	assert.True(t, ignoredSkipped)
+	validateGeneralBoard(t, generalBoard)
+	validateOtherBoard(t, otherBoard)
+	//Import Dashboards
+	log.Info("Importing Dashboards")
+	list := apiClient.ImportDashboards(filtersEntity)
+	assert.Equal(t, len(list), len(boards))
+	log.Info("Deleting Dashboards")
+	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
+	assert.Equal(t, len(deleteList), len(boards))
+	log.Info("List Dashboards again")
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), 0)
+}
+
 func TestDashboardCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 	filtersEntity := api.NewDashboardFilter("", "", "")
 	log.Info("Exporting all dashboards")
 	apiClient.ExportDashboards(filtersEntity)
@@ -64,7 +133,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 	emptyFilter := filters.NewBaseFilter()
 
 	filtersEntity := api.NewDashboardFilter("", "", "")
@@ -101,7 +170,7 @@ func TestWildcardFilter(t *testing.T) {
 	}
 
 	// Setup Filters
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 	emptyFilter := filters.NewBaseFilter()
 
 	filtersEntity := api.NewDashboardFilter("", "", "")

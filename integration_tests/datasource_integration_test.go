@@ -14,7 +14,7 @@ func TestDataSourceCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 	filtersEntity := api.NewDataSourceFilter("")
 	log.Info("Exporting all datasources")
 	apiClient.ExportDataSources(filtersEntity)
@@ -47,7 +47,7 @@ func TestDataSourceFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	initTest(t)
+	initTest(t, nil)
 
 	testingContext := config.Config().Contexts()["testing"]
 	testingContext.GetDataSourceSettings().Filters = &config.DataSourceFilters{

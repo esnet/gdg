@@ -14,8 +14,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func initTest(t *testing.T) (api.ApiService, *viper.Viper) {
-	config.InitConfig("testing.yml", "'")
+func initTest(t *testing.T, cfgName *string) (api.ApiService, *viper.Viper) {
+	if cfgName == nil {
+		cfgName = new(string)
+		*cfgName = "testing.yml"
+	}
+
+	config.InitConfig(*cfgName, "'")
 	conf := config.Config().ViperConfig()
 	assert.NotNil(t, conf)
 	conf.Set("context_name", "testing")

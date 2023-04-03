@@ -41,7 +41,8 @@ func (s *DashNGoImpl) Login() {
 
 func (s *DashNGoImpl) getAdminAuth() runtime.ClientAuthInfoWriter {
 	if s.grafanaConf.UserName == "" {
-		log.Fatal("Unable to get Admin Auth.  Credentials are missing")
+		log.Warnf("Unable to get Admin Auth.  Basic Auth credentials, continueing with token")
+		return s.getAuth()
 	}
 	return &gapi.BasicAuthenticator{
 		Username: s.grafanaConf.UserName,
