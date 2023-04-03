@@ -44,6 +44,21 @@ func TestLibraryElementsCRUD(t *testing.T) {
 	log.Info("Importing Library Elements")
 	list := apiClient.ImportLibraryElements(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
+	//Export all Dashboards
+	apiClient.ExportDashboards(api.NewDashboardFilter("", "", ""))
+	//List connection
+	connections := apiClient.ListLibraryElementsConnections(nil, "T47RSwQnz")
+	assert.Equal(t, len(connections), 1)
+	connection := connections[0]
+
+	assert.Equal(t, connection.Meta.FolderTitle, "Other")
+	assert.True(t, len(connection.Meta.FolderUID) > 0)
+	assert.Equal(t, connection.Meta.Slug, "dashboard-makeover-challenge")
+	assert.Equal(t, connection.Dashboard.(map[string]interface{})["uid"].(string), "F3eInwQ7z")
+	assert.Equal(t, connection.Dashboard.(map[string]interface{})["title"].(string), "Dashboard Makeover Challenge")
+
+	//Delete All Dashboards
+	apiClient.DeleteAllDashboards(api.NewDashboardFilter("", "", ""))
 	log.Info("Deleting Library Elements")
 	deleteList := apiClient.DeleteAllLibraryElements(filtersEntity)
 	assert.Equal(t, len(deleteList), len(boards))

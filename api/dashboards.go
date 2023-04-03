@@ -32,6 +32,19 @@ type DashboardsApi interface {
 	ImportDashboards(filter filters.Filter) []string
 	ExportDashboards(filter filters.Filter)
 	DeleteAllDashboards(filter filters.Filter) []string
+	getDashboardByUid(filter filters.Filter, uid string) (*models.DashboardFullWithMeta, error)
+}
+
+// getDashboardByUid
+func (s *DashNGoImpl) getDashboardByUid(filter filters.Filter, uid string) (*models.DashboardFullWithMeta, error) {
+	params := dashboards.NewGetDashboardByUIDParams()
+	params.UID = uid
+	data, err := s.client.Dashboards.GetDashboardByUID(params, s.getAuth())
+	if err != nil {
+		return nil, err
+	}
+	return data.GetPayload(), nil
+
 }
 
 func NewDashboardFilter(entries ...string) filters.Filter {
