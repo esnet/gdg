@@ -10,7 +10,7 @@ func TestOrgs(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 	orgs := apiClient.ListOrganizations()
 	assert.Equal(t, len(orgs), 1)
 	mainOrg := orgs[0]

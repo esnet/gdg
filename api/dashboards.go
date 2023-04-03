@@ -114,7 +114,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 	var orgsPayload []*models.OrgDTO
 	orgList, err := s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getAdminAuth())
 	if err != nil {
-		log.Warnf("Error getting organizations: %s", err.Error())
+		log.Warn("Error getting organizations")
 		orgsPayload = make([]*models.OrgDTO, 0)
 	} else {
 		orgsPayload = orgList.GetPayload()

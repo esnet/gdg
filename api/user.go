@@ -9,6 +9,7 @@ import (
 	"github.com/esnet/gdg/config"
 	gapi "github.com/esnet/grafana-swagger-api-golang"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/admin_users"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/api_keys"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/users"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
@@ -27,6 +28,50 @@ type UsersApi interface {
 	ExportUsers() []models.UserProfileDTO
 	PromoteUser(userLogin string) (string, error)
 	DeleteAllUsers() []string
+	//TODO: clean up and expose API Keys management via CLI
+	CreateAdminAPIKey(name string) *models.NewAPIKeyResult
+	DeleteAPIKey(id int64) error
+	ClearAPIKeys() error
+}
+
+func (s *DashNGoImpl) ClearAPIKeys() error {
+	p := api_keys.NewGetAPIkeysParams()
+	keys, err := s.client.APIKeys.GetAPIkeys(p, s.getAuth())
+	if err != nil {
+		return err
+	}
+	for _, key := range keys.GetPayload() {
+		err := s.DeleteAPIKey(key.ID)
+		if err != nil {
+			log.Warnf("Failed to delete API key %d named %s", key.ID, key.Name)
+		}
+	}
+
+	return nil
+}
+
+func (s *DashNGoImpl) CreateAdminAPIKey(name string) *models.NewAPIKeyResult {
+	p := api_keys.NewAddAPIkeyParams()
+	p.Body = &models.AddCommand{
+		Name: name,
+		Role: "admin",
+	}
+	newKey, err := s.client.APIKeys.AddAPIkey(p, s.getAuth())
+	if err != nil {
+		log.Fatal("unable to create a new API Key")
+	}
+	return newKey.GetPayload()
+
+}
+func (s *DashNGoImpl) DeleteAPIKey(id int64) error {
+	p := api_keys.NewDeleteAPIkeyParams()
+	p.ID = id
+	_, err := s.client.APIKeys.DeleteAPIkey(p, s.getAuth())
+	if err != nil {
+		return fmt.Errorf("failed to delete API Key: %d", id)
+	}
+	return nil
+
 }
 
 func DefaultUserPassword(username string) string {

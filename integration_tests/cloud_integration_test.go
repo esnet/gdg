@@ -12,7 +12,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 
 	//Wipe all data from grafana
 	dsFilter := api.NewDataSourceFilter("")
@@ -45,7 +45,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t)
+	apiClient, _ := initTest(t, nil)
 
 	//Wipe all data from grafana
 	dashFilter := api.NewDashboardFilter("", "", "")
