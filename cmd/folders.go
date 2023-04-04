@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/esnet/gdg/api"
-	"github.com/esnet/gdg/api/filters"
-	"github.com/esnet/gdg/apphelpers"
-	"github.com/jedib0t/go-pretty/table"
+	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -22,7 +22,7 @@ func getFolderFilter() filters.Filter {
 	if !useFolderFilters {
 		return nil
 	}
-	return api.NewFolderFilter()
+	return service.NewFolderFilter()
 
 }
 
@@ -35,7 +35,7 @@ var foldersDeleteCmd = &cobra.Command{
 		log.Infof("Deleting all Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"title"})
 
-		folders := client.DeleteAllFolder(getFolderFilter())
+		folders := grafanaSvc.DeleteAllFolder(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No Folders found")
 		} else {
@@ -56,7 +56,7 @@ var foldersExportCmd = &cobra.Command{
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"file"})
-		folders := client.ExportFolder(getFolderFilter())
+		folders := grafanaSvc.ExportFolder(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
@@ -77,7 +77,7 @@ var foldersImportCmd = &cobra.Command{
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"file"})
-		folders := client.ImportFolder(getFolderFilter())
+		folders := grafanaSvc.ImportFolder(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
@@ -98,7 +98,7 @@ var foldersListCmd = &cobra.Command{
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "uid", "title"})
-		folders := client.ListFolder(getFolderFilter())
+		folders := grafanaSvc.ListFolder(getFolderFilter())
 
 		if len(folders) == 0 {
 			log.Info("No folders found")

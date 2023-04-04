@@ -3,7 +3,7 @@ context_name: qa
 
 contexts:
   testing:
-    output_path: testing_data
+    output_path: test/data
     datasources:
       credentials:
         default:

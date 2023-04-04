@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/esnet/gdg/internal/version"
 
-	"github.com/esnet/gdg/version"
 	"github.com/spf13/cobra"
 )
 

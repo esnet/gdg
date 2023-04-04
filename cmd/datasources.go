@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/api"
-	"github.com/esnet/gdg/apphelpers"
-	"github.com/jedib0t/go-pretty/table"
+	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/service"
+	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -23,8 +23,8 @@ var clearDataSources = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Delete datasources")
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
-		filters := api.NewDataSourceFilter(dashboardFilter)
-		savedFiles := client.DeleteAllDataSources(filters)
+		filters := service.NewDataSourceFilter(dashboardFilter)
+		savedFiles := grafanaSvc.DeleteAllDataSources(filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"datasource", file})
@@ -41,8 +41,8 @@ var exportDataSources = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Exporting datasources")
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
-		filters := api.NewDataSourceFilter(dashboardFilter)
-		exportedList := client.ExportDataSources(filters)
+		filters := service.NewDataSourceFilter(dashboardFilter)
+		exportedList := grafanaSvc.ExportDataSources(filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range exportedList {
 			tableObj.AppendRow(table.Row{"datasource", file})
@@ -59,8 +59,8 @@ var ImportDataSources = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Importing datasources for context: '%s'", apphelpers.GetContext())
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
-		filters := api.NewDataSourceFilter(dashboardFilter)
-		savedFiles := client.ImportDataSources(filters)
+		filters := service.NewDataSourceFilter(dashboardFilter)
+		savedFiles := grafanaSvc.ImportDataSources(filters)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"datasource", file})
@@ -77,15 +77,15 @@ var listDataSources = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
-		filters := api.NewDataSourceFilter(dashboardFilter)
-		dsListing := client.ListDataSources(filters)
+		filters := service.NewDataSourceFilter(dashboardFilter)
+		dsListing := grafanaSvc.ListDataSources(filters)
 		log.Infof("Listing datasources for context: '%s'", apphelpers.GetContext())
 		if len(dsListing) == 0 {
 			log.Info("No datasources found")
 		} else {
 			for _, link := range dsListing {
 				url := fmt.Sprintf("%s/datasource/edit/%d", apphelpers.GetCtxDefaultGrafanaConfig().URL, link.ID)
-				tableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, api.GetSlug(link.Name), link.Type, link.IsDefault, url})
+				tableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
 			}
 			tableObj.Render()
 		}

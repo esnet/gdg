@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/esnet/gdg/api"
-	"github.com/esnet/gdg/apphelpers"
+	"github.com/esnet/gdg/internal/apphelpers"
+	api "github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
-	"github.com/jedib0t/go-pretty/table"
+	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -30,7 +30,7 @@ var importTeamCmd = &cobra.Command{
 
 		log.Infof("Importing Teams for context: '%s'", apphelpers.GetContext())
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		savedFiles := client.ImportTeams(filter)
+		savedFiles := grafanaSvc.ImportTeams(filter)
 		if len(savedFiles) == 0 {
 			log.Info("No teams found")
 		} else {
@@ -55,7 +55,7 @@ var exportTeamCmd = &cobra.Command{
 		log.Infof("Exporting Teams for context: '%s'", apphelpers.GetContext())
 		log.Warn("Currently support for import Admin members is not support, there will be 1 admin, which is the default admin user")
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		savedFiles := client.ExportTeams(filter)
+		savedFiles := grafanaSvc.ExportTeams(filter)
 		if len(savedFiles) == 0 {
 			log.Info("No teams found")
 		} else {
@@ -90,7 +90,7 @@ var listTeamCmd = &cobra.Command{
 		log.Infof("Listing teams for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "memberID", "member Permission"})
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		teams := client.ListTeams(filter)
+		teams := grafanaSvc.ListTeams(filter)
 		if len(teams) == 0 {
 			log.Info("No teams found")
 		} else {
@@ -116,7 +116,7 @@ var deleteTeamCmd = &cobra.Command{
 		log.Infof("Deleting teams for context: '%s'", apphelpers.GetContext())
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
 		tableObj.AppendHeader(table.Row{"type", "team ID", "team Name"})
-		teams, err := client.DeleteTeam(filter)
+		teams, err := grafanaSvc.DeleteTeam(filter)
 		if err != nil {
 			log.Error(err.Error())
 		} else {

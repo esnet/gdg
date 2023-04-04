@@ -11,7 +11,7 @@ storage_engine:
 contexts:
   testing:
     storage: "any_label"
-    output_path: testing_data
+    output_path: test/data
     datasources:
       filters:
         name_exclusions: "DEV-*|-Dev-*"

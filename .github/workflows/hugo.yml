@@ -19,16 +19,15 @@ jobs:
          extended: true
      - name: NPM Dependencies
        run: |
-         cd documentation && npm install
+         cd website && npm install
      - name: NPM Dependencies
        run: npm install postcss postcss-cli autoprefixer
      - name: Build
-#      run: hugo --destination public --baseURL https://software.es.net/gdg -s documentation
        run: | 
-         cd documentation && npm run build
+         cd website && npm run build
      - name: Deploy
        uses: peaceiris/actions-gh-pages@v3
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
-         publish_dir: ./documentation/public
+         publish_dir: ./website/public
 

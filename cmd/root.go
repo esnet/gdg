@@ -2,19 +2,20 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service"
 	"os"
 
-	"github.com/jedib0t/go-pretty/table"
+	"github.com/jedib0t/go-pretty/v6/table"
+
 	log "github.com/sirupsen/logrus"
 
-	"github.com/esnet/gdg/api"
-	"github.com/esnet/gdg/config"
 	"github.com/spf13/cobra"
 )
 
 var (
 	tableObj      table.Writer
-	client        api.ApiService
+	grafanaSvc    service.GrafanaService
 	DefaultConfig string
 )
 
@@ -74,6 +75,6 @@ func initConfig() {
 }
 
 func setupGrafanaClient() {
-	client = api.NewApiService()
+	grafanaSvc = service.NewApiService()
 
 }
