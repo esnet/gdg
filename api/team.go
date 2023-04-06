@@ -66,14 +66,13 @@ func (s *DashNGoImpl) ImportTeams() map[sdk.Team][]sdk.TeamMember {
 // Export Teams
 func (s *DashNGoImpl) ExportTeams() map[sdk.Team][]sdk.TeamMember {
 	ctx := context.Background()
-	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.TeamResource), false)
+	filesInDir, err := s.storage.FindAllFiles(getResourcePath(config.TeamResource), true)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for teams")
 	}
 	exportedTeams := make(map[sdk.Team][]sdk.TeamMember)
-	for _, file := range filesInDir {
-		fileLocation := filepath.Join(getResourcePath(config.TeamResource), file)
-		if strings.HasSuffix(file, "team.json") {
+	for _, fileLocation := range filesInDir {
+		if strings.HasSuffix(fileLocation, "team.json") {
 			//Export Team
 			var rawTeam []byte
 			if rawTeam, err = s.storage.ReadFile(fileLocation); err != nil {
