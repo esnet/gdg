@@ -23,18 +23,12 @@ var importTeamCmd = &cobra.Command{
 
 		log.Infof("Importing Teams for context: '%s'", apphelpers.GetContext())
 		savedFiles := client.ImportTeams()
-		tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "created", "updated"})
 		if len(savedFiles) == 0 {
 			log.Info("No teams found")
 		} else {
+			tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "created", "updated"})
 			for team := range savedFiles {
 				tableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.Created, team.Updated})
-			}
-			tableObj.AppendHeader(table.Row{"orgID", "teamID", "userID", "email", "login", "avatarURL"})
-			for _, members := range savedFiles {
-				for _, member := range members {
-					tableObj.AppendRow(table.Row{member.OrgId, member.TeamId, member.UserId, member.Email, member.Login, member.AvatarUrl})
-				}
 			}
 			tableObj.Render()
 		}
@@ -49,18 +43,12 @@ var exportTeamCmd = &cobra.Command{
 
 		log.Infof("Exporting Teams for context: '%s'", apphelpers.GetContext())
 		savedFiles := client.ExportTeams()
-		tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "created", "updated"})
 		if len(savedFiles) == 0 {
 			log.Info("No teams found")
 		} else {
+			tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "created", "updated"})
 			for team := range savedFiles {
 				tableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.Created, team.Updated})
-			}
-			tableObj.AppendHeader(table.Row{"orgID", "teamID", "userID", "email", "login", "avatarURL"})
-			for _, members := range savedFiles {
-				for _, member := range members {
-					tableObj.AppendRow(table.Row{member.OrgId, member.TeamId, member.UserId, member.Email, member.Login, member.AvatarUrl})
-				}
 			}
 			tableObj.Render()
 		}
@@ -109,10 +97,10 @@ var deleteTeamCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(teamCmd)
-	userCmd.AddCommand(importTeamCmd)
-	userCmd.AddCommand(exportTeamCmd)
-	userCmd.AddCommand(listTeamCmd)
-	userCmd.AddCommand(deleteTeamCmd)
+	teamCmd.AddCommand(importTeamCmd)
+	teamCmd.AddCommand(exportTeamCmd)
+	teamCmd.AddCommand(listTeamCmd)
+	teamCmd.AddCommand(deleteTeamCmd)
 	deleteTeamCmd.Flags().StringP("team", "t", "", "team ID")
 	err := deleteTeamCmd.MarkFlagRequired("team")
 	if err != nil {

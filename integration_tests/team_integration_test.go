@@ -25,7 +25,10 @@ func TestTeamCRUD(t *testing.T) {
 	log.Info("Importing teams")
 	list := apiClient.ImportTeams()
 	assert.Equal(t, len(list), len(teams))
-	// List Team Members
+	// Add and List Team Members
+	log.Info("Add team members")
+	apiClient.AddTeamMember("engineers", "admin")
+	apiClient.AddTeamMember("musicians", "admin")
 	log.Info("Checking team members")
 	listEngineers := apiClient.ListTeamMembers("engineers")
 	listMusicians := apiClient.ListTeamMembers("musicians")

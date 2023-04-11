@@ -74,9 +74,9 @@ var addTeamMemberCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(teamMemberCmd)
-	userCmd.AddCommand(listTeamMemberCmd)
-	userCmd.AddCommand(deleteTeamMemberCmd)
-	userCmd.AddCommand(addTeamMemberCmd)
+	teamMemberCmd.AddCommand(listTeamMemberCmd)
+	teamMemberCmd.AddCommand(deleteTeamMemberCmd)
+	teamMemberCmd.AddCommand(addTeamMemberCmd)
 	listTeamMemberCmd.Flags().StringP("team", "t", "", "team ID")
 	deleteTeamMemberCmd.Flags().StringP("team", "t", "", "team ID")
 	deleteTeamMemberCmd.Flags().StringP("user", "u", "", "user login")
