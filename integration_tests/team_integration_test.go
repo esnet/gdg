@@ -27,8 +27,10 @@ func TestTeamCRUD(t *testing.T) {
 	assert.Equal(t, len(list), len(teams))
 	// Add and List Team Members
 	log.Info("Add team members")
-	apiClient.AddTeamMember("engineers", "admin")
-	apiClient.AddTeamMember("musicians", "admin")
+	_, err := apiClient.AddTeamMember("engineers", "admin")
+	assert.NoError(t, err)
+	_, err = apiClient.AddTeamMember("musicians", "admin")
+	assert.NoError(t, err)
 	log.Info("Checking team members")
 	listEngineers := apiClient.ListTeamMembers("engineers")
 	listMusicians := apiClient.ListTeamMembers("musicians")
@@ -36,7 +38,8 @@ func TestTeamCRUD(t *testing.T) {
 	assert.Equal(t, len(listMusicians), 1)
 	// Delete teams
 	log.Info("Deleting Teams")
-	_, err := apiClient.DeleteTeam("engineers")
+	_, err = apiClient.DeleteTeam("engineers")
+	assert.NoError(t, err)
 	_, err = apiClient.DeleteTeam("musicians")
 	assert.NoError(t, err)
 	log.Info("List Teams again")
