@@ -19,15 +19,17 @@ func NewExtendedApi() *ExtendedApi {
 		grafanaCfg: cfg,
 	}
 
-	req := requests.URL(cfg.URL)
+	return &o
+}
 
-	if cfg.UserName != "" && cfg.Password != "" {
-		req.BasicAuth(cfg.UserName, cfg.Password)
+func (s *ExtendedApi) getRequestBuilder() *requests.Builder {
+	req := requests.URL(s.grafanaCfg.URL)
+
+	if s.grafanaCfg.UserName != "" && s.grafanaCfg.Password != "" {
+		req.BasicAuth(s.grafanaCfg.UserName, s.grafanaCfg.Password)
 	} else {
-		req.Header("Authorization", "Bearer "+cfg.APIToken)
+		req.Header("Authorization", "Bearer "+s.grafanaCfg.APIToken)
 	}
 
-	o.req = req
-
-	return &o
+	return req
 }

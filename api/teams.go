@@ -3,9 +3,11 @@ package api
 import (
 	"errors"
 	"fmt"
+	"github.com/esnet/gdg/api/filters"
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/teams"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"golang.org/x/exp/maps"
 	"os"
 	"strings"
 
@@ -18,16 +20,49 @@ import (
 
 type TeamsApi interface {
 	//Team
-	ImportTeams() map[*models.TeamDTO][]*models.TeamMemberDTO
-	ExportTeams() map[*models.TeamDTO][]*models.TeamMemberDTO
-	ListTeams() []*models.TeamDTO
-	DeleteTeam(teamName string) (string, error)
-	TeamMembersApi
+	ImportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
+	ExportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
+	ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
+	DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, error)
+}
+
+type UserPermission models.PermissionType
+
+const (
+	AdminUserPermission = 4
+)
+
+func NewTeamFilter(entries ...string) filters.Filter {
+	filterObj := filters.NewBaseFilter()
+
+	teamFilter := entries[0]
+
+	filterObj.AddFilter(filters.Name, teamFilter)
+	filterObj.AddValidation(filters.Name, func(i interface{}) bool {
+		switch i.(type) {
+		case string:
+			{
+				val := i.(string)
+				if filterObj.GetFilter(filters.Name) == "" {
+					return true
+				} else if val == filterObj.GetFilter(filters.Name) {
+					return true
+				}
+			}
+
+		default:
+			return false
+		}
+
+		return false
+	})
+
+	return filterObj
 }
 
 // Import Teams
-func (s *DashNGoImpl) ImportTeams() map[*models.TeamDTO][]*models.TeamMemberDTO {
-	teamListing := s.ListTeams()
+func (s *DashNGoImpl) ImportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
 	teamPath := buildResourceFolder("", config.TeamResource)
 	for ndx, team := range teamListing {
@@ -65,12 +100,17 @@ func (s *DashNGoImpl) ImportTeams() map[*models.TeamDTO][]*models.TeamMemberDTO 
 }
 
 // Export Teams
-func (s *DashNGoImpl) ExportTeams() map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (s *DashNGoImpl) ExportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.TeamResource), true)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for teams")
 	}
 	exportedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
+	//Clear previous data.
+	_, err = s.DeleteTeam(filter)
+	if err != nil {
+		log.Fatalf("Failed to clear previous data, aborting")
+	}
 	for _, fileLocation := range filesInDir {
 		if strings.HasSuffix(fileLocation, "team.json") {
 			//Export Team
@@ -89,11 +129,13 @@ func (s *DashNGoImpl) ExportTeams() map[*models.TeamDTO][]*models.TeamMemberDTO 
 				Name:  newTeam.Name,
 				Email: newTeam.Email,
 			}
-			_, err = s.client.Teams.CreateTeam(p, s.getAuth())
+			teamCreated, err := s.client.Teams.CreateTeam(p, s.getAuth())
 			if err != nil {
 				log.WithError(err).Errorf("failed to create team for file: %s", fileLocation)
 				continue
 			}
+
+			newTeam.ID = teamCreated.GetPayload().TeamID
 			//Export Team Members (if exist)
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
@@ -110,15 +152,10 @@ func (s *DashNGoImpl) ExportTeams() map[*models.TeamDTO][]*models.TeamMemberDTO 
 			}
 			for _, member := range newMembers {
 				if s.isAdmin(member.UserID, member.Name) {
-					log.Info("skipping admin user, already added when new team is created")
+					log.Warnf("skipping admin user, already added when new team is created")
 					continue
 				}
-				p := teams.NewAddTeamMemberParams()
-				p.TeamID = fmt.Sprintf("%d", member.TeamID)
-				p.Body = &models.AddTeamMemberCommand{
-					UserID: member.UserID,
-				}
-				_, err = s.client.Teams.AddTeamMember(p, s.getAdminAuth())
+				_, err := s.addTeamMember(newTeam, member)
 				if err != nil {
 					log.WithError(err).Errorf("failed to create team member for team %s with ID %d", newTeam.Name, member.UserID)
 				} else {
@@ -132,7 +169,8 @@ func (s *DashNGoImpl) ExportTeams() map[*models.TeamDTO][]*models.TeamMemberDTO 
 }
 
 // List all Teams
-func (s *DashNGoImpl) ListTeams() []*models.TeamDTO {
+func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO, 0)
 	var pageSize int64 = 99999
 	p := teams.NewSearchTeamsParams()
 	p.Perpage = &pageSize
@@ -141,13 +179,31 @@ func (s *DashNGoImpl) ListTeams() []*models.TeamDTO {
 		log.Fatal("unable to list teams")
 	}
 
-	return data.GetPayload().Teams
+	getTeamMembers := func(team *models.TeamDTO) {
+		if team.MemberCount > 0 {
+			result[team] = s.listTeamMembers(filter, team.ID)
+		} else {
+			result[team] = nil
+		}
+	}
+
+	for _, team := range data.GetPayload().Teams {
+		if filter != nil {
+			if filter.InvokeValidation(filters.Name, team.Name) {
+				getTeamMembers(team)
+			}
+		} else {
+			getTeamMembers(team)
+		}
+	}
+
+	return result
 }
 
 // Get a specific Team
 // Return nil if team cannot be found
-func (s *DashNGoImpl) getTeam(teamName string) *models.TeamDTO {
-	teamListing := s.ListTeams()
+func (s *DashNGoImpl) getTeam(teamName string, filter filters.Filter) *models.TeamDTO {
+	teamListing := maps.Keys(s.ListTeams(filter))
 	var team *models.TeamDTO
 	for ndx, item := range teamListing {
 		if item.Name == teamName {
@@ -158,17 +214,65 @@ func (s *DashNGoImpl) getTeam(teamName string) *models.TeamDTO {
 	return team
 }
 
-// Delete a specific Team
-func (s *DashNGoImpl) DeleteTeam(teamName string) (string, error) {
-	team := s.getTeam(teamName)
-	if team == nil {
-		return "", fmt.Errorf("team:  '%s' could not be found", teamName)
+// DeleteTeam removes all Teams
+func (s *DashNGoImpl) DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, error) {
+	teamListing := maps.Keys(s.ListTeams(filter))
+	var result []*models.TeamDTO
+	for _, team := range teamListing {
+		if filter != nil && !filter.ValidateAll(team.Name) {
+			continue
+		}
+		p := teams.NewDeleteTeamByIDParams()
+		p.TeamID = fmt.Sprintf("%d", team.ID)
+		_, err := s.client.Teams.DeleteTeamByID(p, s.getAuth())
+		if err != nil {
+			log.Errorf("failed to delete team: '%s'", team.Name)
+			continue
+		}
+		result = append(result, team)
 	}
-	p := teams.NewDeleteTeamByIDParams()
-	p.TeamID = fmt.Sprintf("%d", team.ID)
-	msg, err := s.client.Teams.DeleteTeamByID(p, s.getAuth())
+
+	return result, nil
+}
+
+// List Team Members of specific Team
+func (s *DashNGoImpl) listTeamMembers(filter filters.Filter, teamID int64) []*models.TeamMemberDTO {
+	teamIDStr := fmt.Sprintf("%d", teamID)
+	fetchTeamParam := teams.NewGetTeamMembersParams()
+	fetchTeamParam.TeamID = teamIDStr
+	members, err := s.client.Teams.GetTeamMembers(fetchTeamParam, s.getAuth())
 	if err != nil {
-		errorMsg := fmt.Sprintf("failed to delete team: '%s'", teamName)
+		log.Fatal(fmt.Errorf("team:  '%d' could not be found", teamID))
+	}
+
+	return members.GetPayload()
+}
+
+// Add User to a Team
+// TODO: add support to import member with correct permission granted.
+func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMemberDTO) (string, error) {
+	if team == nil {
+		log.Fatal(fmt.Errorf("team:  '%s' could not be found", team.Name))
+	}
+	users := s.ListUsers()
+	var user *models.UserSearchHitDTO
+	for ndx, item := range users {
+		if item.Login == userDTO.Login {
+			user = users[ndx]
+			break
+		}
+	}
+
+	if user == nil {
+		log.Fatal(fmt.Errorf("user:  '%s' could not be found", userDTO.Login))
+	}
+	p := teams.NewAddTeamMemberParams()
+	p.TeamID = fmt.Sprintf("%d", team.ID)
+	p.Body = &models.AddTeamMemberCommand{UserID: user.ID}
+	msg, err := s.client.Teams.AddTeamMember(p, s.getAuth())
+	if err != nil {
+		log.Info(err.Error())
+		errorMsg := fmt.Sprintf("failed to add member '%s' to team '%s'", userDTO.Login, team.Name)
 		log.Error(errorMsg)
 		return "", errors.New(errorMsg)
 	}

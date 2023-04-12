@@ -28,7 +28,7 @@ type DataSourcesApi interface {
 
 func NewDataSourceFilter(name string) filters.Filter {
 	filterEntity := filters.NewBaseFilter()
-	filterEntity.AddFilter("Name", name)
+	filterEntity.AddFilter(filters.Name, name)
 	filterEntity.AddValidation(filters.DefaultFilter, func(i interface{}) bool {
 		val, ok := i.(map[filters.FilterType]string)
 		if !ok {
@@ -44,7 +44,6 @@ func NewDataSourceFilter(name string) filters.Filter {
 }
 
 // ListDataSources: list all the currently configured datasources
-
 func (s *DashNGoImpl) ListDataSources(filter filters.Filter) []models.DataSourceListItemDTO {
 	ds, err := s.client.Datasources.GetDataSources(datasources.NewGetDataSourcesParams(), s.getAuth())
 	if err != nil {

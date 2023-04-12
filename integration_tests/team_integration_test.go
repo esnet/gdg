@@ -1,6 +1,9 @@
 package integration_tests
 
 import (
+	"github.com/esnet/gdg/api"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"golang.org/x/exp/maps"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
@@ -11,38 +14,41 @@ func TestTeamCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
+
+	filter := api.NewTeamFilter("")
 	apiClient, _ := initTest(t, nil)
+	log.Info("Exporting current user list")
+	apiClient.ExportUsers()
+	users := apiClient.ListUsers()
+	assert.Equal(t, len(users), 2)
 	log.Info("Exporting all teams")
-	apiClient.ExportTeams()
+	apiClient.ExportTeams(filter)
 	log.Info("Listing all Teams")
-	teams := apiClient.ListTeams()
+	teamsMap := apiClient.ListTeams(filter)
+	teams := maps.Keys(teamsMap)
 	assert.Equal(t, len(teams), 2)
-	var firstDsItem = teams[0]
-	assert.Equal(t, firstDsItem.Name, "engineers")
-	var secondDsItem = teams[1]
-	assert.Equal(t, secondDsItem.Name, "musicians")
+	var engineerTeam *models.TeamDTO
+	var musicianTeam *models.TeamDTO
+	for ndx, team := range teams {
+		if team.Name == "engineers" {
+			engineerTeam = teams[ndx]
+		} else if team.Name == "musicians" {
+			musicianTeam = teams[ndx]
+		}
+	}
+	assert.Equal(t, engineerTeam.Name, "engineers")
+	engineers := teamsMap[engineerTeam]
+	assert.Equal(t, len(engineers), 2)
+	assert.Equal(t, engineers[1].Login, "tux")
+	assert.Equal(t, musicianTeam.Name, "musicians")
 	//Import Teams
 	log.Info("Importing teams")
-	list := apiClient.ImportTeams()
+	list := apiClient.ImportTeams(filter)
 	assert.Equal(t, len(list), len(teams))
-	// Add and List Team Members
-	log.Info("Add team members")
-	_, err := apiClient.AddTeamMember("engineers", "admin")
-	assert.NoError(t, err)
-	_, err = apiClient.AddTeamMember("musicians", "admin")
-	assert.NoError(t, err)
-	log.Info("Checking team members")
-	listEngineers := apiClient.ListTeamMembers("engineers")
-	listMusicians := apiClient.ListTeamMembers("musicians")
-	assert.Equal(t, len(listEngineers), 1)
-	assert.Equal(t, len(listMusicians), 1)
-	// Delete teams
-	log.Info("Deleting Teams")
-	_, err = apiClient.DeleteTeam("engineers")
-	assert.NoError(t, err)
-	_, err = apiClient.DeleteTeam("musicians")
-	assert.NoError(t, err)
-	log.Info("List Teams again")
-	teams = apiClient.ListTeams()
-	assert.Equal(t, len(teams), 0)
+	//CleanUp
+	_, err := apiClient.DeleteTeam(filter)
+	assert.Nil(t, err)
+	//Remove Users
+	apiClient.DeleteAllUsers()
+
 }

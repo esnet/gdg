@@ -6,7 +6,17 @@
 		"login": "admin",
 		"orgId": 1,
 		"permission": 4,
-		"teamId": 18,
+		"teamId": 5,
 		"userId": 1
+	},
+	{
+		"avatarUrl": "/avatar/b0af9e9c1c0acf1dc93d4dc9d6bcafb1",
+		"email": "s@s.com",
+		"labels": [],
+		"login": "tux",
+		"name": "supertux",
+		"orgId": 1,
+		"teamId": 5,
+		"userId": 2
 	}
 ]
