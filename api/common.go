@@ -2,10 +2,11 @@ package api
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/config"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/esnet/gdg/config"
 
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/gosimple/slug"

@@ -10,7 +10,7 @@ import (
 
 func (extended *ExtendedApi) SearchUsers(query *users.SearchUsersParams) ([]*models.UserSearchHitDTO, error) {
 	usersList := make([]*models.UserSearchHitDTO, 0)
-	err := extended.req.
+	err := extended.getRequestBuilder().
 		Path("/api/users").
 		Param("page", fmt.Sprintf("%d", *query.Page)).
 		Param("perpage", fmt.Sprintf("%d", *query.Perpage)).

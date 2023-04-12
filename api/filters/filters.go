@@ -15,6 +15,7 @@ const (
 	TagsFilter    FilterType = "TagsFilter"
 	DashFilter    FilterType = "DashFilter"
 	FolderFilter  FilterType = "FolderFilter"
+	TeamFilter    FilterType = "TeamFilter"
 	DefaultFilter FilterType = "default"
 	Name          FilterType = "Name"
 )
@@ -27,8 +28,9 @@ type Filter interface {
 	//Regex Tooling
 	AddRegex(FilterType, *regexp.Regexp)
 	//Entity filterMap
-	GetEntity(FilterType) []string          // Returns slice of filter values or default value from Config
-	GetFilter(key FilterType) string        //Get the Filter value
+	GetEntity(FilterType) []string   // Returns slice of filter values or default value from Config
+	GetFilter(key FilterType) string //Get the Filter value
+	//FilterValid(key FilterType, value string) bool //true if filter match
 	AddFilter(key FilterType, value string) //Add a filter to match against for a given type
 
 	ValidateAll(interface{}) bool //ValidateAll if Entry is valid

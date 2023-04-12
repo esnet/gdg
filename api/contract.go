@@ -3,14 +3,15 @@ package api
 import (
 	"context"
 	"fmt"
+
 	"github.com/esnet/gdg/apphelpers"
 	"github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/apiExtend"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+
 	"sync"
-	//gclient "github.com/grafana/grafana-api-golang-client"
 )
 
 type ApiService interface {
@@ -21,6 +22,7 @@ type ApiService interface {
 	UsersApi
 	FoldersApi
 	LibraryElementsApi
+	TeamsApi
 
 	//MetaData
 	GetServerInfo() map[string]interface{}
