@@ -2,11 +2,10 @@ package main
 
 import (
 	_ "embed"
+	applogger "github.com/esnet/gdg/internal/log"
 	"sync"
 
 	"github.com/esnet/gdg/cmd"
-
-	applogger "github.com/esnet/gdg/log"
 )
 
 //go:embed conf/importer-example.yml

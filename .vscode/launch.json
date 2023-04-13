@@ -1,7 +1,4 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
@@ -14,7 +11,7 @@
                 "ctx",
                 "show",
                 "-c",
-                "conf/testing.yml",
+                "conf/testing.yml"
             ]
         },
         {
@@ -25,7 +22,7 @@
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "ds",
-                "list",
+                "list"
             ]
         },
         {
@@ -36,7 +33,7 @@
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "dash",
-                "import",
+                "import"
             ]
         },
         {
@@ -49,7 +46,7 @@
                 "dash",
                 "import",
                 "-d",
-                "test_deploy",
+                "test_deploy"
             ]
         },
         {
@@ -60,7 +57,7 @@
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "dash",
-                "export",
+                "export"
             ]
         },
         {
@@ -73,7 +70,7 @@
                 "dash",
                 "export",
                 "-d",
-                "test_deploy",
+                "test_deploy"
             ]
         },
         {
@@ -84,7 +81,7 @@
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "datasource",
-                "import",
+                "import"
             ]
         },
         {
@@ -95,7 +92,7 @@
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "datasource",
-                "export",
+                "export"
             ]
         },
         {
@@ -106,7 +103,7 @@
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "org",
-                "list",
+                "list"
             ]
         },
         {

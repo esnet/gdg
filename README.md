@@ -17,5 +17,5 @@ Release 0.4 has some breaking changes, please read the release [notes](https://s
 
 ## Quickstart 
 
-![Quickstart screen](assets/quickstart.gif)
+![Quickstart screen](website/static/quickstart.gif)
 

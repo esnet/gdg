@@ -42,7 +42,7 @@ var serverInfo = &cobra.Command{
 	Short: "server health info",
 	Long:  `server health info`,
 	Run: func(cmd *cobra.Command, args []string) {
-		result := client.GetServerInfo()
+		result := grafanaSvc.GetServerInfo()
 		for key, value := range result {
 			log.Infof("%s:  %s", key, value)
 		}

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/esnet/gdg/apphelpers"
-	"github.com/jedib0t/go-pretty/table"
+	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -22,7 +22,7 @@ var listOrgCmd = &cobra.Command{
 
 		log.Infof("Listing organizations for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "org"})
-		listOrganizations := client.ListOrganizations()
+		listOrganizations := grafanaSvc.ListOrganizations()
 		if len(listOrganizations) == 0 {
 			log.Info("No organizations found")
 		} else {

@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/api"
-	"github.com/esnet/gdg/apphelpers"
-	"github.com/jedib0t/go-pretty/table"
+	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/service"
+	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"strings"
@@ -30,8 +30,8 @@ var clearDashboards = &cobra.Command{
 	Short: "delete all monitored dashboards",
 	Long:  `clear all monitored dashboards from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
-		filter := api.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
-		deletedDashboards := client.DeleteAllDashboards(filter)
+		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
+		deletedDashboards := grafanaSvc.DeleteAllDashboards(filter)
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range deletedDashboards {
 			tableObj.AppendRow(table.Row{"dashboard", file})
@@ -53,11 +53,11 @@ var exportDashboard = &cobra.Command{
 	Long:  `export all dashboards`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		filter := api.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
-		client.ExportDashboards(filter)
+		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
+		grafanaSvc.ExportDashboards(filter)
 
 		tableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
-		boards := client.ListDashboards(filter)
+		boards := grafanaSvc.ListDashboards(filter)
 
 		for _, link := range boards {
 			tableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
@@ -77,8 +77,8 @@ var importDashboard = &cobra.Command{
 	Short: "Import all dashboards",
 	Long:  `Import all dashboards from grafana to local file system`,
 	Run: func(cmd *cobra.Command, args []string) {
-		filter := api.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
-		savedFiles := client.ImportDashboards(filter)
+		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
+		savedFiles := grafanaSvc.ImportDashboards(filter)
 		log.Infof("Importing dashboards for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
@@ -95,8 +95,8 @@ var listDashboards = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "Tags", "URL"})
 
-		filters := api.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
-		boards := client.ListDashboards(filters)
+		filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
+		boards := grafanaSvc.ListDashboards(filters)
 
 		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
 		for _, link := range boards {
