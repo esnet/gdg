@@ -53,7 +53,7 @@ func (s *DashNGoImpl) ListDataSources(filter filters.Filter) []models.DataSource
 
 	dsSettings := s.grafanaConf.GetDataSourceSettings()
 	for _, item := range ds.GetPayload() {
-		if dsSettings.FiltersEnabled() && (!dsSettings.Filters.ValidName(item.Name) || !dsSettings.Filters.ValidDataType(item.Type)) {
+		if dsSettings.FiltersEnabled() && dsSettings.IsExcluded(item) {
 			log.Debugf("Skipping data source: %s since it fails filter checks with dataType of: %s", item.Name, item.Type)
 			continue
 		}
@@ -114,7 +114,7 @@ func (s *DashNGoImpl) DeleteAllDataSources(filter filters.Filter) []string {
 func (s *DashNGoImpl) ExportDataSources(filter filters.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
-	var exported []string = make([]string, 0)
+	var exported = make([]string, 0)
 
 	log.Infof("Reading files from folder: %s", apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DataSourceResource))
 	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DataSourceResource), false)
@@ -148,15 +148,15 @@ func (s *DashNGoImpl) ExportDataSources(filter filters.Filter) []string {
 			var creds *config.GrafanaDataSource
 
 			if newDS.BasicAuth {
-				creds, err = dsConfig.GetCredentials(newDS.Name)
+				creds, err = dsConfig.GetCredentials(newDS)
 				if err != nil { //Attempt to get Credentials by URL regex
-					creds, _ = dsConfig.GetCredentialByUrl(newDS.URL)
+					log.Warn("DataSource has Auth enabled but has no valid Credentials that could be retrieved.  Please check your configuration and try again.")
 				}
 			} else {
 				creds = nil
 			}
 
-			if dsSettings.FiltersEnabled() && (!dsSettings.Filters.ValidName(newDS.Name) || !dsSettings.Filters.ValidDataType(newDS.Type)) {
+			if dsSettings.FiltersEnabled() && dsSettings.IsExcluded(newDS) {
 				log.Debugf("Skipping local JSON file since source: %s since it fails filter checks with dataType of: %s", newDS.Name, newDS.Type)
 				continue
 			}

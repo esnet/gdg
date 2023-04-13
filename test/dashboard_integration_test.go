@@ -26,7 +26,7 @@ func TestDashboardAPIKeyCRUD(t *testing.T) {
 
 	//TODO: convert to a token based pattern
 	apiClient, _ := initTest(t, nil)
-	testData, _ := os.ReadFile("conf/testing.yml")
+	testData, _ := os.ReadFile("config/testing.yml")
 	data := map[string]interface{}{}
 	err := yaml.Unmarshal(testData, &data)
 	assert.Nil(t, err)
@@ -34,6 +34,9 @@ func TestDashboardAPIKeyCRUD(t *testing.T) {
 	apiClient.DeleteAllTokens() //Remove any old data
 	newKey, err := apiClient.CreateAPIKey("testing", "admin", 0)
 	assert.Nil(t, err)
+
+	wrapper := map[string]*config.GrafanaConfig{}
+	_ = wrapper
 
 	level1 := data["contexts"].(map[string]interface{})
 	level2 := level1["testing"].(map[string]interface{})
@@ -43,7 +46,7 @@ func TestDashboardAPIKeyCRUD(t *testing.T) {
 
 	updatedCfg, err := yaml.Marshal(data)
 	assert.Nil(t, err)
-	newCfg := "conf/tokenTest.yml"
+	newCfg := "config/tokenTest.yml"
 	err = os.WriteFile(newCfg, updatedCfg, 0644)
 	assert.Nil(t, err)
 

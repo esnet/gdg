@@ -5,6 +5,101 @@ weight: 16
 
 Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
 
+
+### Authentication Management
+
+This is mainly added as a convenience mechanism.  It was needed to support some testing and exposing the feature is useful as a really simple CLI to create tokens / service Keys.  You probably should be using other tooling for managing all your service files and tokens.   Unlike most other entities, this is not a backup feature as much as utility.
+
+There are two sub commands for auth, service-accounts and tokens (will be deprecated at some point).
+
+#### Token Management
+
+
+```sh
+./bin/gdg auth tokens list -- list current tokens (No access to the actual token secret)
+./bin/gdg auth tokens new --  Create a new token.  new <name> <role> [ttl in seconds, forever otherwise]
+./bin/gdg auth tokens clear -- Deletes all tokens
+```
+
+{{< details "Token Listing" >}}
+```
+┌────┬─────────┬───────┬───────────────┐
+│ ID │ NAME    │ ROLE  │ EXPIRATION    │
+├────┼─────────┼───────┼───────────────┤
+│  1 │ testing │ Admin │ No Expiration │
+└────┴─────────┴───────┴───────────────┘
+```
+{{< /details >}}
+
+Example of creating a new token.
+
+```sh
+./bin/gdg auth tokens new foobar Admin 3600 
+```
+
+{{< details "New Token" >}}
+
+┌────┬────────┬─────────────────────────────────────────────────────────────┐
+│ ID │ NAME   │ TOKEN                                                       │
+├────┼────────┼─────────────────────────────────────────────────────────────┤
+│  2 │ foobar │ eyJrIjoiNzU2WVhiMEZpVWNlV3hWSUVZQTuIjoiZm9vYmFyIiwiaWQiOjF9 │
+└────┴────────┴─────────────────────────────────────────────────────────────┘
+
+{{< /details >}}
+
+
+#### Service Accounts
+
+
+```sh 
+./bin/gdg svc  clear       delete all Service Accounts
+./bin/gdg svc  clearTokens delete all tokens for Service Account
+./bin/gdg svc  list        list API Keys
+./bin/gdg svc  newService  newService <serviceName> <role> [ttl in seconds]
+./bin/gdg svc  newToken    newToken <serviceAccountID> <name> [ttl in seconds]
+```
+
+```sh 
+./bin/gdg auth svc newService AwesomeSauceSvc admin
+```
+
+{{< details "New Service" >}}
+
+┌────┬─────────────────┬───────┐
+│ ID │ NAME            │ ROLE  │
+├────┼─────────────────┼───────┤
+│  4 │ AwesomeSauceSvc │ Admin │
+└────┴─────────────────┴───────┘
+{{< /details >}}
+
+```sh 
+./bin/gdg auth svc newToken 4 AwesomeToken
+```
+
+{{< details "New Service" >}}
+
+┌───────────┬──────────┬──────────────┬────────────────────────────────────────────────┐
+│ SERVICEID │ TOKEN_ID │ NAME         │ TOKEN                                          │
+├───────────┼──────────┼──────────────┼────────────────────────────────────────────────┤
+│         4 │        3 │ AwesomeToken │ glsa_a14JOaGExOkDuJHjDWScXbxjTBIXScsw_39df7bf5 │
+└───────────┴──────────┴──────────────┴────────────────────────────────────────────────┘
+{{< /details >}}
+
+```sh 
+./bin/gdg auth svc list 
+```
+
+{{< details "Service Listing" >}}
+
+┌────┬─────────────────┬───────┬────────┬──────────┬──────────────┬───────────────┐
+│ ID │ SERVICE NAME    │ ROLE  │ TOKENS │ TOKEN ID │ TOKEN NAME   │ EXPIRATION    │
+├────┼─────────────────┼───────┼────────┼──────────┼──────────────┼───────────────┤
+│ 4  │ AwesomeSauceSvc │ Admin │ 1      │          │              │               │
+│    │                 │       │        │        3 │ AwesomeToken │ No Expiration │
+└────┴─────────────────┴───────┴────────┴──────────┴──────────────┴───────────────┘
+{{< /details >}}
+
+
 ### Alert Notifications (DEPRECATED)
 
 This will stop working soon both as a concept in grafana and something that GDG will support.
@@ -70,22 +165,6 @@ All commands can use `datasources` or `ds` to manage datasources
 ./bin/gdg ds clear -- Deletes all datasources
 ```
 
-### Library Elements
-
-Library elements are components that can be shared among multiple dashboards.  Folder matching will still be applied, so any folders not monitored will be ignored unless explicitly specified.  If wildcard flag is enabled, all elements will be acted on irrelevant of folder location
-
-All commands can use `libraryelements` aliased to `library` and `lib` for laziness purposes.
-
-```sh
-./bin/gdg lib list -- Lists all library components
-./bin/gdg lib import -- Import all library components from grafana to local file system
-./bin/gdg lib export -- Exports all library components from local filesystem (matching folder filter) to Grafana
-./bin/gdg lib clear -- Deletes all library components
-./bin/gdg lib  list-connections <Lib Element UID> -- Will list all of the dashboards connected to the Lib Element (Coming in v0.4.2)
-```
-
-
-
 ### Devel
 Some developer helper utilities
 
@@ -106,12 +185,61 @@ Mostly optional as Dashboards will create/delete these are needed but if there i
 ./bin/gdg folders clear -- Deletes all folders
 ```
 
+
+
+
+### Library Elements
+
+Library elements are components that can be shared among multiple dashboards.  Folder matching will still be applied, so any folders not monitored will be ignored unless explicitly specified.  If wildcard flag is enabled, all elements will be acted on irrelevant of folder location
+
+All commands can use `libraryelements` aliased to `library` and `lib` for laziness purposes.
+
+```sh
+./bin/gdg lib list -- Lists all library components
+./bin/gdg lib import -- Import all library components from grafana to local file system
+./bin/gdg lib export -- Exports all library components from local filesystem (matching folder filter) to Grafana
+./bin/gdg lib clear -- Deletes all library components
+./bin/gdg lib  list-connections <Lib Element UID> -- Will list all of the dashboards connected to the Lib Element (Coming in v0.4.2)
+```
+
+
+
 ### Organizations
 Command can use `organizations` or `org` to manage organizations.
 
 ```sh
 ./bin/gdg org list -- Lists all organizations
 ```
+
+### Teams 
+
+{{< alert icon="👉" text="Admin team members are unable to be exported back.  Currently all members except the server admin will be exported as regular members" />}}
+
+{{< alert icon="👉" text="Users need to be created before team export can succeed" />}}
+
+```sh
+./bin/gdg team list  -- Lists all known team members
+./bin/gdg team import -- import all known team members
+./bin/gdg team export -- export all known team members
+./bin/gdg team clear -- Delete all known team except admin
+```
+
+{{< details "Team Listing" >}}
+```
+
+┌────┬───────────┬───────┬───────┬─────────┬─────────────┬──────────────┬───────────────────┐
+│ ID │ NAME      │ EMAIL │ ORGID │ CREATED │ MEMBERCOUNT │ MEMBER LOGIN │ MEMBER PERMISSION │
+├────┼───────────┼───────┼───────┼─────────┼─────────────┼──────────────┼───────────────────┤
+│ 4  │ engineers │       │ 1     │ 2       │             │              │                   │
+│    │           │       │       │         │ admin       │ Admin        │                   │
+│    │           │       │       │         │ tux         │ Member       │                   │
+│ 5  │ musicians │       │ 1     │ 1       │             │              │                   │
+│    │           │       │       │         │ admin       │ Admin        │                   │
+└────┴───────────┴───────┴───────┴─────────┴─────────────┴──────────────┴───────────────────┘
+
+```
+{{< /details >}}
+
 
 ### Users
 

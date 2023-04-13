@@ -77,6 +77,42 @@ global:
 
 #### DataSource Credentials
 
+#### Current Behavior (Version +v0.4.2)
+
+If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following rules.
+
+We will try to find a match given the rules specified:
+
+ - field: matches any valid gjson path and retrieves it's value.  ie.  `jsonData.maxConcurrentShardRequests` and validates it against a golang supported [Regex](https://github.com/google/re2/wiki/Syntax).
+ - It goes down the list of rules and returns the auth for the first matching one.  The rules should be listed from more specific to more broad.  The default rule ideally should be at the end.
+
+```json
+```yaml
+  testing:
+    output_path: testing_data
+    datasources:
+      credential_rules:
+        - rules:
+            - field: "name"
+              regex: "misc"
+            - field: "url"
+              regex: ".*esproxy2*"
+          auth:
+            user: admin
+            password: secret
+    url: http://localhost:3000
+    user_name: admin
+    password: admin
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    watched:
+      - General
+      - Other 
+ 
+ ```
+
+
+##### Legacy Behavior:
+
 If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:
 
 1. Match of DS credentials based on DS name.
@@ -108,6 +144,32 @@ An example of a configuration can be seen below
  ```
 
 #### DataSource Filters
+
+#### Current Behavior (+v0.4.2)
+
+You can filter based on any field and have it be an exclusive (default) or inclusive (ie Only allow values that match) to be listed/imported etc.
+
+Pattern matching is the same as the Credentials mapping.
+
+  - field represents any valid JSON Path 
+  - regex: any valid [regex](https://github.com/google/re2/wiki/Syntax) supported by golang
+  
+The example below will exclude any datasources named "Google Sheets".  It will also only include datasources with the type elasticsearch or mysql
+
+```yaml
+contexts:
+  testing:
+    output_path: test/data
+    datasources:
+      exclude_filters:
+        - field: "name"
+          regex: "Google Sheets"
+        - field: "type"
+          regex: "elasticsearch|mysql"
+          inclusive: true
+```
+
+#### Legacy Behavior
 
 This feature allows you to exclude datasource by name or include them by type.  Please note that the logic switches based on the data type.
 

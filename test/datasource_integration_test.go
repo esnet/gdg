@@ -1,7 +1,7 @@
 package test
 
 import (
-	config2 "github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"testing"
@@ -49,12 +49,12 @@ func TestDataSourceFilter(t *testing.T) {
 	}
 	initTest(t, nil)
 
-	testingContext := config2.Config().Contexts()["testing"]
-	testingContext.GetDataSourceSettings().Filters = &config2.DataSourceFilters{
+	testingContext := config.Config().Contexts()["testing"]
+	testingContext.GetDataSourceSettings().Filters = &config.DataSourceFilters{
 		NameExclusions:  "DEV-*|-Dev-*",
 		DataSourceTypes: []string{"elasticsearch", "globalnoc-tsds-datasource"},
 	}
-	testingContext = config2.Config().Contexts()["testing"]
+	testingContext = config.Config().Contexts()["testing"]
 	log.Info(testingContext.GetDataSourceSettings().Filters)
 
 	apiClient := service.NewApiService("dummy")

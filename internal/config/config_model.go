@@ -1,12 +1,14 @@
 package config
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/tidwall/gjson"
 	"path"
 	"regexp"
 	"strings"
-
-	"github.com/thoas/go-funk"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -48,51 +50,208 @@ type GrafanaConfig struct {
 }
 
 type DataSourceSettings struct {
-	Filters     *DataSourceFilters            `yaml:"filters"`
-	Credentials map[string]*GrafanaDataSource `yaml:"credentials"`
+	Filters       *DataSourceFilters            `yaml:"filters,omitempty"`
+	FilterRules   []MatchingRule                `yaml:"exclude_filters,omitempty"`
+	Credentials   map[string]*GrafanaDataSource `yaml:"credentials,omitempty"`
+	MatchingRules []RegexMatchesList            `yaml:"credential_rules,omitempty"`
+}
+
+type RegexMatchesList struct {
+	Rules []MatchingRule     `yaml:"rules,omitempty"`
+	Auth  *GrafanaDataSource `yaml:"auth,omitempty"`
+}
+
+type CredentialRule struct {
+	RegexMatchesList
+	Auth *GrafanaDataSource `yaml:"auth,omitempty"`
+}
+
+type MatchingRule struct {
+	Field     string `yaml:"field,omitempty"`
+	Regex     string `yaml:"regex,omitempty"`
+	Inclusive bool   `yaml:"inclusive,omitempty"`
 }
 
 type FilterOverrides struct {
 	IgnoreDashboardFilters bool `yaml:"ignore_dashboard_filters"`
 }
 
-func (ds DataSourceSettings) FiltersEnabled() bool {
-	return ds.Filters != nil
+func (ds *DataSourceSettings) FiltersEnabled() bool {
+	//Build FilterRules if they not set and FilterRules are nil
+	if ds.Filters != nil && ds.FilterRules == nil {
+		ds.convertLegacyFilterEntity()
+	}
+
+	return ds.FilterRules != nil || ds.Filters != nil
 }
 
-func (ds *DataSourceSettings) GetCredentials(dataSourceName string) (*GrafanaDataSource, error) {
-	key := strings.ToLower(dataSourceName)
-	if val, ok := ds.Credentials[key]; ok {
-		return val, nil
-	} else {
-		return nil, errors.New("no valid configuration found, falling back on default")
+// convertLegacyCredentialsEntity converts previous pattern to the new rule matching one
+// Deprecated
+func (ds *DataSourceSettings) convertLegacyCredentialsEntity() {
+
+	log.Warn("WARNING: the configuration key 'credentials' is now deprecated, please migrate to using 'credential_rules'")
+	log.Warn("A best effort is being done for backward compatibility, but if you use url regex, both name and URL need to match")
+	var defaultAuth *RegexMatchesList
+	for key, entry := range ds.Credentials {
+		if key == "default" {
+			defaultAuth = &RegexMatchesList{
+				Rules: []MatchingRule{{
+					Field: "name",
+					Regex: ".*",
+				}},
+				Auth: &GrafanaDataSource{
+					User:     entry.User,
+					Password: entry.Password,
+				},
+			}
+			continue
+		}
+
+		newEntry := RegexMatchesList{
+			Rules: []MatchingRule{
+				{
+					Field: "name",
+					Regex: "(?i)" + key, //make it case insensitive
+				},
+			},
+			Auth: &GrafanaDataSource{
+				User:     entry.User,
+				Password: entry.Password,
+			},
+		}
+		if entry.UrlRegex != "" {
+			newEntry.Rules = append(newEntry.Rules, MatchingRule{
+				Field: "url",
+				Regex: entry.UrlRegex,
+			})
+		}
+
+		ds.MatchingRules = append(ds.MatchingRules, newEntry)
+
 	}
+
+	//Add default entry last
+	if defaultAuth != nil {
+		ds.MatchingRules = append(ds.MatchingRules, *defaultAuth)
+	}
+
+}
+
+func (ds *DataSourceSettings) GetCredentials(dataSourceName models.AddDataSourceCommand) (*GrafanaDataSource, error) {
+	if len(ds.MatchingRules) == 0 && len(ds.Credentials) > 0 {
+		ds.convertLegacyCredentialsEntity()
+	}
+	data, err := json.Marshal(dataSourceName)
+	if err != nil {
+		log.Warn("Unable to marshall Datasource, unable to fetch credentials")
+		return nil, fmt.Errorf("unable to marshall Datasource, unable to fetch credentials")
+	}
+	//Get Auth based on New Matching Rules
+	parser := gjson.ParseBytes(data)
+	for _, entry := range ds.MatchingRules {
+		//Check Rules
+		valid := true
+		for _, rule := range entry.Rules {
+			fieldObject := parser.Get(rule.Field)
+			if !fieldObject.Exists() {
+				log.Warnf("Unable to find a field titled: %s in datasource, skipping validation rule", rule.Field)
+				valid = false
+				continue
+			}
+			fieldValue := fieldObject.String()
+			p, err := regexp.Compile(rule.Regex)
+			if err != nil {
+				log.Warnf("Unable to compile regex: %s to match against field %s, skipping validation", rule.Regex, rule.Field)
+				valid = false
+			}
+			if !p.Match([]byte(fieldValue)) {
+				valid = false
+				break
+			}
+		}
+		if valid {
+			return entry.Auth, nil
+		}
+
+	}
+
+	return nil, errors.New("no valid configuration found, falling back on default")
+}
+
+// convertLegacyFilterEntity construct new matching rules from legacy entity
+// Deprecated
+func (ds *DataSourceSettings) convertLegacyFilterEntity() {
+
+	log.Warn("WARNING: Filters are deprecated, please move to FilterRules.  This config option " +
+		"will stop function in the next release")
+	//ds.FilterRules = make([]MatchingRule, 0)
+	//Add Name Match
+	if ds.Filters.NameExclusions != "" {
+		ds.FilterRules = append(ds.FilterRules, MatchingRule{
+			Field: "name",
+			Regex: ds.Filters.NameExclusions,
+		})
+		if len(ds.Filters.DataSourceTypes) > 0 {
+			dataTypeRule := MatchingRule{
+				Field:     "type",
+				Inclusive: true,
+			}
+			bld := strings.Builder{}
+			bld.WriteString("")
+			for ndx, dataType := range ds.Filters.DataSourceTypes {
+				bld.WriteString(dataType)
+				if ndx != len(ds.Filters.DataSourceTypes)-1 {
+					bld.WriteString("|")
+				}
+			}
+			dataTypeRule.Regex = bld.String()
+			ds.FilterRules = append(ds.FilterRules, dataTypeRule)
+		}
+	}
+
+}
+
+func (ds *DataSourceSettings) IsExcluded(item interface{}) bool {
+	data, err := json.Marshal(item)
+	if err != nil {
+		log.Warn("Unable to serialize object, cannot validate")
+		return true
+	}
+
+	//Since filters are always converted only check we need should be this one.
+	if ds.FilterRules != nil {
+		for _, field := range ds.FilterRules {
+
+			fieldParse := gjson.GetBytes(data, field.Field)
+			if !fieldParse.Exists() || field.Regex == "" {
+				continue
+			}
+
+			fieldValue := fieldParse.String()
+			p, err := regexp.Compile(field.Regex)
+			if err != nil {
+				log.Warnf("Invalid regex for filter rule with field: %s", field.Field)
+				return true
+			}
+			match := p.Match([]byte(fieldValue))
+			//If inclusive, then the boolean is flipped
+			if field.Inclusive {
+				match = !match
+			}
+			if match {
+				return match
+			}
+		}
+	}
+
+	return false
+
 }
 
 type DataSourceFilters struct {
 	NameExclusions  string   `yaml:"name_exclusions"`
 	DataSourceTypes []string `yaml:"valid_types"`
 	pattern         *regexp.Regexp
-}
-
-func (filter DataSourceFilters) ValidDataType(dataType string) bool {
-	if len(filter.DataSourceTypes) == 0 {
-		return true
-	}
-	return funk.Contains(filter.DataSourceTypes, dataType)
-}
-
-func (filter *DataSourceFilters) ValidName(name string) bool {
-	if filter.pattern == nil {
-		var err error
-		filter.pattern, err = regexp.Compile(filter.NameExclusions)
-		if err != nil {
-			log.Warning("Could not compile datasource filter.  Aborting")
-			filter.pattern = nil
-			return false
-		}
-	}
-	return !filter.pattern.Match([]byte(name))
 }
 
 func (s *GrafanaConfig) GetFilterOverrides() *FilterOverrides {
@@ -147,47 +306,13 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 }
 
 // GetCredentials return credentials for a given datasource or falls back on default value
-func (s *GrafanaConfig) GetCredentials(dataSourceName string) (*GrafanaDataSource, error) {
+func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceCommand) (*GrafanaDataSource, error) {
 	source, err := s.GetDataSourceSettings().GetCredentials(dataSourceName)
 	if err == nil {
 		return source, nil
 	}
 
-	log.Infof("No datasource credentials found for '%s', falling back on default", dataSourceName)
-	return s.GetDefaultCredentials(), nil
-}
-
-// GetCredentialByUrl attempts to match URL by regex
-func (s *GrafanaConfig) GetCredentialByUrl(fullUrl string) (*GrafanaDataSource, error) {
-	for key, val := range s.GetDataSourceSettings().Credentials {
-		if val.UrlRegex != "" {
-			r, err := regexp.Compile(val.UrlRegex)
-			if err != nil {
-				log.Warnf("Invalid regex for DS: %s using regex: %s", key, val.UrlRegex)
-				continue
-			}
-			match := r.MatchString(fullUrl)
-			if match {
-				return val, nil
-			}
-		}
-	}
-	log.Warn("No valid regex detected, falling back on default")
-	return s.GetDefaultCredentials(), errors.New("no valid configuration found, falling back on default")
-
-}
-
-// GetDefaultCredentials returns the default credentials
-func (s *GrafanaConfig) GetDefaultCredentials() *GrafanaDataSource {
-	if s.DefaultDataSource == nil {
-		if val, ok := s.GetDataSourceSettings().Credentials["default"]; ok {
-			s.DefaultDataSource = val
-		} else {
-			log.Warn("No default credentials set, assuming no auth required")
-		}
-	}
-
-	return s.DefaultDataSource
+	return nil, fmt.Errorf("no datasource credentials found for '%s', falling back on default", dataSourceName.Name)
 }
 
 // Default datasource credentials

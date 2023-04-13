@@ -8,7 +8,7 @@ import (
 	"github.com/esnet/gdg/cmd"
 )
 
-//go:embed conf/importer-example.yml
+//go:embed config/importer-example.yml
 var defaultConfig string
 
 var doOnce sync.Once
