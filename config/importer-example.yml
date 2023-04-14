@@ -13,19 +13,39 @@ contexts:
     storage: "any_label"
     output_path: test/data
     datasources:
-      filters:
-        name_exclusions: "DEV-*|-Dev-*"
-        ##Inclusive
-        valid_types:
-          - elasticsearch
-      credentials:
-        default:
-          user: user
-          password: password
-        misc:
-          user: admin
-          password: secret
-          url_regex: .*esproxy2*
+      exclude_filters:
+        - matches:
+            - field: "name"
+              regex: "DEV-*|-Dev-*"
+            - field: "type"
+              regex: "elasticsearch"
+              inclusive: true
+      credential_rules:
+        # Default
+        - match:
+            - field: "name"
+              regex: ".*"
+          auth:
+            user: user
+            password: password
+        - match:
+## Any JSON Path supported by gjson library is valid  aka.  "jsonData.esVersion" and a value of "70" would only import
+## DataSources configured for ElasticSearch 7.X
+            - field: "name"
+              regex: "misc"
+            - field: "url"
+              value: ".*esproxy2*"
+          auth:
+            user: user
+            password: password
+        - match:
+            - field: "url"
+              regex: ".*esproxy2*"
+          auth:
+            user: admin
+            password: secret
+
+
     url: http://grafana:3000
     user_name: admin
     password: admin

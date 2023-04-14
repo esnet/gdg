@@ -13,6 +13,28 @@ contexts:
           user: admin
           password: secret
           url_regex: .*esproxy2*
+#      exclude_filters:
+#        - field: "name"
+#          regex: "DEV-*|-Dev-*"
+#        - field: "type"
+#          regex: "elasticsearch"
+#          inclusive: true
+#      credential_rules:
+#        # Default
+#        - rules:
+#            - field: "name"
+#              regex: "misc"
+#            - field: "url"
+#              regex: ".*esproxy2*"
+#          auth:
+#            user: admin
+#            password: secret
+#        - match:
+#            - field: "name"
+#              regex: ".*"
+#          auth:
+#            user: user
+#            password: password
     url: http://localhost:3000
     user_name: admin
     password: admin
@@ -20,7 +42,6 @@ contexts:
     watched:
       - General
       - Other
-
   production:
     output_path: prod
     datasources:

@@ -13,34 +13,34 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type ConfigStruct struct {
+type Configuration struct {
 	defaultConfig *viper.Viper
 	contextMap    map[string]*GrafanaConfig
 }
 
-var configData *ConfigStruct
+var configData *Configuration
 
 // ViperConfig returns the loaded configuration via a viper reference
-func (s *ConfigStruct) ViperConfig() *viper.Viper {
+func (s *Configuration) ViperConfig() *viper.Viper {
 	return s.defaultConfig
 }
 
 // Contexts returns map of all contexts
-func (s *ConfigStruct) Contexts() map[string]*GrafanaConfig {
+func (s *Configuration) Contexts() map[string]*GrafanaConfig {
 	return s.contextMap
 }
 
 // IsDebug returns true if debug mode is enabled
-func (s ConfigStruct) IsDebug() bool {
+func (s *Configuration) IsDebug() bool {
 	return s.defaultConfig.GetBool("global.debug")
 }
 
 // IgnoreSSL returns true if SSL errors should be ignored
-func (s ConfigStruct) IgnoreSSL() bool {
+func (s *Configuration) IgnoreSSL() bool {
 	return s.defaultConfig.GetBool("global.ignore_ssl_errors")
 }
 
-func Config() *ConfigStruct {
+func Config() *Configuration {
 	return configData
 }
 
@@ -83,7 +83,7 @@ func applyEnvOverrides(contexts map[string]interface{}, mapName string, config *
 }
 
 func InitConfig(override, defaultConfig string) {
-	configData = &ConfigStruct{}
+	configData = &Configuration{}
 	appName := "importer"
 	if override != "" {
 		appName = filepath.Base(override)
@@ -93,11 +93,11 @@ func InitConfig(override, defaultConfig string) {
 
 	configData.defaultConfig, err = readViperConfig(appName)
 	if err != nil {
-		err = os.MkdirAll("conf", os.ModePerm)
+		err = os.MkdirAll("config", os.ModePerm)
 		if err != nil {
-			log.Fatal("unable to create configuration folder: 'conf'")
+			log.Fatal("unable to create configuration folder: 'config'")
 		}
-		err = os.WriteFile("conf/importer.yml", []byte(defaultConfig), 0600)
+		err = os.WriteFile("config/importer.yml", []byte(defaultConfig), 0600)
 		if err != nil {
 			log.Panic("Could not persist default config locally")
 		}
@@ -132,10 +132,12 @@ func readViperConfig(appName string) (*viper.Viper, error) {
 	v.SetConfigName(appName)
 	v.AddConfigPath(".")
 	//For tests
-	v.AddConfigPath("../../conf") //mostly to support tests
-	v.AddConfigPath("../conf")    //mostly to support tests
-	//
+	v.AddConfigPath("../../config") //mostly to support tests
+	v.AddConfigPath("../config")    //mostly to support tests
+	//Legacy Path
 	v.AddConfigPath("conf")
+	//
+	v.AddConfigPath("config")
 	v.AddConfigPath("/etc/gdg/")
 	v.AutomaticEnv()
 

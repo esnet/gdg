@@ -10,7 +10,6 @@ import (
 
 type ExtendedApi struct {
 	grafanaCfg *config.GrafanaConfig
-	req        *requests.Builder
 }
 
 func NewExtendedApi() *ExtendedApi {

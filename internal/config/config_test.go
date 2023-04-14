@@ -3,6 +3,7 @@ package config_test
 import (
 	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"os"
 	"testing"
 
@@ -38,8 +39,8 @@ func TestConfigEnv(t *testing.T) {
 	conf = config.Config().ViperConfig()
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")
-
 }
+
 func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	assert.False(t, grafana.AdminEnabled)
 	assert.Equal(t, "https://staging.grafana.com", grafana.URL)
@@ -52,10 +53,16 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	assert.Equal(t, "qa/datasources", grafana.GetDataSourceOutput())
 	assert.Equal(t, "qa/dashboards", grafana.GetDashboardOutput())
 	dsSettings := grafana.DataSourceSettings
-	defaultSettings, _ := dsSettings.GetCredentials("default")
+	request := models.AddDataSourceCommand{}
+	defaultSettings, _ := dsSettings.GetCredentials(request)
+	assert.Equal(t, len(grafana.DataSourceSettings.MatchingRules), 3)
+	//Last Entry is the default
+	defaultSettings = grafana.DataSourceSettings.MatchingRules[2].Auth
 	assert.Equal(t, "user", defaultSettings.User)
 	assert.Equal(t, "password", defaultSettings.Password)
-	defaultSettings, _ = dsSettings.GetCredentials("complex name")
+
+	request.Name = "Complex Name"
+	defaultSettings, _ = dsSettings.GetCredentials(request)
 	assert.Equal(t, "test", defaultSettings.User)
 	assert.Equal(t, "secret", defaultSettings.Password)
 }

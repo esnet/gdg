@@ -11,7 +11,7 @@ import (
 func (extended *ExtendedApi) ListTokens(query *service_accounts.ListTokensParams) ([]*models.TokenDTO, error) {
 	tokens := make([]*models.TokenDTO, 0)
 	path := fmt.Sprintf("/api/serviceaccounts/%d/tokens", query.ServiceAccountID)
-	err := extended.req.
+	err := extended.getRequestBuilder().
 		Path(path).
 		ToJSON(&tokens).
 		Method(http.MethodGet).Fetch(context.Background())
