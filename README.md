@@ -13,7 +13,7 @@ Please find the pretty documentation [here](https://software.es.net/gdg/) and th
 
 ## Breaking Changes
 
-Release 0.4 has some breaking changes, please read the release [notes](https://software.es.net/gdg/docs/releases/gdg_0.4.0/)
+Release 0.4 has some breaking changes, please read the release [notes](https://software.es.net/gdg/docs/releases/gdg_0.4/#release-notes-for-v040)
 
 ## Quickstart 
 
