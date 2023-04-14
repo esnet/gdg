@@ -45,7 +45,7 @@ nfpms:
     # GoReleaser will automatically add the binaries.
     contents:
       # Simple config file
-      - src: conf/importer-example.yml
+      - src: config/importer-example.yml
         dst: /etc/gdg/importer.yml
         type: config
 
@@ -75,7 +75,7 @@ archives:
       amd64: x86_64
     files:
       - README*
-      - conf/importer-example.yml
+      - config/importer-example.yml
 
 checksum:
   name_template: "checksums.txt"
