@@ -33,6 +33,12 @@
   url = "/docs/gdg/installation/"
   weight = 10
 
+[[main]]
+  name = "Release Notes"
+  url = "/docs/releases/gdg_0.4/"
+  weight = 10
+
+
 # [[main]]
 #   name = "Tutorial"
 #   url = "/tutorial/lorem/ipsum/"
@@ -42,7 +48,7 @@
 #  name = "Blog"
 #  url = "/blog/"
 #  weight = 20
-  
+
 #[[main]]
 #  name = "Releases"
 #  url = "/releases/"
