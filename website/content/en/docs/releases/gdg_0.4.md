@@ -9,7 +9,7 @@ weight: 199
 toc: true
 ---
 
-##  Release Notes for v0.4.2
+##  Release Notes for v0.4.3
 **Release Date: 04/14/2023**
 
 ### New Features
@@ -24,6 +24,9 @@ toc: true
   - URLMatching for Credentials will not work (legacy pattern) if the URL AND the datasource do not match.  If you need URL matching with variable datasource names, you will need to migrate to the new [configuration](https://software.es.net/gdg/docs/gdg/configuration/#datasource).
 
 ---
+##  Release Notes for v0.4.2
+
+Issue with release, failed CI, so skipping version.
 
 ##  Release Notes for v0.4.1
 **Release Date: 04/01/2023**
