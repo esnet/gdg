@@ -1,10 +1,12 @@
 package config_test
 
 import (
+	"fmt"
 	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -20,6 +22,31 @@ func TestSetup(t *testing.T) {
 	grafanaConf := apphelpers.GetCtxDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
 	validateGrafanaQA(t, grafanaConf)
+}
+
+// Ensures that if the config is on a completely different path, the searchPath is updated accordingly
+func TestSetupDifferentPath(t *testing.T) {
+	dir, _ := os.Getwd()
+	//Fix test path
+	if strings.Contains(dir, "config") {
+		os.Chdir("../..")
+	}
+
+	os.Setenv("GDG_CONTEXT_NAME", "production")
+	data, err := os.ReadFile("config/testing.yml")
+	assert.Nil(t, err, "Failed to read test configuration file")
+	destination := os.TempDir()
+	cfgFile := fmt.Sprintf("%s/config.yml", destination)
+	err = os.WriteFile(cfgFile, data, 0644)
+	assert.Nil(t, err, "Failed to save configuration file")
+	config.InitConfig(cfgFile, "")
+	conf := config.Config().ViperConfig()
+	assert.NotNil(t, conf)
+	context := conf.GetString("context_name")
+	assert.Equal(t, context, "production")
+	grafanaConf := apphelpers.GetCtxDefaultGrafanaConfig()
+	assert.NotNil(t, grafanaConf)
+	assert.Equal(t, grafanaConf.OutputPath, "prod")
 }
 
 func TestConfigEnv(t *testing.T) {

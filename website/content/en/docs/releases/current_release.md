@@ -9,7 +9,7 @@ weight: 199
 toc: true
 ---
 
-##  Release Notes for v0.4.3
+##  Release Notes for v0.4.4
 **Release Date: 04/14/2023**
 
 
@@ -18,3 +18,5 @@ toc: true
 
 
 ### Bug Fixes
+
+  - Bug #156 fixed.  When gdg binary and config are in completely different paths, gdg is unable to load the configuration file and fallsback on the default config instead.
