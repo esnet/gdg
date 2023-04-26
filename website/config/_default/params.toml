@@ -8,7 +8,7 @@ titleAddition = "Grafana Dash-N-Grab"
 description = "GDG is a CLI tool enabeling the user to import, manage, and backup various entities of Grafana"
 breadCrumb = true
 ## Documentation
-# docsVersion = "0.3"
+docsVersion = "0.4"
 
 ## Open Graph
 images = ["doks.png"]
@@ -103,7 +103,7 @@ lastMod = false
   highLight = true
   kaTex = false
   multilingualMode = false
-  docsVersioning = false
+  docsVersioning = true
   fullWidth = false
   navbarSticky = true
   toTopButton = false
