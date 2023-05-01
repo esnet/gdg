@@ -18,7 +18,10 @@ type Configuration struct {
 	contextMap    map[string]*GrafanaConfig
 }
 
-var configData *Configuration
+var (
+	configData        *Configuration
+	configSearchPaths = []string{".", "../../config", "../config", "conf", "config", "/etc/gdg"}
+)
 
 // ViperConfig returns the loaded configuration via a viper reference
 func (s *Configuration) ViperConfig() *viper.Viper {
@@ -85,13 +88,20 @@ func applyEnvOverrides(contexts map[string]interface{}, mapName string, config *
 func InitConfig(override, defaultConfig string) {
 	configData = &Configuration{}
 	appName := "importer"
+	var configDirs []string
 	if override != "" {
+		overrideDir := filepath.Dir(override)
+		if overrideDir != "" {
+			configDirs = append([]string{overrideDir}, configSearchPaths...)
+		}
 		appName = filepath.Base(override)
 		appName = strings.TrimSuffix(appName, filepath.Ext(appName))
+	} else {
+		configDirs = append(configDirs, configSearchPaths...)
 	}
 	var err error
 
-	configData.defaultConfig, err = readViperConfig(appName)
+	configData.defaultConfig, err = readViperConfig(appName, configDirs)
 	if err != nil {
 		err = os.MkdirAll("config", os.ModePerm)
 		if err != nil {
@@ -103,7 +113,7 @@ func InitConfig(override, defaultConfig string) {
 		}
 		appName = "importer"
 
-		configData.defaultConfig, err = readViperConfig(appName)
+		configData.defaultConfig, err = readViperConfig(appName, configDirs)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -124,21 +134,16 @@ func InitConfig(override, defaultConfig string) {
 }
 
 // readViperConfig utilizes the viper library to load the config from the selected paths
-func readViperConfig(appName string) (*viper.Viper, error) {
+func readViperConfig(appName string, configDirs []string) (*viper.Viper, error) {
 	v := viper.New()
 	v.SetEnvPrefix("GDG")
 	replacer := strings.NewReplacer(".", "__")
 	v.SetEnvKeyReplacer(replacer)
 	v.SetConfigName(appName)
-	v.AddConfigPath(".")
-	//For tests
-	v.AddConfigPath("../../config") //mostly to support tests
-	v.AddConfigPath("../config")    //mostly to support tests
-	//Legacy Path
-	v.AddConfigPath("conf")
-	//
-	v.AddConfigPath("config")
-	v.AddConfigPath("/etc/gdg/")
+	for _, dir := range configDirs {
+		v.AddConfigPath(dir)
+	}
+
 	v.AutomaticEnv()
 
 	// global defaults
