@@ -6,7 +6,7 @@ weight: 2
 Starting with version 0.4, library panels are going to be supported. It's a bit special and the behavior is somewhat unique.
 
 Rules:
-  - Library Panels are immutable.  They cannot be moved to a different folder.  They are linked to one or multiple dashboards.  
+  - Library Panels are immutable.  They cannot be moved to a different folder.  They are linked to one or multiple dashboards.
   - The only way I can see to move a lib element is to unlink the panel, delete the panel and re-create it in a different folder, then re-link it.
   - In theory it's supposed to move with the dashboards but I haven't been able to re-create that behavior.
   - You cannot delete a library element while a dashboard is still using it.
@@ -19,7 +19,7 @@ will retrieve all the components from Grafana and save to local file system.
 
 
 ```sh
-gdg lib import
+gdg lib download
 ┌─────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ TYPE    │ FILENAME                                                                                              │
 ├─────────┼───────────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -39,7 +39,7 @@ gdg lib import
 Now that we the library components, pulled let's pull the Dashboard.
 
 ```sh
-gdg dash import
+gdg dash download
 INFO[0002] Importing dashboards for context: 'local'
 ┌───────────┬───────────────────────────────────────────────────────────────────┐
 │ TYPE      │ FILENAME                                                          │
@@ -93,7 +93,7 @@ Here's the json from the dashboard JSON:
         "uid": "y1C0A5unz",
         "version": 2
       },
-```      
+```
 
 Please note, this is the Grill panel.
 
@@ -104,7 +104,7 @@ Please note, this is the Grill panel.
         "type": "graph",
         "uid": "y1C0A5unz",
         "version": 1
-} 
+}
 ```
 ## Deleting Elements
 If we try to delete all the Library elements, that won't be allowed.
@@ -128,7 +128,7 @@ INFO[0000] No library were found.  0 librarys removed
 
 (Future version will allow you to inspect which dashboard has a link to which dashboards)
 
-```sh 
+```sh
 ./bin/gdg dash clear -d dashboard-makeover-challenge                                                                                  (gke_esnet-sd-dev_us-central1-c_dev-staging-kafka-3/default)
 INFO[0000] 1 dashboards were deleted
 ┌───────────┬──────────────────────────────┐
@@ -140,8 +140,8 @@ INFO[0000] 1 dashboards were deleted
 
 Please note the -d, we're explicitly only deleting one dashboard.  We can verify the list.
 
-```sh 
-./bin/gdg dash list 
+```sh
+./bin/gdg dash list
 ┌────┬──────────────────────────────┬──────────────────────────────┬─────────┬───────────┬────────────────────────────────────────────────────────────────┐
 │ ID │ TITLE                        │ SLUG                         │ FOLDER  │ UID       │ URL                                                            │
 ├────┼──────────────────────────────┼──────────────────────────────┼─────────┼───────────┼────────────────────────────────────────────────────────────────┤
