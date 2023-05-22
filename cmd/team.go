@@ -22,10 +22,11 @@ func parseTeamGlobalFlags(cmd *cobra.Command) []string {
 	return []string{teamName}
 }
 
-var importTeamCmd = &cobra.Command{
-	Use:   "import",
-	Short: "import teams",
-	Long:  `import teams`,
+var downloadTeamCmd = &cobra.Command{
+	Use:     "download",
+	Short:   "download teams from grafana",
+	Long:    `download teams from grafana`,
+	Aliases: []string{"import", "d"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Importing Teams for context: '%s'", apphelpers.GetContext())
@@ -46,10 +47,11 @@ var importTeamCmd = &cobra.Command{
 	},
 }
 
-var exportTeamCmd = &cobra.Command{
-	Use:   "export",
-	Short: "export teams",
-	Long:  `export teams`,
+var uploadTeamCmd = &cobra.Command{
+	Use:     "upload",
+	Short:   "upload teams to grafana",
+	Long:    `upload teams to grafana`,
+	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Exporting Teams for context: '%s'", apphelpers.GetContext())
@@ -82,9 +84,10 @@ func getTeamPermission(permissionType models.PermissionType) string {
 }
 
 var listTeamCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list teams",
-	Long:  `list teams`,
+	Use:     "list",
+	Short:   "list teams",
+	Long:    `list teams`,
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Listing teams for context: '%s'", apphelpers.GetContext())
@@ -109,9 +112,10 @@ var listTeamCmd = &cobra.Command{
 }
 
 var deleteTeamCmd = &cobra.Command{
-	Use:   "clear",
-	Short: "Delete All Team",
-	Long:  `Delete All Team`,
+	Use:     "clear",
+	Short:   "Delete All Team from grafana",
+	Long:    `Delete All Team from grafana`,
+	Aliases: []string{"c"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Deleting teams for context: '%s'", apphelpers.GetContext())
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
@@ -130,8 +134,8 @@ var deleteTeamCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(teamCmd)
-	teamCmd.AddCommand(importTeamCmd)
-	teamCmd.AddCommand(exportTeamCmd)
+	teamCmd.AddCommand(downloadTeamCmd)
+	teamCmd.AddCommand(uploadTeamCmd)
 	teamCmd.AddCommand(listTeamCmd)
 	teamCmd.AddCommand(deleteTeamCmd)
 	teamCmd.PersistentFlags().StringP("team", "t", "", "team ID")

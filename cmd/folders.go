@@ -26,10 +26,11 @@ func getFolderFilter() filters.Filter {
 
 }
 
-var foldersDeleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "delete Folders",
-	Long:  `delete Folders`,
+var deleteFoldersCmd = &cobra.Command{
+	Use:     "clear",
+	Aliases: []string{"delete"},
+	Short:   "delete Folders from grafana",
+	Long:    `delete Folders from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Deleting all Folders for context: '%s'", apphelpers.GetContext())
@@ -48,10 +49,11 @@ var foldersDeleteCmd = &cobra.Command{
 	},
 }
 
-var foldersExportCmd = &cobra.Command{
-	Use:   "export",
-	Short: "export Folders",
-	Long:  `export Folders`,
+var uploadFoldersCmd = &cobra.Command{
+	Use:     "upload",
+	Short:   "upload Folders to grafana",
+	Long:    `upload Folders to grafana`,
+	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
@@ -69,10 +71,11 @@ var foldersExportCmd = &cobra.Command{
 	},
 }
 
-var foldersImportCmd = &cobra.Command{
-	Use:   "import",
-	Short: "import Folders",
-	Long:  `import Folders`,
+var downloadFoldersCmd = &cobra.Command{
+	Use:     "download",
+	Short:   "download Folders",
+	Long:    `download Folders`,
+	Aliases: []string{"import", "d"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
@@ -90,10 +93,11 @@ var foldersImportCmd = &cobra.Command{
 	},
 }
 
-var foldersListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list Folders",
-	Long:  `list Folders`,
+var listFoldersCmd = &cobra.Command{
+	Use:     "list",
+	Short:   "list Folders",
+	Long:    `list Folders`,
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
@@ -114,10 +118,10 @@ var foldersListCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(foldersCmd)
-	foldersCmd.AddCommand(foldersDeleteCmd)
-	foldersCmd.AddCommand(foldersExportCmd)
-	foldersCmd.AddCommand(foldersImportCmd)
-	foldersCmd.AddCommand(foldersListCmd)
+	foldersCmd.AddCommand(deleteFoldersCmd)
+	foldersCmd.AddCommand(uploadFoldersCmd)
+	foldersCmd.AddCommand(downloadFoldersCmd)
+	foldersCmd.AddCommand(listFoldersCmd)
 	foldersCmd.PersistentFlags().BoolVar(&useFolderFilters, "use-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
 
 }

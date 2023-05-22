@@ -15,9 +15,10 @@ var orgCmd = &cobra.Command{
 }
 
 var listOrgCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list orgs",
-	Long:  `list organizations`,
+	Use:     "list",
+	Short:   "list orgs",
+	Long:    `list organizations`,
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Listing organizations for context: '%s'", apphelpers.GetContext())

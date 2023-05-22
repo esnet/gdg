@@ -17,9 +17,10 @@ var datasources = &cobra.Command{
 }
 
 var clearDataSources = &cobra.Command{
-	Use:   "clear",
-	Short: "clear all datasources",
-	Long:  `clear all datasources from grafana`,
+	Use:     "clear",
+	Short:   "clear all datasources",
+	Long:    `clear all datasources from grafana`,
+	Aliases: []string{"c"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Delete datasources")
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
@@ -34,10 +35,11 @@ var clearDataSources = &cobra.Command{
 	},
 }
 
-var exportDataSources = &cobra.Command{
-	Use:   "export ",
-	Short: "export all datasources",
-	Long:  `export all datasources`,
+var uploadDataSources = &cobra.Command{
+	Use:     "upload ",
+	Short:   "upload all datasources to grafana",
+	Long:    `upload all datasources to grafana`,
+	Aliases: []string{"u", "export"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Exporting datasources")
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
@@ -52,10 +54,11 @@ var exportDataSources = &cobra.Command{
 	},
 }
 
-var ImportDataSources = &cobra.Command{
-	Use:   "import",
-	Short: "import all datasources",
-	Long:  `import all datasources from grafana to local filesystem`,
+var downloadDataSources = &cobra.Command{
+	Use:     "download",
+	Short:   "download all datasources from grafana",
+	Long:    `download all datasources from grafana to local filesystem`,
+	Aliases: []string{"d", "import"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Importing datasources for context: '%s'", apphelpers.GetContext())
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
@@ -71,9 +74,10 @@ var ImportDataSources = &cobra.Command{
 }
 
 var listDataSources = &cobra.Command{
-	Use:   "list",
-	Short: "List all dashboards",
-	Long:  `List all dashboards`,
+	Use:     "list",
+	Short:   "List all dashboards",
+	Long:    `List all dashboards`,
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
@@ -96,8 +100,8 @@ func init() {
 	rootCmd.AddCommand(datasources)
 	datasources.PersistentFlags().StringP("datasource", "d", "", "filter by datasource slug")
 	datasources.AddCommand(clearDataSources)
-	datasources.AddCommand(exportDataSources)
-	datasources.AddCommand(ImportDataSources)
+	datasources.AddCommand(uploadDataSources)
+	datasources.AddCommand(downloadDataSources)
 	datasources.AddCommand(listDataSources)
 
 }

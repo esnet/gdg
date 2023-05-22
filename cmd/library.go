@@ -17,9 +17,10 @@ var libraryElements = &cobra.Command{
 }
 
 var clearLibrary = &cobra.Command{
-	Use:   "clear",
-	Short: "delete all Library elements",
-	Long:  `clear all library elements`,
+	Use:     "clear",
+	Aliases: []string{"c"},
+	Short:   "delete all Library elements from grafana",
+	Long:    `delete all library elements from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
 		//filter := getLibraryGlobalFlags(cmd)
 		deletedLibrarys := grafanaSvc.DeleteAllLibraryElements(nil)
@@ -38,10 +39,11 @@ var clearLibrary = &cobra.Command{
 	},
 }
 
-var exportLibrary = &cobra.Command{
-	Use:   "export",
-	Short: "export all library",
-	Long:  `export all library`,
+var uploadLibrary = &cobra.Command{
+	Use:     "upload",
+	Short:   "upload all library to grafana",
+	Long:    `upload all library to grafana`,
+	Aliases: []string{"u", "export"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("exporting lib elements")
 		libraryFilter := filters.NewBaseFilter()
@@ -58,10 +60,11 @@ var exportLibrary = &cobra.Command{
 	},
 }
 
-var importLibrary = &cobra.Command{
-	Use:   "import",
-	Short: "Import all library",
-	Long:  `Import all library from grafana to local file system`,
+var downloadLibary = &cobra.Command{
+	Use:     "download",
+	Short:   "Download all library from grafana",
+	Long:    `Download all library from grafana to local file system`,
+	Aliases: []string{"d", "import"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("exporting lib elements")
 		//filter := parseDashboardGlobalFlags(cmd)
@@ -130,9 +133,9 @@ var listLibraryConnections = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(libraryElements)
-	libraryElements.AddCommand(importLibrary)
+	libraryElements.AddCommand(downloadLibary)
 	libraryElements.AddCommand(listLibraries)
 	libraryElements.AddCommand(clearLibrary)
-	libraryElements.AddCommand(exportLibrary)
+	libraryElements.AddCommand(uploadLibrary)
 	libraryElements.AddCommand(listLibraryConnections)
 }

@@ -49,8 +49,8 @@ var listTokensCmd = &cobra.Command{
 
 var deleteTokensCmd = &cobra.Command{
 	Use:   "clear",
-	Short: "delete all Tokens",
-	Long:  `delete all Tokens`,
+	Short: "delete all Tokens from grafana",
+	Long:  `delete all Tokens from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		savedFiles := grafanaSvc.DeleteAllTokens()
