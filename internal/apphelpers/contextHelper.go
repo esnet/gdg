@@ -22,7 +22,7 @@ func NewContext(name string) {
 	name = strings.ToLower(name) // forces lowercase contexts
 	answers := config.GrafanaConfig{
 		DataSourceSettings: &config.DataSourceSettings{
-			Credentials: make(map[string]*config.GrafanaDataSource),
+			MatchingRules: make([]config.RegexMatchesList, 0),
 		},
 	}
 	promptAnswers := struct {
@@ -72,7 +72,18 @@ func NewContext(name string) {
 			User:     promptAnswers.DSUser,
 			Password: promptAnswers.DSPassword,
 		}
-		answers.GetDataSourceSettings().Credentials["default"] = &ds
+		answers.DataSourceSettings.MatchingRules = []config.RegexMatchesList{
+			{
+				Rules: []config.MatchingRule{
+					{
+						Field: "name",
+						Regex: ".*",
+					},
+				},
+				Auth: &ds,
+			},
+		}
+
 	}
 
 	//Setup grafana required field based on responses

@@ -43,7 +43,7 @@ func NewDataSourceFilter(name string) filters.Filter {
 	return filterEntity
 }
 
-// ListDataSources: list all the currently configured datasources
+// ListDataSources list all the currently configured datasources
 func (s *DashNGoImpl) ListDataSources(filter filters.Filter) []models.DataSourceListItemDTO {
 	ds, err := s.client.Datasources.GetDataSources(datasources.NewGetDataSourcesParams(), s.getAuth())
 	if err != nil {
@@ -65,7 +65,7 @@ func (s *DashNGoImpl) ListDataSources(filter filters.Filter) []models.DataSource
 	return result
 }
 
-// ImportDataSources: will read in all the configured datasources.
+// ImportDataSources  will read in all the configured datasources.
 // NOTE: credentials cannot be retrieved and need to be set via configuration
 func (s *DashNGoImpl) ImportDataSources(filter filters.Filter) []string {
 	var (

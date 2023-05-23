@@ -5,36 +5,27 @@ contexts:
   testing:
     output_path: test/data
     datasources:
-      credentials:
-        default:
-          user: user
-          password: password
-        misc:
-          user: admin
-          password: secret
-          url_regex: .*esproxy2*
 #      exclude_filters:
 #        - field: "name"
 #          regex: "DEV-*|-Dev-*"
 #        - field: "type"
 #          regex: "elasticsearch"
 #          inclusive: true
-#      credential_rules:
-#        # Default
-#        - rules:
-#            - field: "name"
-#              regex: "misc"
-#            - field: "url"
-#              regex: ".*esproxy2*"
-#          auth:
-#            user: admin
-#            password: secret
-#        - match:
-#            - field: "name"
-#              regex: ".*"
-#          auth:
-#            user: user
-#            password: password
+      credential_rules:
+        - rules:
+            - field: "name"
+              regex: "misc"
+            - field: "url"
+              regex: ".*esproxy2*"
+          auth:
+            user: admin
+            password: secret
+        - rules:
+            - field: "name"
+              regex: ".*"
+          auth:
+            user: user
+            password: password
     url: http://localhost:3000
     user_name: admin
     password: admin
@@ -45,16 +36,21 @@ contexts:
   production:
     output_path: prod
     datasources:
-      credentials:
-        complex name:
-          password: secret
-          user: test
-        default:
-          password: password
-          user: user
-        ds_name:
-          password: secret
-          user: abcd
+      credential_rules:
+        - rules:
+            - field: "name"
+              regex: "(?i)complex name"
+          auth:
+            password: secret
+            user: test
+        - rules:
+            - match:
+                - field: "name"
+                  regex: ".*"
+          auth:
+            password: password
+            user: user
+
     url: https://grafana.com
     user_name: admin
     password: admin
@@ -66,16 +62,26 @@ contexts:
     output_path: qa
     token: <CHANGEME>
     datasources:
-      credentials:
-        complex name:
-          password: secret
-          user: test
-        default:
-          password: password
-          user: user
-        ds_name:
-          password: secret
-          user: abcd
+      credential_rules:
+        - rules:
+            - field: "name"
+              regex: "(?i)complex name"
+          auth:
+            user: test
+            password: secret
+        - rules:
+            - field: "name"
+              regex: "ds_name"
+          auth:
+            user: abcd
+            password: secret
+        # Default
+        - rules:
+            - field: "name"
+              regex: ".*"
+          auth:
+            user: user
+            password: password
     url: https://staging.grafana.com
     organization: your-org
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on

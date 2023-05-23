@@ -126,7 +126,7 @@ func InitConfig(override, defaultConfig string) {
 	if err != nil {
 		log.Fatal("Failed to decode context map, please check your configuration")
 	}
-	err = yaml.Unmarshal([]byte(contextMaps), &configData.contextMap)
+	err = yaml.Unmarshal(contextMaps, &configData.contextMap)
 	if err != nil {
 		log.Fatal("No valid configuration file has been found")
 	}

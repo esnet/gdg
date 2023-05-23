@@ -5,7 +5,7 @@ storage_engine:
     kind: cloud
     cloud_type: s3
     access_key_id: ""
-    secret_key:  ""
+    secret_key: ""
     bucket_name: ""
 
 contexts:
@@ -21,16 +21,7 @@ contexts:
               regex: "elasticsearch"
               inclusive: true
       credential_rules:
-        # Default
-        - match:
-            - field: "name"
-              regex: ".*"
-          auth:
-            user: user
-            password: password
-        - match:
-## Any JSON Path supported by gjson library is valid  aka.  "jsonData.esVersion" and a value of "70" would only import
-## DataSources configured for ElasticSearch 7.X
+        - rules:
             - field: "name"
               regex: "misc"
             - field: "url"
@@ -38,14 +29,19 @@ contexts:
           auth:
             user: user
             password: password
-        - match:
+        - rules:
             - field: "url"
               regex: ".*esproxy2*"
           auth:
             user: admin
             password: secret
-
-
+        - rules:
+            # Default
+            - field: "name"
+              regex: ".*"
+          auth:
+            user: user
+            password: password
     url: http://grafana:3000
     user_name: admin
     password: admin
@@ -58,16 +54,20 @@ contexts:
   production:
     output_path: prod
     datasources:
-      credentials:
-        complex name:
-          password: secret
-          user: test
-        default:
-          password: password
-          user: user
-        ds_name:
-          password: secret
-          user: abcd
+      credential_rules:
+        - rules:
+            - field: "name"
+              regex: "(?i)complex name"
+          auth:
+            user: test
+            password: secret
+        # Default
+        - rules:
+            - field: "name"
+              regex: ".*"
+          auth:
+            user: user
+            password: password
     url: https://grafana.com
     user_name: admin
     password: admin
@@ -80,16 +80,20 @@ contexts:
     output_path: qa
     token: <CHANGEME>
     datasources:
-      credentials:
-        complex name:
-          password: secret
-          user: test
-        default:
-          password: password
-          user: user
-        ds_name:
-          password: secret
-          user: abcd
+      credential_rules:
+        - rules:
+            - field: "name"
+              regex: "(?i)complex name"
+          auth:
+            user: test
+            password: secret
+        - rules:
+            # Default
+            - field: "name"
+              regex: ".*"
+          auth:
+            user: user
+            password: password
     url: https://staging.grafana.com
     organization: your-org
     filter_override:
