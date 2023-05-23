@@ -58,8 +58,8 @@ var listServiceAcctsCmd = &cobra.Command{
 
 var deleteServiceAcctsTokensCmd = &cobra.Command{
 	Use:   "clearTokens",
-	Short: "delete all tokens for Service Account",
-	Long:  `delete all tokens for Service Account`,
+	Short: "delete all tokens for Service Account from grafana",
+	Long:  `delete all tokens for Service Account from grafana`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("requires a service account ID to be specified")
@@ -90,8 +90,8 @@ var deleteServiceAcctsTokensCmd = &cobra.Command{
 
 var deleteServiceAcctsCmd = &cobra.Command{
 	Use:   "clear",
-	Short: "delete all Service Accounts",
-	Long:  `delete all Service Accounts`,
+	Short: "delete all Service Accounts from grafana",
+	Long:  `delete all Service Accounts from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		savedFiles := grafanaSvc.DeleteAllServiceAccounts()

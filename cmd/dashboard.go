@@ -26,9 +26,10 @@ var dashboard = &cobra.Command{
 }
 
 var clearDashboards = &cobra.Command{
-	Use:   "clear",
-	Short: "delete all monitored dashboards",
-	Long:  `clear all monitored dashboards from grafana`,
+	Use:     "clear",
+	Short:   "delete all monitored dashboards from grafana",
+	Long:    `clear all monitored dashboards from grafana`,
+	Aliases: []string{"c"},
 	Run: func(cmd *cobra.Command, args []string) {
 		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 		deletedDashboards := grafanaSvc.DeleteAllDashboards(filter)
@@ -47,10 +48,11 @@ var clearDashboards = &cobra.Command{
 	},
 }
 
-var exportDashboard = &cobra.Command{
-	Use:   "export",
-	Short: "export all dashboards",
-	Long:  `export all dashboards`,
+var uploadDashboard = &cobra.Command{
+	Use:     "upload",
+	Short:   "upload all dashboards to grafana",
+	Long:    `upload all dashboards to grafana`,
+	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
@@ -72,10 +74,11 @@ var exportDashboard = &cobra.Command{
 	},
 }
 
-var importDashboard = &cobra.Command{
-	Use:   "import",
-	Short: "Import all dashboards",
-	Long:  `Import all dashboards from grafana to local file system`,
+var downloadDashboard = &cobra.Command{
+	Use:     "download",
+	Short:   "download all dashboards from grafana",
+	Aliases: []string{"import", "d"},
+	Long:    `Download all dashboards from grafana to local file system`,
 	Run: func(cmd *cobra.Command, args []string) {
 		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 		savedFiles := grafanaSvc.ImportDashboards(filter)
@@ -89,9 +92,10 @@ var importDashboard = &cobra.Command{
 }
 
 var listDashboards = &cobra.Command{
-	Use:   "list",
-	Short: "List all dashboards",
-	Long:  `List all dashboards`,
+	Use:     "list",
+	Short:   "List all dashboards from grafana",
+	Long:    `List all dashboards from grafana`,
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "Tags", "URL"})
 
@@ -118,9 +122,9 @@ func init() {
 	rootCmd.AddCommand(dashboard)
 	dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
 	dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
-	dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by Tags (does not apply on export)")
+	dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by Tags (does not apply on upload)")
 	dashboard.AddCommand(clearDashboards)
-	dashboard.AddCommand(exportDashboard)
-	dashboard.AddCommand(importDashboard)
+	dashboard.AddCommand(uploadDashboard)
+	dashboard.AddCommand(downloadDashboard)
 	dashboard.AddCommand(listDashboards)
 }

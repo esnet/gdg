@@ -19,9 +19,10 @@ var alertnotifications = &cobra.Command{
 
 // clearAlerts
 var clearAlertNotifications = &cobra.Command{
-	Use:   "clear",
-	Short: "delete all alert notification channels",
-	Long:  `clear all alert notification channels from grafana`,
+	Use:     "clear",
+	Short:   "delete all alert notification channels from grafana",
+	Long:    `delete all alert notification channels from grafana`,
+	Aliases: []string{"c"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 		tableObj.AppendHeader(table.Row{"type", "filename"})
@@ -40,10 +41,11 @@ var clearAlertNotifications = &cobra.Command{
 	},
 }
 
-var exportAlertNotifications = &cobra.Command{
-	Use:   "export",
-	Short: "export all alert notification channels",
-	Long:  `export all alert notification channels`,
+var uploadAlertNotifications = &cobra.Command{
+	Use:     "upload",
+	Short:   "upload all alert notification channels to grafana",
+	Long:    `upload all alert notification channels to grafana`,
+	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 		tableObj.AppendHeader(table.Row{"name", "id", "UID"})
@@ -62,10 +64,11 @@ var exportAlertNotifications = &cobra.Command{
 	},
 }
 
-var importAlertNotifications = &cobra.Command{
-	Use:   "import",
-	Short: "import all alert notification channels",
-	Long:  `import all alert notification channels from grafana to local filesystem`,
+var downloadAlertNotifications = &cobra.Command{
+	Use:     "download",
+	Short:   "download all alert notification channels from grafana",
+	Long:    `download all alert notification channels from grafana to local filesystem`,
+	Aliases: []string{"import", "d"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 		tableObj.AppendHeader(table.Row{"type", "filename"})
@@ -81,9 +84,10 @@ var importAlertNotifications = &cobra.Command{
 }
 
 var listAlertNotifications = &cobra.Command{
-	Use:   "list",
-	Short: "List all alert notification channels",
-	Long:  `List all alert notification channels`,
+	Use:     "list",
+	Short:   "List all alert notification channels from grafana",
+	Long:    `List all alert notification channels from grafana`,
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 		tableObj.AppendHeader(table.Row{"id", "name", "slug", "type", "default", "url"})
@@ -105,7 +109,7 @@ var listAlertNotifications = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(alertnotifications)
 	alertnotifications.AddCommand(clearAlertNotifications)
-	alertnotifications.AddCommand(exportAlertNotifications)
-	alertnotifications.AddCommand(importAlertNotifications)
+	alertnotifications.AddCommand(uploadAlertNotifications)
+	alertnotifications.AddCommand(downloadAlertNotifications)
 	alertnotifications.AddCommand(listAlertNotifications)
 }

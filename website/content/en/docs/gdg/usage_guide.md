@@ -3,7 +3,7 @@ title: "Usage Guide"
 weight: 16
 ---
 
-Every namespace supporting CRUD operations has the functions: list, import, export, clear operating on only the monitored folders.
+Every namespace supporting CRUD operations has the functions: list, download, upload, clear operating on only the monitored folders.
 
 
 ### Authentication Management
@@ -34,7 +34,7 @@ There are two sub commands for auth, service-accounts and tokens (will be deprec
 Example of creating a new token.
 
 ```sh
-./bin/gdg auth tokens new foobar Admin 3600 
+./bin/gdg auth tokens new foobar Admin 3600
 ```
 
 {{< details "New Token" >}}
@@ -51,7 +51,7 @@ Example of creating a new token.
 #### Service Accounts
 
 
-```sh 
+```sh
 ./bin/gdg svc  clear       delete all Service Accounts
 ./bin/gdg svc  clearTokens delete all tokens for Service Account
 ./bin/gdg svc  list        list API Keys
@@ -59,7 +59,7 @@ Example of creating a new token.
 ./bin/gdg svc  newToken    newToken <serviceAccountID> <name> [ttl in seconds]
 ```
 
-```sh 
+```sh
 ./bin/gdg auth svc newService AwesomeSauceSvc admin
 ```
 
@@ -72,7 +72,7 @@ Example of creating a new token.
 └────┴─────────────────┴───────┘
 {{< /details >}}
 
-```sh 
+```sh
 ./bin/gdg auth svc newToken 4 AwesomeToken
 ```
 
@@ -85,8 +85,8 @@ Example of creating a new token.
 └───────────┴──────────┴──────────────┴────────────────────────────────────────────────┘
 {{< /details >}}
 
-```sh 
-./bin/gdg auth svc list 
+```sh
+./bin/gdg auth svc list
 ```
 
 {{< details "Service Listing" >}}
@@ -108,8 +108,8 @@ Allows you to manage alertnotifications (an) if you have any setup
 
 ```sh
 ./bin/gdg an list -- Lists all alert notifications
-./bin/gdg an import -- retrieve and save all alertnotifications from grafana
-./bin/gdg an export  -- writes all local alert notifications to grafana
+./bin/gdg an download -- retrieve and save all alertnotifications from grafana
+./bin/gdg an upload  -- writes all local alert notifications to grafana
 ./bin/gdg an clear -- Deletes all alert notifications
 ```
 
@@ -137,17 +137,17 @@ All commands can use `dashboards` or `dash` to manage dashboards
 
 ```sh
 ./bin/gdg dash list -- Lists all current dashboards
-./bin/gdg dash import -- Import all dashboards from grafana to local file system
-./bin/gdg dash export -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
+./bin/gdg dash download -- Import all dashboards from grafana to local file system
+./bin/gdg dash upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
 ./bin/gdg dash clear -- Deletes all dashboards
 ```
 
 You can also use filtering options to list or import your daashboard by folder or by tags.
 
 ```sh
-./bin/gdg dash import -f myFolder
-./bin/gdg dash import -t myTag
-./bin/gdg dash import -t tagA -t tagB -t tagC
+./bin/gdg dash download -f myFolder
+./bin/gdg dash download -t myTag
+./bin/gdg dash download -t tagA -t tagB -t tagC
 ```
 
 ### DataSources
@@ -160,8 +160,8 @@ All commands can use `datasources` or `ds` to manage datasources
 
 ```sh
 ./bin/gdg ds list -- Lists all current datasources
-./bin/gdg ds import -- Import all datasources from grafana to local file system
-./bin/gdg ds export -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
+./bin/gdg ds download -- Import all datasources from grafana to local file system
+./bin/gdg ds upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
 ./bin/gdg ds clear -- Deletes all datasources
 ```
 
@@ -180,8 +180,8 @@ Mostly optional as Dashboards will create/delete these are needed but if there i
 
 ```sh
 ./bin/gdg folders list -- Lists all current folders
-./bin/gdg folders import -- Import all folders from grafana to local file system
-./bin/gdg folders export -- Exports all folders from local filesystem
+./bin/gdg folders download -- Import all folders from grafana to local file system
+./bin/gdg folders upload -- Exports all folders from local filesystem
 ./bin/gdg folders clear -- Deletes all folders
 ```
 
@@ -196,8 +196,8 @@ All commands can use `libraryelements` aliased to `library` and `lib` for lazine
 
 ```sh
 ./bin/gdg lib list -- Lists all library components
-./bin/gdg lib import -- Import all library components from grafana to local file system
-./bin/gdg lib export -- Exports all library components from local filesystem (matching folder filter) to Grafana
+./bin/gdg lib download -- Import all library components from grafana to local file system
+./bin/gdg lib upload -- Exports all library components from local filesystem (matching folder filter) to Grafana
 ./bin/gdg lib clear -- Deletes all library components
 ./bin/gdg lib  list-connections <Lib Element UID> -- Will list all of the dashboards connected to the Lib Element (Coming in v0.4.2)
 ```
@@ -211,7 +211,7 @@ Command can use `organizations` or `org` to manage organizations.
 ./bin/gdg org list -- Lists all organizations
 ```
 
-### Teams 
+### Teams
 
 {{< alert icon="👉" text="Admin team members are unable to be exported back.  Currently all members except the server admin will be exported as regular members" />}}
 
@@ -219,8 +219,8 @@ Command can use `organizations` or `org` to manage organizations.
 
 ```sh
 ./bin/gdg team list  -- Lists all known team members
-./bin/gdg team import -- import all known team members
-./bin/gdg team export -- export all known team members
+./bin/gdg team download -- download all known team members
+./bin/gdg team upload -- upload all known team members
 ./bin/gdg team clear -- Delete all known team except admin
 ```
 
@@ -250,8 +250,8 @@ NOTE: admin user is always ignored.
 ```sh
 ./bin/gdg users list -- Lists all known users
 ./bin/gdg users promote -u user@foobar.com -- promotes the user to a grafana admin
-./bin/gdg users import -- Lists all known users
-./bin/gdg users export -- Export all users (Not yet supported)
+./bin/gdg users download -- Lists all known users
+./bin/gdg users upload -- Export all users (Not yet supported)
 ./bin/gdg users clear -- Delete all known users except admin
 ```
 ### Token Management (available on +v0.4.2)
@@ -260,8 +260,8 @@ Allows the user to create, delete and list current tokens.
 
 ```sh
 ./bin/gdg tokens list -- Lists all known tokens
-./bin/gdg tokens clear -- Delete all known tokens 
-./bin/gdg tokens new <token_name> <role> [ttl] -- Delete all tokens 
+./bin/gdg tokens clear -- Delete all known tokens
+./bin/gdg tokens new <token_name> <role> [ttl] -- Delete all tokens
 ```
 
 

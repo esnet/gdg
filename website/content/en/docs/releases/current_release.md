@@ -14,9 +14,9 @@ toc: true
 
 
 ### New Features
-
-
+  - #159 Due to confusion that has been generated with using import/export.  The action verbs were replaced with download/upload with the previous cmds still left in as functional elements.
+      - All 'import' has been replaced with 'download' action.
+      - All 'export' has been replaced with an 'upload' action.
 
 ### Bug Fixes
-
   - Bug #156 fixed.  When gdg binary and config are in completely different paths, gdg is unable to load the configuration file and fallsback on the default config instead.

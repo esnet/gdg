@@ -39,9 +39,10 @@ var promoteUser = &cobra.Command{
 	},
 }
 var deleteUsersCmd = &cobra.Command{
-	Use:   "clear",
-	Short: "delete all users",
-	Long:  `delete all users`,
+	Use:     "clear",
+	Short:   "delete all users",
+	Long:    `delete all users`,
+	Aliases: []string{"c"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		savedFiles := grafanaSvc.DeleteAllUsers()
@@ -58,10 +59,11 @@ var deleteUsersCmd = &cobra.Command{
 	},
 }
 
-var exportUserCmd = &cobra.Command{
-	Use:   "export",
-	Short: "export users",
-	Long:  `export users`,
+var uploadUsersCmd = &cobra.Command{
+	Use:     "upload",
+	Short:   "upload users to grafana",
+	Long:    `upload users to grafana`,
+	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
@@ -84,10 +86,11 @@ var exportUserCmd = &cobra.Command{
 	},
 }
 
-var importUserCmd = &cobra.Command{
-	Use:   "import",
-	Short: "import users",
-	Long:  `import users`,
+var downloadUsersCmd = &cobra.Command{
+	Use:     "download",
+	Short:   "download users from grafana",
+	Long:    `download users from grafana`,
+	Aliases: []string{"import", "d"},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
@@ -136,8 +139,8 @@ func init() {
 	rootCmd.AddCommand(userCmd)
 	userCmd.AddCommand(promoteUser)
 	userCmd.AddCommand(deleteUsersCmd)
-	userCmd.AddCommand(exportUserCmd)
-	userCmd.AddCommand(importUserCmd)
+	userCmd.AddCommand(uploadUsersCmd)
+	userCmd.AddCommand(downloadUsersCmd)
 	userCmd.AddCommand(listUserCmd)
 	promoteUser.Flags().StringP("user", "u", "", "user email")
 	err := promoteUser.MarkFlagRequired("user")
