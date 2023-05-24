@@ -142,7 +142,7 @@ All commands can use `dashboards` or `dash` to manage dashboards
 ./bin/gdg dash clear -- Deletes all dashboards
 ```
 
-You can also use filtering options to list or import your daashboard by folder or by tags.
+You can also use filtering options to list or import your dashboard by folder or by tags.
 
 ```sh
 ./bin/gdg dash download -f myFolder

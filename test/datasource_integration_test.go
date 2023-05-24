@@ -50,12 +50,18 @@ func TestDataSourceFilter(t *testing.T) {
 	initTest(t, nil)
 
 	testingContext := config.Config().Contexts()["testing"]
-	testingContext.GetDataSourceSettings().Filters = &config.DataSourceFilters{
-		NameExclusions:  "DEV-*|-Dev-*",
-		DataSourceTypes: []string{"elasticsearch", "globalnoc-tsds-datasource"},
+	testingContext.GetDataSourceSettings().FilterRules = []config.MatchingRule{
+		{
+			Field: "name",
+			Regex: "DEV-*|-Dev-*",
+		},
+		{
+			Field:     "type",
+			Inclusive: true,
+			Regex:     "elasticsearch|globalnoc-tsds-datasource",
+		},
 	}
 	testingContext = config.Config().Contexts()["testing"]
-	log.Info(testingContext.GetDataSourceSettings().Filters)
 
 	apiClient := service.NewApiService("dummy")
 
