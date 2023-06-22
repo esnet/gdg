@@ -9,7 +9,7 @@ services:
             - MINIO_ROOT_USER=test
             - MINIO_ROOT_PASSWORD=secretsss
     grafana:
-        image: grafana/grafana:9.4.3-ubuntu
+        image: grafana/grafana:10.0.0-ubuntu
         ports:
             - 3000:3000
         environment:
