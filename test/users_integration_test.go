@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/esnet/gdg/internal/service"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +12,7 @@ func TestUsers(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	apiClient, _ := initTest(t, nil)
-	users := apiClient.ListUsers()
+	users := apiClient.ListUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(users), 1)
 	adminUser := users[0]
 	assert.Equal(t, adminUser.ID, int64(1))

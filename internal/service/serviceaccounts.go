@@ -84,6 +84,7 @@ func (s *DashNGoImpl) ListServiceAccounts() []*api.ServiceAccountDTOWithTokens {
 }
 
 func (s *DashNGoImpl) ListServiceAccountsTokens(id int64) ([]*models.TokenDTO, error) {
+
 	p := service_accounts.NewListTokensParams()
 	p.ServiceAccountID = id
 	response, err := s.extended.ListTokens(p)

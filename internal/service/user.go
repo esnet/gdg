@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service/filters"
 	gapi "github.com/esnet/grafana-swagger-api-golang"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/admin_users"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/users"
@@ -22,11 +23,31 @@ import (
 // UsersApi Contract definition
 type UsersApi interface {
 	//User
-	ListUsers() []*models.UserSearchHitDTO
-	ImportUsers() []string
-	ExportUsers() []models.UserProfileDTO
+	ListUsers(filter filters.Filter) []*models.UserSearchHitDTO
+	ImportUsers(filter filters.Filter) []string
+	ExportUsers(filter filters.Filter) []models.UserProfileDTO
 	PromoteUser(userLogin string) (string, error)
-	DeleteAllUsers() []string
+	DeleteAllUsers(filter filters.Filter) []string
+}
+
+func NewUserFilter(label string) filters.Filter {
+	filterEntity := filters.NewBaseFilter()
+	if label == "" {
+		return filterEntity
+	}
+	filterEntity.AddFilter(filters.AuthLabel, label)
+	filterEntity.AddValidation(filters.DefaultFilter, func(i interface{}) bool {
+		val, ok := i.(map[filters.FilterType]string)
+		if !ok {
+			return ok
+		}
+		if filterEntity.GetFilter(filters.AuthLabel) == "" {
+			return true
+		}
+		return val[filters.AuthLabel] == filterEntity.GetFilter(filters.AuthLabel)
+	})
+
+	return filterEntity
 }
 
 func DefaultUserPassword(username string) string {
@@ -47,13 +68,13 @@ func DefaultUserPassword(username string) string {
 	return password
 }
 
-func (s *DashNGoImpl) ImportUsers() []string {
+func (s *DashNGoImpl) ImportUsers(filter filters.Filter) []string {
 	var (
 		userData []byte
 		err      error
 	)
 
-	userListing := s.ListUsers()
+	userListing := s.ListUsers(filter)
 	var importedUsers []string
 
 	userPath := buildResourceFolder("", config.UserResource)
@@ -84,14 +105,14 @@ func (s *DashNGoImpl) isAdmin(id int64, name string) bool {
 	return id == 1 || name == "admin"
 }
 
-func (s *DashNGoImpl) ExportUsers() []models.UserProfileDTO {
+func (s *DashNGoImpl) ExportUsers(filter filters.Filter) []models.UserProfileDTO {
 	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.UserResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for userListings")
 	}
 	var userListings []models.UserProfileDTO
 	var rawUser []byte
-	userList := s.ListUsers()
+	userList := s.ListUsers(filter)
 	var currentUsers = make(map[string]*models.UserSearchHitDTO, 0)
 
 	//Build current User Mapping
@@ -159,7 +180,8 @@ func (s *DashNGoImpl) ExportUsers() []models.UserProfileDTO {
 }
 
 // ListUsers list all grafana users
-func (s *DashNGoImpl) ListUsers() []*models.UserSearchHitDTO {
+func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDTO {
+	var filteredUsers []*models.UserSearchHitDTO
 	params := users.NewSearchUsersParams()
 	params.Page = gapi.ToPtr(int64(1))
 	params.Perpage = gapi.ToPtr(int64(5000))
@@ -167,12 +189,19 @@ func (s *DashNGoImpl) ListUsers() []*models.UserSearchHitDTO {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	return usersList
+	for _, entry := range usersList {
+		if len(entry.AuthLabels) == 0 {
+			filteredUsers = append(filteredUsers, entry)
+		} else if filter.ValidateAll(map[filters.FilterType]string{filters.AuthLabel: entry.AuthLabels[0]}) {
+			filteredUsers = append(filteredUsers, entry)
+		}
+	}
+	return filteredUsers
 }
 
-// DeleteAllUsers
-func (s *DashNGoImpl) DeleteAllUsers() []string {
-	userListing := s.ListUsers()
+// DeleteAllUsers remove all users excluding admin or anything matching the filter
+func (s *DashNGoImpl) DeleteAllUsers(filter filters.Filter) []string {
+	userListing := s.ListUsers(filter)
 	var deletedUsers []string
 	for _, user := range userListing {
 		if s.isAdmin(user.ID, user.Name) {
@@ -195,7 +224,7 @@ func (s *DashNGoImpl) DeleteAllUsers() []string {
 func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 
 	//Get all users
-	userListing := s.ListUsers()
+	userListing := s.ListUsers(filters.NewBaseFilter())
 	var user *models.UserSearchHitDTO
 	for ndx, item := range userListing {
 		if item.Email == userLogin {

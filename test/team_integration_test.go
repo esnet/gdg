@@ -18,8 +18,8 @@ func TestTeamCRUD(t *testing.T) {
 	filter := service.NewTeamFilter("")
 	apiClient, _ := initTest(t, nil)
 	log.Info("Exporting current user list")
-	apiClient.ExportUsers()
-	users := apiClient.ListUsers()
+	apiClient.ExportUsers(service.NewUserFilter(""))
+	users := apiClient.ListUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(users), 2)
 	log.Info("Exporting all teams")
 	apiClient.ExportTeams(filter)
@@ -49,6 +49,6 @@ func TestTeamCRUD(t *testing.T) {
 	_, err := apiClient.DeleteTeam(filter)
 	assert.Nil(t, err)
 	//Remove Users
-	apiClient.DeleteAllUsers()
+	apiClient.DeleteAllUsers(service.NewUserFilter(""))
 
 }

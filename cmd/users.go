@@ -44,8 +44,8 @@ var deleteUsersCmd = &cobra.Command{
 	Long:    `delete all users`,
 	Aliases: []string{"c"},
 	Run: func(cmd *cobra.Command, args []string) {
-
-		savedFiles := grafanaSvc.DeleteAllUsers()
+		authLabel, _ := cmd.Flags().GetString("authlabel")
+		savedFiles := grafanaSvc.DeleteAllUsers(service.NewUserFilter(authLabel))
 		log.Infof("Delete Users for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		if len(savedFiles) == 0 {
@@ -65,9 +65,9 @@ var uploadUsersCmd = &cobra.Command{
 	Long:    `upload users to grafana`,
 	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
-
-		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
-		savedFiles := grafanaSvc.ExportUsers()
+		log.Infof("Uploading Users to context: '%s'", apphelpers.GetContext())
+		authLabel, _ := cmd.Flags().GetString("authlabel")
+		savedFiles := grafanaSvc.ExportUsers(service.NewUserFilter(authLabel))
 		log.Infof("Exporting Users for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "grafanaAdmin", "disabled", "default Password", "authLabels"})
 		if len(savedFiles) == 0 {
@@ -92,9 +92,9 @@ var downloadUsersCmd = &cobra.Command{
 	Long:    `download users from grafana`,
 	Aliases: []string{"import", "d"},
 	Run: func(cmd *cobra.Command, args []string) {
-
 		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
-		savedFiles := grafanaSvc.ImportUsers()
+		authLabel, _ := cmd.Flags().GetString("authlabel")
+		savedFiles := grafanaSvc.ImportUsers(service.NewUserFilter(authLabel))
 		log.Infof("Importing Users for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		if len(savedFiles) == 0 {
@@ -114,10 +114,10 @@ var listUserCmd = &cobra.Command{
 	Long:  `list users`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Info("all credentials for imported users defaults to the sha256 of login.")
-		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing users for context: '%s'", apphelpers.GetContext())
+		authLabel, _ := cmd.Flags().GetString("authlabel")
 		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "disabled", "default Password", "authLabels"})
-		users := grafanaSvc.ListUsers()
+		users := grafanaSvc.ListUsers(service.NewUserFilter(authLabel))
 		if len(users) == 0 {
 			log.Info("No users found")
 		} else {
@@ -143,6 +143,7 @@ func init() {
 	userCmd.AddCommand(downloadUsersCmd)
 	userCmd.AddCommand(listUserCmd)
 	promoteUser.Flags().StringP("user", "u", "", "user email")
+	userCmd.PersistentFlags().StringP("authlabel", "", "", "filter by a given auth label")
 	err := promoteUser.MarkFlagRequired("user")
 	if err != nil {
 		log.Debug("Failed to mark user flag as required")

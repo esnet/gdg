@@ -1,9 +1,11 @@
 package api
 
 import (
+	"crypto/tls"
 	"github.com/carlmjohnson/requests"
 	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
+	"net/http"
 )
 
 //Most of these methods are here due to limitations in existing libraries being used.
@@ -22,7 +24,13 @@ func NewExtendedApi() *ExtendedApi {
 }
 
 func (s *ExtendedApi) getRequestBuilder() *requests.Builder {
+
 	req := requests.URL(s.grafanaCfg.URL)
+	if config.Config().IgnoreSSL() {
+		customTransport := http.DefaultTransport.(*http.Transport).Clone()
+		customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		req = req.Transport(customTransport)
+	}
 
 	if s.grafanaCfg.UserName != "" && s.grafanaCfg.Password != "" {
 		req.BasicAuth(s.grafanaCfg.UserName, s.grafanaCfg.Password)

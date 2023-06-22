@@ -24,8 +24,7 @@ type DataSourcesApi interface {
 	DeleteAllDataSources(filter filters.Filter) []string
 }
 
-//Filters
-
+// NewDataSourceFilter
 func NewDataSourceFilter(name string) filters.Filter {
 	filterEntity := filters.NewBaseFilter()
 	filterEntity.AddFilter(filters.Name, name)
