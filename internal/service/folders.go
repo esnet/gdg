@@ -2,13 +2,16 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folder_permissions"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folders"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/search"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
 	log "github.com/sirupsen/logrus"
+	"github.com/tidwall/gjson"
 	"golang.org/x/exp/slices"
 	"os"
 	"path/filepath"
@@ -21,6 +24,10 @@ type FoldersApi interface {
 	ImportFolder(filter filters.Filter) []string
 	ExportFolder(filter filters.Filter) []string
 	DeleteAllFolder(filter filters.Filter) []string
+	//Permissions
+	ListFolderPermissions(filter filters.Filter) map[*models.Hit][]*models.DashboardACLInfoDTO
+	ImportFolderPermissions(filter filters.Filter) []string
+	ExportFolderPermissions(filter filters.Filter) []string
 }
 
 func NewFolderFilter() filters.Filter {
@@ -41,6 +48,117 @@ func NewFolderFilter() filters.Filter {
 
 }
 
+// checkFolderName returns true if folder is valid, otherwise false if special chars are found
+// in folder name.
+func (s *DashNGoImpl) checkFolderName(folderName string) bool {
+	if strings.Contains(folderName, "/") || strings.Contains(folderName, "\\") {
+		return false
+	}
+	return true
+}
+
+func (s *DashNGoImpl) ImportFolderPermissions(filter filters.Filter) []string {
+	log.Infof("Downloading folder permissions")
+	var (
+		dsPacked  []byte
+		err       error
+		dataFiles []string
+	)
+	currentPermissions := s.ListFolderPermissions(filter)
+	for folder, permission := range currentPermissions {
+		if dsPacked, err = json.MarshalIndent(permission, "", "	"); err != nil {
+			log.Errorf("%s for %s Permissions\n", err, folder.Title)
+			continue
+		}
+		dsPath := buildResourcePath(slug.Make(folder.Title), config.FolderPermissionResource)
+		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
+			log.Errorf("%s for %s\n", err.Error(), slug.Make(folder.Title))
+		} else {
+			dataFiles = append(dataFiles, dsPath)
+		}
+	}
+	return dataFiles
+
+}
+
+func (s *DashNGoImpl) ExportFolderPermissions(filter filters.Filter) []string {
+	var (
+		rawFolder []byte
+		dataFiles []string
+	)
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderPermissionResource), false)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to read folders permission imports")
+	}
+	for _, file := range filesInDir {
+		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderPermissionResource), file)
+		if strings.HasSuffix(file, ".json") {
+			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
+				log.WithError(err).Errorf("failed to read file %s", fileLocation)
+				continue
+			}
+		}
+		uid := gjson.GetBytes(rawFolder, "0.uid")
+
+		newEntries := make([]*models.DashboardACLUpdateItem, 0)
+		err = json.Unmarshal(rawFolder, &newEntries)
+		if err != nil {
+			log.Warnf("Failed to Decode payload for %s", fileLocation)
+			continue
+		}
+		payload := &models.UpdateDashboardACLCommand{
+			Items: newEntries,
+		}
+
+		p := folder_permissions.NewUpdateFolderPermissionsParams()
+		p.FolderUID = uid.String()
+		p.Body = payload
+		_, err := s.client.FolderPermissions.UpdateFolderPermissions(p, s.getAuth())
+		if err != nil {
+			log.Errorf("Failed to update folder permissions")
+		} else {
+			dataFiles = append(dataFiles, fileLocation)
+
+		}
+	}
+	log.Infof("Patching server with local folder permissions")
+	return dataFiles
+}
+
+// ListFolderPermissions retrieves all current folder permissions
+// TODO: add concurrency to folder permissions calls
+func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*models.Hit][]*models.DashboardACLInfoDTO {
+	//get list of folders
+	foldersList := s.ListFolder(filter)
+
+	r := make(map[*models.Hit][]*models.DashboardACLInfoDTO, 0)
+
+	for ndx, foldersEntry := range foldersList {
+		func(j *models.Hit) {
+			p := folder_permissions.NewGetFolderPermissionListParams()
+			p.FolderUID = j.UID
+			results, err := s.client.FolderPermissions.GetFolderPermissionList(p, s.getAuth())
+			if err != nil {
+				msg := fmt.Sprintf("Unable to get folder permissions for folderUID: %s", p.FolderUID)
+				switch err.(type) {
+				case *folder_permissions.GetFolderPermissionListInternalServerError:
+					castError := err.(*folder_permissions.GetFolderPermissionListInternalServerError)
+					log.WithField("message", *castError.GetPayload().Message).
+						WithError(err).Error(msg)
+				default:
+					log.WithError(err).Error(msg)
+				}
+
+			} else {
+				r[foldersList[ndx]] = results.GetPayload()
+			}
+
+		}(foldersEntry)
+	}
+
+	return r
+}
+
 func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 	var result = make([]*models.Hit, 0)
 	if config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
@@ -53,10 +171,20 @@ func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 	if err != nil {
 		log.Fatal("unable to retrieve folder list.")
 	}
+
 	for ndx, val := range folderListing.GetPayload() {
+		valid := s.checkFolderName(val.Title)
 		if filter == nil {
+			if !valid {
+				log.Warningf("Folder '%s' has an invalid character and is not supported", val.Title)
+				continue
+			}
 			result = append(result, folderListing.GetPayload()[ndx])
 		} else if filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: val.Title}) {
+			if !valid {
+				log.Warningf("Folder '%s' has an invalid character and is not supported", val.Title)
+				continue
+			}
 			result = append(result, folderListing.GetPayload()[ndx])
 		}
 	}
@@ -111,6 +239,10 @@ func (s *DashNGoImpl) ExportFolder(filter filters.Filter) []string {
 		var newFolder models.CreateFolderCommand
 		if err = json.Unmarshal(rawFolder, &newFolder); err != nil {
 			log.WithError(err).Warn("failed to unmarshall folder")
+			continue
+		}
+		if !s.checkFolderName(newFolder.Title) {
+			log.Warningf("Folder '%s' has an invalid character and is not supported, skipping folder", newFolder.Title)
 			continue
 		}
 		skipCreate := false

@@ -185,6 +185,44 @@ Mostly optional as Dashboards will create/delete these are needed but if there i
 ./bin/gdg folders clear -- Deletes all folders
 ```
 
+### Folder Permissions
+
+This CRUD allows you to import / export folder permissions.  Initial release will be part of v0.4.4.  There are a lot of nested relationship that go with this.
+
+Expectations:
+  - Users have to already exist.
+  - Teams (if used) need to already exist.
+  - Folders also need to already exist.
+
+The Folder Permissions will list, import and re-apply permissions.  But the expectations is that all other entities are already there.  Next few iteration will try to add more concurrency for
+this tool and more error checking when entities that don't exist are being referenced.
+
+**NOTE:** Unlike other command, permissions does not have a `clear` function.  Theoretically you could have a folder name with an emtpy array under folder-permissions to clear all known permissions to the folder, but otherwise
+clearing permissions from all folders seems too destructive to really be a useful function.
+
+```sh
+./bin/gdg folders list -- Lists all current folder permissions
+./bin/gdg folders download -- Retrieve all folders permissions from Grafana
+./bin/gdg folders upload -- Exports all folders from local filesystem
+```
+
+```
+┌───────────┬──────────────────────────────────────┬───────────────────────────────────────────────────────────────────────────────────┬─────────────┬────────────────────────────────┬────────┬─────────────────┐
+│ FOLDER ID │ FOLDERUID                            │ FOLDER NAME                                                                       │ USERID      │ TEAM NAME                      │ ROLE   │ PERMISSION NAME │
+├───────────┼──────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────┼─────────────┼────────────────────────────────┼────────┼─────────────────┤
+│ 2272      │ dfba969d-565b-481e-a930-53aa5684992c │ sub-flow                                                                          │             │                                │        │                 │
+│                                                  │     PERMISSION--->                                                                │ admin       │                                         │ Admin           │
+│ 520       │ GPmSOQNnk                            │ EngageMap (internal beta)                                                         │             │                                │        │                 │
+│                                                  │     PERMISSION--->                                                                │                                              │ Admin  │ Edit            │
+│                                                  │     PERMISSION--->                                                                │                                              │ Editor │ Edit            │
+│                                                  │     PERMISSION--->                                                                │                                              │ Viewer │ View            │
+│ 2031      │ n3xS8TwVk                            │ Team CMS - US dumb dumb                                                           │             │                                │        │                 │
+│                                                  │     PERMISSION--->                                                                │             │ authscope_team_cms             │        │ Edit            │
+│ 1746      │ pASPyoQVk                            │ Team DOE-IN-PNNL - DOE-IN Pacific Northwest National Laboratory                   │             │                                │        │                 │
+└──────────────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────────────┴─────────────┴────────────────────────────────┴────────┴─────────────────┘
+```
+
+The listing includes the folder name, followed by several lines with "PERMISSION--->" which will each list a permission.  It can a user being granted access or a team being granted a role etc.
 
 
 

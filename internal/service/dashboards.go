@@ -308,10 +308,12 @@ func (s *DashNGoImpl) ExportDashboards(filterReq filters.Filter) {
 			continue
 		}
 
-		elements := strings.Split(file, string(os.PathSeparator))
-		if len(elements) >= 2 {
-			folderName = elements[len(elements)-2]
+		//Extract Folder Name based on path
+		folderName, err = getFolderFromResourcePath(s.grafanaConf.Storage, file, config.DashboardResource)
+		if err != nil {
+			log.Warnf("unable to determine dashboard folder name, falling back on default")
 		}
+
 		if folderName == "" || folderName == DefaultFolderName {
 			folderId = DefaultFolderId
 			folderName = DefaultFolderName
@@ -329,6 +331,7 @@ func (s *DashNGoImpl) ExportDashboards(filterReq filters.Filter) {
 		if folderName == DefaultFolderName {
 			folderId = DefaultFolderId
 		} else {
+
 			if val, ok := folderMap[folderName]; ok {
 				folderId = val
 			} else {
