@@ -18,6 +18,7 @@ const (
 	TeamFilter    FilterType = "TeamFilter"
 	DefaultFilter FilterType = "default"
 	Name          FilterType = "Name"
+	AuthLabel     FilterType = "AuthLabel"
 )
 
 func (s FilterType) String() string {

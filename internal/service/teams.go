@@ -255,7 +255,7 @@ func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMe
 	if team == nil {
 		log.Fatal(fmt.Errorf("team:  '%s' could not be found", team.Name))
 	}
-	users := s.ListUsers()
+	users := s.ListUsers(NewUserFilter(""))
 	var user *models.UserSearchHitDTO
 	for ndx, item := range users {
 		if item.Login == userDTO.Login {
