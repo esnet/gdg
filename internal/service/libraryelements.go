@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/library_elements"
@@ -51,7 +50,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.Filter, conn
 }
 
 func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.LibraryElementDTO {
-	ignoreFilters := apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters
+	ignoreFilters := config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters
 	folderFilter := NewFolderFilter()
 	if ignoreFilters {
 		folderFilter = nil
@@ -62,7 +61,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 	var buf = strings.Builder{}
 	//Check to see if General should be included
 	//If Ignore Filters OR General is in monitored list, add 0 folder
-	if (!ignoreFilters && slices.Contains(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), DefaultFolderName)) || ignoreFilters {
+	if (!ignoreFilters && slices.Contains(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), DefaultFolderName)) || ignoreFilters {
 		buf.WriteString("0,")
 	} else {
 		buf.WriteString("")
@@ -123,8 +122,8 @@ func (s *DashNGoImpl) ExportLibraryElements(filter filters.Filter) []string {
 		libraryUID        string
 	)
 
-	log.Infof("Reading files from folder: %s", apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.LibraryElementResource))
-	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.LibraryElementResource), true)
+	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource))
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource), true)
 
 	currentLibElements := s.ListLibraryElements(filter)
 	libMapping := make(map[string]*models.LibraryElementDTO, 0)
@@ -166,7 +165,7 @@ func (s *DashNGoImpl) ExportLibraryElements(filter filters.Filter) []string {
 				continue
 			}
 
-			if !slices.Contains(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), folderName) {
+			if !slices.Contains(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), folderName) {
 				log.WithField("folder", folderName).WithField("file", file).Warn("Skipping since requested file is not in a folder gdg is configured to manage")
 				continue
 			}

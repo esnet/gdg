@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/datasources"
@@ -115,8 +114,8 @@ func (s *DashNGoImpl) ExportDataSources(filter filters.Filter) []string {
 
 	var exported = make([]string, 0)
 
-	log.Infof("Reading files from folder: %s", apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DataSourceResource))
-	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DataSourceResource), false)
+	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.DataSourceResource))
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.DataSourceResource), false)
 
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for datasources")
@@ -127,7 +126,7 @@ func (s *DashNGoImpl) ExportDataSources(filter filters.Filter) []string {
 
 	dsSettings := s.grafanaConf.GetDataSourceSettings()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DataSourceResource), file)
+		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.DataSourceResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file: %s", fileLocation)

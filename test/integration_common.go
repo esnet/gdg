@@ -23,7 +23,6 @@ func initTest(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Vip
 	config.InitConfig(*cfgName, "'")
 	conf := config.Config().ViperConfig()
 	assert.NotNil(t, conf)
-	conf.Set("context_name", "testing")
 	//Hack for Local testing
 	conf.Set("context.testing.url", "http://localhost:3000")
 	contextName := conf.GetString("context_name")
@@ -39,20 +38,24 @@ func initTest(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Vip
 	return client, conf
 }
 
-func SetupCloudFunction(apiClient service.GrafanaService, params []string) context.Context {
+func SetupCloudFunction(t *testing.T, cfg *viper.Viper, apiClient service.GrafanaService, params []string) (context.Context, service.GrafanaService) {
 	_ = os.Setenv("AWS_ACCESS_KEY", "test")
 	_ = os.Setenv("AWS_SECRET_KEY", "secretsss")
-
 	bucketName := params[1]
-	var m = map[string]interface{}{
+	var m = map[string]string{
 		service.CloudType:  params[0],
 		service.Prefix:     "dummy",
 		service.BucketName: bucketName,
+		service.Kind:       "cloud",
 	}
 
+	cfgObj := config.Config().GetAppConfig()
+	defaultCfg := config.Config().GetDefaultGrafanaConfig()
+	defaultCfg.Storage = "test"
+	cfgObj.StorageEngine["test"] = m
+	apiClient = service.NewApiService("dummy")
+
 	ctx := context.Background()
-	//ctx = context.WithValue(ctx, MINIO_HOST, "https://localhost:9000")
-	//ctx = context.WithValue(ctx, MINIO_SSL, false)
 	ctx = context.WithValue(ctx, service.StorageContext, m)
 	configMap := map[string]string{}
 	for key, value := range m {
@@ -66,5 +69,5 @@ func SetupCloudFunction(apiClient service.GrafanaService, params []string) conte
 	dash := apiClient.(*service.DashNGoImpl)
 	dash.SetStorage(s)
 
-	return ctx
+	return ctx, apiClient
 }

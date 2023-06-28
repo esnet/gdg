@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
@@ -25,7 +25,7 @@ var promoteUser = &cobra.Command{
 	Aliases: []string{"godmode"},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing dashboards for context: '%s'", config.Config().AppConfig.GetContext())
 		userLogin, _ := cmd.Flags().GetString("user")
 
 		msg, err := grafanaSvc.PromoteUser(userLogin)
@@ -46,7 +46,7 @@ var deleteUsersCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		authLabel, _ := cmd.Flags().GetString("authlabel")
 		savedFiles := grafanaSvc.DeleteAllUsers(service.NewUserFilter(authLabel))
-		log.Infof("Delete Users for context: '%s'", apphelpers.GetContext())
+		log.Infof("Delete Users for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		if len(savedFiles) == 0 {
 			log.Info("No users found")
@@ -65,10 +65,9 @@ var uploadUsersCmd = &cobra.Command{
 	Long:    `upload users to grafana`,
 	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Infof("Uploading Users to context: '%s'", apphelpers.GetContext())
+		log.Infof("Uploading Users to context: '%s'", config.Config().AppConfig.GetContext())
 		authLabel, _ := cmd.Flags().GetString("authlabel")
 		savedFiles := grafanaSvc.ExportUsers(service.NewUserFilter(authLabel))
-		log.Infof("Exporting Users for context: '%s'", apphelpers.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "grafanaAdmin", "disabled", "default Password", "authLabels"})
 		if len(savedFiles) == 0 {
 			log.Info("No users found")
@@ -92,10 +91,9 @@ var downloadUsersCmd = &cobra.Command{
 	Long:    `download users from grafana`,
 	Aliases: []string{"import", "d"},
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
 		authLabel, _ := cmd.Flags().GetString("authlabel")
 		savedFiles := grafanaSvc.ImportUsers(service.NewUserFilter(authLabel))
-		log.Infof("Importing Users for context: '%s'", apphelpers.GetContext())
+		log.Infof("Importing Users for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		if len(savedFiles) == 0 {
 			log.Info("No users found")
@@ -114,7 +112,7 @@ var listUserCmd = &cobra.Command{
 	Long:  `list users`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Listing users for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing users for context: '%s'", config.Config().AppConfig.GetContext())
 		authLabel, _ := cmd.Flags().GetString("authlabel")
 		tableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "disabled", "default Password", "authLabels"})
 		users := grafanaSvc.ListUsers(service.NewUserFilter(authLabel))

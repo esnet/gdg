@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"errors"
+	"github.com/esnet/gdg/internal/config"
 	"sort"
 	"strconv"
 
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -74,7 +74,7 @@ var deleteServiceAcctsTokensCmd = &cobra.Command{
 			log.Fatalf("unable to parse %s as a valid numeric value", idStr)
 		}
 
-		log.Infof("Deleting Service Accounts Tokens for serviceID %d for context: '%s'", id, apphelpers.GetContext())
+		log.Infof("Deleting Service Accounts Tokens for serviceID %d for context: '%s'", id, config.Config().AppConfig.GetContext())
 		savedFiles := grafanaSvc.DeleteServiceAccountTokens(id)
 		tableObj.AppendHeader(table.Row{"serviceID", "type", "token_name"})
 		if len(savedFiles) == 0 {
@@ -95,7 +95,7 @@ var deleteServiceAcctsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		savedFiles := grafanaSvc.DeleteAllServiceAccounts()
-		log.Infof("Delete Service Accounts for context: '%s'", apphelpers.GetContext())
+		log.Infof("Delete Service Accounts for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		if len(savedFiles) == 0 {
 			log.Info("No Service Accounts found")

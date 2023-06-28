@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -33,7 +33,7 @@ var deleteFoldersCmd = &cobra.Command{
 	Long:    `delete Folders from grafana`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Deleting all Folders for context: '%s'", apphelpers.GetContext())
+		log.Infof("Deleting all Folders for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"title"})
 
 		folders := grafanaSvc.DeleteAllFolder(getFolderFilter())
@@ -56,7 +56,7 @@ var uploadFoldersCmd = &cobra.Command{
 	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"file"})
 		folders := grafanaSvc.ExportFolder(getFolderFilter())
 		if len(folders) == 0 {
@@ -78,7 +78,7 @@ var downloadFoldersCmd = &cobra.Command{
 	Aliases: []string{"import", "d"},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"file"})
 		folders := grafanaSvc.ImportFolder(getFolderFilter())
 		if len(folders) == 0 {
@@ -100,7 +100,7 @@ var listFoldersCmd = &cobra.Command{
 	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Listing Folders for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "uid", "title"})
 		folders := grafanaSvc.ListFolder(getFolderFilter())
 

@@ -3,7 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -22,7 +22,7 @@ var contextClear = &cobra.Command{
 	Short: "clear all context",
 	Long:  `clear all contexts`,
 	Run: func(cmd *cobra.Command, args []string) {
-		apphelpers.ClearContexts()
+		config.Config().ClearContexts()
 		log.Info("Successfully deleted all configured contexts")
 	},
 }
@@ -42,8 +42,7 @@ var contextCopy = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		src := args[0]
 		dest := args[1]
-		apphelpers.CopyContext(src, dest)
-
+		config.Config().CopyContext(src, dest)
 	},
 }
 
@@ -60,7 +59,7 @@ var contextDelete = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := args[0]
-		apphelpers.DeleteContext(ctx)
+		config.Config().DeleteContext(ctx)
 		log.Infof("Successfully deleted context %s", ctx)
 	},
 }
@@ -71,15 +70,15 @@ var contextList = &cobra.Command{
 	Long:  `List contexts.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tableObj.AppendHeader(table.Row{"context", "active"})
-		contexts := apphelpers.GetContexts()
-		activeContext := apphelpers.GetContext()
-		for _, item := range contexts {
+		contexts := config.Config().GetAppConfig().GetContexts()
+		activeContext := config.Config().GetAppConfig().GetContext()
+		for key, _ := range contexts {
 			active := false
-			if item == strings.ToLower(activeContext) {
-				item = fmt.Sprintf("*%s", activeContext)
+			if key == strings.ToLower(activeContext) {
+				key = fmt.Sprintf("*%s", activeContext)
 				active = true
 			}
-			tableObj.AppendRow(table.Row{item, active})
+			tableObj.AppendRow(table.Row{key, active})
 		}
 
 		tableObj.Render()
@@ -99,8 +98,7 @@ var contextNew = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := args[0]
-		apphelpers.NewContext(ctx)
-
+		config.Config().NewContext(ctx)
 	},
 }
 
@@ -117,7 +115,7 @@ var contextSet = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		context := args[0]
-		apphelpers.SetContext(context)
+		config.Config().ChangeContext(context)
 
 	},
 }
@@ -127,11 +125,11 @@ var contextShow = &cobra.Command{
 	Short: "show optional[context]",
 	Long:  `show contexts optional[context]`,
 	Run: func(cmd *cobra.Command, args []string) {
-		context := apphelpers.GetContext()
-		if len(args) > 1 && len(args[0]) > 0 {
+		context := config.Config().GetAppConfig().GetContext()
+		if len(args) > 0 && len(args[0]) > 0 {
 			context = args[0]
 		}
-		apphelpers.ShowContext(context)
+		config.Config().PrintContext(context)
 
 	},
 }

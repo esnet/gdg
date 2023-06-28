@@ -2,10 +2,7 @@ package service
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/esnet/gdg/internal/api"
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client"
 	log "github.com/sirupsen/logrus"
@@ -53,7 +50,7 @@ func NewDashNGoImpl() *DashNGoImpl {
 
 func newInstance() *DashNGoImpl {
 	obj := &DashNGoImpl{}
-	obj.grafanaConf = apphelpers.GetCtxDefaultGrafanaConfig()
+	obj.grafanaConf = config.Config().GetDefaultGrafanaConfig()
 	obj.configRef = config.Config().ViperConfig()
 	obj.Login()
 
@@ -70,12 +67,8 @@ func (s *DashNGoImpl) SetStorage(v Storage) {
 
 func configureStorage(obj *DashNGoImpl) {
 	//config
-	appData := config.Config().ViperConfig().GetStringMap(fmt.Sprintf("storage_engine.%s", obj.grafanaConf.Storage))
+	storageType, appData := config.Config().GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
 
-	storageType := "local"
-	if len(appData) != 0 {
-		storageType = appData["kind"].(string)
-	}
 	var err error
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, StorageContext, appData)
@@ -87,7 +80,6 @@ func configureStorage(obj *DashNGoImpl) {
 				log.Warn("falling back on Local Storage, Cloud storage configuration error")
 				obj.storage = NewLocalStorage(ctx)
 			}
-
 		}
 	default:
 		obj.storage = NewLocalStorage(ctx)

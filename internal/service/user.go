@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	gapi "github.com/esnet/grafana-swagger-api-golang"
@@ -106,7 +105,7 @@ func (s *DashNGoImpl) isAdmin(id int64, name string) bool {
 }
 
 func (s *DashNGoImpl) ExportUsers(filter filters.Filter) []models.UserProfileDTO {
-	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.UserResource), false)
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for userListings")
 	}
@@ -122,7 +121,7 @@ func (s *DashNGoImpl) ExportUsers(filter filters.Filter) []models.UserProfileDTO
 	}
 
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.UserResource), file)
+		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawUser, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file: %s", fileLocation)

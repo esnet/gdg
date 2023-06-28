@@ -54,12 +54,12 @@ func (s *DashNGoImpl) getAdminAuth() runtime.ClientAuthInfoWriter {
 
 func (s *DashNGoImpl) getAuth() runtime.ClientAuthInfoWriter {
 	if s.grafanaConf.APIToken != "" {
-		return gapi.APIKeyAuthenticator{
+		return &gapi.APIKeyAuthenticator{
 			APIKey: s.grafanaConf.APIToken,
 		}
 
 	} else {
-		return gapi.BasicAuthenticator{
+		return &gapi.BasicAuthenticator{
 			Username: s.grafanaConf.UserName,
 			Password: s.grafanaConf.Password,
 		}

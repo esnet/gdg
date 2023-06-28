@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	api "github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -29,7 +29,7 @@ var downloadTeamCmd = &cobra.Command{
 	Aliases: []string{"import", "d"},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Importing Teams for context: '%s'", apphelpers.GetContext())
+		log.Infof("Importing Teams for context: '%s'", config.Config().AppConfig.GetContext())
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
 		savedFiles := grafanaSvc.ImportTeams(filter)
 		if len(savedFiles) == 0 {
@@ -54,7 +54,7 @@ var uploadTeamCmd = &cobra.Command{
 	Aliases: []string{"export", "u"},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Exporting Teams for context: '%s'", apphelpers.GetContext())
+		log.Infof("Exporting Teams for context: '%s'", config.Config().AppConfig.GetContext())
 		log.Warn("Currently support for import Admin members is not support, there will be 1 admin, which is the default admin user")
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
 		savedFiles := grafanaSvc.ExportTeams(filter)
@@ -90,7 +90,7 @@ var listTeamCmd = &cobra.Command{
 	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Infof("Listing teams for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing teams for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "memberID", "member Permission"})
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
 		teams := grafanaSvc.ListTeams(filter)
@@ -117,7 +117,7 @@ var deleteTeamCmd = &cobra.Command{
 	Long:    `Delete All Team from grafana`,
 	Aliases: []string{"c"},
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Infof("Deleting teams for context: '%s'", apphelpers.GetContext())
+		log.Infof("Deleting teams for context: '%s'", config.Config().AppConfig.GetContext())
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
 		tableObj.AppendHeader(table.Row{"type", "team ID", "team Name"})
 		teams, err := grafanaSvc.DeleteTeam(filter)
