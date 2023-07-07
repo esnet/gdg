@@ -12,6 +12,10 @@ import (
 	"strings"
 )
 
+var (
+	skipConfirmAction bool
+)
+
 func parseDashboardGlobalFlags(cmd *cobra.Command) []string {
 	folderFilter, _ := cmd.Flags().GetString("folder")
 	dashboardFilter, _ := cmd.Flags().GetString("dashboard")
@@ -51,15 +55,14 @@ var clearDashboards = &cobra.Command{
 }
 
 // askForConfirmation prompts user to confirm operation
-func askForConfirmation(msg string) {
+// msg Message to prompt the user with
+// validate returns true/false on success or terminates the process
+func askForConfirmation(msg string, validate func(response string) bool) bool {
 	fmt.Printf(msg)
 	r := bufio.NewReader(os.Stdin)
 	ans, _ := r.ReadString('\n')
 	response := strings.ToLower(ans)
-	if response[0] != 'y' && response[0] != 'Y' {
-		log.Infof("Goodbye")
-		os.Exit(0)
-	}
+	return validate(response)
 }
 
 var uploadDashboard = &cobra.Command{
@@ -71,11 +74,17 @@ var uploadDashboard = &cobra.Command{
 
 		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 
-		confirm, _ := cmd.Flags().GetBool("skip-confirmation")
-		if confirm {
+		if !skipConfirmAction {
 			askForConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
 				"(or all folders if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
-				"continue (y/n)", strings.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), ", ")))
+				"continue (y/n)", strings.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
+			), func(ans string) bool {
+				if ans[0] != 'y' {
+					log.Infof("Goodbye")
+					os.Exit(0)
+				}
+				return true
+			})
 		}
 		grafanaSvc.ExportDashboards(filter)
 
@@ -141,7 +150,7 @@ var listDashboards = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(dashboard)
-	dashboard.PersistentFlags().BoolP("skip-confirmation", "", true, "when set to true, bypass confirmation prompts")
+	dashboard.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
 	dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
 	dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
 	dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by Tags (does not apply on upload)")
