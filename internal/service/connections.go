@@ -15,16 +15,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// DataSourcesApi Contract definition
-type DataSourcesApi interface {
-	ListDataSources(filter filters.Filter) []models.DataSourceListItemDTO
-	ImportDataSources(filter filters.Filter) []string
-	ExportDataSources(filter filters.Filter) []string
-	DeleteAllDataSources(filter filters.Filter) []string
+// ConnectionsApi Contract definition
+type ConnectionsApi interface {
+	ListConnections(filter filters.Filter) []models.DataSourceListItemDTO
+	DownloadConnections(filter filters.Filter) []string
+	UploadConnections(filter filters.Filter) []string
+	DeleteAllConnections(filter filters.Filter) []string
+	ConnectionPermissions
 }
 
-// NewDataSourceFilter
-func NewDataSourceFilter(name string) filters.Filter {
+// NewConnectionFilter
+func NewConnectionFilter(name string) filters.Filter {
 	filterEntity := filters.NewBaseFilter()
 	filterEntity.AddFilter(filters.Name, name)
 	filterEntity.AddValidation(filters.DefaultFilter, func(i interface{}) bool {
@@ -41,8 +42,8 @@ func NewDataSourceFilter(name string) filters.Filter {
 	return filterEntity
 }
 
-// ListDataSources list all the currently configured datasources
-func (s *DashNGoImpl) ListDataSources(filter filters.Filter) []models.DataSourceListItemDTO {
+// ListConnections list all the currently configured datasources
+func (s *DashNGoImpl) ListConnections(filter filters.Filter) []models.DataSourceListItemDTO {
 	ds, err := s.client.Datasources.GetDataSources(datasources.NewGetDataSourcesParams(), s.getAuth())
 	if err != nil {
 		panic(err)
@@ -63,23 +64,23 @@ func (s *DashNGoImpl) ListDataSources(filter filters.Filter) []models.DataSource
 	return result
 }
 
-// ImportDataSources  will read in all the configured datasources.
+// DownloadConnections  will read in all the configured datasources.
 // NOTE: credentials cannot be retrieved and need to be set via configuration
-func (s *DashNGoImpl) ImportDataSources(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadConnections(filter filters.Filter) []string {
 	var (
 		dsListing []models.DataSourceListItemDTO
 		dsPacked  []byte
 		err       error
 		dataFiles []string
 	)
-	dsListing = s.ListDataSources(filter)
+	dsListing = s.ListConnections(filter)
 	for _, ds := range dsListing {
 		if dsPacked, err = json.MarshalIndent(ds, "", "	"); err != nil {
 			log.Errorf("%s for %s\n", err, ds.Name)
 			continue
 		}
 
-		dsPath := buildResourcePath(slug.Make(ds.Name), config.DataSourceResource)
+		dsPath := buildResourcePath(slug.Make(ds.Name), config.ConnectionResource)
 
 		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
 			log.Errorf("%s for %s\n", err, slug.Make(ds.Name))
@@ -91,9 +92,9 @@ func (s *DashNGoImpl) ImportDataSources(filter filters.Filter) []string {
 }
 
 // Removes all current datasources
-func (s *DashNGoImpl) DeleteAllDataSources(filter filters.Filter) []string {
+func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 	var ds []string = make([]string, 0)
-	items := s.ListDataSources(filter)
+	items := s.ListConnections(filter)
 	for _, item := range items {
 		p := datasources.NewDeleteDataSourceByIDParams()
 		p.ID = fmt.Sprintf("%d", item.ID)
@@ -109,24 +110,24 @@ func (s *DashNGoImpl) DeleteAllDataSources(filter filters.Filter) []string {
 }
 
 // ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
-func (s *DashNGoImpl) ExportDataSources(filter filters.Filter) []string {
+func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
 	var exported = make([]string, 0)
 
-	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.DataSourceResource))
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.DataSourceResource), false)
+	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource))
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource), false)
 
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for datasources")
 	}
-	dsListing = s.ListDataSources(filter)
+	dsListing = s.ListConnections(filter)
 
 	var rawDS []byte
 
 	dsSettings := s.grafanaConf.GetDataSourceSettings()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.DataSourceResource), file)
+		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 				log.WithError(err).Errorf("failed to read file: %s", fileLocation)
@@ -143,7 +144,7 @@ func (s *DashNGoImpl) ExportDataSources(filter filters.Filter) []string {
 				continue
 			}
 			dsConfig := s.grafanaConf
-			var creds *config.GrafanaDataSource
+			var creds *config.GrafanaConnection
 
 			if newDS.BasicAuth {
 				creds, err = dsConfig.GetCredentials(newDS)

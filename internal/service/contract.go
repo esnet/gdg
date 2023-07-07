@@ -14,7 +14,7 @@ import (
 type GrafanaService interface {
 	OrganizationsApi
 	DashboardsApi
-	DataSourcesApi
+	ConnectionsApi
 	AlertNotificationsApi
 	UsersApi
 	FoldersApi

@@ -16,8 +16,14 @@ toc: true
 
 ### Changes
   - Adding support for Basic CRU for Orgs
+  - Renamed 'DataSources' command to 'Connections' to match Grafana's naming convention.
+  - Connection Permissions are now supported.  This is an enterprise features and will only function if you have an enterprise version of grafana.  Enterprise features are enabled by setting `enterprise_support: true` for a given context.
 
 
 ### Bug Fixes
   -
+
+
+### Breaking Changes
+  - datasources have been renamed as connections.  If you have an existing backup, simply rename the folder to 'connections' and everything should continue working.
 

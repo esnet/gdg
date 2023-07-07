@@ -15,23 +15,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Configuration struct {
-	defaultConfig *viper.Viper
-	AppConfig     *AppConfig
-}
-
-type AppGlobals struct {
-	Debug           bool `mapstructure:"debug" yaml:"debug"`
-	IgnoreSSLErrors bool `mapstructure:"ignore_ssl_errors" yaml:"ignore_ssl_errors"`
-}
-
-type AppConfig struct {
-	ContextName   string                       `mapstructure:"context_name" yaml:"context_name"`
-	StorageEngine map[string]map[string]string `mapstructure:"storage_engine" yaml:"storage_engine"`
-	Contexts      map[string]*GrafanaConfig    `mapstructure:"contexts" yaml:"contexts"`
-	Global        *AppGlobals                  `mapstructure:"global" yaml:"global"`
-}
-
 func (s *Configuration) ClearContexts() {
 	newContext := make(map[string]*GrafanaConfig)
 	newContext["example"] = &GrafanaConfig{

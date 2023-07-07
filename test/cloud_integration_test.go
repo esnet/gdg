@@ -18,28 +18,28 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	apiClient, cfg := initTest(t, nil)
 
 	//Wipe all data from grafana
-	dsFilter := service.NewDataSourceFilter("")
-	apiClient.DeleteAllDataSources(dsFilter)
+	dsFilter := service.NewConnectionFilter("")
+	apiClient.DeleteAllConnections(dsFilter)
 
-	apiClient.ExportDataSources(dsFilter)
-	dsList := apiClient.ListDataSources(dsFilter)
+	apiClient.UploadConnections(dsFilter)
+	dsList := apiClient.ListConnections(dsFilter)
 	assert.True(t, len(dsList) > 0)
 	SetupCloudFunction(t, cfg, apiClient, []string{"minio", "testing"})
 	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
 
 	log.Info("Importing DataSources")
-	dsStringList := apiClient.ImportDataSources(dsFilter) //Saving to S3
+	dsStringList := apiClient.DownloadConnections(dsFilter) //Saving to S3
 	assert.Equal(t, len(dsList), len(dsStringList))
 	log.Info("Deleting DataSources")
-	deleteDSList := apiClient.DeleteAllDataSources(dsFilter) // Cleaning up Grafana
+	deleteDSList := apiClient.DeleteAllConnections(dsFilter) // Cleaning up Grafana
 	assert.Equal(t, len(deleteDSList), len(dsStringList))
-	dsList = apiClient.ListDataSources(dsFilter)
+	dsList = apiClient.ListConnections(dsFilter)
 	assert.Equal(t, len(dsList), 0)
 	//Load Data from S3
-	apiClient.ExportDataSources(dsFilter) //Load data from S3
-	dsList = apiClient.ListDataSources(dsFilter)
+	apiClient.UploadConnections(dsFilter) //Load data from S3
+	dsList = apiClient.ListConnections(dsFilter)
 	assert.Equal(t, len(dsList), len(dsStringList))
-	apiClient.DeleteAllDataSources(dsFilter) // Cleaning up Grafana
+	apiClient.DeleteAllConnections(dsFilter) // Cleaning up Grafana
 }
 
 // TestDashboardCloudCrud will load testing_data to Grafana from local context.  Switch to CLoud,

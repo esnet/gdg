@@ -51,6 +51,6 @@ The only additional change to the context is to provide a storage label to use:
     ...
 ```
 
-So given the bucket name of `foo` with a prefix of `bar` with the output_path configured as `testing_data` the datasources will be imported to:
+So given the bucket name of `foo` with a prefix of `bar` with the output_path configured as `testing_data` the connections will be imported to:
 
-`s3://foo/bar/testing_data/datasources/` and exported from the same location.  If you need it to be in a different location you can update the prefix accordingly but at destination will follow the typical app patterns.
+`s3://foo/bar/testing_data/connections/` and exported from the same location.  If you need it to be in a different location you can update the prefix accordingly but at destination will follow the typical app patterns.

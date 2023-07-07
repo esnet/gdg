@@ -34,8 +34,8 @@ func TestBuildFolderSourcePath(t *testing.T) {
 }
 
 func TestBuildDataSourcePath(t *testing.T) {
-	result := buildResourcePath(slug.Make("My DS"), config.DataSourceResource)
-	assert.Equal(t, "qa/datasources/my-ds.json", result)
+	result := buildResourcePath(slug.Make("My DS"), config.ConnectionResource)
+	assert.Equal(t, "qa/connections/my-ds.json", result)
 }
 
 func TestBuildAlertNotificationPath(t *testing.T) {

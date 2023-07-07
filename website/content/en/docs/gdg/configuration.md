@@ -37,7 +37,7 @@ contexts:
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - Example
-    datasources:
+    connections:
       credentials:
         default:
           user: admin
@@ -73,13 +73,13 @@ global:
   ignore_ssl_errors: false
 ```
 
-### DataSource 
+### Connection
 
-#### DataSource Credentials
+#### Connection Credentials
 
 #### Current Behavior (Version +v0.4.2)
 
-If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following rules.
+If the connection has BasicAuth enabled, then we'll attempt to set the auth with the following rules.
 
 We will try to find a match given the rules specified:
 
@@ -90,7 +90,7 @@ We will try to find a match given the rules specified:
 ```yaml
   testing:
     output_path: testing_data
-    datasources:
+    connections:
       credential_rules:
         - rules:
             - field: "name"
@@ -113,7 +113,7 @@ We will try to find a match given the rules specified:
 
 ##### Legacy Behavior:
 
-If the datasource has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:
+If the connection has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:
 
 1. Match of DS credentials based on DS name.
 2. Match URL regex for the DS if regex specified.
@@ -124,7 +124,7 @@ An example of a configuration can be seen below
 ```yaml
   testing:
     output_path: testing_data
-    datasources:
+    connections:
       credentials:
         default:
           user: user
@@ -143,7 +143,7 @@ An example of a configuration can be seen below
  
  ```
 
-#### DataSource Filters
+#### Connection Filters
 
 #### Current Behavior (+v0.4.2)
 
@@ -154,13 +154,13 @@ Pattern matching is the same as the Credentials mapping.
   - field represents any valid JSON Path 
   - regex: any valid [regex](https://github.com/google/re2/wiki/Syntax) supported by golang
   
-The example below will exclude any datasources named "Google Sheets".  It will also only include datasources with the type elasticsearch or mysql
+The example below will exclude any connections named "Google Sheets".  It will also only include connections with the type elasticsearch or mysql
 
 ```yaml
 contexts:
   testing:
     output_path: test/data
-    datasources:
+    connections:
       exclude_filters:
         - field: "name"
           regex: "Google Sheets"
@@ -171,7 +171,7 @@ contexts:
 
 #### Legacy Behavior
 
-This feature allows you to exclude datasource by name or include them by type.  Please note that the logic switches based on the data type.
+This feature allows you to exclude connection by name or include them by type.  Please note that the logic switches based on the data type.
 
 **name filter:**
 
@@ -182,11 +182,11 @@ datasources:
     name_exclusions: "DEV-*|-Dev-*"
 ```
 
-Will exclude any datasource that matches the name regex.
+Will exclude any connection that matches the name regex.
 
 **Type Filter**
 
-Will ONLY include datasource that are listed. 
+Will ONLY include connection that are listed. 
 
 ```yaml
 datasources:
@@ -195,7 +195,7 @@ datasources:
       - elasticsearch
 ```
 
-The snippet above will ONLY import datasources for elasticsearch
+The snippet above will ONLY import connections for elasticsearch
 
 
 

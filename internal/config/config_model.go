@@ -14,15 +14,16 @@ import (
 type ResourceType string
 
 const (
-	AlertNotificationResource = "alertnotifications"
-	DashboardResource         = "dashboards"
-	DataSourceResource        = "datasources"
-	FolderPermissionResource  = "folders-permissions"
-	FolderResource            = "folders"
-	LibraryElementResource    = "libraryelements"
-	OrganizationResource      = "organizations"
-	TeamResource              = "teams"
-	UserResource              = "users"
+	AlertNotificationResource    = "alertnotifications"
+	ConnectionPermissionResource = "connections-permissions"
+	ConnectionResource           = "connections"
+	DashboardResource            = "dashboards"
+	FolderPermissionResource     = "folders-permissions"
+	FolderResource               = "folders"
+	LibraryElementResource       = "libraryelements"
+	OrganizationResource         = "organizations"
+	TeamResource                 = "teams"
+	UserResource                 = "users"
 )
 
 func (s *ResourceType) String() string {
@@ -33,55 +34,15 @@ func (s *ResourceType) GetPath(basePath string) string {
 	return path.Join(basePath, s.String())
 }
 
-// GrafanaConfig model wraps auth and watched list for grafana
-type GrafanaConfig struct {
-	Storage            string              `yaml:"storage"`
-	AdminEnabled       bool                `yaml:"-"`
-	URL                string              `yaml:"url"`
-	APIToken           string              `yaml:"token"`
-	UserName           string              `yaml:"user_name"`
-	Password           string              `yaml:"password"`
-	Organization       string              `yaml:"organization"`
-	MonitoredFolders   []string            `yaml:"watched"`
-	DataSourceSettings *DataSourceSettings `yaml:"datasources"`
-	FilterOverrides    *FilterOverrides    `yaml:"filter_override"`
-	OutputPath         string              `yaml:"output_path"`
-}
-
-type DataSourceSettings struct {
-	FilterRules   []MatchingRule     `yaml:"exclude_filters,omitempty"`
-	MatchingRules []RegexMatchesList `yaml:"credential_rules,omitempty"`
-}
-
-type RegexMatchesList struct {
-	Rules []MatchingRule     `yaml:"rules,omitempty"`
-	Auth  *GrafanaDataSource `yaml:"auth,omitempty"`
-}
-
-type CredentialRule struct {
-	RegexMatchesList
-	Auth *GrafanaDataSource `yaml:"auth,omitempty"`
-}
-
-type MatchingRule struct {
-	Field     string `yaml:"field,omitempty"`
-	Regex     string `yaml:"regex,omitempty"`
-	Inclusive bool   `yaml:"inclusive,omitempty"`
-}
-
-type FilterOverrides struct {
-	IgnoreDashboardFilters bool `yaml:"ignore_dashboard_filters"`
-}
-
-func (ds *DataSourceSettings) FiltersEnabled() bool {
+func (ds *ConnectionSettings) FiltersEnabled() bool {
 	return ds.FilterRules != nil
 }
 
-func (ds *DataSourceSettings) GetCredentials(dataSourceName models.AddDataSourceCommand) (*GrafanaDataSource, error) {
+func (ds *ConnectionSettings) GetCredentials(dataSourceName models.AddDataSourceCommand) (*GrafanaConnection, error) {
 	data, err := json.Marshal(dataSourceName)
 	if err != nil {
-		log.Warn("Unable to marshall Datasource, unable to fetch credentials")
-		return nil, fmt.Errorf("unable to marshall Datasource, unable to fetch credentials")
+		log.Warn("Unable to marshall Connection, unable to fetch credentials")
+		return nil, fmt.Errorf("unable to marshall Connection, unable to fetch credentials")
 	}
 	//Get Auth based on New Matching Rules
 	parser := gjson.ParseBytes(data)
@@ -115,7 +76,7 @@ func (ds *DataSourceSettings) GetCredentials(dataSourceName models.AddDataSource
 	return nil, errors.New("no valid configuration found, falling back on default")
 }
 
-func (ds *DataSourceSettings) IsExcluded(item interface{}) bool {
+func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
 	data, err := json.Marshal(item)
 	if err != nil {
 		log.Warn("Unable to serialize object, cannot validate")
@@ -152,12 +113,6 @@ func (ds *DataSourceSettings) IsExcluded(item interface{}) bool {
 
 }
 
-type DataSourceFilters struct {
-	NameExclusions  string   `yaml:"name_exclusions"`
-	DataSourceTypes []string `yaml:"valid_types"`
-	pattern         *regexp.Regexp
-}
-
 func (s *GrafanaConfig) GetFilterOverrides() *FilterOverrides {
 	if s.FilterOverrides == nil {
 		s.FilterOverrides = &FilterOverrides{IgnoreDashboardFilters: false}
@@ -165,9 +120,9 @@ func (s *GrafanaConfig) GetFilterOverrides() *FilterOverrides {
 	return s.FilterOverrides
 }
 
-func (s *GrafanaConfig) GetDataSourceSettings() *DataSourceSettings {
+func (s *GrafanaConfig) GetDataSourceSettings() *ConnectionSettings {
 	if s.DataSourceSettings == nil {
-		s.DataSourceSettings = &DataSourceSettings{}
+		s.DataSourceSettings = &ConnectionSettings{}
 	}
 	return s.DataSourceSettings
 }
@@ -181,7 +136,7 @@ func (s *GrafanaConfig) GetDashboardOutput() string {
 }
 
 func (s *GrafanaConfig) GetDataSourceOutput() string {
-	return path.Join(s.OutputPath, DataSourceResource)
+	return path.Join(s.OutputPath, ConnectionResource)
 }
 
 func (s *GrafanaConfig) GetAlertNotificationOutput() string {
@@ -210,7 +165,7 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 }
 
 // GetCredentials return credentials for a given datasource or falls back on default value
-func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceCommand) (*GrafanaDataSource, error) {
+func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceCommand) (*GrafanaConnection, error) {
 	source, err := s.GetDataSourceSettings().GetCredentials(dataSourceName)
 	if err == nil {
 		return source, nil
@@ -219,8 +174,7 @@ func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceComman
 	return nil, fmt.Errorf("no datasource credentials found for '%s', falling back on default", dataSourceName.Name)
 }
 
-// GrafanaDataSource Default datasource credentials
-type GrafanaDataSource struct {
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
+// IsEnterprise Returns true when enterprise is enabled
+func (s *GrafanaConfig) IsEnterprise() bool {
+	return s.EnterpriseSupport
 }

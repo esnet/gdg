@@ -22,19 +22,19 @@ func NewExtendedApi() *ExtendedApi {
 	return &o
 }
 
-func (s *ExtendedApi) getRequestBuilder() *requests.Builder {
+func (extended *ExtendedApi) getRequestBuilder() *requests.Builder {
 
-	req := requests.URL(s.grafanaCfg.URL)
+	req := requests.URL(extended.grafanaCfg.URL)
 	if config.Config().IgnoreSSL() {
 		customTransport := http.DefaultTransport.(*http.Transport).Clone()
 		customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		req = req.Transport(customTransport)
 	}
 
-	if s.grafanaCfg.UserName != "" && s.grafanaCfg.Password != "" {
-		req.BasicAuth(s.grafanaCfg.UserName, s.grafanaCfg.Password)
+	if extended.grafanaCfg.APIToken != "" {
+		req.Header("Authorization", "Bearer "+extended.grafanaCfg.APIToken)
 	} else {
-		req.Header("Authorization", "Bearer "+s.grafanaCfg.APIToken)
+		req.BasicAuth(extended.grafanaCfg.UserName, extended.grafanaCfg.Password)
 	}
 
 	return req
