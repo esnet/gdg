@@ -1,14 +1,13 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"os"
 	"strings"
 )
 
@@ -54,17 +53,6 @@ var clearDashboards = &cobra.Command{
 	},
 }
 
-// askForConfirmation prompts user to confirm operation
-// msg Message to prompt the user with
-// validate returns true/false on success or terminates the process
-func askForConfirmation(msg string, validate func(response string) bool) bool {
-	fmt.Printf(msg)
-	r := bufio.NewReader(os.Stdin)
-	ans, _ := r.ReadString('\n')
-	response := strings.ToLower(ans)
-	return validate(response)
-}
-
 var uploadDashboard = &cobra.Command{
 	Use:     "upload",
 	Short:   "upload all dashboards to grafana",
@@ -75,16 +63,10 @@ var uploadDashboard = &cobra.Command{
 		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 
 		if !skipConfirmAction {
-			askForConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
+			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
 				"(or all folders if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
-				"continue (y/n)", strings.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
-			), func(ans string) bool {
-				if ans[0] != 'y' {
-					log.Infof("Goodbye")
-					os.Exit(0)
-				}
-				return true
-			})
+				"continue (y/n) ", strings.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
+			), "", true)
 		}
 		grafanaSvc.ExportDashboards(filter)
 
