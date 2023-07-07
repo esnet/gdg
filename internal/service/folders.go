@@ -57,6 +57,7 @@ func (s *DashNGoImpl) checkFolderName(folderName string) bool {
 	return true
 }
 
+// ImportFolderPermissions downloads all the current folder permissions based on filter.
 func (s *DashNGoImpl) ImportFolderPermissions(filter filters.Filter) []string {
 	log.Infof("Downloading folder permissions")
 	var (
@@ -81,6 +82,8 @@ func (s *DashNGoImpl) ImportFolderPermissions(filter filters.Filter) []string {
 
 }
 
+// ExportFolderPermissions update current folder permissions to match local file system.
+// Note: This expects all the current users and teams to already exist.
 func (s *DashNGoImpl) ExportFolderPermissions(filter filters.Filter) []string {
 	var (
 		rawFolder []byte
@@ -134,31 +137,28 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*models.H
 	r := make(map[*models.Hit][]*models.DashboardACLInfoDTO, 0)
 
 	for ndx, foldersEntry := range foldersList {
-		func(j *models.Hit) {
-			p := folder_permissions.NewGetFolderPermissionListParams()
-			p.FolderUID = j.UID
-			results, err := s.client.FolderPermissions.GetFolderPermissionList(p, s.getAuth())
-			if err != nil {
-				msg := fmt.Sprintf("Unable to get folder permissions for folderUID: %s", p.FolderUID)
-				switch err.(type) {
-				case *folder_permissions.GetFolderPermissionListInternalServerError:
-					castError := err.(*folder_permissions.GetFolderPermissionListInternalServerError)
-					log.WithField("message", *castError.GetPayload().Message).
-						WithError(err).Error(msg)
-				default:
-					log.WithError(err).Error(msg)
-				}
-
-			} else {
-				r[foldersList[ndx]] = results.GetPayload()
+		p := folder_permissions.NewGetFolderPermissionListParams()
+		p.FolderUID = foldersEntry.UID
+		results, err := s.client.FolderPermissions.GetFolderPermissionList(p, s.getAuth())
+		if err != nil {
+			msg := fmt.Sprintf("Unable to get folder permissions for folderUID: %s", p.FolderUID)
+			switch err.(type) {
+			case *folder_permissions.GetFolderPermissionListInternalServerError:
+				castError := err.(*folder_permissions.GetFolderPermissionListInternalServerError)
+				log.WithField("message", *castError.GetPayload().Message).
+					WithError(err).Error(msg)
+			default:
+				log.WithError(err).Error(msg)
 			}
-
-		}(foldersEntry)
+		} else {
+			r[foldersList[ndx]] = results.GetPayload()
+		}
 	}
 
 	return r
 }
 
+// ListFolder list the current existing folders that match the given filter.
 func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 	var result = make([]*models.Hit, 0)
 	if config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
@@ -193,7 +193,7 @@ func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 
 }
 
-// ImportFolder
+// ImportFolder Download all the given folders matching filter
 func (s *DashNGoImpl) ImportFolder(filter filters.Filter) []string {
 	var (
 		dsPacked  []byte
@@ -217,6 +217,7 @@ func (s *DashNGoImpl) ImportFolder(filter filters.Filter) []string {
 	return dataFiles
 }
 
+// ExportFolder upload all the given folders to grafana
 func (s *DashNGoImpl) ExportFolder(filter filters.Filter) []string {
 	var (
 		result    []string
@@ -269,6 +270,7 @@ func (s *DashNGoImpl) ExportFolder(filter filters.Filter) []string {
 	return result
 }
 
+// DeleteAllFolder deletes all the matching folders from grafana
 func (s *DashNGoImpl) DeleteAllFolder(filter filters.Filter) []string {
 	var result []string
 	folderListing := s.ListFolder(filter)
@@ -292,6 +294,7 @@ func getFolderNameIDMap(folders []*models.Hit) map[string]int64 {
 	return folderMap
 }
 
+// Creates a reverse look up map, where the values are the keys and the keys are the values.
 func reverseLookUp[T comparable, Y comparable](m map[T]Y) map[Y]T {
 	reverse := make(map[Y]T, 0)
 	for key, val := range m {
