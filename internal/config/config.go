@@ -52,11 +52,12 @@ func (s *Configuration) ClearContexts() {
 // GetDefaultGrafanaConfig returns the default aka. selected grafana config
 func (s *Configuration) GetDefaultGrafanaConfig() *GrafanaConfig {
 	name := s.GetAppConfig().GetContext()
+
 	val, ok := s.GetAppConfig().GetContexts()[name]
 	if ok {
 		return val
 	} else {
-		log.Fatal("Context is not found.  Please check your config")
+		log.Fatalf("Context: '%s' is not found.  Please check your config", name)
 	}
 	return nil
 
@@ -71,7 +72,7 @@ func (s *Configuration) CopyContext(src, dest string) {
 	}
 	cfg, ok := contexts[src]
 	if !ok {
-		log.Fatal("Cannot set context.  No valid configuration found in importer.yml")
+		log.Fatalf("Cannot find context to: '%s'.  No valid configuration found in importer.yml", src)
 	}
 	newCopy, err := tools.DeepCopy(*cfg)
 	if err != nil {

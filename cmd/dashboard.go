@@ -65,8 +65,7 @@ var uploadDashboard = &cobra.Command{
 		if !skipConfirmAction {
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
 				"(or all folders if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
-
-				"continue (y/n) ", strings.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
+				"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
 			), "", true)
 		}
 		grafanaSvc.ExportDashboards(filter)
