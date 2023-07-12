@@ -3,7 +3,6 @@ package api
 import (
 	"crypto/tls"
 	"github.com/carlmjohnson/requests"
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"net/http"
 )
@@ -15,7 +14,7 @@ type ExtendedApi struct {
 }
 
 func NewExtendedApi() *ExtendedApi {
-	cfg := apphelpers.GetCtxDefaultGrafanaConfig()
+	cfg := config.Config().GetDefaultGrafanaConfig()
 	o := ExtendedApi{
 		grafanaCfg: cfg,
 	}

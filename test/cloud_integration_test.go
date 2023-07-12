@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	_ "gocloud.dev/blob/memblob"
+	"os"
 	"testing"
 )
 
@@ -12,7 +13,9 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t, nil)
+
+	os.Setenv("GDG_CONTEXT_NAME", "testing")
+	apiClient, cfg := initTest(t, nil)
 
 	//Wipe all data from grafana
 	dsFilter := service.NewDataSourceFilter("")
@@ -21,7 +24,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	apiClient.ExportDataSources(dsFilter)
 	dsList := apiClient.ListDataSources(dsFilter)
 	assert.True(t, len(dsList) > 0)
-	SetupCloudFunction(apiClient, []string{"minio", "testing"})
+	SetupCloudFunction(t, cfg, apiClient, []string{"minio", "testing"})
 	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
 
 	log.Info("Importing DataSources")
@@ -45,7 +48,8 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t, nil)
+	os.Setenv("GDG_CONTEXT_NAME", "testing")
+	apiClient, cfg := initTest(t, nil)
 
 	//Wipe all data from grafana
 	dashFilter := service.NewDashboardFilter("", "", "")
@@ -56,7 +60,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	assert.True(t, len(boards) > 0)
 
 	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
-	SetupCloudFunction(apiClient, []string{"minio", "testing"})
+	_, apiClient = SetupCloudFunction(t, cfg, apiClient, []string{"minio", "testing"})
 
 	//At this point all operations are reading/writing from Minio
 	log.Info("Importing Dashboards")
@@ -72,6 +76,4 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	boards = apiClient.ListDashboards(dashFilter) //Read data
 	assert.Equal(t, len(list), len(boards))       //verify
 	apiClient.DeleteAllDashboards(dashFilter)
-	//
-
 }

@@ -23,6 +23,7 @@ const (
 	CloudType  = "cloud_type"
 	BucketName = "bucket_name"
 	Prefix     = "prefix"
+	Kind       = "kind"
 )
 
 // getCloudLocation appends prefix to path
@@ -99,7 +100,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 	if contextVal == nil {
 		return nil, errors.New("cannot configure GCP storage, context missing")
 	}
-	appData, ok := contextVal.(map[string]interface{})
+	appData, ok := contextVal.(map[string]string)
 	if !ok {
 		return nil, errors.New("cannot convert appData to string map")
 	}

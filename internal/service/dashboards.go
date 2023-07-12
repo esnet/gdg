@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	gapi "github.com/esnet/grafana-swagger-api-golang"
@@ -161,7 +160,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 	var limit uint = 5000 // Upper bound of Grafana API call
 
 	var tagsParams = make([]string, 0)
-	if !apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+	if !config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
 		tagsParams = append(tagsParams, filterReq.GetEntity(filters.TagsFilter)...)
 	}
 
@@ -188,7 +187,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 	var validUid bool
 	for _, link := range boardLinks {
 		validFolder = false
-		if apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+		if config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
 			validFolder = true
 		} else if funk.ContainsString(folderFilters, link.FolderTitle) {
 			validFolder = true
@@ -275,7 +274,7 @@ func (s *DashNGoImpl) ExportDashboards(filterReq filters.Filter) {
 		folderName string = ""
 		folderId   int64
 	)
-	path := apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.DashboardResource)
+	path := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
 	filesInDir, err := s.storage.FindAllFiles(path, true)
 	if err != nil {
 		log.WithError(err).Fatal("unable to find any files to export from storage engine")
@@ -317,7 +316,7 @@ func (s *DashNGoImpl) ExportDashboards(filterReq filters.Filter) {
 			folderId = DefaultFolderId
 			folderName = DefaultFolderName
 		}
-		if !slices.Contains(validFolders, folderName) && !apphelpers.GetCtxDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+		if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
 			log.Debugf("Skipping file %s, doesn't match any valid folders", file)
 			continue
 		}

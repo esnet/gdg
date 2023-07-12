@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
@@ -60,7 +60,7 @@ var downloadDataSources = &cobra.Command{
 	Long:    `download all datasources from grafana to local filesystem`,
 	Aliases: []string{"d", "import"},
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Infof("Importing datasources for context: '%s'", apphelpers.GetContext())
+		log.Infof("Importing datasources for context: '%s'", config.Config().GetAppConfig().GetContext())
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
 		filters := service.NewDataSourceFilter(dashboardFilter)
 		savedFiles := grafanaSvc.ImportDataSources(filters)
@@ -83,12 +83,12 @@ var listDataSources = &cobra.Command{
 		dashboardFilter, _ := cmd.Flags().GetString("datasource")
 		filters := service.NewDataSourceFilter(dashboardFilter)
 		dsListing := grafanaSvc.ListDataSources(filters)
-		log.Infof("Listing datasources for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing datasources for context: '%s'", config.Config().GetAppConfig().GetContext())
 		if len(dsListing) == 0 {
 			log.Info("No datasources found")
 		} else {
 			for _, link := range dsListing {
-				url := fmt.Sprintf("%s/datasource/edit/%d", apphelpers.GetCtxDefaultGrafanaConfig().URL, link.ID)
+				url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
 				tableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
 			}
 			tableObj.Render()

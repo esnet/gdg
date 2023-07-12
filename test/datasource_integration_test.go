@@ -49,7 +49,7 @@ func TestDataSourceFilter(t *testing.T) {
 	}
 	initTest(t, nil)
 
-	testingContext := config.Config().Contexts()["testing"]
+	testingContext := config.Config().GetAppConfig().GetContexts()["testing"]
 	testingContext.GetDataSourceSettings().FilterRules = []config.MatchingRule{
 		{
 			Field: "name",
@@ -61,7 +61,7 @@ func TestDataSourceFilter(t *testing.T) {
 			Regex:     "elasticsearch|globalnoc-tsds-datasource",
 		},
 	}
-	testingContext = config.Config().Contexts()["testing"]
+	testingContext = config.Config().GetAppConfig().GetContexts()["testing"]
 
 	apiClient := service.NewApiService("dummy")
 

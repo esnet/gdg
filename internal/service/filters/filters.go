@@ -1,7 +1,7 @@
 package filters
 
 import (
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/thoas/go-funk"
 	"regexp"
@@ -92,7 +92,7 @@ func (s *BaseFilter) GetEntity(name FilterType) []string {
 	case TagsFilter:
 		return s.getEntities(TagsFilter, []string{})
 	case FolderFilter:
-		return s.getEntities(FolderFilter, apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders())
+		return s.getEntities(FolderFilter, config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders())
 	default:
 		return defaultResponse
 	}

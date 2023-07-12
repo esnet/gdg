@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/legacy_alerts_notification_channels"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
@@ -85,7 +84,7 @@ func (s *DashNGoImpl) ExportAlertNotifications() []string {
 		err                error
 	)
 
-	dirPath := apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.AlertNotificationResource)
+	dirPath := config.Config().GetDefaultGrafanaConfig().GetPath(config.AlertNotificationResource)
 	filesInDir, err = s.storage.FindAllFiles(dirPath, true)
 	if err != nil {
 		log.WithError(err).Fatalf("Unable to find Alert data in Storage System %s", s.storage.Name())

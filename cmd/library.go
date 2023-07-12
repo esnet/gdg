@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
@@ -69,7 +69,7 @@ var downloadLibary = &cobra.Command{
 		log.Info("exporting lib elements")
 		//filter := parseDashboardGlobalFlags(cmd)
 		savedFiles := grafanaSvc.ImportLibraryElements(nil)
-		log.Infof("Importing library for context: '%s'", apphelpers.GetContext())
+		log.Infof("Importing library for context: '%s'", config.Config().AppConfig.GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"library", file})
@@ -89,7 +89,7 @@ var listLibraries = &cobra.Command{
 		elements := grafanaSvc.ListLibraryElements(nil)
 		log.Infof("Number of elements is: %d", len(elements))
 
-		log.Infof("Listing library for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing library for context: '%s'", config.Config().AppConfig.GetContext())
 		for _, link := range elements {
 			tableObj.AppendRow(table.Row{link.ID, link.UID, link.Meta.FolderName, link.Name, link.Type})
 
@@ -113,7 +113,7 @@ var listLibraryConnections = &cobra.Command{
 
 		libElmentUid := args[0]
 		elements := grafanaSvc.ListLibraryElementsConnections(nil, libElmentUid)
-		log.Infof("Listing library for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing library connections for context: '%s'", config.Config().AppConfig.GetContext())
 		for _, link := range elements {
 			dash := link.Dashboard.(map[string]interface{})
 			tableObj.AppendRow(table.Row{dash["id"].(json.Number), dash["uid"].(string), link.Meta.Slug, dash["title"].(string), link.Meta.FolderTitle})

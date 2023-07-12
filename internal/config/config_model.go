@@ -19,6 +19,7 @@ const (
 	DashboardResource         = "dashboards"
 	DataSourceResource        = "datasources"
 	FolderResource            = "folders"
+	FolderPermissionResource  = "folders-permissions"
 	AlertNotificationResource = "alertnotifications"
 	LibraryElementResource    = "libraryelements"
 )

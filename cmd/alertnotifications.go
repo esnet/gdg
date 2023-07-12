@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
@@ -27,7 +27,7 @@ var clearAlertNotifications = &cobra.Command{
 		log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 
-		log.Infof("Clearing all alert notification channels for context: '%s'", apphelpers.GetContext())
+		log.Infof("Clearing all alert notification channels for context: '%s'", config.Config().AppConfig.GetContext())
 		deleted := grafanaSvc.DeleteAllAlertNotifications()
 		for _, item := range deleted {
 			tableObj.AppendRow(table.Row{"alertnotification", item})
@@ -50,7 +50,7 @@ var uploadAlertNotifications = &cobra.Command{
 		log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 		tableObj.AppendHeader(table.Row{"name", "id", "UID"})
 
-		log.Infof("Exporting alert notification channels for context: '%s'", apphelpers.GetContext())
+		log.Infof("Exporting alert notification channels for context: '%s'", config.Config().AppConfig.GetContext())
 		grafanaSvc.ExportAlertNotifications()
 		items := grafanaSvc.ListAlertNotifications()
 		for _, item := range items {
@@ -73,7 +73,7 @@ var downloadAlertNotifications = &cobra.Command{
 		log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 
-		log.Infof("Importing alert notification channels for context: '%s'", apphelpers.GetContext())
+		log.Infof("Importing alert notification channels for context: '%s'", config.Config().AppConfig.GetContext())
 		savedFiles := grafanaSvc.ImportAlertNotifications()
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"alertnotification", file})
@@ -93,12 +93,12 @@ var listAlertNotifications = &cobra.Command{
 		tableObj.AppendHeader(table.Row{"id", "name", "slug", "type", "default", "url"})
 		alertnotifications := grafanaSvc.ListAlertNotifications()
 
-		log.Infof("Listing alert notifications channels for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing alert notifications channels for context: '%s'", config.Config().AppConfig.GetContext())
 		if len(alertnotifications) == 0 {
 			log.Info("No alert notifications found")
 		} else {
 			for _, link := range alertnotifications {
-				url := fmt.Sprintf("%s/alerting/notification/%d/edit", apphelpers.GetCtxDefaultGrafanaConfig().URL, link.ID)
+				url := fmt.Sprintf("%s/alerting/notification/%d/edit", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
 				tableObj.AppendRow(table.Row{link.ID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
 			}
 			tableObj.Render()

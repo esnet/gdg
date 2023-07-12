@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 
@@ -102,7 +101,7 @@ func (s *DashNGoImpl) ImportTeams(filter filters.Filter) map[*models.TeamDTO][]*
 
 // Export Teams
 func (s *DashNGoImpl) ExportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
-	filesInDir, err := s.storage.FindAllFiles(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.TeamResource), true)
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.TeamResource), true)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for teams")
 	}
@@ -141,7 +140,7 @@ func (s *DashNGoImpl) ExportTeams(filter filters.Filter) map[*models.TeamDTO][]*
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
 
-			teamMemberLocation := filepath.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetPath(config.TeamResource), GetSlug(newTeam.Name), "members.json")
+			teamMemberLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.TeamResource), GetSlug(newTeam.Name), "members.json")
 			if rawMembers, err = s.storage.ReadFile(teamMemberLocation); err != nil {
 				log.WithError(err).Errorf("failed to find team members: %s", fileLocation)
 				continue

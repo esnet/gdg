@@ -181,7 +181,7 @@ func TestWildcardFilter(t *testing.T) {
 	filtersEntity.AddFilter(filters.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
 
 	// Enable Wildcard
-	testingContext := config.Config().Contexts()["testing"]
+	testingContext := config.Config().GetAppConfig().GetContexts()["testing"]
 	testingContext.GetFilterOverrides().IgnoreDashboardFilters = true
 	assert.True(t, testingContext.GetFilterOverrides().IgnoreDashboardFilters)
 

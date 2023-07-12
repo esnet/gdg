@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/internal/apphelpers"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -65,7 +65,7 @@ var uploadDashboard = &cobra.Command{
 		if !skipConfirmAction {
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
 				"(or all folders if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
-				"continue (y/n) ", strings.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
+				"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
 			), "", true)
 		}
 		grafanaSvc.ExportDashboards(filter)
@@ -94,7 +94,7 @@ var downloadDashboard = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 		savedFiles := grafanaSvc.ImportDashboards(filter)
-		log.Infof("Importing dashboards for context: '%s'", apphelpers.GetContext())
+		log.Infof("Importing dashboards for context: '%s'", config.Config().GetAppConfig().GetContext())
 		tableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
 			tableObj.AppendRow(table.Row{"dashboard", file})
@@ -114,9 +114,9 @@ var listDashboards = &cobra.Command{
 		filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
 		boards := grafanaSvc.ListDashboards(filters)
 
-		log.Infof("Listing dashboards for context: '%s'", apphelpers.GetContext())
+		log.Infof("Listing dashboards for context: '%s'", config.Config().GetAppConfig().GetContext())
 		for _, link := range boards {
-			url := fmt.Sprintf("%s%s", apphelpers.GetCtxDefaultGrafanaConfig().URL, link.URL)
+			url := fmt.Sprintf("%s%s", config.Config().GetDefaultGrafanaConfig().URL, link.URL)
 			tableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
 				link.UID, strings.Join(link.Tags, ","), url})
 
