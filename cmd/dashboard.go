@@ -4,10 +4,15 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/apphelpers"
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"strings"
+)
+
+var (
+	skipConfirmAction bool
 )
 
 func parseDashboardGlobalFlags(cmd *cobra.Command) []string {
@@ -56,6 +61,13 @@ var uploadDashboard = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cmd)...)
+
+		if !skipConfirmAction {
+			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
+				"(or all folders if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
+				"continue (y/n) ", strings.Join(apphelpers.GetCtxDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
+			), "", true)
+		}
 		grafanaSvc.ExportDashboards(filter)
 
 		tableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
@@ -120,6 +132,7 @@ var listDashboards = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(dashboard)
+	dashboard.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
 	dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
 	dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
 	dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by Tags (does not apply on upload)")
