@@ -21,8 +21,8 @@ type AuthenticationApi interface {
 	Login()
 }
 
-// Login Logs into grafana returning a legacyClient instance using Token or Basic Auth
-func (s *DashNGoImpl) Login() {
+// GetNewClient constructs a new client for use with concurrent calls.
+func (s *DashNGoImpl) GetNewClient() *gclient.GrafanaHTTPAPI {
 	var err error
 	u, err := url.Parse(s.grafanaConf.URL)
 	if err != nil {
@@ -40,9 +40,13 @@ func (s *DashNGoImpl) Login() {
 	if err == nil {
 		s.grafanaConf.SetAdmin(userInfo.IsGrafanaAdmin)
 	}
+	return gclient.New(runtimeClient, nil)
+}
 
+// Login Logs into grafana returning a legacyClient instance using Token or Basic Auth
+func (s *DashNGoImpl) Login() {
+	s.client = s.GetNewClient()
 	s.extended = api.NewExtendedApi()
-
 }
 
 // getGrafanaAdminAuth returns a runtime.ClientAuthInfoWriter that represents a Grafana Admin
