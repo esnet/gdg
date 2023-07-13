@@ -8,7 +8,15 @@ images: []
 weight: 199
 toc: true
 ---
+
 ##  Release Notes for v0.4.5
+**Release Date: 07/13/2023**
+
+### Changes:
+  - Fixing broken CICD release process
+
+---
+##  Release Notes for v0.4.4
 **Release Date: 07/13/2023**
 
 
