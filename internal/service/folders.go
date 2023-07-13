@@ -176,13 +176,13 @@ func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 		valid := s.checkFolderName(val.Title)
 		if filter == nil {
 			if !valid {
-				log.Warningf("Folder '%s' has an invalid character and is not supported", val.Title)
+				log.Warningf("Folder '%s' has an invalid character and is not supported. Path seperators are not allowed", val.Title)
 				continue
 			}
 			result = append(result, folderListing.GetPayload()[ndx])
 		} else if filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: val.Title}) {
 			if !valid {
-				log.Warningf("Folder '%s' has an invalid character and is not supported", val.Title)
+				log.Warningf("Folder '%s' has an invalid character and is not supported. Path seperators are not allowed", val.Title)
 				continue
 			}
 			result = append(result, folderListing.GetPayload()[ndx])

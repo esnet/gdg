@@ -28,15 +28,15 @@ var listFoldersPermissionsCmd = &cobra.Command{
 
 		if len(folders) == 0 {
 			log.Info("No folders found")
-		} else {
-			for key, value := range folders {
-				tableObj.AppendRow(table.Row{key.ID, key.UID, key.Title})
-				for _, entry := range value {
-					tableObj.AppendRow(table.Row{"", "", "    PERMISSION--->", entry.UserLogin, entry.Team, entry.Role, entry.PermissionName}, rowConfigAutoMerge)
-				}
-			}
-			tableObj.Render()
+			return
 		}
+		for key, value := range folders {
+			tableObj.AppendRow(table.Row{key.ID, key.UID, key.Title})
+			for _, entry := range value {
+				tableObj.AppendRow(table.Row{"", "", "    PERMISSION--->", entry.UserLogin, entry.Team, entry.Role, entry.PermissionName}, rowConfigAutoMerge)
+			}
+		}
+		tableObj.Render()
 
 	},
 }
@@ -55,12 +55,12 @@ var downloadFoldersPermissionsCmd = &cobra.Command{
 
 		if len(folders) == 0 {
 			log.Info("No folders found")
-		} else {
-			for _, folder := range folders {
-				tableObj.AppendRow(table.Row{folder})
-			}
-			tableObj.Render()
+			return
 		}
+		for _, folder := range folders {
+			tableObj.AppendRow(table.Row{folder})
+		}
+		tableObj.Render()
 
 	},
 }
@@ -72,17 +72,17 @@ var uploadFoldersPermissionsCmd = &cobra.Command{
 	Aliases: []string{"export"},
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Uploading folder permissions")
-		tableObj.AppendHeader(table.Row{"id", "uid", "title"})
+		tableObj.AppendHeader(table.Row{"file name"})
 		folders := grafanaSvc.ExportFolderPermissions(getFolderFilter())
 
 		if len(folders) == 0 {
 			log.Info("No folders found")
-		} else {
-			//	for _, folder := range folders {
-			//		tableObj.AppendRow(table.Row{folder.ID, folder.UID, folder.Title})
-			//	}
-			//	tableObj.Render()
+			return
 		}
+		for _, folder := range folders {
+			tableObj.AppendRow(table.Row{folder})
+		}
+		tableObj.Render()
 
 	},
 }
