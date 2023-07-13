@@ -18,6 +18,13 @@ toc: true
       - All 'import' has been replaced with 'download' action.
       - All 'export' has been replaced with an 'upload' action.
   - #160 Removed deprecated configuration patterns.  Removed `datasources.credentials` and  `datasources.filters`
+  - #167 Adding support for Folder Permissions
+  - #170 OS level characters are no longer supported in folders.  For example '/' and '\' will not be support in any folder GDG backs up.  The behavior combined with the mkdir / path command is too buggy to really
+    allow such characters in the names.  The complexity in code needed to support it vs just disallowing it isn't worth it.
+
 
 ### Bug Fixes
   - Bug #156 fixed.  When gdg binary and config are in completely different paths, gdg is unable to load the configuration file and fallsback on the default config instead.
+  - BUG #170 fixed.  Added disallowed characters.  For example "/" and "\" will not be supported in folder names
+  - Some calls failed with invalid SSL.  Fixed secondary code path to also support unsigned SSL
+

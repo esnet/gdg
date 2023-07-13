@@ -122,6 +122,7 @@ func init() {
 	foldersCmd.AddCommand(uploadFoldersCmd)
 	foldersCmd.AddCommand(downloadFoldersCmd)
 	foldersCmd.AddCommand(listFoldersCmd)
+	foldersCmd.AddCommand(listFoldersPermissionsCmd)
 	foldersCmd.PersistentFlags().BoolVar(&useFolderFilters, "use-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
 
 }
