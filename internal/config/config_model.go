@@ -14,14 +14,15 @@ import (
 type ResourceType string
 
 const (
-	UserResource              = "users"
-	TeamResource              = "teams"
+	AlertNotificationResource = "alertnotifications"
 	DashboardResource         = "dashboards"
 	DataSourceResource        = "datasources"
-	FolderResource            = "folders"
 	FolderPermissionResource  = "folders-permissions"
-	AlertNotificationResource = "alertnotifications"
+	FolderResource            = "folders"
 	LibraryElementResource    = "libraryelements"
+	OrganizationResource      = "organizations"
+	TeamResource              = "teams"
+	UserResource              = "users"
 )
 
 func (s *ResourceType) String() string {

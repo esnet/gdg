@@ -1,12 +1,13 @@
 package test
 
 import (
+	"golang.org/x/exp/slices"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOrgs(t *testing.T) {
+func TestOrgsCrud(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -16,5 +17,9 @@ func TestOrgs(t *testing.T) {
 	mainOrg := orgs[0]
 	assert.Equal(t, mainOrg.ID, int64(1))
 	assert.Equal(t, mainOrg.Name, "Main Org.")
+	newOrgs := apiClient.UploadOrganizations()
+	assert.Equal(t, len(newOrgs), 2)
+	assert.True(t, slices.Contains(newOrgs, "DumbDumb"))
+	assert.True(t, slices.Contains(newOrgs, "Moo"))
 
 }
