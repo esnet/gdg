@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/gosimple/slug"
-	log "github.com/sirupsen/logrus"
+	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -36,7 +37,7 @@ func updateSlug(board string) string {
 func CreateDestinationPath(v string) {
 	err := os.MkdirAll(v, 0750)
 	if err != nil {
-		log.WithError(err).Panicf("unable to create path %s", v)
+		log.Panicf("unable to create path %s, err: %s", v, err.Error())
 	}
 }
 
@@ -56,7 +57,7 @@ func getFolderFromResourcePath(storageEngine string, filePath string, resourceTy
 	ndx := strings.LastIndex(folderName, string(os.PathSeparator))
 	if ndx != -1 {
 		folderName = folderName[0:ndx]
-		log.Debugf("Folder name is: %s", folderName)
+		slog.Debug("Folder name is", "folder", folderName)
 		return folderName, nil
 	}
 	return "", errors.New("unable to parse resource to retrieve folder name")

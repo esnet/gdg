@@ -2,9 +2,12 @@ package test
 
 import (
 	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/internal/config"
+	applog "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
+
 	"github.com/stretchr/testify/assert"
 	"io"
 	"os"
@@ -34,7 +37,7 @@ func setupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.Grafa
 	defer cleanup()
 	err = w.Close()
 	if err != nil {
-		log.Warn("unable to close write stream")
+		slog.Warn("unable to close write stream")
 	}
 	clean := func() {
 		defer r.Close()
@@ -52,11 +55,13 @@ func InterceptStdout() (*os.File, *os.File, func()) {
 	backupErr := os.Stderr
 	r, w, _ := os.Pipe()
 	//Restore streams
-	log.SetOutput(w)
+	config.InitConfig("testing", "")
+	applog.InitializeAppLogger(w, w)
 	cleanup := func() {
 		os.Stdout = backupStd
 		os.Stderr = backupErr
-		log.SetOutput(os.Stdout)
+		applog.InitializeAppLogger(os.Stdout, os.Stderr)
+
 	}
 	os.Stdout = w
 	os.Stderr = w

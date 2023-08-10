@@ -5,8 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
-	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
+	"log"
+	"log/slog"
 	"os"
 	"path"
 	"regexp"
@@ -69,7 +70,7 @@ func (ds *ConnectionSettings) FiltersEnabled() bool {
 func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSourceCommand) (*GrafanaConnection, error) {
 	data, err := json.Marshal(connectionEntity)
 	if err != nil {
-		log.Warn("Unable to marshall Connection, unable to fetch credentials")
+		slog.Warn("Unable to marshall Connection, unable to fetch credentials")
 		return nil, fmt.Errorf("unable to marshall Connection, unable to fetch credentials")
 	}
 	//Get Auth based on New Matching Rules
@@ -80,14 +81,14 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 		for _, rule := range entry.Rules {
 			fieldObject := parser.Get(rule.Field)
 			if !fieldObject.Exists() {
-				log.Warnf("Unable to find a field titled: %s in datasource, skipping validation rule", rule.Field)
+				slog.Warn("Unable to find a matching field in datasource, skipping validation rule", "filedName", rule.Field)
 				valid = false
 				continue
 			}
 			fieldValue := fieldObject.String()
 			p, err := regexp.Compile(rule.Regex)
 			if err != nil {
-				log.Warnf("Unable to compile regex: %s to match against field %s, skipping validation", rule.Regex, rule.Field)
+				slog.Warn("Unable to compile regex to match against field, skipping validation", "regex", rule.Regex, "fieldName", rule.Field)
 				valid = false
 			}
 			if !p.Match([]byte(fieldValue)) {
@@ -108,7 +109,7 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
 	data, err := json.Marshal(item)
 	if err != nil {
-		log.Warn("Unable to serialize object, cannot validate")
+		slog.Warn("Unable to serialize object, cannot validate")
 		return true
 	}
 
@@ -124,7 +125,7 @@ func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
 			fieldValue := fieldParse.String()
 			p, err := regexp.Compile(field.Regex)
 			if err != nil {
-				log.Warnf("Invalid regex for filter rule with field: %s", field.Field)
+				slog.Warn("Invalid regex for filter rule", "field", field.Field)
 				return true
 			}
 			match := p.Match([]byte(fieldValue))

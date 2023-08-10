@@ -4,9 +4,9 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"log/slog"
 	"testing"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,9 +18,9 @@ func TestConnectionsCRUD(t *testing.T) {
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
 	filtersEntity := service.NewConnectionFilter("")
-	log.Info("Exporting all connections")
+	slog.Info("Exporting all connections")
 	apiClient.UploadConnections(filtersEntity)
-	log.Info("Listing all connections")
+	slog.Info("Listing all connections")
 	dataSources := apiClient.ListConnections(filtersEntity)
 	assert.Equal(t, len(dataSources), 3)
 	var dsItem *models.DataSourceListItemDTO
@@ -33,13 +33,13 @@ func TestConnectionsCRUD(t *testing.T) {
 	assert.NotNil(t, dsItem)
 	validateConnection(t, *dsItem)
 	//Import Dashboards
-	log.Info("Importing connections")
+	slog.Info("Importing connections")
 	list := apiClient.DownloadConnections(filtersEntity)
 	assert.Equal(t, len(list), len(dataSources))
-	log.Info("Deleting connections")
+	slog.Info("Deleting connections")
 	deleteList := apiClient.DeleteAllConnections(filtersEntity)
 	assert.Equal(t, len(deleteList), len(dataSources))
-	log.Info("List connections again")
+	slog.Info("List connections again")
 	dataSources = apiClient.ListConnections(filtersEntity)
 	assert.Equal(t, len(dataSources), 0)
 }
@@ -70,9 +70,9 @@ func TestConnectionFilter(t *testing.T) {
 	apiClient := service.NewApiService("dummy")
 
 	filtersEntity := service.NewConnectionFilter("")
-	log.Info("Exporting all connections")
+	slog.Info("Exporting all connections")
 	apiClient.UploadConnections(filtersEntity)
-	log.Info("Listing all connections")
+	slog.Info("Listing all connections")
 	dataSources := apiClient.ListConnections(filtersEntity)
 	assert.Equal(t, len(dataSources), 2)
 	var dsItem *models.DataSourceListItemDTO
@@ -85,13 +85,13 @@ func TestConnectionFilter(t *testing.T) {
 	assert.NotNil(t, dsItem)
 	validateConnection(t, *dsItem)
 	//Import Dashboards
-	log.Info("Importing connections")
+	slog.Info("Importing connections")
 	list := apiClient.DownloadConnections(filtersEntity)
 	assert.Equal(t, len(list), len(dataSources))
-	log.Info("Deleting connections")
+	slog.Info("Deleting connections")
 	deleteList := apiClient.DeleteAllConnections(filtersEntity)
 	assert.Equal(t, len(deleteList), len(dataSources))
-	log.Info("List connections again")
+	slog.Info("List connections again")
 	dataSources = apiClient.ListConnections(filtersEntity)
 	assert.Equal(t, len(dataSources), 0)
 }

@@ -10,14 +10,14 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folders"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/search"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/tidwall/pretty"
 	"golang.org/x/exp/slices"
+	"log"
+	"log/slog"
 	"path/filepath"
 	"regexp"
 	"strings"
 
-	"github.com/tidwall/pretty"
-
-	log "github.com/sirupsen/logrus"
 	"github.com/thoas/go-funk"
 )
 
@@ -43,7 +43,7 @@ func (s *DashNGoImpl) getDashboardByUid(uid string) (*models.DashboardFullWithMe
 
 func NewDashboardFilter(entries ...string) filters.Filter {
 	if len(entries) != 3 {
-		log.Fatal("Unable to create a valid Dashboard Filter, aborting.")
+		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
 	}
 	folderFilter := entries[0]
 	dashboardFilter := entries[1]
@@ -199,19 +199,19 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 		dp.UID = link.UID
 
 		if metaData, err = s.client.Dashboards.GetDashboardByUID(dp, s.getAuth()); err != nil {
-			log.Errorf("%s for %s\n", err, link.URI)
+			slog.Error("unable to get Dashboard by UID", "err", err, "Dashboard-URI", link.URI)
 			continue
 		}
 
 		rawBoard, err = json.Marshal(metaData.Payload.Dashboard)
 		if err != nil {
-			log.Errorf("unable to serialize dashboard %s", dp.UID)
+			slog.Error("unable to serialize dashboard", "dashboard", dp.UID)
 			continue
 		}
 
 		fileName := fmt.Sprintf("%s/%s.json", buildResourceFolder(link.FolderTitle, config.DashboardResource), metaData.Payload.Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
-			log.Errorf("%s for %s\n", err, metaData.Payload.Meta.Slug)
+			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.Payload.Meta.Slug)
 		} else {
 			boards = append(boards, fileName)
 		}
@@ -246,7 +246,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 	path := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
 	filesInDir, err := s.storage.FindAllFiles(path, true)
 	if err != nil {
-		log.WithError(err).Fatal("unable to find any files to export from storage engine")
+		log.Fatalf("unable to find any files to export from storage engine, err: %v", err)
 	}
 	//Delete all dashboards that match prior to import
 	s.DeleteAllDashboards(filterReq)
@@ -263,24 +263,24 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
 
 		if !strings.HasSuffix(file, ".json") {
-			log.Warnf("Only json files are supported, skipping %s", file)
+			slog.Warn("Only json files are supported, skipping", "filename", file)
 			continue
 		}
 
 		if rawBoard, err = s.storage.ReadFile(file); err != nil {
-			log.Println(err)
+			slog.Warn("Unable to read file", "filename", file, "err", err)
 			continue
 		}
 		var board = make(map[string]interface{})
 		if err = json.Unmarshal(rawBoard, &board); err != nil {
-			log.WithError(err).Printf("Failed to unmarshall file: %s", file)
+			slog.Warn("Failed to unmarshall file", "filename", file)
 			continue
 		}
 
 		//Extract Folder Name based on path
 		folderName, err = getFolderFromResourcePath(s.grafanaConf.Storage, file, config.DashboardResource)
 		if err != nil {
-			log.Warnf("unable to determine dashboard folder name, falling back on default")
+			slog.Warn("unable to determine dashboard folder name, falling back on default")
 		}
 
 		if folderName == "" || folderName == DefaultFolderName {
@@ -288,7 +288,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 			folderName = DefaultFolderName
 		}
 		if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
-			log.Debugf("Skipping file %s, doesn't match any valid folders", file)
+			slog.Debug("Skipping file since it doesn't match any valid folders", "filename", file)
 			continue
 		}
 		validateMap := map[filters.FilterType]string{filters.FolderFilter: folderName, filters.DashFilter: baseFile}
@@ -329,7 +329,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 
 		if _, exportError := s.client.Dashboards.ImportDashboard(importDashReq, s.getAuth()); exportError != nil {
-			log.WithError(err).Printf("error on Exporting dashboard %s", file)
+			slog.Info("error on Exporting dashboard", "dashboard-filename", file, "err", err)
 			continue
 		}
 

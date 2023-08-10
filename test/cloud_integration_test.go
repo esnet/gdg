@@ -2,9 +2,9 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	_ "gocloud.dev/blob/memblob"
+	"log/slog"
 	"os"
 	"testing"
 )
@@ -27,10 +27,10 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	SetupCloudFunction([]string{"s3", "testing"})
 	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
 
-	log.Info("Importing DataSources")
+	slog.Info("Importing DataSources")
 	dsStringList := apiClient.DownloadConnections(dsFilter) //Saving to S3
 	assert.Equal(t, len(dsList), len(dsStringList))
-	log.Info("Deleting DataSources")
+	slog.Info("Deleting DataSources")
 	deleteDSList := apiClient.DeleteAllConnections(dsFilter) // Cleaning up Grafana
 	assert.Equal(t, len(deleteDSList), len(dsStringList))
 	dsList = apiClient.ListConnections(dsFilter)
@@ -66,10 +66,10 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	_, apiClient = SetupCloudFunction([]string{"s3", "testing"})
 
 	//At this point all operations are reading/writing from Minio
-	log.Info("Importing Dashboards")
+	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(dashFilter) //Saving to S3
 	assert.Equal(t, len(list), len(boards))
-	log.Info("Deleting Dashboards") // Clearing Grafana
+	slog.Info("Deleting Dashboards") // Clearing Grafana
 	deleteList := apiClient.DeleteAllDashboards(dashFilter)
 	assert.Equal(t, len(list), len(deleteList))
 	boards = apiClient.ListDashboards(dashFilter)

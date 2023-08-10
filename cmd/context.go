@@ -8,7 +8,8 @@ import (
 	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
+
 	"github.com/spf13/cobra"
 	"strings"
 )
@@ -35,7 +36,7 @@ func newContextClearCmd() simplecobra.Commander {
 		NameP: "clear",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
 			config.Config().ClearContexts()
-			log.Info("Successfully deleted all configured contexts")
+			slog.Info("Successfully deleted all configured contexts")
 			return nil
 		},
 		Short: "Manage Context configuration",
@@ -122,7 +123,7 @@ func newDeleteContext() simplecobra.Commander {
 			}
 			contextEntry := args[0]
 			config.Config().DeleteContext(contextEntry)
-			log.Infof("Successfully deleted context %s", ctx)
+			slog.Info("Successfully deleted context", "context", ctx)
 			return nil
 		},
 		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {

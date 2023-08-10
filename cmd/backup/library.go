@@ -8,8 +8,9 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"log"
+	"log/slog"
 )
 
 func newLibraryElementsCommand() simplecobra.Commander {
@@ -51,10 +52,10 @@ func newLibraryElementsClearCmd() simplecobra.Commander {
 				rootCmd.TableObj.AppendRow(table.Row{"library", file})
 			}
 			if len(deletedLibrarys) == 0 {
-				log.Info("No library were found.  0 librarys removed")
+				slog.Info("No library were found.  0 libraries removed")
 
 			} else {
-				log.Infof("%d library were deleted", len(deletedLibrarys))
+				slog.Info("libraries were deleted", "count", len(deletedLibrarys))
 				rootCmd.TableObj.Render()
 			}
 			return nil
@@ -74,9 +75,8 @@ func newLibraryElementsListCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "UID", "Folder", "Name", "Type"})
 
 			elements := rootCmd.GrafanaSvc().ListLibraryElements(nil)
-			log.Infof("Number of elements is: %d", len(elements))
 
-			log.Infof("Listing library for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Listing library for context", "context", config.Config().AppConfig.GetContext())
 			for _, link := range elements {
 				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Meta.FolderName, link.Name, link.Type})
 
@@ -84,7 +84,7 @@ func newLibraryElementsListCmd() simplecobra.Commander {
 			if len(elements) > 0 {
 				rootCmd.TableObj.Render()
 			} else {
-				log.Info("No library found")
+				slog.Info("No library found")
 			}
 
 			return nil
@@ -101,7 +101,7 @@ func newLibraryElementsDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Downloading library for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Downloading library for context", "context", config.Config().AppConfig.GetContext())
 			savedFiles := rootCmd.GrafanaSvc().DownloadLibraryElements(nil)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range savedFiles {
@@ -122,7 +122,7 @@ func newLibraryElementsUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Info("exporting lib elements")
+			slog.Info("exporting lib elements")
 			libraryFilter := filters.NewBaseFilter()
 			elements := rootCmd.GrafanaSvc().UploadLibraryElements(libraryFilter)
 			rootCmd.TableObj.AppendHeader(table.Row{"Name"})
@@ -132,7 +132,7 @@ func newLibraryElementsUploadCmd() simplecobra.Commander {
 				}
 				rootCmd.TableObj.Render()
 			} else {
-				log.Info("No library found")
+				slog.Info("No library found")
 			}
 			return nil
 		},
@@ -150,13 +150,13 @@ func newLibraryElementsListConnectionsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			if len(args) != 1 {
-				log.Fatalf("Wrong number of arguments, requires library element UUID")
+				log.Fatal("Wrong number of arguments, requires library element UUID")
 			}
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "UID", "Slug", "Title", "Folder"})
 
 			libElmentUid := args[0]
 			elements := rootCmd.GrafanaSvc().ListLibraryElementsConnections(nil, libElmentUid)
-			log.Infof("Listing library connections for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Listing library connections for context", "context", config.Config().AppConfig.GetContext())
 			for _, link := range elements {
 				dash := link.Dashboard.(map[string]interface{})
 				rootCmd.TableObj.AppendRow(table.Row{dash["id"].(json.Number), dash["uid"].(string), link.Meta.Slug, dash["title"].(string), link.Meta.FolderTitle})
@@ -164,7 +164,7 @@ func newLibraryElementsListConnectionsCmd() simplecobra.Commander {
 			if len(elements) > 0 {
 				rootCmd.TableObj.Render()
 			} else {
-				log.Info("No library found")
+				slog.Info("No library found")
 			}
 			return nil
 		},

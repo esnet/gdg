@@ -7,8 +7,9 @@ import (
 	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"log"
+	"log/slog"
 	"slices"
 	"sort"
 	"strconv"
@@ -49,7 +50,7 @@ func newListTokensCmd() simplecobra.Commander {
 				return apiKeys[i].ID < apiKeys[j].ID
 			})
 			if len(apiKeys) == 0 {
-				log.Info("No apiKeys found")
+				slog.Info("No apiKeys found")
 			} else {
 				for _, apiKey := range apiKeys {
 					var formattedDate string = apiKey.Expiration.String()
@@ -77,10 +78,10 @@ func newDeleteTokenCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllTokens()
-			log.Infof("Delete Tokens for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Delete Tokens for context: ", "context", config.Config().AppConfig.GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			if len(savedFiles) == 0 {
-				log.Info("No Tokens found")
+				slog.Info("No Tokens found")
 			} else {
 				for _, file := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{"user", file})
@@ -124,7 +125,7 @@ func newNewTokenCmd() simplecobra.Commander {
 			}
 			key, err := rootCmd.GrafanaSvc().CreateAPIKey(name, role, expiration)
 			if err != nil {
-				log.WithError(err).Fatal("unable to create api key")
+				log.Fatal("unable to create api key", "err", err)
 			} else {
 
 				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "token"})

@@ -4,10 +4,10 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"golang.org/x/exp/maps"
+	"log/slog"
 	"os"
 	"testing"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,13 +21,13 @@ func TestTeamCRUD(t *testing.T) {
 	filter := service.NewTeamFilter("")
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
-	log.Info("Exporting current user list")
+	slog.Info("Exporting current user list")
 	apiClient.UploadUsers(service.NewUserFilter(""))
 	users := apiClient.ListUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(users), 2)
-	log.Info("Exporting all teams")
+	slog.Info("Exporting all teams")
 	apiClient.UploadTeams(filter)
-	log.Info("Listing all Teams")
+	slog.Info("Listing all Teams")
 	teamsMap := apiClient.ListTeams(filter)
 	teams := maps.Keys(teamsMap)
 	assert.Equal(t, len(teams), 2)
@@ -46,7 +46,7 @@ func TestTeamCRUD(t *testing.T) {
 	assert.Equal(t, engineers[1].Login, "tux")
 	assert.Equal(t, musicianTeam.Name, "musicians")
 	//Import Teams
-	log.Info("Importing teams")
+	slog.Info("Importing teams")
 	list := apiClient.DownloadTeams(filter)
 	assert.Equal(t, len(list), len(teams))
 	//CleanUp

@@ -8,8 +8,8 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"log/slog"
 )
 
 func newAlertNotificationsCommand() simplecobra.Commander {
@@ -44,18 +44,19 @@ func newClearAlertNotificationsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
+			slog.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 
-			log.Infof("Clearing all alert notification channels for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Clearing all alert notification channels for context",
+				"context", config.Config().AppConfig.GetContext())
 			deleted := rootCmd.GrafanaSvc().DeleteAllAlertNotifications()
 			for _, item := range deleted {
 				rootCmd.TableObj.AppendRow(table.Row{"alertnotification", item})
 			}
 			if len(deleted) == 0 {
-				log.Info("No alert notification channels were found. 0 removed")
+				slog.Info("No alert notification channels were found. 0 removed")
 			} else {
-				log.Infof("%d alert notification channels were deleted", len(deleted))
+				slog.Info("alert notification channels were deleted", "count", len(deleted))
 				rootCmd.TableObj.Render()
 			}
 			return nil
@@ -73,10 +74,11 @@ func newUploadAlertNotificationsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
+			slog.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 			rootCmd.TableObj.AppendHeader(table.Row{"name", "id", "UID"})
 
-			log.Infof("Exporting alert notification channels for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Exporting alert notification channels for context",
+				"context", config.Config().AppConfig.GetContext())
 			rootCmd.GrafanaSvc().UploadAlertNotifications()
 			items := rootCmd.GrafanaSvc().ListAlertNotifications()
 			for _, item := range items {
@@ -85,7 +87,7 @@ func newUploadAlertNotificationsCmd() simplecobra.Commander {
 			if len(items) > 0 {
 				rootCmd.TableObj.Render()
 			} else {
-				log.Info("No alert notification channels found")
+				slog.Info("No alert notification channels found")
 			}
 			return nil
 		},
@@ -102,10 +104,12 @@ func newDownloadAlertNotificationsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
+			slog.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 
-			log.Infof("Downloading alert notification channels for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Downloading alert notification channels for context",
+				"context", config.Config().AppConfig.GetContext())
+
 			savedFiles := rootCmd.GrafanaSvc().DownloadAlertNotifications()
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"alertnotification", file})
@@ -126,13 +130,16 @@ func newListAlertNotificationsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
+			slog.Warn("Alert Notifications will be deprecated as of Grafana 9.0, this API may no longer work soon")
+
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "slug", "type", "default", "url"})
 			alertnotifications := rootCmd.GrafanaSvc().ListAlertNotifications()
 
-			log.Infof("Listing alert notifications channels for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Listing alert notifications channels for context",
+				"context", config.Config().AppConfig.GetContext())
+
 			if len(alertnotifications) == 0 {
-				log.Info("No alert notifications found")
+				slog.Info("No alert notifications found")
 			} else {
 				for _, link := range alertnotifications {
 					url := fmt.Sprintf("%s/alerting/notification/%d/edit", config.Config().GetDefaultGrafanaConfig().URL, link.ID)

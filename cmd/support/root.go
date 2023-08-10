@@ -5,9 +5,9 @@ import (
 	"errors"
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/internal/config"
+	appconfig "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
 	"os"
 )
 
@@ -75,10 +75,8 @@ func (c *RootCommand) initConfiguration() {
 	}
 	//Registers sub CommandsList
 	config.InitConfig(configOverride, DefaultConfig)
+	appconfig.InitializeAppLogger(os.Stdout, os.Stderr)
 
-	if config.Config().IsDebug() {
-		log.SetLevel(log.DebugLevel)
-	}
 	//Validate current configuration
 	config.Config().GetDefaultGrafanaConfig().Validate()
 

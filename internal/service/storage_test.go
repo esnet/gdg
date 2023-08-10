@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"errors"
-	log "github.com/sirupsen/logrus"
+	"log"
 	"path"
 )
 

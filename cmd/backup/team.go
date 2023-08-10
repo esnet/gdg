@@ -8,8 +8,8 @@ import (
 	api "github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"log/slog"
 )
 
 func parseTeamGlobalFlags(command *cobra.Command) []string {
@@ -58,12 +58,12 @@ func newTeamsListCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Listing teams for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Listing teams for context", "context", config.Config().AppConfig.GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "memberID", "member Permission"})
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			teams := rootCmd.GrafanaSvc().ListTeams(filter)
 			if len(teams) == 0 {
-				log.Info("No teams found")
+				slog.Info("No teams found")
 			} else {
 				for team, members := range teams {
 					rootCmd.TableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
@@ -89,11 +89,11 @@ func newTeamsDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Importing Teams for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Importing Teams for context", "context", config.Config().AppConfig.GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadTeams(filter)
 			if len(savedFiles) == 0 {
-				log.Info("No teams found")
+				slog.Info("No teams found")
 			} else {
 				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "member user ID", "Member Permission"})
 				for team, members := range savedFiles {
@@ -119,11 +119,11 @@ func newTeamsUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Exporting Teams for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Exporting Teams for context", "context", config.Config().AppConfig.GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().UploadTeams(filter)
 			if len(savedFiles) == 0 {
-				log.Info("No teams found")
+				slog.Info("No teams found")
 			} else {
 				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "created", "memberCount", "member Login", "member Permission"})
 				for team, members := range savedFiles {
@@ -150,12 +150,12 @@ func newTeamsClearCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Deleting teams for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Deleting teams for context", "context", config.Config().AppConfig.GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "team ID", "team Name"})
 			teams, err := rootCmd.GrafanaSvc().DeleteTeam(filter)
 			if err != nil {
-				log.Error(err.Error())
+				slog.Error(err.Error())
 			} else {
 				for _, team := range teams {
 					rootCmd.TableObj.AppendRow(table.Row{"team", team.ID, team.Name})

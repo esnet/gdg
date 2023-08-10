@@ -13,8 +13,9 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/users"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
-	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/pretty"
+	"log"
+	"log/slog"
 	"path/filepath"
 	"strings"
 )
@@ -91,17 +92,17 @@ func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 	userPath := buildResourceFolder("", config.UserResource)
 	for ndx, user := range userListing {
 		if s.isAdminUser(user.ID, user.Name) {
-			log.Info("Skipping admin super user")
+			slog.Info("Skipping admin super user")
 			continue
 		}
 		fileName := filepath.Join(userPath, fmt.Sprintf("%s.json", GetSlug(user.Login)))
 		userData, err = json.Marshal(&userListing[ndx])
 		if err != nil {
-			log.Errorf("could not serialize user object for userId: %d", user.ID)
+			slog.Error("could not serialize user object for userId", "userID", user.ID)
 			continue
 		}
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(userData)); err != nil {
-			log.WithError(err).Errorf("for %s\n", user.Login)
+			slog.Error("Failed to write file", "filename", user.Login, "err", err)
 		} else {
 			importedUsers = append(importedUsers, fileName)
 		}
@@ -119,7 +120,7 @@ func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
 func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO {
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), false)
 	if err != nil {
-		log.WithError(err).Errorf("failed to list files in directory for userListings")
+		slog.Error("failed to list files in directory for userListings", "err", err)
 	}
 	var userListings []models.UserProfileDTO
 	var rawUser []byte
@@ -136,11 +137,11 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO
 		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawUser, err = s.storage.ReadFile(fileLocation); err != nil {
-				log.WithError(err).Errorf("failed to read file: %s", fileLocation)
+				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
 			if val, ok := currentUsers[filepath.Base(file)]; ok {
-				log.Warnf("User %s already exist, skipping", val.Login)
+				slog.Warn("User already exist, skipping", "username", val.Login)
 				continue
 			}
 			var newUser models.AdminCreateUserForm
@@ -150,37 +151,37 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO
 
 			var data = make(map[string]interface{}, 0)
 			if err = json.Unmarshal(rawUser, &data); err != nil {
-				log.WithError(err).Errorf("failed to unmarshall file: %s", fileLocation)
+				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
 				continue
 			}
 			data["password"] = password
 
 			//Get raw version of payload once more with password
 			if rawUser, err = json.Marshal(data); err != nil {
-				log.WithError(err).Errorf("failed to marshall file: %s to include password", fileLocation)
+				slog.Error("failed to marshall file to include password", "filename", fileLocation, "err", err)
 			}
 
 			if err = json.Unmarshal(rawUser, &newUser); err != nil {
-				log.WithError(err).Errorf("failed to unmarshall file: %s", fileLocation)
+				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
 				continue
 			}
 
 			if newUser.Name == "admin" {
-				log.Info("Skipping admin user")
+				slog.Info("Skipping admin user")
 				continue
 			}
 			params := admin_users.NewAdminCreateUserParams()
 			params.Body = &newUser
 			userCreated, err := s.client.AdminUsers.AdminCreateUser(params, s.getBasicAuth())
 			if err != nil {
-				log.WithError(err).Errorf("Failed to create user for file: %s", fileLocation)
+				slog.Error("Failed to create user for file", "filename", fileLocation, "err", err)
 				continue
 			}
 			p := users.NewGetUserByIDParams()
 			p.UserID = userCreated.Payload.ID
 			resp, err := s.client.Users.GetUserByID(p, s.getBasicAuth())
 			if err != nil {
-				log.Errorf("unable to read user: %s, ID: %d back from grafana", newUser.Email, userCreated.Payload.ID)
+				slog.Error("unable to read user back from grafana", "username", newUser.Email, "userID", userCreated.GetPayload().ID)
 				continue
 			}
 			userListings = append(userListings, *resp.Payload)
@@ -219,7 +220,7 @@ func (s *DashNGoImpl) DeleteAllUsers(filter filters.Filter) []string {
 	var deletedUsers []string
 	for _, user := range userListing {
 		if s.isAdminUser(user.ID, user.Name) {
-			log.Info("Skipping admin user")
+			slog.Info("Skipping admin user")
 			continue
 
 		}
@@ -261,7 +262,7 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 	msg, err := s.client.AdminUsers.AdminUpdateUserPermissions(promoteUserParam, s.getBasicAuth())
 	if err != nil {
 		errorMsg := fmt.Sprintf("failed to promote user: '%s'", userLogin)
-		log.Error(errorMsg)
+		slog.Error("failed to promote user", "username", userLogin, "err", err)
 		return "", errors.New(errorMsg)
 	}
 

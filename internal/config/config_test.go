@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
+	"log/slog"
 	"os"
 	"strings"
 	"testing"
@@ -47,10 +47,10 @@ func TestSetup(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	config.InitConfig("testing.yml", "")
 	conf := config.Config().ViperConfig()
-	log.Info(conf.ConfigFileUsed())
+	slog.Info(conf.ConfigFileUsed())
 
 	confobj := config.Config().GetAppConfig()
-	log.Infof(confobj.ContextName)
+	slog.Info(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "qa")
@@ -70,10 +70,10 @@ func TestWatchedFoldersConfig(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	config.InitConfig("testing.yml", "")
 	conf := config.Config().ViperConfig()
-	log.Info(conf.ConfigFileUsed())
+	slog.Info(conf.ConfigFileUsed())
 
 	confobj := config.Config().GetAppConfig()
-	log.Infof(confobj.ContextName)
+	slog.Info(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "qa")

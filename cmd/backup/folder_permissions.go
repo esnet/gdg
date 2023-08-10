@@ -6,8 +6,8 @@ import (
 	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"log/slog"
 )
 
 func newFolderPermissionCommand() simplecobra.Commander {
@@ -42,12 +42,12 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
 
-			log.Infof("Listing Folders for context: '%s'", config.Config().GetAppConfig().GetContext())
+			slog.Info("Listing Folders for context", "context", config.Config().GetAppConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name", "UserID", "Team Name", "Role", "Permission Name"}, rowConfigAutoMerge)
 			folders := rootCmd.GrafanaSvc().ListFolderPermissions(getFolderFilter())
 
 			if len(folders) == 0 {
-				log.Info("No folders found")
+				slog.Info("No folders found")
 				return nil
 			}
 			for key, value := range folders {
@@ -71,13 +71,13 @@ func newFolderPermissionDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Downloading Folder Permissions for context: '%s'", config.Config().GetAppConfig().GetContext())
+			slog.Info("Downloading Folder Permissions for context", "context", config.Config().GetAppConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
 			folders := rootCmd.GrafanaSvc().DownloadFolderPermissions(getFolderFilter())
-			log.Infof("Downloading folder permissions")
+			slog.Info("Downloading folder permissions")
 
 			if len(folders) == 0 {
-				log.Info("No folders found")
+				slog.Info("No folders found")
 				return nil
 			}
 			for _, folder := range folders {
@@ -98,12 +98,12 @@ func newFolderPermissionUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Uploading folder permissions")
+			slog.Info("Uploading folder permissions")
 			rootCmd.TableObj.AppendHeader(table.Row{"file name"})
 			folders := rootCmd.GrafanaSvc().UploadFolderPermissions(getFolderFilter())
 
 			if len(folders) == 0 {
-				log.Info("No folders found")
+				slog.Info("No folders found")
 				return nil
 			}
 			for _, folder := range folders {

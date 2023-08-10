@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cmd/support"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"log/slog"
 	"os"
 )
 
@@ -29,7 +29,7 @@ func newServerInfoCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			result := rootCmd.GrafanaSvc().GetServerInfo()
 			for key, value := range result {
-				log.Infof("%s:  %s", key, value)
+				slog.Info("", key, value)
 			}
 			return nil
 		},

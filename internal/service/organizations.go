@@ -10,11 +10,12 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/go-openapi/runtime"
 	"github.com/gosimple/slug"
+	"log/slog"
 	"path/filepath"
 	"strings"
 
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/orgs"
-	log "github.com/sirupsen/logrus"
+	"log"
 )
 
 // OrganizationsApi Contract definition
@@ -76,7 +77,7 @@ func (s *DashNGoImpl) getOrganization(id int64) (*models.OrgDetailsDTO, error) {
 func (s *DashNGoImpl) SetOrganization(id int64) error {
 	//Removes Org filter
 	if id <= 1 {
-		log.Warnf("organization is not a valid value, resetting to default value of 1.")
+		slog.Warn("organization is not a valid value, resetting to default value of 1.")
 		s.grafanaConf.OrganizationId = 1
 	}
 
@@ -100,7 +101,7 @@ func (s *DashNGoImpl) SetOrganization(id int64) error {
 // ListOrganizations List all dashboards
 func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
 	if !s.grafanaConf.IsAdminEnabled() {
-		log.Errorf("No valid Grafana Admin configured, cannot retrieve Organizations List")
+		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
 	}
 
@@ -112,9 +113,9 @@ func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
 		case errors.As(err, &swaggerErr):
 			var castError *orgs.SearchOrgsForbidden
 			errors.As(err, &castError)
-			log.WithField("message", *castError.GetPayload().Message).Fatal(msg)
+			log.Fatalf("%s, message:%s", msg, *castError.GetPayload().Message)
 		default:
-			log.WithError(err).Fatal(msg)
+			log.Fatalf("%s, err: %v", msg, err)
 		}
 	}
 	return orgList.GetPayload()
@@ -123,7 +124,7 @@ func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
 // DownloadOrganizations Download organizations
 func (s *DashNGoImpl) DownloadOrganizations() []string {
 	if !s.grafanaConf.IsAdminEnabled() {
-		log.Errorf("No valid Grafana Admin configured, cannot retrieve Organizations")
+		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations")
 		return nil
 	}
 	var (
@@ -135,12 +136,12 @@ func (s *DashNGoImpl) DownloadOrganizations() []string {
 	orgsListing := s.ListOrganizations()
 	for _, organisation := range orgsListing {
 		if dsPacked, err = json.MarshalIndent(organisation, "", "	"); err != nil {
-			log.Errorf("%s for %s\n", err, organisation.Name)
+			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Name)
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(organisation.Name), config.OrganizationResource)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
-			log.Errorf("%s for %s\n", err.Error(), slug.Make(organisation.Name))
+			slog.Error("Unable to write file", "err", err.Error(), "organization", slug.Make(organisation.Name))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
 		}
@@ -152,7 +153,7 @@ func (s *DashNGoImpl) DownloadOrganizations() []string {
 // UploadOrganizations Upload organizations to Grafana
 func (s *DashNGoImpl) UploadOrganizations() []string {
 	if !s.grafanaConf.IsAdminEnabled() {
-		log.Errorf("No valid Grafana Admin configured, cannot upload Organizations")
+		slog.Error("No valid Grafana Admin configured, cannot upload Organizations")
 		return nil
 	}
 	var (
@@ -161,7 +162,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 	)
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.OrganizationResource), false)
 	if err != nil {
-		log.WithError(err).Fatal("Failed to read folders imports")
+		log.Fatalf("Failed to read folders imports, err: %v", err)
 	}
 	orgListing := s.ListOrganizations()
 	orgMap := map[string]bool{}
@@ -173,17 +174,17 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.OrganizationResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
-				log.WithError(err).Errorf("failed to read file %s", fileLocation)
+				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
 		}
 		var newOrg models.CreateOrgCommand
 		if err = json.Unmarshal(rawFolder, &newOrg); err != nil {
-			log.WithError(err).Warn("failed to unmarshall folder")
+			slog.Warn("failed to unmarshall folder", "err", err)
 			continue
 		}
 		if _, ok := orgMap[newOrg.Name]; ok {
-			log.Infof("Organization %s already exists, skipping", newOrg.Name)
+			slog.Info("Organization already exists, skipping", "organization", newOrg.Name)
 			continue
 		}
 
@@ -191,7 +192,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 		params.Body = &newOrg
 		_, err = s.client.Orgs.CreateOrg(params, s.getBasicAuth())
 		if err != nil {
-			log.Errorf("failed to create folder %s", newOrg.Name)
+			slog.Error("failed to create folder", "organization", newOrg.Name)
 			continue
 		}
 		result = append(result, newOrg.Name)
@@ -203,7 +204,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 // SwitchOrganization switch organization context
 func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 	if !s.grafanaConf.IsBasicAuth() {
-		log.Warnf("Basic auth required for Org switching.  Ignoring Org setting and continuing")
+		slog.Warn("Basic auth required for Org switching.  Ignoring Org setting and continuing")
 		return nil
 	}
 	valid := false
@@ -211,14 +212,14 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 		var orgsPayload []*models.OrgDTO
 		orgList, err := s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getBasicAuth())
 		if err != nil {
-			log.Warn("Error fetch organizations requires (SuperAdmin Basic Auth), assuming valid ID was requested.  Cannot validate OrgId")
+			slog.Warn("Error fetch organizations requires (SuperAdmin Basic Auth), assuming valid ID was requested.  Cannot validate OrgId")
 			valid = true
 			orgsPayload = make([]*models.OrgDTO, 0)
 		} else {
 			orgsPayload = orgList.GetPayload()
 		}
 		for _, orgEntry := range orgsPayload {
-			log.Debugf("%d %s\n", orgEntry.ID, orgEntry.Name)
+			slog.Debug("", "orgID", orgEntry.ID, "OrgName", orgEntry.Name)
 			if orgEntry.ID == s.grafanaConf.GetOrganizationId() {
 				valid = true
 				break
@@ -241,7 +242,7 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 	params.OrgID = id
 	status, err := s.client.SignedInUser.UserSetUsingOrg(params, s.getBasicAuth())
 	if err != nil {
-		log.WithError(err).Fatalf("%s for %v\n", err, status)
+		log.Fatalf("%s for %v\n", err, status)
 		return err
 	}
 
@@ -263,7 +264,7 @@ func (s *DashNGoImpl) getAssociatedActiveOrg(auth runtime.ClientAuthInfoWriter) 
 	p := org.NewGetCurrentOrgParams()
 	payload, err := s.client.Org.GetCurrentOrg(p, auth)
 	if err != nil {
-		log.WithError(err).Fatal("Unable to retrieve current organization")
+		log.Fatalf("Unable to retrieve current organization, err: %v", err)
 	}
 	return payload.GetPayload()
 }
@@ -273,7 +274,7 @@ func (s *DashNGoImpl) SetUserOrganizations(id int64) error {
 	p.OrgID = id
 	payload, err := s.client.SignedInUser.UserSetUsingOrg(p, s.getBasicAuth())
 	if err == nil {
-		log.Debugf(payload.GetPayload().Message)
+		slog.Debug(payload.GetPayload().Message)
 	}
 	return err
 }
@@ -290,7 +291,7 @@ func (s *DashNGoImpl) ListOrgUsers(orgId int64) []*models.OrgUserDTO {
 	p.OrgID = orgId
 	resp, err := s.client.Orgs.GetOrgUsers(p, s.getGrafanaAdminAuth())
 	if err != nil {
-		log.WithError(err).Fatal("failed to get org users")
+		log.Fatalf("failed to get org users, err: %v", err)
 	}
 	return resp.GetPayload()
 }
