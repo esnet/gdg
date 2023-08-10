@@ -10,11 +10,12 @@ toc: true
 ---
 
 ##  Release Notes for v0.4.6
+
 **Release Date: TBD 07/13/2023**
 
 
 ### Changes
-  - TBD
+  - Adding support for Basic CRU for Orgs
 
 
 ### Bug Fixes

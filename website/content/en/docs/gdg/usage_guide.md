@@ -245,8 +245,13 @@ All commands can use `libraryelements` aliased to `library` and `lib` for lazine
 ### Organizations
 Command can use `organizations` or `org` to manage organizations.
 
+NOTE: this only manages top level of the orgs structure. It's mainly useful to maintain consistency.
+
 ```sh
 ./bin/gdg org list -- Lists all organizations
+./bin/gdg org upload -- Upload Orgs to grafana
+./bin/gdg org download -- Download Orgs to grafana
+./bin/gdg org set <orgID> -- Sets a given Org filter.  All Dashboards and Datasources etc are uploaded to the given Org only.
 ```
 
 ### Teams
