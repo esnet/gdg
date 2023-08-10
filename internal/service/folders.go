@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -161,8 +162,8 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*models.H
 			//log.Infof("Starting a new go routine for folder %s", folder.FolderTitle)
 			p := folder_permissions.NewGetFolderPermissionListParams()
 			p.FolderUID = folder.UID
-			//client := s.GetNewClient()
-			//p.SetHTTPClient(client)
+			_, client := s.GetNewClient()
+			p.SetHTTPClient(client)
 
 			//lock.Lock()
 			//log.Infof("Getting folder permissions for folder %s", folder.Title)
@@ -173,8 +174,9 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*models.H
 
 			if err != nil {
 				msg := fmt.Sprintf("Unable to get folder permissions for folderUID: %s", p.FolderUID)
-				switch err.(type) {
-				case *folder_permissions.GetFolderPermissionListInternalServerError:
+				var getFolderPermissionListInternalServerError *folder_permissions.GetFolderPermissionListInternalServerError
+				switch {
+				case errors.As(err, &getFolderPermissionListInternalServerError):
 					castError := err.(*folder_permissions.GetFolderPermissionListInternalServerError)
 					log.WithField("message", *castError.GetPayload().Message).
 						WithError(err).Error(msg)
