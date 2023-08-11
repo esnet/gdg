@@ -113,6 +113,13 @@ func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
+	//TODO: remove code after next release
+	legacyCheck := config.Config().GetDefaultGrafanaConfig().GetPath(config.LegacyConnections)
+	if _, err := os.Stat(legacyCheck); !os.IsNotExist(err) {
+		log.Fatalf("Your export contains a datasource directry which is deprecated.  Please remove or "+
+			"rename directory to '%s'", config.ConnectionResource)
+	}
+
 	var exported = make([]string, 0)
 
 	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource))

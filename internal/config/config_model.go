@@ -17,6 +17,7 @@ const (
 	AlertNotificationResource    = "alertnotifications"
 	ConnectionPermissionResource = "connections-permissions"
 	ConnectionResource           = "connections"
+	LegacyConnections            = "datasources"
 	DashboardResource            = "dashboards"
 	FolderPermissionResource     = "folders-permissions"
 	FolderResource               = "folders"
