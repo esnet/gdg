@@ -20,8 +20,8 @@ import (
 
 type TeamsApi interface {
 	//Team
-	ImportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
-	ExportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
+	DownloadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
+	UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
 	ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
 	DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, error)
 }
@@ -61,7 +61,7 @@ func NewTeamFilter(entries ...string) filters.Filter {
 }
 
 // Import Teams
-func (s *DashNGoImpl) ImportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
 	teamPath := buildResourceFolder("", config.TeamResource)
@@ -100,7 +100,7 @@ func (s *DashNGoImpl) ImportTeams(filter filters.Filter) map[*models.TeamDTO][]*
 }
 
 // Export Teams
-func (s *DashNGoImpl) ExportTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.TeamResource), true)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for teams")
@@ -249,7 +249,6 @@ func (s *DashNGoImpl) listTeamMembers(filter filters.Filter, teamID int64) []*mo
 }
 
 // Add User to a Team
-// TODO: add support to import member with correct permission granted.
 func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMemberDTO) (string, error) {
 	if team == nil {
 		log.Fatal(fmt.Errorf("team:  '%s' could not be found", team.Name))
@@ -276,5 +275,17 @@ func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMe
 		log.Error(errorMsg)
 		return "", errors.New(errorMsg)
 	}
+	if userDTO.Permission == AdminUserPermission {
+		adminPatch := teams.NewUpdateTeamMemberParams()
+		adminPatch.TeamID = fmt.Sprintf("%d", team.ID)
+		adminPatch.UserID = userDTO.UserID
+		adminPatch.Body = &models.UpdateTeamMemberCommand{Permission: AdminUserPermission}
+		response, err := s.client.Teams.UpdateTeamMember(adminPatch, s.getAuth())
+		if err != nil {
+			return "", err
+		}
+		log.WithField("message", response.GetPayload().Message).Debugf("Updated permissions for user %s on team %s", userDTO.Name, team.Name)
+	}
+
 	return msg.GetPayload().Message, nil
 }

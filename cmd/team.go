@@ -31,7 +31,7 @@ var downloadTeamCmd = &cobra.Command{
 
 		log.Infof("Importing Teams for context: '%s'", config.Config().AppConfig.GetContext())
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		savedFiles := grafanaSvc.ImportTeams(filter)
+		savedFiles := grafanaSvc.DownloadTeams(filter)
 		if len(savedFiles) == 0 {
 			log.Info("No teams found")
 		} else {
@@ -57,7 +57,7 @@ var uploadTeamCmd = &cobra.Command{
 		log.Infof("Exporting Teams for context: '%s'", config.Config().AppConfig.GetContext())
 		log.Warn("Currently support for import Admin members is not support, there will be 1 admin, which is the default admin user")
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		savedFiles := grafanaSvc.ExportTeams(filter)
+		savedFiles := grafanaSvc.UploadTeams(filter)
 		if len(savedFiles) == 0 {
 			log.Info("No teams found")
 		} else {
