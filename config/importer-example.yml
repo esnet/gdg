@@ -12,7 +12,8 @@ contexts:
   testing:
     storage: "any_label"
     output_path: test/data
-    datasources:
+    enterprise_support: true
+    connections:
       exclude_filters:
         - matches:
             - field: "name"
@@ -53,7 +54,7 @@ contexts:
 
   production:
     output_path: prod
-    datasources:
+    connections:
       credential_rules:
         - rules:
             - field: "name"
@@ -79,7 +80,7 @@ contexts:
   qa:
     output_path: qa
     token: <CHANGEME>
-    datasources:
+    connections:
       credential_rules:
         - rules:
             - field: "name"

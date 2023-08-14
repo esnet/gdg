@@ -4,7 +4,7 @@ context_name: qa
 contexts:
   testing:
     output_path: test/data
-    datasources:
+    connections:
 #      exclude_filters:
 #        - field: "name"
 #          regex: "DEV-*|-Dev-*"
@@ -35,7 +35,7 @@ contexts:
       - Other
   production:
     output_path: prod
-    datasources:
+    connections:
       credential_rules:
         - rules:
             - field: "name"
@@ -61,7 +61,7 @@ contexts:
   qa:
     output_path: qa
     token: <CHANGEME>
-    datasources:
+    connections:
       credential_rules:
         - rules:
             - field: "name"

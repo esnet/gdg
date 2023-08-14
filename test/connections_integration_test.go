@@ -15,11 +15,11 @@ func TestDataSourceCRUD(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	apiClient, _ := initTest(t, nil)
-	filtersEntity := service.NewDataSourceFilter("")
-	log.Info("Exporting all datasources")
-	apiClient.ExportDataSources(filtersEntity)
-	log.Info("Listing all datasources")
-	dataSources := apiClient.ListDataSources(filtersEntity)
+	filtersEntity := service.NewConnectionFilter("")
+	log.Info("Exporting all connections")
+	apiClient.UploadConnections(filtersEntity)
+	log.Info("Listing all connections")
+	dataSources := apiClient.ListConnections(filtersEntity)
 	assert.Equal(t, len(dataSources), 3)
 	var dsItem *models.DataSourceListItemDTO
 	for _, ds := range dataSources {
@@ -29,16 +29,16 @@ func TestDataSourceCRUD(t *testing.T) {
 		}
 	}
 	assert.NotNil(t, dsItem)
-	validateDataSource(t, *dsItem)
+	validateConnection(t, *dsItem)
 	//Import Dashboards
-	log.Info("Importing datasources")
-	list := apiClient.ImportDataSources(filtersEntity)
+	log.Info("Importing connections")
+	list := apiClient.DownloadConnections(filtersEntity)
 	assert.Equal(t, len(list), len(dataSources))
-	log.Info("Deleting datasources")
-	deleteList := apiClient.DeleteAllDataSources(filtersEntity)
+	log.Info("Deleting connections")
+	deleteList := apiClient.DeleteAllConnections(filtersEntity)
 	assert.Equal(t, len(deleteList), len(dataSources))
-	log.Info("List datasources again")
-	dataSources = apiClient.ListDataSources(filtersEntity)
+	log.Info("List connections again")
+	dataSources = apiClient.ListConnections(filtersEntity)
 	assert.Equal(t, len(dataSources), 0)
 }
 
@@ -65,11 +65,11 @@ func TestDataSourceFilter(t *testing.T) {
 
 	apiClient := service.NewApiService("dummy")
 
-	filtersEntity := service.NewDataSourceFilter("")
-	log.Info("Exporting all datasources")
-	apiClient.ExportDataSources(filtersEntity)
-	log.Info("Listing all datasources")
-	dataSources := apiClient.ListDataSources(filtersEntity)
+	filtersEntity := service.NewConnectionFilter("")
+	log.Info("Exporting all connections")
+	apiClient.UploadConnections(filtersEntity)
+	log.Info("Listing all connections")
+	dataSources := apiClient.ListConnections(filtersEntity)
 	assert.Equal(t, len(dataSources), 2)
 	var dsItem *models.DataSourceListItemDTO
 	for _, ds := range dataSources {
@@ -79,20 +79,20 @@ func TestDataSourceFilter(t *testing.T) {
 		}
 	}
 	assert.NotNil(t, dsItem)
-	validateDataSource(t, *dsItem)
+	validateConnection(t, *dsItem)
 	//Import Dashboards
-	log.Info("Importing datasources")
-	list := apiClient.ImportDataSources(filtersEntity)
+	log.Info("Importing connections")
+	list := apiClient.DownloadConnections(filtersEntity)
 	assert.Equal(t, len(list), len(dataSources))
-	log.Info("Deleting datasources")
-	deleteList := apiClient.DeleteAllDataSources(filtersEntity)
+	log.Info("Deleting connections")
+	deleteList := apiClient.DeleteAllConnections(filtersEntity)
 	assert.Equal(t, len(deleteList), len(dataSources))
-	log.Info("List datasources again")
-	dataSources = apiClient.ListDataSources(filtersEntity)
+	log.Info("List connections again")
+	dataSources = apiClient.ListConnections(filtersEntity)
 	assert.Equal(t, len(dataSources), 0)
 }
 
-func validateDataSource(t *testing.T, dsItem models.DataSourceListItemDTO) {
+func validateConnection(t *testing.T, dsItem models.DataSourceListItemDTO) {
 	assert.Equal(t, int64(1), dsItem.OrgID)
 	assert.Equal(t, "netsage", dsItem.Name)
 	assert.Equal(t, "elasticsearch", dsItem.Type)

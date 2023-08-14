@@ -24,7 +24,6 @@ var listFoldersPermissionsCmd = &cobra.Command{
 		log.Infof("Listing Folders for context: '%s'", config.Config().GetAppConfig().GetContext())
 		tableObj.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name", "UserID", "Team Name", "Role", "Permission Name"}, rowConfigAutoMerge)
 		folders := grafanaSvc.ListFolderPermissions(getFolderFilter())
-		_ = folders
 
 		if len(folders) == 0 {
 			log.Info("No folders found")

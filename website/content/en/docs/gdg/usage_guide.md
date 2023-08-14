@@ -150,19 +150,21 @@ You can also use filtering options to list or import your dashboard by folder or
 ./bin/gdg dash download -t tagA -t tagB -t tagC
 ```
 
-### DataSources
+### Connections (was: DataSources)
 
-DataSources credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/esnet/gdg/blob/master/conf/importer-example.yml).  If the datasource JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
+Note:  Starting with 0.4.6 this was renamed to connections.  
+
+Connections credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/esnet/gdg/blob/master/conf/importer-example.yml).  If the connection JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from _organization_ specified in configuration file otherwise current organization user is used.
 
 
-All commands can use `datasources` or `ds` to manage datasources
+All commands can use `connection` or `c` to manage datasources.  (Legacy options of `datasource` and `ds` are also supported)
 
 ```sh
-./bin/gdg ds list -- Lists all current datasources
-./bin/gdg ds download -- Import all datasources from grafana to local file system
-./bin/gdg ds upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
-./bin/gdg ds clear -- Deletes all datasources
+./bin/gdg c list -- Lists all current connections
+./bin/gdg c download -- Import all connections from grafana to local file system
+./bin/gdg c upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
+./bin/gdg c clear -- Deletes all connections
 ```
 
 ### Devel

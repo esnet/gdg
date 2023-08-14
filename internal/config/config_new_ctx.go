@@ -10,7 +10,7 @@ func (s *Configuration) NewContext(name string) {
 
 	name = strings.ToLower(name) // forces lowercase contexts
 	answers := GrafanaConfig{
-		DataSourceSettings: &DataSourceSettings{
+		DataSourceSettings: &ConnectionSettings{
 			MatchingRules: make([]RegexMatchesList, 0),
 		},
 	}
@@ -57,7 +57,7 @@ func (s *Configuration) NewContext(name string) {
 	}
 	//Set Default Datasource
 	if promptAnswers.DSUser != "" && promptAnswers.DSPassword != "" {
-		ds := GrafanaDataSource{
+		ds := GrafanaConnection{
 			User:     promptAnswers.DSUser,
 			Password: promptAnswers.DSPassword,
 		}

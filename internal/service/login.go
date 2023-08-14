@@ -28,7 +28,7 @@ func (s *DashNGoImpl) Login() {
 	if err != nil {
 		log.Fatal("invalid Grafana URL")
 	}
-	httpClient := http.DefaultClient
+	httpClient := &http.Client{}
 	if config.Config().IgnoreSSL() {
 		httpClient = ignoreSSLErrors()
 	}
