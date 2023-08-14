@@ -22,7 +22,7 @@ func TestTeamCRUD(t *testing.T) {
 	users := apiClient.ListUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(users), 2)
 	log.Info("Exporting all teams")
-	apiClient.ExportTeams(filter)
+	apiClient.UploadTeams(filter)
 	log.Info("Listing all Teams")
 	teamsMap := apiClient.ListTeams(filter)
 	teams := maps.Keys(teamsMap)
@@ -43,7 +43,7 @@ func TestTeamCRUD(t *testing.T) {
 	assert.Equal(t, musicianTeam.Name, "musicians")
 	//Import Teams
 	log.Info("Importing teams")
-	list := apiClient.ImportTeams(filter)
+	list := apiClient.DownloadTeams(filter)
 	assert.Equal(t, len(list), len(teams))
 	//CleanUp
 	_, err := apiClient.DeleteTeam(filter)

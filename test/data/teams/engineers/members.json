@@ -17,6 +17,7 @@
 		"name": "supertux",
 		"orgId": 1,
 		"teamId": 5,
+		"permission": 4,
 		"userId": 2
 	}
 ]
