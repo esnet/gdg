@@ -6,6 +6,7 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"sort"
 )
 
 var orgCmd = &cobra.Command{
@@ -25,6 +26,9 @@ var listOrgCmd = &cobra.Command{
 		log.Infof("Listing organizations for context: '%s'", config.Config().AppConfig.GetContext())
 		cmd.TableObj.AppendHeader(table.Row{"id", "org"})
 		listOrganizations := cmd.GetGrafanaSvc().ListOrganizations()
+		sort.Slice(listOrganizations, func(a, b int) bool {
+			return listOrganizations[a].ID < listOrganizations[b].ID
+		})
 		if len(listOrganizations) == 0 {
 			log.Info("No organizations found")
 		} else {

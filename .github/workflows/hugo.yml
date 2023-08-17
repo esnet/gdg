@@ -1,8 +1,10 @@
-name: Publish Hugo Documentation
+name: Publish Hugo Documentation On New Tag 
 on:
   push:
-    branches: 
-      - master
+#   branches: 
+#     - master
+    tags:
+      - v*
 
 jobs:
   deployHugoPages:

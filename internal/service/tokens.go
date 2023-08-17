@@ -17,7 +17,7 @@ type TokenApi interface {
 // ListAPIKeys returns a list of all known API Keys and service accounts
 func (s *DashNGoImpl) ListAPIKeys() []*models.APIKeyDTO {
 	params := api_keys.NewGetAPIkeysParams()
-	keys, err := s.client.APIKeys.GetAPIkeys(params, s.getAdminAuth())
+	keys, err := s.client.APIKeys.GetAPIkeys(params, s.getBasicAuth())
 	if err != nil {
 		log.Fatal("unable to list API Keys")
 	}

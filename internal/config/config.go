@@ -163,7 +163,7 @@ func (app *AppConfig) GetContextMap() map[string]interface{} {
 
 var (
 	configData        *Configuration
-	configSearchPaths = []string{".", "../../config", "../config", "conf", "config", "/etc/gdg"}
+	configSearchPaths = []string{".", "../../config", "../config", "config", "/etc/gdg"}
 )
 
 // GetCloudConfiguration Returns storage type and configuration
@@ -264,25 +264,26 @@ func InitConfig(override, defaultConfig string) {
 
 	configData.defaultConfig, configData.AppConfig, err = readViperConfig(appName, configDirs)
 	if err != nil {
-		err = os.MkdirAll("config", os.ModePerm)
-		if err != nil {
-			log.Fatal("unable to create configuration folder: 'config'")
-		}
-		err = os.WriteFile("config/importer.yml", []byte(defaultConfig), 0600)
-		if err != nil {
-			log.Panic("Could not persist default config locally")
-		}
-		appName = "importer"
+		loadDefault := tools.GetUserConfirmation("unable to load configuration.  Would you like to fall back on default? This will overwrite the current configuration.  (y/n) ", "", true)
+		if loadDefault {
+			err = os.MkdirAll("config", os.ModePerm)
+			if err != nil {
+				log.Fatal("unable to create configuration folder: 'config'")
+			}
+			err = os.WriteFile("config/importer.yml", []byte(defaultConfig), 0600)
+			if err != nil {
+				log.Panic("Could not persist default config locally")
+			}
+			appName = "importer"
 
-		configData.defaultConfig, configData.AppConfig, err = readViperConfig(appName, configDirs)
-		if err != nil {
-			log.Panic(err)
+			configData.defaultConfig, configData.AppConfig, err = readViperConfig(appName, configDirs)
+			if err != nil {
+				log.Panic(err)
+			}
 		}
-
 	}
 
 	//unmarshall struct
-
 	contexts := configData.defaultConfig.GetStringMap("contexts")
 	contexts = applyEnvOverrides(contexts, "contexts", configData.defaultConfig)
 

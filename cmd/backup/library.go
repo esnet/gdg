@@ -106,7 +106,7 @@ var listLibraries = &cobra.Command{
 var listLibraryConnections = &cobra.Command{
 	Use:   "list-connections",
 	Short: "List all library Connection given a valid library Connection UID",
-	Long:  `List all library Connection`,
+	Long:  `List all library Connection for a given library connection UID`,
 	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	Run: func(command *cobra.Command, args []string) {
 		cmd.TableObj.AppendHeader(table.Row{"id", "UID", "Slug", "Title", "Folder"})

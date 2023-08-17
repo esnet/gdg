@@ -62,6 +62,15 @@ func getFolderFromResourcePath(storageEngine string, filePath string, resourceTy
 	return "", errors.New("unable to parse resource to retrieve folder name")
 }
 
+func isResourceOrgNamespaces(resourceType config.ResourceType) bool {
+	if resourceType == config.DashboardResource {
+		return true
+	}
+
+	return false
+
+}
+
 func buildResourceFolder(folderName string, resourceType config.ResourceType) string {
 	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
@@ -71,7 +80,6 @@ func buildResourceFolder(folderName string, resourceType config.ResourceType) st
 	if strings.Contains(folderName, strSeperator) {
 		folderName = strings.ReplaceAll(folderName, strSeperator, fmt.Sprintf("//%s", strSeperator))
 	}
-
 	v := fmt.Sprintf("%s/%s", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
 	CreateDestinationPath(v)
 	return v

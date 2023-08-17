@@ -7,6 +7,7 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
+	"os"
 	"path"
 	"regexp"
 )
@@ -23,24 +24,50 @@ const (
 	FolderResource               = "folders"
 	LibraryElementResource       = "libraryelements"
 	OrganizationResource         = "organizations"
+	OrganizationMetaResource     = "org"
 	TeamResource                 = "teams"
 	UserResource                 = "users"
 )
 
+var orgNamespacedResource = map[ResourceType]bool{
+	AlertNotificationResource:    true,
+	ConnectionPermissionResource: true,
+	ConnectionResource:           true,
+	DashboardResource:            true,
+	FolderPermissionResource:     true,
+	FolderResource:               true,
+	LibraryElementResource:       true,
+	TeamResource:                 true,
+}
+
+// isNamespaced returns true if the resource type is namespaced
+func (s *ResourceType) isNamespaced() bool {
+	return orgNamespacedResource[*s]
+}
+
+// String returns the string representation of the resource type
 func (s *ResourceType) String() string {
 	return string(*s)
 }
 
+// GetPath returns the path of the resource type, if Namespaced, will delimit the path by org Id
 func (s *ResourceType) GetPath(basePath string) string {
+	if s.isNamespaced() {
+		orgId := Config().GetDefaultGrafanaConfig().GetOrganizationId()
+		return path.Join(basePath, fmt.Sprintf("%s_%d", OrganizationMetaResource, orgId), s.String())
+
+	}
 	return path.Join(basePath, s.String())
 }
 
+// FiltersEnabled returns true if the filters are enabled for the resource type
 func (ds *ConnectionSettings) FiltersEnabled() bool {
 	return ds.FilterRules != nil
 }
 
-func (ds *ConnectionSettings) GetCredentials(dataSourceName models.AddDataSourceCommand) (*GrafanaConnection, error) {
-	data, err := json.Marshal(dataSourceName)
+// GetCredentials returns the credentials for the connection
+func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSourceCommand) (*GrafanaConnection, error) {
+	data, err := json.Marshal(connectionEntity)
 	if err != nil {
 		log.Warn("Unable to marshall Connection, unable to fetch credentials")
 		return nil, fmt.Errorf("unable to marshall Connection, unable to fetch credentials")
@@ -77,6 +104,7 @@ func (ds *ConnectionSettings) GetCredentials(dataSourceName models.AddDataSource
 	return nil, errors.New("no valid configuration found, falling back on default")
 }
 
+// IsExcluded returns true if the item should be excluded from the connection List
 func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
 	data, err := json.Marshal(item)
 	if err != nil {
@@ -114,6 +142,7 @@ func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
 
 }
 
+// GetFilterOverrides returns the filter overrides for the connection
 func (s *GrafanaConfig) GetFilterOverrides() *FilterOverrides {
 	if s.FilterOverrides == nil {
 		s.FilterOverrides = &FilterOverrides{IgnoreDashboardFilters: false}
@@ -121,6 +150,7 @@ func (s *GrafanaConfig) GetFilterOverrides() *FilterOverrides {
 	return s.FilterOverrides
 }
 
+// GetDataSourceSettings returns the datasource settings for the connection
 func (s *GrafanaConfig) GetDataSourceSettings() *ConnectionSettings {
 	if s.DataSourceSettings == nil {
 		s.DataSourceSettings = &ConnectionSettings{}
@@ -128,10 +158,12 @@ func (s *GrafanaConfig) GetDataSourceSettings() *ConnectionSettings {
 	return s.DataSourceSettings
 }
 
+// GetPath returns the path of the resource type
 func (s *GrafanaConfig) GetPath(r ResourceType) string {
 	return r.GetPath(s.OutputPath)
 }
 
+// GetDashboardOutput returns the path of the dashboards output
 func (s *GrafanaConfig) GetDashboardOutput() string {
 	return path.Join(s.OutputPath, DashboardResource)
 }
@@ -163,6 +195,30 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 	}
 
 	return s.MonitoredFolders
+}
+
+// Validate will return false if configuration or filesystem is in an invalid state
+func (s *GrafanaConfig) Validate() bool {
+	valid := true
+	if len(s.LegacyConnectionSettings) > 0 {
+		log.Warnf("Using 'datasources' is now deprecated, please use 'connections' instead")
+		valid = false
+	}
+	//Validate Connections
+	//TODO: remove code after next release
+	legacyCheck := s.GetPath(LegacyConnections)
+	if _, err := os.Stat(legacyCheck); !os.IsNotExist(err) {
+		log.Fatalf("Your export contains a datasource directry which is deprecated.  Please remove or "+
+			"rename directory to '%s'", ConnectionResource)
+	}
+
+	return valid
+
+}
+
+// IsAdminEnabled returns true if the admin is set, represents a GrafanaAdmin
+func (s *GrafanaConfig) IsAdminEnabled() bool {
+	return s.adminEnabled
 }
 
 // GetCredentials return credentials for a given datasource or falls back on default value

@@ -16,4 +16,5 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 
 func init() {
 	cmd.RootCmd.AddCommand(backupCmd)
+	cmd.GetGrafanaSvc().InitOrganizations()
 }

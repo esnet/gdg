@@ -44,6 +44,11 @@ func NewConnectionFilter(name string) filters.Filter {
 
 // ListConnections list all the currently configured datasources
 func (s *DashNGoImpl) ListConnections(filter filters.Filter) []models.DataSourceListItemDTO {
+	err := s.SwitchOrganization(s.grafanaConf.GetOrganizationId())
+	if err != nil {
+		log.Fatalf("Failed to switch organization ID %d: ", s.grafanaConf.OrganizationId)
+	}
+
 	ds, err := s.client.Datasources.GetDataSources(datasources.NewGetDataSourcesParams(), s.getAuth())
 	if err != nil {
 		panic(err)
@@ -113,13 +118,6 @@ func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
-	//TODO: remove code after next release
-	legacyCheck := config.Config().GetDefaultGrafanaConfig().GetPath(config.LegacyConnections)
-	if _, err := os.Stat(legacyCheck); !os.IsNotExist(err) {
-		log.Fatalf("Your export contains a datasource directry which is deprecated.  Please remove or "+
-			"rename directory to '%s'", config.ConnectionResource)
-	}
-
 	var exported = make([]string, 0)
 
 	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource))
@@ -181,7 +179,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 				if existingDS.Name == newDS.Name {
 					deleteParam := datasources.NewDeleteDataSourceByIDParams()
 					deleteParam.ID = fmt.Sprintf("%d", existingDS.ID)
-					if _, err := s.client.Datasources.DeleteDataSourceByID(deleteParam, s.getAdminAuth()); err != nil {
+					if _, err := s.client.Datasources.DeleteDataSourceByID(deleteParam, s.getBasicAuth()); err != nil {
 						log.Errorf("error on deleting datasource %s with %s", newDS.Name, err)
 					}
 					break

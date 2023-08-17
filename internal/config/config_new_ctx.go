@@ -96,7 +96,6 @@ func (s *Configuration) NewContext(name string) {
 	}
 
 	if promptAnswers.AuthType == "both" || promptAnswers.AuthType == "basicauth" {
-		answers.AdminEnabled = true
 		questions = append(questions, &survey.Question{
 			Name:     "UserName",
 			Prompt:   &survey.Input{Message: "Please enter your admin UserName"},
