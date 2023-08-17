@@ -96,7 +96,10 @@ global:
 
 storage_engine:
   test:
+    self_hosted: true
     kind: cloud
     cloud_type: s3
+    ssl_enabled: true
     bucket_name: ""
+    endpoint: http://localhost:9000
     prefix: ""

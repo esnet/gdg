@@ -4,9 +4,22 @@ storage_engine:
   any_label:
     kind: cloud
     cloud_type: s3
-    access_key_id: ""
-    secret_key: ""
     bucket_name: ""
+## The configuration below is mainly intended for OSS alternatives like ceph and minio.  If you use a known cloud provider
+  ## like aws, gcs, azure please setup the auth using the provided tooling from the cloud provider.
+  # For example, having a valid AWS bucket configured in ~/.aws/credentials will be sufficient without needing to provide the auth in the config.
+  ### valid boolean values can be represented as true, "true", or "1"
+  custom_cloud:
+    custom: true   ## Required, if set to true most of the 'custom' configuration will be disregarded.
+    kind: cloud
+    cloud_type: s3
+    prefix: dummy
+    bucket_name: "mybucket"
+    access_id: ""  ## this value can also be read from: AWS_ACCESS_KEY. config file is given precedence
+    secret_key: ""  ## same as above, can be read from: AWS_SECRET_KEY with config file is given precedence.
+    init_bucket: "true" ## Only supported for custom workflows. Will attempt to create a bucket if one does not exist.
+    endpoint: "http://localhost:9000"  
+    ssl_enabled: "false"
 
 contexts:
   testing:

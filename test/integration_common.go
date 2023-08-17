@@ -39,14 +39,19 @@ func initTest(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Vip
 }
 
 func SetupCloudFunction(t *testing.T, cfg *viper.Viper, apiClient service.GrafanaService, params []string) (context.Context, service.GrafanaService) {
-	_ = os.Setenv("AWS_ACCESS_KEY", "test")
-	_ = os.Setenv("AWS_SECRET_KEY", "secretsss")
+	_ = os.Setenv(service.InitBucket, "true")
 	bucketName := params[1]
 	var m = map[string]string{
+		service.InitBucket: "true",
 		service.CloudType:  params[0],
 		service.Prefix:     "dummy",
+		service.AccessId:   "test",
+		service.SecretKey:  "secretsss",
 		service.BucketName: bucketName,
 		service.Kind:       "cloud",
+		service.Custom:     "true",
+		service.Endpoint:   "http://localhost:9000",
+		service.SSLEnabled: "false",
 	}
 
 	cfgObj := config.Config().GetAppConfig()

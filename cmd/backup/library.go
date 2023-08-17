@@ -67,9 +67,8 @@ var downloadLibary = &cobra.Command{
 	Long:    `Download all library from grafana to local file system`,
 	Aliases: []string{"d"},
 	Run: func(command *cobra.Command, args []string) {
-		log.Info("exporting lib elements")
+		log.Infof("Downloading library for context: '%s'", config.Config().AppConfig.GetContext())
 		savedFiles := cmd.GetGrafanaSvc().DownloadLibraryElements(nil)
-		log.Infof("Importing library for context: '%s'", config.Config().AppConfig.GetContext())
 		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 		for _, file := range savedFiles {
 			cmd.TableObj.AppendRow(table.Row{"library", file})

@@ -194,7 +194,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 	)
 
 	boardLinks = s.ListDashboards(filter)
-	var boards = make([]string, 0)
+	var boards []string
 	for _, link := range boardLinks {
 		dp := dashboards.NewGetDashboardByUIDParams()
 		dp.UID = link.UID

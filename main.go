@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/esnet/gdg/cmd"
-	_ "github.com/esnet/gdg/cmd/backup" // register backup command
-	_ "github.com/esnet/gdg/cmd/tools"  // register tools command
+	_ "github.com/esnet/gdg/cmd/backup"     // register backup command
+	_ "github.com/esnet/gdg/cmd/tools"      // register tools command
 )
 
 //go:embed config/importer-example.yml

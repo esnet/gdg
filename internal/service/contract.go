@@ -27,8 +27,8 @@ type GrafanaService interface {
 }
 
 var (
-	instance *DashNGoImpl
-	once     sync.Once
+	instance        *DashNGoImpl
+	initServiceOnce sync.Once
 )
 
 type DashNGoImpl struct {
@@ -42,7 +42,7 @@ type DashNGoImpl struct {
 }
 
 func NewDashNGoImpl() *DashNGoImpl {
-	once.Do(func() {
+	initServiceOnce.Do(func() {
 		instance = newInstance()
 	})
 	return instance
