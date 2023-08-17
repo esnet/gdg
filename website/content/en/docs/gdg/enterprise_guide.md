@@ -1,6 +1,6 @@
 ---
 title: "Enterprise User Guide"
-weight: 17
+weight: 18
 ---
 The features listed below are for the enterprise edition of Grafana only.  They will not work on the OSS version.
 
@@ -10,13 +10,13 @@ In order to use these features you need.
 
 `enterprise_support: true`
 
-2. Have a running Enterprise version of grafana, I'll defer to the grafana community on instructions on how to set this up.  
+2. Have a running Enterprise version of grafana, I'll defer to the grafana community on instructions on how to set this up.
 
-### Connections Permissions 
+### Connections Permissions
 
 Note:  Available with +v0.4.6.  All of these commands are a subset of the connection command.
 
-All commands can use `permission` or `p` to manage connection permissions.  
+All commands can use `permission` or `p` to manage connection permissions.
 
 ```sh
 ./bin/gdg c permission list -- Lists all current connections permissions

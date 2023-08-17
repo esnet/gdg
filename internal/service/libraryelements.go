@@ -19,8 +19,8 @@ import (
 type LibraryElementsApi interface {
 	ListLibraryElements(filter filters.Filter) []*models.LibraryElementDTO
 	ListLibraryElementsConnections(filter filters.Filter, connectionID string) []*models.DashboardFullWithMeta
-	ImportLibraryElements(filter filters.Filter) []string
-	ExportLibraryElements(filter filters.Filter) []string
+	DownloadLibraryElements(filter filters.Filter) []string
+	UploadLibraryElements(filter filters.Filter) []string
 	DeleteAllLibraryElements(filter filters.Filter) []string
 }
 
@@ -39,7 +39,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.Filter, conn
 	var results []*models.DashboardFullWithMeta
 
 	for _, item := range payload.GetPayload().Result {
-		dashboard, err := s.getDashboardByUid(filter, item.ConnectionUID)
+		dashboard, err := s.getDashboardByUid(item.ConnectionUID)
 		if err != nil {
 			log.WithField("UID", item.ConnectionUID).Errorf("failed to retrieve linked Dashboard")
 		}
@@ -82,7 +82,8 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 	return libraryElements.GetPayload().Result.Elements
 }
 
-func (s *DashNGoImpl) ImportLibraryElements(filter filters.Filter) []string {
+// DownloadLibraryElements downloads all the Library Elements
+func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 	var (
 		listing   []*models.LibraryElementDTO
 		dsPacked  []byte
@@ -114,7 +115,8 @@ func (s *DashNGoImpl) ImportLibraryElements(filter filters.Filter) []string {
 	return dataFiles
 }
 
-func (s *DashNGoImpl) ExportLibraryElements(filter filters.Filter) []string {
+// UploadLibraryElements uploads all the Library Elements
+func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 	var (
 		exported          []string = make([]string, 0)
 		rawLibraryElement []byte
@@ -189,6 +191,7 @@ func (s *DashNGoImpl) ExportLibraryElements(filter filters.Filter) []string {
 	return exported
 }
 
+// DeleteAllLibraryElements deletes all the Library Elements
 func (s *DashNGoImpl) DeleteAllLibraryElements(filter filters.Filter) []string {
 	var entries []string
 	libraryElements := s.ListLibraryElements(filter)

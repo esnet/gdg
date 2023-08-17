@@ -21,13 +21,13 @@ import (
 // FoldersApi Contract definition
 type FoldersApi interface {
 	ListFolder(filter filters.Filter) []*models.Hit
-	ImportFolder(filter filters.Filter) []string
-	ExportFolder(filter filters.Filter) []string
-	DeleteAllFolder(filter filters.Filter) []string
+	DownloadFolders(filter filters.Filter) []string
+	UploadFolders(filter filters.Filter) []string
+	DeleteAllFolders(filter filters.Filter) []string
 	//Permissions
 	ListFolderPermissions(filter filters.Filter) map[*models.Hit][]*models.DashboardACLInfoDTO
-	ImportFolderPermissions(filter filters.Filter) []string
-	ExportFolderPermissions(filter filters.Filter) []string
+	DownloadFolderPermissions(filter filters.Filter) []string
+	UploadFolderPermissions(filter filters.Filter) []string
 }
 
 func NewFolderFilter() filters.Filter {
@@ -57,8 +57,8 @@ func (s *DashNGoImpl) checkFolderName(folderName string) bool {
 	return true
 }
 
-// ImportFolderPermissions downloads all the current folder permissions based on filter.
-func (s *DashNGoImpl) ImportFolderPermissions(filter filters.Filter) []string {
+// DownloadFolderPermissions downloads all the current folder permissions based on filter.
+func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.Filter) []string {
 	log.Infof("Downloading folder permissions")
 	var (
 		dsPacked  []byte
@@ -82,9 +82,9 @@ func (s *DashNGoImpl) ImportFolderPermissions(filter filters.Filter) []string {
 
 }
 
-// ExportFolderPermissions update current folder permissions to match local file system.
+// UploadFolderPermissions update current folder permissions to match local file system.
 // Note: This expects all the current users and teams to already exist.
-func (s *DashNGoImpl) ExportFolderPermissions(filter filters.Filter) []string {
+func (s *DashNGoImpl) UploadFolderPermissions(filter filters.Filter) []string {
 	var (
 		rawFolder []byte
 		dataFiles []string
@@ -193,8 +193,8 @@ func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 
 }
 
-// ImportFolder Download all the given folders matching filter
-func (s *DashNGoImpl) ImportFolder(filter filters.Filter) []string {
+// DownloadFolders Download all the given folders matching filter
+func (s *DashNGoImpl) DownloadFolders(filter filters.Filter) []string {
 	var (
 		dsPacked  []byte
 		err       error
@@ -217,8 +217,8 @@ func (s *DashNGoImpl) ImportFolder(filter filters.Filter) []string {
 	return dataFiles
 }
 
-// ExportFolder upload all the given folders to grafana
-func (s *DashNGoImpl) ExportFolder(filter filters.Filter) []string {
+// UploadFolders upload all the given folders to grafana
+func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 	var (
 		result    []string
 		rawFolder []byte
@@ -271,7 +271,7 @@ func (s *DashNGoImpl) ExportFolder(filter filters.Filter) []string {
 }
 
 // DeleteAllFolder deletes all the matching folders from grafana
-func (s *DashNGoImpl) DeleteAllFolder(filter filters.Filter) []string {
+func (s *DashNGoImpl) DeleteAllFolders(filter filters.Filter) []string {
 	var result []string
 	folderListing := s.ListFolder(filter)
 	for _, folder := range folderListing {

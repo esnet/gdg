@@ -14,13 +14,18 @@ import (
 )
 
 var (
-	tableObj      table.Writer
+	TableObj      table.Writer
 	grafanaSvc    service.GrafanaService
 	DefaultConfig string
 )
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+// GetGrafanaSvc returns the GrafanaService
+func GetGrafanaSvc() service.GrafanaService {
+	return grafanaSvc
+}
+
+// RootCmd represents the base command when called without any subcommands
+var RootCmd = &cobra.Command{
 	Use:   "gdg Grafana Dash-N-Grab",
 	Short: "A brief description of your application",
 	Long: `A longer description that spans multiple lines and likely contains
@@ -35,9 +40,9 @@ to quickly create a Cobra application.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -45,13 +50,13 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.CompletionOptions.DisableDefaultCmd = true
-	rootCmd.PersistentFlags().StringP("config", "c", "", "Configuration Override")
+	RootCmd.CompletionOptions.DisableDefaultCmd = true
+	RootCmd.PersistentFlags().StringP("config", "c", "", "Configuration Override")
 
 }
 
 func initConfig() {
-	configOverride, _ := rootCmd.Flags().GetString("config")
+	configOverride, _ := RootCmd.Flags().GetString("config")
 	if DefaultConfig == "" {
 		raw, err := os.ReadFile("conf/importer-example.yml")
 		if err == nil {
@@ -65,9 +70,9 @@ func initConfig() {
 	setupGrafanaClient()
 	log.Debug("Creating output locations")
 	//Output Renderer
-	tableObj = table.NewWriter()
-	tableObj.SetOutputMirror(os.Stdout)
-	tableObj.SetStyle(table.StyleLight)
+	TableObj = table.NewWriter()
+	TableObj.SetOutputMirror(os.Stdout)
+	TableObj.SetStyle(table.StyleLight)
 
 	if config.Config().IsDebug() {
 		log.SetLevel(log.DebugLevel)

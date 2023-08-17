@@ -1,6 +1,7 @@
-package cmd
+package backup
 
 import (
+	"github.com/esnet/gdg/cmd"
 	"github.com/esnet/gdg/internal/config"
 	api "github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
@@ -17,8 +18,8 @@ var teamCmd = &cobra.Command{
 	Long:    `Manage teams.`,
 }
 
-func parseTeamGlobalFlags(cmd *cobra.Command) []string {
-	teamName, _ := cmd.Flags().GetString("team")
+func parseTeamGlobalFlags(command *cobra.Command) []string {
+	teamName, _ := command.Flags().GetString("team")
 	return []string{teamName}
 }
 
@@ -26,23 +27,23 @@ var downloadTeamCmd = &cobra.Command{
 	Use:     "download",
 	Short:   "download teams from grafana",
 	Long:    `download teams from grafana`,
-	Aliases: []string{"import", "d"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Aliases: []string{"d"},
+	Run: func(command *cobra.Command, args []string) {
 
 		log.Infof("Importing Teams for context: '%s'", config.Config().AppConfig.GetContext())
-		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		savedFiles := grafanaSvc.DownloadTeams(filter)
+		filter := api.NewTeamFilter(parseTeamGlobalFlags(command)...)
+		savedFiles := cmd.GetGrafanaSvc().DownloadTeams(filter)
 		if len(savedFiles) == 0 {
 			log.Info("No teams found")
 		} else {
-			tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "member user ID", "Member Permission"})
+			cmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "member user ID", "Member Permission"})
 			for team, members := range savedFiles {
-				tableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
+				cmd.TableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
 				for _, member := range members {
-					tableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
+					cmd.TableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
 				}
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 	},
 }
@@ -51,26 +52,26 @@ var uploadTeamCmd = &cobra.Command{
 	Use:     "upload",
 	Short:   "upload teams to grafana",
 	Long:    `upload teams to grafana`,
-	Aliases: []string{"export", "u"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Aliases: []string{"u"},
+	Run: func(command *cobra.Command, args []string) {
 
 		log.Infof("Exporting Teams for context: '%s'", config.Config().AppConfig.GetContext())
 		log.Warn("Currently support for import Admin members is not support, there will be 1 admin, which is the default admin user")
-		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		savedFiles := grafanaSvc.UploadTeams(filter)
+		filter := api.NewTeamFilter(parseTeamGlobalFlags(command)...)
+		savedFiles := cmd.GetGrafanaSvc().UploadTeams(filter)
 		if len(savedFiles) == 0 {
 			log.Info("No teams found")
 		} else {
-			tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "created", "memberCount", "member Login", "member Permission"})
+			cmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "created", "memberCount", "member Login", "member Permission"})
 			for team, members := range savedFiles {
-				tableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
+				cmd.TableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
 				if team.MemberCount > 0 {
 					for _, member := range members {
-						tableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
+						cmd.TableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
 					}
 				}
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 	},
 }
@@ -88,24 +89,24 @@ var listTeamCmd = &cobra.Command{
 	Short:   "list teams",
 	Long:    `list teams`,
 	Aliases: []string{"l"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 
 		log.Infof("Listing teams for context: '%s'", config.Config().AppConfig.GetContext())
-		tableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "memberID", "member Permission"})
-		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		teams := grafanaSvc.ListTeams(filter)
+		cmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "memberID", "member Permission"})
+		filter := api.NewTeamFilter(parseTeamGlobalFlags(command)...)
+		teams := cmd.GetGrafanaSvc().ListTeams(filter)
 		if len(teams) == 0 {
 			log.Info("No teams found")
 		} else {
 			for team, members := range teams {
-				tableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
+				cmd.TableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
 				if team.MemberCount > 0 {
 					for _, member := range members {
-						tableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
+						cmd.TableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
 					}
 				}
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 
 	},
@@ -116,24 +117,24 @@ var deleteTeamCmd = &cobra.Command{
 	Short:   "Delete All Team from grafana",
 	Long:    `Delete All Team from grafana`,
 	Aliases: []string{"c"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		log.Infof("Deleting teams for context: '%s'", config.Config().AppConfig.GetContext())
-		filter := api.NewTeamFilter(parseTeamGlobalFlags(cmd)...)
-		tableObj.AppendHeader(table.Row{"type", "team ID", "team Name"})
-		teams, err := grafanaSvc.DeleteTeam(filter)
+		filter := api.NewTeamFilter(parseTeamGlobalFlags(command)...)
+		cmd.TableObj.AppendHeader(table.Row{"type", "team ID", "team Name"})
+		teams, err := cmd.GetGrafanaSvc().DeleteTeam(filter)
 		if err != nil {
 			log.Error(err.Error())
 		} else {
 			for _, team := range teams {
-				tableObj.AppendRow(table.Row{"team", team.ID, team.Name})
+				cmd.TableObj.AppendRow(table.Row{"team", team.ID, team.Name})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(teamCmd)
+	backupCmd.AddCommand(teamCmd)
 	teamCmd.AddCommand(downloadTeamCmd)
 	teamCmd.AddCommand(uploadTeamCmd)
 	teamCmd.AddCommand(listTeamCmd)
