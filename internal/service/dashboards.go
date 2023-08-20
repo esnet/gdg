@@ -351,7 +351,7 @@ func (s *DashNGoImpl) ExportDashboards(filterReq filters.Filter) {
 
 		err = json.Unmarshal(rawBoard, &data)
 		//zero out ID.  Can't create a new dashboard if an ID already exists.
-		data["id"] = nil
+		delete(data, "id")
 		importDashReq := dashboards.NewImportDashboardParams()
 		importDashReq.Body = &models.ImportDashboardRequest{
 			FolderID:  folderId,
