@@ -18,7 +18,7 @@ func TestTeamCRUD(t *testing.T) {
 	filter := service.NewTeamFilter("")
 	apiClient, _ := initTest(t, nil)
 	log.Info("Exporting current user list")
-	apiClient.ExportUsers(service.NewUserFilter(""))
+	apiClient.UploadUsers(service.NewUserFilter(""))
 	users := apiClient.ListUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(users), 2)
 	log.Info("Exporting all teams")

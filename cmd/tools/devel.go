@@ -1,6 +1,7 @@
-package cmd
+package tools
 
 import (
+	"github.com/esnet/gdg/cmd"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"os"
@@ -19,17 +20,17 @@ var CompletionCmd = &cobra.Command{
 	DisableFlagsInUseLine: true,
 	ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
 	Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		var err error
 		switch args[0] {
 		case "bash":
-			err = cmd.Root().GenBashCompletion(os.Stdout)
+			err = cmd.RootCmd.GenBashCompletion(os.Stdout)
 		case "zsh":
-			err = cmd.Root().GenZshCompletion(os.Stdout)
+			err = cmd.RootCmd.GenZshCompletion(os.Stdout)
 		case "fish":
-			err = cmd.Root().GenFishCompletion(os.Stdout, true)
+			err = cmd.RootCmd.GenFishCompletion(os.Stdout, true)
 		case "powershell":
-			err = cmd.Root().GenPowerShellCompletion(os.Stdout)
+			err = cmd.RootCmd.GenPowerShellCompletion(os.Stdout)
 		}
 		if err != nil {
 			log.Error("Failed to generation shell completion.")
@@ -41,8 +42,8 @@ var serverInfo = &cobra.Command{
 	Use:   "srvinfo",
 	Short: "server health info",
 	Long:  `server health info`,
-	Run: func(cmd *cobra.Command, args []string) {
-		result := grafanaSvc.GetServerInfo()
+	Run: func(command *cobra.Command, args []string) {
+		result := cmd.GetGrafanaSvc().GetServerInfo()
 		for key, value := range result {
 			log.Infof("%s:  %s", key, value)
 		}
@@ -50,7 +51,7 @@ var serverInfo = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(develCmd)
+	toolsCmd.AddCommand(develCmd)
 	develCmd.AddCommand(CompletionCmd)
 	develCmd.AddCommand(serverInfo)
 }

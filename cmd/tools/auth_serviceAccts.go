@@ -1,7 +1,8 @@
-package cmd
+package tools
 
 import (
 	"errors"
+	cmd "github.com/esnet/gdg/cmd"
 	"github.com/esnet/gdg/internal/config"
 	"sort"
 	"strconv"
@@ -23,10 +24,10 @@ var listServiceAcctsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list API Keys",
 	Long:  `list API Keys`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 
-		tableObj.AppendHeader(table.Row{"id", "service name", "role", "tokens", "token id", "token name", "expiration"})
-		apiKeys := grafanaSvc.ListServiceAccounts()
+		cmd.TableObj.AppendHeader(table.Row{"id", "service name", "role", "tokens", "token id", "token name", "expiration"})
+		apiKeys := cmd.GetGrafanaSvc().ListServiceAccounts()
 		sort.SliceStable(apiKeys, func(i, j int) bool {
 			return apiKeys[i].ServiceAccount.ID < apiKeys[j].ServiceAccount.ID
 		})
@@ -35,7 +36,7 @@ var listServiceAcctsCmd = &cobra.Command{
 		} else {
 			for _, apiKey := range apiKeys {
 
-				tableObj.AppendRow(table.Row{apiKey.ServiceAccount.ID, apiKey.ServiceAccount.Name, apiKey.ServiceAccount.Role, apiKey.ServiceAccount.Tokens})
+				cmd.TableObj.AppendRow(table.Row{apiKey.ServiceAccount.ID, apiKey.ServiceAccount.Name, apiKey.ServiceAccount.Role, apiKey.ServiceAccount.Tokens})
 				if apiKey.Tokens != nil {
 					sort.SliceStable(apiKey.Tokens, func(i, j int) bool {
 						return apiKey.Tokens[i].ID < apiKey.Tokens[j].ID
@@ -46,11 +47,11 @@ var listServiceAcctsCmd = &cobra.Command{
 						if date.(string) == "0001-01-01T00:00:00.000Z" {
 							formattedDate = "No Expiration"
 						}
-						tableObj.AppendRow(table.Row{"", "", "", "", token.ID, token.Name, formattedDate})
+						cmd.TableObj.AppendRow(table.Row{"", "", "", "", token.ID, token.Name, formattedDate})
 					}
 				}
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 
 	},
@@ -60,14 +61,14 @@ var deleteServiceAcctsTokensCmd = &cobra.Command{
 	Use:   "clearTokens",
 	Short: "delete all tokens for Service Account from grafana",
 	Long:  `delete all tokens for Service Account from grafana`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(command *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("requires a service account ID to be specified")
 		}
 		return nil
 	},
 
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		idStr := args[0]
 		id, err := strconv.ParseInt(idStr, 10, 64)
 		if err != nil {
@@ -75,15 +76,15 @@ var deleteServiceAcctsTokensCmd = &cobra.Command{
 		}
 
 		log.Infof("Deleting Service Accounts Tokens for serviceID %d for context: '%s'", id, config.Config().AppConfig.GetContext())
-		savedFiles := grafanaSvc.DeleteServiceAccountTokens(id)
-		tableObj.AppendHeader(table.Row{"serviceID", "type", "token_name"})
+		savedFiles := cmd.GetGrafanaSvc().DeleteServiceAccountTokens(id)
+		cmd.TableObj.AppendHeader(table.Row{"serviceID", "type", "token_name"})
 		if len(savedFiles) == 0 {
 			log.Info("No Service Accounts tokens found")
 		} else {
 			for _, token := range savedFiles {
-				tableObj.AppendRow(table.Row{id, "service token", token})
+				cmd.TableObj.AppendRow(table.Row{id, "service token", token})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 	},
 }
@@ -92,18 +93,18 @@ var deleteServiceAcctsCmd = &cobra.Command{
 	Use:   "clear",
 	Short: "delete all Service Accounts from grafana",
 	Long:  `delete all Service Accounts from grafana`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 
-		savedFiles := grafanaSvc.DeleteAllServiceAccounts()
+		savedFiles := cmd.GetGrafanaSvc().DeleteAllServiceAccounts()
 		log.Infof("Delete Service Accounts for context: '%s'", config.Config().AppConfig.GetContext())
-		tableObj.AppendHeader(table.Row{"type", "filename"})
+		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 		if len(savedFiles) == 0 {
 			log.Info("No Service Accounts found")
 		} else {
 			for _, file := range savedFiles {
-				tableObj.AppendRow(table.Row{"user", file})
+				cmd.TableObj.AppendRow(table.Row{"user", file})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 	},
 }
@@ -112,13 +113,13 @@ var newServiceAcctsCmd = &cobra.Command{
 	Use:   "newService",
 	Short: "newService <serviceName> <role> [ttl in seconds]",
 	Long:  `newService <serviceName> <role> [ttl in seconds]`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(command *cobra.Command, args []string) error {
 		if len(args) < 2 {
 			return errors.New("requires a key name and a role('admin','viewer','editor') [ttl optional] ")
 		}
 		return nil
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		name := args[0]
 		role := args[1]
 		ttl := "0"
@@ -138,14 +139,14 @@ var newServiceAcctsCmd = &cobra.Command{
 		if !slices.Contains([]string{"admin", "editor", "viewer"}, role) {
 			log.Fatal("Invalid role specified")
 		}
-		serviceAcct, err := grafanaSvc.CreateServiceAccount(name, role, expiration)
+		serviceAcct, err := cmd.GetGrafanaSvc().CreateServiceAccount(name, role, expiration)
 		if err != nil {
 			log.WithError(err).Fatal("unable to create api key")
 		} else {
 
-			tableObj.AppendHeader(table.Row{"id", "name", "role"})
-			tableObj.AppendRow(table.Row{serviceAcct.ID, serviceAcct.Name, serviceAcct.Role})
-			tableObj.Render()
+			cmd.TableObj.AppendHeader(table.Row{"id", "name", "role"})
+			cmd.TableObj.AppendRow(table.Row{serviceAcct.ID, serviceAcct.Name, serviceAcct.Role})
+			cmd.TableObj.Render()
 		}
 
 	},
@@ -155,13 +156,13 @@ var newServiceAcctsTokenCmd = &cobra.Command{
 	Use:   "newToken",
 	Short: "newToken <serviceAccountID> <name> [ttl in seconds]",
 	Long:  `newToken <serviceAccountID> <name> [ttl in seconds]`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(command *cobra.Command, args []string) error {
 		if len(args) < 2 {
 			return errors.New("requires a service-account ID and token name [ttl optional] ")
 		}
 		return nil
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		serviceIDRaw := args[0]
 		name := args[1]
 		ttl := "0"
@@ -182,14 +183,14 @@ var newServiceAcctsTokenCmd = &cobra.Command{
 			expiration = 0
 		}
 
-		key, err := grafanaSvc.CreateServiceAccountToken(serviceID, name, expiration)
+		key, err := cmd.GetGrafanaSvc().CreateServiceAccountToken(serviceID, name, expiration)
 		if err != nil {
 			log.WithError(err).Fatal("unable to create api key")
 		} else {
 
-			tableObj.AppendHeader(table.Row{"serviceID", "token_id", "name", "token"})
-			tableObj.AppendRow(table.Row{serviceID, key.ID, key.Name, key.Key})
-			tableObj.Render()
+			cmd.TableObj.AppendHeader(table.Row{"serviceID", "token_id", "name", "token"})
+			cmd.TableObj.AppendRow(table.Row{serviceID, key.ID, key.Name, key.Key})
+			cmd.TableObj.Render()
 		}
 
 	},

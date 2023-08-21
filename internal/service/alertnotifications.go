@@ -16,8 +16,8 @@ import (
 // Deprecated: Marked as Deprecated as of Grafana 9.0, Moving to ContactPoints is recommended
 type AlertNotificationsApi interface {
 	ListAlertNotifications() []*models.AlertNotification
-	ImportAlertNotifications() []string
-	ExportAlertNotifications() []string
+	DownloadAlertNotifications() []string
+	UploadAlertNotifications() []string
 	DeleteAllAlertNotifications() []string
 }
 
@@ -33,7 +33,7 @@ func (s *DashNGoImpl) ListAlertNotifications() []*models.AlertNotification {
 }
 
 // ImportAlertNotifications: will read in all the configured alert notification channels.
-func (s *DashNGoImpl) ImportAlertNotifications() []string {
+func (s *DashNGoImpl) DownloadAlertNotifications() []string {
 	var (
 		alertnotifications []*models.AlertNotification
 		anPacked           []byte
@@ -76,7 +76,7 @@ func (s *DashNGoImpl) DeleteAllAlertNotifications() []string {
 // ExportAlertNotifications: exports all alert notification channels to grafana.
 // NOTE: credentials will be missing and need to be set manually after export
 // TODO implement configuring sensitive fields for different kinds of alert notification channels
-func (s *DashNGoImpl) ExportAlertNotifications() []string {
+func (s *DashNGoImpl) UploadAlertNotifications() []string {
 	var (
 		alertnotifications []*models.AlertNotification
 		exported           []string

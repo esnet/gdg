@@ -69,7 +69,7 @@ var contextList = &cobra.Command{
 	Short: "List context",
 	Long:  `List contexts.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tableObj.AppendHeader(table.Row{"context", "active"})
+		TableObj.AppendHeader(table.Row{"context", "active"})
 		contexts := config.Config().GetAppConfig().GetContexts()
 		activeContext := config.Config().GetAppConfig().GetContext()
 		for key, _ := range contexts {
@@ -78,10 +78,10 @@ var contextList = &cobra.Command{
 				key = fmt.Sprintf("*%s", activeContext)
 				active = true
 			}
-			tableObj.AppendRow(table.Row{key, active})
+			TableObj.AppendRow(table.Row{key, active})
 		}
 
-		tableObj.Render()
+		TableObj.Render()
 	},
 }
 
@@ -135,7 +135,7 @@ var contextShow = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(context)
+	RootCmd.AddCommand(context)
 	context.AddCommand(contextClear)
 	context.AddCommand(contextCopy)
 	context.AddCommand(contextDelete)

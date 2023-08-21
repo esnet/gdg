@@ -54,7 +54,7 @@ func TestDashboardAPIKeyCRUD(t *testing.T) {
 
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	log.Info("Exporting all dashboards")
-	apiClient.ExportDashboards(filtersEntity)
+	apiClient.UploadDashboards(filtersEntity)
 	log.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 	log.Infof("Imported %d dashboards", len(boards))
@@ -80,7 +80,7 @@ func TestDashboardAPIKeyCRUD(t *testing.T) {
 	validateOtherBoard(t, otherBoard)
 	//Import Dashboards
 	log.Info("Importing Dashboards")
-	list := apiClient.ImportDashboards(filtersEntity)
+	list := apiClient.DownloadDashboards(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
 	log.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
@@ -97,7 +97,7 @@ func TestDashboardCRUD(t *testing.T) {
 	apiClient, _ := initTest(t, nil)
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	log.Info("Exporting all dashboards")
-	apiClient.ExportDashboards(filtersEntity)
+	apiClient.UploadDashboards(filtersEntity)
 	log.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 	log.Infof("Imported %d dashboards", len(boards))
@@ -123,7 +123,7 @@ func TestDashboardCRUD(t *testing.T) {
 	validateOtherBoard(t, otherBoard)
 	//Import Dashboards
 	log.Info("Importing Dashboards")
-	list := apiClient.ImportDashboards(filtersEntity)
+	list := apiClient.DownloadDashboards(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
 	log.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
@@ -144,7 +144,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	filtersEntity.AddFilter(filters.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
 
 	log.Info("Exporting all dashboards")
-	apiClient.ExportDashboards(emptyFilter)
+	apiClient.UploadDashboards(emptyFilter)
 
 	log.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
@@ -156,7 +156,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 
 	//Import Dashboards
 	log.Info("Importing Dashboards")
-	list := apiClient.ImportDashboards(filtersEntity)
+	list := apiClient.DownloadDashboards(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
 
 	log.Info("Deleting Dashboards")
@@ -186,10 +186,10 @@ func TestWildcardFilter(t *testing.T) {
 	assert.True(t, testingContext.GetFilterOverrides().IgnoreDashboardFilters)
 
 	// Testing Exporting with Wildcard
-	apiClient.ExportDashboards(emptyFilter)
+	apiClient.UploadDashboards(emptyFilter)
 	boards := apiClient.ListDashboards(emptyFilter)
 
-	apiClient.ExportDashboards(filtersEntity)
+	apiClient.UploadDashboards(filtersEntity)
 	boards_filtered := apiClient.ListDashboards(emptyFilter)
 
 	assert.Equal(t, len(boards), len(boards_filtered))
@@ -204,7 +204,7 @@ func TestWildcardFilter(t *testing.T) {
 	assert.Equal(t, len(boards), len(boards_filtered))
 
 	log.Info("Importing Dashboards")
-	list := apiClient.ImportDashboards(emptyFilter)
+	list := apiClient.DownloadDashboards(emptyFilter)
 	assert.Equal(t, len(list), len(boards))
 
 	log.Info("Deleting Dashboards")

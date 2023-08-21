@@ -9,7 +9,7 @@ weight: 199
 toc: true
 ---
 
-##  Release Notes for v0.4.6
+##  Release Notes for v0.5.0
 
 **Release Date: TBD 07/13/2023**
 
@@ -26,4 +26,5 @@ toc: true
 
 ### Breaking Changes
   - datasources have been renamed as connections.  If you have an existing backup, simply rename the folder to 'connections' and everything should continue working.
+  - All commands have now been moved under 'backup' or 'tools' to better reflect their functionality.
 

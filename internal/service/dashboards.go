@@ -27,14 +27,14 @@ import (
 // DashboardsApi Contract definition
 type DashboardsApi interface {
 	ListDashboards(filter filters.Filter) []*models.Hit
-	ImportDashboards(filter filters.Filter) []string
-	ExportDashboards(filter filters.Filter)
+	DownloadDashboards(filter filters.Filter) []string
+	UploadDashboards(filter filters.Filter)
 	DeleteAllDashboards(filter filters.Filter) []string
-	getDashboardByUid(filter filters.Filter, uid string) (*models.DashboardFullWithMeta, error)
+	getDashboardByUid(uid string) (*models.DashboardFullWithMeta, error)
 }
 
-// getDashboardByUid
-func (s *DashNGoImpl) getDashboardByUid(filter filters.Filter, uid string) (*models.DashboardFullWithMeta, error) {
+// getDashboardByUid retrieve a dashboard given a particular uid.
+func (s *DashNGoImpl) getDashboardByUid(uid string) (*models.DashboardFullWithMeta, error) {
 	params := dashboards.NewGetDashboardByUIDParams()
 	params.UID = uid
 	data, err := s.client.Dashboards.GetDashboardByUID(params, s.getAuth())
@@ -214,8 +214,8 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 
 }
 
-// ImportDashboards saves all dashboards matching query to configured location
-func (s *DashNGoImpl) ImportDashboards(filter filters.Filter) []string {
+// DownloadDashboard saves all dashboards matching query to configured location
+func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 	var (
 		boardLinks []*models.Hit
 		rawBoard   []byte
@@ -265,9 +265,9 @@ func (s *DashNGoImpl) createdFolder(folderName string) (int64, error) {
 
 }
 
-// ExportDashboards finds all the dashboards in the configured location and exports them to grafana.
+// UploadDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folder doesn't exist, it'll be created.
-func (s *DashNGoImpl) ExportDashboards(filterReq filters.Filter) {
+func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 
 	var (
 		rawBoard   []byte

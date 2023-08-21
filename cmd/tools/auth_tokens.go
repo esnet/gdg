@@ -1,7 +1,8 @@
-package cmd
+package tools
 
 import (
 	"errors"
+	cmd "github.com/esnet/gdg/cmd"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
@@ -22,10 +23,10 @@ var listTokensCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list API Keys",
 	Long:  `list API Keys`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 
-		tableObj.AppendHeader(table.Row{"id", "name", "role", "expiration"})
-		apiKeys := grafanaSvc.ListAPIKeys()
+		cmd.TableObj.AppendHeader(table.Row{"id", "name", "role", "expiration"})
+		apiKeys := cmd.GetGrafanaSvc().ListAPIKeys()
 		sort.SliceStable(apiKeys, func(i, j int) bool {
 			return apiKeys[i].ID < apiKeys[j].ID
 		})
@@ -39,9 +40,9 @@ var listTokensCmd = &cobra.Command{
 					formattedDate = "No Expiration"
 				}
 
-				tableObj.AppendRow(table.Row{apiKey.ID, apiKey.Name, apiKey.Role, formattedDate})
+				cmd.TableObj.AppendRow(table.Row{apiKey.ID, apiKey.Name, apiKey.Role, formattedDate})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 
 	},
@@ -51,18 +52,18 @@ var deleteTokensCmd = &cobra.Command{
 	Use:   "clear",
 	Short: "delete all Tokens from grafana",
 	Long:  `delete all Tokens from grafana`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 
-		savedFiles := grafanaSvc.DeleteAllTokens()
+		savedFiles := cmd.GetGrafanaSvc().DeleteAllTokens()
 		log.Infof("Delete Tokens for context: '%s'", config.Config().AppConfig.GetContext())
-		tableObj.AppendHeader(table.Row{"type", "filename"})
+		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 		if len(savedFiles) == 0 {
 			log.Info("No Tokens found")
 		} else {
 			for _, file := range savedFiles {
-				tableObj.AppendRow(table.Row{"user", file})
+				cmd.TableObj.AppendRow(table.Row{"user", file})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 	},
 }
@@ -71,13 +72,13 @@ var newTokensCmd = &cobra.Command{
 	Use:   "new",
 	Short: "new <name> <role> [ttl in seconds]",
 	Long:  `new <name> <role> [ttl in seconds ]`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(command *cobra.Command, args []string) error {
 		if len(args) < 2 {
 			return errors.New("requires a key name and a role('admin','viewer','editor') [ttl optional] ")
 		}
 		return nil
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		name := args[0]
 		role := args[1]
 		ttl := "0"
@@ -97,14 +98,14 @@ var newTokensCmd = &cobra.Command{
 		if !slices.Contains([]string{"admin", "editor", "viewer"}, role) {
 			log.Fatal("Invalid role specified")
 		}
-		key, err := grafanaSvc.CreateAPIKey(name, role, expiration)
+		key, err := cmd.GetGrafanaSvc().CreateAPIKey(name, role, expiration)
 		if err != nil {
 			log.WithError(err).Fatal("unable to create api key")
 		} else {
 
-			tableObj.AppendHeader(table.Row{"id", "name", "token"})
-			tableObj.AppendRow(table.Row{key.ID, key.Name, key.Key})
-			tableObj.Render()
+			cmd.TableObj.AppendHeader(table.Row{"id", "name", "token"})
+			cmd.TableObj.AppendRow(table.Row{key.ID, key.Name, key.Key})
+			cmd.TableObj.Render()
 		}
 
 	},

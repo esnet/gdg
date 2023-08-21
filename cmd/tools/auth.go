@@ -1,4 +1,4 @@
-package cmd
+package tools
 
 import (
 	"github.com/spf13/cobra"
@@ -12,7 +12,7 @@ var AuthCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(AuthCmd)
+	toolsCmd.AddCommand(AuthCmd)
 	AuthCmd.AddCommand(tokensCmd)
 
 }

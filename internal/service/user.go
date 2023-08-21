@@ -23,8 +23,8 @@ import (
 type UsersApi interface {
 	//User
 	ListUsers(filter filters.Filter) []*models.UserSearchHitDTO
-	ImportUsers(filter filters.Filter) []string
-	ExportUsers(filter filters.Filter) []models.UserProfileDTO
+	DownloadUsers(filter filters.Filter) []string
+	UploadUsers(filter filters.Filter) []models.UserProfileDTO
 	PromoteUser(userLogin string) (string, error)
 	DeleteAllUsers(filter filters.Filter) []string
 }
@@ -67,7 +67,7 @@ func DefaultUserPassword(username string) string {
 	return password
 }
 
-func (s *DashNGoImpl) ImportUsers(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 	var (
 		userData []byte
 		err      error
@@ -104,7 +104,7 @@ func (s *DashNGoImpl) isAdmin(id int64, name string) bool {
 	return id == 1 || name == "admin"
 }
 
-func (s *DashNGoImpl) ExportUsers(filter filters.Filter) []models.UserProfileDTO {
+func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO {
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), false)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list files in directory for userListings")

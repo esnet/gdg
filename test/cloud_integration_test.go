@@ -55,7 +55,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	dashFilter := service.NewDashboardFilter("", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
 	//Load data into grafana
-	apiClient.ExportDashboards(dashFilter)
+	apiClient.UploadDashboards(dashFilter)
 	boards := apiClient.ListDashboards(dashFilter)
 	assert.True(t, len(boards) > 0)
 
@@ -64,7 +64,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 
 	//At this point all operations are reading/writing from Minio
 	log.Info("Importing Dashboards")
-	list := apiClient.ImportDashboards(dashFilter) //Saving to S3
+	list := apiClient.DownloadDashboards(dashFilter) //Saving to S3
 	assert.Equal(t, len(list), len(boards))
 	log.Info("Deleting Dashboards") // Clearing Grafana
 	deleteList := apiClient.DeleteAllDashboards(dashFilter)
@@ -72,7 +72,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	boards = apiClient.ListDashboards(dashFilter)
 	assert.Equal(t, len(boards), 0)
 	//Load Data from S3
-	apiClient.ExportDashboards(dashFilter)        //ReLoad data from S3 backup
+	apiClient.UploadDashboards(dashFilter)        //ReLoad data from S3 backup
 	boards = apiClient.ListDashboards(dashFilter) //Read data
 	assert.Equal(t, len(list), len(boards))       //verify
 	apiClient.DeleteAllDashboards(dashFilter)

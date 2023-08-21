@@ -1,6 +1,7 @@
-package cmd
+package backup
 
 import (
+	"github.com/esnet/gdg/cmd"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
@@ -18,37 +19,36 @@ var listFoldersPermissionsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list Folders Permissions",
 	Long:  `list Folders Permissions`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 		rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
 
 		log.Infof("Listing Folders for context: '%s'", config.Config().GetAppConfig().GetContext())
-		tableObj.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name", "UserID", "Team Name", "Role", "Permission Name"}, rowConfigAutoMerge)
-		folders := grafanaSvc.ListFolderPermissions(getFolderFilter())
+		cmd.TableObj.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name", "UserID", "Team Name", "Role", "Permission Name"}, rowConfigAutoMerge)
+		folders := cmd.GetGrafanaSvc().ListFolderPermissions(getFolderFilter())
 
 		if len(folders) == 0 {
 			log.Info("No folders found")
 			return
 		}
 		for key, value := range folders {
-			tableObj.AppendRow(table.Row{key.ID, key.UID, key.Title})
+			cmd.TableObj.AppendRow(table.Row{key.ID, key.UID, key.Title})
 			for _, entry := range value {
-				tableObj.AppendRow(table.Row{"", "", "    PERMISSION--->", entry.UserLogin, entry.Team, entry.Role, entry.PermissionName}, rowConfigAutoMerge)
+				cmd.TableObj.AppendRow(table.Row{"", "", "    PERMISSION--->", entry.UserLogin, entry.Team, entry.Role, entry.PermissionName}, rowConfigAutoMerge)
 			}
 		}
-		tableObj.Render()
+		cmd.TableObj.Render()
 
 	},
 }
 
 var downloadFoldersPermissionsCmd = &cobra.Command{
-	Use:     "download",
-	Short:   "download Folders Permissions",
-	Long:    `downloadFolders Permissions`,
-	Aliases: []string{"import"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Use:   "download",
+	Short: "download Folders Permissions",
+	Long:  `downloadFolders Permissions`,
+	Run: func(command *cobra.Command, args []string) {
 		log.Infof("import Folders for context: '%s'", config.Config().GetAppConfig().GetContext())
-		tableObj.AppendHeader(table.Row{"filename"})
-		folders := grafanaSvc.ImportFolderPermissions(getFolderFilter())
+		cmd.TableObj.AppendHeader(table.Row{"filename"})
+		folders := cmd.GetGrafanaSvc().DownloadFolderPermissions(getFolderFilter())
 		//_ = folders
 		log.Infof("Downloading folder permissions")
 
@@ -57,31 +57,30 @@ var downloadFoldersPermissionsCmd = &cobra.Command{
 			return
 		}
 		for _, folder := range folders {
-			tableObj.AppendRow(table.Row{folder})
+			cmd.TableObj.AppendRow(table.Row{folder})
 		}
-		tableObj.Render()
+		cmd.TableObj.Render()
 
 	},
 }
 
 var uploadFoldersPermissionsCmd = &cobra.Command{
-	Use:     "upload",
-	Short:   "upload Folders Permissions",
-	Long:    `uploadFolders Permissions`,
-	Aliases: []string{"export"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Use:   "upload",
+	Short: "upload Folders Permissions",
+	Long:  `uploadFolders Permissions`,
+	Run: func(command *cobra.Command, args []string) {
 		log.Infof("Uploading folder permissions")
-		tableObj.AppendHeader(table.Row{"file name"})
-		folders := grafanaSvc.ExportFolderPermissions(getFolderFilter())
+		cmd.TableObj.AppendHeader(table.Row{"file name"})
+		folders := cmd.GetGrafanaSvc().UploadFolderPermissions(getFolderFilter())
 
 		if len(folders) == 0 {
 			log.Info("No folders found")
 			return
 		}
 		for _, folder := range folders {
-			tableObj.AppendRow(table.Row{folder})
+			cmd.TableObj.AppendRow(table.Row{folder})
 		}
-		tableObj.Render()
+		cmd.TableObj.Render()
 
 	},
 }

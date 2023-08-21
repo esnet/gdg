@@ -1,6 +1,7 @@
-package cmd
+package backup
 
 import (
+	"github.com/esnet/gdg/cmd"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -31,19 +32,19 @@ var deleteFoldersCmd = &cobra.Command{
 	Aliases: []string{"delete"},
 	Short:   "delete Folders from grafana",
 	Long:    `delete Folders from grafana`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 
 		log.Infof("Deleting all Folders for context: '%s'", config.Config().AppConfig.GetContext())
-		tableObj.AppendHeader(table.Row{"title"})
+		cmd.TableObj.AppendHeader(table.Row{"title"})
 
-		folders := grafanaSvc.DeleteAllFolder(getFolderFilter())
+		folders := cmd.GetGrafanaSvc().DeleteAllFolders(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No Folders found")
 		} else {
 			for _, folder := range folders {
-				tableObj.AppendRow(table.Row{folder})
+				cmd.TableObj.AppendRow(table.Row{folder})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 
 	},
@@ -53,19 +54,19 @@ var uploadFoldersCmd = &cobra.Command{
 	Use:     "upload",
 	Short:   "upload Folders to grafana",
 	Long:    `upload Folders to grafana`,
-	Aliases: []string{"export", "u"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Aliases: []string{"u"},
+	Run: func(command *cobra.Command, args []string) {
 
 		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
-		tableObj.AppendHeader(table.Row{"file"})
-		folders := grafanaSvc.ExportFolder(getFolderFilter())
+		cmd.TableObj.AppendHeader(table.Row{"file"})
+		folders := cmd.GetGrafanaSvc().UploadFolders(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
 			for _, folder := range folders {
-				tableObj.AppendRow(table.Row{folder})
+				cmd.TableObj.AppendRow(table.Row{folder})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 
 	},
@@ -75,19 +76,19 @@ var downloadFoldersCmd = &cobra.Command{
 	Use:     "download",
 	Short:   "download Folders",
 	Long:    `download Folders`,
-	Aliases: []string{"import", "d"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Aliases: []string{"d"},
+	Run: func(command *cobra.Command, args []string) {
 
 		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
-		tableObj.AppendHeader(table.Row{"file"})
-		folders := grafanaSvc.ImportFolder(getFolderFilter())
+		cmd.TableObj.AppendHeader(table.Row{"file"})
+		folders := cmd.GetGrafanaSvc().DownloadFolders(getFolderFilter())
 		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
 			for _, folder := range folders {
-				tableObj.AppendRow(table.Row{folder})
+				cmd.TableObj.AppendRow(table.Row{folder})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 
 	},
@@ -98,30 +99,30 @@ var listFoldersCmd = &cobra.Command{
 	Short:   "list Folders",
 	Long:    `list Folders`,
 	Aliases: []string{"l"},
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(command *cobra.Command, args []string) {
 
 		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
-		tableObj.AppendHeader(table.Row{"id", "uid", "title"})
-		folders := grafanaSvc.ListFolder(getFolderFilter())
+		cmd.TableObj.AppendHeader(table.Row{"id", "uid", "title"})
+		folders := cmd.GetGrafanaSvc().ListFolder(getFolderFilter())
 
 		if len(folders) == 0 {
 			log.Info("No folders found")
 		} else {
 			for _, folder := range folders {
-				tableObj.AppendRow(table.Row{folder.ID, folder.UID, folder.Title})
+				cmd.TableObj.AppendRow(table.Row{folder.ID, folder.UID, folder.Title})
 			}
-			tableObj.Render()
+			cmd.TableObj.Render()
 		}
 
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(foldersCmd)
+	backupCmd.AddCommand(foldersCmd)
+	foldersCmd.AddCommand(listFoldersCmd)
+	foldersCmd.AddCommand(downloadFoldersCmd)
 	foldersCmd.AddCommand(deleteFoldersCmd)
 	foldersCmd.AddCommand(uploadFoldersCmd)
-	foldersCmd.AddCommand(downloadFoldersCmd)
-	foldersCmd.AddCommand(listFoldersCmd)
 	foldersCmd.AddCommand(listFoldersPermissionsCmd)
 	foldersCmd.PersistentFlags().BoolVar(&useFolderFilters, "use-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
 
