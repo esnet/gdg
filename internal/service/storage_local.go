@@ -7,7 +7,6 @@ import (
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/fileblob"
 	_ "gocloud.dev/blob/fileblob"
-	"io/fs"
 	"os"
 	"path/filepath"
 )
@@ -38,7 +37,7 @@ func (s *LocalStorage) getBucket(baseFolder string) (*blob.Bucket, error) {
 }
 
 // WriteFile writes file to disk and returns an error if operation failed
-func (s *LocalStorage) WriteFile(filename string, data []byte, mode fs.FileMode) error {
+func (s *LocalStorage) WriteFile(filename string, data []byte) error {
 	mb, err := s.getBucket(filepath.Dir(filename))
 	if err != nil {
 		return err

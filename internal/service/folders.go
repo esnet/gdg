@@ -13,7 +13,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/slices"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -72,7 +71,7 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.Filter) []string 
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(folder.Title), config.FolderPermissionResource)
-		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			log.Errorf("%s for %s\n", err.Error(), slug.Make(folder.Title))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
@@ -207,7 +206,7 @@ func (s *DashNGoImpl) DownloadFolders(filter filters.Filter) []string {
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(folder.Title), config.FolderResource)
-		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			log.Errorf("%s for %s\n", err.Error(), slug.Make(folder.Title))
 		} else {
 			dataFiles = append(dataFiles, dsPath)

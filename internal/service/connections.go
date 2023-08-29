@@ -82,7 +82,7 @@ func (s *DashNGoImpl) DownloadConnections(filter filters.Filter) []string {
 
 		dsPath := buildResourcePath(slug.Make(ds.Name), config.ConnectionResource)
 
-		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			log.Errorf("%s for %s\n", err, slug.Make(ds.Name))
 		} else {
 			dataFiles = append(dataFiles, dsPath)

@@ -10,7 +10,6 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
 	log "github.com/sirupsen/logrus"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -58,7 +57,7 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.Filter) []str
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(connection.Name), config.ConnectionPermissionResource)
-		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			log.Errorf("%s for %s\n", err.Error(), slug.Make(connection.Name))
 		} else {
 			dataFiles = append(dataFiles, dsPath)

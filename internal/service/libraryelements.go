@@ -12,7 +12,6 @@ import (
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
-	"os"
 	"strings"
 )
 
@@ -106,7 +105,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 
 		libraryPath := fmt.Sprintf("%s/%s.json", buildResourceFolder(folderName, config.LibraryElementResource), slug.Make(item.Name))
 
-		if err = s.storage.WriteFile(libraryPath, dsPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(libraryPath, dsPacked); err != nil {
 			log.Errorf("%s for %s\n", err, slug.Make(item.Name))
 		} else {
 			dataFiles = append(dataFiles, libraryPath)

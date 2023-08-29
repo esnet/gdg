@@ -9,7 +9,6 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/teams"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"golang.org/x/exp/maps"
-	"os"
 	"strings"
 
 	"encoding/json"
@@ -88,9 +87,9 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][
 			continue
 		}
 		//Writing Files
-		if err = s.storage.WriteFile(teamFileName, teamData, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(teamFileName, teamData); err != nil {
 			log.WithError(err).Errorf("for %s\n", team.Name)
-		} else if err = s.storage.WriteFile(memberFileName, membersData, os.FileMode(int(0666))); err != nil {
+		} else if err = s.storage.WriteFile(memberFileName, membersData); err != nil {
 			log.WithError(err).Errorf("for %s\n", team.Name)
 		} else {
 			importedTeams[team] = members.GetPayload()
