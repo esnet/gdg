@@ -13,7 +13,6 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/signed_in_user"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"golang.org/x/exp/slices"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -241,7 +240,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 		}
 
 		fileName := fmt.Sprintf("%s/%s.json", buildResourceFolder(link.FolderTitle, config.DashboardResource), metaData.Payload.Meta.Slug)
-		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard), os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			log.Errorf("%s for %s\n", err, metaData.Payload.Meta.Slug)
 		} else {
 			boards = append(boards, fileName)

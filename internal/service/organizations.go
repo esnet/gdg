@@ -7,7 +7,6 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/signed_in_user"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -96,7 +95,7 @@ func (s *DashNGoImpl) DownloadOrganizations() []string {
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(organisation.Name), config.OrganizationResource)
-		if err = s.storage.WriteFile(dsPath, dsPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			log.Errorf("%s for %s\n", err.Error(), slug.Make(organisation.Name))
 		} else {
 			dataFiles = append(dataFiles, dsPath)

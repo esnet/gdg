@@ -6,7 +6,6 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"gocloud.dev/blob"
-	"io/fs"
 	"path"
 	"path/filepath"
 	"strings"
@@ -52,7 +51,7 @@ func (s *CloudStorage) ReadFile(filename string) ([]byte, error) {
 }
 
 // WriteFile persists data to Cloud Provider Storage returning error if operation failed
-func (s *CloudStorage) WriteFile(filename string, data []byte, mode fs.FileMode) error {
+func (s *CloudStorage) WriteFile(filename string, data []byte) error {
 	if s.BucketRef == nil {
 		return errors.New("unable to get valid bucket ")
 	}

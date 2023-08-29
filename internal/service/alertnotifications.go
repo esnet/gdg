@@ -5,7 +5,6 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/legacy_alerts_notification_channels"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
-	"os"
 	"strings"
 
 	"github.com/gosimple/slug"
@@ -47,7 +46,7 @@ func (s *DashNGoImpl) DownloadAlertNotifications() []string {
 			continue
 		}
 		anPath := buildResourcePath(slug.Make(an.Name), config.AlertNotificationResource)
-		if err = s.storage.WriteFile(anPath, anPacked, os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(anPath, anPacked); err != nil {
 			log.Errorf("error writing %s to file with %s", slug.Make(an.Name), err)
 		} else {
 			dataFiles = append(dataFiles, anPath)

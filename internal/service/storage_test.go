@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	log "github.com/sirupsen/logrus"
-	"io/fs"
 	"path"
 )
 
@@ -37,7 +36,7 @@ func (s *TestStorage) ReadFile(filename string) ([]byte, error) {
 
 }
 
-func (s *TestStorage) WriteFile(filename string, data []byte, mode fs.FileMode) error {
+func (s *TestStorage) WriteFile(filename string, data []byte) error {
 	val, ok := s.m[`filedata`]
 	if ok {
 		writeCache := val.(map[string][]byte)

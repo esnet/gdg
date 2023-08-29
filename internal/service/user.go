@@ -14,7 +14,6 @@ import (
 	"github.com/gosimple/slug"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/pretty"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -88,7 +87,7 @@ func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 			log.Errorf("could not serialize user object for userId: %d", user.ID)
 			continue
 		}
-		if err = s.storage.WriteFile(fileName, pretty.Pretty(userData), os.FileMode(int(0666))); err != nil {
+		if err = s.storage.WriteFile(fileName, pretty.Pretty(userData)); err != nil {
 			log.WithError(err).Errorf("for %s\n", user.Login)
 		} else {
 			importedUsers = append(importedUsers, fileName)
