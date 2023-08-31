@@ -197,12 +197,10 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 	return s.MonitoredFolders
 }
 
-// Validate will return false if configuration or filesystem is in an invalid state
-func (s *GrafanaConfig) Validate() bool {
-	valid := true
+// Validate will return terminate if any deprecated configuration is found.
+func (s *GrafanaConfig) Validate() {
 	if len(s.LegacyConnectionSettings) > 0 {
-		log.Warnf("Using 'datasources' is now deprecated, please use 'connections' instead")
-		valid = false
+		log.Fatal("Using 'datasources' is now deprecated, please use 'connections' instead")
 	}
 	//Validate Connections
 	//TODO: remove code after next release
@@ -211,8 +209,6 @@ func (s *GrafanaConfig) Validate() bool {
 		log.Fatalf("Your export contains a datasource directry which is deprecated.  Please remove or "+
 			"rename directory to '%s'", ConnectionResource)
 	}
-
-	return valid
 
 }
 

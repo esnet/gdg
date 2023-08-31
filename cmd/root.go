@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -82,11 +81,7 @@ func initConfig() {
 			log.SetLevel(log.DebugLevel)
 		}
 		//Validate current configuration
-		valid := config.Config().GetDefaultGrafanaConfig().Validate()
-		if !valid {
-			tools.GetUserConfirmation("There are configuration issues, do you wish to try continuing anyways? (y/n)  ",
-				"", true)
-		}
+		config.Config().GetDefaultGrafanaConfig().Validate()
 	})
 
 }

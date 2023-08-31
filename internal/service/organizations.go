@@ -215,9 +215,9 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 		} else {
 			orgsPayload = orgList.GetPayload()
 		}
-		for _, org := range orgsPayload {
-			log.Debugf("%d %s\n", org.ID, org.Name)
-			if org.ID == s.grafanaConf.GetOrganizationId() {
+		for _, orgEntry := range orgsPayload {
+			log.Debugf("%d %s\n", orgEntry.ID, orgEntry.Name)
+			if orgEntry.ID == s.grafanaConf.GetOrganizationId() {
 				valid = true
 				break
 			}

@@ -117,7 +117,7 @@ var updateUserRole = &cobra.Command{
 	Long:  `updateUserRole an Organization users`,
 	Args: func(command *cobra.Command, args []string) error {
 		if len(args) < 3 {
-			return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [admin, viewer]")
+			return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [admin, editor, viewer]")
 		}
 		return nil
 	},
@@ -147,7 +147,7 @@ var addUserRole = &cobra.Command{
 	Long:  `addUser to an Organization users`,
 	Args: func(command *cobra.Command, args []string) error {
 		if len(args) < 3 {
-			return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [admin, viewer]")
+			return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [admin, editor, viewer]")
 		}
 		return nil
 	},

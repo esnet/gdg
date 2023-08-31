@@ -7,7 +7,6 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/datasources"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -96,7 +95,7 @@ func (s *DashNGoImpl) DownloadConnections(filter filters.Filter) []string {
 	return dataFiles
 }
 
-// Removes all current datasources
+// DeleteAllConnections Removes all current datasources
 func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 	var ds []string = make([]string, 0)
 	items := s.ListConnections(filter)
@@ -114,11 +113,11 @@ func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 	return ds
 }
 
-// ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
+// UploadConnections exports all datasources to grafana using the credentials configured in config file.
 func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
-	var exported = make([]string, 0)
+	var exported []string
 
 	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource))
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource), false)

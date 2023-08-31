@@ -127,6 +127,7 @@ func (s *Configuration) ChangeContext(name string) {
 
 // SaveToDisk Persists current configuration to disk
 func (s *Configuration) SaveToDisk(useViper bool) error {
+
 	if useViper {
 		return s.ViperConfig().WriteConfig()
 	}
@@ -263,24 +264,27 @@ func InitConfig(override, defaultConfig string) {
 	var err error
 
 	configData.defaultConfig, configData.AppConfig, err = readViperConfig(appName, configDirs)
-	if err != nil {
-		loadDefault := tools.GetUserConfirmation("unable to load configuration.  Would you like to fall back on default? This will overwrite the current configuration.  (y/n) ", "", true)
-		if loadDefault {
-			err = os.MkdirAll("config", os.ModePerm)
-			if err != nil {
-				log.Fatal("unable to create configuration folder: 'config'")
-			}
-			err = os.WriteFile("config/importer.yml", []byte(defaultConfig), 0600)
-			if err != nil {
-				log.Panic("Could not persist default config locally")
-			}
-			appName = "importer"
+	_, ok := err.(viper.ConfigFileNotFoundError)
 
-			configData.defaultConfig, configData.AppConfig, err = readViperConfig(appName, configDirs)
-			if err != nil {
-				log.Panic(err)
-			}
+	if err != nil && ok {
+		log.Info("No configuration file has been found, creating a default configuration")
+		err = os.MkdirAll("config", os.ModePerm)
+		if err != nil {
+			log.Fatal("unable to create configuration folder: 'config'")
 		}
+		err = os.WriteFile("config/importer.yml", []byte(defaultConfig), 0600)
+		if err != nil {
+			log.Panic("Could not persist default config locally")
+		}
+		appName = "importer"
+
+		configData.defaultConfig, configData.AppConfig, err = readViperConfig(appName, configDirs)
+		if err != nil {
+			log.Panic(err)
+		}
+
+	} else if err != nil { // config is found but is invalid
+		log.Fatal("Invalid configuration detected, please fix your configuration and try again.")
 	}
 
 	//unmarshall struct
@@ -311,10 +315,6 @@ func readViperConfig(appName string, configDirs []string) (*viper.Viper, *AppCon
 	}
 
 	v.AutomaticEnv()
-
-	// global defaults
-	//v.SetDefault("globals.json_logs", false)
-	//v.SetDefault("loglevel", "debug")
 
 	err := v.ReadInConfig()
 	if err == nil {
