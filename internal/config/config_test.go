@@ -87,7 +87,6 @@ func TestConfigEnv(t *testing.T) {
 }
 
 func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
-	assert.False(t, grafana.AdminEnabled)
 	assert.Equal(t, "https://staging.grafana.com", grafana.URL)
 	assert.Equal(t, "<CHANGEME>", grafana.APIToken)
 	assert.Equal(t, "", grafana.UserName)

@@ -17,13 +17,13 @@ var userCmd = &cobra.Command{
 }
 
 var promoteUser = &cobra.Command{
-	Use:     "promote",
+	Use:     "makeGrafanaAdmin",
 	Short:   "Promote User to Grafana Admin",
 	Long:    `Promote User to Grafana Admin`,
-	Aliases: []string{"godmode"},
+	Aliases: []string{"godmode", "promote"},
 	Run: func(command *cobra.Command, args []string) {
 
-		log.Infof("Listing dashboards for context: '%s'", config.Config().AppConfig.GetContext())
+		log.Infof("Promoting User to Grafana Admin for context: '%s'", config.Config().AppConfig.GetContext())
 		userLogin, _ := command.Flags().GetString("user")
 
 		msg, err := cmd.GetGrafanaSvc().PromoteUser(userLogin)
@@ -41,7 +41,6 @@ func init() {
 	toolsCmd.AddCommand(userCmd)
 	userCmd.AddCommand(promoteUser)
 	promoteUser.Flags().StringP("user", "u", "", "user email")
-	userCmd.PersistentFlags().StringP("authlabel", "", "", "filter by a given auth label")
 	err := promoteUser.MarkFlagRequired("user")
 	if err != nil {
 		log.Debug("Failed to mark user flag as required")

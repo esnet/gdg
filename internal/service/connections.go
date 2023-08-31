@@ -7,7 +7,6 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/datasources"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -44,6 +43,11 @@ func NewConnectionFilter(name string) filters.Filter {
 
 // ListConnections list all the currently configured datasources
 func (s *DashNGoImpl) ListConnections(filter filters.Filter) []models.DataSourceListItemDTO {
+	err := s.SwitchOrganization(s.grafanaConf.GetOrganizationId())
+	if err != nil {
+		log.Fatalf("Failed to switch organization ID %d: ", s.grafanaConf.OrganizationId)
+	}
+
 	ds, err := s.client.Datasources.GetDataSources(datasources.NewGetDataSourcesParams(), s.getAuth())
 	if err != nil {
 		panic(err)
@@ -91,7 +95,7 @@ func (s *DashNGoImpl) DownloadConnections(filter filters.Filter) []string {
 	return dataFiles
 }
 
-// Removes all current datasources
+// DeleteAllConnections Removes all current datasources
 func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 	var ds []string = make([]string, 0)
 	items := s.ListConnections(filter)
@@ -109,18 +113,11 @@ func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 	return ds
 }
 
-// ExportDataSources: exports all datasources to grafana using the credentials configured in config file.
+// UploadConnections exports all datasources to grafana using the credentials configured in config file.
 func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
-	//TODO: remove code after next release
-	legacyCheck := config.Config().GetDefaultGrafanaConfig().GetPath(config.LegacyConnections)
-	if _, err := os.Stat(legacyCheck); !os.IsNotExist(err) {
-		log.Fatalf("Your export contains a datasource directry which is deprecated.  Please remove or "+
-			"rename directory to '%s'", config.ConnectionResource)
-	}
-
-	var exported = make([]string, 0)
+	var exported []string
 
 	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource))
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource), false)
@@ -181,7 +178,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 				if existingDS.Name == newDS.Name {
 					deleteParam := datasources.NewDeleteDataSourceByIDParams()
 					deleteParam.ID = fmt.Sprintf("%d", existingDS.ID)
-					if _, err := s.client.Datasources.DeleteDataSourceByID(deleteParam, s.getAdminAuth()); err != nil {
+					if _, err := s.client.Datasources.DeleteDataSourceByID(deleteParam, s.getBasicAuth()); err != nil {
 						log.Errorf("error on deleting datasource %s with %s", newDS.Name, err)
 					}
 					break

@@ -56,7 +56,6 @@ var uploadTeamCmd = &cobra.Command{
 	Run: func(command *cobra.Command, args []string) {
 
 		log.Infof("Exporting Teams for context: '%s'", config.Config().AppConfig.GetContext())
-		log.Warn("Currently support for import Admin members is not support, there will be 1 admin, which is the default admin user")
 		filter := api.NewTeamFilter(parseTeamGlobalFlags(command)...)
 		savedFiles := cmd.GetGrafanaSvc().UploadTeams(filter)
 		if len(savedFiles) == 0 {

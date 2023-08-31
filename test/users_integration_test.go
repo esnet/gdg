@@ -12,6 +12,7 @@ func TestUsers(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	apiClient, _ := initTest(t, nil)
+	apiClient.DeleteAllUsers(service.NewUserFilter("")) //clear any previous state
 	users := apiClient.ListUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(users), 1)
 	adminUser := users[0]

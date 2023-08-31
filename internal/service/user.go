@@ -9,6 +9,7 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	gapi "github.com/esnet/grafana-swagger-api-golang"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/admin_users"
+	"github.com/esnet/grafana-swagger-api-golang/goclient/client/signed_in_user"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/users"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
@@ -26,6 +27,7 @@ type UsersApi interface {
 	UploadUsers(filter filters.Filter) []models.UserProfileDTO
 	PromoteUser(userLogin string) (string, error)
 	DeleteAllUsers(filter filters.Filter) []string
+	GetUserInfo() (*models.UserProfileDTO, error)
 }
 
 func NewUserFilter(label string) filters.Filter {
@@ -66,6 +68,17 @@ func DefaultUserPassword(username string) string {
 	return password
 }
 
+// GetUserInfo get signed-in user info, requires Basic authentication
+func (s *DashNGoImpl) GetUserInfo() (*models.UserProfileDTO, error) {
+	p := signed_in_user.NewGetSignedInUserParams()
+	userInfo, err := s.client.SignedInUser.GetSignedInUser(p, s.getBasicAuth())
+	if err == nil {
+		return userInfo.GetPayload(), err
+	}
+	return nil, err
+
+}
+
 func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 	var (
 		userData []byte
@@ -77,7 +90,7 @@ func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 
 	userPath := buildResourceFolder("", config.UserResource)
 	for ndx, user := range userListing {
-		if s.isAdmin(user.ID, user.Name) {
+		if s.isAdminUser(user.ID, user.Name) {
 			log.Info("Skipping admin super user")
 			continue
 		}
@@ -99,7 +112,7 @@ func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 
 }
 
-func (s *DashNGoImpl) isAdmin(id int64, name string) bool {
+func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
 	return id == 1 || name == "admin"
 }
 
@@ -158,14 +171,14 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO
 			}
 			params := admin_users.NewAdminCreateUserParams()
 			params.Body = &newUser
-			userCreated, err := s.client.AdminUsers.AdminCreateUser(params, s.getAdminAuth())
+			userCreated, err := s.client.AdminUsers.AdminCreateUser(params, s.getBasicAuth())
 			if err != nil {
 				log.WithError(err).Errorf("Failed to create user for file: %s", fileLocation)
 				continue
 			}
 			p := users.NewGetUserByIDParams()
 			p.UserID = userCreated.Payload.ID
-			resp, err := s.client.Users.GetUserByID(p, s.getAdminAuth())
+			resp, err := s.client.Users.GetUserByID(p, s.getBasicAuth())
 			if err != nil {
 				log.Errorf("unable to read user: %s, ID: %d back from grafana", newUser.Email, userCreated.Payload.ID)
 				continue
@@ -202,14 +215,14 @@ func (s *DashNGoImpl) DeleteAllUsers(filter filters.Filter) []string {
 	userListing := s.ListUsers(filter)
 	var deletedUsers []string
 	for _, user := range userListing {
-		if s.isAdmin(user.ID, user.Name) {
+		if s.isAdminUser(user.ID, user.Name) {
 			log.Info("Skipping admin user")
 			continue
 
 		}
 		params := admin_users.NewAdminDeleteUserParams()
 		params.UserID = user.ID
-		_, err := s.client.AdminUsers.AdminDeleteUser(params, s.getAdminAuth())
+		_, err := s.client.AdminUsers.AdminDeleteUser(params, s.getBasicAuth())
 		if err == nil {
 			deletedUsers = append(deletedUsers, user.Email)
 		}
@@ -242,7 +255,7 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 		IsGrafanaAdmin: true,
 	}
 
-	msg, err := s.client.AdminUsers.AdminUpdateUserPermissions(promoteUserParam, s.getAdminAuth())
+	msg, err := s.client.AdminUsers.AdminUpdateUserPermissions(promoteUserParam, s.getBasicAuth())
 	if err != nil {
 		errorMsg := fmt.Sprintf("failed to promote user: '%s'", userLogin)
 		log.Error(errorMsg)
@@ -251,4 +264,15 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 
 	return msg.GetPayload().Message, nil
 
+}
+
+// getUserById get the user by ID
+func (s *DashNGoImpl) getUserById(userId int64) (*models.UserProfileDTO, error) {
+	p := users.NewGetUserByIDParams()
+	p.UserID = userId
+	resp, err := s.client.Users.GetUserByID(p, s.getAuth())
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetPayload(), nil
 }

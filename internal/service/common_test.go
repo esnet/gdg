@@ -24,21 +24,21 @@ func TestUserPath(t *testing.T) {
 }
 func TestBuildDashboardPath(t *testing.T) {
 	result := buildResourceFolder("General", config.DashboardResource)
-	assert.Equal(t, "qa/dashboards/General", result)
+	assert.Equal(t, "qa/org_1/dashboards/General", result)
 }
 
 func TestBuildFolderSourcePath(t *testing.T) {
 	result := buildResourcePath(slug.Make("Some Folder"), config.FolderResource)
-	assert.Equal(t, "qa/folders/some-folder.json", result)
+	assert.Equal(t, "qa/org_1/folders/some-folder.json", result)
 
 }
 
 func TestBuildDataSourcePath(t *testing.T) {
 	result := buildResourcePath(slug.Make("My DS"), config.ConnectionResource)
-	assert.Equal(t, "qa/connections/my-ds.json", result)
+	assert.Equal(t, "qa/org_1/connections/my-ds.json", result)
 }
 
 func TestBuildAlertNotificationPath(t *testing.T) {
 	result := buildResourcePath("SomeNotification", config.AlertNotificationResource)
-	assert.Equal(t, "qa/alertnotifications/SomeNotification.json", result)
+	assert.Equal(t, "qa/org_1/alertnotifications/SomeNotification.json", result)
 }

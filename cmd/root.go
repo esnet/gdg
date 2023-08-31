@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
-	"os"
-
 	"github.com/jedib0t/go-pretty/v6/table"
-
 	log "github.com/sirupsen/logrus"
+	"os"
+	"sync"
 
 	"github.com/spf13/cobra"
 )
@@ -17,10 +16,14 @@ var (
 	TableObj      table.Writer
 	grafanaSvc    service.GrafanaService
 	DefaultConfig string
+	once          sync.Once
 )
 
 // GetGrafanaSvc returns the GrafanaService
 func GetGrafanaSvc() service.GrafanaService {
+	if grafanaSvc == nil {
+		initConfig()
+	}
 	return grafanaSvc
 }
 
@@ -56,30 +59,29 @@ func init() {
 }
 
 func initConfig() {
-	configOverride, _ := RootCmd.Flags().GetString("config")
-	if DefaultConfig == "" {
-		raw, err := os.ReadFile("conf/importer-example.yml")
-		if err == nil {
-			DefaultConfig = string(raw)
-		} else {
-			DefaultConfig = ""
+	once.Do(func() {
+		configOverride, _ := RootCmd.Flags().GetString("config")
+		if DefaultConfig == "" {
+			raw, err := os.ReadFile("config/importer-example.yml")
+			if err == nil {
+				DefaultConfig = string(raw)
+			} else {
+				DefaultConfig = ""
+			}
 		}
-	}
-	config.InitConfig(configOverride, DefaultConfig)
+		config.InitConfig(configOverride, DefaultConfig)
 
-	setupGrafanaClient()
-	log.Debug("Creating output locations")
-	//Output Renderer
-	TableObj = table.NewWriter()
-	TableObj.SetOutputMirror(os.Stdout)
-	TableObj.SetStyle(table.StyleLight)
+		grafanaSvc = service.NewApiService()
+		//Output Renderer
+		TableObj = table.NewWriter()
+		TableObj.SetOutputMirror(os.Stdout)
+		TableObj.SetStyle(table.StyleLight)
 
-	if config.Config().IsDebug() {
-		log.SetLevel(log.DebugLevel)
-	}
-}
-
-func setupGrafanaClient() {
-	grafanaSvc = service.NewApiService()
+		if config.Config().IsDebug() {
+			log.SetLevel(log.DebugLevel)
+		}
+		//Validate current configuration
+		config.Config().GetDefaultGrafanaConfig().Validate()
+	})
 
 }

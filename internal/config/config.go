@@ -127,6 +127,7 @@ func (s *Configuration) ChangeContext(name string) {
 
 // SaveToDisk Persists current configuration to disk
 func (s *Configuration) SaveToDisk(useViper bool) error {
+
 	if useViper {
 		return s.ViperConfig().WriteConfig()
 	}
@@ -163,7 +164,7 @@ func (app *AppConfig) GetContextMap() map[string]interface{} {
 
 var (
 	configData        *Configuration
-	configSearchPaths = []string{".", "../../config", "../config", "conf", "config", "/etc/gdg"}
+	configSearchPaths = []string{".", "../../config", "../config", "config", "/etc/gdg"}
 )
 
 // GetCloudConfiguration Returns storage type and configuration
@@ -263,7 +264,10 @@ func InitConfig(override, defaultConfig string) {
 	var err error
 
 	configData.defaultConfig, configData.AppConfig, err = readViperConfig(appName, configDirs)
-	if err != nil {
+	_, ok := err.(viper.ConfigFileNotFoundError)
+
+	if err != nil && ok {
+		log.Info("No configuration file has been found, creating a default configuration")
 		err = os.MkdirAll("config", os.ModePerm)
 		if err != nil {
 			log.Fatal("unable to create configuration folder: 'config'")
@@ -279,10 +283,11 @@ func InitConfig(override, defaultConfig string) {
 			log.Panic(err)
 		}
 
+	} else if err != nil { // config is found but is invalid
+		log.Fatal("Invalid configuration detected, please fix your configuration and try again.")
 	}
 
 	//unmarshall struct
-
 	contexts := configData.defaultConfig.GetStringMap("contexts")
 	contexts = applyEnvOverrides(contexts, "contexts", configData.defaultConfig)
 
@@ -310,10 +315,6 @@ func readViperConfig(appName string, configDirs []string) (*viper.Viper, *AppCon
 	}
 
 	v.AutomaticEnv()
-
-	// global defaults
-	//v.SetDefault("globals.json_logs", false)
-	//v.SetDefault("loglevel", "debug")
 
 	err := v.ReadInConfig()
 	if err == nil {

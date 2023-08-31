@@ -8,9 +8,7 @@ import (
 	gapi "github.com/esnet/grafana-swagger-api-golang"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/dashboards"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folders"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/orgs"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/search"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/signed_in_user"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"golang.org/x/exp/slices"
 	"path/filepath"
@@ -120,33 +118,6 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 // ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
 func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
-
-	var orgsPayload []*models.OrgDTO
-	orgList, err := s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getAdminAuth())
-	if err != nil {
-		log.Warn("Error getting organizations")
-		orgsPayload = make([]*models.OrgDTO, 0)
-	} else {
-		orgsPayload = orgList.GetPayload()
-	}
-	if s.grafanaConf.Organization != "" {
-		var ID int64
-		for _, org := range orgsPayload {
-			log.Errorf("%d %s\n", org.ID, org.Name)
-			if org.Name == s.grafanaConf.Organization {
-				ID = org.ID
-			}
-		}
-		if ID > 0 {
-			params := signed_in_user.NewUserSetUsingOrgParams()
-			params.OrgID = ID
-			status, err := s.client.SignedInUser.UserSetUsingOrg(params, s.getAuth())
-			if err != nil {
-				log.Fatalf("%s for %v\n", err, status)
-			}
-		}
-	}
-
 	// Fallback on defaults
 	if filterReq == nil {
 		filterReq = NewDashboardFilter("", "", "")
@@ -213,7 +184,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 
 }
 
-// DownloadDashboard saves all dashboards matching query to configured location
+// DownloadDashboards saves all dashboards matching query to configured location
 func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 	var (
 		boardLinks []*models.Hit
@@ -223,7 +194,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 	)
 
 	boardLinks = s.ListDashboards(filter)
-	var boards []string = make([]string, 0)
+	var boards = make([]string, 0)
 	for _, link := range boardLinks {
 		dp := dashboards.NewGetDashboardByUIDParams()
 		dp.UID = link.UID

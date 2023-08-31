@@ -150,7 +150,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*
 				continue
 			}
 			for _, member := range newMembers {
-				if s.isAdmin(member.UserID, member.Name) {
+				if s.isAdminUser(member.UserID, member.Name) {
 					log.Warnf("skipping admin user, already added when new team is created")
 					continue
 				}
