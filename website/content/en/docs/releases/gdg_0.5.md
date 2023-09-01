@@ -40,4 +40,6 @@ Datasources have also been deprecated in favor of 'Connections' to match the Gra
 
 ### Breaking Changes
   - datasources have been renamed as connections.  If you have an existing backup, simply rename the folder to 'connections' and everything should continue working.
+  - All Orgs namespaced backups (ie. everything except users and orgs) need to be moved under their respective org folder.  ie.  `org_1` where the given Org has an ID of 1.
   - All commands have now been moved under 'backup' or 'tools' to better reflect their functionality. [#183](https://github.com/esnet/gdg/issues/183)
+  - `organization` config is deprecated in favor of `organization_id`.

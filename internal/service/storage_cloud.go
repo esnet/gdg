@@ -139,7 +139,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 			getMapValue(SecretKey, os.Getenv("AWS_SECRET_KEY"), stringEmpty, appData), "")
 		sess, err = session.NewSession(&aws.Config{
 			Credentials:      creds,
-			Endpoint:         aws.String(appData[Endpoint]),
+			Endpoint:         aws.String(getMapValue(Endpoint, "http://localhost:9000", stringEmpty, appData)),
 			DisableSSL:       aws.Bool(getMapValue(SSLEnabled, "false", stringEmpty, appData) != "true"),
 			S3ForcePathStyle: aws.Bool(true),
 			Region:           aws.String(getMapValue(Region, "us-east-1", stringEmpty, appData)),
