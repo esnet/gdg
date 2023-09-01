@@ -68,7 +68,7 @@ var getTokenOrgCmd = &cobra.Command{
 	Long:  `display org associated with token`,
 	Run: func(command *cobra.Command, args []string) {
 
-		log.Infof("Listing organizations for context: '%s'", config.Config().AppConfig.GetContext())
+		log.Infof("Display token organization for context: '%s'", config.Config().AppConfig.GetContext())
 		cmd.TableObj.AppendHeader(table.Row{"id", "name"})
 		org := cmd.GetGrafanaSvc().GetTokenOrganization()
 		if org == nil {
