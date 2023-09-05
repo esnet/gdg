@@ -4,11 +4,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	log "github.com/sirupsen/logrus"
 	"gocloud.dev/blob"
+	"gocloud.dev/blob/s3blob"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 type CloudStorage struct {
@@ -23,6 +30,20 @@ const (
 	BucketName = "bucket_name"
 	Prefix     = "prefix"
 	Kind       = "kind"
+	Custom     = "custom"
+	AccessId   = "access_id"
+	SecretKey  = "secret_key"
+	Endpoint   = "endpoint"
+	Region     = "region"
+	SSLEnabled = "ssl_enabled"
+	InitBucket = "init_bucket"
+)
+
+var (
+	stringEmpty = func(key string) bool {
+		return key == ""
+	}
+	initBucketOnce sync.Once
 )
 
 // getCloudLocation appends prefix to path
@@ -81,7 +102,11 @@ func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 			break
 		}
 		if fullPath {
-			fileList = append(fileList, obj.Key)
+			if strings.Contains(obj.Key, folderName) {
+				fileList = append(fileList, obj.Key)
+			} else {
+				log.Debugf("%s does not match folder path", obj.Key)
+			}
 		} else {
 			fileList = append(fileList, filepath.Base(obj.Key))
 		}
@@ -92,7 +117,9 @@ func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 
 func NewCloudStorage(c context.Context) (Storage, error) {
 	var (
-		err error
+		err       error
+		bucketObj *blob.Bucket
+		errorMsg  string
 	)
 
 	contextVal := c.Value(StorageContext)
@@ -104,30 +131,75 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		return nil, errors.New("cannot convert appData to string map")
 	}
 
-	var cloudURL = fmt.Sprintf("%s://%s", appData["cloud_type"], appData["bucket_name"])
+	//Pattern specifically for Self hosted S3 compatible instances Minio / Ceph
+	if boolStrCheck(getMapValue(Custom, "false", stringEmpty, appData)) {
+		var sess *session.Session
+		creds := credentials.NewStaticCredentials(
+			getMapValue(AccessId, os.Getenv("AWS_ACCESS_KEY"), stringEmpty, appData),
+			getMapValue(SecretKey, os.Getenv("AWS_SECRET_KEY"), stringEmpty, appData), "")
+		sess, err = session.NewSession(&aws.Config{
+			Credentials:      creds,
+			Endpoint:         aws.String(getMapValue(Endpoint, "http://localhost:9000", stringEmpty, appData)),
+			DisableSSL:       aws.Bool(getMapValue(SSLEnabled, "false", stringEmpty, appData) != "true"),
+			S3ForcePathStyle: aws.Bool(true),
+			Region:           aws.String(getMapValue(Region, "us-east-1", stringEmpty, appData)),
+		})
+		bucketObj, err = s3blob.OpenBucket(context.Background(), sess, appData["bucket_name"], nil)
+		if err != nil {
+			errorMsg = err.Error()
+		}
+		if err == nil && boolStrCheck(getMapValue(InitBucket, "false", stringEmpty, appData)) {
+			//Attempts to initiate bucket
+			initBucketOnce.Do(func() {
+				client := s3.New(sess)
+				m := s3.CreateBucketInput{
+					Bucket: aws.String(appData[BucketName]),
+				}
+				//attempt to create bucket
+				_, err := client.CreateBucket(&m)
+				if err != nil {
+					log.Warnf("%s bucket already exists or cannot be created", *m.Bucket)
+				} else {
+					log.Infof("bucket %s has been created", *m.Bucket)
+				}
+			})
 
-	bucketObj, err := blob.OpenBucket(c, cloudURL)
-	if err != nil {
-		log.Panicf("failed to open bucket %s", cloudURL)
+		}
+
+	} else {
+		var cloudURL = fmt.Sprintf("%s://%s", appData["cloud_type"], appData["bucket_name"])
+		bucketObj, err = blob.OpenBucket(c, cloudURL)
+		errorMsg = fmt.Sprintf("failed to open bucket %s", cloudURL)
 	}
 
-	config := map[string]string{}
-
-	for key, value := range appData {
-		stringVal := fmt.Sprintf("%v", value)
-		if stringVal == "<nil>" {
-			stringVal = ""
-		}
-		config[key] = stringVal
+	if err != nil {
+		log.WithError(err).WithField("Msg", errorMsg).Fatal("unable to connect to cloud provider")
 	}
 
 	entity := &CloudStorage{
-		BucketName: config[BucketName],
+		BucketName: appData[BucketName],
 		BucketRef:  bucketObj,
 	}
-	if val, ok := config["prefix"]; ok {
+
+	if val, ok := appData[Prefix]; ok {
 		entity.Prefix = val
 	}
 
 	return entity, nil
+}
+
+// boolStrCheck does a more intelligent bool check as yaml values are converted to "1" or "true" depending
+// on how the user configures quotes the value.
+func boolStrCheck(val string) bool {
+	return strings.ToLower(val) == "true" || val == "1"
+
+}
+
+// getMapValue a generic utility that will get a value from a map and return a default if key does not exist
+func getMapValue[T comparable](key, defaultValue T, emptyTest func(key T) bool, data map[T]T) T {
+	val, ok := data[key]
+	if ok && !emptyTest(val) {
+		return val
+	}
+	return defaultValue
 }

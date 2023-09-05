@@ -76,17 +76,22 @@ func (s *DashNGoImpl) getOrganization(id int64) (*models.OrgDetailsDTO, error) {
 func (s *DashNGoImpl) SetOrganization(id int64) error {
 	//Removes Org filter
 	if id <= 1 {
+		log.Warnf("organization is not a valid value, resetting to default value of 1.")
 		s.grafanaConf.OrganizationId = 1
-	} else {
-		if s.grafanaConf.IsAdminEnabled() || s.grafanaConf.IsBasicAuth() {
-			organization, err := s.getOrganization(id)
-			if err != nil {
-				return errors.New("invalid org Id, org is not found")
-			}
-			s.grafanaConf.OrganizationId = organization.ID
-		} else {
-			s.grafanaConf.OrganizationId = id
+	}
+
+	if s.grafanaConf.IsAdminEnabled() || s.grafanaConf.IsBasicAuth() {
+		organization, err := s.getOrganization(id)
+		if err != nil {
+			return errors.New("invalid org Id, org is not found")
 		}
+		s.grafanaConf.OrganizationId = organization.ID
+	} else {
+		tokenOrg := s.GetTokenOrganization()
+		if tokenOrg.ID != id {
+			log.Fatalf("you have no BasicAuth configured, and token org are non-changeable.  Please configure a different token associated with Org %d, OR configure basic auth.", id)
+		}
+		s.grafanaConf.OrganizationId = id
 	}
 
 	return config.Config().SaveToDisk(false)
