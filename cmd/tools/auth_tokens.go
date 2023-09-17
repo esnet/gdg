@@ -1,118 +1,138 @@
 package tools
 
 import (
+	"context"
 	"errors"
-	cmd "github.com/esnet/gdg/cmd"
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"golang.org/x/exp/slices"
+	"slices"
 	"sort"
 	"strconv"
 )
 
-var tokensCmd = &cobra.Command{
-	Use:     "tokens",
-	Aliases: []string{"token", "apikeys"},
-	Short:   "Manage api tokens",
-	Long:    `Provides some utility to help the user manage their API token keys`,
+func newTokensCmd() simplecobra.Commander {
+	description := "Provides some utility to help the user manage their API token keys"
+	return &support.SimpleCommand{
+		NameP: "tokens",
+		Short: description,
+		Long:  description,
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			return cd.CobraCommand.Help()
+		},
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"token", "apikeys"}
+		},
+		CommandsList: []simplecobra.Commander{
+			newListTokensCmd(),
+			newDeleteTokenCmd(),
+			newNewTokenCmd(),
+		},
+	}
 }
 
-var listTokensCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list API Keys",
-	Long:  `list API Keys`,
-	Run: func(command *cobra.Command, args []string) {
+func newListTokensCmd() simplecobra.Commander {
+	description := "List API Keys"
+	return &support.SimpleCommand{
+		NameP:        "list",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 
-		cmd.TableObj.AppendHeader(table.Row{"id", "name", "role", "expiration"})
-		apiKeys := cmd.GetGrafanaSvc().ListAPIKeys()
-		sort.SliceStable(apiKeys, func(i, j int) bool {
-			return apiKeys[i].ID < apiKeys[j].ID
-		})
-		if len(apiKeys) == 0 {
-			log.Info("No apiKeys found")
-		} else {
-			for _, apiKey := range apiKeys {
-				var formattedDate string = apiKey.Expiration.String()
-				date, _ := apiKey.Expiration.Value()
-				if date.(string) == "0001-01-01T00:00:00.000Z" {
-					formattedDate = "No Expiration"
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "role", "expiration"})
+			apiKeys := rootCmd.GrafanaSvc().ListAPIKeys()
+			sort.SliceStable(apiKeys, func(i, j int) bool {
+				return apiKeys[i].ID < apiKeys[j].ID
+			})
+			if len(apiKeys) == 0 {
+				log.Info("No apiKeys found")
+			} else {
+				for _, apiKey := range apiKeys {
+					var formattedDate string = apiKey.Expiration.String()
+					date, _ := apiKey.Expiration.Value()
+					if date.(string) == "0001-01-01T00:00:00.000Z" {
+						formattedDate = "No Expiration"
+					}
+
+					rootCmd.TableObj.AppendRow(table.Row{apiKey.ID, apiKey.Name, apiKey.Role, formattedDate})
 				}
-
-				cmd.TableObj.AppendRow(table.Row{apiKey.ID, apiKey.Name, apiKey.Role, formattedDate})
+				rootCmd.TableObj.Render()
 			}
-			cmd.TableObj.Render()
-		}
-
-	},
+			return nil
+		},
+	}
 }
 
-var deleteTokensCmd = &cobra.Command{
-	Use:   "clear",
-	Short: "delete all Tokens from grafana",
-	Long:  `delete all Tokens from grafana`,
-	Run: func(command *cobra.Command, args []string) {
+func newDeleteTokenCmd() simplecobra.Commander {
+	description := "delete all Tokens from grafana"
+	return &support.SimpleCommand{
+		NameP:        "clear",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 
-		savedFiles := cmd.GetGrafanaSvc().DeleteAllTokens()
-		log.Infof("Delete Tokens for context: '%s'", config.Config().AppConfig.GetContext())
-		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-		if len(savedFiles) == 0 {
-			log.Info("No Tokens found")
-		} else {
-			for _, file := range savedFiles {
-				cmd.TableObj.AppendRow(table.Row{"user", file})
+			savedFiles := rootCmd.GrafanaSvc().DeleteAllTokens()
+			log.Infof("Delete Tokens for context: '%s'", config.Config().AppConfig.GetContext())
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			if len(savedFiles) == 0 {
+				log.Info("No Tokens found")
+			} else {
+				for _, file := range savedFiles {
+					rootCmd.TableObj.AppendRow(table.Row{"user", file})
+				}
+				rootCmd.TableObj.Render()
 			}
-			cmd.TableObj.Render()
-		}
-	},
+			return nil
+		},
+	}
 }
 
-var newTokensCmd = &cobra.Command{
-	Use:   "new",
-	Short: "new <name> <role> [ttl in seconds]",
-	Long:  `new <name> <role> [ttl in seconds ]`,
-	Args: func(command *cobra.Command, args []string) error {
-		if len(args) < 2 {
-			return errors.New("requires a key name and a role('admin','viewer','editor') [ttl optional] ")
-		}
-		return nil
-	},
-	Run: func(command *cobra.Command, args []string) {
-		name := args[0]
-		role := args[1]
-		ttl := "0"
-		if len(args) > 2 {
-			ttl = args[2]
-		}
-		var (
-			expiration int64
-			err        error
-		)
+func newNewTokenCmd() simplecobra.Commander {
+	description := "new <name> <role> [ttl in seconds]"
+	return &support.SimpleCommand{
+		NameP:        "new",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			if len(args) < 2 {
+				return errors.New("requires a key name and a role('admin','viewer','editor') [ttl optional] ")
+			}
+			name := args[0]
+			role := args[1]
+			ttl := "0"
+			if len(args) > 2 {
+				ttl = args[2]
+			}
+			var (
+				expiration int64
+				err        error
+			)
 
-		expiration, err = strconv.ParseInt(ttl, 10, 64)
-		if err != nil {
-			expiration = 0
-		}
+			expiration, err = strconv.ParseInt(ttl, 10, 64)
+			if err != nil {
+				expiration = 0
+			}
 
-		if !slices.Contains([]string{"admin", "editor", "viewer"}, role) {
-			log.Fatal("Invalid role specified")
-		}
-		key, err := cmd.GetGrafanaSvc().CreateAPIKey(name, role, expiration)
-		if err != nil {
-			log.WithError(err).Fatal("unable to create api key")
-		} else {
+			if !slices.Contains([]string{"admin", "editor", "viewer"}, role) {
+				log.Fatal("Invalid role specified")
+			}
+			key, err := rootCmd.GrafanaSvc().CreateAPIKey(name, role, expiration)
+			if err != nil {
+				log.WithError(err).Fatal("unable to create api key")
+			} else {
 
-			cmd.TableObj.AppendHeader(table.Row{"id", "name", "token"})
-			cmd.TableObj.AppendRow(table.Row{key.ID, key.Name, key.Key})
-			cmd.TableObj.Render()
-		}
+				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "token"})
+				rootCmd.TableObj.AppendRow(table.Row{key.ID, key.Name, key.Key})
+				rootCmd.TableObj.Render()
+			}
 
-	},
-}
-
-func init() {
-	tokensCmd.AddCommand(listTokensCmd)
-	tokensCmd.AddCommand(deleteTokensCmd)
-	tokensCmd.AddCommand(newTokensCmd)
+			return nil
+		},
+	}
 }

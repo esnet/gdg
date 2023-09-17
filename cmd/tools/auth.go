@@ -1,18 +1,20 @@
 package tools
 
 import (
-	"github.com/spf13/cobra"
+	"context"
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cmd/support"
 )
 
-// userCmd represents the version command
-var AuthCmd = &cobra.Command{
-	Use:   "auth",
-	Short: "Manage auth via API",
-	Long:  `Provides some utility to help the user manage their auth keys`,
-}
-
-func init() {
-	toolsCmd.AddCommand(AuthCmd)
-	AuthCmd.AddCommand(tokensCmd)
-
+func newAuthCmd() simplecobra.Commander {
+	description := "Manage auth via API"
+	return &support.SimpleCommand{
+		NameP:        "auth",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{newTokensCmd(), newServiceAccountCmd()},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			return cd.CobraCommand.Help()
+		},
+	}
 }

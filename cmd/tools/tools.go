@@ -1,18 +1,25 @@
 package tools
 
 import (
-	"github.com/esnet/gdg/cmd"
+	"context"
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cmd/support"
 	"github.com/spf13/cobra"
 )
 
-// userCmd represents the version command
-var toolsCmd = &cobra.Command{
-	Use:     "tools",
-	Short:   "A collection of tools to manage a grafana instance",
-	Long:    `A collection of tools to manage a grafana instance`,
-	Aliases: []string{"t"},
-}
+func NewToolsCommand() simplecobra.Commander {
+	description := "A collection of tools to manage a grafana instance"
+	return &support.SimpleCommand{
+		NameP:        "tools",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{newDevelCmd(), newUserCommand(), newAuthCmd(), newOrgCommand()},
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"t"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			return cd.CobraCommand.Help()
+		},
+	}
 
-func init() {
-	cmd.RootCmd.AddCommand(toolsCmd)
 }

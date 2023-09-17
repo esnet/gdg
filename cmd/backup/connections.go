@@ -1,8 +1,10 @@
 package backup
 
 import (
+	"context"
 	"fmt"
-	"github.com/esnet/gdg/cmd"
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -10,100 +12,126 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var connections = &cobra.Command{
-	Use:     "connections",
-	Aliases: []string{"connection", "ds", "c", "datasource", "datasources"},
-	Short:   "Manage connections (formerly Data Sources)",
-	Long:    `All software has versions.`,
+func newConnectionsCommand() simplecobra.Commander {
+	description := "Manage connections (formerly Data Sources)"
+	return &support.SimpleCommand{
+		NameP: "connections",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"connection", "ds", "c", "datasource", "datasources"}
+			connections := cmd
+			connections.PersistentFlags().StringP("connection", "", "", "filter by connection slug")
+		},
+		CommandsList: []simplecobra.Commander{
+			newClearConnectionsCmd(),
+			newUploadConnectionsCmd(),
+			newDownloadDashboardsCmd(),
+			newListConnectionsCmd(),
+			newConnectionsPermissionCmd(),
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			return cd.CobraCommand.Help()
+		},
+	}
 }
 
-var clearConnections = &cobra.Command{
-	Use:     "clear",
-	Short:   "clear all connections",
-	Long:    `clear all connections from grafana`,
-	Aliases: []string{"c"},
-	Run: func(command *cobra.Command, args []string) {
-
-		log.Info("Delete connections")
-		dashboardFilter, _ := command.Flags().GetString("datasource")
-		filters := service.NewConnectionFilter(dashboardFilter)
-		savedFiles := cmd.GetGrafanaSvc().DeleteAllConnections(filters)
-		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-		for _, file := range savedFiles {
-			cmd.TableObj.AppendRow(table.Row{"datasource", file})
-		}
-		cmd.TableObj.Render()
-
-	},
-}
-
-var uploadConnections = &cobra.Command{
-	Use:     "upload ",
-	Short:   "upload all connections to grafana",
-	Long:    `upload all connections to grafana`,
-	Aliases: []string{"u"},
-	Run: func(command *cobra.Command, args []string) {
-		log.Info("Uploading connections")
-		dashboardFilter, _ := command.Flags().GetString("connection")
-		filters := service.NewConnectionFilter(dashboardFilter)
-		exportedList := cmd.GetGrafanaSvc().UploadConnections(filters)
-		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-		for _, file := range exportedList {
-			cmd.TableObj.AppendRow(table.Row{"datasource", file})
-		}
-		cmd.TableObj.Render()
-
-	},
-}
-
-var downloadConnections = &cobra.Command{
-	Use:     "download",
-	Short:   "download all connections from grafana",
-	Long:    `download all connections from grafana to local filesystem`,
-	Aliases: []string{"d"},
-	Run: func(command *cobra.Command, args []string) {
-		log.Infof("Importing connections for context: '%s'", config.Config().GetAppConfig().GetContext())
-		dashboardFilter, _ := command.Flags().GetString("connection")
-		filters := service.NewConnectionFilter(dashboardFilter)
-		savedFiles := cmd.GetGrafanaSvc().DownloadConnections(filters)
-		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-		for _, file := range savedFiles {
-			cmd.TableObj.AppendRow(table.Row{"datasource", file})
-		}
-		cmd.TableObj.Render()
-
-	},
-}
-
-var listConnections = &cobra.Command{
-	Use:     "list",
-	Short:   "List all connections",
-	Long:    `List all connections`,
-	Aliases: []string{"l"},
-	Run: func(command *cobra.Command, args []string) {
-		cmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
-		dashboardFilter, _ := command.Flags().GetString("connection")
-		filters := service.NewConnectionFilter(dashboardFilter)
-		dsListing := cmd.GetGrafanaSvc().ListConnections(filters)
-		log.Infof("Listing connections for context: '%s'", config.Config().GetAppConfig().GetContext())
-		if len(dsListing) == 0 {
-			log.Info("No connections found")
-		} else {
-			for _, link := range dsListing {
-				url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
-				cmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
+func newClearConnectionsCmd() simplecobra.Commander {
+	description := "clear all connections for the given Organization"
+	return &support.SimpleCommand{
+		NameP: "clear",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"c"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Info("Delete connections")
+			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("datasource")
+			filters := service.NewConnectionFilter(dashboardFilter)
+			savedFiles := rootCmd.GrafanaSvc().DeleteAllConnections(filters)
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			for _, file := range savedFiles {
+				rootCmd.TableObj.AppendRow(table.Row{"datasource", file})
 			}
-			cmd.TableObj.Render()
-		}
-	},
+			rootCmd.TableObj.Render()
+			return nil
+		},
+	}
 }
 
-func init() {
-	backupCmd.AddCommand(connections)
-	connections.PersistentFlags().StringP("connection", "", "", "filter by connection slug")
-	connections.AddCommand(clearConnections)
-	connections.AddCommand(uploadConnections)
-	connections.AddCommand(downloadConnections)
-	connections.AddCommand(listConnections)
+func newUploadConnectionsCmd() simplecobra.Commander {
+	description := "upload all connections to grafana for the given Organization"
+	return &support.SimpleCommand{
+		NameP: "upload",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"u"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Info("Uploading connections")
+			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
+			filters := service.NewConnectionFilter(dashboardFilter)
+			exportedList := rootCmd.GrafanaSvc().UploadConnections(filters)
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			for _, file := range exportedList {
+				rootCmd.TableObj.AppendRow(table.Row{"datasource", file})
+			}
+			rootCmd.TableObj.Render()
+			return nil
+		},
+	}
+}
 
+func newDownloadConnectionsCmd() simplecobra.Commander {
+	description := "download all connections from grafana for the given Organization"
+	return &support.SimpleCommand{
+		NameP: "download",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"d"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Infof("Importing connections for context: '%s'", config.Config().GetAppConfig().GetContext())
+			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
+			filters := service.NewConnectionFilter(dashboardFilter)
+			savedFiles := rootCmd.GrafanaSvc().DownloadConnections(filters)
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			for _, file := range savedFiles {
+				rootCmd.TableObj.AppendRow(table.Row{"datasource", file})
+			}
+			rootCmd.TableObj.Render()
+			return nil
+		},
+	}
+}
+func newListConnectionsCmd() simplecobra.Commander {
+	description := "List all connections for the given Organization"
+	return &support.SimpleCommand{
+		NameP: "list",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"l"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
+			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
+			filters := service.NewConnectionFilter(dashboardFilter)
+			dsListing := rootCmd.GrafanaSvc().ListConnections(filters)
+			log.Infof("Listing connections for context: '%s'", config.Config().GetAppConfig().GetContext())
+			if len(dsListing) == 0 {
+				log.Info("No connections found")
+			} else {
+				for _, link := range dsListing {
+					url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
+					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
+				}
+				rootCmd.TableObj.Render()
+			}
+			return nil
+		},
+	}
 }

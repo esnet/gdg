@@ -1,8 +1,10 @@
 package backup
 
 import (
+	"context"
 	"encoding/json"
-	"github.com/esnet/gdg/cmd"
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -10,131 +12,161 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var libraryElements = &cobra.Command{
-	Use:     "libraryelements",
-	Aliases: []string{"lib", "library"},
-	Short:   "Manage Library Elements",
-	Long:    `Manage Library Elements.`,
+func newLibraryElementsCommand() simplecobra.Commander {
+	description := "Manage Library Elements"
+	return &support.SimpleCommand{
+		NameP: "libraryelements",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"lib", "library"}
+		},
+		CommandsList: []simplecobra.Commander{
+			newLibraryElementsListCmd(),
+			newLibraryElementsClearCmd(),
+			newLibraryElementsDownloadCmd(),
+			newLibraryElementsUploadCmd(),
+			newLibraryElementsListConnectionsCmd(),
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			return cd.CobraCommand.Help()
+		},
+	}
 }
 
-var clearLibrary = &cobra.Command{
-	Use:     "clear",
-	Aliases: []string{"c"},
-	Short:   "delete all Library elements from grafana",
-	Long:    `delete all library elements from grafana`,
-	Run: func(command *cobra.Command, args []string) {
-		//filter := getLibraryGlobalFlags(cmd)
-		deletedLibrarys := cmd.GetGrafanaSvc().DeleteAllLibraryElements(nil)
-		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-		for _, file := range deletedLibrarys {
-			cmd.TableObj.AppendRow(table.Row{"library", file})
-		}
-		if len(deletedLibrarys) == 0 {
-			log.Info("No library were found.  0 librarys removed")
-
-		} else {
-			log.Infof("%d library were deleted", len(deletedLibrarys))
-			cmd.TableObj.Render()
-		}
-
-	},
-}
-
-var uploadLibrary = &cobra.Command{
-	Use:     "upload",
-	Short:   "upload all library to grafana",
-	Long:    `upload all library to grafana`,
-	Aliases: []string{"u"},
-	Run: func(command *cobra.Command, args []string) {
-		log.Info("exporting lib elements")
-		libraryFilter := filters.NewBaseFilter()
-		elements := cmd.GetGrafanaSvc().UploadLibraryElements(libraryFilter)
-		cmd.TableObj.AppendHeader(table.Row{"Name"})
-		if len(elements) > 0 {
-			for _, link := range elements {
-				cmd.TableObj.AppendRow(table.Row{link})
+func newLibraryElementsClearCmd() simplecobra.Commander {
+	description := "delete all Library elements from grafana"
+	return &support.SimpleCommand{
+		NameP: "clear",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"c"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			//filter := getLibraryGlobalFlags(cmd)
+			deletedLibrarys := rootCmd.GrafanaSvc().DeleteAllLibraryElements(nil)
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			for _, file := range deletedLibrarys {
+				rootCmd.TableObj.AppendRow(table.Row{"library", file})
 			}
-			cmd.TableObj.Render()
-		} else {
-			log.Info("No library found")
-		}
-	},
+			if len(deletedLibrarys) == 0 {
+				log.Info("No library were found.  0 librarys removed")
+
+			} else {
+				log.Infof("%d library were deleted", len(deletedLibrarys))
+				rootCmd.TableObj.Render()
+			}
+			return nil
+		},
+	}
+}
+func newLibraryElementsListCmd() simplecobra.Commander {
+	description := "List all library Elements"
+	return &support.SimpleCommand{
+		NameP: "list",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"l"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "UID", "Folder", "Name", "Type"})
+
+			elements := rootCmd.GrafanaSvc().ListLibraryElements(nil)
+			log.Infof("Number of elements is: %d", len(elements))
+
+			log.Infof("Listing library for context: '%s'", config.Config().AppConfig.GetContext())
+			for _, link := range elements {
+				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Meta.FolderName, link.Name, link.Type})
+
+			}
+			if len(elements) > 0 {
+				rootCmd.TableObj.Render()
+			} else {
+				log.Info("No library found")
+			}
+
+			return nil
+		},
+	}
+}
+func newLibraryElementsDownloadCmd() simplecobra.Commander {
+	description := "Download all library from grafana to local file system"
+	return &support.SimpleCommand{
+		NameP: "download",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"d"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Infof("Downloading library for context: '%s'", config.Config().AppConfig.GetContext())
+			savedFiles := rootCmd.GrafanaSvc().DownloadLibraryElements(nil)
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			for _, file := range savedFiles {
+				rootCmd.TableObj.AppendRow(table.Row{"library", file})
+			}
+			rootCmd.TableObj.Render()
+			return nil
+		},
+	}
+}
+func newLibraryElementsUploadCmd() simplecobra.Commander {
+	description := "upload all library to grafana"
+	return &support.SimpleCommand{
+		NameP: "upload",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"u"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Info("exporting lib elements")
+			libraryFilter := filters.NewBaseFilter()
+			elements := rootCmd.GrafanaSvc().UploadLibraryElements(libraryFilter)
+			rootCmd.TableObj.AppendHeader(table.Row{"Name"})
+			if len(elements) > 0 {
+				for _, link := range elements {
+					rootCmd.TableObj.AppendRow(table.Row{link})
+				}
+				rootCmd.TableObj.Render()
+			} else {
+				log.Info("No library found")
+			}
+			return nil
+		},
+	}
 }
 
-var downloadLibary = &cobra.Command{
-	Use:     "download",
-	Short:   "Download all library from grafana",
-	Long:    `Download all library from grafana to local file system`,
-	Aliases: []string{"d"},
-	Run: func(command *cobra.Command, args []string) {
-		log.Infof("Downloading library for context: '%s'", config.Config().AppConfig.GetContext())
-		savedFiles := cmd.GetGrafanaSvc().DownloadLibraryElements(nil)
-		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-		for _, file := range savedFiles {
-			cmd.TableObj.AppendRow(table.Row{"library", file})
-		}
-		cmd.TableObj.Render()
+func newLibraryElementsListConnectionsCmd() simplecobra.Commander {
+	description := "List all library Connection given a valid library Connection UID"
+	return &support.SimpleCommand{
+		NameP: "list-connections",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"c"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			if len(args) != 1 {
+				log.Fatalf("Wrong number of arguments, requires library element UUID")
+			}
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "UID", "Slug", "Title", "Folder"})
 
-	},
-}
-
-var listLibraries = &cobra.Command{
-	Use:   "list",
-	Short: "List all library",
-	Long:  `List all library`,
-	Run: func(command *cobra.Command, args []string) {
-		cmd.TableObj.AppendHeader(table.Row{"id", "UID", "Folder", "Name", "Type"})
-
-		elements := cmd.GetGrafanaSvc().ListLibraryElements(nil)
-		log.Infof("Number of elements is: %d", len(elements))
-
-		log.Infof("Listing library for context: '%s'", config.Config().AppConfig.GetContext())
-		for _, link := range elements {
-			cmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Meta.FolderName, link.Name, link.Type})
-
-		}
-		if len(elements) > 0 {
-			cmd.TableObj.Render()
-		} else {
-			log.Info("No library found")
-		}
-
-	},
-}
-
-var listLibraryConnections = &cobra.Command{
-	Use:   "list-connections",
-	Short: "List all library Connection given a valid library Connection UID",
-	Long:  `List all library Connection for a given library connection UID`,
-	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
-	Run: func(command *cobra.Command, args []string) {
-		cmd.TableObj.AppendHeader(table.Row{"id", "UID", "Slug", "Title", "Folder"})
-
-		libElmentUid := args[0]
-		elements := cmd.GetGrafanaSvc().ListLibraryElementsConnections(nil, libElmentUid)
-		log.Infof("Listing library connections for context: '%s'", config.Config().AppConfig.GetContext())
-		for _, link := range elements {
-			dash := link.Dashboard.(map[string]interface{})
-			cmd.TableObj.AppendRow(table.Row{dash["id"].(json.Number), dash["uid"].(string), link.Meta.Slug, dash["title"].(string), link.Meta.FolderTitle})
-		}
-		if len(elements) > 0 {
-			cmd.TableObj.Render()
-		} else {
-			log.Info("No library found")
-		}
-		/*
-
-
-		 */
-
-	},
-}
-
-func init() {
-	backupCmd.AddCommand(libraryElements)
-	libraryElements.AddCommand(downloadLibary)
-	libraryElements.AddCommand(listLibraries)
-	libraryElements.AddCommand(clearLibrary)
-	libraryElements.AddCommand(uploadLibrary)
-	libraryElements.AddCommand(listLibraryConnections)
+			libElmentUid := args[0]
+			elements := rootCmd.GrafanaSvc().ListLibraryElementsConnections(nil, libElmentUid)
+			log.Infof("Listing library connections for context: '%s'", config.Config().AppConfig.GetContext())
+			for _, link := range elements {
+				dash := link.Dashboard.(map[string]interface{})
+				rootCmd.TableObj.AppendRow(table.Row{dash["id"].(json.Number), dash["uid"].(string), link.Meta.Slug, dash["title"].(string), link.Meta.FolderTitle})
+			}
+			if len(elements) > 0 {
+				rootCmd.TableObj.Render()
+			} else {
+				log.Info("No library found")
+			}
+			return nil
+		},
+	}
 }

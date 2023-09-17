@@ -1,7 +1,9 @@
 package backup
 
 import (
-	"github.com/esnet/gdg/cmd"
+	"context"
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -12,13 +14,6 @@ import (
 
 var useFolderFilters bool
 
-var foldersCmd = &cobra.Command{
-	Use:     "folders",
-	Aliases: []string{"fld", "folder"},
-	Short:   "Folders Tooling",
-	Long:    `Folders Tooling`,
-}
-
 func getFolderFilter() filters.Filter {
 	if !useFolderFilters {
 		return nil
@@ -27,102 +22,130 @@ func getFolderFilter() filters.Filter {
 
 }
 
-var deleteFoldersCmd = &cobra.Command{
-	Use:     "clear",
-	Aliases: []string{"delete"},
-	Short:   "delete Folders from grafana",
-	Long:    `delete Folders from grafana`,
-	Run: func(command *cobra.Command, args []string) {
+func newFolderCommand() simplecobra.Commander {
+	description := "Manage folder entities"
+	return &support.SimpleCommand{
+		NameP: "folders",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"fld", "folder"}
+			cmd.PersistentFlags().BoolVar(&useFolderFilters, "use-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			return cd.CobraCommand.Help()
+		},
+		CommandsList: []simplecobra.Commander{
+			newFolderPermissionCommand(),
+			newFolderListCmd(),
+			newFolderClearCmd(),
+			newFolderDownloadCmd(),
+			newFolderUploadCmd(),
+		},
+	}
 
-		log.Infof("Deleting all Folders for context: '%s'", config.Config().AppConfig.GetContext())
-		cmd.TableObj.AppendHeader(table.Row{"title"})
-
-		folders := cmd.GetGrafanaSvc().DeleteAllFolders(getFolderFilter())
-		if len(folders) == 0 {
-			log.Info("No Folders found")
-		} else {
-			for _, folder := range folders {
-				cmd.TableObj.AppendRow(table.Row{folder})
-			}
-			cmd.TableObj.Render()
-		}
-
-	},
 }
 
-var uploadFoldersCmd = &cobra.Command{
-	Use:     "upload",
-	Short:   "upload Folders to grafana",
-	Long:    `upload Folders to grafana`,
-	Aliases: []string{"u"},
-	Run: func(command *cobra.Command, args []string) {
+func newFolderClearCmd() simplecobra.Commander {
+	description := "delete Folders from grafana"
+	return &support.SimpleCommand{
+		NameP: "clear",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"c", "delete"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Infof("Deleting all Folders for context: '%s'", config.Config().AppConfig.GetContext())
+			rootCmd.TableObj.AppendHeader(table.Row{"title"})
 
-		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
-		cmd.TableObj.AppendHeader(table.Row{"file"})
-		folders := cmd.GetGrafanaSvc().UploadFolders(getFolderFilter())
-		if len(folders) == 0 {
-			log.Info("No folders found")
-		} else {
-			for _, folder := range folders {
-				cmd.TableObj.AppendRow(table.Row{folder})
+			folders := rootCmd.GrafanaSvc().DeleteAllFolders(getFolderFilter())
+			if len(folders) == 0 {
+				log.Info("No Folders found")
+			} else {
+				for _, folder := range folders {
+					rootCmd.TableObj.AppendRow(table.Row{folder})
+				}
+				rootCmd.TableObj.Render()
 			}
-			cmd.TableObj.Render()
-		}
-
-	},
+			return nil
+		},
+	}
 }
 
-var downloadFoldersCmd = &cobra.Command{
-	Use:     "download",
-	Short:   "download Folders",
-	Long:    `download Folders`,
-	Aliases: []string{"d"},
-	Run: func(command *cobra.Command, args []string) {
+func newFolderListCmd() simplecobra.Commander {
+	description := "List Folders"
+	return &support.SimpleCommand{
+		NameP: "list",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"u"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "title"})
+			folders := rootCmd.GrafanaSvc().ListFolder(getFolderFilter())
 
-		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
-		cmd.TableObj.AppendHeader(table.Row{"file"})
-		folders := cmd.GetGrafanaSvc().DownloadFolders(getFolderFilter())
-		if len(folders) == 0 {
-			log.Info("No folders found")
-		} else {
-			for _, folder := range folders {
-				cmd.TableObj.AppendRow(table.Row{folder})
+			if len(folders) == 0 {
+				log.Info("No folders found")
+			} else {
+				for _, folder := range folders {
+					rootCmd.TableObj.AppendRow(table.Row{folder.ID, folder.UID, folder.Title})
+				}
+				rootCmd.TableObj.Render()
 			}
-			cmd.TableObj.Render()
-		}
-
-	},
+			return nil
+		},
+	}
 }
-
-var listFoldersCmd = &cobra.Command{
-	Use:     "list",
-	Short:   "list Folders",
-	Long:    `list Folders`,
-	Aliases: []string{"l"},
-	Run: func(command *cobra.Command, args []string) {
-
-		log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
-		cmd.TableObj.AppendHeader(table.Row{"id", "uid", "title"})
-		folders := cmd.GetGrafanaSvc().ListFolder(getFolderFilter())
-
-		if len(folders) == 0 {
-			log.Info("No folders found")
-		} else {
-			for _, folder := range folders {
-				cmd.TableObj.AppendRow(table.Row{folder.ID, folder.UID, folder.Title})
+func newFolderDownloadCmd() simplecobra.Commander {
+	description := "Download Folders from grafana"
+	return &support.SimpleCommand{
+		NameP: "download",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"d"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Infof("Listing Folders for context: '%s'", config.Config().AppConfig.GetContext())
+			rootCmd.TableObj.AppendHeader(table.Row{"file"})
+			folders := rootCmd.GrafanaSvc().DownloadFolders(getFolderFilter())
+			if len(folders) == 0 {
+				log.Info("No folders found")
+			} else {
+				for _, folder := range folders {
+					rootCmd.TableObj.AppendRow(table.Row{folder})
+				}
+				rootCmd.TableObj.Render()
 			}
-			cmd.TableObj.Render()
-		}
-
-	},
+			return nil
+		},
+	}
 }
-
-func init() {
-	backupCmd.AddCommand(foldersCmd)
-	foldersCmd.AddCommand(listFoldersCmd)
-	foldersCmd.AddCommand(downloadFoldersCmd)
-	foldersCmd.AddCommand(deleteFoldersCmd)
-	foldersCmd.AddCommand(uploadFoldersCmd)
-	foldersCmd.PersistentFlags().BoolVar(&useFolderFilters, "use-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
-
+func newFolderUploadCmd() simplecobra.Commander {
+	description := "upload Folders to grafana"
+	return &support.SimpleCommand{
+		NameP: "upload",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"u"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			log.Infof("Uploading Folders for context: '%s'", config.Config().AppConfig.GetContext())
+			rootCmd.TableObj.AppendHeader(table.Row{"file"})
+			folders := rootCmd.GrafanaSvc().UploadFolders(getFolderFilter())
+			if len(folders) == 0 {
+				log.Info("No folders found")
+			} else {
+				for _, folder := range folders {
+					rootCmd.TableObj.AppendRow(table.Row{folder})
+				}
+				rootCmd.TableObj.Render()
+			}
+			return nil
+		},
+	}
 }

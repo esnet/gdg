@@ -27,7 +27,6 @@ type DashboardsApi interface {
 	DownloadDashboards(filter filters.Filter) []string
 	UploadDashboards(filter filters.Filter)
 	DeleteAllDashboards(filter filters.Filter) []string
-	getDashboardByUid(uid string) (*models.DashboardFullWithMeta, error)
 }
 
 // getDashboardByUid retrieve a dashboard given a particular uid.
