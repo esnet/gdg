@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"errors"
+	"os"
+	"path/filepath"
+
 	log "github.com/sirupsen/logrus"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/fileblob"
 	_ "gocloud.dev/blob/fileblob"
-	"os"
-	"path/filepath"
 )
 
 // LocalStorage default storage engine
@@ -34,7 +35,10 @@ func (s *LocalStorage) getBucket(baseFolder string) (*blob.Bucket, error) {
 	if _, err := os.Stat(baseFolder); err != nil {
 		_ = os.Mkdir(baseFolder, 0750)
 	}
-	return fileblob.OpenBucket(baseFolder, nil)
+	opts := fileblob.Options {
+		NoTempDir: true,
+	}
+	return fileblob.OpenBucket(baseFolder, &opts)
 }
 
 // WriteFile writes file to disk and returns an error if operation failed
