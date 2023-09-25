@@ -1,0 +1,99 @@
+version: "3"
+
+vars:
+  BIN_NAME: gdg
+  VERSION : { sh: grep "const Version " internal/version/version.go | sed -E 's/.*"(.+)"$$/\1/' }
+  GIT_COMMIT: { sh: git rev-parse HEAD }
+  GIT_DIRTY: { sh: test -n "`git status --porcelain`" && echo "+CHANGES" || true }
+  BUILD_DATE: { sh: date '+%Y-%m-%d-%H:%M:%S' }
+  IMAGE_NAME: "esnet/gdg"
+  LD_FLAGS: "-s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/internal/version.BuildDate={{ .BUILD_DATE }} "
+
+dotenv: ['.env']
+
+tasks:
+  default:
+    cmds:
+      - task: build
+  format:
+    desc: "Format code"
+    cmds:
+      - gofmt -w -s .
+  lint:
+    desc: "Lint project"
+    cmds:
+      - golangci-lint run ./...
+  authors:
+    desc: "Building GDG"
+    cmds:
+      - echo "Authors\n=======\n" > AUTHORS.md
+      - "git log --raw | grep \"^Author: \" | sort | uniq | cut -d ' ' -f2 | sed 's/^/- /' >> AUTHORS.md"
+    silent: false
+  mocks: 
+    desc: "Re-generate Mocks"
+    cmds:
+      - mockery --dir=internal/service/ --output=internal/service/mocks --outpkg=mocks --all
+  linux:
+    desc: "Build linux binary"
+    cmds:
+      - env GOOS='linux' GOARCH='amd64' go build -ldflags "{{ .LD_FLAGS }} " -o bin/{{ .BIN_NAME }}_linux
+  build:
+    desc: "Buiding {{ .BIN_NAME }} {{ .VERSION }}" 
+    cmds:
+      - echo "GOPATH=${GOPATH}"
+      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}
+  install: 
+    desc: "installing {{ .BIN_NAME }} {{ .VERSION }}" 
+    cmds: 
+      - echo "GOPATH=${GOPATH}"
+      - go install -ldflags "{{ .LD_FLAGS}}"
+      - mv ${GOPATH}/bin/gdg ${GOPATH}/bin/{{ .BIN_NAME }}
+    silent: false
+  test: 
+    desc:  "Dos tuff"
+    cmds:
+      - echo ${GOPATH}
+  get-deps:
+    desc:  "Tidy Deps"
+    cmds:
+      - go mod tidy
+  build-alpine:
+    desc: "building {{ .BIN_NAME }} {{. VERSION }}"
+    cmds:
+      - go build -ldflags '{{ .LD_FLAGS }} -linkmode external -extldflags "-static"' -o bin/{{ .BIN_NAME}}
+  pakcage:
+    desc: "building image {{ .BIN_NAME }} {{ .VERSION }} {{ .GIT_COMMIT }}"
+    cmds:
+      - docker build --build-arg VERSION={{ .VERSION }} --build-arg GIT_COMMIT={{ .GIT_COMMIT }} -t $(IMAGE_NAME):local .
+  tag: 
+    desc: "Tagging: latest {{ .VERSION }} {{ .GIT_COMMIT }}"
+    cmds:
+      - docker tag $(IMAGE_NAME):local $(IMAGE_NAME):{{ .GIT_COMMIT }}
+      - docker tag $(IMAGE_NAME):local $(IMAGE_NAME):{{ .VERSION }}
+      - docker tag $(IMAGE_NAME):local $(IMAGE_NAME):latest
+  push: 
+    desc: "Pushing docker image to registry: latest {{ .VERSION }} {{ .GIT_COMMIT }}"
+    deps: [tag]
+    cmds:
+      - docker push $(IMAGE_NAME):{{ .GIT_COMMIT }}
+      - docker push $(IMAGE_NAME):{{ .VERSION }}
+      - docker push $(IMAGE_NAME):latest
+  clean:
+    desc: "clean up data"
+    cmds:
+      - "test ! -e bin/{{ .BIN_NAME }} || rm bin/{{ .BIN_NAME }}" 
+      - "rm -fr dist/"
+  release-snapshot: 
+    deps: [clean]
+    desc: "Release Snapshot"
+    cmds:
+      - goreleaser build --snapshot
+  release: 
+    deps: [clean]
+    desc: "Release GDG"
+    cmds:
+      - goreleaser release
+  test:
+      desc: ""
+      cmds:
+        - go test -v ./... -cover
