@@ -26,7 +26,7 @@ func newConnectionsCommand() simplecobra.Commander {
 		CommandsList: []simplecobra.Commander{
 			newClearConnectionsCmd(),
 			newUploadConnectionsCmd(),
-			newDownloadDashboardsCmd(),
+			newDownloadConnectionsCmd(),
 			newListConnectionsCmd(),
 			newConnectionsPermissionCmd(),
 		},

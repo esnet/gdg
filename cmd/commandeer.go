@@ -20,7 +20,8 @@ func Execute(defaultCfg string, args []string, options ...support.RootOption) er
 	cd, err := x.Execute(context.Background(), args)
 
 	if err != nil || len(args) == 0 {
-		return cd.CobraCommand.Help()
+		_ = cd.CobraCommand.Help()
+		return err
 	}
 
 	return nil

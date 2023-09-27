@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cmd/test_tools"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/gdg/internal/version"
@@ -12,22 +13,6 @@ import (
 	"strings"
 	"testing"
 )
-
-func interceptStdout() (*os.File, *os.File, func()) {
-	backupStd := os.Stdout
-	backupErr := os.Stderr
-	r, w, _ := os.Pipe()
-	//Restore streams
-	cleanup := func() {
-		os.Stdout = backupStd
-		os.Stderr = backupErr
-	}
-	os.Stdout = w
-	os.Stderr = w
-
-	return r, w, cleanup
-
-}
 
 func TestVersionCommand(t *testing.T) {
 	testSvc := new(mocks.GrafanaService)
@@ -42,7 +27,7 @@ func TestVersionCommand(t *testing.T) {
 	}
 	path, _ := os.Getwd()
 	fmt.Println(path)
-	r, w, cleanup := interceptStdout()
+	r, w, cleanup := test_tools.InterceptStdout()
 	data, err := os.ReadFile("../config/testing.yml")
 	assert.Nil(t, err)
 
@@ -59,4 +44,25 @@ func TestVersionCommand(t *testing.T) {
 	assert.True(t, strings.Contains(outStr, "Date:"))
 	assert.True(t, strings.Contains(outStr, "Go Version:"))
 	assert.True(t, strings.Contains(outStr, "OS / Arch:"))
+}
+
+func TestVersionErrCommand(t *testing.T) {
+	testSvc := new(mocks.GrafanaService)
+	getMockSvc := func() service.GrafanaService {
+		return testSvc
+	}
+
+	optionMockSvc := func() support.RootOption {
+		return func(response *support.RootCommand) {
+			response.GrafanaSvc = getMockSvc
+		}
+	}
+	path, _ := os.Getwd()
+	fmt.Println(path)
+	data, err := os.ReadFile("../config/testing.yml")
+	assert.Nil(t, err)
+
+	err = Execute(string(data), []string{"dumb", "dumb"}, optionMockSvc())
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), `command error: unknown command "dumb" for "gdg"`)
 }

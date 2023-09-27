@@ -14,7 +14,7 @@ import (
 var defaultConfig string
 
 var (
-	f = func() api.GrafanaService {
+	getGrafanaSvc = func() api.GrafanaService {
 		return api.NewApiService()
 	}
 )
@@ -22,13 +22,13 @@ var (
 func main() {
 	applogger.InitializeAppLogger()
 
-	option := func() support.RootOption {
+	setGrafanaSvc := func() support.RootOption {
 		return func(response *support.RootCommand) {
-			response.GrafanaSvc = f
+			response.GrafanaSvc = getGrafanaSvc
 		}
 	}
 
-	err := cmd.Execute(defaultConfig, os.Args[1:], option())
+	err := cmd.Execute(defaultConfig, os.Args[1:], setGrafanaSvc())
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
