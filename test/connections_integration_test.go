@@ -62,6 +62,7 @@ func TestDataSourceFilter(t *testing.T) {
 		},
 	}
 	testingContext = config.Config().GetAppConfig().GetContexts()["testing"]
+  _ = testingContext
 
 	apiClient := service.NewApiService("dummy")
 
