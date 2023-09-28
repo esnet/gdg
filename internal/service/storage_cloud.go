@@ -144,6 +144,9 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 			S3ForcePathStyle: aws.Bool(true),
 			Region:           aws.String(getMapValue(Region, "us-east-1", stringEmpty, appData)),
 		})
+		if err != nil {
+			errorMsg = err.Error()
+		}
 		bucketObj, err = s3blob.OpenBucket(context.Background(), sess, appData["bucket_name"], nil)
 		if err != nil {
 			errorMsg = err.Error()

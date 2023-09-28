@@ -40,7 +40,7 @@ func CreateDestinationPath(v string) {
 	}
 }
 
-// getFolderFromResourcePath if a use encodes a path seperator in path, we can't determine the folder name.  This strips away
+// getFolderFromResourcePath if a use encodes a path separator in path, we can't determine the folder name.  This strips away
 // all the known components of a resource type leaving only the folder name.
 func getFolderFromResourcePath(storageEngine string, filePath string, resourceType config.ResourceType) (string, error) {
 	basePath := fmt.Sprintf("%s/", config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource))
@@ -60,15 +60,6 @@ func getFolderFromResourcePath(storageEngine string, filePath string, resourceTy
 		return folderName, nil
 	}
 	return "", errors.New("unable to parse resource to retrieve folder name")
-}
-
-func isResourceOrgNamespaces(resourceType config.ResourceType) bool {
-	if resourceType == config.DashboardResource {
-		return true
-	}
-
-	return false
-
 }
 
 func buildResourceFolder(folderName string, resourceType config.ResourceType) string {

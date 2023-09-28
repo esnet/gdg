@@ -1,8 +1,10 @@
 package backup
 
 import (
+	"context"
 	"fmt"
-	"github.com/esnet/gdg/cmd"
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/tools"
@@ -12,9 +14,7 @@ import (
 	"strings"
 )
 
-var (
-	skipConfirmAction bool
-)
+var skipConfirmAction bool
 
 func parseDashboardGlobalFlags(command *cobra.Command) []string {
 	folderFilter, _ := command.Flags().GetString("folder")
@@ -24,121 +24,155 @@ func parseDashboardGlobalFlags(command *cobra.Command) []string {
 	return []string{folderFilter, dashboardFilter, strings.Join(tagsFilter, ",")}
 }
 
-var dashboard = &cobra.Command{
-	Use:     "dashboards",
-	Aliases: []string{"dash", "dashboard"},
-	Short:   "Manage Dashboards",
-	Long:    `Manage Grafana Dashboards.`,
+func newDashboardCommand() simplecobra.Commander {
+	description := "Manage Grafana Dashboards"
+	return &support.SimpleCommand{
+		NameP: "dashboards",
+		Short: description,
+		Long:  description,
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"dash", "dashboard"}
+			dashboard := cmd
+			dashboard.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
+			dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
+			dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
+			dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by Tags (does not apply on upload)")
+		},
+		CommandsList: []simplecobra.Commander{
+			newListDashboardsCmd(),
+			newDownloadDashboardsCmd(),
+			newUploadDashboardsCmd(),
+			newClearDashboardsCmd(),
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			return cd.CobraCommand.Help()
+		},
+	}
+
 }
 
-var clearDashboards = &cobra.Command{
-	Use:     "clear",
-	Short:   "delete all monitored dashboards from grafana",
-	Long:    `clear all monitored dashboards from grafana`,
-	Aliases: []string{"c"},
-	Run: func(command *cobra.Command, args []string) {
-		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(command)...)
-		deletedDashboards := cmd.GetGrafanaSvc().DeleteAllDashboards(filter)
-		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-		for _, file := range deletedDashboards {
-			cmd.TableObj.AppendRow(table.Row{"dashboard", file})
-		}
-		if len(deletedDashboards) == 0 {
-			log.Info("No dashboards were found.  0 dashboards removed")
+func newClearDashboardsCmd() simplecobra.Commander {
+	description := "delete all monitored dashboards from grafana"
+	return &support.SimpleCommand{
+		NameP:        "clear",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{},
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"c"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			deletedDashboards := rootCmd.GrafanaSvc().DeleteAllDashboards(filter)
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			for _, file := range deletedDashboards {
+				rootCmd.TableObj.AppendRow(table.Row{"dashboard", file})
+			}
+			if len(deletedDashboards) == 0 {
+				log.Info("No dashboards were found. 0 dashboards were removed")
 
-		} else {
-			log.Infof("%d dashboards were deleted", len(deletedDashboards))
-			cmd.TableObj.Render()
-		}
+			} else {
+				log.Infof("%d dashboards were deleted", len(deletedDashboards))
+				rootCmd.TableObj.Render()
+			}
+			return nil
+		},
+	}
 
-	},
 }
 
-var uploadDashboard = &cobra.Command{
-	Use:     "upload",
-	Short:   "upload all dashboards to grafana",
-	Long:    `upload all dashboards to grafana`,
-	Aliases: []string{"u"},
-	Run: func(command *cobra.Command, args []string) {
+func newUploadDashboardsCmd() simplecobra.Commander {
+	description := "upload all dashboards to grafana"
+	return &support.SimpleCommand{
+		NameP:        "upload",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{},
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"u"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
 
-		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(command)...)
+			if !skipConfirmAction {
+				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
+					"(or all folders if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
+					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
+				), "", true)
+			}
+			rootCmd.GrafanaSvc().UploadDashboards(filter)
 
-		if !skipConfirmAction {
-			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
-				"(or all folders if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
-				"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
-			), "", true)
-		}
-		cmd.GetGrafanaSvc().UploadDashboards(filter)
+			rootCmd.TableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
+			boards := rootCmd.GrafanaSvc().ListDashboards(filter)
 
-		cmd.TableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
-		boards := cmd.GetGrafanaSvc().ListDashboards(filter)
+			for _, link := range boards {
+				rootCmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
 
-		for _, link := range boards {
-			cmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
+			}
+			if len(boards) > 0 {
+				rootCmd.TableObj.Render()
+			} else {
+				log.Info("No dashboards found")
+			}
+			return nil
+		},
+	}
 
-		}
-		if len(boards) > 0 {
-			cmd.TableObj.Render()
-		} else {
-			log.Info("No dashboards found")
-		}
-
-	},
 }
 
-var downloadDashboard = &cobra.Command{
-	Use:     "download",
-	Short:   "download all dashboards from grafana",
-	Aliases: []string{"d"},
-	Long:    `Download all dashboards from grafana to local file system`,
-	Run: func(command *cobra.Command, args []string) {
-		filter := service.NewDashboardFilter(parseDashboardGlobalFlags(command)...)
-		savedFiles := cmd.GetGrafanaSvc().DownloadDashboards(filter)
-		log.Infof("Importing dashboards for context: '%s'", config.Config().GetAppConfig().GetContext())
-		cmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-		for _, file := range savedFiles {
-			cmd.TableObj.AppendRow(table.Row{"dashboard", file})
-		}
-		cmd.TableObj.Render()
-	},
+func newDownloadDashboardsCmd() simplecobra.Commander {
+	description := "download all dashboards from grafana"
+	return &support.SimpleCommand{
+		NameP:        "download",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{},
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"d"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			savedFiles := rootCmd.GrafanaSvc().DownloadDashboards(filter)
+			log.Infof("Downloading dashboards for context: '%s'", config.Config().GetAppConfig().GetContext())
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			for _, file := range savedFiles {
+				rootCmd.TableObj.AppendRow(table.Row{"dashboard", file})
+			}
+			rootCmd.TableObj.Render()
+			return nil
+		},
+	}
 }
+func newListDashboardsCmd() simplecobra.Commander {
+	description := "List all dashboards from grafana"
+	return &support.SimpleCommand{
+		NameP:        "list",
+		Short:        description,
+		Long:         description,
+		CommandsList: []simplecobra.Commander{},
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"l"}
+		},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "Tags", "URL"})
 
-var listDashboards = &cobra.Command{
-	Use:     "list",
-	Short:   "List all dashboards from grafana",
-	Long:    `List all dashboards from grafana`,
-	Aliases: []string{"l"},
-	Run: func(command *cobra.Command, args []string) {
-		cmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "Tags", "URL"})
+			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
 
-		filters := service.NewDashboardFilter(parseDashboardGlobalFlags(command)...)
-		boards := cmd.GetGrafanaSvc().ListDashboards(filters)
+			log.Infof("Listing dashboards for context: '%s'", config.Config().GetAppConfig().GetContext())
+			for _, link := range boards {
+				url := fmt.Sprintf("%s%s", config.Config().GetDefaultGrafanaConfig().URL, link.URL)
+				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
+					link.UID, strings.Join(link.Tags, ","), url})
 
-		log.Infof("Listing dashboards for context: '%s'", config.Config().GetAppConfig().GetContext())
-		for _, link := range boards {
-			url := fmt.Sprintf("%s%s", config.Config().GetDefaultGrafanaConfig().URL, link.URL)
-			cmd.TableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
-				link.UID, strings.Join(link.Tags, ","), url})
+			}
+			if len(boards) > 0 {
+				rootCmd.TableObj.Render()
+			} else {
+				log.Info("No dashboards found")
+			}
+			return nil
+		},
+	}
 
-		}
-		if len(boards) > 0 {
-			cmd.TableObj.Render()
-		} else {
-			log.Info("No dashboards found")
-		}
-
-	},
-}
-
-func init() {
-	backupCmd.AddCommand(dashboard)
-	dashboard.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
-	dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
-	dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
-	dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by Tags (does not apply on upload)")
-	dashboard.AddCommand(clearDashboards)
-	dashboard.AddCommand(uploadDashboard)
-	dashboard.AddCommand(downloadDashboard)
-	dashboard.AddCommand(listDashboards)
 }

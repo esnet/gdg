@@ -35,7 +35,7 @@ func (s *LocalStorage) getBucket(baseFolder string) (*blob.Bucket, error) {
 	if _, err := os.Stat(baseFolder); err != nil {
 		_ = os.Mkdir(baseFolder, 0750)
 	}
-	opts := fileblob.Options {
+	opts := fileblob.Options{
 		NoTempDir: true,
 	}
 	return fileblob.OpenBucket(baseFolder, &opts)

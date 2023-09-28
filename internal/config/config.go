@@ -97,7 +97,7 @@ func (s *Configuration) DeleteContext(name string) {
 	}
 	delete(contexts, name)
 	if len(contexts) != 0 {
-		for key, _ := range contexts {
+		for key := range contexts {
 			s.GetAppConfig().ContextName = key
 			break
 		}

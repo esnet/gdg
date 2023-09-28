@@ -27,7 +27,6 @@ type DashboardsApi interface {
 	DownloadDashboards(filter filters.Filter) []string
 	UploadDashboards(filter filters.Filter)
 	DeleteAllDashboards(filter filters.Filter) []string
-	getDashboardByUid(uid string) (*models.DashboardFullWithMeta, error)
 }
 
 // getDashboardByUid retrieve a dashboard given a particular uid.
@@ -241,7 +240,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 
 	var (
 		rawBoard   []byte
-		folderName string = ""
+		folderName string
 		folderId   int64
 	)
 	path := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)

@@ -54,7 +54,6 @@ func (s *DashNGoImpl) CreateServiceAccountToken(serviceAccountId int64, name str
 }
 
 func (s *DashNGoImpl) ListServiceAccounts() []*api.ServiceAccountDTOWithTokens {
-	result := make([]*api.ServiceAccountDTOWithTokens, 0)
 	p := service_accounts.NewSearchOrgServiceAccountsWithPagingParams()
 	p.Disabled = tools.PtrOf(false)
 	p.Perpage = tools.PtrOf(int64(5000))
@@ -64,7 +63,7 @@ func (s *DashNGoImpl) ListServiceAccounts() []*api.ServiceAccountDTOWithTokens {
 		log.Fatal("unable to retrieve service accounts")
 	}
 	data := resp.GetPayload()
-	result = lo.Map(data.ServiceAccounts, func(entity *models.ServiceAccountDTO, _ int) *api.ServiceAccountDTOWithTokens {
+	result := lo.Map(data.ServiceAccounts, func(entity *models.ServiceAccountDTO, _ int) *api.ServiceAccountDTOWithTokens {
 		t := api.ServiceAccountDTOWithTokens{
 			ServiceAccount: entity,
 		}

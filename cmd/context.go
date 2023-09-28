@@ -1,8 +1,11 @@
 package cmd
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	log "github.com/sirupsen/logrus"
@@ -10,137 +13,154 @@ import (
 	"strings"
 )
 
-var context = &cobra.Command{
-	Use:     "contexts",
-	Aliases: []string{"ctx", "context"},
-	Short:   "Manage Context configuration",
-	Long:    `Manage Context configuration which allows multiple grafana configs to be used.`,
+func newContextCmd() simplecobra.Commander {
+	v := &support.SimpleCommand{
+		NameP: "contexts",
+		CommandsList: []simplecobra.Commander{newContextClearCmd(), newListContextCmd(),
+			newContextCopy(), newShowContext(), newDeleteContext(), newContext(), newSetContext()},
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
+			return cd.CobraCommand.Help()
+		},
+		Short: "Manage Context configuration",
+		Long:  "Manage Context configuration which allows multiple grafana configs to be used.",
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.Aliases = []string{"ctx", "context"}
+		},
+	}
+	return v
 }
 
-var contextClear = &cobra.Command{
-	Use:   "clear",
-	Short: "clear all context",
-	Long:  `clear all contexts`,
-	Run: func(cmd *cobra.Command, args []string) {
-		config.Config().ClearContexts()
-		log.Info("Successfully deleted all configured contexts")
-	},
+func newContextClearCmd() simplecobra.Commander {
+	return &support.SimpleCommand{
+		NameP: "clear",
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
+			config.Config().ClearContexts()
+			log.Info("Successfully deleted all configured contexts")
+			return nil
+		},
+		Short: "Manage Context configuration",
+		Long:  "Manage Context configuration which allows multiple grafana configs to be used.",
+	}
 }
 
-var contextCopy = &cobra.Command{
-	Use:     "copy",
-	Short:   "copy context <src> <dest>",
-	Long:    `copy contexts  <src> <dest>`,
-	Aliases: []string{"cp"},
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 2 {
-			return errors.New("requires a src and destination argument")
-		}
-		return nil
-	},
-
-	Run: func(cmd *cobra.Command, args []string) {
-		src := args[0]
-		dest := args[1]
-		config.Config().CopyContext(src, dest)
-	},
-}
-
-var contextDelete = &cobra.Command{
-	Use:     "delete",
-	Short:   "delete context <context>",
-	Long:    `delete context <context>.`,
-	Aliases: []string{"del"},
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("requires a context argument")
-		}
-		return nil
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		ctx := args[0]
-		config.Config().DeleteContext(ctx)
-		log.Infof("Successfully deleted context %s", ctx)
-	},
-}
-
-var contextList = &cobra.Command{
-	Use:   "list",
-	Short: "List context",
-	Long:  `List contexts.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		TableObj.AppendHeader(table.Row{"context", "active"})
-		contexts := config.Config().GetAppConfig().GetContexts()
-		activeContext := config.Config().GetAppConfig().GetContext()
-		for key, _ := range contexts {
-			active := false
-			if key == strings.ToLower(activeContext) {
-				key = fmt.Sprintf("*%s", activeContext)
-				active = true
+func newListContextCmd() simplecobra.Commander {
+	return &support.SimpleCommand{
+		NameP: "list",
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
+			r.TableObj.AppendHeader(table.Row{"context", "active"})
+			contexts := config.Config().GetAppConfig().GetContexts()
+			activeContext := config.Config().GetAppConfig().GetContext()
+			for key := range contexts {
+				active := false
+				if key == strings.ToLower(activeContext) {
+					key = fmt.Sprintf("*%s", activeContext)
+					active = true
+				}
+				_ = active
+				r.TableObj.AppendRow(table.Row{key, active})
 			}
-			TableObj.AppendRow(table.Row{key, active})
-		}
 
-		TableObj.Render()
-	},
+			r.TableObj.Render()
+			return nil
+		},
+		Short: "List context",
+		Long:  "List contexts.",
+	}
 }
 
-var contextNew = &cobra.Command{
-	Use:   "new",
-	Short: "new <context>",
-	Long:  `new <context>`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("requires a context name")
-		}
-		return nil
-	},
+func newContextCopy() simplecobra.Commander {
+	v := &support.SimpleCommand{
+		NameP: "copy",
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
+			src := args[0]
+			dest := args[1]
+			config.Config().CopyContext(src, dest)
+			return nil
+		},
+		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
+			cd.CobraCommand.Aliases = []string{"cp"}
+			cd.CobraCommand.Args = func(cmd *cobra.Command, args []string) error {
+				if len(args) < 2 {
+					return errors.New("requires a src and destination argument")
+				}
+				return nil
+			}
+			return nil
+		},
+		Short: "copy context <src> <dest>",
+		Long:  "copy contexts  <src> <dest>",
+	}
 
-	Run: func(cmd *cobra.Command, args []string) {
-		ctx := args[0]
-		config.Config().NewContext(ctx)
-	},
+	return v
+
 }
 
-var contextSet = &cobra.Command{
-	Use:   "set",
-	Short: "set <context>",
-	Long:  `set <contexts>`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("requires a context argument")
-		}
-		return nil
-	},
-
-	Run: func(cmd *cobra.Command, args []string) {
-		context := args[0]
-		config.Config().ChangeContext(context)
-
-	},
+func newShowContext() simplecobra.Commander {
+	return &support.SimpleCommand{
+		NameP: "show",
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
+			contextEntry := config.Config().GetAppConfig().GetContext()
+			if len(args) > 0 && len(args[0]) > 0 {
+				contextEntry = args[0]
+			}
+			config.Config().PrintContext(contextEntry)
+			return nil
+		},
+		Short: "show optional[context]",
+		Long:  "show optional[context]",
+	}
 }
 
-var contextShow = &cobra.Command{
-	Use:   "show",
-	Short: "show optional[context]",
-	Long:  `show contexts optional[context]`,
-	Run: func(cmd *cobra.Command, args []string) {
-		context := config.Config().GetAppConfig().GetContext()
-		if len(args) > 0 && len(args[0]) > 0 {
-			context = args[0]
-		}
-		config.Config().PrintContext(context)
+func newDeleteContext() simplecobra.Commander {
+	return &support.SimpleCommand{
+		NameP: "delete",
+		Short: "delete context <context>",
+		Long:  "delete context <context>",
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
+			if len(args) < 1 {
+				return errors.New("requires a context argument")
+			}
+			contextEntry := args[0]
+			config.Config().DeleteContext(contextEntry)
+			log.Infof("Successfully deleted context %s", ctx)
+			return nil
+		},
+		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
+			cd.CobraCommand.Aliases = []string{"del"}
+			return nil
+		},
+	}
 
-	},
 }
 
-func init() {
-	RootCmd.AddCommand(context)
-	context.AddCommand(contextClear)
-	context.AddCommand(contextCopy)
-	context.AddCommand(contextDelete)
-	context.AddCommand(contextList)
-	context.AddCommand(contextNew)
-	context.AddCommand(contextSet)
-	context.AddCommand(contextShow)
+func newContext() simplecobra.Commander {
+	return &support.SimpleCommand{
+		NameP: "new",
+		Short: "new <context>",
+		Long:  "new <context>",
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			if len(args) < 1 {
+				return errors.New("requires a context NameP")
+			}
+			contextEntry := args[0]
+			config.Config().NewContext(contextEntry)
+			return nil
+		},
+	}
+}
+
+func newSetContext() simplecobra.Commander {
+	return &support.SimpleCommand{
+		NameP: "set",
+		Short: "set <context>",
+		Long:  "set <context>",
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			if len(args) < 1 {
+				return errors.New("requires a context argument")
+			}
+			contextEntry := args[0]
+			config.Config().ChangeContext(contextEntry)
+			return nil
+		},
+	}
 }

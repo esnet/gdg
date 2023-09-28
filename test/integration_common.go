@@ -38,7 +38,7 @@ func initTest(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Vip
 	return client, conf
 }
 
-func SetupCloudFunction(t *testing.T, cfg *viper.Viper, apiClient service.GrafanaService, params []string) (context.Context, service.GrafanaService) {
+func SetupCloudFunction(params []string) (context.Context, service.GrafanaService) {
 	_ = os.Setenv(service.InitBucket, "true")
 	bucketName := params[1]
 	var m = map[string]string{
@@ -58,7 +58,7 @@ func SetupCloudFunction(t *testing.T, cfg *viper.Viper, apiClient service.Grafan
 	defaultCfg := config.Config().GetDefaultGrafanaConfig()
 	defaultCfg.Storage = "test"
 	cfgObj.StorageEngine["test"] = m
-	apiClient = service.NewApiService("dummy")
+	apiClient := service.NewApiService("dummy")
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, service.StorageContext, m)

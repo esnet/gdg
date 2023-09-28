@@ -15,12 +15,15 @@ import (
 
 func DuplicateConfig(t *testing.T) string {
 	dir, _ := os.Getwd()
+	var err error
 	//Fix test path
 	if strings.Contains(dir, "config") {
-		os.Chdir("../..")
+		err = os.Chdir("../..")
+		assert.Nil(t, err, "Failed to change to base directory ")
 	}
 
-	os.Setenv("GDG_CONTEXT_NAME", "production")
+	err = os.Setenv("GDG_CONTEXT_NAME", "production")
+	assert.Nil(t, err, "Failed to set override GDG context name via ENV")
 	data, err := os.ReadFile("config/testing.yml")
 	assert.Nil(t, err, "Failed to read test configuration file")
 	destination := os.TempDir()
@@ -98,10 +101,9 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	assert.Equal(t, "qa/dashboards", grafana.GetDashboardOutput())
 	dsSettings := grafana.DataSourceSettings
 	request := models.AddDataSourceCommand{}
-	defaultSettings, _ := dsSettings.GetCredentials(request)
 	assert.Equal(t, len(grafana.DataSourceSettings.MatchingRules), 3)
 	//Last Entry is the default
-	defaultSettings = grafana.DataSourceSettings.MatchingRules[2].Auth
+	defaultSettings := grafana.DataSourceSettings.MatchingRules[2].Auth
 	assert.Equal(t, "user", defaultSettings.User)
 	assert.Equal(t, "password", defaultSettings.Password)
 

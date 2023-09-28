@@ -2,26 +2,34 @@ package main
 
 import (
 	_ "embed"
-	applogger "github.com/esnet/gdg/internal/log"
-	"sync"
-
 	"github.com/esnet/gdg/cmd"
-	_ "github.com/esnet/gdg/cmd/backup"     // register backup command
-	_ "github.com/esnet/gdg/cmd/tools"      // register tools command
+	"github.com/esnet/gdg/cmd/support"
+	applogger "github.com/esnet/gdg/internal/log"
+	api "github.com/esnet/gdg/internal/service"
+	log "github.com/sirupsen/logrus"
+	"os"
 )
 
 //go:embed config/importer-example.yml
 var defaultConfig string
 
-var doOnce sync.Once
+var (
+	getGrafanaSvc = func() api.GrafanaService {
+		return api.NewApiService()
+	}
+)
 
 func main() {
-	cmd.DefaultConfig = defaultConfig
-	cmd.Execute()
-}
+	applogger.InitializeAppLogger()
 
-func init() {
-	doOnce.Do(func() {
-		applogger.InitializeAppLogger()
-	})
+	setGrafanaSvc := func() support.RootOption {
+		return func(response *support.RootCommand) {
+			response.GrafanaSvc = getGrafanaSvc
+		}
+	}
+
+	err := cmd.Execute(defaultConfig, os.Args[1:], setGrafanaSvc())
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
 }

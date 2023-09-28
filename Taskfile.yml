@@ -15,14 +15,27 @@ tasks:
   default:
     cmds:
       - task: build
+  install_tools:
+    desc: "Install required Dev tools by GDG"
+    cmds:
+      - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+      - go install github.com/client9/misspell/cmd/misspell@latest
   format:
     desc: "Format code"
     cmds:
       - gofmt -w -s .
   lint:
-    desc: "Lint project"
+    desc: "Lint project, skipping test files."
     cmds:
-      - golangci-lint run ./...
+      - golangci-lint run --skip-dirs "(^|/)test($|/)" --skip-files "_test.go"  ./... 
+  spellcheck:
+    desc: "Check Spelling across code"
+    cmds:
+      - misspell .  | grep -v "website" 
+  lint_tests:
+    desc: "Lint project, including test files."
+    cmds:
+      - golangci-lint run ./... 
   authors:
     desc: "Building GDG"
     cmds:
@@ -57,10 +70,6 @@ tasks:
     desc:  "Tidy Deps"
     cmds:
       - go mod tidy
-  build-alpine:
-    desc: "building {{ .BIN_NAME }} {{. VERSION }}"
-    cmds:
-      - go build -ldflags '{{ .LD_FLAGS }} -linkmode external -extldflags "-static"' -o bin/{{ .BIN_NAME}}
   pakcage:
     desc: "building image {{ .BIN_NAME }} {{ .VERSION }} {{ .GIT_COMMIT }}"
     cmds:

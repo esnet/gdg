@@ -38,17 +38,13 @@ func NewTeamFilter(entries ...string) filters.Filter {
 
 	filterObj.AddFilter(filters.Name, teamFilter)
 	filterObj.AddValidation(filters.Name, func(i interface{}) bool {
-		switch i.(type) {
+		switch val := i.(type) {
 		case string:
-			{
-				val := i.(string)
-				if filterObj.GetFilter(filters.Name) == "" {
-					return true
-				} else if val == filterObj.GetFilter(filters.Name) {
-					return true
-				}
+			if filterObj.GetFilter(filters.Name) == "" {
+				return true
+			} else if val == filterObj.GetFilter(filters.Name) {
+				return true
 			}
-
 		default:
 			return false
 		}
@@ -59,7 +55,7 @@ func NewTeamFilter(entries ...string) filters.Filter {
 	return filterObj
 }
 
-// Import Teams
+// DownloadTeams fetches all teams for a given Org
 func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
@@ -201,17 +197,17 @@ func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*mo
 
 // Get a specific Team
 // Return nil if team cannot be found
-func (s *DashNGoImpl) getTeam(teamName string, filter filters.Filter) *models.TeamDTO {
-	teamListing := maps.Keys(s.ListTeams(filter))
-	var team *models.TeamDTO
-	for ndx, item := range teamListing {
-		if item.Name == teamName {
-			team = teamListing[ndx]
-			break
-		}
-	}
-	return team
-}
+//func (s *DashNGoImpl) getTeam(teamName string, filter filters.Filter) *models.TeamDTO {
+//	teamListing := maps.Keys(s.ListTeams(filter))
+//	var team *models.TeamDTO
+//	for ndx, item := range teamListing {
+//		if item.Name == teamName {
+//			team = teamListing[ndx]
+//			break
+//		}
+//	}
+//	return team
+//}
 
 // DeleteTeam removes all Teams
 func (s *DashNGoImpl) DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, error) {

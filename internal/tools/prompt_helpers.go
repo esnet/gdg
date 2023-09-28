@@ -22,7 +22,7 @@ func GetUserConfirmation(msg, error string, terminate bool) bool {
 		error = "Goodbye"
 	}
 	for {
-		fmt.Printf(msg)
+		fmt.Print(msg)
 		r := bufio.NewReader(os.Stdin)
 		ans, _ := r.ReadString('\n')
 		ans = strings.ToLower(ans)
