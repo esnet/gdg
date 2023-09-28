@@ -183,7 +183,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 			continue
 		}
 		if _, ok := orgMap[newOrg.Name]; ok {
-			log.Infof("Organizaiton %s already exists, skipping", newOrg.Name)
+			log.Infof("Organization %s already exists, skipping", newOrg.Name)
 			continue
 		}
 

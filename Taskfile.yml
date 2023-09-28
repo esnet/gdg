@@ -19,6 +19,7 @@ tasks:
     desc: "Install required Dev tools by GDG"
     cmds:
       - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+      - go install github.com/client9/misspell/cmd/misspell@latest
   format:
     desc: "Format code"
     cmds:
@@ -27,6 +28,10 @@ tasks:
     desc: "Lint project, skipping test files."
     cmds:
       - golangci-lint run --skip-dirs "(^|/)test($|/)" --skip-files "_test.go"  ./... 
+  spellcheck:
+    desc: "Check Spelling across code"
+    cmds:
+      - misspell .  | grep -v "website" 
   lint_tests:
     desc: "Lint project, including test files."
     cmds:

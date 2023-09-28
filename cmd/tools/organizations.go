@@ -57,7 +57,7 @@ func newSetOrgCmd() simplecobra.Commander {
 			if err != nil {
 				log.WithError(err).Fatal("unable to set Org ID")
 			}
-			log.Infof("Succesfully set Org ID for context: %s", config.Config().AppConfig.GetContext())
+			log.Infof("Successfully set Org ID for context: %s", config.Config().AppConfig.GetContext())
 			return nil
 
 		},
