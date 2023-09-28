@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/spf13/viper"
-	"regexp"
 )
 
 type Configuration struct {
@@ -98,7 +97,7 @@ type FilterOverrides struct {
 type ConnectionFilters struct {
 	NameExclusions  string   `yaml:"name_exclusions"`
 	ConnectionTypes []string `yaml:"valid_types"`
-	pattern         *regexp.Regexp
+	//	pattern         *regexp.Regexp
 }
 
 // GrafanaConnection Default connection credentials

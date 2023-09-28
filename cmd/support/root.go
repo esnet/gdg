@@ -15,16 +15,12 @@ var (
 	DefaultConfig string
 )
 
+// RootCommand struct wraps the root command and supporting services needed
 type RootCommand struct {
 	NameP  string
 	isInit bool
 
 	GrafanaSvc func() service.GrafanaService
-
-	localFlagName string
-
-	persistentFlagNameC string
-	localFlagNameC      string
 
 	ctx                  context.Context
 	initThis             *simplecobra.Commandeer
@@ -37,6 +33,7 @@ type RootCommand struct {
 	CommandEntries []simplecobra.Commander
 }
 
+// RootOption used to configure the Root Command struct
 type RootOption func(command *RootCommand)
 
 // NewRootCmd Allows to construct a root command passing any number of arguments to set RootCommand Options
@@ -50,10 +47,12 @@ func NewRootCmd(root *RootCommand, options ...RootOption) *RootCommand {
 	return root
 }
 
+// Commands returns a list of Cobra commands
 func (c *RootCommand) Commands() []simplecobra.Commander {
 	return c.CommandEntries
 }
 
+// PreRun executed prior to command invocation
 func (c *RootCommand) PreRun(this, runner *simplecobra.Commandeer) error {
 	c.isInit = true
 	c.initThis = this
@@ -62,6 +61,7 @@ func (c *RootCommand) PreRun(this, runner *simplecobra.Commandeer) error {
 	return nil
 }
 
+// initConfiguration Loads configuration, and setups fail over case
 func (c *RootCommand) initConfiguration() {
 	cmd := c.initRunner.CobraCommand
 	configOverride, _ := cmd.Flags().GetString("config")
@@ -84,10 +84,12 @@ func (c *RootCommand) initConfiguration() {
 
 }
 
+// Name returns the cli command name
 func (c *RootCommand) Name() string {
 	return c.NameP
 }
 
+// Run invokes the CLI command
 func (c *RootCommand) Run(ctx context.Context, cd *simplecobra.Commandeer, args []string) error {
 	if c.failRun {
 		return errors.New("failRun")
@@ -96,6 +98,7 @@ func (c *RootCommand) Run(ctx context.Context, cd *simplecobra.Commandeer, args 
 	return nil
 }
 
+// Init invoked to Initialize the RootCommand object
 func (c *RootCommand) Init(cd *simplecobra.Commandeer) error {
 	if c.failWithCobraCommand {
 		return errors.New("failWithCobraCommand")

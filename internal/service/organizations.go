@@ -159,9 +159,6 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 		result    []string
 		rawFolder []byte
 	)
-	if s.grafanaConf.IsAdminEnabled() {
-
-	}
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.OrganizationResource), false)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to read folders imports")

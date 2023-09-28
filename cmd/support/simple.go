@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// SimpleCommand wraps a simple command
 type SimpleCommand struct {
 	use       string
 	NameP     string
@@ -20,18 +21,22 @@ type SimpleCommand struct {
 	RootCmd *RootCommand
 }
 
+// Commands is a list of subcommands
 func (c *SimpleCommand) Commands() []simplecobra.Commander {
 	return c.CommandsList
 }
 
+// SetName Function allows name to be set
 func (c *SimpleCommand) SetName(name string) {
 	c.NameP = name
 }
 
+// Name returns function Name
 func (c *SimpleCommand) Name() string {
 	return c.NameP
 }
 
+// Run executes cli command
 func (c *SimpleCommand) Run(ctx context.Context, cd *simplecobra.Commandeer, args []string) error {
 	if c.RunFunc == nil {
 		return nil
@@ -39,6 +44,7 @@ func (c *SimpleCommand) Run(ctx context.Context, cd *simplecobra.Commandeer, arg
 	return c.RunFunc(ctx, cd, c.RootCmd, args)
 }
 
+// Init initializes the SimpleCommand
 func (c *SimpleCommand) Init(cd *simplecobra.Commandeer) error {
 	c.RootCmd = cd.Root.Command.(*RootCommand)
 	cmd := cd.CobraCommand
@@ -53,6 +59,7 @@ func (c *SimpleCommand) Init(cd *simplecobra.Commandeer) error {
 	return nil
 }
 
+// PreRun executed prior to cli command execution
 func (c *SimpleCommand) PreRun(cd, runner *simplecobra.Commandeer) error {
 	if c.InitCFunc != nil {
 		return c.InitCFunc(cd, c.RootCmd)

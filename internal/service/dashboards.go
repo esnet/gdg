@@ -240,7 +240,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 
 	var (
 		rawBoard   []byte
-		folderName string = ""
+		folderName string
 		folderId   int64
 	)
 	path := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)

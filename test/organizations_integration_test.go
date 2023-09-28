@@ -53,6 +53,7 @@ func TestOrgUserMembership(t *testing.T) {
 	}
 	//Reset if any state exists.
 	err := apiClient.DeleteUserFromOrg(orgUser.ID, newOrg.ID)
+	assert.Nil(t, err)
 	//Start CRUD test
 	orgUsers := apiClient.ListOrgUsers(newOrg.ID)
 	assert.Equal(t, len(orgUsers), 1)

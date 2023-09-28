@@ -50,7 +50,7 @@ func newListContextCmd() simplecobra.Commander {
 			r.TableObj.AppendHeader(table.Row{"context", "active"})
 			contexts := config.Config().GetAppConfig().GetContexts()
 			activeContext := config.Config().GetAppConfig().GetContext()
-			for key, _ := range contexts {
+			for key := range contexts {
 				active := false
 				if key == strings.ToLower(activeContext) {
 					key = fmt.Sprintf("*%s", activeContext)

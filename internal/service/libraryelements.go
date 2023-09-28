@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/esnet/gdg/internal/tools"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/library_elements"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
@@ -23,7 +24,7 @@ type LibraryElementsApi interface {
 	DeleteAllLibraryElements(filter filters.Filter) []string
 }
 
-var (
+const (
 	listLibraryPanels int64 = 1
 	listLibraryVars   int64 = 2
 )
@@ -72,7 +73,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 
 	params := library_elements.NewGetLibraryElementsParams()
 	params.FolderFilter = &folderList
-	params.Kind = &listLibraryPanels
+	params.Kind = tools.PtrOf(listLibraryPanels)
 	libraryElements, err := s.client.LibraryElements.GetLibraryElements(params, s.getAuth())
 	if err != nil {
 		log.WithError(err).Fatal("Unable to list Library Elements")

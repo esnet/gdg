@@ -14,9 +14,7 @@ import (
 	"strings"
 )
 
-var (
-	skipConfirmAction bool
-)
+var skipConfirmAction bool
 
 func parseDashboardGlobalFlags(command *cobra.Command) []string {
 	folderFilter, _ := command.Flags().GetString("folder")

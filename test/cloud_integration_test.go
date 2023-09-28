@@ -15,7 +15,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	}
 
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
-	apiClient, cfg := initTest(t, nil)
+	apiClient, _ := initTest(t, nil)
 
 	//Wipe all data from grafana
 	dsFilter := service.NewConnectionFilter("")
@@ -24,7 +24,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	apiClient.UploadConnections(dsFilter)
 	dsList := apiClient.ListConnections(dsFilter)
 	assert.True(t, len(dsList) > 0)
-	SetupCloudFunction(t, cfg, apiClient, []string{"s3", "testing"})
+	SetupCloudFunction([]string{"s3", "testing"})
 	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
 
 	log.Info("Importing DataSources")
@@ -48,8 +48,10 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	os.Setenv("GDG_CONTEXT_NAME", "testing")
-	apiClient, cfg := initTest(t, nil)
+	err := os.Setenv("GDG_CONTEXT_NAME", "testing")
+	assert.Nil(t, err, "Failed to set context name via env to testing")
+
+	apiClient, _ := initTest(t, nil)
 
 	//Wipe all data from grafana
 	dashFilter := service.NewDashboardFilter("", "", "")
@@ -60,7 +62,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	assert.True(t, len(boards) > 0)
 
 	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
-	_, apiClient = SetupCloudFunction(t, cfg, apiClient, []string{"s3", "testing"})
+	_, apiClient = SetupCloudFunction([]string{"s3", "testing"})
 
 	//At this point all operations are reading/writing from Minio
 	log.Info("Importing Dashboards")

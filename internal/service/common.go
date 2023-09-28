@@ -62,15 +62,6 @@ func getFolderFromResourcePath(storageEngine string, filePath string, resourceTy
 	return "", errors.New("unable to parse resource to retrieve folder name")
 }
 
-func isResourceOrgNamespaces(resourceType config.ResourceType) bool {
-	if resourceType == config.DashboardResource {
-		return true
-	}
-
-	return false
-
-}
-
 func buildResourceFolder(folderName string, resourceType config.ResourceType) string {
 	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
