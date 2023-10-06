@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDataSourceCRUD(t *testing.T) {
+func TestConnectionsCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -42,8 +42,8 @@ func TestDataSourceCRUD(t *testing.T) {
 	assert.Equal(t, len(dataSources), 0)
 }
 
-// TestDataSourceFilter ensures the regex matching and datasource type filters work as expected
-func TestDataSourceFilter(t *testing.T) {
+// TestConnectionFilter ensures the regex matching and datasource type filters work as expected
+func TestConnectionFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -62,7 +62,7 @@ func TestDataSourceFilter(t *testing.T) {
 		},
 	}
 	testingContext = config.Config().GetAppConfig().GetContexts()["testing"]
-  _ = testingContext
+	_ = testingContext
 
 	apiClient := service.NewApiService("dummy")
 

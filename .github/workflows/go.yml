@@ -6,31 +6,16 @@ on:
       - master
   pull_request:
 
+
 jobs:
   test:
     strategy:
       matrix:
-        go: [ 1.21.0]
-        grafana: [ 9.4.3, 10.0.0 ]
+        go: [ 1.21.0 ]
+        grafana: [ 8.5.22, 9.4.3, 10.1.4 ]
 
     env:
       GRAFANA_INTEGRATION: 1
-
-    services:
-      minio:
-        image: bitnami/minio:latest
-        ports:
-          - 9000:9000
-          - 9001:9001
-        options: >-
-          -e GF_AUTH_ANONYMOUS_ENABLED=true -e MINIO_ROOT_USER="test" -e MINIO_ROOT_PASSWORD="secretsss"
-      grafana:
-        # Docker Hub image
-        image: "grafana/grafana:${{ matrix.grafana }}"
-        ports:
-          - 3000:3000
-        options: >-
-          -e GF_AUTH_ANONYMOUS_ENABLED=true
 
     runs-on: ubuntu-latest
     steps:
@@ -51,16 +36,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Wait for Minio to come up.
-        run: nc -z -v -w15 127.0.0.1 9000
       - name: Calc coverage
-        if: "${{ matrix.go == '1.21.0' && matrix.grafana == '9.4.3' }}"
+        if: "${{ matrix.go == '1.21.0' && matrix.grafana == '10.1.4' }}"
         run: |
           go test -v -covermode=atomic -coverprofile=coverage.out ./...
       - name: Convert coverage.out to coverage.lcov
-        if: "${{ matrix.go == '1.21.0' && matrix.grafana == '9.4.3' }}"
+        if: "${{ matrix.go == '1.21.0' && matrix.grafana == '10.1.4' }}"
         uses: jandelgado/gcov2lcov-action@v1.0.9
       - name: Test
-        if: "${{ matrix.grafana != '9.4.3' }}"
+        if: "${{ matrix.grafana != '10.1.4' }}"
         run: go test -v ./...
 

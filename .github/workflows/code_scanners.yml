@@ -1,0 +1,40 @@
+name: Code Scanners
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  GO_VERSION: 1.21
+
+
+permissions:
+  contents: read
+  # Optional: allow read access to pull request. Use with `only-new-issues` option.
+  # pull-requests: read
+
+
+jobs:
+  code_scanning:
+    strategy:
+      matrix:
+        job_name: [security, vuln_check, lint]
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.21.2"
+          cache: false
+      - name: Install Task
+        run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+      - name: Installing Go Tools
+        run: ./bin/task install_tools      
+      - name: Running Scan
+        run: ./bin/task ${{ matrix.job_name }}
+

@@ -28,7 +28,7 @@ func DuplicateConfig(t *testing.T) string {
 	assert.Nil(t, err, "Failed to read test configuration file")
 	destination := os.TempDir()
 	cfgFile := fmt.Sprintf("%s/config.yml", destination)
-	err = os.WriteFile(cfgFile, data, 0644)
+	err = os.WriteFile(cfgFile, data, 0600)
 	assert.Nil(t, err, "Failed to save configuration file")
 
 	return cfgFile
