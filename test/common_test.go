@@ -22,10 +22,21 @@ import (
 var minioPortResource *dockertest.Resource
 var grafanaResource *dockertest.Resource
 
+func getEnvVersion(envName, defaultValue string) string {
+	if val, ok := os.LookupEnv(envName); ok {
+		return val
+	}
+
+	return defaultValue
+
+}
+
 func setupMinioContainer(pool *dockertest.Pool, wg *sync.WaitGroup) {
 	// pulls an image, creates a container based on it and runs it
 	defer wg.Done()
-	resource, err := pool.Run("bitnami/minio", "latest",
+	version := getEnvVersion("GDG_MINIO_VERSION", "latest")
+	log.Infof("Starting minio container version: %s", version)
+	resource, err := pool.Run("bitnami/minio", version,
 		[]string{"MINIO_ROOT_USER=test", "MINIO_ROOT_PASSWORD=secretsss"})
 	if err != nil {
 		log.Fatalf("Could not start resource: %s", err)
@@ -35,6 +46,23 @@ func setupMinioContainer(pool *dockertest.Pool, wg *sync.WaitGroup) {
 	validatePort(resource, 5*time.Second, []string{"9000"}, "Unable to connect to minio container.  Cannot run test")
 	log.Info("Minio container is up and running")
 
+}
+
+func setupGrafanaContainer(pool *dockertest.Pool, wg *sync.WaitGroup) {
+	// pulls an image, creates a container based on it and runs it
+	defer wg.Done()
+	version := getEnvVersion("GDG_GRAFANA_VERSION", "10.0.0-ubuntu")
+	log.Infof("Starting grafana container version: %s", version)
+	resource, err := pool.Run("grafana/grafana", version,
+		[]string{"GF_INSTALL_PLUGINS=grafana-googlesheets-datasource", "GF_AUTH_ANONYMOUS_ENABLED=true"})
+	if err != nil {
+		log.Fatalf("Could not start resource: %s", err)
+	}
+	grafanaResource = resource
+
+	validatePort(resource, 5*time.Second, []string{"3000"}, "Unable to connect to grafana container.  Cannot run test")
+
+	log.Info("Grafana container is up and running")
 }
 
 func validatePort(resource *dockertest.Resource, delay time.Duration, ports []string, errorMsg string) {
@@ -53,21 +81,6 @@ func validatePort(resource *dockertest.Resource, delay time.Duration, ports []st
 		}
 	}
 
-}
-
-func setupGrafanaContainer(pool *dockertest.Pool, wg *sync.WaitGroup) {
-	// pulls an image, creates a container based on it and runs it
-	defer wg.Done()
-	resource, err := pool.Run("grafana/grafana", "10.0.0-ubuntu",
-		[]string{"GF_INSTALL_PLUGINS=grafana-googlesheets-datasource", "GF_AUTH_ANONYMOUS_ENABLED=true"})
-	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
-	}
-	grafanaResource = resource
-
-	validatePort(resource, 5*time.Second, []string{"3000"}, "Unable to connect to grafana container.  Cannot run test")
-
-	log.Info("Grafana container is up and running")
 }
 
 func setupDockerTest() *dockertest.Pool {
@@ -94,22 +107,29 @@ func TestMain(m *testing.M) {
 	go setupMinioContainer(pool, wg)
 	go setupGrafanaContainer(pool, wg)
 	wg.Wait()
+	//Adding some more sleep to ensure everything is up and running
+	time.Sleep(time.Second * 5)
 	log.Infof("Ending at: %s", time.Now().String())
 
-	exitVal := m.Run()
+	defer func() {
+		if r := recover(); r != nil {
+			log.Info("Recovering from panic, cleaning up")
+		}
+		// You can't defer this because os.Exit doesn't care for defer
+		for _, resource := range []*dockertest.Resource{minioPortResource, grafanaResource} {
+			if resource == nil {
+				log.Warning("No resource set, skipping cleanup")
+				continue
+			}
+			if err := pool.Purge(resource); err != nil {
+				log.Fatalf("Could not purge resource: %s", err)
+			} else {
+				log.Info("Resource has been purged")
+			}
+		}
+	}()
 
-	// You can't defer this because os.Exit doesn't care for defer
-	for _, resource := range []*dockertest.Resource{minioPortResource, grafanaResource} {
-		if resource == nil {
-			log.Warning("No resource set, skipping cleanup")
-			continue
-		}
-		if err := pool.Purge(resource); err != nil {
-			log.Fatalf("Could not purge resource: %s", err)
-		} else {
-			log.Info("Resource has been purged")
-		}
-	}
+	exitVal := m.Run()
 
 	os.Exit(exitVal)
 }

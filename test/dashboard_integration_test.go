@@ -33,7 +33,7 @@ func TestDashboardAPIKeyCRUD(t *testing.T) {
 
 	apiClient.DeleteAllTokens() //Remove any old data
 	newKey, err := apiClient.CreateAPIKey("testing", "admin", 0)
-	assert.Nil(t, err)
+	assert.Nil(t, err, err.Error())
 
 	wrapper := map[string]*config.GrafanaConfig{}
 	_ = wrapper

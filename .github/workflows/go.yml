@@ -10,12 +10,15 @@ on:
 jobs:
   test:
     strategy:
+      max-parallel: 1
       matrix:
         go: [ 1.21.0 ]
-        grafana: [ 8.5.22, 9.4.3, 10.1.4 ]
+#       grafana: [ 8.5.22, 9.4.3, 10.1.4 ]
+        grafana: [ 10.1.4 ]
 
     env:
       GRAFANA_INTEGRATION: 1
+      GDG_GRAFANA_VERSION: ${{ matrix.grafana }}
 
     runs-on: ubuntu-latest
     steps:
@@ -40,10 +43,14 @@ jobs:
         if: "${{ matrix.go == '1.21.0' && matrix.grafana == '10.1.4' }}"
         run: |
           go test -v -covermode=atomic -coverprofile=coverage.out ./...
+        env:
+          GDG_GRAFANA_VERSION: ${{ matrix.grafana }}
       - name: Convert coverage.out to coverage.lcov
         if: "${{ matrix.go == '1.21.0' && matrix.grafana == '10.1.4' }}"
         uses: jandelgado/gcov2lcov-action@v1.0.9
       - name: Test
         if: "${{ matrix.grafana != '10.1.4' }}"
         run: go test -v ./...
+        env:
+          GDG_GRAFANA_VERSION: "${{ matrix.grafana }}-ubuntu"
 
