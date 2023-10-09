@@ -1,5 +1,5 @@
 # Build Stage
-FROM golang:1.20.0  AS build-stage
+FROM golang:1.21.2  AS build-stage
 
 LABEL app="build-gdg"
 LABEL REPO="https://github.com/esnet/gdg"
@@ -15,7 +15,7 @@ WORKDIR /go/src/github.com/esnet/gdg
 RUN make build-alpine
 
 # Final Stage
-FROM golang:1.20.0 
+FROM golang:1.21.2 
 
 ARG GIT_COMMIT
 ARG VERSION

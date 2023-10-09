@@ -20,14 +20,20 @@ tasks:
     cmds:
       - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
       - go install github.com/client9/misspell/cmd/misspell@latest
+      - go install github.com/securego/gosec/v2/cmd/gosec@master
+      - go install golang.org/x/vuln/cmd/govulncheck@latest
   format:
     desc: "Format code"
     cmds:
       - gofmt -w -s .
+  security:
+    desc: "Run security scan"
+    cmds:
+      - gosec --exclude=G402,G304  ./...
   lint:
     desc: "Lint project, skipping test files."
     cmds:
-      - golangci-lint run --skip-dirs "(^|/)test($|/)" --skip-files "_test.go"  ./... 
+      - golangci-lint run --timeout=30m --skip-dirs "(^|/)test($|/)" --skip-files "_test.go"  ./... 
   spellcheck:
     desc: "Check Spelling across code"
     cmds:
@@ -62,10 +68,6 @@ tasks:
       - go install -ldflags "{{ .LD_FLAGS}}"
       - mv ${GOPATH}/bin/gdg ${GOPATH}/bin/{{ .BIN_NAME }}
     silent: false
-  test: 
-    desc:  "Dos tuff"
-    cmds:
-      - echo ${GOPATH}
   get-deps:
     desc:  "Tidy Deps"
     cmds:
@@ -103,6 +105,12 @@ tasks:
     cmds:
       - goreleaser release
   test:
-      desc: ""
+      desc: "test check"
       cmds:
         - go test -v ./... -cover
+      env:
+        GRAFANA_INTEGRATION: "1"
+  vuln_check:
+      desc: "Vulnerability check"
+      cmds:
+        - govulncheck ./...
