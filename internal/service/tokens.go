@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/api_keys"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/client/api_keys"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"log"
 )
 

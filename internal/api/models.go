@@ -1,6 +1,6 @@
 package api
 
-import "github.com/esnet/grafana-swagger-api-golang/goclient/models"
+import "github.com/grafana/grafana-openapi-client-go/models"
 
 type ServiceAccountDTOWithTokens struct {
 	ServiceAccount *models.ServiceAccountDTO

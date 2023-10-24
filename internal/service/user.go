@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	gapi "github.com/esnet/grafana-swagger-api-golang"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/admin_users"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/signed_in_user"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/users"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
+	"github.com/grafana/grafana-openapi-client-go/client/admin_users"
+	"github.com/grafana/grafana-openapi-client-go/client/signed_in_user"
+	"github.com/grafana/grafana-openapi-client-go/client/users"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/pretty"
 	"log"
 	"log/slog"
@@ -198,13 +198,13 @@ func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDT
 	}
 	var filteredUsers []*models.UserSearchHitDTO
 	params := users.NewSearchUsersParams()
-	params.Page = gapi.ToPtr(int64(1))
-	params.Perpage = gapi.ToPtr(int64(5000))
-	usersList, err := s.extended.SearchUsers(params)
+	params.Page = tools.PtrOf(int64(1))
+	params.Perpage = tools.PtrOf(int64(5000))
+	usersList, err := s.client.Users.SearchUsers(params, s.getAuth())
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	for _, entry := range usersList {
+	for _, entry := range usersList.GetPayload() {
 		if len(entry.AuthLabels) == 0 {
 			filteredUsers = append(filteredUsers, entry)
 		} else if filter.ValidateAll(map[filters.FilterType]string{filters.AuthLabel: entry.AuthLabels[0]}) {

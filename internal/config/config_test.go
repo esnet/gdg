@@ -3,7 +3,7 @@ package config_test
 import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/slices"
 	"log/slog"
 	"os"
@@ -60,6 +60,7 @@ func TestSetup(t *testing.T) {
 }
 
 func TestWatchedFoldersConfig(t *testing.T) {
+	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	//clear all ENV values
 	for _, key := range os.Environ() {
 		if strings.Contains(key, "GDG_") {

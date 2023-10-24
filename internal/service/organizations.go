@@ -5,17 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/org"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/signed_in_user"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/go-openapi/runtime"
 	"github.com/gosimple/slug"
+	"github.com/grafana/grafana-openapi-client-go/client/org"
+	"github.com/grafana/grafana-openapi-client-go/client/orgs"
+	"github.com/grafana/grafana-openapi-client-go/client/signed_in_user"
+	"github.com/grafana/grafana-openapi-client-go/models"
+	"log"
 	"log/slog"
 	"path/filepath"
 	"strings"
-
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/orgs"
-	"log"
 )
 
 // OrganizationsApi Contract definition

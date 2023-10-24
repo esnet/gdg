@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folder_permissions"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folders"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/search"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
+	"github.com/grafana/grafana-openapi-client-go/client/folder_permissions"
+	"github.com/grafana/grafana-openapi-client-go/client/folders"
+	"github.com/grafana/grafana-openapi-client-go/client/search"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/slices"
 	"log"
@@ -240,7 +240,9 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 				continue
 			}
 		}
+
 		var newFolder models.CreateFolderCommand
+		//var newFolder models.CreateFolderCommand
 		if err = json.Unmarshal(rawFolder, &newFolder); err != nil {
 			slog.Warn("failed to unmarshall folder", "err", err)
 			continue
@@ -262,6 +264,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		}
 		params := folders.NewCreateFolderParams()
 		params.Body = &newFolder
+		//f, err := s.client.Folders.CreateFolder(params, s.getAuth())
 		f, err := s.client.Folders.CreateFolder(params, s.getAuth())
 		if err != nil {
 			slog.Error("failed to create folder.", "folderName", newFolder.Title, "err", err)

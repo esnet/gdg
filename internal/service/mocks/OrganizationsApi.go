@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	models "github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	models "github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
 
