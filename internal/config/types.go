@@ -25,20 +25,26 @@ type AppConfig struct {
 
 // GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
-	Storage            string              `mapstructure:"storage" yaml:"storage"`
-	adminEnabled       bool                `mapstructure:"-" yaml:"-"`
-	EnterpriseSupport  bool                `mapstructure:"enterprise_support" yaml:"enterprise_support"`
-	URL                string              `mapstructure:"url" yaml:"url"`
-	APIToken           string              `mapstructure:"token" yaml:"token"`
-	UserName           string              `mapstructure:"user_name" yaml:"user_name"`
-	Password           string              `mapstructure:"password" yaml:"password"`
-	OrganizationId     int64               `mapstructure:"organization_id" yaml:"organization_id"`
-	MonitoredFolders   []string            `mapstructure:"watched" yaml:"watched"`
-	DataSourceSettings *ConnectionSettings `mapstructure:"connections" yaml:"connections"`
+	Storage                  string                `mapstructure:"storage" yaml:"storage"`
+	adminEnabled             bool                  `mapstructure:"-" yaml:"-"`
+	EnterpriseSupport        bool                  `mapstructure:"enterprise_support" yaml:"enterprise_support"`
+	URL                      string                `mapstructure:"url" yaml:"url"`
+	APIToken                 string                `mapstructure:"token" yaml:"token"`
+	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
+	Password                 string                `mapstructure:"password" yaml:"password"`
+	OrganizationId           int64                 `mapstructure:"organization_id" yaml:"organization_id"`
+	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
+	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
+	DataSourceSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	//Datasources are deprecated, please use Connections
 	LegacyConnectionSettings map[string]interface{} `mapstructure:"datasources" yaml:"datasources"`
 	FilterOverrides          *FilterOverrides       `mapstructure:"filter_override" yaml:"filter_override"`
 	OutputPath               string                 `mapstructure:"output_path" yaml:"output_path"`
+}
+
+type MonitoredOrgFolders struct {
+	OrganizationId int64    `json:"organization_id" yaml:"organization_id"`
+	Folders        []string `json:"folders" yaml:"folders"`
 }
 
 // GetOrganizationId returns the id of the organization (defaults to 1 if unset)

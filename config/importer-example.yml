@@ -5,7 +5,7 @@ storage_engine:
     kind: cloud
     cloud_type: s3
     bucket_name: ""
-## The configuration below is mainly intended for OSS alternatives like ceph and minio.  If you use a known cloud provider
+  ## The configuration below is mainly intended for OSS alternatives like ceph and minio.  If you use a known cloud provider
   ## like aws, gcs, azure please setup the auth using the provided tooling from the cloud provider.
   # For example, having a valid AWS bucket configured in ~/.aws/credentials will be sufficient without needing to provide the auth in the config.
   ### valid boolean values can be represented as true, "true", or "1"
@@ -18,7 +18,7 @@ storage_engine:
     access_id: ""  ## this value can also be read from: AWS_ACCESS_KEY. config file is given precedence
     secret_key: ""  ## same as above, can be read from: AWS_SECRET_KEY with config file is given precedence.
     init_bucket: "true" ## Only supported for custom workflows. Will attempt to create a bucket if one does not exist.
-    endpoint: "http://localhost:9000"  
+    endpoint: "http://localhost:9000"
     ssl_enabled: "false"
 
 contexts:
@@ -115,6 +115,11 @@ contexts:
     watched:
       - Folder1
       - Folder2
+    watched_folders_override:
+      - organization_id: 0
+        folders:
+          - General
+          - SpecialFolder
 
 global:
   debug: true
