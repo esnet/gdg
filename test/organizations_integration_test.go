@@ -18,7 +18,8 @@ func TestOrgsCrud(t *testing.T) {
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic Auth")
 	}
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	orgs := apiClient.ListOrganizations()
 	assert.Equal(t, len(orgs), 1)
 	mainOrg := orgs[0]
@@ -38,7 +39,8 @@ func TestOrgUserMembership(t *testing.T) {
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic Auth")
 	}
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	//Create Orgs in case they aren't already present.
 	apiClient.UploadOrganizations()
 	orgs := apiClient.ListOrganizations()

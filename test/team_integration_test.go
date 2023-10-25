@@ -19,7 +19,8 @@ func TestTeamCRUD(t *testing.T) {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic Auth")
 	}
 	filter := service.NewTeamFilter("")
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	log.Info("Exporting current user list")
 	apiClient.UploadUsers(service.NewUserFilter(""))
 	users := apiClient.ListUsers(service.NewUserFilter(""))

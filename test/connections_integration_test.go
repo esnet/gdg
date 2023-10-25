@@ -15,7 +15,8 @@ func TestConnectionsCRUD(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	filtersEntity := service.NewConnectionFilter("")
 	log.Info("Exporting all connections")
 	apiClient.UploadConnections(filtersEntity)
@@ -48,7 +49,8 @@ func TestConnectionFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	initTest(t, nil)
+	_, _, clean := initTest(t, nil)
+	defer clean()
 
 	testingContext := config.Config().GetAppConfig().GetContexts()["testing"]
 	testingContext.GetDataSourceSettings().FilterRules = []config.MatchingRule{

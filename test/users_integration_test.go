@@ -15,7 +15,8 @@ func TestUsers(t *testing.T) {
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic Auth")
 	}
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	apiClient.DeleteAllUsers(service.NewUserFilter("")) //clear any previous state
 	users := apiClient.ListUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(users), 1)

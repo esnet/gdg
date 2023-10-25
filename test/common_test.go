@@ -116,11 +116,12 @@ func TestMain(m *testing.M) {
 	os.Exit(exitVal)
 }
 
-func initTest(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Viper) {
+func initTest(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Viper, func() error) {
 	apiClient, v := createSimpleClient(t, cfgName)
+	noOp := func() error { return nil }
 
 	if os.Getenv("TEST_TOKEN_CONFIG") != "1" {
-		return apiClient, v
+		return apiClient, v, noOp
 	}
 
 	testData, _ := os.ReadFile(v.ConfigFileUsed())
@@ -150,7 +151,12 @@ func initTest(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Vip
 	err = os.WriteFile(newCfg, updatedCfg, 0644)
 	assert.Nil(t, err)
 
-	return createSimpleClient(t, &newCfg)
+	cleanUp := func() error {
+		return os.Remove(newCfg)
+	}
+
+	apiClient, v = createSimpleClient(t, &newCfg)
+	return apiClient, v, cleanUp
 
 }
 
