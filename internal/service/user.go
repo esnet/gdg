@@ -192,6 +192,9 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO
 
 // ListUsers list all grafana users
 func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDTO {
+	if !s.grafanaConf.IsBasicAuth() {
+		log.Fatal("User listing requires basic auth to be configured.  Token based listing is not supported")
+	}
 	var filteredUsers []*models.UserSearchHitDTO
 	params := users.NewSearchUsersParams()
 	params.Page = gapi.ToPtr(int64(1))

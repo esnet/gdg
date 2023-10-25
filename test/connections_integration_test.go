@@ -14,6 +14,7 @@ func TestConnectionsCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
+
 	apiClient, _ := initTest(t, nil)
 	filtersEntity := service.NewConnectionFilter("")
 	log.Info("Exporting all connections")

@@ -1,16 +1,10 @@
 ## Configuration intended to be used with integration tests
-context_name: qa
+context_name: testing
 
 contexts:
   testing:
     output_path: test/data
     connections:
-#      exclude_filters:
-#        - field: "name"
-#          regex: "DEV-*|-Dev-*"
-#        - field: "type"
-#          regex: "elasticsearch"
-#          inclusive: true
       credential_rules:
         - rules:
             - field: "name"

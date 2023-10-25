@@ -31,6 +31,7 @@ require (
 	github.com/carlmjohnson/requests v0.23.4
 	github.com/esnet/grafana-swagger-api-golang v0.0.0-20230904013855-9a47b55d30d3
 	github.com/go-openapi/runtime v0.26.0
+	github.com/google/uuid v1.3.1
 	github.com/jedib0t/go-pretty/v6 v6.4.8
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/samber/lo v1.38.1
@@ -101,7 +102,6 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
-	github.com/google/uuid v1.3.1 // indirect
 	github.com/google/wire v0.5.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.1 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect

@@ -4,6 +4,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/gosimple/slug"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
@@ -18,6 +19,8 @@ func TestSlug(t *testing.T) {
 }
 
 func TestUserPath(t *testing.T) {
+	err := os.Setenv("GDG_CONTEXT_NAME", "qa")
+	assert.Nil(t, err)
 	config.InitConfig("testing.yml", "'")
 	path := buildResourceFolder("", config.UserResource)
 	assert.Equal(t, "qa/users/", path)

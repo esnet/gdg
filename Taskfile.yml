@@ -110,6 +110,15 @@ tasks:
         - go test -v ./... -cover
       env:
         GRAFANA_INTEGRATION: "1"
+        TEST_TOKEN_CONFIG: "0"
+  test_tokens:
+      desc: "test Token Based Only"
+      cmds:
+        - go test -v ./... -cover
+      env:
+        GRAFANA_INTEGRATION: "1"
+        TEST_TOKEN_CONFIG: "1"
+
   vuln_check:
       desc: "Vulnerability check"
       cmds:

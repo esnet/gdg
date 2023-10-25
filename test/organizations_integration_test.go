@@ -4,6 +4,7 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"golang.org/x/exp/slices"
+	"os"
 	"sort"
 	"testing"
 
@@ -13,6 +14,9 @@ import (
 func TestOrgsCrud(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
+	}
+	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
+		t.Skip("Skipping Token configuration, Organization CRUD requires Basic Auth")
 	}
 	apiClient, _ := initTest(t, nil)
 	orgs := apiClient.ListOrganizations()
@@ -30,6 +34,9 @@ func TestOrgsCrud(t *testing.T) {
 func TestOrgUserMembership(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
+	}
+	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
+		t.Skip("Skipping Token configuration, Organization CRUD requires Basic Auth")
 	}
 	apiClient, _ := initTest(t, nil)
 	//Create Orgs in case they aren't already present.

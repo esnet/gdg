@@ -8,3 +8,4 @@ prod/
 public
 resources
 .idea
+config/token*.yml

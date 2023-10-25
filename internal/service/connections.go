@@ -166,7 +166,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 
 			if creds != nil {
 				user := creds.User
-				var secureData map[string]string = make(map[string]string)
+				var secureData = make(map[string]string)
 				newDS.BasicAuthUser = user
 				secureData["basicAuthPassword"] = creds.Password
 				newDS.SecureJSONData = secureData
@@ -178,7 +178,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 				if existingDS.Name == newDS.Name {
 					deleteParam := datasources.NewDeleteDataSourceByIDParams()
 					deleteParam.ID = fmt.Sprintf("%d", existingDS.ID)
-					if _, err := s.client.Datasources.DeleteDataSourceByID(deleteParam, s.getBasicAuth()); err != nil {
+					if _, err := s.client.Datasources.DeleteDataSourceByID(deleteParam, s.getAuth()); err != nil {
 						log.Errorf("error on deleting datasource %s with %s", newDS.Name, err)
 					}
 					break
