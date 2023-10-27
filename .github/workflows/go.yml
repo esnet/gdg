@@ -11,7 +11,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go: [ {version: 1.21.0, token: 1}, {version: 1.21.0, token: 0}]
+        go: [ {version: 1.21.3, token: 1}, {version: 1.21.3, token: 0}]
         grafana: [ 10.1.4 ]
 
     env:
@@ -40,11 +40,11 @@ jobs:
         run: | 
           echo "token IS $TEST_TOKEN_CONFIG"
       - name: Calc coverage
-        if: "${{ matrix.go.version == '1.21.0' && matrix.grafana == '10.1.4' && matrix.go.token == '0' }}"
+        if: "${{ matrix.go.version == '1.21.3' && matrix.grafana == '10.1.4' && matrix.go.token == '0' }}"
         run: |
           go test -v -covermode=atomic -coverprofile=coverage.out ./...
       - name: Convert coverage.out to coverage.lcov
-        if: "${{ matrix.go.version == '1.21.0' && matrix.grafana == '10.1.4' && matrix.go.token == '0' }}"
+        if: "${{ matrix.go.version == '1.21.3' && matrix.grafana == '10.1.4' && matrix.go.token == '0' }}"
         uses: jandelgado/gcov2lcov-action@v1.0.9
       - name: Test 
         if: "${{ matrix.go.token == '1' }}"
