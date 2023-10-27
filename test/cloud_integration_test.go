@@ -14,7 +14,6 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	apiClient, _ := initTest(t, nil)
 
 	//Wipe all data from grafana

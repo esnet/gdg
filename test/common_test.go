@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
+	"github.com/google/uuid"
 	"github.com/ory/dockertest/v3"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 	"net"
 	"os"
 	"sync"
@@ -115,12 +117,53 @@ func TestMain(m *testing.M) {
 }
 
 func initTest(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Viper) {
+	apiClient, v := createSimpleClient(t, cfgName)
+
+	if os.Getenv("TEST_TOKEN_CONFIG") != "1" {
+		return apiClient, v
+	}
+
+	testData, _ := os.ReadFile(v.ConfigFileUsed())
+	data := map[string]interface{}{}
+	err := yaml.Unmarshal(testData, &data)
+	assert.Nil(t, err)
+
+	apiClient.DeleteAllTokens() //Remove any old data
+	tokenName, _ := uuid.NewUUID()
+	newKey, err := apiClient.CreateAPIKey(tokenName.String(), "admin", 0)
+	assert.Nil(t, err)
+
+	wrapper := map[string]*config.GrafanaConfig{}
+	_ = wrapper
+
+	level1 := data["contexts"].(map[string]interface{})
+	level2 := level1["testing"].(map[string]interface{})
+	level2["token"] = newKey.Key
+	level2["user_name"] = ""
+	level2["password"] = ""
+
+	updatedCfg, err := yaml.Marshal(data)
+	assert.Nil(t, err)
+	tokenCfg, err := os.CreateTemp("config", "token*.yml")
+	assert.Nil(t, err, "Unable to create token configuration file")
+	newCfg := tokenCfg.Name()
+	err = os.WriteFile(newCfg, updatedCfg, 0644)
+	assert.Nil(t, err)
+
+	return createSimpleClient(t, &newCfg)
+
+}
+
+func createSimpleClient(t *testing.T, cfgName *string) (service.GrafanaService, *viper.Viper) {
 	if cfgName == nil {
 		cfgName = new(string)
 		*cfgName = "testing.yml"
 	}
+
 	actualPort := grafanaResource.GetPort(fmt.Sprintf("%s/tcp", "3000"))
-	os.Setenv("GDG_CONTEXTS__TESTING__URL", fmt.Sprintf("http://localhost:%s", actualPort))
+	err := os.Setenv("GDG_CONTEXTS__TESTING__URL", fmt.Sprintf("http://localhost:%s", actualPort))
+
+	assert.Nil(t, err)
 
 	config.InitConfig(*cfgName, "'")
 	conf := config.Config().ViperConfig()

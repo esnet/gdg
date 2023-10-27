@@ -35,6 +35,7 @@ func DuplicateConfig(t *testing.T) string {
 }
 
 func TestSetup(t *testing.T) {
+	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	//clear all ENV values
 	for _, key := range os.Environ() {
 		if strings.Contains(key, "GDG_") {
@@ -42,6 +43,7 @@ func TestSetup(t *testing.T) {
 		}
 	}
 
+	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	config.InitConfig("testing.yml", "")
 	conf := config.Config().ViperConfig()
 	log.Info(conf.ConfigFileUsed())

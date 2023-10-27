@@ -4,6 +4,7 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"golang.org/x/exp/maps"
+	"os"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
@@ -14,7 +15,9 @@ func TestTeamCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-
+	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
+		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic Auth")
+	}
 	filter := service.NewTeamFilter("")
 	apiClient, _ := initTest(t, nil)
 	log.Info("Exporting current user list")

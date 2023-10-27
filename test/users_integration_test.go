@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,6 +11,9 @@ import (
 func TestUsers(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
+	}
+	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
+		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic Auth")
 	}
 	apiClient, _ := initTest(t, nil)
 	apiClient.DeleteAllUsers(service.NewUserFilter("")) //clear any previous state
