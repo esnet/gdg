@@ -50,7 +50,6 @@ func TestSetup(t *testing.T) {
 	log.Info(conf.ConfigFileUsed())
 
 	confobj := config.Config().GetAppConfig()
-	_ = confobj
 	log.Infof(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
@@ -61,7 +60,6 @@ func TestSetup(t *testing.T) {
 }
 
 func TestWatchedFoldersConfig(t *testing.T) {
-	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	//clear all ENV values
 	for _, key := range os.Environ() {
 		if strings.Contains(key, "GDG_") {
@@ -75,7 +73,6 @@ func TestWatchedFoldersConfig(t *testing.T) {
 	log.Info(conf.ConfigFileUsed())
 
 	confobj := config.Config().GetAppConfig()
-	_ = confobj
 	log.Infof(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
