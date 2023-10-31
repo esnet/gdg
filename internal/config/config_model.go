@@ -188,8 +188,23 @@ func (s *GrafanaConfig) GetTeamOutput() string {
 	return path.Join(s.OutputPath, TeamResource)
 }
 
+// GetOrgMonitoredFolders return the OrganizationMonitoredFolders that override a given Org
+func (s *GrafanaConfig) GetOrgMonitoredFolders(orgId int64) []string {
+	for _, item := range s.MonitoredFoldersOverride {
+		if item.OrganizationId == orgId && len(item.Folders) > 0 {
+			return item.Folders
+		}
+	}
+
+	return nil
+}
+
 // GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.
 func (s *GrafanaConfig) GetMonitoredFolders() []string {
+	orgFolders := s.GetOrgMonitoredFolders(s.OrganizationId)
+	if len(orgFolders) > 0 {
+		return orgFolders
+	}
 	if len(s.MonitoredFolders) == 0 {
 		return []string{"General"}
 	}

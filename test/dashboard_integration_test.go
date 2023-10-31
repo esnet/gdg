@@ -21,7 +21,8 @@ func TestDashboardCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	log.Info("Exporting all dashboards")
 	apiClient.UploadDashboards(filtersEntity)
@@ -64,7 +65,8 @@ func TestDashboardTagsFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	emptyFilter := filters.NewBaseFilter()
 
 	filtersEntity := service.NewDashboardFilter("", "", "")
@@ -101,7 +103,8 @@ func TestWildcardFilter(t *testing.T) {
 	}
 
 	// Setup Filters
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	emptyFilter := filters.NewBaseFilter()
 
 	filtersEntity := service.NewDashboardFilter("", "", "")

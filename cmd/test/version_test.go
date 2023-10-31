@@ -1,42 +1,26 @@
-package cmd
+package test
 
 import (
 	"fmt"
+	"github.com/esnet/gdg/cmd"
 	"github.com/esnet/gdg/cmd/support"
-	"github.com/esnet/gdg/cmd/test_tools"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/gdg/internal/version"
 	"github.com/stretchr/testify/assert"
-	"io"
 	"os"
 	"strings"
 	"testing"
 )
 
 func TestVersionCommand(t *testing.T) {
-	testSvc := new(mocks.GrafanaService)
-	getMockSvc := func() service.GrafanaService {
-		return testSvc
+	var execMe = func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
+		err := cmd.Execute(string(data), []string{"version"}, optionMockSvc())
+		return err
 	}
+	outStr, closeReader := setupAndExecuteMockingServices(t, execMe)
+	defer closeReader()
 
-	optionMockSvc := func() support.RootOption {
-		return func(response *support.RootCommand) {
-			response.GrafanaSvc = getMockSvc
-		}
-	}
-	path, _ := os.Getwd()
-	fmt.Println(path)
-	r, w, cleanup := test_tools.InterceptStdout()
-	data, err := os.ReadFile("../config/testing.yml")
-	assert.Nil(t, err)
-
-	err = Execute(string(data), []string{"version"}, optionMockSvc())
-	assert.Nil(t, err)
-	defer cleanup()
-	w.Close()
-	out, _ := io.ReadAll(r)
-	outStr := string(out)
 	assert.True(t, strings.Contains(outStr, "Build Date:"))
 	assert.True(t, strings.Contains(outStr, "Git Commit:"))
 	assert.True(t, strings.Contains(outStr, "Version:"))
@@ -59,10 +43,10 @@ func TestVersionErrCommand(t *testing.T) {
 	}
 	path, _ := os.Getwd()
 	fmt.Println(path)
-	data, err := os.ReadFile("../config/testing.yml")
+	data, err := os.ReadFile("../../config/testing.yml")
 	assert.Nil(t, err)
 
-	err = Execute(string(data), []string{"dumb", "dumb"}, optionMockSvc())
+	err = cmd.Execute(string(data), []string{"dumb", "dumb"}, optionMockSvc())
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), `command error: unknown command "dumb" for "gdg"`)
 }

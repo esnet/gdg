@@ -14,7 +14,8 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 
 	//Wipe all data from grafana
 	dsFilter := service.NewConnectionFilter("")
@@ -50,7 +51,8 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	err := os.Setenv("GDG_CONTEXT_NAME", "testing")
 	assert.Nil(t, err, "Failed to set context name via env to testing")
 
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 
 	//Wipe all data from grafana
 	dashFilter := service.NewDashboardFilter("", "", "")

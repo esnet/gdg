@@ -42,7 +42,7 @@ func newListServiceAccountCmd() simplecobra.Commander {
 		NameP:        "list",
 		Short:        description,
 		Long:         description,
-		CommandsList: []simplecobra.Commander{newTokensCmd()},
+		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "service name", "role", "tokens", "token id", "token name", "expiration"})
 			apiKeys := rootCmd.GrafanaSvc().ListServiceAccounts()
@@ -83,7 +83,7 @@ func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
 		NameP:        "clearTokens",
 		Short:        description,
 		Long:         description,
-		CommandsList: []simplecobra.Commander{newTokensCmd()},
+		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			if len(args) < 1 {
 				return errors.New("requires a service account ID to be specified")
@@ -116,7 +116,7 @@ func newDeleteServiceAccountCmd() simplecobra.Commander {
 		NameP:        "clear",
 		Short:        description,
 		Long:         description,
-		CommandsList: []simplecobra.Commander{newTokensCmd()},
+		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllServiceAccounts()
 			log.Infof("Delete Service Accounts for context: '%s'", config.Config().AppConfig.GetContext())
@@ -140,7 +140,7 @@ func newServiceAccount() simplecobra.Commander {
 		NameP:        "newService",
 		Short:        description,
 		Long:         description,
-		CommandsList: []simplecobra.Commander{newTokensCmd()},
+		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			if len(args) < 2 {
 				return errors.New("requires a key name and a role('admin','viewer','editor') [ttl optional] ")

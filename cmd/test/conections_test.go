@@ -1,9 +1,8 @@
-package backup_test
+package test
 
 import (
 	"github.com/esnet/gdg/cmd"
 	"github.com/esnet/gdg/cmd/support"
-	"github.com/esnet/gdg/cmd/test_tools"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
@@ -38,7 +37,7 @@ func TestConnectionCommand(t *testing.T) {
 			response.GrafanaSvc = getMockSvc
 		}
 	}
-	r, w, cleanup := test_tools.InterceptStdout()
+	r, w, cleanup := InterceptStdout()
 	data, err := os.ReadFile("../../config/testing.yml")
 	assert.Nil(t, err)
 

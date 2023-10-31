@@ -5,6 +5,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/exp/slices"
 	"os"
 	"strings"
 	"testing"
@@ -49,7 +50,6 @@ func TestSetup(t *testing.T) {
 	log.Info(conf.ConfigFileUsed())
 
 	confobj := config.Config().GetAppConfig()
-	_ = confobj
 	log.Infof(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
@@ -57,6 +57,44 @@ func TestSetup(t *testing.T) {
 	grafanaConf := config.Config().GetDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
 	validateGrafanaQA(t, grafanaConf)
+}
+
+func TestWatchedFoldersConfig(t *testing.T) {
+	//clear all ENV values
+	for _, key := range os.Environ() {
+		if strings.Contains(key, "GDG_") {
+			os.Unsetenv(key)
+		}
+	}
+
+	os.Setenv("GDG_CONTEXT_NAME", "qa")
+	config.InitConfig("testing.yml", "")
+	conf := config.Config().ViperConfig()
+	log.Info(conf.ConfigFileUsed())
+
+	confobj := config.Config().GetAppConfig()
+	log.Infof(confobj.ContextName)
+	assert.NotNil(t, conf)
+	context := conf.GetString("context_name")
+	assert.Equal(t, context, "qa")
+	grafanaConf := config.Config().GetDefaultGrafanaConfig()
+	assert.NotNil(t, grafanaConf)
+	grafanaConf.MonitoredFoldersOverride = []config.MonitoredOrgFolders{{
+		OrganizationId: 0,
+		Folders:        []string{"General", "SpecialFolder"},
+	}}
+	folders := grafanaConf.GetMonitoredFolders()
+	assert.True(t, slices.Contains(folders, "SpecialFolder"))
+	grafanaConf.OrganizationId = 2
+	folders = grafanaConf.GetMonitoredFolders()
+	assert.False(t, slices.Contains(folders, "SpecialFolder"))
+	assert.True(t, slices.Contains(folders, "Folder2"))
+	grafanaConf.OrganizationId = 0
+	grafanaConf.MonitoredFoldersOverride = nil
+	folders = grafanaConf.GetMonitoredFolders()
+	assert.False(t, slices.Contains(folders, "SpecialFolder"))
+	assert.True(t, slices.Contains(folders, "Folder2"))
+
 }
 
 // Ensures that if the config is on a completely different path, the searchPath is updated accordingly

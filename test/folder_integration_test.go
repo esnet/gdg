@@ -11,7 +11,8 @@ func TestFolderCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _ := initTest(t, nil)
+	apiClient, _, cleanup := initTest(t, nil)
+	defer cleanup()
 	log.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
 	log.Info("Listing all Folders")
