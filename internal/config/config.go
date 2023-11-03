@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/thoas/go-funk"
@@ -164,7 +165,7 @@ func (app *AppConfig) GetContextMap() map[string]interface{} {
 
 var (
 	configData        *Configuration
-	configSearchPaths = []string{".", "../../config", "../config", "config", "/etc/gdg"}
+	configSearchPaths = []string{"config", ".", "../config", "../../config", "/etc/gdg"}
 )
 
 // GetCloudConfiguration Returns storage type and configuration
@@ -264,7 +265,8 @@ func InitConfig(override, defaultConfig string) {
 	var err error
 
 	configData.defaultConfig, configData.AppConfig, err = readViperConfig(appName, configDirs)
-	_, ok := err.(viper.ConfigFileNotFoundError)
+	var configFileNotFoundError viper.ConfigFileNotFoundError
+	ok := errors.As(err, &configFileNotFoundError)
 
 	if err != nil && ok {
 		log.Info("No configuration file has been found, creating a default configuration")
