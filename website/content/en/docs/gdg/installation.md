@@ -10,6 +10,7 @@ The following packages are currently supported:
   - RPM
   - APK
   - Docker
+  - Brew
 
 ### Package Installation
 
@@ -18,6 +19,21 @@ Install from package involves downloading the appropriate package from the [rele
 ```sh
 rpm -Uvh ./gdg_0.3.1_amd64.rpm
 dpkg -i ./gdg_0.3.1_amd64.deb
+```
+
+### Homebrew Installation
+
+
+```sh
+brew tap esnet/gdg
+brew update
+brew install gdg
+```
+
+If there is a conflict you can try to be explicit.
+
+```sh 
+brew install esnet/gdg/gdg 
 ```
 
 ### Docker usage

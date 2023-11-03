@@ -16,11 +16,12 @@ toc: true
 ### Changes
   - TechDebt: Rewriting the CLI flag parsing to allow for easier testing patterns.  Should mostly be transparent to the user.
   - OrgWatchedFolders added a way to override watched folders for a given organization
+  - [#93](https://github.com/esnet/gdg/issues/205) Homebrew support added in.  First pass at having a homebrew release.
 
 ### Bug Fixes
   - Tiny patch to fix website documentation navigatioin
-  - [#205]((https://github.com/esnet/gdg/issues/205)  fixes invalid cross-link device when symlink exists to /tmp filesystem.
-  - [#206]((https://github.com/esnet/gdg/issues/206) fixed behavior issue
+  - [#205](https://github.com/esnet/gdg/issues/205)  fixes invalid cross-link device when symlink exists to /tmp filesystem.
+  - [#206](https://github.com/esnet/gdg/issues/206) fixed behavior issue
 
 ### Developer Changes
   - Replaced Makefile with Taskfiles.

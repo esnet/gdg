@@ -26,7 +26,7 @@ nfpms:
     package_name: gdg
     file_name_template: "{{ .ConventionalFileName }}"
     homepage: https://software.es.net/gdg/
-    maintainer: csgeek <samir+gdg@es.net>
+    maintainer: GDG ESNet <gdg@es.net>
     description: |-
       GDG is a tool used to manage dashboards, datasources, orgs and various entities of the Grafana application.
     license: BSD License
@@ -53,6 +53,12 @@ nfpms:
         dst: /etc/gdg/importer.yml
         type: config
 
+universal_binaries:
+  - replace: true
+
+release:
+  prerelease: auto
+
 
 dockers:
   - 
@@ -69,6 +75,23 @@ dockers:
 
     skip_push: false
     dockerfile: "docker/Dockerfile-gorelease"
+
+
+brews:
+  -
+    name: 
+    homepage: https://software.es.net/gdg
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+    description: Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager for grafana supporting backup/restore to local filesystem, s3, gcs, azure, and other S3 compatible storage engines. 
+    folder: Formula
+    repository:
+      owner: esnet
+      name: homebrew-gdg
+      token: "{{ .Env.HOMEBREW_TOKEN }}"
+      branch: main
+    commit_author:
+      name:  GDG ESNet
+      email: gdg@es.net
 
 archives:
    - name_template: >-
