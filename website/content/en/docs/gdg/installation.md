@@ -65,6 +65,7 @@ You can verify the version by running `gdg version`.
 
 ## Configuration
 
-You can then create a simple configuration using `gdg ctx new` which will do a best effort to guide to setup a basic config that will get you up and going or read the more detailed documentation that can be found [here](/gdg/docs/configuration/)
+You can then create a simple configuration using `gdg ctx new` which will do a best effort to guide to setup a basic config that will get you up and going or read the more detailed documentation that can be found [here](/gdg/docs/gdg/configuration/)
+
 
 **NOTE**: wizard doesn't currently support ALL features but it should help you get a head start.
