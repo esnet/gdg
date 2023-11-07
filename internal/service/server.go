@@ -1,14 +1,14 @@
 package service
 
 import (
-	log "github.com/sirupsen/logrus"
+	"log"
 )
 
 // GetServerInfo returns basic Grafana Server info
 func (s *DashNGoImpl) GetServerInfo() map[string]interface{} {
 	t, err := s.extended.Health()
 	if err != nil {
-		log.Panic("Unable to get server health info")
+		log.Fatalf("Unable to get server health info, err: %v", err)
 	}
 	result := make(map[string]interface{})
 	result["Database"] = t.Database

@@ -11,9 +11,10 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/search"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
-	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/slices"
+	"log"
+	"log/slog"
 	"path/filepath"
 	"strings"
 )
@@ -59,7 +60,7 @@ func (s *DashNGoImpl) checkFolderName(folderName string) bool {
 
 // DownloadFolderPermissions downloads all the current folder permissions based on filter.
 func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.Filter) []string {
-	log.Infof("Downloading folder permissions")
+	slog.Info("Downloading folder permissions")
 	var (
 		dsPacked  []byte
 		err       error
@@ -68,12 +69,12 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.Filter) []string 
 	currentPermissions := s.ListFolderPermissions(filter)
 	for folder, permission := range currentPermissions {
 		if dsPacked, err = json.MarshalIndent(permission, "", "	"); err != nil {
-			log.Errorf("%s for %s Permissions\n", err, folder.Title)
+			slog.Error("Unable to marshall file", "err", err, "folderName", folder.Title)
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(folder.Title), config.FolderPermissionResource)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
-			log.Errorf("%s for %s\n", err.Error(), slug.Make(folder.Title))
+			slog.Error("Unable to write file", "err", err.Error(), "filename", slug.Make(folder.Title))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
 		}
@@ -91,13 +92,13 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.Filter) []string {
 	)
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderPermissionResource), false)
 	if err != nil {
-		log.WithError(err).Fatal("Failed to read folders permission imports")
+		log.Fatalf("Failed to read folders permission imports, %v", err)
 	}
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderPermissionResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
-				log.WithError(err).Errorf("failed to read file %s", fileLocation)
+				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
 		}
@@ -106,7 +107,7 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.Filter) []string {
 		newEntries := make([]*models.DashboardACLUpdateItem, 0)
 		err = json.Unmarshal(rawFolder, &newEntries)
 		if err != nil {
-			log.Warnf("Failed to Decode payload for %s", fileLocation)
+			slog.Warn("Failed to Decode payload file", "filename", fileLocation)
 			continue
 		}
 		payload := &models.UpdateDashboardACLCommand{
@@ -118,13 +119,13 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.Filter) []string {
 		p.Body = payload
 		_, err := s.client.FolderPermissions.UpdateFolderPermissions(p, s.getAuth())
 		if err != nil {
-			log.Errorf("Failed to update folder permissions")
+			slog.Error("Failed to update folder permissions")
 		} else {
 			dataFiles = append(dataFiles, fileLocation)
 
 		}
 	}
-	log.Infof("Patching server with local folder permissions")
+	slog.Info("Patching server with local folder permissions")
 	return dataFiles
 }
 
@@ -148,10 +149,9 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*models.H
 			case errors.As(err, &getFolderPermissionListInternalServerError):
 				var castError *folder_permissions.GetFolderPermissionListInternalServerError
 				errors.As(err, &castError)
-				log.WithField("message", *castError.GetPayload().Message).
-					WithError(err).Error(msg)
+				slog.Error(msg, "message", *castError.GetPayload().Message, "err", err)
 			default:
-				log.WithError(err).Error(msg)
+				slog.Error(msg, "err", err)
 			}
 		} else {
 			r[foldersList[ndx]] = results.GetPayload()
@@ -179,13 +179,13 @@ func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 		valid := s.checkFolderName(val.Title)
 		if filter == nil {
 			if !valid {
-				log.Warningf("Folder '%s' has an invalid character and is not supported. Path seperators are not allowed", val.Title)
+				slog.Warn("Folder has an invalid character and is not supported. Path separators are not allowed", "folderName", val.Title)
 				continue
 			}
 			result = append(result, folderListing.GetPayload()[ndx])
 		} else if filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: val.Title}) {
 			if !valid {
-				log.Warningf("Folder '%s' has an invalid character and is not supported. Path seperators are not allowed", val.Title)
+				slog.Warn("Folder has an invalid character and is not supported. Path separators are not allowed", "folderName", val.Title)
 				continue
 			}
 			result = append(result, folderListing.GetPayload()[ndx])
@@ -206,12 +206,12 @@ func (s *DashNGoImpl) DownloadFolders(filter filters.Filter) []string {
 	folderListing := s.ListFolder(filter)
 	for _, folder := range folderListing {
 		if dsPacked, err = json.MarshalIndent(folder, "", "	"); err != nil {
-			log.Errorf("%s for %s\n", err, folder.Title)
+			slog.Error("Unable to serialize data to JSON", "err", err, "folderName", folder.Title)
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(folder.Title), config.FolderResource)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
-			log.Errorf("%s for %s\n", err.Error(), slug.Make(folder.Title))
+			slog.Error("Unable to write file.", "err", err.Error(), "folderName", slug.Make(folder.Title))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
 		}
@@ -228,7 +228,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 	)
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderResource), false)
 	if err != nil {
-		log.WithError(err).Fatal("Failed to read folders imports")
+		log.Fatalf("Failed to read folders imports, %v", err)
 	}
 	folderItems := s.ListFolder(filter)
 
@@ -236,23 +236,23 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderResource), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
-				log.WithError(err).Errorf("failed to read file %s", fileLocation)
+				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
 		}
 		var newFolder models.CreateFolderCommand
 		if err = json.Unmarshal(rawFolder, &newFolder); err != nil {
-			log.WithError(err).Warn("failed to unmarshall folder")
+			slog.Warn("failed to unmarshall folder", "err", err)
 			continue
 		}
 		if !s.checkFolderName(newFolder.Title) {
-			log.Warningf("Folder '%s' has an invalid character and is not supported, skipping folder", newFolder.Title)
+			slog.Warn("Folder has an invalid character and is not supported, skipping folder", "folderName", newFolder.Title)
 			continue
 		}
 		skipCreate := false
 		for _, existingFolder := range folderItems {
 			if existingFolder.UID == newFolder.UID {
-				log.Warnf("Folder '%s' already exists, skipping", existingFolder.Title)
+				slog.Warn("Folder already exists, skipping", "folderName", existingFolder.Title)
 				skipCreate = true
 			}
 
@@ -264,7 +264,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		params.Body = &newFolder
 		f, err := s.client.Folders.CreateFolder(params, s.getAuth())
 		if err != nil {
-			log.Errorf("failed to create folder %s", newFolder.Title)
+			slog.Error("failed to create folder.", "folderName", newFolder.Title, "err", err)
 			continue
 		}
 		result = append(result, f.Payload.Title)

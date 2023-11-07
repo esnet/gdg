@@ -7,7 +7,9 @@ import (
 	"github.com/esnet/gdg/cmd/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
+	"log"
+	"log/slog"
+
 	"github.com/spf13/cobra"
 	"slices"
 	"sort"
@@ -50,7 +52,7 @@ func newListServiceAccountCmd() simplecobra.Commander {
 				return apiKeys[i].ServiceAccount.ID < apiKeys[j].ServiceAccount.ID
 			})
 			if len(apiKeys) == 0 {
-				log.Info("No Service Accounts found")
+				slog.Info("No Service Accounts found")
 			} else {
 				for _, apiKey := range apiKeys {
 
@@ -94,11 +96,13 @@ func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
 				log.Fatalf("unable to parse %s as a valid numeric value", idStr)
 			}
 
-			log.Infof("Deleting Service Accounts Tokens for serviceID %d for context: '%s'", id, config.Config().AppConfig.GetContext())
+			slog.Info("Deleting Service Accounts Tokens for context",
+				"serviceAccountId", id,
+				"context", config.Config().AppConfig.GetContext())
 			savedFiles := rootCmd.GrafanaSvc().DeleteServiceAccountTokens(id)
 			rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "type", "token_name"})
 			if len(savedFiles) == 0 {
-				log.Info("No Service Accounts tokens found")
+				slog.Info("No Service Accounts tokens found")
 			} else {
 				for _, token := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{id, "service token", token})
@@ -119,10 +123,10 @@ func newDeleteServiceAccountCmd() simplecobra.Commander {
 		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllServiceAccounts()
-			log.Infof("Delete Service Accounts for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Delete Service Accounts for context", "context", config.Config().AppConfig.GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			if len(savedFiles) == 0 {
-				log.Info("No Service Accounts found")
+				slog.Info("No Service Accounts found")
 			} else {
 				for _, file := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{"user", file})
@@ -166,7 +170,7 @@ func newServiceAccount() simplecobra.Commander {
 			}
 			serviceAcct, err := rootCmd.GrafanaSvc().CreateServiceAccount(name, role, expiration)
 			if err != nil {
-				log.WithError(err).Fatal("unable to create api key")
+				log.Fatal("unable to create api key", "error", err)
 			} else {
 
 				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "role"})
@@ -211,7 +215,7 @@ func newServiceAccountTokenCmd() simplecobra.Commander {
 
 			key, err := rootCmd.GrafanaSvc().CreateServiceAccountToken(serviceID, name, expiration)
 			if err != nil {
-				log.WithError(err).Fatal("unable to create api key")
+				log.Fatal("unable to create api key", "err", err)
 			} else {
 
 				rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "token_id", "name", "token"})

@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/api_keys"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
-	log "github.com/sirupsen/logrus"
+	"log"
 )
 
 type TokenApi interface {
@@ -31,7 +32,7 @@ func (s *DashNGoImpl) DeleteAllTokens() []string {
 	for _, key := range keys {
 		err := s.deleteAPIKey(key.ID)
 		if err != nil {
-			log.Warnf("Failed to delete API key %d named %s", key.ID, key.Name)
+			slog.Warn("Failed to delete API key", "APIKeyID", key.ID, "APIKey", key.Name)
 			continue
 		}
 		deleted = append(deleted, key.Name)

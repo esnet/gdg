@@ -2,7 +2,8 @@ package config
 
 import (
 	"github.com/AlecAivazis/survey/v2"
-	log "github.com/sirupsen/logrus"
+	"log"
+	"log/slog"
 	"strings"
 )
 
@@ -122,6 +123,6 @@ func (s *Configuration) NewContext(name string) {
 	if err != nil {
 		log.Fatal("could not save configuration.")
 	}
-	log.Infof("New configuration %s has been created", name)
+	slog.Info("New configuration has been created", "newContext", name)
 
 }

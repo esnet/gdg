@@ -3,8 +3,8 @@ package test
 import (
 	"testing"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"log/slog"
 )
 
 func TestFolderCRUD(t *testing.T) {
@@ -13,9 +13,9 @@ func TestFolderCRUD(t *testing.T) {
 	}
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
-	log.Info("Exporting all folders")
+	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
-	log.Info("Listing all Folders")
+	slog.Info("Listing all Folders")
 	folders := apiClient.ListFolder(nil)
 	assert.Equal(t, len(folders), 2)
 	var firstDsItem = folders[0]
@@ -23,13 +23,13 @@ func TestFolderCRUD(t *testing.T) {
 	var secondDsItem = folders[1]
 	assert.Equal(t, secondDsItem.Title, "Other")
 	//Import Folders
-	log.Info("Importing folders")
+	slog.Info("Importing folders")
 	list := apiClient.DownloadFolders(nil)
 	assert.Equal(t, len(list), len(folders))
-	log.Info("Deleting Folders")
+	slog.Info("Deleting Folders")
 	deleteList := apiClient.DeleteAllFolders(nil)
 	assert.Equal(t, len(deleteList), len(folders))
-	log.Info("List Folders again")
+	slog.Info("List Folders again")
 	folders = apiClient.ListFolder(nil)
 	assert.Equal(t, len(folders), 0)
 }

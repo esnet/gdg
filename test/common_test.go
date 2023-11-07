@@ -7,8 +7,9 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/google/uuid"
 	"github.com/ory/dockertest/v3"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
+	"log"
+	"log/slog"
 	"net"
 	"os"
 	"sync"
@@ -30,12 +31,12 @@ func setupMinioContainer(pool *dockertest.Pool, wg *sync.WaitGroup) {
 	resource, err := pool.Run("bitnami/minio", "latest",
 		[]string{"MINIO_ROOT_USER=test", "MINIO_ROOT_PASSWORD=secretsss"})
 	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
+		log.Fatal("Could not start resource", "resource", err)
 	}
 	minioPortResource = resource
 
 	validatePort(resource, 5*time.Second, []string{"9000"}, "Unable to connect to minio container.  Cannot run test")
-	log.Info("Minio container is up and running")
+	slog.Info("Minio container is up and running")
 
 }
 
@@ -63,20 +64,20 @@ func setupGrafanaContainer(pool *dockertest.Pool, wg *sync.WaitGroup) {
 	resource, err := pool.Run("grafana/grafana", "10.0.0-ubuntu",
 		[]string{"GF_INSTALL_PLUGINS=grafana-googlesheets-datasource", "GF_AUTH_ANONYMOUS_ENABLED=true"})
 	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
+		log.Fatal("Could not start resource", "err", err)
 	}
 	grafanaResource = resource
 
 	validatePort(resource, 5*time.Second, []string{"3000"}, "Unable to connect to grafana container.  Cannot run test")
 
-	log.Info("Grafana container is up and running")
+	slog.Info("Grafana container is up and running")
 }
 
 func setupDockerTest() *dockertest.Pool {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	pool, err := dockertest.NewPool("")
 	if err != nil {
-		log.Fatalf("Could not construct pool: %s", err)
+		log.Fatal("Could not construct pool", "err", err)
 	}
 	// uses pool to try to connect to Docker
 	err = pool.Client.Ping()
@@ -92,24 +93,24 @@ func TestMain(m *testing.M) {
 	pool := setupDockerTest()
 	var wg *sync.WaitGroup = new(sync.WaitGroup)
 	wg.Add(2)
-	log.Infof("Starting at: %s", time.Now().String())
+	slog.Info("Starting at", "time", time.Now().String())
 	go setupMinioContainer(pool, wg)
 	go setupGrafanaContainer(pool, wg)
 	wg.Wait()
-	log.Infof("Ending at: %s", time.Now().String())
+	slog.Info("Ending at", "end", time.Now().String())
 
 	exitVal := m.Run()
 
 	// You can't defer this because os.Exit doesn't care for defer
 	for _, resource := range []*dockertest.Resource{minioPortResource, grafanaResource} {
 		if resource == nil {
-			log.Warning("No resource set, skipping cleanup")
+			slog.Warn("No resource set, skipping cleanup")
 			continue
 		}
 		if err := pool.Purge(resource); err != nil {
 			log.Fatalf("Could not purge resource: %s", err)
 		} else {
-			log.Info("Resource has been purged")
+			slog.Info("Resource has been purged")
 		}
 	}
 
@@ -183,7 +184,7 @@ func createSimpleClient(t *testing.T, cfgName *string) (service.GrafanaService, 
 	if strings.Contains(path, "test") {
 		err := os.Chdir("..")
 		if err != nil {
-			log.Warning("unable to set directory to parent")
+			slog.Warn("unable to set directory to parent")
 		}
 	}
 	return client, conf

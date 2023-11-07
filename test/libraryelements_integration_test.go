@@ -4,8 +4,8 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"log/slog"
 	"testing"
 )
 
@@ -18,15 +18,15 @@ func TestLibraryElementsCRUD(t *testing.T) {
 	defer cleanup()
 	apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))
 	filtersEntity := service.NewDashboardFilter("", "", "")
-	log.Info("Exporting all Library Elements")
+	slog.Info("Exporting all Library Elements")
 	apiClient.UploadLibraryElements(filtersEntity)
-	log.Info("Listing all library elements")
+	slog.Info("Listing all library elements")
 	boards := apiClient.ListLibraryElements(filtersEntity)
-	log.Infof("Imported %d library elements", len(boards))
+	slog.Info("Imported library elements", "count", len(boards))
 	var generalBoard *models.LibraryElementDTO
 	var otherBoard *models.LibraryElementDTO
 	for ndx, board := range boards {
-		log.Infof(board.Name)
+		slog.Info(board.Name)
 		if slug.Make(board.Name) == "dashboard-makeover-extra-cleaning-duty-assignment-today" {
 			generalBoard = boards[ndx]
 		}
@@ -42,7 +42,7 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		"Type": "stat", "UID": "VvzpJ5X7z", "Kind": int64(1)})
 
 	//Import Library Elements
-	log.Info("Importing Library Elements")
+	slog.Info("Importing Library Elements")
 	list := apiClient.DownloadLibraryElements(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
 	//Export all Dashboards
@@ -60,10 +60,10 @@ func TestLibraryElementsCRUD(t *testing.T) {
 
 	//Delete All Dashboards
 	apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))
-	log.Info("Deleting Library Elements")
+	slog.Info("Deleting Library Elements")
 	deleteList := apiClient.DeleteAllLibraryElements(filtersEntity)
 	assert.Equal(t, len(deleteList), len(boards))
-	log.Info("List Dashboards again")
+	slog.Info("List Dashboards again")
 	boards = apiClient.ListLibraryElements(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 

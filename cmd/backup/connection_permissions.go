@@ -9,7 +9,8 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
+
 	"github.com/spf13/cobra"
 )
 
@@ -46,13 +47,13 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)
-			log.Infof("Listing Connection Permissions for context: '%s'", config.Config().GetAppConfig().GetContext())
+			slog.Info("Listing Connection Permissions for context", "context", config.Config().GetAppConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 			connections := rootCmd.GrafanaSvc().ListConnectionPermissions(filters)
 			_ = connections
 
 			if len(connections) == 0 {
-				log.Info("No connections found")
+				slog.Info("No connections found")
 			} else {
 				for link, perms := range connections {
 					url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
@@ -79,7 +80,7 @@ func newConnectionsPermissionClearCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Clear all connections permissions")
+			slog.Info("Clear all connections permissions")
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all connections on: '%s' "+
 				"(Or all permission matching yoru --connection filter).  Do you wish to continue (y/n) ", config.Config().GetAppConfig().ContextName,
 			), "", true)
@@ -89,7 +90,7 @@ func newConnectionsPermissionClearCmd() simplecobra.Commander {
 			connections := rootCmd.GrafanaSvc().DeleteAllConnectionPermissions(filters)
 
 			if len(connections) == 0 {
-				log.Info("No connections found")
+				slog.Info("No connections found")
 			} else {
 				for _, connections := range connections {
 					rootCmd.TableObj.AppendRow(table.Row{connections})
@@ -112,15 +113,16 @@ func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("import Connections for context: '%s'", config.Config().GetAppConfig().GetContext())
+			slog.Info("import Connections for context",
+				"context", config.Config().GetAppConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)
 			connections := rootCmd.GrafanaSvc().DownloadConnectionPermissions(filters)
-			log.Infof("Downloading connections permissions")
+			slog.Info("Downloading connections permissions")
 
 			if len(connections) == 0 {
-				log.Info("No connections found")
+				slog.Info("No connections found")
 			} else {
 				for _, connections := range connections {
 					rootCmd.TableObj.AppendRow(table.Row{connections})
@@ -141,14 +143,14 @@ func newConnectionsPermissionUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			log.Infof("Uploading connections permissions")
+			slog.Info("Uploading connections permissions")
 			rootCmd.TableObj.AppendHeader(table.Row{"connection permission"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)
 			connections := rootCmd.GrafanaSvc().UploadConnectionPermissions(filters)
 
 			if len(connections) == 0 {
-				log.Info("No connections found")
+				slog.Info("No connections found")
 			} else {
 				for _, connections := range connections {
 					rootCmd.TableObj.AppendRow(table.Row{connections})

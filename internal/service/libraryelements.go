@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -9,10 +10,11 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/library_elements"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
-	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
+	"log"
+	"log/slog"
 	"strings"
 )
 
@@ -41,7 +43,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.Filter, conn
 	for _, item := range payload.GetPayload().Result {
 		dashboard, err := s.getDashboardByUid(item.ConnectionUID)
 		if err != nil {
-			log.WithField("UID", item.ConnectionUID).Errorf("failed to retrieve linked Dashboard")
+			slog.Error("failed to retrieve linked Dashboard", "uid", item.ConnectionUID)
 		}
 		results = append(results, dashboard)
 	}
@@ -76,7 +78,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 	params.Kind = tools.PtrOf(listLibraryPanels)
 	libraryElements, err := s.client.LibraryElements.GetLibraryElements(params, s.getAuth())
 	if err != nil {
-		log.WithError(err).Fatal("Unable to list Library Elements")
+		log.Fatalf("Unable to list Library Elements %v", err)
 
 	}
 	return libraryElements.GetPayload().Result.Elements
@@ -95,7 +97,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 	listing = s.ListLibraryElements(filter)
 	for _, item := range listing {
 		if dsPacked, err = json.MarshalIndent(item, "", "	"); err != nil {
-			log.Errorf("%s for %s\n", err, item.Name)
+			slog.Error("Unable to serialize object", "err", err, "library-element", item.Name)
 			continue
 		}
 		folderName := DefaultFolderName
@@ -107,7 +109,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 		libraryPath := fmt.Sprintf("%s/%s.json", buildResourceFolder(folderName, config.LibraryElementResource), slug.Make(item.Name))
 
 		if err = s.storage.WriteFile(libraryPath, dsPacked); err != nil {
-			log.Errorf("%s for %s\n", err, slug.Make(item.Name))
+			slog.Error("Unable to write file", "err", err, "library-element", slug.Make(item.Name))
 		} else {
 			dataFiles = append(dataFiles, libraryPath)
 		}
@@ -124,7 +126,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 		libraryUID        string
 	)
 
-	log.Infof("Reading files from folder: %s", config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource))
+	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource))
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource), true)
 
 	currentLibElements := s.ListLibraryElements(filter)
@@ -135,14 +137,14 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 	}
 
 	if err != nil {
-		log.WithError(err).Errorf("failed to list files in directory for library elements")
+		slog.Error("failed to list files in directory for library elements", "err", err)
 	}
 
 	for _, file := range filesInDir {
 		fileLocation := file
 		if strings.HasSuffix(file, ".json") {
 			if rawLibraryElement, err = s.storage.ReadFile(fileLocation); err != nil {
-				log.WithError(err).Errorf("failed to read file: %s", fileLocation)
+				slog.Error("failed to read file", "file", fileLocation, "err", err)
 				continue
 			}
 
@@ -151,30 +153,29 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 			if Results[0].Exists() {
 				folderName = Results[0].String()
 			} else {
-				log.Errorf("Unable to determine folder name of library component, skipping %s", file)
+				slog.Error("Unable to determine folder name of library component, skipping.", "filename", file)
 				continue
 			}
 			//Get UID
 			if Results[1].Exists() {
 				libraryUID = Results[1].String()
 			} else {
-				log.Errorf("Unable to determine the library panel UID, %s, attempting to export anyways", file)
-				//continue
+				slog.Error("Unable to determine the library panel UID, attempting to export anyways", "filename", file)
 			}
 
 			if _, ok := libMapping[libraryUID]; ok {
-				log.Warnf("Library already exists, skipping %s", file)
+				slog.Warn("Library already exists, skipping", "filename", file)
 				continue
 			}
 
 			if !slices.Contains(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), folderName) {
-				log.WithField("folder", folderName).WithField("file", file).Warn("Skipping since requested file is not in a folder gdg is configured to manage")
+				slog.Warn("Skipping since requested file is not in a folder gdg is configured to manage", "folder", folderName, "file", file)
 				continue
 			}
 			var newLibraryRequest models.CreateLibraryElementCommand
 
 			if err = json.Unmarshal(rawLibraryElement, &newLibraryRequest); err != nil {
-				log.WithError(err).Errorf("failed to unmarshall file: %s", fileLocation)
+				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
 				continue
 			}
 
@@ -182,7 +183,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 			params.Body = &newLibraryRequest
 			entity, err := s.client.LibraryElements.CreateLibraryElement(params, s.getAuth())
 			if err != nil {
-				log.WithError(err).Errorf("Failed to create library element")
+				slog.Error("Failed to create library element", "err", err)
 			} else {
 				exported = append(exported, entity.Payload.Result.Name)
 			}
@@ -201,13 +202,14 @@ func (s *DashNGoImpl) DeleteAllLibraryElements(filter filters.Filter) []string {
 		params.SetLibraryElementUID(element.UID)
 		_, err := s.client.LibraryElements.DeleteLibraryElementByUID(params, s.getAuth())
 		if err != nil {
-			var logEntry *log.Entry
-			if serr, ok := err.(*library_elements.DeleteLibraryElementByUIDForbidden); ok {
-				logEntry = log.WithField("ErrorMessage", *serr.GetPayload().Message)
-			} else {
-				log.WithError(err)
+			logEntries := make([]interface{}, 0)
+			var serr *library_elements.DeleteLibraryElementByUIDForbidden
+			if errors.As(err, &serr) {
+				logEntries = append(logEntries, []interface{}{"ErrorMessage", *serr.GetPayload().Message}...)
 			}
-			logEntry.Errorf("Failed to delete library panel titled: %s", element.Name)
+
+			logEntries = append(logEntries, []interface{}{"panel", element.Name}...)
+			slog.Error("Failed to delete library panel", logEntries...)
 			continue
 		}
 		entries = append(entries, element.Name)

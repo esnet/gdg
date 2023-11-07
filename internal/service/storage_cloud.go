@@ -8,9 +8,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	log "github.com/sirupsen/logrus"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/s3blob"
+	"log"
+	"log/slog"
 	"os"
 	"path"
 	"path/filepath"
@@ -105,7 +106,7 @@ func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 			if strings.Contains(obj.Key, folderName) {
 				fileList = append(fileList, obj.Key)
 			} else {
-				log.Debugf("%s does not match folder path", obj.Key)
+				slog.Debug("key does not match folder path", "key", obj.Key)
 			}
 		} else {
 			fileList = append(fileList, filepath.Base(obj.Key))
@@ -161,9 +162,9 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 				//attempt to create bucket
 				_, err := client.CreateBucket(&m)
 				if err != nil {
-					log.Warnf("%s bucket already exists or cannot be created", *m.Bucket)
+					slog.Warn("bucket already exists or cannot be created", "bucket", *m.Bucket)
 				} else {
-					log.Infof("bucket %s has been created", *m.Bucket)
+					slog.Info("bucket has been created", "bucket", *m.Bucket)
 				}
 			})
 
@@ -176,7 +177,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 	}
 
 	if err != nil {
-		log.WithError(err).WithField("Msg", errorMsg).Fatal("unable to connect to cloud provider")
+		log.Fatalf("unable to connect to cloud provider, err: %v, message: %s", err, errorMsg)
 	}
 
 	entity := &CloudStorage{

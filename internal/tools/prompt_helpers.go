@@ -3,8 +3,9 @@ package tools
 import (
 	"bufio"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
+	"log"
+	"log/slog"
 	"os"
 	"strings"
 )
@@ -27,7 +28,7 @@ func GetUserConfirmation(msg, error string, terminate bool) bool {
 		ans, _ := r.ReadString('\n')
 		ans = strings.ToLower(ans)
 		if !slices.Contains(validResponse, rune(ans[0])) {
-			log.Error("Invalid response, please try again.  Only [yes/no] are supported")
+			slog.Error("Invalid response, please try again.  Only [yes/no] are supported")
 			continue
 		}
 		//Validate Response

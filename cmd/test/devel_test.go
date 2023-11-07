@@ -23,9 +23,9 @@ func TestDevelSrvInfo(t *testing.T) {
 	outStr, closeReader := setupAndExecuteMockingServices(t, execMe)
 	defer closeReader()
 
-	assert.True(t, strings.Contains(outStr, "Version:"))
-	assert.True(t, strings.Contains(outStr, "Database:"))
-	assert.True(t, strings.Contains(outStr, "Commit:"))
+	assert.True(t, strings.Contains(outStr, "Version="))
+	assert.True(t, strings.Contains(outStr, "Database="))
+	assert.True(t, strings.Contains(outStr, "Commit="))
 }
 
 func TestDevelSrvCompletion(t *testing.T) {

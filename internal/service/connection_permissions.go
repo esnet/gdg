@@ -9,7 +9,8 @@ import (
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/datasource_permissions"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
-	log "github.com/sirupsen/logrus"
+	"log"
+	"log/slog"
 	"path/filepath"
 	"strings"
 )
@@ -32,7 +33,7 @@ func (s *DashNGoImpl) ListConnectionPermissions(filter filters.Filter) map[*mode
 	for ndx, connection := range connections {
 		permission, err := s.getConnectionPermission(connection.ID)
 		if err != nil {
-			log.Errorf("unable to retrieve connection permissions for ID: %d", connection.ID)
+			slog.Error("unable to retrieve connection permissions for ID", "id", connection.ID)
 			continue
 		}
 		result[&connections[ndx]] = permission.GetPayload()
@@ -44,7 +45,7 @@ func (s *DashNGoImpl) ListConnectionPermissions(filter filters.Filter) map[*mode
 
 // DownloadConnectionPermissions download permissions to local file system
 func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.Filter) []string {
-	log.Infof("Downloading connection permissions")
+	slog.Info("Downloading connection permissions")
 	var (
 		dsPacked  []byte
 		err       error
@@ -53,12 +54,12 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.Filter) []str
 	currentPermissions := s.ListConnectionPermissions(filter)
 	for connection, permission := range currentPermissions {
 		if dsPacked, err = json.MarshalIndent(permission, "", "	"); err != nil {
-			log.Errorf("unable to marshall json %s for %s Permissions\n", err, connection.Name)
+			slog.Error("unable to marshall json ", "err", err.Error(), "connectionName", connection.Name)
 			continue
 		}
 		dsPath := buildResourcePath(slug.Make(connection.Name), config.ConnectionPermissionResource)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
-			log.Errorf("%s for %s\n", err.Error(), slug.Make(connection.Name))
+			slog.Error("unable to write file. ", "filename", slug.Make(connection.Name), "error", err.Error())
 		} else {
 			dataFiles = append(dataFiles, dsPath)
 		}
@@ -78,17 +79,17 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionPermissionResource), false)
 	if err != nil {
-		log.WithError(err).Fatal("Failed to read folders permission imports")
+		log.Fatalf("Failed to read folders permission imports: %s", err.Error())
 	}
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionPermissionResource), file)
 		if !filter.ValidateAll(map[filters.FilterType]string{filters.Name: strings.ReplaceAll(file, ".json", "")}) {
-			log.Debugf("File does not match pattern, skipping %s", file)
+			slog.Debug("File does not match pattern, skipping file", "filename", file)
 			continue
 		}
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
-				log.WithError(err).Errorf("failed to read file %s", fileLocation)
+				slog.Error("failed to read file %s", "filename", fileLocation, "err", err)
 				continue
 			}
 		}
@@ -96,13 +97,13 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 		newEntries := new(models.DataSourcePermissionsDTO)
 		err = json.Unmarshal(rawFolder, &newEntries)
 		if err != nil {
-			log.Warnf("Failed to Decode payload for %s", fileLocation)
+			slog.Warn("Failed to Decode payload for file", "filename", fileLocation)
 			continue
 		}
 		//Get current permissions
 		permissions, err := s.getConnectionPermission(newEntries.DatasourceID)
 		if err != nil {
-			log.Errorf("connection permission could not be retrieved, cannot update permissions")
+			slog.Error("connection permission could not be retrieved, cannot update permissions")
 			continue
 		}
 
@@ -113,7 +114,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 		}
 
 		if !success {
-			log.Errorf("Failed to delete previous data, cannot update permissions")
+			slog.Error("Failed to delete previous data, cannot update permissions")
 			continue
 		}
 
@@ -128,14 +129,14 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 			}
 			err = s.extended.AddConnectionPermission(p)
 			if err != nil {
-				log.Errorf("Failed to update folder permissions")
+				slog.Error("Failed to update folder permissions")
 			} else {
 				dataFiles = append(dataFiles, fileLocation)
 			}
 		}
 	}
 
-	log.Infof("Removing all previous permissions and re-applying")
+	slog.Info("Removing all previous permissions and re-applying")
 	return dataFiles
 }
 
@@ -168,8 +169,7 @@ func (s *DashNGoImpl) deleteConnectionPermission(permissionId int64, datasourceI
 	if err != nil {
 		return false
 	}
-	log.Debugf("%d permission has been removed associated with datasource %d: %s", permissionId, datasourceId, resp.GetPayload().Message)
-
+	slog.Debug("permission has been removed associated with datasource %d: %s", "permissionId", permissionId, "datasourceId", datasourceId, "response", resp.GetPayload().Message)
 	return true
 }
 

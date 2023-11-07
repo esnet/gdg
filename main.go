@@ -4,10 +4,10 @@ import (
 	_ "embed"
 	"github.com/esnet/gdg/cmd"
 	"github.com/esnet/gdg/cmd/support"
-	applogger "github.com/esnet/gdg/internal/log"
-	api "github.com/esnet/gdg/internal/service"
-	log "github.com/sirupsen/logrus"
+	"log"
 	"os"
+
+	api "github.com/esnet/gdg/internal/service"
 )
 
 //go:embed config/importer-example.yml
@@ -20,8 +20,6 @@ var (
 )
 
 func main() {
-	applogger.InitializeAppLogger()
-
 	setGrafanaSvc := func() support.RootOption {
 		return func(response *support.RootCommand) {
 			response.GrafanaSvc = getGrafanaSvc

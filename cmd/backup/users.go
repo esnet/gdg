@@ -7,8 +7,8 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"log/slog"
 	"strings"
 )
 
@@ -46,11 +46,11 @@ func newUsersListCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			authLabel, _ := cd.CobraCommand.Flags().GetString("authlabel")
-			log.Infof("Listing users for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Listing users for context", "context", config.Config().AppConfig.GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "login", "name", "email", "admin", "disabled", "default Password", "authLabels"})
 			users := rootCmd.GrafanaSvc().ListUsers(service.NewUserFilter(authLabel))
 			if len(users) == 0 {
-				log.Info("No users found")
+				slog.Info("No users found")
 			} else {
 				for _, user := range users {
 					var labels string
@@ -79,10 +79,10 @@ func newUsersDownloadCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			authLabel, _ := cd.CobraCommand.Flags().GetString("authlabel")
 			savedFiles := rootCmd.GrafanaSvc().DownloadUsers(service.NewUserFilter(authLabel))
-			log.Infof("Importing Users for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Importing Users for context", "context", config.Config().AppConfig.GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			if len(savedFiles) == 0 {
-				log.Info("No users found")
+				slog.Info("No users found")
 			} else {
 				for _, file := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{"user", file})
@@ -104,11 +104,11 @@ func newUsersUploadCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			authLabel, _ := cd.CobraCommand.Flags().GetString("authlabel")
-			log.Infof("Uploading Users to context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Uploading Users to context", "context", config.Config().AppConfig.GetContext())
 			savedFiles := rootCmd.GrafanaSvc().UploadUsers(service.NewUserFilter(authLabel))
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "login", "name", "email", "grafanaAdmin", "disabled", "default Password", "authLabels"})
 			if len(savedFiles) == 0 {
-				log.Info("No users found")
+				slog.Info("No users found")
 			} else {
 				for _, user := range savedFiles {
 					var labels string
@@ -136,10 +136,10 @@ func newUsersClearCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			authLabel, _ := cd.CobraCommand.Flags().GetString("authlabel")
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllUsers(service.NewUserFilter(authLabel))
-			log.Infof("Delete Users for context: '%s'", config.Config().AppConfig.GetContext())
+			slog.Info("Delete Users for context", "context", config.Config().AppConfig.GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			if len(savedFiles) == 0 {
-				log.Info("No users found")
+				slog.Info("No users found")
 			} else {
 				for _, file := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{"user", file})

@@ -9,8 +9,8 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"log/slog"
 	"strings"
 )
 
@@ -69,10 +69,10 @@ func newClearDashboardsCmd() simplecobra.Commander {
 				rootCmd.TableObj.AppendRow(table.Row{"dashboard", file})
 			}
 			if len(deletedDashboards) == 0 {
-				log.Info("No dashboards were found. 0 dashboards were removed")
+				slog.Info("No dashboards were found. 0 dashboards were removed")
 
 			} else {
-				log.Infof("%d dashboards were deleted", len(deletedDashboards))
+				slog.Info("dashboards were deleted", "count", len(deletedDashboards))
 				rootCmd.TableObj.Render()
 			}
 			return nil
@@ -112,7 +112,7 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 			if len(boards) > 0 {
 				rootCmd.TableObj.Render()
 			} else {
-				log.Info("No dashboards found")
+				slog.Info("No dashboards found")
 			}
 			return nil
 		},
@@ -133,7 +133,8 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadDashboards(filter)
-			log.Infof("Downloading dashboards for context: '%s'", config.Config().GetAppConfig().GetContext())
+			slog.Info("Downloading dashboards for context",
+				"context", config.Config().GetAppConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"dashboard", file})
@@ -159,7 +160,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
 
-			log.Infof("Listing dashboards for context: '%s'", config.Config().GetAppConfig().GetContext())
+			slog.Info("Listing dashboards for context", "context", config.Config().GetAppConfig().GetContext())
 			for _, link := range boards {
 				url := fmt.Sprintf("%s%s", config.Config().GetDefaultGrafanaConfig().URL, link.URL)
 				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
@@ -169,7 +170,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 			if len(boards) > 0 {
 				rootCmd.TableObj.Render()
 			} else {
-				log.Info("No dashboards found")
+				slog.Info("No dashboards found")
 			}
 			return nil
 		},

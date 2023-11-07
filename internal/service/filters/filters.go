@@ -2,7 +2,8 @@ package filters
 
 import (
 	"github.com/esnet/gdg/internal/config"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
+
 	"github.com/thoas/go-funk"
 	"regexp"
 	"strings"
@@ -63,7 +64,7 @@ func (s *BaseFilter) AddRegex(name FilterType, pattern *regexp.Regexp) {
 		name = DefaultFilter
 	}
 	if pattern == nil {
-		log.Warnf("invalid pattern received, cannot set filter pattern for entity name: %s", name)
+		slog.Warn("invalid pattern received, cannot set filter pattern for entity name", "entityName", name)
 		return
 	}
 	s.validationPatterns[name] = pattern

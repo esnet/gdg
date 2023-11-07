@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/exp/slices"
+	"log/slog"
 )
 
 //TODO: with full CRUD.
@@ -24,16 +24,16 @@ func TestDashboardCRUD(t *testing.T) {
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
 	filtersEntity := service.NewDashboardFilter("", "", "")
-	log.Info("Exporting all dashboards")
+	slog.Info("Exporting all dashboards")
 	apiClient.UploadDashboards(filtersEntity)
-	log.Info("Listing all dashboards")
+	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
-	log.Infof("Imported %d dashboards", len(boards))
+	slog.Info("Imported dashboards", "count", len(boards))
 	ignoredSkipped := true
 	var generalBoard *models.Hit
 	var otherBoard *models.Hit
 	for ndx, board := range boards {
-		log.Infof(board.Slug)
+		slog.Info(board.Slug)
 		if board.Slug == "latency-patterns" {
 			ignoredSkipped = false
 		}
@@ -50,13 +50,13 @@ func TestDashboardCRUD(t *testing.T) {
 	validateGeneralBoard(t, generalBoard)
 	validateOtherBoard(t, otherBoard)
 	//Import Dashboards
-	log.Info("Importing Dashboards")
+	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
-	log.Info("Deleting Dashboards")
+	slog.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
 	assert.Equal(t, len(deleteList), len(boards))
-	log.Info("List Dashboards again")
+	slog.Info("List Dashboards again")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }
@@ -72,27 +72,27 @@ func TestDashboardTagsFilter(t *testing.T) {
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	filtersEntity.AddFilter(filters.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
 
-	log.Info("Exporting all dashboards")
+	slog.Info("Exporting all dashboards")
 	apiClient.UploadDashboards(emptyFilter)
 
-	log.Info("Listing all dashboards")
+	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 
-	log.Infof("Imported %d dashboards", len(boards))
+	slog.Info("Imported %d dashboards", "count", len(boards))
 	for _, board := range boards {
 		validateTags(t, board)
 	}
 
 	//Import Dashboards
-	log.Info("Importing Dashboards")
+	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
 
-	log.Info("Deleting Dashboards")
+	slog.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
 	assert.Equal(t, len(deleteList), len(boards))
 
-	log.Info("List Dashboards again")
+	slog.Info("List Dashboards again")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }
@@ -125,23 +125,23 @@ func TestWildcardFilter(t *testing.T) {
 	assert.Equal(t, len(boards), len(boards_filtered))
 
 	// Testing Listing with Wildcard
-	log.Info("Listing all dashboards without filter")
+	slog.Info("Listing all dashboards without filter")
 	boards = apiClient.ListDashboards(emptyFilter)
 
-	log.Info("Listing all dashboards ignoring filter")
+	slog.Info("Listing all dashboards ignoring filter")
 	boards_filtered = apiClient.ListDashboards(filtersEntity)
 
 	assert.Equal(t, len(boards), len(boards_filtered))
 
-	log.Info("Importing Dashboards")
+	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(emptyFilter)
 	assert.Equal(t, len(list), len(boards))
 
-	log.Info("Deleting Dashboards")
+	slog.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(emptyFilter)
 	assert.Equal(t, len(deleteList), len(boards))
 
-	log.Info("List Dashboards again")
+	slog.Info("List Dashboards again")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }

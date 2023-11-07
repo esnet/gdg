@@ -10,7 +10,7 @@ import (
 
 	gclient "github.com/esnet/grafana-swagger-api-golang/goclient/client"
 	"github.com/go-openapi/runtime"
-	log "github.com/sirupsen/logrus"
+	"log"
 	"net/http"
 )
 

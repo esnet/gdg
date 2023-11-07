@@ -5,8 +5,8 @@ import (
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"log/slog"
 
 	"sync"
 )
@@ -77,7 +77,7 @@ func configureStorage(obj *DashNGoImpl) {
 		{
 			obj.storage, err = NewCloudStorage(ctx)
 			if err != nil {
-				log.Warn("falling back on Local Storage, Cloud storage configuration error")
+				slog.Warn("falling back on Local Storage, Cloud storage configuration error")
 				obj.storage = NewLocalStorage(ctx)
 			}
 		}

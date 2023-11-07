@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/thoas/go-funk"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
+	"log"
 )
 
 func (s *Configuration) ClearContexts() {
@@ -29,7 +29,7 @@ func (s *Configuration) ClearContexts() {
 		log.Fatal("Failed to make save changes")
 	}
 
-	log.Info("All contexts were cleared")
+	slog.Info("All contexts were cleared")
 
 }
 
@@ -69,19 +69,19 @@ func (s *Configuration) CopyContext(src, dest string) {
 	if err != nil {
 		log.Fatal("Failed to make save changes")
 	}
-	log.Infof("Copied %s context to %s please check your config to confirm", src, dest)
+	slog.Info("Copied context to destination, please check your config to confirm", "sourceContext", src, "destinationContext", dest)
 }
 
 func (s *Configuration) PrintContext(name string) {
 	name = strings.ToLower(name)
 	grafana, ok := s.GetAppConfig().GetContexts()[name]
 	if !ok {
-		log.Errorf("context %s was not found", name)
+		slog.Error("context was not found", "context", name)
 		return
 	}
 	d, err := yaml.Marshal(grafana)
 	if err != nil {
-		log.WithError(err).Fatal("failed to serialize context")
+		log.Fatal("failed to serialize context", "err", err)
 	}
 	fmt.Printf("---%s:\n%s\n\n", name, string(d))
 
@@ -93,7 +93,7 @@ func (s *Configuration) DeleteContext(name string) {
 	contexts := s.GetAppConfig().GetContexts()
 	_, ok := contexts[name]
 	if !ok {
-		log.Infof("Context not found, cannot delete context named '%s'", name)
+		slog.Info("Context not found, cannot delete context", "context", name)
 		return
 	}
 	delete(contexts, name)
@@ -108,10 +108,10 @@ func (s *Configuration) DeleteContext(name string) {
 	if err != nil {
 		log.Fatal("Failed to make save changes")
 	}
-	log.Infof("Delete %s context and set new context to %s", name, s.GetAppConfig().ContextName)
+	slog.Info("Deleted context and set new context to", "deletedContext", name, "newActiveContext", s.GetAppConfig().ContextName)
 }
 
-// ChangeContext
+// ChangeContext changes active context
 func (s *Configuration) ChangeContext(name string) {
 	name = strings.ToLower(name)
 	_, ok := s.GetAppConfig().GetContexts()[name]
@@ -123,7 +123,7 @@ func (s *Configuration) ChangeContext(name string) {
 	if err != nil {
 		log.Fatal("Failed to make save changes")
 	}
-	log.Infof("Change context to: '%s'", name)
+	slog.Info("Changed context", "context", name)
 }
 
 // SaveToDisk Persists current configuration to disk
@@ -151,7 +151,7 @@ func (app *AppConfig) GetContextMap() map[string]interface{} {
 	response := make(map[string]interface{})
 	data, err := json.Marshal(app.Contexts)
 	if err != nil {
-		log.Errorf("could not serialize contexts")
+		slog.Error("could not serialize contexts")
 		return response
 	}
 	err = json.Unmarshal(data, &response)
@@ -215,13 +215,13 @@ func setMapValueEnvOverride(keys []string, mapValue map[string]interface{}, valu
 	if len(keys) > 1 {
 		rawInnerObject, ok := mapValue[keys[0]]
 		if !ok {
-			log.Warn("No Inner map exists, cannot set Env Override")
+			slog.Warn("No Inner map exists, cannot set Env Override")
 			return
 		}
 
 		innerMap, ok := rawInnerObject.(map[string]interface{})
 		if !ok {
-			log.Warn("cannot traverse full map path.  Unable to set ENV override. Returning ")
+			slog.Warn("cannot traverse full map path.  Unable to set ENV override. Returning ")
 			return
 		}
 		setMapValueEnvOverride(keys[1:], innerMap, value)
@@ -269,7 +269,7 @@ func InitConfig(override, defaultConfig string) {
 	ok := errors.As(err, &configFileNotFoundError)
 
 	if err != nil && ok {
-		log.Info("No configuration file has been found, creating a default configuration")
+		slog.Info("No configuration file has been found, creating a default configuration")
 		err = os.MkdirAll("config", os.ModePerm)
 		if err != nil {
 			log.Fatal("unable to create configuration folder: 'config'")

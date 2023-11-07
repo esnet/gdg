@@ -2,13 +2,14 @@ package service
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/client/service_accounts"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/samber/lo"
-	log "github.com/sirupsen/logrus"
+	"log"
 )
 
 type ServiceAccountApi interface {
@@ -28,9 +29,7 @@ func (s *DashNGoImpl) CreateServiceAccount(name, role string, expiration int64) 
 	}
 	data, err := s.client.ServiceAccounts.CreateServiceAccount(p, s.getAuth())
 	if err != nil {
-		log.WithField("serivceName", name).
-			WithField("role", role).
-			Fatal("unable to create a service request")
+		log.Fatalf("unable to create a service request, serviceName: %s, role: %s", name, role)
 	}
 
 	return data.GetPayload(), nil
@@ -45,8 +44,7 @@ func (s *DashNGoImpl) CreateServiceAccountToken(serviceAccountId int64, name str
 	p.ServiceAccountID = serviceAccountId
 	token, err := s.client.ServiceAccounts.CreateToken(p, s.getAuth())
 	if err != nil {
-		log.Error(err.Error())
-		log.Fatalf("unable to create token '%s' for service account ID: %d", name, serviceAccountId)
+		log.Fatalf("unable to create token '%s' for service account ID: %d, err: %v", name, serviceAccountId, err)
 
 	}
 
@@ -73,7 +71,7 @@ func (s *DashNGoImpl) ListServiceAccounts() []*api.ServiceAccountDTOWithTokens {
 		if item.ServiceAccount.Tokens > 0 {
 			item.Tokens, err = s.ListServiceAccountsTokens(item.ServiceAccount.ID)
 			if err != nil {
-				log.Warnf("failed to retrieve tokens for service account %d", item.ServiceAccount.ID)
+				slog.Warn("failed to retrieve tokens for service account", "serviceAccountId", item.ServiceAccount.ID)
 			}
 		}
 
@@ -102,7 +100,7 @@ func (s *DashNGoImpl) DeleteAllServiceAccounts() []string {
 		p.ServiceAccountID = account.ServiceAccount.ID
 		_, err := s.client.ServiceAccounts.DeleteServiceAccount(p, s.getAuth())
 		if err != nil {
-			log.Warnf("Failed to delete service account %d", p.ServiceAccountID)
+			slog.Warn("Failed to delete service account", "ServiceAccountId", p.ServiceAccountID)
 		} else {
 			accountNames = append(accountNames, fmt.Sprintf("service account %d has been deleted", p.ServiceAccountID))
 		}
@@ -124,7 +122,7 @@ func (s *DashNGoImpl) DeleteServiceAccountTokens(serviceId int64) []string {
 		p.ServiceAccountID = serviceId
 		_, err := s.client.ServiceAccounts.DeleteToken(p, s.getAuth())
 		if err != nil {
-			log.Errorf("unable to delete token ID: %d", token.ID)
+			slog.Error("unable to delete token", "tokenID", token.ID)
 			continue
 		}
 		result = append(result, token.Name)
