@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"log"

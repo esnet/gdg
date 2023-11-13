@@ -1,15 +1,14 @@
 package test
 
 import (
-	"github.com/esnet/gdg/cmd"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"io"
-	"os"
 	"strings"
 	"testing"
 )
@@ -38,10 +37,8 @@ func TestConnectionCommand(t *testing.T) {
 		}
 	}
 	r, w, cleanup := InterceptStdout()
-	data, err := os.ReadFile("../../config/testing.yml")
-	assert.Nil(t, err)
 
-	err = cmd.Execute(string(data), []string{"backup", "connections", "list"}, optionMockSvc())
+	err := cli.Execute("testing.yml", []string{"backup", "connections", "list"}, optionMockSvc())
 	assert.Nil(t, err)
 	defer cleanup()
 	w.Close()

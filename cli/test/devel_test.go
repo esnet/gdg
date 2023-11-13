@@ -1,8 +1,8 @@
 package test
 
 import (
-	"github.com/esnet/gdg/cmd"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/stretchr/testify/assert"
 	"strings"
@@ -17,7 +17,7 @@ func TestDevelSrvInfo(t *testing.T) {
 		expected["Version"] = "version"
 
 		mock.On("GetServerInfo").Return(expected)
-		err := cmd.Execute(string(data), []string{"tools", "devel", "srvinfo"}, optionMockSvc())
+		err := cli.Execute(string(data), []string{"tools", "devel", "srvinfo"}, optionMockSvc())
 		return err
 	}
 	outStr, closeReader := setupAndExecuteMockingServices(t, execMe)
@@ -31,7 +31,7 @@ func TestDevelSrvInfo(t *testing.T) {
 func TestDevelSrvCompletion(t *testing.T) {
 	fn := func(args []string) func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
 		return func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
-			err := cmd.Execute(string(data), args, optionMockSvc())
+			err := cli.Execute(string(data), args, optionMockSvc())
 			return err
 		}
 	}

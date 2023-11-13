@@ -3,7 +3,7 @@ package backup
 import (
 	"context"
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"

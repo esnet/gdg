@@ -1,10 +1,10 @@
-package cmd
+package cli
 
 import (
 	"context"
 	"fmt"
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/version"
 	"github.com/spf13/cobra"
 	"os"

@@ -1,16 +1,22 @@
-package cmd
+package cli
 
 import (
 	"context"
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cmd/backup"
-	"github.com/esnet/gdg/cmd/support"
-	"github.com/esnet/gdg/cmd/tools"
+	"github.com/esnet/gdg/cli/backup"
+	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/tools"
+	assets "github.com/esnet/gdg/config"
+	"log/slog"
 )
 
 // Execute executes a command.
 func Execute(defaultCfg string, args []string, options ...support.RootOption) error {
-	support.DefaultConfig = defaultCfg
+	data, err := assets.Assets.ReadFile(defaultCfg)
+	if err != nil {
+		slog.Info("unable to find load default configuration", "err", err)
+	}
+	support.DefaultConfig = string(data)
 	rootCmd := support.NewRootCmd(getNewRootCmd(), options...)
 	x, err := simplecobra.New(rootCmd)
 	if err != nil {

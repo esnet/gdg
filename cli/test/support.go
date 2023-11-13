@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	applog "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"

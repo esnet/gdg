@@ -3,7 +3,7 @@ package tools
 import (
 	"context"
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/spf13/cobra"
 )
 
