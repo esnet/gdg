@@ -2,8 +2,8 @@ package test
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/cmd"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/gdg/internal/version"
@@ -15,7 +15,7 @@ import (
 
 func TestVersionCommand(t *testing.T) {
 	var execMe = func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
-		err := cmd.Execute(string(data), []string{"version"}, optionMockSvc())
+		err := cli.Execute(string(data), []string{"version"}, optionMockSvc())
 		return err
 	}
 	outStr, closeReader := setupAndExecuteMockingServices(t, execMe)
@@ -46,7 +46,7 @@ func TestVersionErrCommand(t *testing.T) {
 	data, err := os.ReadFile("../../config/testing.yml")
 	assert.Nil(t, err)
 
-	err = cmd.Execute(string(data), []string{"dumb", "dumb"}, optionMockSvc())
+	err = cli.Execute(string(data), []string{"dumb", "dumb"}, optionMockSvc())
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), `command error: unknown command "dumb" for "gdg"`)
 }

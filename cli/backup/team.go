@@ -3,7 +3,7 @@ package backup
 import (
 	"context"
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	api "github.com/esnet/gdg/internal/service"
 	"github.com/esnet/grafana-swagger-api-golang/goclient/models"

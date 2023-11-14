@@ -22,10 +22,6 @@ tasks:
       - go install github.com/client9/misspell/cmd/misspell@latest
       - go install github.com/securego/gosec/v2/cmd/gosec@master
       - go install golang.org/x/vuln/cmd/govulncheck@latest
-  format:
-    desc: "Format code"
-    cmds:
-      - gofmt -w -s .
   security:
     desc: "Run security scan"
     cmds:
@@ -55,33 +51,18 @@ tasks:
   linux:
     desc: "Build linux binary"
     cmds:
-      - env GOOS='linux' GOARCH='amd64' go build -ldflags "{{ .LD_FLAGS }} " -o bin/{{ .BIN_NAME }}_linux
+      - env GOOS='linux' GOARCH='amd64' go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}_linux cmd/gdg/main.go  
   build:
     desc: "Buiding {{ .BIN_NAME }} {{ .VERSION }}" 
     cmds:
       - echo "GOPATH=${GOPATH}"
-      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}
+      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }} cmd/gdg/main.go 
   install: 
     desc: "installing {{ .BIN_NAME }} {{ .VERSION }}" 
     cmds: 
       - echo "GOPATH=${GOPATH}"
-      - go install -ldflags "{{ .LD_FLAGS}}"
-      - mv ${GOPATH}/bin/gdg ${GOPATH}/bin/{{ .BIN_NAME }}
+      - go install -ldflags "{{ .LD_FLAGS}}" cmd/gdg/main.go
     silent: false
-  get-deps:
-    desc:  "Tidy Deps"
-    cmds:
-      - go mod tidy
-  pakcage:
-    desc: "building image {{ .BIN_NAME }} {{ .VERSION }} {{ .GIT_COMMIT }}"
-    cmds:
-      - docker build --build-arg VERSION={{ .VERSION }} --build-arg GIT_COMMIT={{ .GIT_COMMIT }} -t $(IMAGE_NAME):local .
-  tag: 
-    desc: "Tagging: latest {{ .VERSION }} {{ .GIT_COMMIT }}"
-    cmds:
-      - docker tag $(IMAGE_NAME):local $(IMAGE_NAME):{{ .GIT_COMMIT }}
-      - docker tag $(IMAGE_NAME):local $(IMAGE_NAME):{{ .VERSION }}
-      - docker tag $(IMAGE_NAME):local $(IMAGE_NAME):latest
   push: 
     desc: "Pushing docker image to registry: latest {{ .VERSION }} {{ .GIT_COMMIT }}"
     deps: [tag]

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cmd/support"
+	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -45,7 +45,7 @@ func newLibraryElementsClearCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			//filter := getLibraryGlobalFlags(cmd)
+			//filter := getLibraryGlobalFlags(cli)
 			deletedLibrarys := rootCmd.GrafanaSvc().DeleteAllLibraryElements(nil)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range deletedLibrarys {

@@ -15,6 +15,7 @@ builds:
       - CGO_ENABLED=0
     binary: gdg
     ldflags: -s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/internal/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/internal/version.Version={{ .Tag }}
+    main: ./cmd/gdg
     goos:
       - linux
       - windows
@@ -74,7 +75,7 @@ dockers:
       - "ghcr.io/esnet/gdg:{{ .Major }}.{{ .Minor }}"
 
     skip_push: false
-    dockerfile: "docker/Dockerfile-gorelease"
+    dockerfile: "docker/Dockerfile"
 
 
 brews:
