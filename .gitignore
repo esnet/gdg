@@ -1,7 +1,6 @@
 bin
 vendor
 .history
-gdg
 importer.yml
 dist/
 prod/
