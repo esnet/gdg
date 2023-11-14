@@ -1,7 +1,6 @@
 package log
 
 import (
-	"github.com/esnet/gdg/internal/config"
 	"github.com/lmittmann/tint"
 	"github.com/mattn/go-isatty"
 	"log"
@@ -11,12 +10,12 @@ import (
 )
 
 // InitializeAppLogger initialize logger, invoked from main
-func InitializeAppLogger(stdout *os.File, stderr *os.File) {
+func InitializeAppLogger(stdout *os.File, stderr *os.File, debug bool) {
 	errStream := stderr
 	outStream := stdout
 	level := slog.LevelInfo
 	showSource := false
-	if config.Config().AppConfig.Global.Debug {
+	if debug {
 		level = slog.LevelDebug
 		showSource = true
 	}

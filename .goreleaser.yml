@@ -11,7 +11,8 @@ source:
   rlcp: true
 
 builds:
-  - env:
+  - id: gdg
+    env:
       - CGO_ENABLED=0
     binary: gdg
     ldflags: -s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/internal/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/internal/version.Version={{ .Tag }}
@@ -20,17 +21,29 @@ builds:
       - linux
       - windows
       - darwin
+  - id: gdg-generate
+    env:
+      - CGO_ENABLED=0
+    binary: gdg-generate
+    ldflags: -s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/internal/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/internal/version.Version={{ .Tag }}
+    main: ./cmd/gen
+    goos:
+      - linux
+      - windows
+      - darwin
 
 nfpms:
-  -
-    id: gdg
+  - id: gdg
     package_name: gdg
     file_name_template: "{{ .ConventionalFileName }}"
     homepage: https://software.es.net/gdg/
     maintainer: GDG ESNet <gdg@es.net>
     description: |-
-      GDG is a tool used to manage dashboards, datasources, orgs and various entities of the Grafana application.
+      GDG is a tool used to manage dashboards, connections, organizations and various entities of the Grafana application.
     license: BSD License
+    builds:
+      - gdg
+      - gdg-generate
     formats:
       - apk
       - deb
@@ -53,6 +66,11 @@ nfpms:
       - src: config/importer-example.yml
         dst: /etc/gdg/importer.yml
         type: config
+      # Simple config file
+      - src: config/templates-example.yml
+        dst: /etc/gdg/templates.yml
+        type: config
+
 
 universal_binaries:
   - replace: true
@@ -62,13 +80,12 @@ release:
 
 
 dockers:
-  - 
-    id: gdg
-#  # You can have multiple Docker images.
-#  - # ID of the image, needed if you want to filter by it later on (e.g. on custom publishers).
+  - id: gdg
+    #  # You can have multiple Docker images.
+    #  - # ID of the image, needed if you want to filter by it later on (e.g. on custom publishers).
     goos: linux
     goarch: amd64
-#
+    #
     image_templates:
       - "ghcr.io/esnet/gdg:latest"
       - "ghcr.io/esnet/gdg:{{ .RawVersion }}"
@@ -79,11 +96,10 @@ dockers:
 
 
 brews:
-  -
-    name: 
+  - name: gdg
     homepage: https://software.es.net/gdg
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
-    description: Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager for grafana supporting backup/restore to local filesystem, s3, gcs, azure, and other S3 compatible storage engines. 
+    description: Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager for grafana supporting backup/restore to local filesystem, s3, gcs, azure, and other S3 compatible storage engines.
     folder: Formula
     repository:
       owner: esnet
@@ -91,19 +107,20 @@ brews:
       token: "{{ .Env.HOMEBREW_TOKEN }}"
       branch: main
     commit_author:
-      name:  GDG ESNet
+      name: GDG ESNet
       email: gdg@es.net
 
 archives:
-   - name_template: >-
-       {{ .ProjectName }}_
-       {{- title .Os }}_
-       {{- if eq .Arch "amd64" }}x86_64
-       {{- else if eq .Arch "386" }}i386
-       {{- else }}{{ .Arch }}{{ end }}
-     files:
+  - name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    files:
       - README*
       - config/importer-example.yml
+      - config/templates-example.yml
 
 checksum:
   name_template: "checksums.txt"

@@ -49,8 +49,8 @@ func newListContextCmd() simplecobra.Commander {
 		NameP: "list",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
 			r.TableObj.AppendHeader(table.Row{"context", "active"})
-			contexts := config.Config().GetAppConfig().GetContexts()
-			activeContext := config.Config().GetAppConfig().GetContext()
+			contexts := config.Config().GetGDGConfig().GetContexts()
+			activeContext := config.Config().GetGDGConfig().GetContext()
 			for key := range contexts {
 				active := false
 				if key == strings.ToLower(activeContext) {
@@ -100,7 +100,7 @@ func newShowContext() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "show",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
-			contextEntry := config.Config().GetAppConfig().GetContext()
+			contextEntry := config.Config().GetGDGConfig().GetContext()
 			if len(args) > 0 && len(args[0]) > 0 {
 				contextEntry = args[0]
 			}

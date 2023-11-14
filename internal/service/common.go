@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
-	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -33,14 +33,6 @@ func updateSlug(board string) string {
 	return ""
 }
 
-// CreateDestinationPath Handle osMkdir Errors
-func CreateDestinationPath(v string) {
-	err := os.MkdirAll(v, 0750)
-	if err != nil {
-		log.Panicf("unable to create path %s, err: %s", v, err.Error())
-	}
-}
-
 // getFolderFromResourcePath if a use encodes a path separator in path, we can't determine the folder name.  This strips away
 // all the known components of a resource type leaving only the folder name.
 func getFolderFromResourcePath(storageEngine string, filePath string, resourceType config.ResourceType) (string, error) {
@@ -63,7 +55,7 @@ func getFolderFromResourcePath(storageEngine string, filePath string, resourceTy
 	return "", errors.New("unable to parse resource to retrieve folder name")
 }
 
-func buildResourceFolder(folderName string, resourceType config.ResourceType) string {
+func BuildResourceFolder(folderName string, resourceType config.ResourceType) string {
 	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
 	}
@@ -73,13 +65,13 @@ func buildResourceFolder(folderName string, resourceType config.ResourceType) st
 		folderName = strings.ReplaceAll(folderName, strSeperator, fmt.Sprintf("//%s", strSeperator))
 	}
 	v := fmt.Sprintf("%s/%s", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
-	CreateDestinationPath(v)
+	tools.CreateDestinationPath(v)
 	return v
 }
 
 func buildResourcePath(folderName string, resourceType config.ResourceType) string {
 	v := fmt.Sprintf("%s/%s.json", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
-	CreateDestinationPath(filepath.Dir(v))
+	tools.CreateDestinationPath(filepath.Dir(v))
 	return v
 
 }

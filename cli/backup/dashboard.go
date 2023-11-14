@@ -134,7 +134,7 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadDashboards(filter)
 			slog.Info("Downloading dashboards for context",
-				"context", config.Config().GetAppConfig().GetContext())
+				"context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"dashboard", file})
@@ -160,7 +160,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
 
-			slog.Info("Listing dashboards for context", "context", config.Config().GetAppConfig().GetContext())
+			slog.Info("Listing dashboards for context", "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range boards {
 				url := fmt.Sprintf("%s%s", config.Config().GetDefaultGrafanaConfig().URL, link.URL)
 				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,

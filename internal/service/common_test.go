@@ -22,11 +22,11 @@ func TestUserPath(t *testing.T) {
 	err := os.Setenv("GDG_CONTEXT_NAME", "qa")
 	assert.Nil(t, err)
 	config.InitConfig("testing.yml", "'")
-	path := buildResourceFolder("", config.UserResource)
+	path := BuildResourceFolder("", config.UserResource)
 	assert.Equal(t, "qa/users/", path)
 }
 func TestBuildDashboardPath(t *testing.T) {
-	result := buildResourceFolder("General", config.DashboardResource)
+	result := BuildResourceFolder("General", config.DashboardResource)
 	assert.Equal(t, "qa/org_1/dashboards/General", result)
 }
 

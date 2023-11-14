@@ -56,11 +56,11 @@ func InterceptStdout() (*os.File, *os.File, func()) {
 	r, w, _ := os.Pipe()
 	//Restore streams
 	config.InitConfig("testing", "")
-	applog.InitializeAppLogger(w, w)
+	applog.InitializeAppLogger(w, w, false)
 	cleanup := func() {
 		os.Stdout = backupStd
 		os.Stderr = backupErr
-		applog.InitializeAppLogger(os.Stdout, os.Stderr)
+		applog.InitializeAppLogger(os.Stdout, os.Stderr, false)
 
 	}
 	os.Stdout = w

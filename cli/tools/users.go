@@ -33,7 +33,7 @@ func newPromoteUserCmd() simplecobra.Commander {
 		Short: "Promote User to Grafana Admin",
 		Long:  "Promote User to Grafana Admin",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Promoting User to Grafana Admin for context: '%s'", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Promoting User to Grafana Admin for context: '%s'", "context", config.Config().GetGDGConfig().GetContext())
 			userLogin, _ := cd.CobraCommand.Flags().GetString("user")
 
 			msg, err := rootCmd.GrafanaSvc().PromoteUser(userLogin)

@@ -12,11 +12,11 @@ import (
 
 // Execute executes a command.
 func Execute(defaultCfg string, args []string, options ...support.RootOption) error {
-	data, err := assets.Assets.ReadFile(defaultCfg)
+	var err error
+	support.DefaultConfig, err = assets.GetFile(defaultCfg)
 	if err != nil {
-		slog.Info("unable to find load default configuration", "err", err)
+		slog.Warn("unable to find load default configuration", "err", err)
 	}
-	support.DefaultConfig = string(data)
 	rootCmd := support.NewRootCmd(getNewRootCmd(), options...)
 	x, err := simplecobra.New(rootCmd)
 	if err != nil {

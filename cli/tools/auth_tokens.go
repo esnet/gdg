@@ -78,7 +78,7 @@ func newDeleteTokenCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllTokens()
-			slog.Info("Delete Tokens for context: ", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Delete Tokens for context: ", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			if len(savedFiles) == 0 {
 				slog.Info("No Tokens found")

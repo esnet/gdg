@@ -106,7 +106,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 			folderName = val
 		}
 
-		libraryPath := fmt.Sprintf("%s/%s.json", buildResourceFolder(folderName, config.LibraryElementResource), slug.Make(item.Name))
+		libraryPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderName, config.LibraryElementResource), slug.Make(item.Name))
 
 		if err = s.storage.WriteFile(libraryPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err, "library-element", slug.Make(item.Name))

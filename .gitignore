@@ -8,3 +8,4 @@ public
 resources
 .idea
 config/token*.yml
+config/templates.yml

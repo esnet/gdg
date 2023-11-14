@@ -51,7 +51,7 @@ func NewDashNGoImpl() *DashNGoImpl {
 func newInstance() *DashNGoImpl {
 	obj := &DashNGoImpl{}
 	obj.grafanaConf = config.Config().GetDefaultGrafanaConfig()
-	obj.configRef = config.Config().ViperConfig()
+	obj.configRef = config.Config().GetViperConfig(config.ViperGdgConfig)
 	obj.Login()
 
 	obj.debug = config.Config().IsDebug()

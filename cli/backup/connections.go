@@ -96,7 +96,7 @@ func newDownloadConnectionsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Importing connections for context",
-				"context", config.Config().GetAppConfig().GetContext())
+				"context", config.Config().GetGDGConfig().GetContext())
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			savedFiles := rootCmd.GrafanaSvc().DownloadConnections(filters)
@@ -123,7 +123,7 @@ func newListConnectionsCmd() simplecobra.Commander {
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			dsListing := rootCmd.GrafanaSvc().ListConnections(filters)
-			slog.Info("Listing connections for context", "context", config.Config().GetAppConfig().GetContext())
+			slog.Info("Listing connections for context", "context", config.Config().GetGDGConfig().GetContext())
 			if len(dsListing) == 0 {
 				slog.Info("No connections found")
 			} else {

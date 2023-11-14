@@ -62,7 +62,6 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	boards := apiClient.ListDashboards(dashFilter)
 	assert.True(t, len(boards) > 0)
 
-	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
 	_, apiClient = SetupCloudFunction([]string{"s3", "testing"})
 
 	//At this point all operations are reading/writing from Minio

@@ -76,7 +76,7 @@ func newLibraryElementsListCmd() simplecobra.Commander {
 
 			elements := rootCmd.GrafanaSvc().ListLibraryElements(nil)
 
-			slog.Info("Listing library for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Listing library for context", "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range elements {
 				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Meta.FolderName, link.Name, link.Type})
 
@@ -101,7 +101,7 @@ func newLibraryElementsDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Downloading library for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Downloading library for context", "context", config.Config().GetGDGConfig().GetContext())
 			savedFiles := rootCmd.GrafanaSvc().DownloadLibraryElements(nil)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range savedFiles {
@@ -156,7 +156,7 @@ func newLibraryElementsListConnectionsCmd() simplecobra.Commander {
 
 			libElmentUid := args[0]
 			elements := rootCmd.GrafanaSvc().ListLibraryElementsConnections(nil, libElmentUid)
-			slog.Info("Listing library connections for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Listing library connections for context", "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range elements {
 				dash := link.Dashboard.(map[string]interface{})
 				rootCmd.TableObj.AppendRow(table.Row{dash["id"].(json.Number), dash["uid"].(string), link.Meta.Slug, dash["title"].(string), link.Meta.FolderTitle})

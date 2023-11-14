@@ -28,6 +28,7 @@ const (
 	OrganizationMetaResource     = "org"
 	TeamResource                 = "teams"
 	UserResource                 = "users"
+	TemplatesResource            = "templates"
 )
 
 var orgNamespacedResource = map[ResourceType]bool{
@@ -162,31 +163,6 @@ func (s *GrafanaConfig) GetDataSourceSettings() *ConnectionSettings {
 // GetPath returns the path of the resource type
 func (s *GrafanaConfig) GetPath(r ResourceType) string {
 	return r.GetPath(s.OutputPath)
-}
-
-// GetDashboardOutput returns the path of the dashboards output
-func (s *GrafanaConfig) GetDashboardOutput() string {
-	return path.Join(s.OutputPath, DashboardResource)
-}
-
-func (s *GrafanaConfig) GetDataSourceOutput() string {
-	return path.Join(s.OutputPath, ConnectionResource)
-}
-
-func (s *GrafanaConfig) GetAlertNotificationOutput() string {
-	return path.Join(s.OutputPath, AlertNotificationResource)
-}
-
-func (s *GrafanaConfig) GetUserOutput() string {
-	return path.Join(s.OutputPath, UserResource)
-}
-
-func (s *GrafanaConfig) GetFolderOutput() string {
-	return path.Join(s.OutputPath, FolderResource)
-}
-
-func (s *GrafanaConfig) GetTeamOutput() string {
-	return path.Join(s.OutputPath, TeamResource)
 }
 
 // GetOrgMonitoredFolders return the OrganizationMonitoredFolders that override a given Org

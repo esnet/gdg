@@ -57,7 +57,7 @@ func newFolderClearCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c", "delete"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Deleting all Folders for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Deleting all Folders for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"title"})
 
 			folders := rootCmd.GrafanaSvc().DeleteAllFolders(getFolderFilter())
@@ -84,7 +84,7 @@ func newFolderListCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Listing Folders for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "title"})
 			folders := rootCmd.GrafanaSvc().ListFolder(getFolderFilter())
 
@@ -110,7 +110,7 @@ func newFolderDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Listing Folders for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			folders := rootCmd.GrafanaSvc().DownloadFolders(getFolderFilter())
 			if len(folders) == 0 {
@@ -135,7 +135,7 @@ func newFolderUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Uploading Folders for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Uploading Folders for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			folders := rootCmd.GrafanaSvc().UploadFolders(getFolderFilter())
 			if len(folders) == 0 {

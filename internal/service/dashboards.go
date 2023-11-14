@@ -209,7 +209,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 			continue
 		}
 
-		fileName := fmt.Sprintf("%s/%s.json", buildResourceFolder(link.FolderTitle, config.DashboardResource), metaData.Payload.Meta.Slug)
+		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.FolderTitle, config.DashboardResource), metaData.Payload.Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.Payload.Meta.Slug)
 		} else {
@@ -316,9 +316,13 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 			}
 		}
 
-		data := make(map[string]interface{}, 0)
+		data := make(map[string]interface{})
 
 		err = json.Unmarshal(rawBoard, &data)
+		if err != nil {
+			slog.Error("Unable to marshall data to valid JSON, skipping import", slog.Any("data", rawBoard))
+			continue
+		}
 		//zero out ID.  Can't create a new dashboard if an ID already exists.
 		delete(data, "id")
 		importDashReq := dashboards.NewImportDashboardParams()
@@ -329,7 +333,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 
 		if _, exportError := s.client.Dashboards.ImportDashboard(importDashReq, s.getAuth()); exportError != nil {
-			slog.Info("error on Exporting dashboard", "dashboard-filename", file, "err", err)
+			slog.Info("error on Exporting dashboard", "dashboard-filename", file, "err", exportError)
 			continue
 		}
 
