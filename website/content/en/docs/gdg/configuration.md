@@ -271,7 +271,7 @@ The pattern for GDG's is as follows:  `GDG_SECTION__SECTION__keyname`
 For example if I want to set the context name to a different value I can use:
 
 ```sh
-GDG_CONTEXT_NAME="testing" gdg ctx show ## Which will override the value from the context file.
+GDG_CONTEXT_NAME="testing" gdg tools ctx show ## Which will override the value from the context file.
 GDG_CONTEXTS__TESTING__URL="www.google.com" Will override the URL with the one provided.
  ```
 

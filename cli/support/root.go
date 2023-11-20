@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/internal/config"
 	appconfig "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -63,22 +62,7 @@ func (c *RootCommand) PreRun(this, runner *simplecobra.Commandeer) error {
 
 // initConfiguration Loads configuration, and setups fail over case
 func (c *RootCommand) initConfiguration() {
-	cmd := c.initRunner.CobraCommand
-	configOverride, _ := cmd.Flags().GetString("config")
-	if DefaultConfig == "" {
-		raw, err := os.ReadFile("config/importer-example.yml")
-		if err == nil {
-			DefaultConfig = string(raw)
-		} else {
-			DefaultConfig = ""
-		}
-	}
-	//Registers sub CommandsList
-	config.InitConfig(configOverride, DefaultConfig)
-	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, config.Config().GetGDGConfig().Global.Debug)
-
-	//Validate current configuration
-	config.Config().GetDefaultGrafanaConfig().Validate()
+	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, false)
 
 }
 

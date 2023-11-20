@@ -12,12 +12,12 @@ Starting with version 0.1.4 contexts are now supported.  Your config can contain
 ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually
 
 ```sh
-./bin/gdg ctx list -- Lists all known contexts
-./bin/gdg ctx show qa -- shows the configuration for the selected context
-./bin/gdg ctx set production -- updates the active config and sets it to the request value.
-./bin/gdg ctx delete qa -- Deletes the QA context
-./bin/gdg ctx cp qa staging -- copies the qa context to staging and sets it as active
-./bin/gdg ctx clear -- Will delete all active contexts leaving only a single example entry
+./bin/gdg tools ctx list -- Lists all known contexts
+./bin/gdg tools ctx show qa -- shows the configuration for the selected context
+./bin/gdg tools ctx set production -- updates the active config and sets it to the request value.
+./bin/gdg tools ctx delete qa -- Deletes the QA context
+./bin/gdg tools ctx cp qa staging -- copies the qa context to staging and sets it as active
+./bin/gdg tools ctx clear -- Will delete all active contexts leaving only a single example entry
 ```
 
 ### Version

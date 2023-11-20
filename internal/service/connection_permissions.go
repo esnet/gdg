@@ -3,20 +3,21 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"log/slog"
+	"path/filepath"
+	"strings"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/datasource_permissions"
 	"github.com/grafana/grafana-openapi-client-go/models"
-	"log"
-	"log/slog"
-	"path/filepath"
-	"strings"
 )
 
 type ConnectionPermissions interface {
-	//Permissions Enterprise only
+	// Permissions Enterprise only
 	ListConnectionPermissions(filter filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO
 	DownloadConnectionPermissions(filter filters.Filter) []string
 	UploadConnectionPermissions(filter filters.Filter) []string
@@ -100,7 +101,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 			slog.Warn("Failed to Decode payload for file", "filename", fileLocation)
 			continue
 		}
-		//Get current permissions
+		// Get current permissions
 		permissions, err := s.getConnectionPermission(newEntries.DatasourceID)
 		if err != nil {
 			slog.Error("connection permission could not be retrieved, cannot update permissions")
@@ -108,7 +109,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 		}
 
 		success := true
-		//Delete datasource Permissions
+		// Delete datasource Permissions
 		for _, p := range permissions.GetPayload().Permissions {
 			success = s.deleteConnectionPermission(p.ID, newEntries.DatasourceID)
 		}
@@ -128,7 +129,6 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 				p.SetBuiltinRole(tools.PtrOf(entry.BuiltInRole))
 			}
 			_, err = s.GetClient().DatasourcePermissions.AddPermission(p)
-			//err = s.extended.AddConnectionPermission(p)
 			if err != nil {
 				slog.Error("Failed to update folder permissions")
 			} else {

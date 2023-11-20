@@ -8,6 +8,20 @@ weight: 197
 toc: true
 ---
 
+##  Release Notes for v0.5.2
+### Changes
+  - Replacing Connection Auth with a secure/foobar.json file.  Allows for more flexible data to be pushed to grafana.
+  - *TechDebt* refactored packages, moving cmd-> cli, and created cmd/ to allow for multiple binaries to be generated.
+  - [#168](https://github.com/esnet/gdg/issues/168) Introduced a new tool called gdg-generate which allows for templating of dashboards using go.tmpl syntax.
+  - gdg context has been moved under tools.  ie. `gdg tools ctx` instead of `gdg ctx`
+  - [#221](https://github.com/esnet/gdg/issues/221) Version check no longer requires a valid configuration
+
+### Bug Fixes
+
+### Developer Changes
+  - Migrated to Office Grafana GoLang API
+
+
 ##  Release Notes for v0.5.1
 
 **Release Date: 11/03/2023**

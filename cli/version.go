@@ -7,19 +7,18 @@ import (
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/version"
 	"github.com/spf13/cobra"
-	"os"
+	"log/slog"
 )
 
 func newVersionCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "version",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
-			stdout := os.Stdout
-			fmt.Fprintf(stdout, "Build Date: %s\n", version.BuildDate)
-			fmt.Fprintf(stdout, "Git Commit: %s\n", version.GitCommit)
-			fmt.Fprintf(stdout, "Version: %s\n", version.Version)
-			fmt.Fprintf(stdout, "Go Version: %s\n", version.GoVersion)
-			fmt.Fprintf(stdout, "OS / Arch: %s\n", version.OsArch)
+			slog.Info(fmt.Sprintf("Build Date: %s", version.BuildDate))
+			slog.Info(fmt.Sprintf("Git Commit: %s", version.GitCommit))
+			slog.Info(fmt.Sprintf("Version: %s", version.Version))
+			slog.Info(fmt.Sprintf("Go Version: %s", version.GoVersion))
+			slog.Info(fmt.Sprintf("OS / Arch: %s", version.OsArch))
 			return nil
 		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
