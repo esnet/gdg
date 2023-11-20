@@ -35,7 +35,7 @@ func main() {
 	if *showTemplateCfg {
 		data, err := yaml.Marshal(cfg.GetTemplateConfig())
 		if err != nil {
-			slog.Error("unable to load template configuration")
+			log.Fatalf("unable to load template configuration: %v", err)
 		}
 		slog.Info(fmt.Sprintf("Configuration\n%s", string(data)))
 		return
