@@ -42,7 +42,7 @@ func newOrganizationsListCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Listing organizations for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Listing organizations for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "org"})
 			listOrganizations := rootCmd.GrafanaSvc().ListOrganizations()
 			sort.Slice(listOrganizations, func(a, b int) bool {
@@ -71,7 +71,7 @@ func newOrganizationsDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Downloading organizations for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Downloading organizations for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			listOrganizations := rootCmd.GrafanaSvc().DownloadOrganizations()
 			if len(listOrganizations) == 0 {
@@ -97,7 +97,7 @@ func newOrganizationsUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Uploading Folders for context: '%s'", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Uploading Folders for context: '%s'", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			folders := rootCmd.GrafanaSvc().UploadOrganizations()
 			if len(folders) == 0 {

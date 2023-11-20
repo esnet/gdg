@@ -60,7 +60,7 @@ func NewTeamFilter(entries ...string) filters.Filter {
 func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
-	teamPath := buildResourceFolder("", config.TeamResource)
+	teamPath := BuildResourceFolder("", config.TeamResource)
 	for ndx, team := range teamListing {
 		//Teams
 		teamFileName := filepath.Join(teamPath, GetSlug(team.Name), "team.json")

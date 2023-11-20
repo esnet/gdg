@@ -12,6 +12,10 @@ The following remote backup locations are supported:
 
 Please find the generated documentation [here](https://software.es.net/gdg/) and the code for updating the docs is available [here](https://github.com/esnet/gdg/blob/master/documentation/content/docs/usage_guide.md)
 
+## Quickstart
+
+![Quickstart screen](website/static/quickstart.gif)
+
 ## Release conventions.
 
 GDG mostly follows the semver conventions with some minor modifications.
@@ -32,8 +36,4 @@ would be 1.X release.  Splitting the GDG binary into a tools and backup cli, or 
 contexts.  i.e.  `gdg diff dashboards prod staging` is a major divergences from the current expectations so it'll be a major version bump.
 
 For more info, please see the release notes and documentation both available [here](https://software.es.net/gdg/)
-
-## Quickstart 
-
-![Quickstart screen](website/static/quickstart.gif)
 

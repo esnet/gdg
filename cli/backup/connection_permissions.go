@@ -47,7 +47,7 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)
-			slog.Info("Listing Connection Permissions for context", "context", config.Config().GetAppConfig().GetContext())
+			slog.Info("Listing Connection Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 			connections := rootCmd.GrafanaSvc().ListConnectionPermissions(filters)
 			_ = connections
@@ -82,7 +82,7 @@ func newConnectionsPermissionClearCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Clear all connections permissions")
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all connections on: '%s' "+
-				"(Or all permission matching yoru --connection filter).  Do you wish to continue (y/n) ", config.Config().GetAppConfig().ContextName,
+				"(Or all permission matching yoru --connection filter).  Do you wish to continue (y/n) ", config.Config().GetGDGConfig().ContextName,
 			), "", true)
 			rootCmd.TableObj.AppendHeader(table.Row{"cleared connection permissions"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
@@ -114,7 +114,7 @@ func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("import Connections for context",
-				"context", config.Config().GetAppConfig().GetContext())
+				"context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)

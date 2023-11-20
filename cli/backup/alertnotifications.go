@@ -48,7 +48,7 @@ func newClearAlertNotificationsCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 
 			slog.Info("Clearing all alert notification channels for context",
-				"context", config.Config().AppConfig.GetContext())
+				"context", config.Config().GetGDGConfig().GetContext())
 			deleted := rootCmd.GrafanaSvc().DeleteAllAlertNotifications()
 			for _, item := range deleted {
 				rootCmd.TableObj.AppendRow(table.Row{"alertnotification", item})
@@ -78,7 +78,7 @@ func newUploadAlertNotificationsCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"name", "id", "UID"})
 
 			slog.Info("Exporting alert notification channels for context",
-				"context", config.Config().AppConfig.GetContext())
+				"context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.GrafanaSvc().UploadAlertNotifications()
 			items := rootCmd.GrafanaSvc().ListAlertNotifications()
 			for _, item := range items {
@@ -108,7 +108,7 @@ func newDownloadAlertNotificationsCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 
 			slog.Info("Downloading alert notification channels for context",
-				"context", config.Config().AppConfig.GetContext())
+				"context", config.Config().GetGDGConfig().GetContext())
 
 			savedFiles := rootCmd.GrafanaSvc().DownloadAlertNotifications()
 			for _, file := range savedFiles {
@@ -136,7 +136,7 @@ func newListAlertNotificationsCmd() simplecobra.Commander {
 			alertnotifications := rootCmd.GrafanaSvc().ListAlertNotifications()
 
 			slog.Info("Listing alert notifications channels for context",
-				"context", config.Config().AppConfig.GetContext())
+				"context", config.Config().GetGDGConfig().GetContext())
 
 			if len(alertnotifications) == 0 {
 				slog.Info("No alert notifications found")

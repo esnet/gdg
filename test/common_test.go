@@ -6,12 +6,14 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/google/uuid"
-	"github.com/ory/dockertest/v3"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
+	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 	"log"
 	"log/slog"
-	"net"
 	"os"
+	"slices"
 	"sync"
 	"time"
 
@@ -22,97 +24,114 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var minioPortResource *dockertest.Resource
-var grafanaResource *dockertest.Resource
+// var minioPortResource *dockertest.Resource
+var minioContainer testcontainers.Container
+var grafnaContainer testcontainers.Container
 
-func setupMinioContainer(pool *dockertest.Pool, wg *sync.WaitGroup) {
+type Containers struct {
+	Cancel    context.CancelFunc
+	Container testcontainers.Container
+}
+
+func setupMinioContainer(wg *sync.WaitGroup, channels chan Containers) {
 	// pulls an image, creates a container based on it and runs it
 	defer wg.Done()
-	resource, err := pool.Run("bitnami/minio", "latest",
-		[]string{"MINIO_ROOT_USER=test", "MINIO_ROOT_PASSWORD=secretsss"})
-	if err != nil {
-		log.Fatal("Could not start resource", "resource", err)
-	}
-	minioPortResource = resource
 
-	validatePort(resource, 5*time.Second, []string{"9000"}, "Unable to connect to minio container.  Cannot run test")
+	ctx := context.Background()
+	req := testcontainers.ContainerRequest{
+		Image:        "bitnami/minio:latest",
+		ExposedPorts: []string{"9000/tcp", "9001/tcp"},
+		Env:          map[string]string{"MINIO_ROOT_USER": "test", "MINIO_ROOT_PASSWORD": "secretsss"},
+		WaitingFor:   wait.ForLog("Documentation: https://min.io/docs/minio/linux/index.html"),
+	}
+	minioC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
+	if err != nil {
+		panic(err)
+	}
+
 	slog.Info("Minio container is up and running")
-
-}
-
-func validatePort(resource *dockertest.Resource, delay time.Duration, ports []string, errorMsg string) {
-	time.Sleep(delay)
-	for _, port := range ports {
-		timeout := time.Second
-		actualPort := resource.GetPort(fmt.Sprintf("%s/tcp", port))
-		conn, err := net.DialTimeout("tcp", net.JoinHostPort("localhost", actualPort), timeout)
-		if err != nil {
-			fmt.Println("Connecting error:", err)
-			log.Fatalf(errorMsg)
-		}
-
-		if conn != nil {
-			defer conn.Close()
+	cancel := func() {
+		if err := minioC.Terminate(ctx); err != nil {
+			panic(err)
+		} else {
+			slog.Info("Minio container has been terminated")
 		}
 	}
+	result := Containers{
+		Cancel:    cancel,
+		Container: minioC,
+	}
+	channels <- result
 
 }
 
-func setupGrafanaContainer(pool *dockertest.Pool, wg *sync.WaitGroup) {
+func setupGrafanaContainer(wg *sync.WaitGroup, channels chan Containers) {
 	// pulls an image, creates a container based on it and runs it
 	defer wg.Done()
-	resource, err := pool.Run("grafana/grafana", "10.0.0-ubuntu",
-		[]string{"GF_INSTALL_PLUGINS=grafana-googlesheets-datasource", "GF_AUTH_ANONYMOUS_ENABLED=true"})
-	if err != nil {
-		log.Fatal("Could not start resource", "err", err)
+	ctx := context.Background()
+	req := testcontainers.ContainerRequest{
+		Image:        "grafana/grafana:10.0.0-ubuntu",
+		ExposedPorts: []string{"3000/tcp"},
+		Env: map[string]string{
+			"GF_INSTALL_PLUGINS":        "grafana-googlesheets-datasource",
+			"GF_AUTH_ANONYMOUS_ENABLED": "true",
+		},
+		WaitingFor: wait.ForLog("HTTP Server Listen"),
 	}
-	grafanaResource = resource
-
-	validatePort(resource, 5*time.Second, []string{"3000"}, "Unable to connect to grafana container.  Cannot run test")
-
-	slog.Info("Grafana container is up and running")
-}
-
-func setupDockerTest() *dockertest.Pool {
-	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
-	pool, err := dockertest.NewPool("")
+	grafanaC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
 	if err != nil {
-		log.Fatal("Could not construct pool", "err", err)
+		panic(err)
 	}
-	// uses pool to try to connect to Docker
-	err = pool.Client.Ping()
-	if err != nil {
-		log.Fatalf("Could not connect to Docker: %s", err)
+	cancel := func() {
+		if err := grafanaC.Terminate(ctx); err != nil {
+			panic(err)
+		} else {
+			slog.Info("Grafana Container has been terminated")
+		}
 	}
-
-	return pool
+	result := Containers{
+		Cancel:    cancel,
+		Container: grafanaC,
+	}
+	channels <- result
 
 }
 
 func TestMain(m *testing.M) {
-	pool := setupDockerTest()
-	var wg *sync.WaitGroup = new(sync.WaitGroup)
+	channels := make(chan Containers, 2)
+	var wg = new(sync.WaitGroup)
 	wg.Add(2)
 	slog.Info("Starting at", "time", time.Now().String())
-	go setupMinioContainer(pool, wg)
-	go setupGrafanaContainer(pool, wg)
+	go setupMinioContainer(wg, channels)
+	go setupGrafanaContainer(wg, channels)
 	wg.Wait()
+	close(channels)
 	slog.Info("Ending at", "end", time.Now().String())
 
-	exitVal := m.Run()
-
-	// You can't defer this because os.Exit doesn't care for defer
-	for _, resource := range []*dockertest.Resource{minioPortResource, grafanaResource} {
-		if resource == nil {
-			slog.Warn("No resource set, skipping cleanup")
+	for entry := range channels {
+		defer entry.Cancel()
+		str, err := entry.Container.Ports(context.Background())
+		if err != nil {
+			slog.Error("unable to obtain bound ports for container")
 			continue
 		}
-		if err := pool.Purge(resource); err != nil {
-			log.Fatalf("Could not purge resource: %s", err)
-		} else {
-			slog.Info("Resource has been purged")
+		keys := maps.Keys(str)
+		if slices.Contains(keys, "9000/tcp") {
+			minioContainer = entry.Container
 		}
+		if slices.Contains(keys, "3000/tcp") {
+			grafnaContainer = entry.Container
+
+		}
+
 	}
+	exitVal := m.Run()
 
 	os.Exit(exitVal)
 }
@@ -167,13 +186,12 @@ func createSimpleClient(t *testing.T, cfgName *string) (service.GrafanaService, 
 		*cfgName = "testing.yml"
 	}
 
-	actualPort := grafanaResource.GetPort(fmt.Sprintf("%s/tcp", "3000"))
-	err := os.Setenv("GDG_CONTEXTS__TESTING__URL", fmt.Sprintf("http://localhost:%s", actualPort))
-
+	actualPort, err := grafnaContainer.Endpoint(context.Background(), "")
+	err = os.Setenv("GDG_CONTEXTS__TESTING__URL", fmt.Sprintf("http://%s", actualPort))
 	assert.Nil(t, err)
 
 	config.InitConfig(*cfgName, "'")
-	conf := config.Config().ViperConfig()
+	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	assert.NotNil(t, conf)
 	//Hack for Local testing
 	contextName := conf.GetString("context_name")
@@ -194,7 +212,7 @@ func SetupCloudFunction(params []string) (context.Context, service.GrafanaServic
 	_ = os.Setenv(service.InitBucket, "true")
 	bucketName := params[1]
 
-	actualPort := minioPortResource.GetPort(fmt.Sprintf("%s/tcp", "9000"))
+	actualPort, err := minioContainer.Endpoint(context.Background(), "")
 	var m = map[string]string{
 		service.InitBucket: "true",
 		service.CloudType:  params[0],
@@ -204,11 +222,11 @@ func SetupCloudFunction(params []string) (context.Context, service.GrafanaServic
 		service.BucketName: bucketName,
 		service.Kind:       "cloud",
 		service.Custom:     "true",
-		service.Endpoint:   fmt.Sprintf("http://localhost:%s", actualPort),
+		service.Endpoint:   fmt.Sprintf("http://%s", actualPort),
 		service.SSLEnabled: "false",
 	}
 
-	cfgObj := config.Config().GetAppConfig()
+	cfgObj := config.Config().GetGDGConfig()
 	defaultCfg := config.Config().GetDefaultGrafanaConfig()
 	defaultCfg.Storage = "test"
 	cfgObj.StorageEngine["test"] = m

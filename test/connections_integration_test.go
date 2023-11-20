@@ -52,7 +52,7 @@ func TestConnectionFilter(t *testing.T) {
 	_, _, clean := initTest(t, nil)
 	defer clean()
 
-	testingContext := config.Config().GetAppConfig().GetContexts()["testing"]
+	testingContext := config.Config().GetGDGConfig().GetContexts()["testing"]
 	testingContext.GetDataSourceSettings().FilterRules = []config.MatchingRule{
 		{
 			Field: "name",
@@ -64,7 +64,7 @@ func TestConnectionFilter(t *testing.T) {
 			Regex:     "elasticsearch|globalnoc-tsds-datasource",
 		},
 	}
-	testingContext = config.Config().GetAppConfig().GetContexts()["testing"]
+	testingContext = config.Config().GetGDGConfig().GetContexts()["testing"]
 	_ = testingContext
 
 	apiClient := service.NewApiService("dummy")

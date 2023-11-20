@@ -1,7 +1,8 @@
 FROM alpine:latest
 RUN mkdir /app
 COPY gdg /app/gdg
-VOLUME /app/conf
+COPY gdg-generate /app/gdg-generate
+VOLUME /app/config
 VOLUME /app/exports
 
 WORKDIR /app 

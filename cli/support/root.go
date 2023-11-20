@@ -75,7 +75,7 @@ func (c *RootCommand) initConfiguration() {
 	}
 	//Registers sub CommandsList
 	config.InitConfig(configOverride, DefaultConfig)
-	appconfig.InitializeAppLogger(os.Stdout, os.Stderr)
+	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, config.Config().GetGDGConfig().Global.Debug)
 
 	//Validate current configuration
 	config.Config().GetDefaultGrafanaConfig().Validate()

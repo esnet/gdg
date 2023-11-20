@@ -98,7 +98,7 @@ func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
 
 			slog.Info("Deleting Service Accounts Tokens for context",
 				"serviceAccountId", id,
-				"context", config.Config().AppConfig.GetContext())
+				"context", config.Config().GetGDGConfig().GetContext())
 			savedFiles := rootCmd.GrafanaSvc().DeleteServiceAccountTokens(id)
 			rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "type", "token_name"})
 			if len(savedFiles) == 0 {
@@ -123,7 +123,7 @@ func newDeleteServiceAccountCmd() simplecobra.Commander {
 		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllServiceAccounts()
-			slog.Info("Delete Service Accounts for context", "context", config.Config().AppConfig.GetContext())
+			slog.Info("Delete Service Accounts for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			if len(savedFiles) == 0 {
 				slog.Info("No Service Accounts found")

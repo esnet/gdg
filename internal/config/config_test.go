@@ -46,10 +46,10 @@ func TestSetup(t *testing.T) {
 
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	config.InitConfig("testing.yml", "")
-	conf := config.Config().ViperConfig()
+	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	slog.Info(conf.ConfigFileUsed())
 
-	confobj := config.Config().GetAppConfig()
+	confobj := config.Config().GetGDGConfig()
 	slog.Info(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
@@ -69,10 +69,10 @@ func TestWatchedFoldersConfig(t *testing.T) {
 
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	config.InitConfig("testing.yml", "")
-	conf := config.Config().ViperConfig()
+	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	slog.Info(conf.ConfigFileUsed())
 
-	confobj := config.Config().GetAppConfig()
+	confobj := config.Config().GetGDGConfig()
 	slog.Info(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
@@ -101,7 +101,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 func TestSetupDifferentPath(t *testing.T) {
 	cfgFile := DuplicateConfig(t)
 	config.InitConfig(cfgFile, "")
-	conf := config.Config().ViperConfig()
+	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "production")
@@ -114,7 +114,7 @@ func TestConfigEnv(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
 	config.InitConfig("testing.yml", "")
-	conf := config.Config().ViperConfig()
+	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "testing")
 	url := conf.GetString("contexts.testing.url")
@@ -124,7 +124,7 @@ func TestConfigEnv(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "production")
 	os.Setenv("GDG_CONTEXTS__PRODUCTION__URL", "grafana.com")
 	config.InitConfig("testing.yml", "")
-	conf = config.Config().ViperConfig()
+	conf = config.Config().GetViperConfig(config.ViperGdgConfig)
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")
 }
@@ -137,8 +137,8 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	folders := grafana.GetMonitoredFolders()
 	assert.True(t, funk.Contains(folders, "Folder1"))
 	assert.True(t, funk.Contains(folders, "Folder2"))
-	assert.Equal(t, "qa/connections", grafana.GetDataSourceOutput())
-	assert.Equal(t, "qa/dashboards", grafana.GetDashboardOutput())
+	assert.Equal(t, "qa/org_1/connections", grafana.GetPath(config.ConnectionResource))
+	assert.Equal(t, "qa/org_1/dashboards", grafana.GetPath(config.DashboardResource))
 	dsSettings := grafana.DataSourceSettings
 	request := models.AddDataSourceCommand{}
 	assert.Equal(t, len(grafana.DataSourceSettings.MatchingRules), 3)

@@ -4,9 +4,35 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	ViperGdgConfig      = "gdg"
+	ViperTemplateConfig = "template"
+)
+
 type Configuration struct {
-	defaultConfig *viper.Viper
-	AppConfig     *AppConfig
+	viperConfiguration map[string]*viper.Viper
+	gdgConfig          *GDGAppConfiguration
+	templatingConfig   *TemplatingConfig
+}
+
+type TemplatingConfig struct {
+	Entities TemplateEntities `mapstructure:"entities"`
+}
+
+type TemplateEntities struct {
+	Dashboards []TemplateDashboards `mapstructure:"dashboards"`
+}
+
+type TemplateDashboards struct {
+	TemplateName      string                    `mapstructure:"template_name"`
+	DashboardEntities []TemplateDashboardEntity `mapstructure:"output"`
+}
+
+type TemplateDashboardEntity struct {
+	Folder        string                 `mapstructure:"folder"`
+	OrgId         int64                  `mapstructure:"org_id"`
+	DashboardName string                 `mapstructure:"dashboard_name"`
+	TemplateData  map[string]interface{} `mapstructure:"template_data"`
 }
 
 // AppGlobals is the global configuration for the application
@@ -15,8 +41,8 @@ type AppGlobals struct {
 	IgnoreSSLErrors bool `mapstructure:"ignore_ssl_errors" yaml:"ignore_ssl_errors"`
 }
 
-// AppConfig is the configuration for the application
-type AppConfig struct {
+// GDGAppConfiguration is the configuration for the application
+type GDGAppConfiguration struct {
 	ContextName   string                       `mapstructure:"context_name" yaml:"context_name"`
 	StorageEngine map[string]map[string]string `mapstructure:"storage_engine" yaml:"storage_engine"`
 	Contexts      map[string]*GrafanaConfig    `mapstructure:"contexts" yaml:"contexts"`

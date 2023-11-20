@@ -42,7 +42,7 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
 
-			slog.Info("Listing Folders for context", "context", config.Config().GetAppConfig().GetContext())
+			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name", "UserID", "Team Name", "Role", "Permission Name"}, rowConfigAutoMerge)
 			folders := rootCmd.GrafanaSvc().ListFolderPermissions(getFolderFilter())
 
@@ -71,7 +71,7 @@ func newFolderPermissionDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Downloading Folder Permissions for context", "context", config.Config().GetAppConfig().GetContext())
+			slog.Info("Downloading Folder Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
 			folders := rootCmd.GrafanaSvc().DownloadFolderPermissions(getFolderFilter())
 			slog.Info("Downloading folder permissions")

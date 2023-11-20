@@ -115,9 +115,9 @@ func (s *Configuration) NewContext(name string) {
 		log.Fatal(err.Error())
 	}
 
-	contextMap := s.GetAppConfig().GetContexts()
+	contextMap := s.GetGDGConfig().GetContexts()
 	contextMap[name] = &answers
-	s.GetAppConfig().ContextName = name
+	s.GetGDGConfig().ContextName = name
 
 	err = s.SaveToDisk(false)
 	if err != nil {
