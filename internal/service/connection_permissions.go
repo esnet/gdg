@@ -6,9 +6,9 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/datasource_permissions"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
 	"github.com/gosimple/slug"
+	"github.com/grafana/grafana-openapi-client-go/client/datasource_permissions"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"log"
 	"log/slog"
 	"path/filepath"
@@ -127,7 +127,8 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 			if entry.BuiltInRole != "" {
 				p.SetBuiltinRole(tools.PtrOf(entry.BuiltInRole))
 			}
-			err = s.extended.AddConnectionPermission(p)
+			_, err = s.client.DatasourcePermissions.AddPermission(p, s.getAuth())
+			//err = s.extended.AddConnectionPermission(p)
 			if err != nil {
 				slog.Error("Failed to update folder permissions")
 			} else {

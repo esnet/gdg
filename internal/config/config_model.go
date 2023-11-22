@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
 	"log"
 	"log/slog"

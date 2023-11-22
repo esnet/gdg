@@ -4,7 +4,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"strings"
 	"testing"
 

@@ -7,8 +7,8 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"log/slog"
 
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/teams"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/client/teams"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/maps"
 	"strings"
 

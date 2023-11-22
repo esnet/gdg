@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/slices"
 	"os"
 	"sort"

@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/legacy_alerts_notification_channels"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/client/legacy_alerts_notification_channels"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"log/slog"
 	"strings"
 

@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/datasource_permissions"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/client/datasource_permissions"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"net/http"
 )
 

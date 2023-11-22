@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	gapi "github.com/esnet/grafana-swagger-api-golang"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/dashboards"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/folders"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/search"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/esnet/gdg/internal/tools"
+	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
+	"github.com/grafana/grafana-openapi-client-go/client/folders"
+	"github.com/grafana/grafana-openapi-client-go/client/search"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/pretty"
 	"golang.org/x/exp/slices"
 	"log"
@@ -136,9 +136,9 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 	for {
 		searchParams := search.NewSearchParams()
 		searchParams.Tag = tagsParams
-		searchParams.Limit = gapi.ToPtr(int64(limit))
-		searchParams.Page = gapi.ToPtr(int64(page))
-		searchParams.Type = gapi.ToPtr(searchTypeDashboard)
+		searchParams.Limit = tools.PtrOf(int64(limit))
+		searchParams.Page = tools.PtrOf(int64(page))
+		searchParams.Type = tools.PtrOf(searchTypeDashboard)
 
 		pageBoardLinks, err := s.client.Search.Search(searchParams, s.getAuth())
 		if err != nil {

@@ -6,8 +6,8 @@ import (
 
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/tools"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/client/service_accounts"
-	"github.com/esnet/grafana-swagger-api-golang/goclient/models"
+	"github.com/grafana/grafana-openapi-client-go/client/service_accounts"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
 	"log"
 )
@@ -30,6 +30,7 @@ func (s *DashNGoImpl) CreateServiceAccount(name, role string, expiration int64) 
 	data, err := s.client.ServiceAccounts.CreateServiceAccount(p, s.getAuth())
 	if err != nil {
 		log.Fatalf("unable to create a service request, serviceName: %s, role: %s", name, role)
+
 	}
 
 	return data.GetPayload(), nil
@@ -84,12 +85,13 @@ func (s *DashNGoImpl) ListServiceAccountsTokens(id int64) ([]*models.TokenDTO, e
 
 	p := service_accounts.NewListTokensParams()
 	p.ServiceAccountID = id
-	response, err := s.extended.ListTokens(p)
+	//response, err := s.extended.ListTokens(p)
+	response, err := s.client.ServiceAccounts.ListTokens(p, s.getAuth())
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve service account for %d response", id)
 	}
 
-	return response, nil
+	return response.GetPayload(), nil
 }
 
 func (s *DashNGoImpl) DeleteAllServiceAccounts() []string {
