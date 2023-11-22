@@ -264,7 +264,6 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		}
 		params := folders.NewCreateFolderParams()
 		params.Body = &newFolder
-		//f, err := s.client.Folders.CreateFolder(params, s.getAuth())
 		f, err := s.client.Folders.CreateFolder(params, s.getAuth())
 		if err != nil {
 			slog.Error("failed to create folder.", "folderName", newFolder.Title, "err", err)
@@ -276,7 +275,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 	return result
 }
 
-// DeleteAllFolder deletes all the matching folders from grafana
+// DeleteAllFolders deletes all the matching folders from grafana
 func (s *DashNGoImpl) DeleteAllFolders(filter filters.Filter) []string {
 	var result []string
 	folderListing := s.ListFolder(filter)
