@@ -42,6 +42,10 @@ func TestSetup(t *testing.T) {
 			os.Unsetenv(key)
 		}
 	}
+	cwd, _ := os.Getwd()
+	if strings.Contains(cwd, "config") {
+		os.Chdir("../../")
+	}
 
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	config.InitConfig("testing.yml", "")
@@ -136,18 +140,21 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	folders := grafana.GetMonitoredFolders()
 	assert.True(t, funk.Contains(folders, "Folder1"))
 	assert.True(t, funk.Contains(folders, "Folder2"))
-	assert.Equal(t, "qa/org_1/connections", grafana.GetPath(config.ConnectionResource))
-	assert.Equal(t, "qa/org_1/dashboards", grafana.GetPath(config.DashboardResource))
-	dsSettings := grafana.DataSourceSettings
+	assert.Equal(t, "test/data/org_1/connections", grafana.GetPath(config.ConnectionResource))
+	assert.Equal(t, "test/data/org_1/dashboards", grafana.GetPath(config.DashboardResource))
+	dsSettings := grafana.ConnectionSettings
 	request := models.AddDataSourceCommand{}
-	assert.Equal(t, len(grafana.DataSourceSettings.MatchingRules), 3)
+	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)
 	//Last Entry is the default
-	defaultSettings := grafana.DataSourceSettings.MatchingRules[2].Auth
-	assert.Equal(t, "user", defaultSettings.User)
-	assert.Equal(t, "password", defaultSettings.Password)
+	secureLoc := grafana.GetPath(config.SecureSecretsResource)
+	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetAuth(secureLoc)
+	assert.Nil(t, err)
+	assert.Equal(t, "user", defaultSettings.User())
+	assert.Equal(t, "password", defaultSettings.Password())
 
 	request.Name = "Complex Name"
-	defaultSettings, _ = dsSettings.GetCredentials(request)
-	assert.Equal(t, "test", defaultSettings.User)
-	assert.Equal(t, "secret", defaultSettings.Password)
+	securePath := grafana.GetPath(config.SecureSecretsResource)
+	defaultSettings, _ = dsSettings.GetCredentials(request, securePath)
+	assert.Equal(t, "test", defaultSettings.User())
+	assert.Equal(t, "secret", defaultSettings.Password())
 }

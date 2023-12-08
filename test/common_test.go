@@ -24,7 +24,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// var minioPortResource *dockertest.Resource
 var minioContainer testcontainers.Container
 var grafnaContainer testcontainers.Container
 
@@ -42,7 +41,7 @@ func setupMinioContainer(wg *sync.WaitGroup, channels chan Containers) {
 		Image:        "bitnami/minio:latest",
 		ExposedPorts: []string{"9000/tcp", "9001/tcp"},
 		Env:          map[string]string{"MINIO_ROOT_USER": "test", "MINIO_ROOT_PASSWORD": "secretsss"},
-		WaitingFor:   wait.ForLog("Documentation: https://min.io/docs/minio/linux/index.html"),
+		WaitingFor:   wait.ForListeningPort("9000/tcp"),
 	}
 	minioC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
@@ -79,7 +78,7 @@ func setupGrafanaContainer(wg *sync.WaitGroup, channels chan Containers) {
 			"GF_INSTALL_PLUGINS":        "grafana-googlesheets-datasource",
 			"GF_AUTH_ANONYMOUS_ENABLED": "true",
 		},
-		WaitingFor: wait.ForLog("HTTP Server Listen"),
+		WaitingFor: wait.ForListeningPort("3000/tcp"),
 	}
 	grafanaC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,

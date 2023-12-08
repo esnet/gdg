@@ -15,3 +15,11 @@ services:
         environment:
             - GF_INSTALL_PLUGINS=grafana-googlesheets-datasource
 
+    influx:
+      image: influxdb:latest
+      container_name: influxdb
+      security_opt:
+        - no-new-privileges:true
+      restart: unless-stopped
+      ports:
+        - "8086:8086"

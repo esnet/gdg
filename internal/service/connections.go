@@ -151,13 +151,10 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 			dsConfig := s.grafanaConf
 			var creds *config.GrafanaConnection
 
-			if newDS.BasicAuth {
-				creds, err = dsConfig.GetCredentials(newDS)
-				if err != nil { //Attempt to get Credentials by URL regex
-					slog.Warn("DataSource has Auth enabled but has no valid Credentials that could be retrieved.  Please check your configuration and try again.")
-				}
-			} else {
-				creds = nil
+			secureLocation := config.Config().GetDefaultGrafanaConfig().GetPath(config.SecureSecretsResource)
+			creds, err = dsConfig.GetCredentials(newDS, secureLocation)
+			if err != nil { //Attempt to get Credentials by URL regex
+				slog.Warn("DataSource has no secureData configured.  Please check your configuration.")
 			}
 
 			if dsSettings.FiltersEnabled() && dsSettings.IsExcluded(newDS) {
@@ -166,11 +163,8 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 			}
 
 			if creds != nil {
-				user := creds.User
-				var secureData = make(map[string]string)
-				newDS.BasicAuthUser = user
-				secureData["basicAuthPassword"] = creds.Password
-				newDS.SecureJSONData = secureData
+				newDS.BasicAuthUser = creds.User()
+				newDS.SecureJSONData = *creds
 			} else {
 				newDS.BasicAuth = false
 			}
@@ -186,6 +180,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 				}
 			}
 			p := datasources.NewAddDataSourceParams().WithBody(&newDS)
+
 			if createStatus, err := s.client.Datasources.AddDataSource(p, s.getAuth()); err != nil {
 				slog.Error("error on importing datasource", "datasource", newDS.Name, "err", err, "createError", createStatus.Error())
 			} else {

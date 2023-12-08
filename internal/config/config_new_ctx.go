@@ -1,17 +1,20 @@
 package config
 
 import (
-	"github.com/AlecAivazis/survey/v2"
+	"encoding/json"
 	"log"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/AlecAivazis/survey/v2"
 )
 
 func (s *Configuration) NewContext(name string) {
-
 	name = strings.ToLower(name) // forces lowercase contexts
 	answers := GrafanaConfig{
-		DataSourceSettings: &ConnectionSettings{
+		ConnectionSettings: &ConnectionSettings{
 			MatchingRules: make([]RegexMatchesList, 0),
 		},
 	}
@@ -21,8 +24,8 @@ func (s *Configuration) NewContext(name string) {
 		DSUser     string
 		DSPassword string
 	}{}
-	//Setup question that drive behavior
-	var behaviorQuestions = []*survey.Question{
+	// Setup question that drive behavior
+	behaviorQuestions := []*survey.Question{
 		{
 			Name: "AuthType",
 			Prompt: &survey.Select{
@@ -32,10 +35,6 @@ func (s *Configuration) NewContext(name string) {
 			},
 		},
 		{
-			Name:   "Folders",
-			Prompt: &survey.Input{Message: "List the folders you wish to manage (example: folder1,folder2)? (Blank for General)?"},
-		},
-		{
 			Name:   "DSUser",
 			Prompt: &survey.Input{Message: "Please enter your datasource default username"},
 		},
@@ -43,48 +42,34 @@ func (s *Configuration) NewContext(name string) {
 			Name:   "DSPassword",
 			Prompt: &survey.Password{Message: "Please enter your datasource default password"},
 		},
+		{
+			Name:   "Folders",
+			Prompt: &survey.Input{Message: "List the folders you wish to manage (example: folder1,folder2)? (Blank for General)?"},
+		},
 	}
 	err := survey.Ask(behaviorQuestions, &promptAnswers)
 	if err != nil {
 		log.Fatal("Failed to get valid answers to generate a new context")
 	}
 
-	//Set Watched Folders
+	// Set Watched Folders
 	foldersList := strings.Split(promptAnswers.Folders, ",")
 	if len(foldersList) > 0 && foldersList[0] != "" {
 		answers.MonitoredFolders = foldersList
 	} else {
 		answers.MonitoredFolders = []string{"General"}
 	}
-	//Set Default Datasource
-	if promptAnswers.DSUser != "" && promptAnswers.DSPassword != "" {
-		ds := GrafanaConnection{
-			User:     promptAnswers.DSUser,
-			Password: promptAnswers.DSPassword,
-		}
-		answers.DataSourceSettings.MatchingRules = []RegexMatchesList{
-			{
-				Rules: []MatchingRule{
-					{
-						Field: "name",
-						Regex: ".*",
-					},
-				},
-				Auth: &ds,
-			},
-		}
 
-	}
-
-	//Setup grafana required field based on responses
-	var questions = []*survey.Question{
+	// Setup grafana required field based on responses
+	questions := []*survey.Question{
 		{
 			Name:   "URL",
 			Prompt: &survey.Input{Message: "What is the Grafana URL include http(s)?"},
 		},
 		{
-			Name:   "OutputPath",
-			Prompt: &survey.Input{Message: "Destination Folder?"},
+			Name:     "OutputPath",
+			Prompt:   &survey.Input{Message: "Destination Folder?"},
+			Validate: survey.Required,
 		},
 	}
 
@@ -99,12 +84,12 @@ func (s *Configuration) NewContext(name string) {
 	if promptAnswers.AuthType == "both" || promptAnswers.AuthType == "basicauth" {
 		questions = append(questions, &survey.Question{
 			Name:     "UserName",
-			Prompt:   &survey.Input{Message: "Please enter your admin UserName"},
+			Prompt:   &survey.Input{Message: "Please enter your grafana admin Username"},
 			Validate: survey.Required,
 		})
 		questions = append(questions, &survey.Question{
 			Name:     "Password",
-			Prompt:   &survey.Password{Message: "Please enter your admin Password"},
+			Prompt:   &survey.Password{Message: "Please enter your grafana admin Password"},
 			Validate: survey.Required,
 		})
 
@@ -113,6 +98,41 @@ func (s *Configuration) NewContext(name string) {
 	err = survey.Ask(questions, &answers)
 	if err != nil {
 		log.Fatal(err.Error())
+	}
+
+	// Set Default Datasource
+	if promptAnswers.DSUser != "" && promptAnswers.DSPassword != "" {
+		ds := GrafanaConnection{
+			"user":              promptAnswers.DSUser,
+			"basicAuthPassword": promptAnswers.DSPassword,
+		}
+
+		location := filepath.Join(answers.OutputPath, SecureSecretsResource)
+		err = os.MkdirAll(location, 0750)
+		if err != nil {
+			log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
+		}
+		data, err := json.MarshalIndent(&ds, "", "    ")
+		if err != nil {
+			log.Fatalf("unable to turn map into json representation.  location: %s, %v", location, err)
+		}
+		secretFileLocation := filepath.Join(location, "default.json")
+		err = os.WriteFile(secretFileLocation, data, 0600)
+		if err != nil {
+			log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
+		}
+		answers.ConnectionSettings.MatchingRules = []RegexMatchesList{
+			{
+				Rules: []MatchingRule{
+					{
+						Field: "name",
+						Regex: ".*",
+					},
+				},
+				SecureData: "default.json",
+			},
+		}
+
 	}
 
 	contextMap := s.GetGDGConfig().GetContexts()
@@ -124,5 +144,4 @@ func (s *Configuration) NewContext(name string) {
 		log.Fatal("could not save configuration.")
 	}
 	slog.Info("New configuration has been created", "newContext", name)
-
 }

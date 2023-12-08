@@ -17,7 +17,12 @@ func TestConnectionsCRUD(t *testing.T) {
 	}
 
 	apiClient, _, cleanup := initTest(t, nil)
-	defer cleanup()
+	defer func() {
+		cleanErr := cleanup()
+		if cleanErr != nil {
+			slog.Error("unable to clean up after test", slog.Any("err", cleanErr))
+		}
+	}()
 	filtersEntity := service.NewConnectionFilter("")
 	slog.Info("Exporting all connections")
 	apiClient.UploadConnections(filtersEntity)
@@ -50,8 +55,13 @@ func TestConnectionFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	_, _, clean := initTest(t, nil)
-	defer clean()
+	_, _, cleanup := initTest(t, nil)
+	defer func() {
+		cleanErr := cleanup()
+		if cleanErr != nil {
+			slog.Error("unable to clean up after test", slog.Any("err", cleanErr))
+		}
+	}()
 
 	testingContext := config.Config().GetGDGConfig().GetContexts()["testing"]
 	testingContext.GetDataSourceSettings().FilterRules = []config.MatchingRule{

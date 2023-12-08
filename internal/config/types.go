@@ -1,7 +1,12 @@
 package config
 
 import (
+	"encoding/json"
+	"errors"
 	"github.com/spf13/viper"
+	"log/slog"
+	"os"
+	"path/filepath"
 )
 
 const (
@@ -61,7 +66,7 @@ type GrafanaConfig struct {
 	OrganizationId           int64                 `mapstructure:"organization_id" yaml:"organization_id"`
 	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
-	DataSourceSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
+	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	//Datasources are deprecated, please use Connections
 	LegacyConnectionSettings map[string]interface{} `mapstructure:"datasources" yaml:"datasources"`
 	FilterOverrides          *FilterOverrides       `mapstructure:"filter_override" yaml:"filter_override"`
@@ -103,8 +108,34 @@ type ConnectionSettings struct {
 
 // RegexMatchesList model wraps regex matches list for grafana
 type RegexMatchesList struct {
-	Rules []MatchingRule     `mapstructure:"rules" yaml:"rules,omitempty"`
-	Auth  *GrafanaConnection `mapstructure:"auth" yaml:"auth,omitempty"`
+	Rules      []MatchingRule     `mapstructure:"rules" yaml:"rules,omitempty"`
+	SecureData string             `mapstructure:"secure_data" yaml:"secure_data,omitempty"`
+	LegacyAuth *GrafanaConnection `mapstructure:"auth" yaml:"auth,omitempty" json:"auth,omitempty"`
+}
+
+func (r RegexMatchesList) GetAuth(path string) (*GrafanaConnection, error) {
+	if r.LegacyAuth != nil && len(*r.LegacyAuth) > 0 {
+		slog.Warn("the 'auth' key is deprecated, please update to use 'secure_data'")
+	}
+	if r.SecureData == "" {
+		return r.LegacyAuth, nil
+	}
+	secretLocation := filepath.Join(path, r.SecureData)
+	result := new(GrafanaConnection)
+	raw, err := os.ReadFile(secretLocation)
+	if err != nil {
+		msg := "unable to read secrets at location"
+		slog.Error(msg, slog.String("file", secretLocation))
+		return nil, errors.New(msg)
+	}
+	err = json.Unmarshal(raw, result)
+	if err != nil {
+		msg := "unable to read JSON secrets"
+		slog.Error(msg, slog.Any("err", err), slog.String("file", secretLocation))
+		return nil, errors.New(msg)
+	}
+
+	return result, nil
 }
 
 // CredentialRule model wraps regex and auth for grafana
@@ -133,7 +164,12 @@ type ConnectionFilters struct {
 }
 
 // GrafanaConnection Default connection credentials
-type GrafanaConnection struct {
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
+type GrafanaConnection map[string]string
+
+func (g GrafanaConnection) User() string {
+	return g["user"]
+}
+
+func (g GrafanaConnection) Password() string {
+	return g["basicAuthPassword"]
 }
