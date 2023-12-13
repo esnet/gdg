@@ -114,7 +114,7 @@ func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 	return ds
 }
 
-// UploadConnections exports all datasources to grafana using the credentials configured in config file.
+// UploadConnections exports all connections to grafana using the credentials configured in config file.
 func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
@@ -149,10 +149,9 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 				continue
 			}
 			dsConfig := s.grafanaConf
-			var creds *config.GrafanaConnection
 
 			secureLocation := config.Config().GetDefaultGrafanaConfig().GetPath(config.SecureSecretsResource)
-			creds, err = dsConfig.GetCredentials(newDS, secureLocation)
+			credentials, err := dsConfig.GetCredentials(newDS, secureLocation)
 			if err != nil { //Attempt to get Credentials by URL regex
 				slog.Warn("DataSource has no secureData configured.  Please check your configuration.")
 			}
@@ -162,10 +161,16 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 				continue
 			}
 
-			if creds != nil {
-				newDS.BasicAuthUser = creds.User()
-				newDS.SecureJSONData = *creds
+			if credentials != nil {
+				//Sets basic auth if secureData contains it
+				if credentials.User() != "" && (*credentials)["basicAuthPassword"] != "" {
+					newDS.BasicAuthUser = credentials.User()
+					newDS.BasicAuth = true
+				}
+				//Pass any secure data that GDG is configured to use
+				newDS.SecureJSONData = *credentials
 			} else {
+				//if credentials are nil, then basicAuth has to be false
 				newDS.BasicAuth = false
 			}
 
