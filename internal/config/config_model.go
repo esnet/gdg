@@ -29,6 +29,7 @@ const (
 	TeamResource                 = "teams"
 	UserResource                 = "users"
 	TemplatesResource            = "templates"
+	SecureSecretsResource        = "secure"
 )
 
 var orgNamespacedResource = map[ResourceType]bool{
@@ -68,13 +69,13 @@ func (ds *ConnectionSettings) FiltersEnabled() bool {
 }
 
 // GetCredentials returns the credentials for the connection
-func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSourceCommand) (*GrafanaConnection, error) {
+func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSourceCommand, path string) (*GrafanaConnection, error) {
 	data, err := json.Marshal(connectionEntity)
 	if err != nil {
 		slog.Warn("Unable to marshall Connection, unable to fetch credentials")
 		return nil, fmt.Errorf("unable to marshall Connection, unable to fetch credentials")
 	}
-	//Get Auth based on New Matching Rules
+	//Get SecureData based on New Matching Rules
 	parser := gjson.ParseBytes(data)
 	for _, entry := range ds.MatchingRules {
 		//Check Rules
@@ -98,7 +99,7 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 			}
 		}
 		if valid {
-			return entry.Auth, nil
+			return entry.GetAuth(path)
 		}
 
 	}
@@ -154,10 +155,10 @@ func (s *GrafanaConfig) GetFilterOverrides() *FilterOverrides {
 
 // GetDataSourceSettings returns the datasource settings for the connection
 func (s *GrafanaConfig) GetDataSourceSettings() *ConnectionSettings {
-	if s.DataSourceSettings == nil {
-		s.DataSourceSettings = &ConnectionSettings{}
+	if s.ConnectionSettings == nil {
+		s.ConnectionSettings = &ConnectionSettings{}
 	}
-	return s.DataSourceSettings
+	return s.ConnectionSettings
 }
 
 // GetPath returns the path of the resource type
@@ -210,8 +211,8 @@ func (s *GrafanaConfig) IsAdminEnabled() bool {
 }
 
 // GetCredentials return credentials for a given datasource or falls back on default value
-func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceCommand) (*GrafanaConnection, error) {
-	source, err := s.GetDataSourceSettings().GetCredentials(dataSourceName)
+func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceCommand, location string) (*GrafanaConnection, error) {
+	source, err := s.GetDataSourceSettings().GetCredentials(dataSourceName, location)
 	if err == nil {
 		return source, nil
 	}

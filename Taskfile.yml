@@ -47,7 +47,8 @@ tasks:
   mocks: 
     desc: "Re-generate Mocks"
     cmds:
-      - mockery --dir=internal/service/ --output=internal/service/mocks --outpkg=mocks --all
+      - rm -fr internal/service/mocks
+      - mockery 
   linux:
     desc: "Build linux binary"
     cmds:

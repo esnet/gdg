@@ -40,22 +40,16 @@ contexts:
               regex: "misc"
             - field: "url"
               value: ".*esproxy2*"
-          auth:
-            user: user
-            password: password
+          secure_data: "default.json"
         - rules:
             - field: "url"
               regex: ".*esproxy2*"
-          auth:
-            user: admin
-            password: secret
+          secure_data: "default.json"
         - rules:
             # Default
             - field: "name"
               regex: ".*"
-          auth:
-            user: user
-            password: password
+          secure_data: "default.json"
     url: http://grafana:3000
     user_name: admin
     password: admin
@@ -72,16 +66,12 @@ contexts:
         - rules:
             - field: "name"
               regex: "(?i)complex name"
-          auth:
-            user: test
-            password: secret
+          secure_data: "default.json"
         # Default
         - rules:
             - field: "name"
               regex: ".*"
-          auth:
-            user: user
-            password: password
+          secure_data: "default.json"
     url: https://grafana.com
     user_name: admin
     password: admin
@@ -98,16 +88,12 @@ contexts:
         - rules:
             - field: "name"
               regex: "(?i)complex name"
-          auth:
-            user: test
-            password: secret
+          secure_data: "default.json"
         - rules:
             # Default
             - field: "name"
               regex: ".*"
-          auth:
-            user: user
-            password: password
+          secure_data: "default.json"
     url: https://staging.grafana.com
     organization_id: 1
     filter_override:

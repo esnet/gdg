@@ -16,7 +16,7 @@ func TestOrgsCrud(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
-		t.Skip("Skipping Token configuration, Organization CRUD requires Basic Auth")
+		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
@@ -37,7 +37,7 @@ func TestOrgUserMembership(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
-		t.Skip("Skipping Token configuration, Organization CRUD requires Basic Auth")
+		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()

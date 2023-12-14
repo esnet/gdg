@@ -16,7 +16,7 @@ func TestDevelSrvInfo(t *testing.T) {
 		expected["Commit"] = "commit"
 		expected["Version"] = "version"
 
-		mock.On("GetServerInfo").Return(expected)
+		mock.EXPECT().GetServerInfo().Return(expected)
 		err := cli.Execute(string(data), []string{"tools", "devel", "srvinfo"}, optionMockSvc())
 		return err
 	}

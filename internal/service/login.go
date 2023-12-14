@@ -22,7 +22,7 @@ type AuthenticationApi interface {
 	Login()
 }
 
-// Login Logs into grafana returning a legacyClient instance using Token or Basic Auth
+// Login Logs into grafana returning a legacyClient instance using Token or Basic SecureData
 func (s *DashNGoImpl) Login() {
 	var err error
 	u, err := url.Parse(s.grafanaConf.URL)
@@ -65,7 +65,7 @@ func (s *DashNGoImpl) Login() {
 // getGrafanaAdminAuth returns a runtime.ClientAuthInfoWriter that represents a Grafana Admin
 func (s *DashNGoImpl) getGrafanaAdminAuth() runtime.ClientAuthInfoWriter {
 	if !s.grafanaConf.IsAdminEnabled() || s.grafanaConf.UserName == "" {
-		log.Fatal("Unable to get Grafana Admin Auth. ")
+		log.Fatal("Unable to get Grafana Admin SecureData. ")
 	}
 
 	return s.getBasicAuth()

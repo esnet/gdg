@@ -1,0 +1,13 @@
+with-expecter: true
+recursive: false
+all: true
+dir: "{{.InterfaceDir}}/mocks"
+outpkg: "mocks"
+filename: "{{.InterfaceName}}.go"
+mockname: "{{.InterfaceName}}"
+packages:
+    github.com/esnet/gdg/internal/service:
+      config:
+        all: true
+        dir: "{{.InterfaceDir}}/mocks"
+        outpkg: "mocks"

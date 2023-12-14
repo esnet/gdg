@@ -211,7 +211,7 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 		var orgsPayload []*models.OrgDTO
 		orgList, err := s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getBasicAuth())
 		if err != nil {
-			slog.Warn("Error fetch organizations requires (SuperAdmin Basic Auth), assuming valid ID was requested.  Cannot validate OrgId")
+			slog.Warn("Error fetch organizations requires (SuperAdmin Basic SecureData), assuming valid ID was requested.  Cannot validate OrgId")
 			valid = true
 			orgsPayload = make([]*models.OrgDTO, 0)
 		} else {

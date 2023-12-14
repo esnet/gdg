@@ -26,7 +26,7 @@ You can use an Authentication Token / API Key to authenticate with the Grafana A
 
 Service Accounts are supported and interchangeable for tokens.  If you wish to use a service account, simply put the token value from the service account for `token:`.  Please make sure you've granted the account the needed permissions for the operations you are trying to perform.
 
-```
+```yaml
 context_name: main
 
 contexts:
@@ -38,16 +38,21 @@ contexts:
     watched:
       - Example
     connections:
-      credentials:
-        default:
-          user: admin
-          password: secret
-          url_regex:    ## set to pattern to match as well as the name.
-        misc:
-          user: admin
-          password: secret
-          url_regex: .*esproxy2*      
-
+      credential_rules:
+        - rules:
+            - field: "name"
+              regex: "misc"
+            - field: "url"
+              value: ".*esproxy2*"
+          secure_data: "misc_auth.json"
+        - rules:
+            - field: "url"
+              regex: ".*esproxy2*"
+          secure_data: "proxy.json"
+        - rules:
+            - field: "name"
+              regex: ".*"
+          secure_data: "default.json"
 global:
   debug: true
   ignore_ssl_errors: false
@@ -77,8 +82,7 @@ global:
 
 #### Connection Credentials
 
-#### Current Behavior (Version +v0.4.2)
-
+#####  Current Behavior (Version +0.5.2)
 If the connection has BasicAuth enabled, then we'll attempt to set the auth with the following rules.
 
 We will try to find a match given the rules specified:
@@ -86,7 +90,7 @@ We will try to find a match given the rules specified:
  - field: matches any valid gjson path and retrieves it's value.  ie.  `jsonData.maxConcurrentShardRequests` and validates it against a golang supported [Regex](https://github.com/google/re2/wiki/Syntax).
  - It goes down the list of rules and returns the auth for the first matching one.  The rules should be listed from more specific to more broad.  The default rule ideally should be at the end.
 
-```json
+
 ```yaml
   testing:
     output_path: testing_data
@@ -97,8 +101,47 @@ We will try to find a match given the rules specified:
               regex: "misc"
             - field: "url"
               regex: ".*esproxy2*"
+          secure_data: "default.json"
+    url: http://localhost:3000
+    user_name: admin
+    password: admin
+    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    watched:
+      - General
+      - Other
+
+ ```
+the secure_data will read the file from {output_path}/secure/.  It will then use that
+information to construct the datasource.
+
+Default setting if you use basic auth is shown below.
+
+```json
+{
+    "basicAuthPassword": "password",
+    "user": "user"
+}
+```
+
+##### Version v0.4.2-v0.5.1
+
+{{< details "Legacy Behavior " >}}
+Preview behavior did not support the use of a secure/secureData.json pattern, instead an auth: codeblock was used.
+
+Please note that only basicAuth worked prior to version v0.5.2
+
+Example can be seen below:
+
+```yaml
+  testing:
+    output_path: testing_data
+    connections:
+      credential_rules:
+        - rules:
+            - field: name
+              regex: .*
           auth:
-            user: admin
+            user: user
             password: secret
     url: http://localhost:3000
     user_name: admin
@@ -106,12 +149,17 @@ We will try to find a match given the rules specified:
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - General
-      - Other 
- 
+      - Other
+
  ```
 
 
-##### Legacy Behavior:
+
+{{< /details >}}
+
+##### Version Prior to v0.4.2
+
+{{< details "Legacy Behavior " >}}
 
 If the connection has BasicAuth enabled, then we'll attempt to set the auth with the following precedence on matches:
 
@@ -139,9 +187,10 @@ An example of a configuration can be seen below
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - General
-      - Other 
- 
+      - Other
+
  ```
+{{< /details >}}
 
 #### Connection Filters
 
@@ -151,9 +200,9 @@ You can filter based on any field and have it be an exclusive (default) or inclu
 
 Pattern matching is the same as the Credentials mapping.
 
-  - field represents any valid JSON Path 
+  - field represents any valid JSON Path
   - regex: any valid [regex](https://github.com/google/re2/wiki/Syntax) supported by golang
-  
+
 The example below will exclude any connections named "Google Sheets".  It will also only include connections with the type elasticsearch or mysql
 
 ```yaml
@@ -170,7 +219,7 @@ contexts:
 ```
 
 #### Legacy Behavior
-
+{{< details "Legacy Behavior " >}}
 This feature allows you to exclude connection by name or include them by type.  Please note that the logic switches based on the data type.
 
 **name filter:**
@@ -186,7 +235,7 @@ Will exclude any connection that matches the name regex.
 
 **Type Filter**
 
-Will ONLY include connection that are listed. 
+Will ONLY include connection that are listed.
 
 ```yaml
 datasources:
@@ -199,11 +248,12 @@ The snippet above will ONLY import connections for elasticsearch
 
 
 
+{{< /details >}}
 
 #### Notes
 
 If you configure both, Auth Token and Username/Password, then the Token is given priority.
-Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only "General" is managed.  
+Watched folders under grafana is a white list of folders that are being managed by the tool.  By default only "General" is managed.
 
 env.output defines where the files will be saved and imported from.
 
@@ -214,9 +264,9 @@ env.output defines where the files will be saved and imported from.
 
 ### Environment Overrides
 
-If you wish to override certain value via the environment, like credentials and such you can do so.  
+If you wish to override certain value via the environment, like credentials and such you can do so.
 
-The pattern for GDG's is as follows:  "GDG_SECTION__SECTION__keyname"
+The pattern for GDG's is as follows:  `GDG_SECTION__SECTION__keyname`
 
 For example if I want to set the context name to a different value I can use:
 
@@ -236,6 +286,9 @@ GDG_CONTEXTS__TESTING__URL="www.google.com" Will override the URL with the one p
 Running it then should be as simple as:
 
 ```bash
-$ make build
-$ ./bin/gdg
+$ task build_all
+$ ./bin/gdg  ## main binary
+$ ./bin/gdg-generate  ## Dashboard Templating engine
 ```
+
+Requires [task](https://github.com/go-task/task.git) to be installed locally

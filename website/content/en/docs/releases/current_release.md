@@ -14,6 +14,7 @@ toc: true
 
 
 ### Changes
+  - Replacing Connection Auth with a secure/foobar.json file.  Allows for more flexible data to be pushed to grafana.
   - [TechDebt] refactored packages, moving cmd-> cli, and created cmd/ to allow for multiple binaries to be generated.
   - [#168](https://github.com/esnet/gdg/issues/168) Introduced a new tool called gdg-generate which allows for templating of dashboards using go.tmpl syntax.
   -

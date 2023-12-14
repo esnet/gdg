@@ -15,8 +15,12 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	}
 
 	apiClient, _, cleanup := initTest(t, nil)
-	defer cleanup()
-
+	defer func() {
+		cleanErr := cleanup()
+		if cleanErr != nil {
+			slog.Error("unable to clean up after test", slog.Any("err", cleanErr))
+		}
+	}()
 	//Wipe all data from grafana
 	dsFilter := service.NewConnectionFilter("")
 	apiClient.DeleteAllConnections(dsFilter)
@@ -52,8 +56,12 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	assert.Nil(t, err, "Failed to set context name via env to testing")
 
 	apiClient, _, cleanup := initTest(t, nil)
-	defer cleanup()
-
+	defer func() {
+		cleanErr := cleanup()
+		if cleanErr != nil {
+			slog.Error("unable to clean up after test", slog.Any("err", cleanErr))
+		}
+	}()
 	//Wipe all data from grafana
 	dashFilter := service.NewDashboardFilter("", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)

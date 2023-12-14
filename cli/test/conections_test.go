@@ -28,8 +28,8 @@ func TestConnectionCommand(t *testing.T) {
 		},
 	}
 
-	testSvc.On("InitOrganizations").Return(nil)
-	testSvc.On("ListConnections", mock.Anything).Return(resp)
+	testSvc.EXPECT().InitOrganizations().Return()
+	testSvc.EXPECT().ListConnections(mock.Anything).Return(resp)
 
 	optionMockSvc := func() support.RootOption {
 		return func(response *support.RootCommand) {

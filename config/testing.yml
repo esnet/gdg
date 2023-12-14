@@ -11,15 +11,11 @@ contexts:
               regex: "misc"
             - field: "url"
               regex: ".*esproxy2*"
-          auth:
-            user: admin
-            password: secret
+          secure_data: "default.json"
         - rules:
             - field: "name"
               regex: ".*"
-          auth:
-            user: user
-            password: password
+          secure_data: "default.json"
     url: http://localhost:3000
     user_name: admin
     password: admin
@@ -34,16 +30,12 @@ contexts:
         - rules:
             - field: "name"
               regex: "(?i)complex name"
-          auth:
-            password: secret
-            user: test
+          secure_data: "default.json"
         - rules:
             - match:
                 - field: "name"
                   regex: ".*"
-          auth:
-            password: password
-            user: user
+          secure_data: "default.json"
 
     url: https://grafana.com
     user_name: admin
@@ -53,29 +45,23 @@ contexts:
     watched:
       - General
   qa:
-    output_path: qa
+    output_path: test/data
     token: <CHANGEME>
     connections:
       credential_rules:
         - rules:
             - field: "name"
               regex: "(?i)complex name"
-          auth:
-            user: test
-            password: secret
+          secure_data: "complex.json"
         - rules:
             - field: "name"
               regex: "ds_name"
-          auth:
-            user: abcd
-            password: secret
+          secure_data: "default.json"
         # Default
         - rules:
             - field: "name"
               regex: ".*"
-          auth:
-            user: user
-            password: password
+          secure_data: "default.json"
     url: https://staging.grafana.com
     organization: your-org
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
