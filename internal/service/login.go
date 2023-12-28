@@ -29,10 +29,14 @@ func (s *DashNGoImpl) Login() {
 	if err != nil {
 		log.Fatal("invalid Grafana URL")
 	}
+	path, err := url.JoinPath(u.Path, "/api")
+	if err != nil {
+		log.Fatal("invalid Grafana URL Path")
+	}
 	var clientTransport *http.Transport
 	httpTransportCfg := client.TransportConfig{
 		Host:     u.Host,
-		BasePath: "/api",
+		BasePath: path,
 		Schemes:  []string{u.Scheme},
 		//NumRetries: 3,
 	}
