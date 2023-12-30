@@ -5,8 +5,26 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/stretchr/testify/assert"
 	"os"
+	"strings"
 	"testing"
 )
+
+func TestRelativePathLogin(t *testing.T) {
+	cwd, err := os.Getwd()
+	assert.Nil(t, err)
+	if strings.Contains(cwd, "service") {
+		os.Chdir("../..")
+	}
+	os.Setenv("GDG_CONTEXTS__TESTING__URL", "http://localhost:3000/grafana/")
+	config.InitConfig("config/testing.yml", "'")
+	defer os.Unsetenv("GDG_CONTEXTS__TESTING__URL")
+
+	svc := NewApiService("dummy")
+	cfg := svc.(*DashNGoImpl).httpConfig
+	assert.Equal(t, cfg.Host, "localhost:3000")
+	assert.Equal(t, cfg.BasePath, "/grafana/api")
+
+}
 
 // Validates the paths for the various entity types using the common
 // code used to create folders and generate paths.

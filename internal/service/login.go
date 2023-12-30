@@ -29,12 +29,12 @@ func (s *DashNGoImpl) Login() {
 	if err != nil {
 		log.Fatal("invalid Grafana URL")
 	}
-	path, err := url.JoinPath(u.Path, "/api")
+	path, err := url.JoinPath(u.Path, "api")
 	if err != nil {
 		log.Fatal("invalid Grafana URL Path")
 	}
 	var clientTransport *http.Transport
-	httpTransportCfg := client.TransportConfig{
+	s.httpConfig = &client.TransportConfig{
 		Host:     u.Host,
 		BasePath: path,
 		Schemes:  []string{u.Scheme},
@@ -43,18 +43,18 @@ func (s *DashNGoImpl) Login() {
 
 	if config.Config().IgnoreSSL() {
 		_, clientTransport = ignoreSSLErrors()
-		httpTransportCfg.TLSConfig = clientTransport.TLSClientConfig
+		s.httpConfig.TLSConfig = clientTransport.TLSClientConfig
 	}
 	if s.grafanaConf.UserName != "" && s.grafanaConf.Password != "" {
-		httpTransportCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.Password)
+		s.httpConfig.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.Password)
 	}
 	if s.grafanaConf.APIToken != "" {
-		httpTransportCfg.APIKey = s.grafanaConf.APIToken
+		s.httpConfig.APIKey = s.grafanaConf.APIToken
 	}
 	if s.grafanaConf.OrganizationId != 0 {
-		httpTransportCfg.OrgID = s.grafanaConf.OrganizationId
+		s.httpConfig.OrgID = s.grafanaConf.OrganizationId
 	}
-	s.client = client.NewHTTPClientWithConfig(strfmt.Default, &httpTransportCfg)
+	s.client = client.NewHTTPClientWithConfig(strfmt.Default, s.httpConfig)
 
 	userInfo, err := s.GetUserInfo()
 	//Sets state based on user permissions
