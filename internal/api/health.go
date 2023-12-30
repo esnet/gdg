@@ -16,7 +16,7 @@ type HealthResponse struct {
 func (extended *ExtendedApi) Health() (*HealthResponse, error) {
 	health := &HealthResponse{}
 	err := extended.getRequestBuilder().
-		Path("/api/health").
+		Path("api/health").
 		ToJSON(health).
 		Method(http.MethodGet).Fetch(context.Background())
 	return health, err

@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/grafana/grafana-openapi-client-go/client/legacy_alerts_notification_channels"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"log/slog"
 	"strings"
@@ -24,8 +23,7 @@ type AlertNotificationsApi interface {
 //ListAlertNotifications: list all currently configured notification channels
 
 func (s *DashNGoImpl) ListAlertNotifications() []*models.AlertNotification {
-	params := legacy_alerts_notification_channels.NewGetAlertNotificationChannelsParams()
-	channels, err := s.client.LegacyAlertsNotificationChannels.GetAlertNotificationChannels(params, s.getAuth())
+	channels, err := s.GetClient().LegacyAlertsNotificationChannels.GetAlertNotificationChannels()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -58,12 +56,10 @@ func (s *DashNGoImpl) DownloadAlertNotifications() []string {
 
 // Removes all current alert notification channels
 func (s *DashNGoImpl) DeleteAllAlertNotifications() []string {
-	var an []string = make([]string, 0)
+	var an = make([]string, 0)
 	items := s.ListAlertNotifications()
 	for _, item := range items {
-		params := legacy_alerts_notification_channels.NewDeleteAlertNotificationChannelParams()
-		params.NotificationChannelID = item.ID
-		_, err := s.client.LegacyAlertsNotificationChannels.DeleteAlertNotificationChannel(params, s.getAuth())
+		_, err := s.GetClient().LegacyAlertsNotificationChannels.DeleteAlertNotificationChannel(item.ID)
 		if err != nil {
 			slog.Error("Failed to delete notification")
 			continue
@@ -107,18 +103,14 @@ func (s *DashNGoImpl) UploadAlertNotifications() []string {
 
 			for _, existing := range alertnotifications {
 				if existing.Name == newAlertNotification.Name {
-					dp := legacy_alerts_notification_channels.NewDeleteAlertNotificationChannelByUIDParams()
-					dp.NotificationChannelUID = existing.UID
-					if _, err := s.client.LegacyAlertsNotificationChannels.DeleteAlertNotificationChannelByUID(dp, s.getAuth()); err != nil {
+					if _, err := s.GetClient().LegacyAlertsNotificationChannels.DeleteAlertNotificationChannelByUID(existing.UID); err != nil {
 						slog.Error("error on deleting datasource", "datasource", newAlertNotification.Name, "err", err)
 					}
 					break
 				}
 			}
 
-			params := legacy_alerts_notification_channels.NewCreateAlertNotificationChannelParams()
-			params.Body = &newAlertNotification
-			if _, err = s.client.LegacyAlertsNotificationChannels.CreateAlertNotificationChannel(params, s.getAuth()); err != nil {
+			if _, err = s.GetClient().LegacyAlertsNotificationChannels.CreateAlertNotificationChannel(&newAlertNotification); err != nil {
 				slog.Error("error on importing datasource", "datasource", newAlertNotification.Name, "err", err)
 				continue
 			}

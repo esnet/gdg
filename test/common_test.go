@@ -39,7 +39,7 @@ func setupMinioContainer(wg *sync.WaitGroup, channels chan Containers) {
 	ctx := context.Background()
 	req := testcontainers.ContainerRequest{
 		Image:        "bitnami/minio:latest",
-		ExposedPorts: []string{"9000/tcp", "9001/tcp"},
+		ExposedPorts: []string{"9000/tcp"},
 		Env:          map[string]string{"MINIO_ROOT_USER": "test", "MINIO_ROOT_PASSWORD": "secretsss"},
 		WaitingFor:   wait.ForListeningPort("9000/tcp"),
 	}

@@ -10,7 +10,6 @@ import (
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/admin_users"
-	"github.com/grafana/grafana-openapi-client-go/client/signed_in_user"
 	"github.com/grafana/grafana-openapi-client-go/client/users"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/pretty"
@@ -71,8 +70,7 @@ func DefaultUserPassword(username string) string {
 
 // GetUserInfo get signed-in user info, requires Basic authentication
 func (s *DashNGoImpl) GetUserInfo() (*models.UserProfileDTO, error) {
-	p := signed_in_user.NewGetSignedInUserParams()
-	userInfo, err := s.client.SignedInUser.GetSignedInUser(p, s.getBasicAuth())
+	userInfo, err := s.GetBasicAuthClient().SignedInUser.GetSignedInUser()
 	if err == nil {
 		return userInfo.GetPayload(), err
 	}
@@ -172,14 +170,12 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO
 			}
 			params := admin_users.NewAdminCreateUserParams()
 			params.Body = &newUser
-			userCreated, err := s.client.AdminUsers.AdminCreateUser(params, s.getBasicAuth())
+			userCreated, err := s.GetBasicAuthClient().AdminUsers.AdminCreateUser(&newUser)
 			if err != nil {
 				slog.Error("Failed to create user for file", "filename", fileLocation, "err", err)
 				continue
 			}
-			p := users.NewGetUserByIDParams()
-			p.UserID = userCreated.Payload.ID
-			resp, err := s.client.Users.GetUserByID(p, s.getBasicAuth())
+			resp, err := s.GetBasicAuthClient().Users.GetUserByID(userCreated.Payload.ID)
 			if err != nil {
 				slog.Error("unable to read user back from grafana", "username", newUser.Email, "userID", userCreated.GetPayload().ID)
 				continue
@@ -200,7 +196,7 @@ func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDT
 	params := users.NewSearchUsersParams()
 	params.Page = tools.PtrOf(int64(1))
 	params.Perpage = tools.PtrOf(int64(5000))
-	usersList, err := s.client.Users.SearchUsers(params, s.getAuth())
+	usersList, err := s.GetClient().Users.SearchUsers(params)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -226,7 +222,7 @@ func (s *DashNGoImpl) DeleteAllUsers(filter filters.Filter) []string {
 		}
 		params := admin_users.NewAdminDeleteUserParams()
 		params.UserID = user.ID
-		_, err := s.client.AdminUsers.AdminDeleteUser(params, s.getBasicAuth())
+		_, err := s.GetBasicAuthClient().AdminUsers.AdminDeleteUser(user.ID)
 		if err == nil {
 			deletedUsers = append(deletedUsers, user.Email)
 		}
@@ -252,14 +248,9 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 	if user == nil {
 		return "", fmt.Errorf("user: '%s' could not be found", userLogin)
 	}
+	requestBody := &models.AdminUpdateUserPermissionsForm{IsGrafanaAdmin: true}
 
-	promoteUserParam := admin_users.NewAdminUpdateUserPermissionsParams()
-	promoteUserParam.UserID = user.ID
-	promoteUserParam.Body = &models.AdminUpdateUserPermissionsForm{
-		IsGrafanaAdmin: true,
-	}
-
-	msg, err := s.client.AdminUsers.AdminUpdateUserPermissions(promoteUserParam, s.getBasicAuth())
+	msg, err := s.GetBasicAuthClient().AdminUsers.AdminUpdateUserPermissions(user.ID, requestBody)
 	if err != nil {
 		errorMsg := fmt.Sprintf("failed to promote user: '%s'", userLogin)
 		slog.Error("failed to promote user", "username", userLogin, "err", err)
@@ -272,9 +263,7 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 
 // getUserById get the user by ID
 func (s *DashNGoImpl) getUserById(userId int64) (*models.UserProfileDTO, error) {
-	p := users.NewGetUserByIDParams()
-	p.UserID = userId
-	resp, err := s.client.Users.GetUserByID(p, s.getAuth())
+	resp, err := s.GetClient().Users.GetUserByID(userId)
 	if err != nil {
 		return nil, err
 	}

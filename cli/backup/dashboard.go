@@ -11,6 +11,7 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"log/slog"
+	"net/url"
 	"strings"
 )
 
@@ -162,9 +163,17 @@ func newListDashboardsCmd() simplecobra.Commander {
 
 			slog.Info("Listing dashboards for context", "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range boards {
-				url := fmt.Sprintf("%s%s", config.Config().GetDefaultGrafanaConfig().URL, link.URL)
+				base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().URL)
+				var baseHost string
+				if err != nil {
+					baseHost = "http://unknown/"
+				} else {
+					base.Path = ""
+					baseHost = base.String()
+				}
+				urlValue := fmt.Sprintf("%s%s", baseHost, link.URL)
 				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
-					link.UID, strings.Join(link.Tags, ","), url})
+					link.UID, strings.Join(link.Tags, ","), urlValue})
 
 			}
 			if len(boards) > 0 {

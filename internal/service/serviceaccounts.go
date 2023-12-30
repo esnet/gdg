@@ -27,7 +27,7 @@ func (s *DashNGoImpl) CreateServiceAccount(name, role string, expiration int64) 
 		Name: name,
 		Role: role,
 	}
-	data, err := s.client.ServiceAccounts.CreateServiceAccount(p, s.getAuth())
+	data, err := s.GetClient().ServiceAccounts.CreateServiceAccount(p)
 	if err != nil {
 		log.Fatalf("unable to create a service request, serviceName: %s, role: %s", name, role)
 
@@ -43,7 +43,7 @@ func (s *DashNGoImpl) CreateServiceAccountToken(serviceAccountId int64, name str
 		SecondsToLive: expiration,
 	}
 	p.ServiceAccountID = serviceAccountId
-	token, err := s.client.ServiceAccounts.CreateToken(p, s.getAuth())
+	token, err := s.GetClient().ServiceAccounts.CreateToken(p)
 	if err != nil {
 		log.Fatalf("unable to create token '%s' for service account ID: %d, err: %v", name, serviceAccountId, err)
 
@@ -57,7 +57,7 @@ func (s *DashNGoImpl) ListServiceAccounts() []*api.ServiceAccountDTOWithTokens {
 	p.Disabled = tools.PtrOf(false)
 	p.Perpage = tools.PtrOf(int64(5000))
 
-	resp, err := s.client.ServiceAccounts.SearchOrgServiceAccountsWithPaging(p, s.getAuth())
+	resp, err := s.GetClient().ServiceAccounts.SearchOrgServiceAccountsWithPaging(p)
 	if err != nil {
 		log.Fatal("unable to retrieve service accounts")
 	}
@@ -82,11 +82,7 @@ func (s *DashNGoImpl) ListServiceAccounts() []*api.ServiceAccountDTOWithTokens {
 }
 
 func (s *DashNGoImpl) ListServiceAccountsTokens(id int64) ([]*models.TokenDTO, error) {
-
-	p := service_accounts.NewListTokensParams()
-	p.ServiceAccountID = id
-	//response, err := s.extended.ListTokens(p)
-	response, err := s.client.ServiceAccounts.ListTokens(p, s.getAuth())
+	response, err := s.GetClient().ServiceAccounts.ListTokens(id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve service account for %d response", id)
 	}
@@ -98,13 +94,12 @@ func (s *DashNGoImpl) DeleteAllServiceAccounts() []string {
 	var accountNames []string
 	accounts := s.ListServiceAccounts()
 	for _, account := range accounts {
-		p := service_accounts.NewDeleteServiceAccountParams()
-		p.ServiceAccountID = account.ServiceAccount.ID
-		_, err := s.client.ServiceAccounts.DeleteServiceAccount(p, s.getAuth())
+		accountId := account.ServiceAccount.ID
+		_, err := s.GetClient().ServiceAccounts.DeleteServiceAccount(accountId)
 		if err != nil {
-			slog.Warn("Failed to delete service account", "ServiceAccountId", p.ServiceAccountID)
+			slog.Warn("Failed to delete service account", "ServiceAccountId", accountId)
 		} else {
-			accountNames = append(accountNames, fmt.Sprintf("service account %d has been deleted", p.ServiceAccountID))
+			accountNames = append(accountNames, fmt.Sprintf("service account %d has been deleted", accountId))
 		}
 	}
 
@@ -119,10 +114,7 @@ func (s *DashNGoImpl) DeleteServiceAccountTokens(serviceId int64) []string {
 	}
 
 	for _, token := range tokens {
-		p := service_accounts.NewDeleteTokenParams()
-		p.TokenID = token.ID
-		p.ServiceAccountID = serviceId
-		_, err := s.client.ServiceAccounts.DeleteToken(p, s.getAuth())
+		_, err := s.GetClient().ServiceAccounts.DeleteToken(token.ID, serviceId)
 		if err != nil {
 			slog.Error("unable to delete token", "tokenID", token.ID)
 			continue

@@ -71,9 +71,7 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][
 		}
 		//Members
 		memberFileName := filepath.Join(teamPath, GetSlug(team.Name), "members.json")
-		p := teams.NewGetTeamMembersParams()
-		p.TeamID = fmt.Sprintf("%d", team.ID)
-		members, err := s.client.Teams.GetTeamMembers(p, s.getAuth())
+		members, err := s.GetClient().Teams.GetTeamMembers(fmt.Sprintf("%d", team.ID))
 		if err != nil {
 			slog.Error("could not get team members object for team name", "teamName", team.Name)
 			continue
@@ -120,12 +118,11 @@ func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*
 				slog.Error("failed to unmarshal file", "filename", fileLocation, "err", err)
 				continue
 			}
-			p := teams.NewCreateTeamParams()
-			p.Body = &models.CreateTeamCommand{
+			p := &models.CreateTeamCommand{
 				Name:  newTeam.Name,
 				Email: newTeam.Email,
 			}
-			teamCreated, err := s.client.Teams.CreateTeam(p, s.getAuth())
+			teamCreated, err := s.GetClient().Teams.CreateTeam(p)
 			if err != nil {
 				slog.Error("failed to create team for file", "filename", fileLocation, "err", err)
 			}
@@ -169,7 +166,7 @@ func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*mo
 	var pageSize int64 = 99999
 	p := teams.NewSearchTeamsParams()
 	p.Perpage = &pageSize
-	data, err := s.client.Teams.SearchTeams(p, s.getAuth())
+	data, err := s.GetClient().Teams.SearchTeams(p)
 	if err != nil {
 		log.Fatal("unable to list teams")
 	}
@@ -217,9 +214,7 @@ func (s *DashNGoImpl) DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, erro
 		if filter != nil && !filter.ValidateAll(team.Name) {
 			continue
 		}
-		p := teams.NewDeleteTeamByIDParams()
-		p.TeamID = fmt.Sprintf("%d", team.ID)
-		_, err := s.client.Teams.DeleteTeamByID(p, s.getAuth())
+		_, err := s.GetClient().Teams.DeleteTeamByID(fmt.Sprintf("%d", team.ID))
 		if err != nil {
 			slog.Error("failed to delete team", "teamName", team.Name)
 			continue
@@ -233,9 +228,7 @@ func (s *DashNGoImpl) DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, erro
 // List Team Members of specific Team
 func (s *DashNGoImpl) listTeamMembers(filter filters.Filter, teamID int64) []*models.TeamMemberDTO {
 	teamIDStr := fmt.Sprintf("%d", teamID)
-	fetchTeamParam := teams.NewGetTeamMembersParams()
-	fetchTeamParam.TeamID = teamIDStr
-	members, err := s.client.Teams.GetTeamMembers(fetchTeamParam, s.getAuth())
+	members, err := s.GetClient().Teams.GetTeamMembers(teamIDStr)
 	if err != nil {
 		log.Fatal(fmt.Errorf("team:  '%d' could not be found", teamID))
 	}
@@ -260,10 +253,8 @@ func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMe
 	if user == nil {
 		log.Fatal(fmt.Errorf("user:  '%s' could not be found", userDTO.Login))
 	}
-	p := teams.NewAddTeamMemberParams()
-	p.TeamID = fmt.Sprintf("%d", team.ID)
-	p.Body = &models.AddTeamMemberCommand{UserID: user.ID}
-	msg, err := s.client.Teams.AddTeamMember(p, s.getAuth())
+	body := &models.AddTeamMemberCommand{UserID: user.ID}
+	msg, err := s.GetClient().Teams.AddTeamMember(fmt.Sprintf("%d", team.ID), body)
 	if err != nil {
 		slog.Info(err.Error())
 		errorMsg := fmt.Sprintf("failed to add member '%s' to team '%s'", userDTO.Login, team.Name)
@@ -275,7 +266,7 @@ func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMe
 		adminPatch.TeamID = fmt.Sprintf("%d", team.ID)
 		adminPatch.UserID = userDTO.UserID
 		adminPatch.Body = &models.UpdateTeamMemberCommand{Permission: AdminUserPermission}
-		response, err := s.client.Teams.UpdateTeamMember(adminPatch, s.getAuth())
+		response, err := s.GetClient().Teams.UpdateTeamMember(adminPatch)
 		if err != nil {
 			return "", err
 		}

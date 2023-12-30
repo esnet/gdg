@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/grafana/grafana-openapi-client-go/client/datasources"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"log/slog"
 	"path/filepath"
@@ -49,7 +48,7 @@ func (s *DashNGoImpl) ListConnections(filter filters.Filter) []models.DataSource
 		log.Fatalf("Failed to switch organization ID %d: ", s.grafanaConf.OrganizationId)
 	}
 
-	ds, err := s.client.Datasources.GetDataSources(datasources.NewGetDataSourcesParams(), s.getAuth())
+	ds, err := s.GetClient().Datasources.GetDataSources()
 	if err != nil {
 		panic(err)
 	}
@@ -101,10 +100,7 @@ func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 	var ds []string = make([]string, 0)
 	items := s.ListConnections(filter)
 	for _, item := range items {
-		p := datasources.NewDeleteDataSourceByIDParams()
-		p.ID = fmt.Sprintf("%d", item.ID)
-
-		dsItem, err := s.client.Datasources.DeleteDataSourceByID(p, s.getAuth())
+		dsItem, err := s.GetClient().Datasources.DeleteDataSourceByID(fmt.Sprintf("%d", item.ID))
 		if err != nil {
 			slog.Warn("Failed to delete datasource", "datasource", item.Name, "err", dsItem.Error())
 			continue
@@ -176,17 +172,14 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 
 			for _, existingDS := range dsListing {
 				if existingDS.Name == newDS.Name {
-					deleteParam := datasources.NewDeleteDataSourceByIDParams()
-					deleteParam.ID = fmt.Sprintf("%d", existingDS.ID)
-					if _, err := s.client.Datasources.DeleteDataSourceByID(deleteParam, s.getAuth()); err != nil {
+					if _, err := s.GetClient().Datasources.DeleteDataSourceByID(fmt.Sprintf("%d", existingDS.ID)); err != nil {
 						slog.Error("error on deleting datasource", "datasource", newDS.Name, "err", err)
 					}
 					break
 				}
 			}
-			p := datasources.NewAddDataSourceParams().WithBody(&newDS)
 
-			if createStatus, err := s.client.Datasources.AddDataSource(p, s.getAuth()); err != nil {
+			if createStatus, err := s.GetClient().Datasources.AddDataSource(&newDS); err != nil {
 				slog.Error("error on importing datasource", "datasource", newDS.Name, "err", err, "createError", createStatus.Error())
 			} else {
 				exported = append(exported, fileLocation)

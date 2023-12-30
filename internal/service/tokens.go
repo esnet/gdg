@@ -18,7 +18,7 @@ type TokenApi interface {
 // ListAPIKeys returns a list of all known API Keys and service accounts
 func (s *DashNGoImpl) ListAPIKeys() []*models.APIKeyDTO {
 	params := api_keys.NewGetAPIkeysParams()
-	keys, err := s.client.APIKeys.GetAPIkeys(params, s.getBasicAuth())
+	keys, err := s.GetBasicAuthClient().APIKeys.GetAPIkeys(params)
 	if err != nil {
 		log.Fatal("unable to list API Keys")
 	}
@@ -43,15 +43,14 @@ func (s *DashNGoImpl) DeleteAllTokens() []string {
 
 // CreateAPIKey create a new key for the given role and expiration specified
 func (s *DashNGoImpl) CreateAPIKey(name, role string, expiration int64) (*models.NewAPIKeyResult, error) {
-	p := api_keys.NewAddAPIkeyParams()
-	p.Body = &models.AddCommand{
+	p := &models.AddAPIKeyCommand{
 		Name: name,
 		Role: role,
 	}
 	if expiration != 0 {
-		p.Body.SecondsToLive = expiration
+		p.SecondsToLive = expiration
 	}
-	newKey, err := s.client.APIKeys.AddAPIkey(p, s.getAuth())
+	newKey, err := s.GetClient().APIKeys.AddAPIkey(p)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create a new API Key")
 	}
@@ -59,9 +58,7 @@ func (s *DashNGoImpl) CreateAPIKey(name, role string, expiration int64) (*models
 
 }
 func (s *DashNGoImpl) deleteAPIKey(id int64) error {
-	p := api_keys.NewDeleteAPIkeyParams()
-	p.ID = id
-	_, err := s.client.APIKeys.DeleteAPIkey(p, s.getAuth())
+	_, err := s.GetClient().APIKeys.DeleteAPIkey(id)
 	if err != nil {
 		return fmt.Errorf("failed to delete API Key: %d", id)
 	}
