@@ -20,9 +20,10 @@ type AuthenticationApi interface {
 	Login()
 }
 
-// Login Logs into grafana returning a legacyClient instance using Token or Basic SecureData
+// Login sets admin flag and provisions the Extended API for calls unsupported by the OpenAPI spec.
 func (s *DashNGoImpl) Login() {
 	var err error
+	//Will only succeed for BasicAuth
 	userInfo, err := s.GetUserInfo()
 	// Sets state based on user permissions
 	if err == nil {

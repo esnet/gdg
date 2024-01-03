@@ -167,6 +167,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 				var baseHost string
 				if err != nil {
 					baseHost = "http://unknown/"
+					slog.Warn("unable to determine grafana base host for dashboard", slog.String("dashboard-uid", link.UID))
 				} else {
 					base.Path = ""
 					baseHost = base.String()
