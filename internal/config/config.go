@@ -171,7 +171,7 @@ func (app *GDGAppConfiguration) GetContextMap() map[string]interface{} {
 }
 
 var (
-	configData        *Configuration
+	configData        = new(Configuration)
 	configSearchPaths = []string{"config", ".", "../config", "../../config", "/etc/gdg"}
 )
 
@@ -196,7 +196,10 @@ func (s *Configuration) GetContexts() map[string]*GrafanaConfig {
 
 // IsDebug returns true if debug mode is enabled
 func (s *Configuration) IsDebug() bool {
-	return s.GetViperConfig(ViperGdgConfig).GetBool("global.debug")
+	if val := s.GetViperConfig(ViperGdgConfig); val != nil {
+		return val.GetBool("global.debug")
+	}
+	return false
 }
 
 // IgnoreSSL returns true if SSL errors should be ignored

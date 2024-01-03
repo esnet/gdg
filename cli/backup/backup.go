@@ -21,6 +21,7 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 			return cd.CobraCommand.Help()
 		},
 		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
+			support.InitConfiguration(cd.CobraCommand)
 			r.GrafanaSvc().InitOrganizations()
 			return nil
 		},

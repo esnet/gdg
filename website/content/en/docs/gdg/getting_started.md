@@ -7,7 +7,7 @@ weight: 13
 
 You can create new context configuration using an interactive setup.
 ```
-$ ./bin/gdg ctx new mycontext
+$ ./bin/gdg tools ctx new mycontext
 ```
 
 When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:

@@ -14,7 +14,7 @@ dotenv: ['.env']
 tasks:
   default:
     cmds:
-      - task: build
+      - task: build_all
   install_tools:
     desc: "Install required Dev tools by GDG"
     cmds:
@@ -53,6 +53,11 @@ tasks:
     desc: "Build linux binary"
     cmds:
       - env GOOS='linux' GOARCH='amd64' go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}_linux cmd/gdg/main.go  
+  build_all:
+    desc: "Buiding All binaries" 
+    cmds:
+      - task: build
+      - task: build_generate
   build:
     desc: "Buiding {{ .BIN_NAME }} {{ .VERSION }}" 
     cmds:

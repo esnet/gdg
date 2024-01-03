@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "embed"
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
 	"log"

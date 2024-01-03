@@ -1,4 +1,4 @@
-package api
+package types
 
 import "github.com/grafana/grafana-openapi-client-go/models"
 

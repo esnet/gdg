@@ -13,9 +13,13 @@ func NewToolsCommand() simplecobra.Commander {
 		NameP:        "tools",
 		Short:        description,
 		Long:         description,
-		CommandsList: []simplecobra.Commander{newDevelCmd(), newUserCommand(), newAuthCmd(), newOrgCommand()},
+		CommandsList: []simplecobra.Commander{newContextCmd(), newDevelCmd(), newUserCommand(), newAuthCmd(), newOrgCommand()},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"t"}
+		},
+		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
+			support.InitConfiguration(cd.CobraCommand)
+			return nil
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()

@@ -38,7 +38,6 @@ func getNewRootCmd() *support.RootCommand {
 		NameP: "gdg",
 		CommandEntries: []simplecobra.Commander{
 			newVersionCmd(),
-			newContextCmd(),
 			tools.NewToolsCommand(),
 			backup.NewBackupCommand(),
 		},
