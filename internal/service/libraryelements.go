@@ -32,9 +32,7 @@ const (
 )
 
 func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.Filter, connectionID string) []*models.DashboardFullWithMeta {
-	params := library_elements.NewGetLibraryElementConnectionsParams()
-	params.SetLibraryElementUID(connectionID)
-	payload, err := s.client.LibraryElements.GetLibraryElementConnections(params, s.getAuth())
+	payload, err := s.GetClient().LibraryElements.GetLibraryElementConnections(connectionID)
 	if err != nil {
 		log.Fatalf("unable to retrieve a valid connection for %s", connectionID)
 	}
@@ -76,7 +74,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 	params := library_elements.NewGetLibraryElementsParams()
 	params.FolderFilter = &folderList
 	params.Kind = tools.PtrOf(listLibraryPanels)
-	libraryElements, err := s.client.LibraryElements.GetLibraryElements(params, s.getAuth())
+	libraryElements, err := s.GetClient().LibraryElements.GetLibraryElements(params)
 	if err != nil {
 		log.Fatalf("Unable to list Library Elements %v", err)
 
@@ -179,9 +177,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 				continue
 			}
 
-			params := library_elements.NewCreateLibraryElementParams()
-			params.Body = &newLibraryRequest
-			entity, err := s.client.LibraryElements.CreateLibraryElement(params, s.getAuth())
+			entity, err := s.GetClient().LibraryElements.CreateLibraryElement(&newLibraryRequest)
 			if err != nil {
 				slog.Error("Failed to create library element", "err", err)
 			} else {
@@ -198,9 +194,7 @@ func (s *DashNGoImpl) DeleteAllLibraryElements(filter filters.Filter) []string {
 	libraryElements := s.ListLibraryElements(filter)
 	for _, element := range libraryElements {
 
-		params := library_elements.NewDeleteLibraryElementByUIDParams()
-		params.SetLibraryElementUID(element.UID)
-		_, err := s.client.LibraryElements.DeleteLibraryElementByUID(params, s.getAuth())
+		_, err := s.GetClient().LibraryElements.DeleteLibraryElementByUID(element.UID)
 		if err != nil {
 			logEntries := make([]interface{}, 0)
 			var serr *library_elements.DeleteLibraryElementByUIDForbidden

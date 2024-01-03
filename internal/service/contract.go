@@ -4,10 +4,8 @@ import (
 	"context"
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/config"
-	goapi "github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/spf13/viper"
 	"log/slog"
-
 	"sync"
 )
 
@@ -32,7 +30,6 @@ var (
 )
 
 type DashNGoImpl struct {
-	client   *goapi.GrafanaHTTPAPI
 	extended *api.ExtendedApi
 
 	grafanaConf *config.GrafanaConfig

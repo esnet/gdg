@@ -114,10 +114,7 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.Filter) []string {
 			Items: newEntries,
 		}
 
-		p := folder_permissions.NewUpdateFolderPermissionsParams()
-		p.FolderUID = uid.String()
-		p.Body = payload
-		_, err := s.client.FolderPermissions.UpdateFolderPermissions(p, s.getAuth())
+		_, err := s.GetClient().FolderPermissions.UpdateFolderPermissions(uid.String(), payload)
 		if err != nil {
 			slog.Error("Failed to update folder permissions")
 		} else {
@@ -138,11 +135,9 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*models.H
 	r := make(map[*models.Hit][]*models.DashboardACLInfoDTO, 0)
 
 	for ndx, foldersEntry := range foldersList {
-		p := folder_permissions.NewGetFolderPermissionListParams()
-		p.FolderUID = foldersEntry.UID
-		results, err := s.client.FolderPermissions.GetFolderPermissionList(p, s.getAuth())
+		results, err := s.GetClient().FolderPermissions.GetFolderPermissionList(foldersEntry.UID)
 		if err != nil {
-			msg := fmt.Sprintf("Unable to get folder permissions for folderUID: %s", p.FolderUID)
+			msg := fmt.Sprintf("Unable to get folder permissions for folderUID: %s", foldersEntry.UID)
 
 			var getFolderPermissionListInternalServerError *folder_permissions.GetFolderPermissionListInternalServerError
 			switch {
@@ -169,7 +164,7 @@ func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 	}
 	p := search.NewSearchParams()
 	p.Type = &searchTypeFolder
-	folderListing, err := s.client.Search.Search(p, s.getAuth())
+	folderListing, err := s.GetClient().Search.Search(p)
 	folderListing.GetPayload()
 	if err != nil {
 		log.Fatal("unable to retrieve folder list.")
@@ -264,7 +259,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		}
 		params := folders.NewCreateFolderParams()
 		params.Body = &newFolder
-		f, err := s.client.Folders.CreateFolder(params, s.getAuth())
+		f, err := s.GetClient().Folders.CreateFolder(&newFolder)
 		if err != nil {
 			slog.Error("failed to create folder.", "folderName", newFolder.Title, "err", err)
 			continue
@@ -282,7 +277,7 @@ func (s *DashNGoImpl) DeleteAllFolders(filter filters.Filter) []string {
 	for _, folder := range folderListing {
 		params := folders.NewDeleteFolderParams()
 		params.FolderUID = folder.UID
-		_, err := s.client.Folders.DeleteFolder(params, s.getAuth())
+		_, err := s.GetClient().Folders.DeleteFolder(params)
 		if err == nil {
 			result = append(result, folder.Title)
 		}

@@ -7,7 +7,6 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
-	"github.com/grafana/grafana-openapi-client-go/client/folders"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/pretty"
@@ -33,7 +32,7 @@ type DashboardsApi interface {
 func (s *DashNGoImpl) getDashboardByUid(uid string) (*models.DashboardFullWithMeta, error) {
 	params := dashboards.NewGetDashboardByUIDParams()
 	params.UID = uid
-	data, err := s.client.Dashboards.GetDashboardByUID(params, s.getAuth())
+	data, err := s.GetClient().Dashboards.GetDashboardByUID(uid)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +139,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		searchParams.Page = tools.PtrOf(int64(page))
 		searchParams.Type = tools.PtrOf(searchTypeDashboard)
 
-		pageBoardLinks, err := s.client.Search.Search(searchParams, s.getAuth())
+		pageBoardLinks, err := s.GetClient().Search.Search(searchParams)
 		if err != nil {
 			log.Fatal("Failed to retrieve dashboards", err)
 		}
@@ -195,17 +194,14 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 	boardLinks = s.ListDashboards(filter)
 	var boards []string
 	for _, link := range boardLinks {
-		dp := dashboards.NewGetDashboardByUIDParams()
-		dp.UID = link.UID
-
-		if metaData, err = s.client.Dashboards.GetDashboardByUID(dp, s.getAuth()); err != nil {
+		if metaData, err = s.GetClient().Dashboards.GetDashboardByUID(link.UID); err != nil {
 			slog.Error("unable to get Dashboard by UID", "err", err, "Dashboard-URI", link.URI)
 			continue
 		}
 
 		rawBoard, err = json.Marshal(metaData.Payload.Dashboard)
 		if err != nil {
-			slog.Error("unable to serialize dashboard", "dashboard", dp.UID)
+			slog.Error("unable to serialize dashboard", "dashboard", link.UID)
 			continue
 		}
 
@@ -222,11 +218,10 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 
 // createFolder Creates a new folder with the given name.
 func (s *DashNGoImpl) createdFolder(folderName string) (int64, error) {
-	createdFolderRequest := folders.NewCreateFolderParams()
-	createdFolderRequest.Body = &models.CreateFolderCommand{
+	request := &models.CreateFolderCommand{
 		Title: folderName,
 	}
-	folder, err := s.client.Folders.CreateFolder(createdFolderRequest, s.getAuth())
+	folder, err := s.GetClient().Folders.CreateFolder(request)
 	if err != nil {
 		return 0, err
 	}
@@ -325,14 +320,13 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 		//zero out ID.  Can't create a new dashboard if an ID already exists.
 		delete(data, "id")
-		importDashReq := dashboards.NewImportDashboardParams()
-		importDashReq.Body = &models.ImportDashboardRequest{
+		importDashReq := &models.ImportDashboardRequest{
 			FolderID:  folderId,
 			Overwrite: true,
 			Dashboard: data,
 		}
 
-		if _, exportError := s.client.Dashboards.ImportDashboard(importDashReq, s.getAuth()); exportError != nil {
+		if _, exportError := s.GetClient().Dashboards.ImportDashboard(importDashReq); exportError != nil {
 			slog.Info("error on Exporting dashboard", "dashboard-filename", file, "err", exportError)
 			continue
 		}
@@ -348,9 +342,7 @@ func (s *DashNGoImpl) DeleteAllDashboards(filter filters.Filter) []string {
 	items := s.ListDashboards(filter)
 	for _, item := range items {
 		if filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: item.FolderTitle, filters.DashFilter: item.Slug}) {
-			dp := dashboards.NewDeleteDashboardByUIDParams()
-			dp.UID = item.UID
-			_, err := s.client.Dashboards.DeleteDashboardByUID(dp, s.getAuth())
+			_, err := s.GetClient().Dashboards.DeleteDashboardByUID(item.UID)
 			if err == nil {
 				dashboardListing = append(dashboardListing, item.Title)
 			}

@@ -5,11 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/go-openapi/runtime"
 	"github.com/gosimple/slug"
-	"github.com/grafana/grafana-openapi-client-go/client/org"
+	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/orgs"
-	"github.com/grafana/grafana-openapi-client-go/client/signed_in_user"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"log"
 	"log/slog"
@@ -61,9 +59,7 @@ func (s *DashNGoImpl) InitOrganizations() {
 
 // getOrganizations returns organization for a given id.
 func (s *DashNGoImpl) getOrganization(id int64) (*models.OrgDetailsDTO, error) {
-	params := orgs.NewGetOrgByIDParams()
-	params.OrgID = id
-	data, err := s.client.Orgs.GetOrgByID(params, s.getAuth())
+	data, err := s.GetClient().Orgs.GetOrgByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +100,7 @@ func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
 		return nil
 	}
 
-	orgList, err := s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getGrafanaAdminAuth())
+	orgList, err := s.GetAdminClient().Orgs.SearchOrgs(orgs.NewSearchOrgsParams())
 	if err != nil {
 		var swaggerErr *orgs.SearchOrgsForbidden
 		msg := "Cannot retrieve Orgs, you need additional permissions"
@@ -187,9 +183,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 			continue
 		}
 
-		params := orgs.NewCreateOrgParams()
-		params.Body = &newOrg
-		_, err = s.client.Orgs.CreateOrg(params, s.getBasicAuth())
+		_, err = s.GetBasicAuthClient().Orgs.CreateOrg(&newOrg)
 		if err != nil {
 			slog.Error("failed to create folder", "organization", newOrg.Name)
 			continue
@@ -209,7 +203,7 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 	valid := false
 	if id > 1 {
 		var orgsPayload []*models.OrgDTO
-		orgList, err := s.client.Orgs.SearchOrgs(orgs.NewSearchOrgsParams(), s.getBasicAuth())
+		orgList, err := s.GetBasicAuthClient().Orgs.SearchOrgs(orgs.NewSearchOrgsParams())
 		if err != nil {
 			slog.Warn("Error fetch organizations requires (SuperAdmin Basic SecureData), assuming valid ID was requested.  Cannot validate OrgId")
 			valid = true
@@ -237,9 +231,7 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 		log.Fatalf("The Specified OrgId does not match any existing organization.  Please check your configuration and try again.")
 	}
 
-	params := signed_in_user.NewUserSetUsingOrgParams()
-	params.OrgID = id
-	status, err := s.client.SignedInUser.UserSetUsingOrg(params, s.getBasicAuth())
+	status, err := s.GetBasicAuthClient().SignedInUser.UserSetUsingOrg(id)
 	if err != nil {
 		log.Fatalf("%s for %v\n", err, status)
 		return err
@@ -250,18 +242,17 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 
 // GetUserOrganization returns the organizations the user is a member of.
 func (s *DashNGoImpl) GetUserOrganization() *models.OrgDetailsDTO {
-	return s.getAssociatedActiveOrg(s.getBasicAuth())
+	return s.getAssociatedActiveOrg(s.GetBasicAuthClient())
 }
 
 // GetTokenOrganization returns the organizations associated with the given token. (This property is immutable)
 func (s *DashNGoImpl) GetTokenOrganization() *models.OrgDetailsDTO {
-	return s.getAssociatedActiveOrg(s.getAuth())
+	return s.getAssociatedActiveOrg(s.GetClient())
 }
 
 // getAssociatedActiveOrg returns the Org associated with the given authentication mechanism.
-func (s *DashNGoImpl) getAssociatedActiveOrg(auth runtime.ClientAuthInfoWriter) *models.OrgDetailsDTO {
-	p := org.NewGetCurrentOrgParams()
-	payload, err := s.client.Org.GetCurrentOrg(p, auth)
+func (s *DashNGoImpl) getAssociatedActiveOrg(apiClient *client.GrafanaHTTPAPI) *models.OrgDetailsDTO {
+	payload, err := apiClient.Org.GetCurrentOrg()
 	if err != nil {
 		log.Fatalf("Unable to retrieve current organization, err: %v", err)
 	}
@@ -269,9 +260,7 @@ func (s *DashNGoImpl) getAssociatedActiveOrg(auth runtime.ClientAuthInfoWriter) 
 }
 
 func (s *DashNGoImpl) SetUserOrganizations(id int64) error {
-	p := signed_in_user.NewUserSetUsingOrgParams()
-	p.OrgID = id
-	payload, err := s.client.SignedInUser.UserSetUsingOrg(p, s.getBasicAuth())
+	payload, err := s.GetBasicAuthClient().SignedInUser.UserSetUsingOrg(id)
 	if err == nil {
 		slog.Debug(payload.GetPayload().Message)
 	}
@@ -279,16 +268,15 @@ func (s *DashNGoImpl) SetUserOrganizations(id int64) error {
 }
 
 func (s *DashNGoImpl) UpdateCurrentOrganization(name string) error {
-	p := org.NewUpdateCurrentOrgParams()
-	p.Body = &models.UpdateOrgForm{Name: name}
-	_, err := s.client.Org.UpdateCurrentOrg(p, s.getAuth())
+	p := &models.UpdateOrgForm{Name: name}
+	_, err := s.GetClient().Org.UpdateCurrentOrg(p)
 	return err
 }
 
 func (s *DashNGoImpl) ListOrgUsers(orgId int64) []*models.OrgUserDTO {
 	p := orgs.NewGetOrgUsersParams()
 	p.OrgID = orgId
-	resp, err := s.client.Orgs.GetOrgUsers(p, s.getGrafanaAdminAuth())
+	resp, err := s.GetAdminClient().Orgs.GetOrgUsers(orgId)
 	if err != nil {
 		log.Fatalf("failed to get org users, err: %v", err)
 	}
@@ -300,13 +288,11 @@ func (s *DashNGoImpl) AddUserToOrg(role string, userId, orgId int64) error {
 	if err != nil {
 		return fmt.Errorf("failed to retrieve user with Id: %d", userId)
 	}
-	p := orgs.NewAddOrgUserParams()
-	p.OrgID = orgId
-	p.Body = &models.AddOrgUserCommand{
+	request := &models.AddOrgUserCommand{
 		LoginOrEmail: userInfo.Login,
 		Role:         role,
 	}
-	_, err = s.client.Orgs.AddOrgUser(p, s.getGrafanaAdminAuth())
+	_, err = s.GetAdminClient().Orgs.AddOrgUser(orgId, request)
 	return err
 }
 
@@ -314,7 +300,7 @@ func (s *DashNGoImpl) DeleteUserFromOrg(userId, orgId int64) error {
 	p := orgs.NewRemoveOrgUserParams()
 	p.OrgID = orgId
 	p.UserID = userId
-	_, err := s.client.Orgs.RemoveOrgUser(p, s.getGrafanaAdminAuth())
+	_, err := s.GetAdminClient().Orgs.RemoveOrgUser(userId, orgId)
 	return err
 }
 
@@ -325,6 +311,6 @@ func (s *DashNGoImpl) UpdateUserInOrg(role string, userId, orgId int64) error {
 	p.Body = &models.UpdateOrgUserCommand{
 		Role: role,
 	}
-	_, err := s.client.Orgs.UpdateOrgUser(p, s.getGrafanaAdminAuth())
+	_, err := s.GetAdminClient().Orgs.UpdateOrgUser(p)
 	return err
 }

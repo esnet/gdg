@@ -127,7 +127,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 			if entry.BuiltInRole != "" {
 				p.SetBuiltinRole(tools.PtrOf(entry.BuiltInRole))
 			}
-			_, err = s.client.DatasourcePermissions.AddPermission(p, s.getAuth())
+			_, err = s.GetClient().DatasourcePermissions.AddPermission(p)
 			//err = s.extended.AddConnectionPermission(p)
 			if err != nil {
 				slog.Error("Failed to update folder permissions")
@@ -163,10 +163,9 @@ func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter filters.Filter) []st
 
 // deleteConnectionPermission delete a given permission associated with a given datasourceId
 func (s *DashNGoImpl) deleteConnectionPermission(permissionId int64, datasourceId int64) bool {
-	deleteMe := datasource_permissions.NewDeletePermissionsParams()
-	deleteMe.PermissionID = fmt.Sprintf("%d", permissionId)
-	deleteMe.DatasourceID = fmt.Sprintf("%d", datasourceId)
-	resp, err := s.client.DatasourcePermissions.DeletePermissions(deleteMe, s.getAuth())
+	permissionIdStr := fmt.Sprintf("%d", permissionId)
+	connectionId := fmt.Sprintf("%d", datasourceId)
+	resp, err := s.GetClient().DatasourcePermissions.DeletePermissions(permissionIdStr, connectionId)
 	if err != nil {
 		return false
 	}
@@ -176,8 +175,5 @@ func (s *DashNGoImpl) deleteConnectionPermission(permissionId int64, datasourceI
 
 // getConnectionPermission Get all permissions for a given connection
 func (s *DashNGoImpl) getConnectionPermission(id int64) (*datasource_permissions.GetAllPermissionsOK, error) {
-	p := datasource_permissions.NewGetAllPermissionsParams()
-	//p.DatasourceID = fmt.Sprintf("%d", connection.ID)
-	p.DatasourceID = fmt.Sprintf("%d", id)
-	return s.client.DatasourcePermissions.GetAllPermissions(p, s.getAuth())
+	return s.GetClient().DatasourcePermissions.GetAllPermissions(fmt.Sprintf("%d", id))
 }

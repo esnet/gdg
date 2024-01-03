@@ -1,6 +1,4 @@
-Everything in here is intended implemented due to limitations or bugs found.
+Everything in here is implemented due to limitations or bugs found in the OpenAPI Grafana API.
 
-Currently, the /api/health is not documented via swagger therefore the extended API provides that functionality.
-
-The /api/users is documented incorrectly and mapped to the wrong response type, so for the time being relying on a 
-custom implementation to derive the same functionality.
+Any implementation in this package is temporary workaround till the spec/API is fixed or providing custom 
+data models to better organize results for GDGs use case.
