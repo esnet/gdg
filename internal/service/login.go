@@ -39,7 +39,7 @@ func ignoreSSL(transportConfig *client.TransportConfig) {
 
 type NewClientOpts func(transportConfig *client.TransportConfig)
 
-func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) *client.GrafanaHTTPAPI {
+func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAPI, *client.TransportConfig) {
 	var err error
 	u, err := url.Parse(s.grafanaConf.URL)
 	if err != nil {
@@ -62,21 +62,24 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) *client.GrafanaHTTPAPI
 		})
 	}
 	for _, opt := range opts {
-		opt(httpConfig)
+		if opt != nil {
+			opt(httpConfig)
+		}
 	}
 	if config.Config().IgnoreSSL() {
 		ignoreSSL(httpConfig)
 	}
 
-	return client.NewHTTPClientWithConfig(strfmt.Default, httpConfig)
+	return client.NewHTTPClientWithConfig(strfmt.Default, httpConfig), httpConfig
 }
 
 // GetClient Returns a new defaultClient given token precedence over Basic Auth
 func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
 	if s.grafanaConf.APIToken != "" {
-		return s.getNewClient(func(clientCfg *client.TransportConfig) {
+		grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
 			clientCfg.APIKey = s.grafanaConf.APIToken
 		})
+		return grafanaClient
 	} else {
 		return s.GetBasicAuthClient()
 	}
@@ -92,9 +95,10 @@ func (s *DashNGoImpl) GetAdminClient() *client.GrafanaHTTPAPI {
 
 // GetBasicAuthClient returns a basic auth grafana API Client
 func (s *DashNGoImpl) GetBasicAuthClient() *client.GrafanaHTTPAPI {
-	return s.getNewClient(func(clientCfg *client.TransportConfig) {
+	grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
 		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.Password)
 	})
+	return grafanaClient
 }
 
 // ignoreSSLErrors when called replaces the default http legacyClient to ignore invalid SSL issues.
