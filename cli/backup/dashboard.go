@@ -37,7 +37,7 @@ func newDashboardCommand() simplecobra.Commander {
 			dashboard.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
 			dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
 			dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
-			dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by Tags (does not apply on upload)")
+			dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by list of comma delimited tags")
 		},
 		CommandsList: []simplecobra.Commander{
 			newListDashboardsCmd(),
@@ -90,7 +90,7 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
-			cmd.Aliases = []string{"u"}
+			cmd.Aliases = []string{"u", "up"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
@@ -106,6 +106,7 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
 			boards := rootCmd.GrafanaSvc().ListDashboards(filter)
 
+			slog.Info(fmt.Sprintf("%d dashboards have been uploaded", len(boards)))
 			for _, link := range boards {
 				rootCmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
 
@@ -161,7 +162,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
 
-			slog.Info("Listing dashboards for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing dashboards for context", slog.String("context", config.Config().GetGDGConfig().GetContext()), slog.Any("count", len(boards)))
 			for _, link := range boards {
 				base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().URL)
 				var baseHost string

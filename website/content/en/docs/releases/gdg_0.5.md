@@ -10,16 +10,18 @@ toc: true
 
 ##  Release Notes for v0.5.2
 ### Changes
-  - Replacing Connection Auth with a secure/foobar.json file.  Allows for more flexible data to be pushed to grafana.
-  - *TechDebt* refactored packages, moving cmd-> cli, and created cmd/ to allow for multiple binaries to be generated.
+- [#229](https://github.com/esnet/gdg/issues/229) Datasource auth has been moved to a file based configuration under secure/.  This allows for any number of secure values to be passed in.  Using the wizard for initial config is recommended, or see test data for some examples.
   - [#168](https://github.com/esnet/gdg/issues/168) Introduced a new tool called gdg-generate which allows for templating of dashboards using go.tmpl syntax.
   - gdg context has been moved under tools.  ie. `gdg tools ctx` instead of `gdg ctx`
   - [#221](https://github.com/esnet/gdg/issues/221) Version check no longer requires a valid configuration
+  - [#236](https://github.com/esnet/gdg/issues/236) Dashboard filter by tag support.  Allows a user to only list,delete,upload dashboards that match a set of given tags.  Previously, it was only supported for list/clear
 
 ### Bug Fixes
+- [#235](https://github.com/esnet/gdg/issues/235) Fixed a bug that prevented proxy grafana instances from working correctly. ie. someURL/grafana/ would not work since it expected grafana to hosted on slash (/).
 
 ### Developer Changes
   - Migrated to Office Grafana GoLang API
+  - refactored packages, moving cmd-> cli, and created cmd/ to allow for multiple binaries to be generated.
 
 
 ##  Release Notes for v0.5.1
