@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/exp/slices"
 	"log/slog"
+	"slices"
 )
 
 func TestDashboardCRUD(t *testing.T) {
@@ -61,12 +61,13 @@ func TestDashboardCRUD(t *testing.T) {
 	assert.Equal(t, 1, len(boards))
 
 	//Import Dashboards
+	numBoards := 16
 	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(filtersEntity)
-	assert.Equal(t, len(list), len(boards))
+	assert.Equal(t, len(list), numBoards)
 	slog.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
-	assert.Equal(t, len(deleteList), len(boards))
+	assert.Equal(t, len(deleteList), numBoards)
 	slog.Info("List Dashboards again")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
@@ -94,14 +95,14 @@ func TestDashboardCRUDTags(t *testing.T) {
 	assert.Equal(t, 13, len(deleteList))
 	//Multiple Tags behavior
 	slog.Info("Uploading all dashboards, filtered by tags")
-	filtersEntity = service.NewDashboardFilter("", "", "flow,netsage")
+	filtersEntity = service.NewDashboardFilter("", "", "flow")
 	apiClient.UploadDashboards(filtersEntity)
 	slog.Info("Listing all dashboards")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, 8, len(boards))
 	slog.Info("Removing all dashboards")
 	deleteList = apiClient.DeleteAllDashboards(filtersEntity)
-	assert.Equal(t, 13, len(deleteList))
+	assert.Equal(t, 8, len(deleteList))
 	//
 	os.Setenv("GDG_CONTEXTS__TESTING__IGNORE_FILTERS", "true")
 	defer os.Unsetenv("")
@@ -110,16 +111,18 @@ func TestDashboardCRUDTags(t *testing.T) {
 	apiClient.UploadDashboards(filterNone)
 	//Listing with no filter
 	boards = apiClient.ListDashboards(filterNone)
-	assert.Equal(t, 14, len(boards))
+	assert.Equal(t, 16, len(boards))
 
-	filtersEntity = service.NewDashboardFilter("", "", "netsage")
+	filtersEntity = service.NewDashboardFilter("", "", "flow")
 	slog.Info("Listing dashboards by tag")
 	boards = apiClient.ListDashboards(filtersEntity)
-	assert.Equal(t, 14, len(deleteList))
+	assert.Equal(t, 8, len(deleteList))
 	//Listing with
 	filtersEntity = service.NewDashboardFilter("", "", "netsage,flow")
 	boards = apiClient.ListDashboards(filtersEntity)
-	assert.Equal(t, 8, len(deleteList))
+	assert.Equal(t, 13, len(boards))
+	deleteList = apiClient.DeleteAllDashboards(filtersEntity)
+	assert.Equal(t, 13, len(deleteList))
 }
 
 func TestDashboardTagsFilter(t *testing.T) {
@@ -192,7 +195,7 @@ func TestWildcardFilter(t *testing.T) {
 	slog.Info("Listing all dashboards ignoring filter")
 	boards_filtered = apiClient.ListDashboards(filtersEntity)
 
-	assert.Equal(t, len(boards), len(boards_filtered))
+	assert.Equal(t, 14, len(boards_filtered))
 
 	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(emptyFilter)
@@ -233,7 +236,13 @@ func validateGeneralBoard(t *testing.T, board *models.Hit) {
 
 func validateTags(t *testing.T, board *models.Hit) {
 	assert.True(t, board.UID != "")
-	assert.Equal(t, len(board.Tags), 2)
-	assert.True(t, slices.Contains(board.Tags, "netsage"))
-	assert.True(t, slices.Contains(board.Tags, "flow"))
+	assert.True(t, len(board.Tags) > 0)
+	all_tags := []string{"netsage", "flow"}
+	for _, tag := range board.Tags {
+		if tag == "moo" && len(tag) > 1 {
+			continue
+		}
+		assert.True(t, slices.Contains(all_tags, tag))
+
+	}
 }

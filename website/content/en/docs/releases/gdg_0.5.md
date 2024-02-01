@@ -14,7 +14,7 @@ toc: true
   - [#168](https://github.com/esnet/gdg/issues/168) Introduced a new tool called gdg-generate which allows for templating of dashboards using go.tmpl syntax.
   - gdg context has been moved under tools.  ie. `gdg tools ctx` instead of `gdg ctx`
   - [#221](https://github.com/esnet/gdg/issues/221) Version check no longer requires a valid configuration
-  - [#236](https://github.com/esnet/gdg/issues/236) Dashboard filter by tag support.  Allows a user to only list,delete,upload dashboards that match a set of given tags.  Previously, it was only supported for list/clear
+  - [#236](https://github.com/esnet/gdg/issues/236) Dashboard filter by tag support.  Allows a user to only list,delete,upload dashboards that match a set of given tags.
 
 ### Bug Fixes
 - [#235](https://github.com/esnet/gdg/issues/235) Fixed a bug that prevented proxy grafana instances from working correctly. ie. someURL/grafana/ would not work since it expected grafana to hosted on slash (/).

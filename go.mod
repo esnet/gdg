@@ -8,7 +8,6 @@ require (
 	github.com/aws/aws-sdk-go v1.49.13
 	github.com/bep/simplecobra v0.4.0
 	github.com/carlmjohnson/requests v0.23.5
-	github.com/go-openapi/runtime v0.26.2
 	github.com/go-openapi/strfmt v0.22.0
 	github.com/google/uuid v1.5.0
 	github.com/gosimple/slug v1.13.1
@@ -89,6 +88,7 @@ require (
 	github.com/go-openapi/jsonpointer v0.20.2 // indirect
 	github.com/go-openapi/jsonreference v0.20.4 // indirect
 	github.com/go-openapi/loads v0.21.5 // indirect
+	github.com/go-openapi/runtime v0.26.2 // indirect
 	github.com/go-openapi/spec v0.20.13 // indirect
 	github.com/go-openapi/swag v0.22.7 // indirect
 	github.com/go-openapi/validate v0.22.6 // indirect
@@ -176,5 +176,4 @@ require (
 	google.golang.org/grpc v1.60.1 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

@@ -11,11 +11,11 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/pretty"
 	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 	"log"
 	"log/slog"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -123,7 +123,6 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		filterReq = NewDashboardFilter("", "", "")
 	}
 
-	var boardsList = make([]*models.Hit, 0)
 	var boardLinks = make([]*models.Hit, 0)
 	var deduplicatedLinks = make(map[int64]*models.Hit)
 
@@ -172,8 +171,6 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		if ok {
 			slog.Debug("duplicate board, skipping ")
 			continue
-		} else {
-			deduplicatedLinks[link.ID] = boardLinks[ndx]
 		}
 		validFolder = false
 		if config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
@@ -194,7 +191,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		}
 
 		if validFolder && validUid {
-			boardsList = append(boardsList, link)
+			deduplicatedLinks[link.ID] = boardLinks[ndx]
 		}
 	}
 
