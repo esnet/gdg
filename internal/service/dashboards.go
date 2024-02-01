@@ -49,13 +49,15 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 	folderFilter := entries[0]
 	dashboardFilter := entries[1]
 	tagsFilter := entries[2]
+	if tagsFilter == "" {
+		tagsFilter = "[]"
+	}
 
 	filterObj := filters.NewBaseFilter()
 	filterObj.AddFilter(filters.FolderFilter, folderFilter)
 	filterObj.AddFilter(filters.DashFilter, dashboardFilter)
 	filterObj.AddFilter(filters.TagsFilter, tagsFilter)
 	quoteRegex, _ := regexp.Compile("['\"]+")
-	filterObj.AddRegex(filters.TagsFilter, quoteRegex)
 	filterObj.AddRegex(filters.FolderFilter, quoteRegex)
 	//Add Folder Validation
 	filterObj.AddValidation(filters.FolderFilter, func(i interface{}) bool {
@@ -75,25 +77,6 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 		}
 	})
 
-	//Add Tag Validation
-	filterObj.AddValidation(filters.TagsFilter, func(i interface{}) bool {
-		val, ok := i.(map[filters.FilterType]string)
-		if !ok {
-			return ok
-		}
-
-		//Check Tags
-		if tagsFilter, ok = val[filters.TagsFilter]; ok {
-			if filterObj.GetFilter(filters.TagsFilter) == "" {
-				return true
-			}
-			return tagsFilter == filterObj.GetFilter(filters.TagsFilter)
-		} else {
-			return true
-		}
-		//Check Dashboard
-
-	})
 	//Add DashValidation
 	filterObj.AddValidation(filters.DashFilter, func(i interface{}) bool {
 		val, ok := i.(map[filters.FilterType]string)
@@ -157,7 +140,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		retrieve("")
 	} else {
 		for _, tag := range tagsParams {
-			slog.Info("retrieving dashboard for tag", slog.String("tag", tag))
+			slog.Info("retrieving dashboard by tag", slog.String("tag", tag))
 			retrieve(tag)
 		}
 	}
@@ -294,12 +277,17 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 			continue
 		}
 		//Extract Tags
-		if filterVal := filterReq.GetFilter(filters.TagsFilter); filterVal != "" {
+		if filterVal := filterReq.GetFilter(filters.TagsFilter); filterVal != "[]" {
 			var boardTags []string
 			for _, val := range board["tags"].([]interface{}) {
 				boardTags = append(boardTags, val.(string))
 			}
-			requestedSlices := strings.Split(filterVal, ",")
+			var requestedSlices []string
+			err = json.Unmarshal([]byte(filterVal), &requestedSlices)
+			if err != nil {
+				slog.Warn("unable to decode json of requested tags")
+				requestedSlices = []string{}
+			}
 			valid := false
 			for _, val := range requestedSlices {
 				if slices.Contains(boardTags, val) {

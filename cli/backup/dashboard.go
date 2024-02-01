@@ -2,7 +2,12 @@ package backup
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log/slog"
+	"net/url"
+	"strings"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
@@ -10,9 +15,6 @@ import (
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log/slog"
-	"net/url"
-	"strings"
 )
 
 var skipConfirmAction bool
@@ -20,9 +22,14 @@ var skipConfirmAction bool
 func parseDashboardGlobalFlags(command *cobra.Command) []string {
 	folderFilter, _ := command.Flags().GetString("folder")
 	dashboardFilter, _ := command.Flags().GetString("dashboard")
-	tagsFilter, _ := command.Flags().GetStringSlice("tags")
+	tagsFilter, _ := command.Flags().GetStringArray("tags")
+	rawTags, err := json.Marshal(tagsFilter)
+	jsonTags := ""
+	if err == nil {
+		jsonTags = string(rawTags)
+	}
 
-	return []string{folderFilter, dashboardFilter, strings.Join(tagsFilter, ",")}
+	return []string{folderFilter, dashboardFilter, jsonTags}
 }
 
 func newDashboardCommand() simplecobra.Commander {
@@ -37,7 +44,7 @@ func newDashboardCommand() simplecobra.Commander {
 			dashboard.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
 			dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
 			dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
-			dashboard.PersistentFlags().StringSliceP("tags", "t", []string{}, "Filter by list of comma delimited tags")
+			dashboard.PersistentFlags().StringArrayP("tags", "t", []string{}, "Filter by list of comma delimited tags")
 		},
 		CommandsList: []simplecobra.Commander{
 			newListDashboardsCmd(),
@@ -49,7 +56,6 @@ func newDashboardCommand() simplecobra.Commander {
 			return cd.CobraCommand.Help()
 		},
 	}
-
 }
 
 func newClearDashboardsCmd() simplecobra.Commander {
@@ -71,7 +77,6 @@ func newClearDashboardsCmd() simplecobra.Commander {
 			}
 			if len(deletedDashboards) == 0 {
 				slog.Info("No dashboards were found. 0 dashboards were removed")
-
 			} else {
 				slog.Info("dashboards were deleted", "count", len(deletedDashboards))
 				rootCmd.TableObj.Render()
@@ -79,7 +84,6 @@ func newClearDashboardsCmd() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }
 
 func newUploadDashboardsCmd() simplecobra.Commander {
@@ -109,7 +113,6 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 			slog.Info(fmt.Sprintf("%d dashboards have been uploaded", len(boards)))
 			for _, link := range boards {
 				rootCmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
-
 			}
 			if len(boards) > 0 {
 				rootCmd.TableObj.Render()
@@ -119,7 +122,6 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }
 
 func newDownloadDashboardsCmd() simplecobra.Commander {
@@ -146,6 +148,7 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newListDashboardsCmd() simplecobra.Commander {
 	description := "List all dashboards from grafana"
 	return &support.SimpleCommand{
@@ -174,8 +177,18 @@ func newListDashboardsCmd() simplecobra.Commander {
 					baseHost = base.String()
 				}
 				urlValue := fmt.Sprintf("%s%s", baseHost, link.URL)
-				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.Title, link.Slug, link.FolderTitle,
-					link.UID, strings.Join(link.Tags, ","), urlValue})
+				var tagVal string
+				if len(link.Tags) > 0 {
+					tagValByte, err := json.Marshal(link.Tags)
+					if err == nil {
+						tagVal = string(tagValByte)
+					}
+				}
+
+				rootCmd.TableObj.AppendRow(table.Row{
+					link.ID, link.Title, link.Slug, link.FolderTitle,
+					link.UID, tagVal, urlValue,
+				})
 
 			}
 			if len(boards) > 0 {
@@ -186,5 +199,4 @@ func newListDashboardsCmd() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }

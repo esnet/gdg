@@ -1,6 +1,7 @@
 package filters
 
 import (
+	"encoding/json"
 	"github.com/esnet/gdg/internal/config"
 	"log/slog"
 
@@ -91,6 +92,12 @@ func (s *BaseFilter) GetEntity(name FilterType) []string {
 	}
 	switch name {
 	case TagsFilter:
+		entityFilter := s.GetFilter(name)
+		var result []string
+		err := json.Unmarshal([]byte(entityFilter), &result)
+		if err == nil {
+			return result
+		}
 		return s.getEntities(TagsFilter, []string{})
 	case FolderFilter:
 		return s.getEntities(FolderFilter, config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders())

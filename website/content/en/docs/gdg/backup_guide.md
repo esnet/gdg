@@ -57,10 +57,12 @@ You can also use filtering options to list or import your dashboard by folder or
 ```sh
 ./bin/gdg backup dash download -f myFolder
 ./bin/gdg backup dash download -t myTag
-./bin/gdg backup dash download -t tagA,tagB,tagC
+./bin/gdg backup dash download -t tagA -t tagB  -t complex,tagC
 ```
+The command above will return any dashboard that is tagged with `tagA` or `tagB` or `complex,tagC`
 
-**NOTE**: Starting with v0.5.2 full crud support for tag filtering.  You can list,upload,clear,download dashboards using tag filters.  Keep in mind the tag filtering on any matching tags.  ie.  Any dashboard that has tagA or tagB or tagC will be listed,uploaded, etc.
+
+**NOTE**: Starting with v0.5.2 full crud support for tag filtering.  You can list,upload,clear,download dashboards using tag filters.  Keep in mind the tag filtering on any matching tags.  ie.  Any dashboard that has tagA or tagB or complex,tagC will be listed,uploaded, etc.
 
 ### Folders
 

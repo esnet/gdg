@@ -1,6 +1,7 @@
 package test
 
 import (
+	"encoding/json"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -84,7 +85,11 @@ func TestDashboardCRUDTags(t *testing.T) {
 			slog.Warn("Unable to clean up after dashboard tests")
 		}
 	}()
-	filtersEntity := service.NewDashboardFilter("", "", "netsage")
+
+	data, err := json.Marshal([]string{"netsage"})
+	assert.NoError(t, err)
+	filtersEntity := service.NewDashboardFilter("", "", string(data))
+
 	slog.Info("Uploading all dashboards, filtered by tags")
 	apiClient.UploadDashboards(filtersEntity)
 	slog.Info("Listing all dashboards")
@@ -95,7 +100,9 @@ func TestDashboardCRUDTags(t *testing.T) {
 	assert.Equal(t, 13, len(deleteList))
 	//Multiple Tags behavior
 	slog.Info("Uploading all dashboards, filtered by tags")
-	filtersEntity = service.NewDashboardFilter("", "", "flow")
+	data, err = json.Marshal([]string{"flow"})
+	assert.NoError(t, err)
+	filtersEntity = service.NewDashboardFilter("", "", string(data))
 	apiClient.UploadDashboards(filtersEntity)
 	slog.Info("Listing all dashboards")
 	boards = apiClient.ListDashboards(filtersEntity)
@@ -113,12 +120,18 @@ func TestDashboardCRUDTags(t *testing.T) {
 	boards = apiClient.ListDashboards(filterNone)
 	assert.Equal(t, 16, len(boards))
 
-	filtersEntity = service.NewDashboardFilter("", "", "flow")
+	data, err = json.Marshal([]string{"flow"})
+	assert.NoError(t, err)
+	filtersEntity = service.NewDashboardFilter("", "", string(data))
+
 	slog.Info("Listing dashboards by tag")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, 8, len(deleteList))
 	//Listing with
-	filtersEntity = service.NewDashboardFilter("", "", "netsage,flow")
+	data, err = json.Marshal([]string{"flow", "netsage"})
+	assert.NoError(t, err)
+	filtersEntity = service.NewDashboardFilter("", "", string(data))
+
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, 13, len(boards))
 	deleteList = apiClient.DeleteAllDashboards(filtersEntity)
@@ -133,8 +146,9 @@ func TestDashboardTagsFilter(t *testing.T) {
 	defer cleanup()
 	emptyFilter := filters.NewBaseFilter()
 
-	filtersEntity := service.NewDashboardFilter("", "", "")
-	filtersEntity.AddFilter(filters.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
+	data, err := json.Marshal([]string{"flow", "netsage"})
+	assert.NoError(t, err)
+	filtersEntity := service.NewDashboardFilter("", "", string(data))
 
 	slog.Info("Exporting all dashboards")
 	apiClient.UploadDashboards(emptyFilter)
@@ -169,10 +183,11 @@ func TestWildcardFilter(t *testing.T) {
 	// Setup Filters
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
-	emptyFilter := filters.NewBaseFilter()
+	emptyFilter := service.NewDashboardFilter("", "", "")
 
-	filtersEntity := service.NewDashboardFilter("", "", "")
-	filtersEntity.AddFilter(filters.TagsFilter, strings.Join([]string{"flow", "netsage"}, ","))
+	data, err := json.Marshal([]string{"flow", "netsage"})
+	assert.NoError(t, err)
+	filtersEntity := service.NewDashboardFilter("", "", string(data))
 
 	// Enable Wildcard
 	testingContext := config.Config().GetGDGConfig().GetContexts()["testing"]
@@ -239,9 +254,6 @@ func validateTags(t *testing.T, board *models.Hit) {
 	assert.True(t, len(board.Tags) > 0)
 	all_tags := []string{"netsage", "flow"}
 	for _, tag := range board.Tags {
-		if tag == "moo" && len(tag) > 1 {
-			continue
-		}
 		assert.True(t, slices.Contains(all_tags, tag))
 
 	}
