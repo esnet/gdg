@@ -10,11 +10,13 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/pretty"
-	"golang.org/x/exp/slices"
+	"golang.org/x/exp/maps"
 	"log"
 	"log/slog"
 	"path/filepath"
 	"regexp"
+	"slices"
+	"sort"
 	"strings"
 
 	"github.com/thoas/go-funk"
@@ -47,13 +49,15 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 	folderFilter := entries[0]
 	dashboardFilter := entries[1]
 	tagsFilter := entries[2]
+	if tagsFilter == "" {
+		tagsFilter = "[]"
+	}
 
 	filterObj := filters.NewBaseFilter()
 	filterObj.AddFilter(filters.FolderFilter, folderFilter)
 	filterObj.AddFilter(filters.DashFilter, dashboardFilter)
 	filterObj.AddFilter(filters.TagsFilter, tagsFilter)
 	quoteRegex, _ := regexp.Compile("['\"]+")
-	filterObj.AddRegex(filters.TagsFilter, quoteRegex)
 	filterObj.AddRegex(filters.FolderFilter, quoteRegex)
 	//Add Folder Validation
 	filterObj.AddValidation(filters.FolderFilter, func(i interface{}) bool {
@@ -73,25 +77,6 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 		}
 	})
 
-	//Add Tag Validation
-	filterObj.AddValidation(filters.TagsFilter, func(i interface{}) bool {
-		val, ok := i.(map[filters.FilterType]string)
-		if !ok {
-			return ok
-		}
-
-		//Check Tags
-		if tagsFilter, ok = val[filters.TagsFilter]; ok {
-			if filterObj.GetFilter(filters.TagsFilter) == "" {
-				return true
-			}
-			return tagsFilter == filterObj.GetFilter(filters.TagsFilter)
-		} else {
-			return true
-		}
-		//Check Dashboard
-
-	})
 	//Add DashValidation
 	filterObj.AddValidation(filters.DashFilter, func(i interface{}) bool {
 		val, ok := i.(map[filters.FilterType]string)
@@ -121,39 +106,55 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		filterReq = NewDashboardFilter("", "", "")
 	}
 
-	var boardsList = make([]*models.Hit, 0)
 	var boardLinks = make([]*models.Hit, 0)
+	var deduplicatedLinks = make(map[int64]*models.Hit)
 
 	var page uint = 1
 	var limit uint = 5000 // Upper bound of Grafana API call
 
 	var tagsParams = make([]string, 0)
-	if !config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
-		tagsParams = append(tagsParams, filterReq.GetEntity(filters.TagsFilter)...)
+	tagsParams = append(tagsParams, filterReq.GetEntity(filters.TagsFilter)...)
+
+	retrieve := func(tag string) {
+		for {
+			searchParams := search.NewSearchParams()
+			if tag != "" {
+				searchParams.Tag = []string{tag}
+			}
+			searchParams.Limit = tools.PtrOf(int64(limit))
+			searchParams.Page = tools.PtrOf(int64(page))
+			searchParams.Type = tools.PtrOf(searchTypeDashboard)
+
+			pageBoardLinks, err := s.GetClient().Search.Search(searchParams)
+			if err != nil {
+				log.Fatal("Failed to retrieve dashboards", err)
+			}
+			boardLinks = append(boardLinks, pageBoardLinks.GetPayload()...)
+			if len(pageBoardLinks.GetPayload()) < int(limit) {
+				break
+			}
+			page += 1
+		}
 	}
-
-	for {
-		searchParams := search.NewSearchParams()
-		searchParams.Tag = tagsParams
-		searchParams.Limit = tools.PtrOf(int64(limit))
-		searchParams.Page = tools.PtrOf(int64(page))
-		searchParams.Type = tools.PtrOf(searchTypeDashboard)
-
-		pageBoardLinks, err := s.GetClient().Search.Search(searchParams)
-		if err != nil {
-			log.Fatal("Failed to retrieve dashboards", err)
+	if len(tagsParams) == 0 {
+		retrieve("")
+	} else {
+		for _, tag := range tagsParams {
+			slog.Info("retrieving dashboard by tag", slog.String("tag", tag))
+			retrieve(tag)
 		}
-		boardLinks = append(boardLinks, pageBoardLinks.GetPayload()...)
-		if len(pageBoardLinks.GetPayload()) < int(limit) {
-			break
-		}
-		page += 1
 	}
 
 	folderFilters := filterReq.GetEntity(filters.FolderFilter)
 	var validFolder bool
 	var validUid bool
-	for _, link := range boardLinks {
+	for ndx, link := range boardLinks {
+		link.Slug = updateSlug(link.URI)
+		_, ok := deduplicatedLinks[link.ID]
+		if ok {
+			slog.Debug("duplicate board, skipping ")
+			continue
+		}
 		validFolder = false
 		if config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
 			validFolder = true
@@ -166,7 +167,6 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		if !validFolder {
 			continue
 		}
-		link.Slug = updateSlug(link.URI)
 		validUid = filterReq.GetFilter(filters.DashFilter) == "" || link.Slug == filterReq.GetFilter(filters.DashFilter)
 		if link.FolderID == 0 {
 
@@ -174,11 +174,16 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		}
 
 		if validFolder && validUid {
-			boardsList = append(boardsList, link)
+			deduplicatedLinks[link.ID] = boardLinks[ndx]
 		}
 	}
 
-	return boardsList
+	boardLinks = maps.Values(deduplicatedLinks)
+	sort.Slice(boardLinks, func(i, j int) bool {
+		return boardLinks[i].ID < boardLinks[j].ID
+	})
+
+	return boardLinks
 
 }
 
@@ -271,6 +276,31 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 			slog.Warn("Failed to unmarshall file", "filename", file)
 			continue
 		}
+		//Extract Tags
+		if filterVal := filterReq.GetFilter(filters.TagsFilter); filterVal != "[]" {
+			var boardTags []string
+			for _, val := range board["tags"].([]interface{}) {
+				boardTags = append(boardTags, val.(string))
+			}
+			var requestedSlices []string
+			err = json.Unmarshal([]byte(filterVal), &requestedSlices)
+			if err != nil {
+				slog.Warn("unable to decode json of requested tags")
+				requestedSlices = []string{}
+			}
+			valid := false
+			for _, val := range requestedSlices {
+				if slices.Contains(boardTags, val) {
+					valid = true
+					break
+				}
+			}
+			if !valid {
+				slog.Debug("board fails tag filter, ignoring board", slog.Any("title", board["title"]))
+				continue
+			}
+
+		}
 
 		//Extract Folder Name based on path
 		folderName, err = getFolderFromResourcePath(s.grafanaConf.Storage, file, config.DashboardResource)
@@ -345,6 +375,8 @@ func (s *DashNGoImpl) DeleteAllDashboards(filter filters.Filter) []string {
 			_, err := s.GetClient().Dashboards.DeleteDashboardByUID(item.UID)
 			if err == nil {
 				dashboardListing = append(dashboardListing, item.Title)
+			} else {
+				slog.Warn("Unable to remove dashboard", slog.String("title", item.Title), slog.String("uid", item.UID))
 			}
 		}
 	}
