@@ -21,6 +21,10 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - arm64
+      - 386
+      - amd64
   - id: gdg-generate
     env:
       - CGO_ENABLED=0
@@ -31,6 +35,11 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - arm64
+      - 386
+      - amd64
+
 
 nfpms:
   - id: gdg
@@ -117,6 +126,10 @@ archives:
       {{- if eq .Arch "amd64" }}x86_64
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
+    allow_different_binary_count: true
+    builds:
+      - gdg
+      - gdg-generate
     files:
       - README*
       - config/importer-example.yml

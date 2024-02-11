@@ -95,7 +95,8 @@ tasks:
     deps: [clean]
     desc: "Release GDG"
     cmds:
-      - goreleaser release
+      - goreleaser release --skip=publish,validate
+
   test:
       desc: "test check"
       cmds:
