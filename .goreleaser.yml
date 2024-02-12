@@ -4,11 +4,10 @@ before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
-    - go generate ./...
 
 source:
   rlcp: true
+
 
 builds:
   - id: gdg
@@ -21,6 +20,10 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - arm64
+      - 386
+      - amd64
   - id: gdg-generate
     env:
       - CGO_ENABLED=0
@@ -31,6 +34,10 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - arm64
+      - 386
+      - amd64
 
 nfpms:
   - id: gdg
@@ -74,6 +81,7 @@ nfpms:
 
 universal_binaries:
   - replace: true
+    ids: [ gdg gdg-generate ]
 
 release:
   prerelease: auto
@@ -117,6 +125,12 @@ archives:
       {{- if eq .Arch "amd64" }}x86_64
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    builds:
+      - gdg
+      - gdg-generate
     files:
       - README*
       - config/importer-example.yml

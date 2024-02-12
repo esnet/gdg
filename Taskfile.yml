@@ -93,9 +93,10 @@ tasks:
       - goreleaser build --snapshot
   release: 
     deps: [clean]
-    desc: "Release GDG"
+    desc: "TEST Release of GDG, no validation, no publish"
     cmds:
-      - goreleaser release
+      - goreleaser release --skip=publish,validate
+
   test:
       desc: "test check"
       cmds:
