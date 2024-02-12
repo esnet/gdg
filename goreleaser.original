@@ -1,6 +1,10 @@
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
 before:
   hooks:
+    # You may remove this if you don't use go modules.
     - go mod tidy
+    # you may remove this if you don't need go generate
     - go generate ./...
 
 source:
@@ -37,11 +41,67 @@ builds:
       - amd64
 
 
+#nfpms:
+#  - id: gdg
+#    package_name: gdg
+#    file_name_template: "{{ .ConventionalFileName }}"
+#    homepage: https://software.es.net/gdg/
+#    maintainer: GDG ESNet <gdg@es.net>
+#    description: |-
+#      GDG is a tool used to manage dashboards, connections, organizations and various entities of the Grafana application.
+#    license: BSD License
+#    builds:
+#      - gdg
+#      - gdg-generate
+#    formats:
+#      - apk
+#      - deb
+#      - rpm
+#
+#    # Template to the path that the binaries should be installed.
+#    # Defaults to `/usr/bin`.
+#    bindir: /usr/bin
+#
+#    # Section.
+#    section: default
+#
+#    # Priority.
+#    priority: extra
+#
+#    # Contents to add to the package.
+#    # GoReleaser will automatically add the binaries.
+#    contents:
+#      # Simple config file
+#      - src: config/importer-example.yml
+#        dst: /etc/gdg/importer.yml
+#        type: config
+#      # Simple config file
+#      - src: config/templates-example.yml
+#        dst: /etc/gdg/templates.yml
+#        type: config
+
+
 universal_binaries:
   - replace: true
 
 release:
   prerelease: auto
+
+
+#dockers:
+#  - id: gdg
+#    #  # You can have multiple Docker images.
+#    #  - # ID of the image, needed if you want to filter by it later on (e.g. on custom publishers).
+#    goos: linux
+#    goarch: amd64
+#    #
+#    image_templates:
+#      - "ghcr.io/esnet/gdg:latest"
+#      - "ghcr.io/esnet/gdg:{{ .RawVersion }}"
+#      - "ghcr.io/esnet/gdg:{{ .Major }}.{{ .Minor }}"
+#
+#    skip_push: false
+#    dockerfile: "docker/Dockerfile"
 
 
 brews:
@@ -66,7 +126,7 @@ archives:
       {{- if eq .Arch "amd64" }}x86_64
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
-    allow_different_binary_count: false
+    allow_different_binary_count: true
     format_overrides:
       - goos: windows
         format: zip
@@ -88,4 +148,3 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-
