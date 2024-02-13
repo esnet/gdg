@@ -80,8 +80,14 @@ nfpms:
 
 
 universal_binaries:
-  - replace: true
-    ids: [ gdg gdg-generate ]
+  - id: gdg
+    name_template: gdg
+    replace: true
+    ids: [gdg]
+  - id: gdg-generate
+    name_template: gdg-generate
+    replace: true
+    ids: [gdg-generate]
 
 release:
   prerelease: auto

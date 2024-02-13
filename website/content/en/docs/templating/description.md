@@ -1,5 +1,5 @@
 ---
-title: "Templating Tool "
+title: "Templating Tool"
 weight: 1
 ---
 
@@ -11,45 +11,45 @@ running `gdg ctx show`
 For example, my current output is as follows:
 
 ```yaml
----testing:
-storage: ""
-enterprise_support: true
-url: http://localhost:3000
-token: ""
-user_name: admin
-password: admin
-organization_id: 0
-watched_folders_override: [ ]
-watched:
-  - General
-  - Other
-connections:
-  exclude_filters:
-    - { }
-  credential_rules:
-    - rules:
-        - field: name
-          regex: misc
-        - field: url
-      auth:
-        user: user
-        password: password
-    - rules:
-        - field: url
-          regex: .*esproxy2*
-      auth:
-        user: admin
-        password: secret
-    - rules:
-        - field: name
-          regex: .*
-      auth:
-        user: user
-        password: password
-datasources: { }
-filter_override:
-  ignore_dashboard_filters: false
-output_path: test/data
+context_name:
+  storage: ""
+  enterprise_support: true
+  url: http://localhost:3000
+  token: ""
+  user_name: admin
+  password: admin
+  organization_id: 0
+  watched_folders_override: [ ]
+  watched:
+    - General
+    - Other
+  connections:
+    exclude_filters:
+      - { }
+    credential_rules:
+      - rules:
+          - field: name
+            regex: misc
+          - field: url
+        auth:
+          user: user
+          password: password
+      - rules:
+          - field: url
+            regex: .*esproxy2*
+        auth:
+          user: admin
+          password: secret
+      - rules:
+          - field: name
+            regex: .*
+        auth:
+          user: user
+          password: password
+  datasources: { }
+  filter_override:
+    ignore_dashboard_filters: false
+  output_path: test/data
 ```
 
 Most of the config isn't that interesting, except the output_path will be used to determine where the newly generated
@@ -85,8 +85,6 @@ entities:
               - moon
               - lightbulb
               - office lights
-
-
 ```
 
 One caveat. The "Keys" will all be lowercased due to how the data is being read in. Meaning, even though
@@ -96,29 +94,31 @@ One caveat. The "Keys" will all be lowercased due to how the data is being read 
 
 Additionally, there a few functions exposed and available to you that allows you to modify
 
+```
 | Function Name    | Example                                 | Input                | Output                   |
 |------------------|-----------------------------------------|----------------------|--------------------------|
 | ToSlug           | {{ .title \| ToSlug }}                  | Bob Candy            | bob-candy                |
 | QuotedStringJoin | {{ .lightsources \| QuotedStringJoin }} | [sun,moon,lightbulb] | "sun","moon","lightbulb" |
+```
 
 There is also a large collection of functions that have been imported from [sprig](https://masterminds.github.io/sprig/) and are available for use.
 
 ### Example Templating Snippets
 
 Data Injection
+
 ```json
 {
   "annotations": {
     "list": [
       {
-        "$$hashKey": "{{ .title | lower | ToSlug}}",
-        /* Inserting data and piping it to two different functions.  In this case, ToLower is redundant, but it serves as a chained example. */
+        "$$hashKey": "{{ .title | lower | ToSlug}}",  // Inserting data and piping it to two different functions.  In this case, ToLower is redundant, but it serves as a chained example.
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": "Grafana",
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations \u0026 Alerts",
+        "name": "Annotations Alerts",
         "type": "dashboard"
       }
     ]
@@ -131,9 +131,9 @@ Iterating and conditionals.
 ```json
 {
   "link_text": [
-    {{if .enabledlight}}   /* conditional to check if to insert or not */
-    {{ range $v := .lightsources}}  /* Iterating through list */
-    {{ $v }}  /* Inserting value */
+    {{if .enabledlight}}   // conditional to check if to insert or not 
+    {{ range $v := .lightsources}}  // Iterating through list 
+    {{ $v }}  // Inserting value 
     {{ end }}
     {{ end }}
   ]
@@ -154,6 +154,7 @@ As part of the installation you will have access to gdg-generate.
 
 NOTE: -c and -ct are optional parameters as is -t if you're relying on the defaults.
 -t will filter the config and only process the template you've specified.
+
 ```sh
 gdg-generate -c config/importer.yml --ct config/template.yaml -t template_example
 ```
@@ -167,8 +168,6 @@ Example output:
 2023-11-16 09:49:03 INF templating/templating.go:97 Creating a new template folder=General orgId=2 data="map[enabledlight:false lightsources:[sun moon lightbulb office lights] title:Bob Loves Candy]"
 2023-11-16 09:49:03 INF templating/templating.go:100 Writing data to destination output=test/data/org_2/dashboards
 2023-11-16 09:49:03 INF templating/templating.go:131 template Path: path=test/data/templates
-
-
 ```
 
 A new file has been created under test/data/org_2/dashboards/General/template_example.json
