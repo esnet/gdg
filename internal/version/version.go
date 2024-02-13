@@ -8,8 +8,8 @@ import (
 // GitCommit returns the git commit that was compiled. This will be filled in by the compiler.
 var GitCommit string
 
-// Version returns the main version number that is being run at the moment.
-var Version = "0.5.1"
+// Version returns current version.  Set to release CICD
+var Version = "DEVEL"
 
 // BuildDate returns the date the binary was built
 var BuildDate = ""
