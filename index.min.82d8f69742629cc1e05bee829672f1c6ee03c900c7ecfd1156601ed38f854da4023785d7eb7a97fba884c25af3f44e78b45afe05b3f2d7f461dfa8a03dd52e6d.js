@@ -2,15 +2,17 @@ var suggestions=document.getElementById("suggestions"),search=document.getElemen
 The following packages are currently supported:`,content:`Installation # The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.
 The following packages are currently supported:
 RPM APK Docker Brew Package Installation # Install from package involves downloading the appropriate package from the release and installing it as you usually do on your favorite Distro.
-rpm -Uvh ./gdg_0.5.1_amd64.rpm dpkg -i ./gdg_0.5.1_amd64.deb Homebrew Installation # brew tap esnet/gdg brew update brew install gdg If there is a conflict you can try to be explicit.
+rpm -Uvh ./gdg_0.5.3_amd64.rpm dpkg -i ./gdg_0.5.3_amd64.deb Homebrew Installation # brew tap esnet/gdg brew update brew install gdg If there is a conflict you can try to be explicit.
 brew install esnet/gdg/gdg Docker usage # The docker tags are released started with 0.3.1. Each release will generate a major version and minor version tag.
 You can see the available images here
-docker pull ghcr.io/esnet/gdg:0.5.1 NOTE: ghcr.io/esnet/gdg:0.3 will also point to 0.3.1 until 0.3.2 is released after which it&rsquo;ll point to 0.3.2
+docker pull ghcr.io/esnet/gdg:0.5.3 NOTE: ghcr.io/esnet/gdg:0.3 will also point to 0.3.1 until 0.3.2 is released after which it&rsquo;ll point to 0.3.2
 Example compose.
-version: '3.7' services: gdg: image: ghcr.io/esnet/gdg:0.5.1 command: &quot;--help&quot; ## Add additional parameters here # command: &quot;ds export&quot; ## Pass any cmd on here. volumes: - ./config:/app/config ## where the configuration lives - ./exports:/app/exports ## doesn't need to be /app/exports but you should export the destination of where exports are being written out to. From the CLI:
-docker run -it --rm -v $(pwd)/config:/app/config -v $(pwd)/exports:/app/exports ghcr.io/esnet/gdg:latest ds --help Installing via Go # If you have go install you may run the following command to install gdg
-go install github.com/esnet/gdg@latest #for latest go install github.com/esnet/gdg@v0.5.1 #for a specific version You can verify the version by running gdg version.
-Configuration # You can then create a simple configuration using gdg tools ctx new which will do a best effort to guide to setup a basic config that will get you up and going or read the more detailed documentation that can be found here
+version: '3.7' services: gdg: image: ghcr.io/esnet/gdg:0.5.3 command: &quot;--help&quot; ## Add additional parameters here # command: &quot;ds export&quot; ## Pass any cmd on here. volumes: - ./config:/app/config ## where the configuration lives - ./exports:/app/exports ## doesn't need to be /app/exports but you should export the destination of where exports are being written out to. From the CLI:
+docker run -it --rm -v $(pwd)/config:/app/config -v $(pwd)/exports:/app/exports ghcr.io/esnet/gdg:latest ds --help Installing via Go # If you have go install you may run the following command to install gdg. Keep in mind there are two binaries you may install.
+gdg ==&gt; Main binary that manages the various entities supported. gdg-generate =&gt; Helper utility that allows you to generate multiple dashboards given a valid configuration and seed data. gdg
+go install github.com/esnet/gdg/cmd/gdg@latest #for latest go install github.com/esnet/gdg@v0.5.3 #for a specific version You can verify the version by running gdg version.
+gdg-generate
+go install github.com/esnet/gdg/cmd/gdg-generate@latest #for latest go install github.com/esnet/gdg@v0.5.3 #for a specific version Configuration # You can then create a simple configuration using gdg tools ctx new which will do a best effort to guide to setup a basic config that will get you up and going or read the more detailed documentation that can be found here
 NOTE: wizard doesn&rsquo;t currently support ALL features but it should help you get a head start.
 `}),e.add({id:2,href:"/gdg/docs/templating/description/",title:"Templating Tool",description:`GDG has now introduced a new supporting tool that works in conjunction with GDG. It is currently dependent on the GDG configuration since it will operate on the currently selected context. You can confirm what the current context is by running gdg ctx show
 For example, my current output is as follows:
