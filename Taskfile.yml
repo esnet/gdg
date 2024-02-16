@@ -67,7 +67,7 @@ tasks:
     desc: "Buiding {{ .BIN_NAME }}-generate {{ .VERSION }}" 
     cmds:
       - echo "GOPATH=${GOPATH}"
-      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}-generate cmd/gen/main.go 
+      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}-generate cmd/gdg-generate/main.go 
   install: 
     desc: "installing {{ .BIN_NAME }} {{ .VERSION }}" 
     cmds: 
