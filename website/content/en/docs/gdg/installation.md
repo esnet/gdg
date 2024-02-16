@@ -17,8 +17,8 @@ The following packages are currently supported:
 Install from package involves downloading the appropriate package from the [release](https://github.com/esnet/gdg/releases) and installing it as you usually do on your favorite Distro.
 
 ```sh
-rpm -Uvh ./gdg_0.5.1_amd64.rpm
-dpkg -i ./gdg_0.5.1_amd64.deb
+rpm -Uvh ./gdg_0.5.3_amd64.rpm
+dpkg -i ./gdg_0.5.3_amd64.deb
 ```
 
 ### Homebrew Installation
@@ -43,7 +43,7 @@ The docker tags are released started with 0.3.1.  Each release will generate a m
 You can see the available images [here](https://github.com/esnet/gdg/pkgs/container/gdg)
 
 ```sh
-docker pull ghcr.io/esnet/gdg:0.5.1
+docker pull ghcr.io/esnet/gdg:0.5.3
 ```
 
 NOTE: ghcr.io/esnet/gdg:0.3 will also point to 0.3.1 until 0.3.2 is released after which it'll point to 0.3.2
@@ -54,7 +54,7 @@ Example compose.
 version: '3.7'
 services:
   gdg:
-    image:  ghcr.io/esnet/gdg:0.5.1
+    image:  ghcr.io/esnet/gdg:0.5.3
     command: "--help"            ## Add additional parameters here
 #    command: "ds export"       ## Pass any cmd on here.
     volumes:
@@ -70,14 +70,28 @@ docker run -it --rm -v $(pwd)/config:/app/config -v $(pwd)/exports:/app/exports 
 
 ### Installing via Go
 
-If you have go install you may run the following command to install gdg
+If you have go install you may run the following command to install gdg.  Keep in mind there are two binaries you may install.
 
+- gdg ==> Main binary that manages the various entities supported.
+- gdg-generate => Helper utility that allows you to generate multiple dashboards given a valid configuration and seed data.
+
+---
+
+**gdg**
 ```sh
-go install github.com/esnet/gdg@latest  #for latest
-go install github.com/esnet/gdg@v0.5.1  #for a specific version
+go install github.com/esnet/gdg/cmd/gdg@latest  #for latest
+go install github.com/esnet/gdg/cmd/gdg@v0.5.3  #for a specific version
 ```
 
 You can verify the version by running `gdg version`.
+
+**gdg-generate**
+```sh
+go install github.com/esnet/gdg/cmd/gdg-generate@latest  #for latest
+go install github.com/esnet/gdg/cmd/gdg-generate@v0.5.3  #for a specific version
+```
+
+---
 
 ## Configuration
 
