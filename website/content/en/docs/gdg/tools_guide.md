@@ -101,6 +101,16 @@ Example of creating a new token.
 └────┴─────────────────┴───────┴────────┴──────────┴──────────────┴───────────────┘
 {{< /details >}}
 
+### Dashboard Linter
+
+Integrated the official grafana [linter](https://github.com/grafana/dashboard-linter/) into GDG. Allows you to run the linter as part of gdg.
+
+```sh
+gdg tools dashboard lint -d bandwidth-patterns -f testing
+```
+
+You can execute this on a single dashboard, or a folder.  --autofix is available but should be considered a beta feature.
+
 
 ### Devel
 Some developer helper utilities
@@ -110,6 +120,7 @@ Some developer helper utilities
 ./bin/gdg tools devel completion  [bash|fish|powershell|zsh] --  Will generate autocompletion for GDG for your favorite shell
 ./bin/gdg tools devel srvinfo -- print grafana server info
 ```
+
 
 
 ### Organizations

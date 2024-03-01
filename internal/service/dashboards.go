@@ -6,9 +6,13 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
+	"github.com/grafana/dashboard-linter/lint"
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/zeitlinger/conflate"
+	"time"
+
 	"github.com/tidwall/pretty"
 	"golang.org/x/exp/maps"
 	"log"
@@ -28,6 +32,110 @@ type DashboardsApi interface {
 	DownloadDashboards(filter filters.Filter) []string
 	UploadDashboards(filter filters.Filter)
 	DeleteAllDashboards(filter filters.Filter) []string
+	LintDashboards(req LintRequest) []string
+}
+
+type LintRequest struct {
+	StrictFlag    bool
+	VerboseFlag   bool
+	AutoFix       bool
+	DashboardSlug string
+	FolderName    string
+}
+
+func (s *DashNGoImpl) LintDashboards(req LintRequest) []string {
+	var (
+		rawBoard []byte
+	)
+	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
+	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
+	if err != nil {
+		log.Fatalf("unable to find any files to export from storage engine, err: %v", err)
+	}
+	filterReq := NewDashboardFilter(req.FolderName, req.DashboardSlug, "")
+	validFolders := filterReq.GetEntity(filters.FolderFilter)
+	for _, file := range filesInDir {
+		baseFile := filepath.Base(file)
+		baseFile = strings.ReplaceAll(baseFile, ".json", "")
+
+		if !strings.HasSuffix(file, ".json") {
+			slog.Warn("Only json files are supported, skipping", "filename", file)
+			continue
+		}
+		if req.DashboardSlug != "" && baseFile != req.DashboardSlug {
+			slog.Debug("Skipping dashboard, does not match filter", slog.String("dashboard", req.DashboardSlug))
+			continue
+		}
+
+		if rawBoard, err = s.storage.ReadFile(file); err != nil {
+			slog.Warn("Unable to read file", "filename", file, "err", err)
+			continue
+		}
+		if req.FolderName != "" {
+			if !slices.Contains(validFolders, req.FolderName) && !config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+				slog.Debug("Skipping file since it doesn't match any valid folders", "filename", file)
+				continue
+			}
+		}
+
+		dashboard, err := lint.NewDashboard(rawBoard)
+		if err != nil {
+			slog.Error("failed to parse dashboard", slog.Any("err", err))
+			continue
+		}
+		lintConfigFlag := strings.ReplaceAll(file, ".json", ".lint")
+		cfgLint := lint.NewConfigurationFile()
+		if err := cfgLint.Load(lintConfigFlag); err != nil {
+			slog.Error("Unable to load lintConfigFlag")
+			continue
+		}
+		cfgLint.Verbose = req.VerboseFlag
+		cfgLint.Autofix = req.AutoFix
+
+		rules := lint.NewRuleSet()
+		results, err := rules.Lint([]lint.Dashboard{dashboard})
+		if err != nil {
+			slog.Error("failed to lint dashboard", slog.Any("err", err))
+			continue
+
+		}
+		if cfgLint.Autofix {
+			changes := results.AutoFix(&dashboard)
+			if changes > 0 {
+				slog.Info("AutoFix possible")
+				writeErr := s.writeLintedDashboard(dashboard, file, rawBoard)
+				if writeErr != nil {
+					slog.Error("unable to autofix linting issues for dashboard", slog.String("dashboard", file))
+				}
+			} else {
+				slog.Error("AutoFix is not possible for dashboard.", slog.String("dashboard", file))
+				time.Sleep(time.Second * 5)
+			}
+		}
+
+		slog.Info("Running Linter for Dashboard", slog.String("file", file))
+		results.ReportByRule()
+
+	}
+	return nil
+}
+
+func (s *DashNGoImpl) writeLintedDashboard(dashboard lint.Dashboard, filename string, old []byte) error {
+	newBytes, err := dashboard.Marshal()
+	if err != nil {
+		return err
+	}
+	c := conflate.New()
+	err = c.AddData(old, newBytes)
+	if err != nil {
+		return err
+	}
+	b, err := c.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	json := strings.ReplaceAll(string(b), "\"options\": null,", "\"options\": [],")
+	return s.storage.WriteFile(filename, []byte(json))
 }
 
 // getDashboardByUid retrieve a dashboard given a particular uid.
@@ -169,7 +277,6 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		}
 		validUid = filterReq.GetFilter(filters.DashFilter) == "" || link.Slug == filterReq.GetFilter(filters.DashFilter)
 		if link.FolderID == 0 {
-
 			link.FolderTitle = DefaultFolderName
 		}
 

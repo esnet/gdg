@@ -8,6 +8,8 @@ import (
 
 	models "github.com/grafana/grafana-openapi-client-go/models"
 
+	service "github.com/esnet/gdg/internal/service"
+
 	types "github.com/esnet/gdg/internal/types"
 )
 
@@ -1503,6 +1505,54 @@ func (_c *GrafanaService_InitOrganizations_Call) Return() *GrafanaService_InitOr
 }
 
 func (_c *GrafanaService_InitOrganizations_Call) RunAndReturn(run func()) *GrafanaService_InitOrganizations_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// LintDashboards provides a mock function with given fields: req
+func (_m *GrafanaService) LintDashboards(req service.LintRequest) []string {
+	ret := _m.Called(req)
+
+	if len(ret) == 0 {
+		panic("no return value specified for LintDashboards")
+	}
+
+	var r0 []string
+	if rf, ok := ret.Get(0).(func(service.LintRequest) []string); ok {
+		r0 = rf(req)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+
+	return r0
+}
+
+// GrafanaService_LintDashboards_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'LintDashboards'
+type GrafanaService_LintDashboards_Call struct {
+	*mock.Call
+}
+
+// LintDashboards is a helper method to define mock.On call
+//   - req service.LintRequest
+func (_e *GrafanaService_Expecter) LintDashboards(req interface{}) *GrafanaService_LintDashboards_Call {
+	return &GrafanaService_LintDashboards_Call{Call: _e.mock.On("LintDashboards", req)}
+}
+
+func (_c *GrafanaService_LintDashboards_Call) Run(run func(req service.LintRequest)) *GrafanaService_LintDashboards_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(service.LintRequest))
+	})
+	return _c
+}
+
+func (_c *GrafanaService_LintDashboards_Call) Return(_a0 []string) *GrafanaService_LintDashboards_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *GrafanaService_LintDashboards_Call) RunAndReturn(run func(service.LintRequest) []string) *GrafanaService_LintDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
