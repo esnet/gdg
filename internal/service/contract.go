@@ -13,7 +13,6 @@ type GrafanaService interface {
 	OrganizationsApi
 	DashboardsApi
 	ConnectionsApi
-	AlertNotificationsApi
 	UsersApi
 	FoldersApi
 	LibraryElementsApi

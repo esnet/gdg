@@ -6,9 +6,7 @@ import (
 	"fmt"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
-	"log"
 	"log/slog"
-	"os"
 	"path"
 	"regexp"
 )
@@ -19,7 +17,6 @@ const (
 	AlertNotificationResource    = "alertnotifications"
 	ConnectionPermissionResource = "connections-permissions"
 	ConnectionResource           = "connections"
-	LegacyConnections            = "datasources"
 	DashboardResource            = "dashboards"
 	FolderPermissionResource     = "folders-permissions"
 	FolderResource               = "folders"
@@ -192,16 +189,6 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 
 // Validate will return terminate if any deprecated configuration is found.
 func (s *GrafanaConfig) Validate() {
-	if len(s.LegacyConnectionSettings) > 0 {
-		log.Fatal("Using 'datasources' is now deprecated, please use 'connections' instead")
-	}
-	//Validate Connections
-	//TODO: remove code after next release
-	legacyCheck := s.GetPath(LegacyConnections)
-	if _, err := os.Stat(legacyCheck); !os.IsNotExist(err) {
-		log.Fatalf("Your export contains a datasource directry which is deprecated.  Please remove or "+
-			"rename directory to '%s'", ConnectionResource)
-	}
 
 }
 

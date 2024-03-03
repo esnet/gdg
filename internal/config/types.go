@@ -67,10 +67,8 @@ type GrafanaConfig struct {
 	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
-	//Datasources are deprecated, please use Connections
-	LegacyConnectionSettings map[string]interface{} `mapstructure:"datasources" yaml:"datasources"`
-	FilterOverrides          *FilterOverrides       `mapstructure:"filter_override" yaml:"filter_override"`
-	OutputPath               string                 `mapstructure:"output_path" yaml:"output_path"`
+	FilterOverrides          *FilterOverrides      `mapstructure:"filter_override" yaml:"filter_override"`
+	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
 }
 
 type MonitoredOrgFolders struct {

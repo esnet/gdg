@@ -27,7 +27,6 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 		},
 		CommandsList: []simplecobra.Commander{
 			newDashboardCommand(),
-			newAlertNotificationsCommand(),
 			newConnectionsCommand(),
 			newFolderCommand(),
 			newLibraryElementsCommand(),
