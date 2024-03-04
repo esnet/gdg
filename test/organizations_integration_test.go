@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOrgsCrud(t *testing.T) {
+func TestOrganizationCrud(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -32,7 +32,7 @@ func TestOrgsCrud(t *testing.T) {
 
 }
 
-func TestOrgUserMembership(t *testing.T) {
+func TestOrganizationUserMembership(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}

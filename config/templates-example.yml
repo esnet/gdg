@@ -3,7 +3,7 @@ entities:
     - template_name: template_example
       output:
         - folder: "General"
-          org_id: 2
+          organization_name: "Main Org."
           dashboard_name: "Testing Foobar"
           template_data:
             Title: Bob Loves Candy
@@ -14,7 +14,7 @@ entities:
               - lightbulb
               - office lights
         - folder: "Testing"
-          org_id: 3
+          organization_name: Some Other Org
           dashboard_name: ""
           template_data:
             Title: Uncle McDonalds

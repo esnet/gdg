@@ -355,13 +355,66 @@ func (_c *OrganizationsApi_ListOrganizations_Call) RunAndReturn(run func() []*mo
 	return _c
 }
 
-// SetOrganization provides a mock function with given fields: id
-func (_m *OrganizationsApi) SetOrganization(id int64) error {
-	ret := _m.Called(id)
+// ListUserOrganizations provides a mock function with given fields:
+func (_m *OrganizationsApi) ListUserOrganizations() ([]*models.UserOrgDTO, error) {
+	ret := _m.Called()
+
+	var r0 []*models.UserOrgDTO
+	var r1 error
+	if rf, ok := ret.Get(0).(func() ([]*models.UserOrgDTO, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() []*models.UserOrgDTO); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*models.UserOrgDTO)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// OrganizationsApi_ListUserOrganizations_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListUserOrganizations'
+type OrganizationsApi_ListUserOrganizations_Call struct {
+	*mock.Call
+}
+
+// ListUserOrganizations is a helper method to define mock.On call
+func (_e *OrganizationsApi_Expecter) ListUserOrganizations() *OrganizationsApi_ListUserOrganizations_Call {
+	return &OrganizationsApi_ListUserOrganizations_Call{Call: _e.mock.On("ListUserOrganizations")}
+}
+
+func (_c *OrganizationsApi_ListUserOrganizations_Call) Run(run func()) *OrganizationsApi_ListUserOrganizations_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *OrganizationsApi_ListUserOrganizations_Call) Return(_a0 []*models.UserOrgDTO, _a1 error) *OrganizationsApi_ListUserOrganizations_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *OrganizationsApi_ListUserOrganizations_Call) RunAndReturn(run func() ([]*models.UserOrgDTO, error)) *OrganizationsApi_ListUserOrganizations_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SetOrganizationByName provides a mock function with given fields: name, useSlug
+func (_m *OrganizationsApi) SetOrganizationByName(name string, useSlug bool) error {
+	ret := _m.Called(name, useSlug)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(string, bool) error); ok {
+		r0 = rf(name, useSlug)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -369,30 +422,31 @@ func (_m *OrganizationsApi) SetOrganization(id int64) error {
 	return r0
 }
 
-// OrganizationsApi_SetOrganization_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetOrganization'
-type OrganizationsApi_SetOrganization_Call struct {
+// OrganizationsApi_SetOrganizationByName_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetOrganizationByName'
+type OrganizationsApi_SetOrganizationByName_Call struct {
 	*mock.Call
 }
 
-// SetOrganization is a helper method to define mock.On call
-//   - id int64
-func (_e *OrganizationsApi_Expecter) SetOrganization(id interface{}) *OrganizationsApi_SetOrganization_Call {
-	return &OrganizationsApi_SetOrganization_Call{Call: _e.mock.On("SetOrganization", id)}
+// SetOrganizationByName is a helper method to define mock.On call
+//   - name string
+//   - useSlug bool
+func (_e *OrganizationsApi_Expecter) SetOrganizationByName(name interface{}, useSlug interface{}) *OrganizationsApi_SetOrganizationByName_Call {
+	return &OrganizationsApi_SetOrganizationByName_Call{Call: _e.mock.On("SetOrganizationByName", name, useSlug)}
 }
 
-func (_c *OrganizationsApi_SetOrganization_Call) Run(run func(id int64)) *OrganizationsApi_SetOrganization_Call {
+func (_c *OrganizationsApi_SetOrganizationByName_Call) Run(run func(name string, useSlug bool)) *OrganizationsApi_SetOrganizationByName_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64))
+		run(args[0].(string), args[1].(bool))
 	})
 	return _c
 }
 
-func (_c *OrganizationsApi_SetOrganization_Call) Return(_a0 error) *OrganizationsApi_SetOrganization_Call {
+func (_c *OrganizationsApi_SetOrganizationByName_Call) Return(_a0 error) *OrganizationsApi_SetOrganizationByName_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *OrganizationsApi_SetOrganization_Call) RunAndReturn(run func(int64) error) *OrganizationsApi_SetOrganization_Call {
+func (_c *OrganizationsApi_SetOrganizationByName_Call) RunAndReturn(run func(string, bool) error) *OrganizationsApi_SetOrganizationByName_Call {
 	_c.Call.Return(run)
 	return _c
 }

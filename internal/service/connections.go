@@ -43,9 +43,9 @@ func NewConnectionFilter(name string) filters.Filter {
 
 // ListConnections list all the currently configured datasources
 func (s *DashNGoImpl) ListConnections(filter filters.Filter) []models.DataSourceListItemDTO {
-	err := s.SwitchOrganization(s.grafanaConf.GetOrganizationId())
+	err := s.SwitchOrganizationByName(s.grafanaConf.GetOrganizationName())
 	if err != nil {
-		log.Fatalf("Failed to switch organization ID %d: ", s.grafanaConf.OrganizationId)
+		log.Fatalf("Failed to switch organization ID %s: ", s.grafanaConf.OrganizationName)
 	}
 
 	ds, err := s.GetClient().Datasources.GetDataSources()

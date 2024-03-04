@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
 	"log/slog"
@@ -14,7 +15,6 @@ import (
 type ResourceType string
 
 const (
-	AlertNotificationResource    = "alertnotifications"
 	ConnectionPermissionResource = "connections-permissions"
 	ConnectionResource           = "connections"
 	DashboardResource            = "dashboards"
@@ -30,7 +30,6 @@ const (
 )
 
 var orgNamespacedResource = map[ResourceType]bool{
-	AlertNotificationResource:    true,
 	ConnectionPermissionResource: true,
 	ConnectionResource:           true,
 	DashboardResource:            true,
@@ -53,8 +52,8 @@ func (s *ResourceType) String() string {
 // GetPath returns the path of the resource type, if Namespaced, will delimit the path by org Id
 func (s *ResourceType) GetPath(basePath string) string {
 	if s.isNamespaced() {
-		orgId := Config().GetDefaultGrafanaConfig().GetOrganizationId()
-		return path.Join(basePath, fmt.Sprintf("%s_%d", OrganizationMetaResource, orgId), s.String())
+		orgName := slug.Make(Config().GetDefaultGrafanaConfig().GetOrganizationName())
+		return path.Join(basePath, fmt.Sprintf("%s_%s", OrganizationMetaResource, orgName), s.String())
 
 	}
 	return path.Join(basePath, s.String())
@@ -164,9 +163,9 @@ func (s *GrafanaConfig) GetPath(r ResourceType) string {
 }
 
 // GetOrgMonitoredFolders return the OrganizationMonitoredFolders that override a given Org
-func (s *GrafanaConfig) GetOrgMonitoredFolders(orgId int64) []string {
+func (s *GrafanaConfig) GetOrgMonitoredFolders(orgName string) []string {
 	for _, item := range s.MonitoredFoldersOverride {
-		if item.OrganizationId == orgId && len(item.Folders) > 0 {
+		if item.OrganizationName == orgName && len(item.Folders) > 0 {
 			return item.Folders
 		}
 	}
@@ -176,7 +175,7 @@ func (s *GrafanaConfig) GetOrgMonitoredFolders(orgId int64) []string {
 
 // GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.
 func (s *GrafanaConfig) GetMonitoredFolders() []string {
-	orgFolders := s.GetOrgMonitoredFolders(s.OrganizationId)
+	orgFolders := s.GetOrgMonitoredFolders(s.GetOrganizationName())
 	if len(orgFolders) > 0 {
 		return orgFolders
 	}

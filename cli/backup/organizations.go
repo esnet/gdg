@@ -5,6 +5,7 @@ import (
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
+	"github.com/gosimple/slug"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"log/slog"
@@ -19,6 +20,10 @@ func newOrganizationsCommand() simplecobra.Commander {
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"org", "orgs"}
+		},
+		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
+			r.GrafanaSvc().InitOrganizations()
+			return nil
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
@@ -43,7 +48,7 @@ func newOrganizationsListCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Listing organizations for context", "context", config.Config().GetGDGConfig().GetContext())
-			rootCmd.TableObj.AppendHeader(table.Row{"id", "org"})
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "organization Name", "org slug ID"})
 			listOrganizations := rootCmd.GrafanaSvc().ListOrganizations()
 			sort.Slice(listOrganizations, func(a, b int) bool {
 				return listOrganizations[a].ID < listOrganizations[b].ID
@@ -52,7 +57,7 @@ func newOrganizationsListCmd() simplecobra.Commander {
 				slog.Info("No organizations found")
 			} else {
 				for _, org := range listOrganizations {
-					rootCmd.TableObj.AppendRow(table.Row{org.ID, org.Name})
+					rootCmd.TableObj.AppendRow(table.Row{org.ID, org.Name, slug.Make(org.Name)})
 				}
 				rootCmd.TableObj.Render()
 			}
@@ -97,7 +102,7 @@ func newOrganizationsUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Uploading Folders for context: '%s'", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Uploading Folders for context: ", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			folders := rootCmd.GrafanaSvc().UploadOrganizations()
 			if len(folders) == 0 {

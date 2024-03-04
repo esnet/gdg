@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	ViperGdgConfig      = "gdg"
-	ViperTemplateConfig = "template"
+	ViperGdgConfig          = "gdg"
+	ViperTemplateConfig     = "template"
+	DefaultOrganizationName = "Main Org."
+	DefaultOrganizationId   = 1
 )
 
 type Configuration struct {
@@ -34,10 +36,10 @@ type TemplateDashboards struct {
 }
 
 type TemplateDashboardEntity struct {
-	Folder        string                 `mapstructure:"folder"`
-	OrgId         int64                  `mapstructure:"org_id"`
-	DashboardName string                 `mapstructure:"dashboard_name"`
-	TemplateData  map[string]interface{} `mapstructure:"template_data"`
+	Folder           string                 `mapstructure:"folder"`
+	OrganizationName string                 `mapstructure:"organization_name"`
+	DashboardName    string                 `mapstructure:"dashboard_name"`
+	TemplateData     map[string]interface{} `mapstructure:"template_data"`
 }
 
 // AppGlobals is the global configuration for the application
@@ -63,7 +65,7 @@ type GrafanaConfig struct {
 	APIToken                 string                `mapstructure:"token" yaml:"token"`
 	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
 	Password                 string                `mapstructure:"password" yaml:"password"`
-	OrganizationId           int64                 `mapstructure:"organization_id" yaml:"organization_id"`
+	OrganizationName         string                `mapstructure:"organization_name" yaml:"organization_name"`
 	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
@@ -72,16 +74,16 @@ type GrafanaConfig struct {
 }
 
 type MonitoredOrgFolders struct {
-	OrganizationId int64    `json:"organization_id" yaml:"organization_id"`
-	Folders        []string `json:"folders" yaml:"folders"`
+	OrganizationName string   `json:"organization_name" yaml:"organization_name"`
+	Folders          []string `json:"folders" yaml:"folders"`
 }
 
-// GetOrganizationId returns the id of the organization (defaults to 1 if unset)
-func (s *GrafanaConfig) GetOrganizationId() int64 {
-	if s.OrganizationId > 1 {
-		return s.OrganizationId
+// GetOrganizationName returns the id of the organization (defaults to 1 if unset)
+func (s *GrafanaConfig) GetOrganizationName() string {
+	if s.OrganizationName != "" {
+		return s.OrganizationName
 	}
-	return 1
+	return DefaultOrganizationName
 }
 
 // SetAdmin sets true if user has admin permissions

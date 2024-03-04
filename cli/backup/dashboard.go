@@ -40,11 +40,10 @@ func newDashboardCommand() simplecobra.Commander {
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"dash", "dashboard"}
-			dashboard := cmd
-			dashboard.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
-			dashboard.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
-			dashboard.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
-			dashboard.PersistentFlags().StringArrayP("tags", "t", []string{}, "Filter by list of comma delimited tags")
+			cmd.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
+			cmd.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
+			cmd.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
+			cmd.PersistentFlags().StringArrayP("tags", "t", []string{}, "Filter by list of comma delimited tags")
 		},
 		CommandsList: []simplecobra.Commander{
 			newListDashboardsCmd(),
@@ -164,8 +163,16 @@ func newListDashboardsCmd() simplecobra.Commander {
 
 			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
+			orgInfo := rootCmd.GrafanaSvc().GetUserOrganization()
+			orgName := "unknown"
+			if orgInfo != nil {
+				orgName = orgInfo.Name
+			}
 
-			slog.Info("Listing dashboards for context", slog.String("context", config.Config().GetGDGConfig().GetContext()), slog.Any("count", len(boards)))
+			slog.Info("Listing dashboards for context",
+				slog.String("context", config.Config().GetGDGConfig().GetContext()),
+				slog.String("orgName", orgName),
+				slog.Any("count", len(boards)))
 			for _, link := range boards {
 				base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().URL)
 				var baseHost string

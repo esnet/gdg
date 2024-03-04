@@ -43,22 +43,32 @@ func newOrgCommand() simplecobra.Commander {
 func newSetOrgCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "set",
-		Short: "Set <OrgId>, 0 removes filter",
-		Long:  "Set <OrgId>, 0	removes filter",
+		Short: "Set --orgId --orgName to set user Org",
+		Long:  "Set --orgId --orgName to set user Org",
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.PersistentFlags().StringP("orgName", "o", "", "Set user Org by Name (not slug)")
+			cmd.PersistentFlags().StringP("orgSlugName", "", "", "Set user Org by slug name")
+
+		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			if len(args) < 1 {
-				return errors.New("requires an Org ID and name")
+			orgName, _ := cd.CobraCommand.Flags().GetString("orgName")
+			slugName, _ := cd.CobraCommand.Flags().GetString("orgSlugName")
+			if orgName != "" || slugName != "" {
+				var useSlug = false
+				if slugName != "" {
+					useSlug = true
+					orgName = slugName
+				}
+				err := rootCmd.GrafanaSvc().SetOrganizationByName(orgName, useSlug)
+				if err != nil {
+					log.Fatal("unable to set Org ID, ", err.Error())
+				}
 			}
-			OrgId := args[0]
-			orgId, err := strconv.ParseInt(OrgId, 10, 64)
-			if err != nil {
-				log.Fatal("invalid Org ID, could not parse value to a numeric value")
-			}
-			err = rootCmd.GrafanaSvc().SetOrganization(orgId)
-			if err != nil {
-				log.Fatal("unable to set Org ID", "err", err)
-			}
-			slog.Info("Successfully set Org ID for context", "context", config.Config().GetGDGConfig().GetContext())
+
+			rootCmd.GrafanaSvc().InitOrganizations()
+			userOrg := rootCmd.GrafanaSvc().GetUserOrganization()
+			slog.Info("New Org is now set to", slog.String("orgName", userOrg.Name))
+
 			return nil
 
 		},

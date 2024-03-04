@@ -83,8 +83,12 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 		}
 		for _, outputEntity := range entity.DashboardEntities {
 			grafana := cfg.GetDefaultGrafanaConfig()
-			slog.Debug("Creating a new template", slog.String("folder", outputEntity.Folder), slog.Int64("orgId", outputEntity.OrgId), slog.Any("data", outputEntity.TemplateData))
-			grafana.OrganizationId = outputEntity.OrgId
+			slog.Debug("Creating a new template",
+				slog.String("folder", outputEntity.Folder),
+				slog.String("orgName", outputEntity.OrganizationName),
+				slog.Any("data", outputEntity.TemplateData),
+			)
+			grafana.OrganizationName = outputEntity.OrganizationName
 			outputPath := service.BuildResourceFolder(outputEntity.Folder, config.DashboardResource)
 			//Merge two maps.
 			tmpl, err := template.New("").Funcs(fns).Parse(string(templateData))

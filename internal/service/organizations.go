@@ -20,11 +20,13 @@ type OrganizationsApi interface {
 	ListOrganizations() []*models.OrgDTO
 	DownloadOrganizations() []string
 	UploadOrganizations() []string
-	SetOrganization(id int64) error
+	//SetOrganization(id int64) error
+	SetOrganizationByName(name string, useSlug bool) error
 	//Manage Active Organization
 	GetUserOrganization() *models.OrgDetailsDTO
 	GetTokenOrganization() *models.OrgDetailsDTO
 	SetUserOrganizations(id int64) error
+	ListUserOrganizations() ([]*models.UserOrgDTO, error)
 	InitOrganizations()
 	//Org Users
 	ListOrgUsers(orgId int64) []*models.OrgUserDTO
@@ -36,14 +38,34 @@ type OrganizationsApi interface {
 // InitOrganizations will context switch to configured organization and invoke a different call depending on the access level.
 func (s *DashNGoImpl) InitOrganizations() {
 	var orgInfo *models.OrgDetailsDTO
+	var orgEntity models.OrgDetailsDTO
 
 	if s.grafanaConf.IsAdminEnabled() || s.grafanaConf.IsBasicAuth() {
 		orgInfo = s.GetUserOrganization()
 		if orgInfo == nil {
 			log.Fatal("Unable to retrieve requested user's org")
 		}
-		if orgInfo.ID != s.grafanaConf.GetOrganizationId() {
-			err := s.SetUserOrganizations(s.grafanaConf.GetOrganizationId())
+		if orgInfo.Name != s.grafanaConf.GetOrganizationName() {
+			userOrgs, err := s.ListUserOrganizations()
+			if err != nil {
+				log.Fatal("Unable to switch user's Org")
+			}
+			found := false
+			for _, org := range userOrgs {
+				if org.Name == s.grafanaConf.GetOrganizationName() {
+					orgEntity.ID = org.OrgID
+					orgEntity.Name = org.Name
+					found = true
+					break
+				}
+			}
+			if !found {
+				log.Fatalf("User does not have access to org: '%s', Unable to switch user's Org", s.grafanaConf.GetOrganizationName())
+			}
+
+		}
+		if orgInfo.Name != s.grafanaConf.GetOrganizationName() {
+			err := s.SetUserOrganizations(orgEntity.ID)
 			if err != nil {
 				log.Fatal("Unable to switch user's Org")
 			}
@@ -51,46 +73,48 @@ func (s *DashNGoImpl) InitOrganizations() {
 
 	} else {
 		orgInfo = &models.OrgDetailsDTO{
-			ID: s.grafanaConf.GetOrganizationId(),
+			Name: s.grafanaConf.GetOrganizationName(),
 		}
 
 	}
 }
 
-// getOrganizations returns organization for a given id.
-func (s *DashNGoImpl) getOrganization(id int64) (*models.OrgDetailsDTO, error) {
-	data, err := s.GetClient().Orgs.GetOrgByID(id)
-	if err != nil {
-		return nil, err
-	}
-
-	return data.GetPayload(), nil
-
-}
-
-// SetOrganization sets organization for a given id.
-func (s *DashNGoImpl) SetOrganization(id int64) error {
-	//Removes Org filter
-	if id <= 1 {
-		slog.Warn("organization is not a valid value, resetting to default value of 1.")
-		s.grafanaConf.OrganizationId = 1
-	}
+func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 
 	if s.grafanaConf.IsAdminEnabled() || s.grafanaConf.IsBasicAuth() {
-		organization, err := s.getOrganization(id)
+		payload, err := s.ListUserOrganizations()
 		if err != nil {
-			return errors.New("invalid org Id, org is not found")
+			return err
 		}
-		s.grafanaConf.OrganizationId = organization.ID
+		var requestOrg *models.UserOrgDTO
+
+		for ndx, orgEntity := range payload {
+			orgName := orgEntity.Name
+			if useSlug {
+				orgName = slug.Make(orgName)
+			}
+			if orgName == name {
+				requestOrg = payload[ndx]
+				break
+			}
+		}
+		if requestOrg == nil {
+			log.Fatalf("unable to set org.  Please ensure you have the correct permissions and the org name is correct")
+		}
+		s.grafanaConf.OrganizationName = requestOrg.Name
 	} else {
 		tokenOrg := s.GetTokenOrganization()
-		if tokenOrg.ID != id {
-			log.Fatalf("you have no BasicAuth configured, and token org are non-changeable.  Please configure a different token associated with Org %d, OR configure basic auth.", id)
+		orgName := tokenOrg.Name
+		if useSlug {
+			orgName = slug.Make(orgName)
 		}
-		s.grafanaConf.OrganizationId = id
+		if orgName != name {
+			log.Fatalf("you have no BasicAuth configured, and token org are non-changeable.  Please configure a different token associated with Org %s, OR configure basic auth.", orgName)
+		}
 	}
 
 	return config.Config().SaveToDisk(false)
+
 }
 
 // ListOrganizations List all dashboards
@@ -194,14 +218,15 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 	return result
 }
 
-// SwitchOrganization switch organization context
-func (s *DashNGoImpl) SwitchOrganization(id int64) error {
+// SwitchOrganizationByName switch organization context
+func (s *DashNGoImpl) SwitchOrganizationByName(orgName string) error {
 	if !s.grafanaConf.IsBasicAuth() {
 		slog.Warn("Basic auth required for Org switching.  Ignoring Org setting and continuing")
 		return nil
 	}
 	valid := false
-	if id > 1 {
+	var orgId int64 = 1
+	if orgName != "" {
 		var orgsPayload []*models.OrgDTO
 		orgList, err := s.GetBasicAuthClient().Orgs.SearchOrgs(orgs.NewSearchOrgsParams())
 		if err != nil {
@@ -213,17 +238,17 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 		}
 		for _, orgEntry := range orgsPayload {
 			slog.Debug("", "orgID", orgEntry.ID, "OrgName", orgEntry.Name)
-			if orgEntry.ID == s.grafanaConf.GetOrganizationId() {
+			if orgEntry.Name == s.grafanaConf.GetOrganizationName() {
 				valid = true
+				orgId = orgEntry.ID
 				break
 			}
 		}
 
-	}
-	//Fallback on default
-	if id < 2 {
-		id = 1 // DefaultOrgID
+	} else {
+		//Fallback on default
 		valid = true
+		orgId = config.DefaultOrganizationId
 	}
 
 	//We retrieved all the orgs successfully and none of them matched the requested ID
@@ -231,7 +256,7 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 		log.Fatalf("The Specified OrgId does not match any existing organization.  Please check your configuration and try again.")
 	}
 
-	status, err := s.GetBasicAuthClient().SignedInUser.UserSetUsingOrg(id)
+	status, err := s.GetBasicAuthClient().SignedInUser.UserSetUsingOrg(orgId)
 	if err != nil {
 		log.Fatalf("%s for %v\n", err, status)
 		return err
@@ -257,6 +282,16 @@ func (s *DashNGoImpl) getAssociatedActiveOrg(apiClient *client.GrafanaHTTPAPI) *
 		log.Fatalf("Unable to retrieve current organization, err: %v", err)
 	}
 	return payload.GetPayload()
+}
+
+func (s *DashNGoImpl) ListUserOrganizations() ([]*models.UserOrgDTO, error) {
+	payload, err := s.GetBasicAuthClient().SignedInUser.GetSignedInUserOrgList()
+	if err != nil {
+		return nil, err
+	}
+
+	return payload.GetPayload(), nil
+
 }
 
 func (s *DashNGoImpl) SetUserOrganizations(id int64) error {

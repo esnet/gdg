@@ -252,9 +252,9 @@ func validateGeneralBoard(t *testing.T, board *models.Hit) {
 func validateTags(t *testing.T, board *models.Hit) {
 	assert.True(t, board.UID != "")
 	assert.True(t, len(board.Tags) > 0)
-	all_tags := []string{"netsage", "flow"}
+	allTags := []string{"netsage", "flow"}
 	for _, tag := range board.Tags {
-		assert.True(t, slices.Contains(all_tags, tag))
+		assert.True(t, slices.Contains(allTags, tag))
 
 	}
 }

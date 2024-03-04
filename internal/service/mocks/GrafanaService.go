@@ -236,49 +236,6 @@ func (_c *GrafanaService_CreateServiceAccountToken_Call) RunAndReturn(run func(i
 	return _c
 }
 
-// DeleteAllAlertNotifications provides a mock function with given fields:
-func (_m *GrafanaService) DeleteAllAlertNotifications() []string {
-	ret := _m.Called()
-
-	var r0 []string
-	if rf, ok := ret.Get(0).(func() []string); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-
-	return r0
-}
-
-// GrafanaService_DeleteAllAlertNotifications_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteAllAlertNotifications'
-type GrafanaService_DeleteAllAlertNotifications_Call struct {
-	*mock.Call
-}
-
-// DeleteAllAlertNotifications is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) DeleteAllAlertNotifications() *GrafanaService_DeleteAllAlertNotifications_Call {
-	return &GrafanaService_DeleteAllAlertNotifications_Call{Call: _e.mock.On("DeleteAllAlertNotifications")}
-}
-
-func (_c *GrafanaService_DeleteAllAlertNotifications_Call) Run(run func()) *GrafanaService_DeleteAllAlertNotifications_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *GrafanaService_DeleteAllAlertNotifications_Call) Return(_a0 []string) *GrafanaService_DeleteAllAlertNotifications_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *GrafanaService_DeleteAllAlertNotifications_Call) RunAndReturn(run func() []string) *GrafanaService_DeleteAllAlertNotifications_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // DeleteAllConnectionPermissions provides a mock function with given fields: filter
 func (_m *GrafanaService) DeleteAllConnectionPermissions(filter filters.Filter) []string {
 	ret := _m.Called(filter)
@@ -766,49 +723,6 @@ func (_c *GrafanaService_DeleteUserFromOrg_Call) Return(_a0 error) *GrafanaServi
 }
 
 func (_c *GrafanaService_DeleteUserFromOrg_Call) RunAndReturn(run func(int64, int64) error) *GrafanaService_DeleteUserFromOrg_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// DownloadAlertNotifications provides a mock function with given fields:
-func (_m *GrafanaService) DownloadAlertNotifications() []string {
-	ret := _m.Called()
-
-	var r0 []string
-	if rf, ok := ret.Get(0).(func() []string); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-
-	return r0
-}
-
-// GrafanaService_DownloadAlertNotifications_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DownloadAlertNotifications'
-type GrafanaService_DownloadAlertNotifications_Call struct {
-	*mock.Call
-}
-
-// DownloadAlertNotifications is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) DownloadAlertNotifications() *GrafanaService_DownloadAlertNotifications_Call {
-	return &GrafanaService_DownloadAlertNotifications_Call{Call: _e.mock.On("DownloadAlertNotifications")}
-}
-
-func (_c *GrafanaService_DownloadAlertNotifications_Call) Run(run func()) *GrafanaService_DownloadAlertNotifications_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *GrafanaService_DownloadAlertNotifications_Call) Return(_a0 []string) *GrafanaService_DownloadAlertNotifications_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *GrafanaService_DownloadAlertNotifications_Call) RunAndReturn(run func() []string) *GrafanaService_DownloadAlertNotifications_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1465,49 +1379,6 @@ func (_c *GrafanaService_ListAPIKeys_Call) RunAndReturn(run func() []*models.API
 	return _c
 }
 
-// ListAlertNotifications provides a mock function with given fields:
-func (_m *GrafanaService) ListAlertNotifications() []*models.AlertNotification {
-	ret := _m.Called()
-
-	var r0 []*models.AlertNotification
-	if rf, ok := ret.Get(0).(func() []*models.AlertNotification); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.AlertNotification)
-		}
-	}
-
-	return r0
-}
-
-// GrafanaService_ListAlertNotifications_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListAlertNotifications'
-type GrafanaService_ListAlertNotifications_Call struct {
-	*mock.Call
-}
-
-// ListAlertNotifications is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) ListAlertNotifications() *GrafanaService_ListAlertNotifications_Call {
-	return &GrafanaService_ListAlertNotifications_Call{Call: _e.mock.On("ListAlertNotifications")}
-}
-
-func (_c *GrafanaService_ListAlertNotifications_Call) Run(run func()) *GrafanaService_ListAlertNotifications_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *GrafanaService_ListAlertNotifications_Call) Return(_a0 []*models.AlertNotification) *GrafanaService_ListAlertNotifications_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *GrafanaService_ListAlertNotifications_Call) RunAndReturn(run func() []*models.AlertNotification) *GrafanaService_ListAlertNotifications_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // ListConnectionPermissions provides a mock function with given fields: filter
 func (_m *GrafanaService) ListConnectionPermissions(filter filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO {
 	ret := _m.Called(filter)
@@ -2045,6 +1916,59 @@ func (_c *GrafanaService_ListTeams_Call) RunAndReturn(run func(filters.Filter) m
 	return _c
 }
 
+// ListUserOrganizations provides a mock function with given fields:
+func (_m *GrafanaService) ListUserOrganizations() ([]*models.UserOrgDTO, error) {
+	ret := _m.Called()
+
+	var r0 []*models.UserOrgDTO
+	var r1 error
+	if rf, ok := ret.Get(0).(func() ([]*models.UserOrgDTO, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() []*models.UserOrgDTO); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*models.UserOrgDTO)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GrafanaService_ListUserOrganizations_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListUserOrganizations'
+type GrafanaService_ListUserOrganizations_Call struct {
+	*mock.Call
+}
+
+// ListUserOrganizations is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) ListUserOrganizations() *GrafanaService_ListUserOrganizations_Call {
+	return &GrafanaService_ListUserOrganizations_Call{Call: _e.mock.On("ListUserOrganizations")}
+}
+
+func (_c *GrafanaService_ListUserOrganizations_Call) Run(run func()) *GrafanaService_ListUserOrganizations_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ListUserOrganizations_Call) Return(_a0 []*models.UserOrgDTO, _a1 error) *GrafanaService_ListUserOrganizations_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *GrafanaService_ListUserOrganizations_Call) RunAndReturn(run func() ([]*models.UserOrgDTO, error)) *GrafanaService_ListUserOrganizations_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListUsers provides a mock function with given fields: filter
 func (_m *GrafanaService) ListUsers(filter filters.Filter) []*models.UserSearchHitDTO {
 	ret := _m.Called(filter)
@@ -2173,13 +2097,13 @@ func (_c *GrafanaService_PromoteUser_Call) RunAndReturn(run func(string) (string
 	return _c
 }
 
-// SetOrganization provides a mock function with given fields: id
-func (_m *GrafanaService) SetOrganization(id int64) error {
-	ret := _m.Called(id)
+// SetOrganizationByName provides a mock function with given fields: name, useSlug
+func (_m *GrafanaService) SetOrganizationByName(name string, useSlug bool) error {
+	ret := _m.Called(name, useSlug)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(string, bool) error); ok {
+		r0 = rf(name, useSlug)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -2187,30 +2111,31 @@ func (_m *GrafanaService) SetOrganization(id int64) error {
 	return r0
 }
 
-// GrafanaService_SetOrganization_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetOrganization'
-type GrafanaService_SetOrganization_Call struct {
+// GrafanaService_SetOrganizationByName_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetOrganizationByName'
+type GrafanaService_SetOrganizationByName_Call struct {
 	*mock.Call
 }
 
-// SetOrganization is a helper method to define mock.On call
-//   - id int64
-func (_e *GrafanaService_Expecter) SetOrganization(id interface{}) *GrafanaService_SetOrganization_Call {
-	return &GrafanaService_SetOrganization_Call{Call: _e.mock.On("SetOrganization", id)}
+// SetOrganizationByName is a helper method to define mock.On call
+//   - name string
+//   - useSlug bool
+func (_e *GrafanaService_Expecter) SetOrganizationByName(name interface{}, useSlug interface{}) *GrafanaService_SetOrganizationByName_Call {
+	return &GrafanaService_SetOrganizationByName_Call{Call: _e.mock.On("SetOrganizationByName", name, useSlug)}
 }
 
-func (_c *GrafanaService_SetOrganization_Call) Run(run func(id int64)) *GrafanaService_SetOrganization_Call {
+func (_c *GrafanaService_SetOrganizationByName_Call) Run(run func(name string, useSlug bool)) *GrafanaService_SetOrganizationByName_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64))
+		run(args[0].(string), args[1].(bool))
 	})
 	return _c
 }
 
-func (_c *GrafanaService_SetOrganization_Call) Return(_a0 error) *GrafanaService_SetOrganization_Call {
+func (_c *GrafanaService_SetOrganizationByName_Call) Return(_a0 error) *GrafanaService_SetOrganizationByName_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *GrafanaService_SetOrganization_Call) RunAndReturn(run func(int64) error) *GrafanaService_SetOrganization_Call {
+func (_c *GrafanaService_SetOrganizationByName_Call) RunAndReturn(run func(string, bool) error) *GrafanaService_SetOrganizationByName_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2297,49 +2222,6 @@ func (_c *GrafanaService_UpdateUserInOrg_Call) Return(_a0 error) *GrafanaService
 }
 
 func (_c *GrafanaService_UpdateUserInOrg_Call) RunAndReturn(run func(string, int64, int64) error) *GrafanaService_UpdateUserInOrg_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// UploadAlertNotifications provides a mock function with given fields:
-func (_m *GrafanaService) UploadAlertNotifications() []string {
-	ret := _m.Called()
-
-	var r0 []string
-	if rf, ok := ret.Get(0).(func() []string); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-
-	return r0
-}
-
-// GrafanaService_UploadAlertNotifications_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadAlertNotifications'
-type GrafanaService_UploadAlertNotifications_Call struct {
-	*mock.Call
-}
-
-// UploadAlertNotifications is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) UploadAlertNotifications() *GrafanaService_UploadAlertNotifications_Call {
-	return &GrafanaService_UploadAlertNotifications_Call{Call: _e.mock.On("UploadAlertNotifications")}
-}
-
-func (_c *GrafanaService_UploadAlertNotifications_Call) Run(run func()) *GrafanaService_UploadAlertNotifications_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *GrafanaService_UploadAlertNotifications_Call) Return(_a0 []string) *GrafanaService_UploadAlertNotifications_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *GrafanaService_UploadAlertNotifications_Call) RunAndReturn(run func() []string) *GrafanaService_UploadAlertNotifications_Call {
 	_c.Call.Return(run)
 	return _c
 }
