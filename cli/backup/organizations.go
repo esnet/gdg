@@ -5,12 +5,18 @@ import (
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service"
 	"github.com/gosimple/slug"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"log/slog"
 	"sort"
 )
+
+func parseOrganizationGlobalFlags(command *cobra.Command) []string {
+	orgName, _ := command.Flags().GetString("org-name")
+	return []string{orgName}
+}
 
 func newOrganizationsCommand() simplecobra.Commander {
 	description := "Manage Grafana Organizations."
@@ -20,7 +26,9 @@ func newOrganizationsCommand() simplecobra.Commander {
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"org", "orgs"}
+			cmd.PersistentFlags().StringP("org-name", "o", "", "when set to true, bypass confirmation prompts")
 		},
+
 		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
 			r.GrafanaSvc().InitOrganizations()
 			return nil
@@ -47,9 +55,10 @@ func newOrganizationsListCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			filter := service.NewOrganizationFilter(parseOrganizationGlobalFlags(cd.CobraCommand)...)
 			slog.Info("Listing organizations for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "organization Name", "org slug ID"})
-			listOrganizations := rootCmd.GrafanaSvc().ListOrganizations()
+			listOrganizations := rootCmd.GrafanaSvc().ListOrganizations(filter)
 			sort.Slice(listOrganizations, func(a, b int) bool {
 				return listOrganizations[a].ID < listOrganizations[b].ID
 			})
@@ -78,7 +87,8 @@ func newOrganizationsDownloadCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Downloading organizations for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
-			listOrganizations := rootCmd.GrafanaSvc().DownloadOrganizations()
+			filter := service.NewOrganizationFilter(parseOrganizationGlobalFlags(cd.CobraCommand)...)
+			listOrganizations := rootCmd.GrafanaSvc().DownloadOrganizations(filter)
 			if len(listOrganizations) == 0 {
 				slog.Info("No organizations found")
 			} else {
@@ -104,7 +114,8 @@ func newOrganizationsUploadCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Uploading Folders for context: ", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
-			folders := rootCmd.GrafanaSvc().UploadOrganizations()
+			filter := service.NewOrganizationFilter(parseOrganizationGlobalFlags(cd.CobraCommand)...)
+			folders := rootCmd.GrafanaSvc().UploadOrganizations(filter)
 			if len(folders) == 0 {
 				slog.Info("No Orgs were uploaded")
 			} else {

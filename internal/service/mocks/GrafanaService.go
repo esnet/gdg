@@ -991,13 +991,13 @@ func (_c *GrafanaService_DownloadLibraryElements_Call) RunAndReturn(run func(fil
 	return _c
 }
 
-// DownloadOrganizations provides a mock function with given fields:
-func (_m *GrafanaService) DownloadOrganizations() []string {
-	ret := _m.Called()
+// DownloadOrganizations provides a mock function with given fields: filter
+func (_m *GrafanaService) DownloadOrganizations(filter filters.Filter) []string {
+	ret := _m.Called(filter)
 
 	var r0 []string
-	if rf, ok := ret.Get(0).(func() []string); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(filters.Filter) []string); ok {
+		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
@@ -1013,13 +1013,14 @@ type GrafanaService_DownloadOrganizations_Call struct {
 }
 
 // DownloadOrganizations is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) DownloadOrganizations() *GrafanaService_DownloadOrganizations_Call {
-	return &GrafanaService_DownloadOrganizations_Call{Call: _e.mock.On("DownloadOrganizations")}
+//   - filter filters.Filter
+func (_e *GrafanaService_Expecter) DownloadOrganizations(filter interface{}) *GrafanaService_DownloadOrganizations_Call {
+	return &GrafanaService_DownloadOrganizations_Call{Call: _e.mock.On("DownloadOrganizations", filter)}
 }
 
-func (_c *GrafanaService_DownloadOrganizations_Call) Run(run func()) *GrafanaService_DownloadOrganizations_Call {
+func (_c *GrafanaService_DownloadOrganizations_Call) Run(run func(filter filters.Filter)) *GrafanaService_DownloadOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		run(args[0].(filters.Filter))
 	})
 	return _c
 }
@@ -1029,7 +1030,7 @@ func (_c *GrafanaService_DownloadOrganizations_Call) Return(_a0 []string) *Grafa
 	return _c
 }
 
-func (_c *GrafanaService_DownloadOrganizations_Call) RunAndReturn(run func() []string) *GrafanaService_DownloadOrganizations_Call {
+func (_c *GrafanaService_DownloadOrganizations_Call) RunAndReturn(run func(filters.Filter) []string) *GrafanaService_DownloadOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1732,13 +1733,13 @@ func (_c *GrafanaService_ListOrgUsers_Call) RunAndReturn(run func(int64) []*mode
 	return _c
 }
 
-// ListOrganizations provides a mock function with given fields:
-func (_m *GrafanaService) ListOrganizations() []*models.OrgDTO {
-	ret := _m.Called()
+// ListOrganizations provides a mock function with given fields: filter
+func (_m *GrafanaService) ListOrganizations(filter filters.Filter) []*models.OrgDTO {
+	ret := _m.Called(filter)
 
 	var r0 []*models.OrgDTO
-	if rf, ok := ret.Get(0).(func() []*models.OrgDTO); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(filters.Filter) []*models.OrgDTO); ok {
+		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*models.OrgDTO)
@@ -1754,13 +1755,14 @@ type GrafanaService_ListOrganizations_Call struct {
 }
 
 // ListOrganizations is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) ListOrganizations() *GrafanaService_ListOrganizations_Call {
-	return &GrafanaService_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations")}
+//   - filter filters.Filter
+func (_e *GrafanaService_Expecter) ListOrganizations(filter interface{}) *GrafanaService_ListOrganizations_Call {
+	return &GrafanaService_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter)}
 }
 
-func (_c *GrafanaService_ListOrganizations_Call) Run(run func()) *GrafanaService_ListOrganizations_Call {
+func (_c *GrafanaService_ListOrganizations_Call) Run(run func(filter filters.Filter)) *GrafanaService_ListOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		run(args[0].(filters.Filter))
 	})
 	return _c
 }
@@ -1770,7 +1772,7 @@ func (_c *GrafanaService_ListOrganizations_Call) Return(_a0 []*models.OrgDTO) *G
 	return _c
 }
 
-func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func() []*models.OrgDTO) *GrafanaService_ListOrganizations_Call {
+func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filters.Filter) []*models.OrgDTO) *GrafanaService_ListOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2479,13 +2481,13 @@ func (_c *GrafanaService_UploadLibraryElements_Call) RunAndReturn(run func(filte
 	return _c
 }
 
-// UploadOrganizations provides a mock function with given fields:
-func (_m *GrafanaService) UploadOrganizations() []string {
-	ret := _m.Called()
+// UploadOrganizations provides a mock function with given fields: filter
+func (_m *GrafanaService) UploadOrganizations(filter filters.Filter) []string {
+	ret := _m.Called(filter)
 
 	var r0 []string
-	if rf, ok := ret.Get(0).(func() []string); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(filters.Filter) []string); ok {
+		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
@@ -2501,13 +2503,14 @@ type GrafanaService_UploadOrganizations_Call struct {
 }
 
 // UploadOrganizations is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) UploadOrganizations() *GrafanaService_UploadOrganizations_Call {
-	return &GrafanaService_UploadOrganizations_Call{Call: _e.mock.On("UploadOrganizations")}
+//   - filter filters.Filter
+func (_e *GrafanaService_Expecter) UploadOrganizations(filter interface{}) *GrafanaService_UploadOrganizations_Call {
+	return &GrafanaService_UploadOrganizations_Call{Call: _e.mock.On("UploadOrganizations", filter)}
 }
 
-func (_c *GrafanaService_UploadOrganizations_Call) Run(run func()) *GrafanaService_UploadOrganizations_Call {
+func (_c *GrafanaService_UploadOrganizations_Call) Run(run func(filter filters.Filter)) *GrafanaService_UploadOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		run(args[0].(filters.Filter))
 	})
 	return _c
 }
@@ -2517,7 +2520,7 @@ func (_c *GrafanaService_UploadOrganizations_Call) Return(_a0 []string) *Grafana
 	return _c
 }
 
-func (_c *GrafanaService_UploadOrganizations_Call) RunAndReturn(run func() []string) *GrafanaService_UploadOrganizations_Call {
+func (_c *GrafanaService_UploadOrganizations_Call) RunAndReturn(run func(filters.Filter) []string) *GrafanaService_UploadOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }

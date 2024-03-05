@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/orgs"
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/tidwall/gjson"
 	"log"
 	"log/slog"
 	"path/filepath"
@@ -17,10 +19,9 @@ import (
 
 // OrganizationsApi Contract definition
 type OrganizationsApi interface {
-	ListOrganizations() []*models.OrgDTO
-	DownloadOrganizations() []string
-	UploadOrganizations() []string
-	//SetOrganization(id int64) error
+	ListOrganizations(filter filters.Filter) []*models.OrgDTO
+	DownloadOrganizations(filter filters.Filter) []string
+	UploadOrganizations(filter filters.Filter) []string
 	SetOrganizationByName(name string, useSlug bool) error
 	//Manage Active Organization
 	GetUserOrganization() *models.OrgDetailsDTO
@@ -33,6 +34,16 @@ type OrganizationsApi interface {
 	AddUserToOrg(role string, userId, orgId int64) error
 	DeleteUserFromOrg(userId, orgId int64) error
 	UpdateUserInOrg(role string, userId, orgId int64) error
+}
+
+func NewOrganizationFilter(args ...string) filters.Filter {
+	filterObj := filters.NewBaseFilter()
+	if len(args) == 0 || args[0] == "" {
+		return filterObj
+	}
+
+	filterObj.AddFilter(filters.OrgFilter, args[0])
+	return filterObj
 }
 
 // InitOrganizations will context switch to configured organization and invoke a different call depending on the access level.
@@ -118,7 +129,7 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 }
 
 // ListOrganizations List all dashboards
-func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
+func (s *DashNGoImpl) ListOrganizations(filter filters.Filter) []*models.OrgDTO {
 	if !s.grafanaConf.IsAdminEnabled() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
@@ -137,11 +148,17 @@ func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
 			log.Fatalf("%s, err: %v", msg, err)
 		}
 	}
-	return orgList.GetPayload()
+	var result []*models.OrgDTO
+	for _, org := range orgList.Payload {
+		if filter.GetFilter(filters.OrgFilter) == "" || filter.GetFilter(filters.OrgFilter) == org.Name {
+			result = append(result, org)
+		}
+	}
+	return result
 }
 
 // DownloadOrganizations Download organizations
-func (s *DashNGoImpl) DownloadOrganizations() []string {
+func (s *DashNGoImpl) DownloadOrganizations(filter filters.Filter) []string {
 	if !s.grafanaConf.IsAdminEnabled() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations")
 		return nil
@@ -152,7 +169,7 @@ func (s *DashNGoImpl) DownloadOrganizations() []string {
 		dataFiles []string
 	)
 
-	orgsListing := s.ListOrganizations()
+	orgsListing := s.ListOrganizations(filter)
 	for _, organisation := range orgsListing {
 		if dsPacked, err = json.MarshalIndent(organisation, "", "	"); err != nil {
 			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Name)
@@ -170,7 +187,7 @@ func (s *DashNGoImpl) DownloadOrganizations() []string {
 }
 
 // UploadOrganizations Upload organizations to Grafana
-func (s *DashNGoImpl) UploadOrganizations() []string {
+func (s *DashNGoImpl) UploadOrganizations(filter filters.Filter) []string {
 	if !s.grafanaConf.IsAdminEnabled() {
 		slog.Error("No valid Grafana Admin configured, cannot upload Organizations")
 		return nil
@@ -183,7 +200,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, err: %v", err)
 	}
-	orgListing := s.ListOrganizations()
+	orgListing := s.ListOrganizations(filter)
 	orgMap := map[string]bool{}
 	for _, entry := range orgListing {
 		orgMap[entry.Name] = true
@@ -202,6 +219,10 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 			slog.Warn("failed to unmarshall folder", "err", err)
 			continue
 		}
+		rawOrgName := gjson.GetBytes(rawFolder, "name").String()
+		if filter.GetFilter(filters.OrgFilter) != "" && rawOrgName != filter.GetFilter(filters.OrgFilter) {
+			continue
+		}
 		if _, ok := orgMap[newOrg.Name]; ok {
 			slog.Info("Organization already exists, skipping", "organization", newOrg.Name)
 			continue
@@ -209,7 +230,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 
 		_, err = s.GetBasicAuthClient().Orgs.CreateOrg(&newOrg)
 		if err != nil {
-			slog.Error("failed to create folder", "organization", newOrg.Name)
+			slog.Error("failed to create organization", "organization", newOrg.Name)
 			continue
 		}
 		result = append(result, newOrg.Name)

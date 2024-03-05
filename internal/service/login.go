@@ -59,8 +59,7 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 	}
 
 	if s.grafanaConf.OrganizationName != "" {
-		//s.GetClient().Org.GetCurrentOrg()
-		orgId, err := api.NewExtendedApi().UserOrg()
+		orgId, err := api.NewExtendedApi().GetConfiguredOrgId(s.grafanaConf.OrganizationName)
 		if err != nil {
 			slog.Info("unable to determine org ID, falling back")
 			orgId = 1
