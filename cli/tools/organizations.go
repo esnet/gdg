@@ -43,8 +43,8 @@ func newOrgCommand() simplecobra.Commander {
 func newSetOrgCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "set",
-		Short: "Set --orgId --orgName to set user Org",
-		Long:  "Set --orgId --orgName to set user Org",
+		Short: "Set --orgSlugName --orgName to set user Org",
+		Long:  "Set --orgSlugName --orgName to set user Org",
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.PersistentFlags().StringP("orgName", "o", "", "Set user Org by Name (not slug)")
 			cmd.PersistentFlags().StringP("orgSlugName", "", "", "Set user Org by slug name")
@@ -185,26 +185,23 @@ func newUpdateUserRoleCmd() simplecobra.Commander {
 }
 
 func newAddUserRoleCmd() simplecobra.Commander {
-	description := "addUser <orgId> <userId> <role>"
+	description := "addUser <orgSlugName> <userId> <role>"
 	return &support.SimpleCommand{
 		NameP: "addUser",
 		Short: description,
 		Long:  description,
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			if len(args) < 3 {
-				return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [admin, editor, viewer]")
+				return fmt.Errorf("requires the following parameters to be specified: [<orgSlugName> <userId> <role>]\nValid roles are: [admin, editor, viewer]")
 			}
-			orgId, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				log.Fatal("unable to parse orgId to numeric value")
-			}
+			orgSlug := args[0]
 			userId, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
 			slog.Info("Add user to org for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"login", "orgId", "name", "email", "role"})
-			err = rootCmd.GrafanaSvc().AddUserToOrg(args[2], userId, orgId)
+			err = rootCmd.GrafanaSvc().AddUserToOrg(args[2], orgSlug, userId)
 			if err != nil {
 				slog.Error("Unable to add user to Org")
 			} else {

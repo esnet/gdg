@@ -22,17 +22,17 @@ func (_m *OrganizationsApi) EXPECT() *OrganizationsApi_Expecter {
 	return &OrganizationsApi_Expecter{mock: &_m.Mock}
 }
 
-// AddUserToOrg provides a mock function with given fields: role, userId, orgId
-func (_m *OrganizationsApi) AddUserToOrg(role string, userId int64, orgId int64) error {
-	ret := _m.Called(role, userId, orgId)
+// AddUserToOrg provides a mock function with given fields: role, orgSlug, userId
+func (_m *OrganizationsApi) AddUserToOrg(role string, orgSlug string, userId int64) error {
+	ret := _m.Called(role, orgSlug, userId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for AddUserToOrg")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, int64, int64) error); ok {
-		r0 = rf(role, userId, orgId)
+	if rf, ok := ret.Get(0).(func(string, string, int64) error); ok {
+		r0 = rf(role, orgSlug, userId)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -47,15 +47,15 @@ type OrganizationsApi_AddUserToOrg_Call struct {
 
 // AddUserToOrg is a helper method to define mock.On call
 //   - role string
+//   - orgSlug string
 //   - userId int64
-//   - orgId int64
-func (_e *OrganizationsApi_Expecter) AddUserToOrg(role interface{}, userId interface{}, orgId interface{}) *OrganizationsApi_AddUserToOrg_Call {
-	return &OrganizationsApi_AddUserToOrg_Call{Call: _e.mock.On("AddUserToOrg", role, userId, orgId)}
+func (_e *OrganizationsApi_Expecter) AddUserToOrg(role interface{}, orgSlug interface{}, userId interface{}) *OrganizationsApi_AddUserToOrg_Call {
+	return &OrganizationsApi_AddUserToOrg_Call{Call: _e.mock.On("AddUserToOrg", role, orgSlug, userId)}
 }
 
-func (_c *OrganizationsApi_AddUserToOrg_Call) Run(run func(role string, userId int64, orgId int64)) *OrganizationsApi_AddUserToOrg_Call {
+func (_c *OrganizationsApi_AddUserToOrg_Call) Run(run func(role string, orgSlug string, userId int64)) *OrganizationsApi_AddUserToOrg_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(int64), args[2].(int64))
+		run(args[0].(string), args[1].(string), args[2].(int64))
 	})
 	return _c
 }
@@ -65,7 +65,7 @@ func (_c *OrganizationsApi_AddUserToOrg_Call) Return(_a0 error) *OrganizationsAp
 	return _c
 }
 
-func (_c *OrganizationsApi_AddUserToOrg_Call) RunAndReturn(run func(string, int64, int64) error) *OrganizationsApi_AddUserToOrg_Call {
+func (_c *OrganizationsApi_AddUserToOrg_Call) RunAndReturn(run func(string, string, int64) error) *OrganizationsApi_AddUserToOrg_Call {
 	_c.Call.Return(run)
 	return _c
 }

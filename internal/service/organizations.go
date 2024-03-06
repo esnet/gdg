@@ -31,7 +31,7 @@ type OrganizationsApi interface {
 	InitOrganizations()
 	//Org Users
 	ListOrgUsers(orgId int64) []*models.OrgUserDTO
-	AddUserToOrg(role string, userId, orgId int64) error
+	AddUserToOrg(role, orgSlug string, userId int64) error
 	DeleteUserFromOrg(userId, orgId int64) error
 	UpdateUserInOrg(role string, userId, orgId int64) error
 }
@@ -339,7 +339,7 @@ func (s *DashNGoImpl) ListOrgUsers(orgId int64) []*models.OrgUserDTO {
 	return resp.GetPayload()
 }
 
-func (s *DashNGoImpl) AddUserToOrg(role string, userId, orgId int64) error {
+func (s *DashNGoImpl) AddUserToOrg(role, orgSlug string, userId int64) error {
 	userInfo, err := s.getUserById(userId)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve user with Id: %d", userId)
@@ -348,6 +348,22 @@ func (s *DashNGoImpl) AddUserToOrg(role string, userId, orgId int64) error {
 		LoginOrEmail: userInfo.Login,
 		Role:         role,
 	}
+	//Get Org
+	orgs, err := s.ListUserOrganizations()
+	if err != nil {
+		return fmt.Errorf("unable to retrieve user orgs, %w", err)
+	}
+	var orgId int64
+	for _, org := range orgs {
+		if slug.Make(org.Name) == orgSlug {
+			orgId = org.OrgID
+			break
+		}
+	}
+	if orgId == 0 {
+		return fmt.Errorf("unable to find a valid org with slug value of %s", orgSlug)
+	}
+
 	_, err = s.GetAdminClient().Orgs.AddOrgUser(orgId, request)
 	return err
 }
