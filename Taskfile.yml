@@ -22,6 +22,8 @@ tasks:
       - go install github.com/client9/misspell/cmd/misspell@latest
       - go install github.com/securego/gosec/v2/cmd/gosec@master
       - go install golang.org/x/vuln/cmd/govulncheck@latest
+      - go install github.com/vektra/mockery/v2@v2.42.0
+
   security:
     desc: "Run security scan"
     cmds:
