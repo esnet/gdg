@@ -26,6 +26,10 @@ contexts:
     storage: "any_label"
     output_path: test/data
     enterprise_support: true
+    user:
+      random_password: true
+      min_length: 8
+      max_length: 20
     connections:
       exclude_filters:
         - matches:

@@ -1,13 +1,13 @@
 package service
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
+	"github.com/esnet/gdg/internal/types"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/admin_users"
 	"github.com/grafana/grafana-openapi-client-go/client/users"
@@ -16,17 +16,19 @@ import (
 	"log"
 	"log/slog"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
 // UsersApi Contract definition
 type UsersApi interface {
-	//User
+	//UserApi
 	ListUsers(filter filters.Filter) []*models.UserSearchHitDTO
 	DownloadUsers(filter filters.Filter) []string
-	UploadUsers(filter filters.Filter) []models.UserProfileDTO
-	PromoteUser(userLogin string) (string, error)
+	UploadUsers(filter filters.Filter) []types.UserProfileWithAuth
 	DeleteAllUsers(filter filters.Filter) []string
+	// Tools
+	PromoteUser(userLogin string) (string, error)
 	GetUserInfo() (*models.UserProfileDTO, error)
 }
 
@@ -48,24 +50,6 @@ func NewUserFilter(label string) filters.Filter {
 	})
 
 	return filterEntity
-}
-
-func DefaultUserPassword(username string) string {
-	if username == "admin" {
-		return ""
-	}
-
-	username = username + ".json"
-	//generate user password
-	h := sha256.New()
-	password := func() string {
-		h.Write([]byte(username))
-		hash := h.Sum(nil)
-		password := fmt.Sprintf("%x", hash)
-		return password
-	}()
-
-	return password
 }
 
 // GetUserInfo get signed-in user info, requires Basic authentication
@@ -106,7 +90,6 @@ func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 		}
 
 	}
-
 	return importedUsers
 
 }
@@ -115,12 +98,12 @@ func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
 	return id == 1 || name == "admin"
 }
 
-func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO {
+func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []types.UserProfileWithAuth {
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), false)
 	if err != nil {
 		slog.Error("failed to list files in directory for userListings", "err", err)
 	}
-	var userListings []models.UserProfileDTO
+	var userListings []types.UserProfileWithAuth
 	var rawUser []byte
 	userList := s.ListUsers(filter)
 	var currentUsers = make(map[string]*models.UserSearchHitDTO, 0)
@@ -145,9 +128,9 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO
 			var newUser models.AdminCreateUserForm
 
 			//generate user password
-			password := DefaultUserPassword(file)
+			password := s.grafanaConf.GetUserSettings().GetPassword(file)
 
-			var data = make(map[string]interface{}, 0)
+			var data = make(map[string]interface{})
 			if err = json.Unmarshal(rawUser, &data); err != nil {
 				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
 				continue
@@ -180,7 +163,7 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []models.UserProfileDTO
 				slog.Error("unable to read user back from grafana", "username", newUser.Email, "userID", userCreated.GetPayload().ID)
 				continue
 			}
-			userListings = append(userListings, *resp.Payload)
+			userListings = append(userListings, types.UserProfileWithAuth{UserProfileDTO: *resp.GetPayload(), Password: newUser.Password})
 		}
 	}
 
@@ -207,6 +190,9 @@ func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDT
 			filteredUsers = append(filteredUsers, entry)
 		}
 	}
+	sort.Slice(filteredUsers, func(i, j int) bool {
+		return filteredUsers[i].ID < filteredUsers[j].ID
+	})
 	return filteredUsers
 }
 

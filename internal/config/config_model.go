@@ -27,6 +27,8 @@ const (
 	UserResource                 = "users"
 	TemplatesResource            = "templates"
 	SecureSecretsResource        = "secure"
+	minPasswordLength            = 8
+	maxPasswordLength            = 20
 )
 
 var orgNamespacedResource = map[ResourceType]bool{
@@ -160,6 +162,24 @@ func (s *GrafanaConfig) GetDataSourceSettings() *ConnectionSettings {
 // GetPath returns the path of the resource type
 func (s *GrafanaConfig) GetPath(r ResourceType) string {
 	return r.GetPath(s.OutputPath)
+}
+
+// GetUserSettings returns configured UserSettings
+func (s *GrafanaConfig) GetUserSettings() *UserSettings {
+	if s.UserSettings == nil {
+		return &UserSettings{
+			RandomPassword: false,
+		}
+	}
+	//Set default values if none are set
+	if s.UserSettings.MinLength == 0 {
+		s.UserSettings.MinLength = minPasswordLength
+	}
+	if s.UserSettings.MaxLength == 0 {
+		s.UserSettings.MaxLength = maxPasswordLength
+	}
+
+	return s.UserSettings
 }
 
 // GetOrgMonitoredFolders return the OrganizationMonitoredFolders that override a given Org

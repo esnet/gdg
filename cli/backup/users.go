@@ -52,13 +52,18 @@ func newUsersListCmd() simplecobra.Commander {
 			if len(users) == 0 {
 				slog.Info("No users found")
 			} else {
+				cfg := config.Config().GetDefaultGrafanaConfig()
+				var defaultPassword = "Unknown"
 				for _, user := range users {
 					var labels string
 					if len(user.AuthLabels) > 0 {
 						labels = strings.Join(user.AuthLabels, ", ")
-
 					}
-					rootCmd.TableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsAdmin, user.IsDisabled, service.DefaultUserPassword(user.Login), labels})
+					if !cfg.GetUserSettings().RandomPassword {
+						defaultPassword = cfg.GetUserSettings().GetPassword(user.Login)
+					}
+					rootCmd.TableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsAdmin,
+						user.IsDisabled, defaultPassword, labels})
 				}
 				rootCmd.TableObj.Render()
 			}
@@ -114,9 +119,9 @@ func newUsersUploadCmd() simplecobra.Commander {
 					var labels string
 					if len(user.AuthLabels) > 0 {
 						labels = strings.Join(user.AuthLabels, ", ")
-
 					}
-					rootCmd.TableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsGrafanaAdmin, user.IsDisabled, service.DefaultUserPassword(user.Login), labels})
+					rootCmd.TableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email,
+						user.IsGrafanaAdmin, user.IsDisabled, user.Password, labels})
 				}
 				rootCmd.TableObj.Render()
 			}

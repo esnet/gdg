@@ -1,10 +1,14 @@
 package config
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/sethvargo/go-password/password"
 	"github.com/spf13/viper"
 	"log/slog"
+	"math/rand/v2"
 	"os"
 	"path/filepath"
 )
@@ -56,6 +60,48 @@ type GDGAppConfiguration struct {
 	Global        *AppGlobals                  `mapstructure:"global" yaml:"global"`
 }
 
+type UserSettings struct {
+	RandomPassword bool `mapstructure:"random_password" yaml:"random_password"`
+	MinLength      int  `mapstructure:"min_length" yaml:"min_length"`
+	MaxLength      int  `mapstructure:"max_length" yaml:"max_length"`
+}
+
+func (u *UserSettings) GetPassword(username string) string {
+	if !u.RandomPassword {
+		return u.defaultUserPassword(username)
+	} else if u.MinLength > u.MaxLength {
+		slog.Warn("min length is greater than max length, falling back on default behavior")
+		return u.defaultUserPassword(username)
+	}
+
+	passLength := rand.IntN(u.MaxLength-u.MinLength) + u.MinLength
+	res, err := password.Generate(passLength, 1, 1, false, false)
+	if err != nil {
+		slog.Warn("unable to generate a proper random password, falling back on default password pattern",
+			slog.String("username", username))
+		return u.defaultUserPassword(username)
+	}
+	return res
+}
+
+func (u *UserSettings) defaultUserPassword(username string) string {
+	if username == "admin" {
+		return ""
+	}
+
+	username = username + ".json"
+	//generate user password
+	h := sha256.New()
+	password := func() string {
+		h.Write([]byte(username))
+		hash := h.Sum(nil)
+		password := fmt.Sprintf("%x", hash)
+		return password
+	}()
+
+	return password
+}
+
 // GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
 	Storage                  string                `mapstructure:"storage" yaml:"storage"`
@@ -69,6 +115,7 @@ type GrafanaConfig struct {
 	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
+	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	FilterOverrides          *FilterOverrides      `mapstructure:"filter_override" yaml:"filter_override"`
 	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
 }

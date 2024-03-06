@@ -6,3 +6,8 @@ type ServiceAccountDTOWithTokens struct {
 	ServiceAccount *models.ServiceAccountDTO
 	Tokens         []*models.TokenDTO
 }
+
+type UserProfileWithAuth struct {
+	models.UserProfileDTO
+	Password string
+}
