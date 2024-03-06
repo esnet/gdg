@@ -740,17 +740,17 @@ func (_c *GrafanaService_DeleteTeam_Call) RunAndReturn(run func(filters.Filter) 
 	return _c
 }
 
-// DeleteUserFromOrg provides a mock function with given fields: userId, orgId
-func (_m *GrafanaService) DeleteUserFromOrg(userId int64, orgId int64) error {
-	ret := _m.Called(userId, orgId)
+// DeleteUserFromOrg provides a mock function with given fields: orgId, userId
+func (_m *GrafanaService) DeleteUserFromOrg(orgId string, userId int64) error {
+	ret := _m.Called(orgId, userId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteUserFromOrg")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64, int64) error); ok {
-		r0 = rf(userId, orgId)
+	if rf, ok := ret.Get(0).(func(string, int64) error); ok {
+		r0 = rf(orgId, userId)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -764,15 +764,15 @@ type GrafanaService_DeleteUserFromOrg_Call struct {
 }
 
 // DeleteUserFromOrg is a helper method to define mock.On call
+//   - orgId string
 //   - userId int64
-//   - orgId int64
-func (_e *GrafanaService_Expecter) DeleteUserFromOrg(userId interface{}, orgId interface{}) *GrafanaService_DeleteUserFromOrg_Call {
-	return &GrafanaService_DeleteUserFromOrg_Call{Call: _e.mock.On("DeleteUserFromOrg", userId, orgId)}
+func (_e *GrafanaService_Expecter) DeleteUserFromOrg(orgId interface{}, userId interface{}) *GrafanaService_DeleteUserFromOrg_Call {
+	return &GrafanaService_DeleteUserFromOrg_Call{Call: _e.mock.On("DeleteUserFromOrg", orgId, userId)}
 }
 
-func (_c *GrafanaService_DeleteUserFromOrg_Call) Run(run func(userId int64, orgId int64)) *GrafanaService_DeleteUserFromOrg_Call {
+func (_c *GrafanaService_DeleteUserFromOrg_Call) Run(run func(orgId string, userId int64)) *GrafanaService_DeleteUserFromOrg_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64), args[1].(int64))
+		run(args[0].(string), args[1].(int64))
 	})
 	return _c
 }
@@ -782,7 +782,7 @@ func (_c *GrafanaService_DeleteUserFromOrg_Call) Return(_a0 error) *GrafanaServi
 	return _c
 }
 
-func (_c *GrafanaService_DeleteUserFromOrg_Call) RunAndReturn(run func(int64, int64) error) *GrafanaService_DeleteUserFromOrg_Call {
+func (_c *GrafanaService_DeleteUserFromOrg_Call) RunAndReturn(run func(string, int64) error) *GrafanaService_DeleteUserFromOrg_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2368,17 +2368,17 @@ func (_c *GrafanaService_SetUserOrganizations_Call) RunAndReturn(run func(int64)
 	return _c
 }
 
-// UpdateUserInOrg provides a mock function with given fields: role, userId, orgId
-func (_m *GrafanaService) UpdateUserInOrg(role string, userId int64, orgId int64) error {
-	ret := _m.Called(role, userId, orgId)
+// UpdateUserInOrg provides a mock function with given fields: role, orgSlug, userId
+func (_m *GrafanaService) UpdateUserInOrg(role string, orgSlug string, userId int64) error {
+	ret := _m.Called(role, orgSlug, userId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateUserInOrg")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, int64, int64) error); ok {
-		r0 = rf(role, userId, orgId)
+	if rf, ok := ret.Get(0).(func(string, string, int64) error); ok {
+		r0 = rf(role, orgSlug, userId)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -2393,15 +2393,15 @@ type GrafanaService_UpdateUserInOrg_Call struct {
 
 // UpdateUserInOrg is a helper method to define mock.On call
 //   - role string
+//   - orgSlug string
 //   - userId int64
-//   - orgId int64
-func (_e *GrafanaService_Expecter) UpdateUserInOrg(role interface{}, userId interface{}, orgId interface{}) *GrafanaService_UpdateUserInOrg_Call {
-	return &GrafanaService_UpdateUserInOrg_Call{Call: _e.mock.On("UpdateUserInOrg", role, userId, orgId)}
+func (_e *GrafanaService_Expecter) UpdateUserInOrg(role interface{}, orgSlug interface{}, userId interface{}) *GrafanaService_UpdateUserInOrg_Call {
+	return &GrafanaService_UpdateUserInOrg_Call{Call: _e.mock.On("UpdateUserInOrg", role, orgSlug, userId)}
 }
 
-func (_c *GrafanaService_UpdateUserInOrg_Call) Run(run func(role string, userId int64, orgId int64)) *GrafanaService_UpdateUserInOrg_Call {
+func (_c *GrafanaService_UpdateUserInOrg_Call) Run(run func(role string, orgSlug string, userId int64)) *GrafanaService_UpdateUserInOrg_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(int64), args[2].(int64))
+		run(args[0].(string), args[1].(string), args[2].(int64))
 	})
 	return _c
 }
@@ -2411,7 +2411,7 @@ func (_c *GrafanaService_UpdateUserInOrg_Call) Return(_a0 error) *GrafanaService
 	return _c
 }
 
-func (_c *GrafanaService_UpdateUserInOrg_Call) RunAndReturn(run func(string, int64, int64) error) *GrafanaService_UpdateUserInOrg_Call {
+func (_c *GrafanaService_UpdateUserInOrg_Call) RunAndReturn(run func(string, string, int64) error) *GrafanaService_UpdateUserInOrg_Call {
 	_c.Call.Return(run)
 	return _c
 }

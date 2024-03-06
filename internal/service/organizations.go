@@ -32,8 +32,8 @@ type OrganizationsApi interface {
 	//Org Users
 	ListOrgUsers(orgId int64) []*models.OrgUserDTO
 	AddUserToOrg(role, orgSlug string, userId int64) error
-	DeleteUserFromOrg(userId, orgId int64) error
-	UpdateUserInOrg(role string, userId, orgId int64) error
+	DeleteUserFromOrg(orgId string, userId int64) error
+	UpdateUserInOrg(role, orgSlug string, userId int64) error
 }
 
 func NewOrganizationFilter(args ...string) filters.Filter {
@@ -348,19 +348,9 @@ func (s *DashNGoImpl) AddUserToOrg(role, orgSlug string, userId int64) error {
 		LoginOrEmail: userInfo.Login,
 		Role:         role,
 	}
-	//Get Org
-	orgs, err := s.ListUserOrganizations()
+
+	orgId, err := s.getOrgIdFromSlug(orgSlug)
 	if err != nil {
-		return fmt.Errorf("unable to retrieve user orgs, %w", err)
-	}
-	var orgId int64
-	for _, org := range orgs {
-		if slug.Make(org.Name) == orgSlug {
-			orgId = org.OrgID
-			break
-		}
-	}
-	if orgId == 0 {
 		return fmt.Errorf("unable to find a valid org with slug value of %s", orgSlug)
 	}
 
@@ -368,21 +358,49 @@ func (s *DashNGoImpl) AddUserToOrg(role, orgSlug string, userId int64) error {
 	return err
 }
 
-func (s *DashNGoImpl) DeleteUserFromOrg(userId, orgId int64) error {
+func (s *DashNGoImpl) DeleteUserFromOrg(orgSlugName string, userId int64) error {
 	p := orgs.NewRemoveOrgUserParams()
+	orgId, err := s.getOrgIdFromSlug(orgSlugName)
+	if err != nil {
+		return err
+	}
 	p.OrgID = orgId
 	p.UserID = userId
-	_, err := s.GetAdminClient().Orgs.RemoveOrgUser(userId, orgId)
+	_, err = s.GetAdminClient().Orgs.RemoveOrgUser(userId, orgId)
 	return err
 }
 
-func (s *DashNGoImpl) UpdateUserInOrg(role string, userId, orgId int64) error {
+func (s *DashNGoImpl) getOrgIdFromSlug(slugName string) (int64, error) {
+	//Get Org
+	organizations, err := s.ListUserOrganizations()
+	if err != nil {
+		return 0, fmt.Errorf("unable to retrieve user organizations, %w", err)
+	}
+	var orgId int64
+	for _, org := range organizations {
+		if slug.Make(org.Name) == slugName {
+			orgId = org.OrgID
+			break
+		}
+	}
+	if orgId == 0 {
+		return 0, fmt.Errorf("unable to find org with matching slug name of %s", slugName)
+	}
+	return orgId, nil
+}
+
+func (s *DashNGoImpl) UpdateUserInOrg(role, orgSlug string, userId int64) error {
 	p := orgs.NewUpdateOrgUserParams()
+	orgId, err := s.getOrgIdFromSlug(orgSlug)
+	if err != nil {
+		return err
+	}
 	p.OrgID = orgId
 	p.UserID = userId
 	p.Body = &models.UpdateOrgUserCommand{
 		Role: role,
 	}
-	_, err := s.GetAdminClient().Orgs.UpdateOrgUser(p)
+
+	_, err = s.GetAdminClient().Orgs.UpdateOrgUser(p)
 	return err
 }

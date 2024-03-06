@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
+	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/slices"
 	"os"
@@ -64,8 +65,9 @@ func TestOrganizationUserMembership(t *testing.T) {
 			break
 		}
 	}
+	assert.NotNil(t, orgUser)
 	//Reset if any state exists.
-	err := apiClient.DeleteUserFromOrg(orgUser.ID, newOrg.ID)
+	err := apiClient.DeleteUserFromOrg(slug.Make(newOrg.Name), orgUser.ID)
 	assert.Nil(t, err)
 	//Start CRUD test
 	orgUsers := apiClient.ListOrgUsers(newOrg.ID)
@@ -73,16 +75,16 @@ func TestOrganizationUserMembership(t *testing.T) {
 	assert.Equal(t, orgUsers[0].Login, "admin")
 	assert.Equal(t, orgUsers[0].Role, "Admin")
 
-	err = apiClient.AddUserToOrg("Admin", orgUser.ID, newOrg.ID)
+	err = apiClient.AddUserToOrg("Admin", slug.Make(newOrg.Name), orgUser.ID)
 	assert.Nil(t, err)
 	orgUsers = apiClient.ListOrgUsers(newOrg.ID)
 	assert.Equal(t, len(orgUsers), 2)
 	assert.Equal(t, orgUsers[1].Role, "Admin")
-	err = apiClient.UpdateUserInOrg("Viewer", orgUser.ID, newOrg.ID)
+	err = apiClient.UpdateUserInOrg("Viewer", slug.Make(newOrg.Name), orgUser.ID)
 	orgUsers = apiClient.ListOrgUsers(newOrg.ID)
 	assert.Nil(t, err)
 	assert.Equal(t, orgUsers[1].Role, "Viewer")
-	err = apiClient.DeleteUserFromOrg(orgUser.ID, newOrg.ID)
+	err = apiClient.DeleteUserFromOrg(slug.Make(newOrg.Name), orgUser.ID)
 	orgUsers = apiClient.ListOrgUsers(newOrg.ID)
 	assert.Equal(t, len(orgUsers), 1)
 	assert.Nil(t, err)

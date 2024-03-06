@@ -154,7 +154,7 @@ func newListUsers() simplecobra.Commander {
 }
 
 func newUpdateUserRoleCmd() simplecobra.Commander {
-	description := "updateUserRole <orgId> <userId> <role>"
+	description := "updateUserRole <orgSlugName> <userId> <role>"
 	return &support.SimpleCommand{
 		NameP: "updateUserRole",
 		Short: description,
@@ -163,17 +163,15 @@ func newUpdateUserRoleCmd() simplecobra.Commander {
 			if len(args) < 3 {
 				return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [admin, editor, viewer]")
 			}
-			orgId, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				log.Fatal("unable to parse orgId to numeric value")
-			}
+			orgSlug := args[0]
+			roleName := args[2]
 			userId, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
 			slog.Info("Listing org users for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"login", "orgId", "name", "email", "role"})
-			err = rootCmd.GrafanaSvc().UpdateUserInOrg(args[2], userId, orgId)
+			err = rootCmd.GrafanaSvc().UpdateUserInOrg(roleName, orgSlug, userId)
 			if err != nil {
 				slog.Error("Unable to update Org user")
 			} else {
@@ -220,18 +218,15 @@ func newDeleteUserRoleCmd() simplecobra.Commander {
 		Long:  description,
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			if len(args) < 2 {
-				return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId>]")
+				return fmt.Errorf("requires the following parameters to be specified: [<orgSlugName> <userId>]")
 			}
-			orgId, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				log.Fatal("unable to parse orgId to numeric value")
-			}
+			orgSlug := args[0]
 			userId, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
 			slog.Info("Update org for context", "context", config.Config().GetGDGConfig().GetContext())
-			err = rootCmd.GrafanaSvc().DeleteUserFromOrg(userId, orgId)
+			err = rootCmd.GrafanaSvc().DeleteUserFromOrg(orgSlug, userId)
 			if err != nil {
 				slog.Error("Unable to remove user from Org")
 			} else {
