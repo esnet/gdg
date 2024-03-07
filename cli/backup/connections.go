@@ -47,7 +47,7 @@ func newClearConnectionsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Delete connections")
+			slog.Info("Delete connections", slog.String("Organization", GetOrganizationName()))
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("datasource")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllConnections(filters)
@@ -71,7 +71,7 @@ func newUploadConnectionsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Uploading connections")
+			slog.Info("Uploading connections", slog.String("Organization", GetOrganizationName()))
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			exportedList := rootCmd.GrafanaSvc().UploadConnections(filters)
@@ -96,6 +96,7 @@ func newDownloadConnectionsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Importing connections for context",
+				slog.String("Organization", GetOrganizationName()),
 				"context", config.Config().GetGDGConfig().GetContext())
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
@@ -123,7 +124,9 @@ func newListConnectionsCmd() simplecobra.Commander {
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			dsListing := rootCmd.GrafanaSvc().ListConnections(filters)
-			slog.Info("Listing connections for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing connections for context",
+				slog.String("Organization", GetOrganizationName()),
+				slog.String("context", GetContext()))
 			if len(dsListing) == 0 {
 				slog.Info("No connections found")
 			} else {

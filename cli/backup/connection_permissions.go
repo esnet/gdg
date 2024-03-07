@@ -113,7 +113,7 @@ func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("import Connections for context",
+			slog.Info("Download Connections for context",
 				"context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")

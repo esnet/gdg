@@ -40,7 +40,7 @@ contexts:
     url: https://grafana.com
     user_name: admin
     password: admin
-    organization: your-org
+    organization_name: Your Org
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - General
@@ -63,7 +63,7 @@ contexts:
               regex: ".*"
           secure_data: "default.json"
     url: https://staging.grafana.com
-    organization: your-org
+    organization_name: Your Org
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - Folder1

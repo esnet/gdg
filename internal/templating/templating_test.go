@@ -25,8 +25,8 @@ func TestGenerate(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, len(data), 1)
 	generatedFiles := data["template_example"]
-	assert.True(t, slices.Contains(generatedFiles, "test/data/org_2/dashboards/General/testing-foobar.json"))
-	assert.True(t, slices.Contains(generatedFiles, "test/data/org_3/dashboards/Testing/template_example.json"))
+	assert.True(t, slices.Contains(generatedFiles, "test/data/org_main-org/dashboards/General/testing-foobar.json"))
+	assert.True(t, slices.Contains(generatedFiles, "test/data/org_some-other-org/dashboards/Testing/template_example.json"))
 	//Remove output to avoid conflicting with other tests
 	defer func() {
 		os.Remove(generatedFiles[0])
@@ -36,7 +36,7 @@ func TestGenerate(t *testing.T) {
 	//Obtain first Config and validate output.
 	cfg := config.Config().GetTemplateConfig()
 	templateCfg := cfg.Entities.Dashboards[0].DashboardEntities[0]
-	rawData, err := os.ReadFile("test/data/org_2/dashboards/General/testing-foobar.json")
+	rawData, err := os.ReadFile("test/data/org_main-org/dashboards/General/testing-foobar.json")
 	assert.Nil(t, err)
 	parser := gjson.ParseBytes(rawData)
 	val := parser.Get("annotations.list.0.hashKey")

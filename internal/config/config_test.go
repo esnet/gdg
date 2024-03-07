@@ -83,16 +83,16 @@ func TestWatchedFoldersConfig(t *testing.T) {
 	grafanaConf := config.Config().GetDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
 	grafanaConf.MonitoredFoldersOverride = []config.MonitoredOrgFolders{{
-		OrganizationId: 0,
-		Folders:        []string{"General", "SpecialFolder"},
+		OrganizationName: "Your Org",
+		Folders:          []string{"General", "SpecialFolder"},
 	}}
 	folders := grafanaConf.GetMonitoredFolders()
 	assert.True(t, slices.Contains(folders, "SpecialFolder"))
-	grafanaConf.OrganizationId = 2
+	grafanaConf.OrganizationName = "DumbDumb"
 	folders = grafanaConf.GetMonitoredFolders()
 	assert.False(t, slices.Contains(folders, "SpecialFolder"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
-	grafanaConf.OrganizationId = 0
+	grafanaConf.OrganizationName = "Main Org."
 	grafanaConf.MonitoredFoldersOverride = nil
 	folders = grafanaConf.GetMonitoredFolders()
 	assert.False(t, slices.Contains(folders, "SpecialFolder"))
@@ -140,8 +140,8 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	folders := grafana.GetMonitoredFolders()
 	assert.True(t, funk.Contains(folders, "Folder1"))
 	assert.True(t, funk.Contains(folders, "Folder2"))
-	assert.Equal(t, "test/data/org_1/connections", grafana.GetPath(config.ConnectionResource))
-	assert.Equal(t, "test/data/org_1/dashboards", grafana.GetPath(config.DashboardResource))
+	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(config.ConnectionResource))
+	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(config.DashboardResource))
 	dsSettings := grafana.ConnectionSettings
 	request := models.AddDataSourceCommand{}
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)

@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
+	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/slices"
 	"os"
@@ -11,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOrgsCrud(t *testing.T) {
+func TestOrganizationCrud(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -20,19 +21,23 @@ func TestOrgsCrud(t *testing.T) {
 	}
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
-	orgs := apiClient.ListOrganizations()
+	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter())
 	assert.Equal(t, len(orgs), 1)
 	mainOrg := orgs[0]
 	assert.Equal(t, mainOrg.ID, int64(1))
 	assert.Equal(t, mainOrg.Name, "Main Org.")
-	newOrgs := apiClient.UploadOrganizations()
+	newOrgs := apiClient.UploadOrganizations(service.NewOrganizationFilter())
 	assert.Equal(t, len(newOrgs), 2)
 	assert.True(t, slices.Contains(newOrgs, "DumbDumb"))
 	assert.True(t, slices.Contains(newOrgs, "Moo"))
+	//Filter Org
+	orgs = apiClient.ListOrganizations(service.NewOrganizationFilter("DumbDumb"))
+	assert.Equal(t, len(orgs), 1)
+	assert.Equal(t, orgs[0].Name, "DumbDumb")
 
 }
 
-func TestOrgUserMembership(t *testing.T) {
+func TestOrganizationUserMembership(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -42,8 +47,8 @@ func TestOrgUserMembership(t *testing.T) {
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
 	//Create Orgs in case they aren't already present.
-	apiClient.UploadOrganizations()
-	orgs := apiClient.ListOrganizations()
+	apiClient.UploadOrganizations(service.NewOrganizationFilter())
+	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter())
 	sort.Slice(orgs, func(a, b int) bool {
 		return orgs[a].ID < orgs[b].ID
 	})
@@ -60,8 +65,9 @@ func TestOrgUserMembership(t *testing.T) {
 			break
 		}
 	}
+	assert.NotNil(t, orgUser)
 	//Reset if any state exists.
-	err := apiClient.DeleteUserFromOrg(orgUser.ID, newOrg.ID)
+	err := apiClient.DeleteUserFromOrg(slug.Make(newOrg.Name), orgUser.ID)
 	assert.Nil(t, err)
 	//Start CRUD test
 	orgUsers := apiClient.ListOrgUsers(newOrg.ID)
@@ -69,16 +75,16 @@ func TestOrgUserMembership(t *testing.T) {
 	assert.Equal(t, orgUsers[0].Login, "admin")
 	assert.Equal(t, orgUsers[0].Role, "Admin")
 
-	err = apiClient.AddUserToOrg("Admin", orgUser.ID, newOrg.ID)
+	err = apiClient.AddUserToOrg("Admin", slug.Make(newOrg.Name), orgUser.ID)
 	assert.Nil(t, err)
 	orgUsers = apiClient.ListOrgUsers(newOrg.ID)
 	assert.Equal(t, len(orgUsers), 2)
 	assert.Equal(t, orgUsers[1].Role, "Admin")
-	err = apiClient.UpdateUserInOrg("Viewer", orgUser.ID, newOrg.ID)
+	err = apiClient.UpdateUserInOrg("Viewer", slug.Make(newOrg.Name), orgUser.ID)
 	orgUsers = apiClient.ListOrgUsers(newOrg.ID)
 	assert.Nil(t, err)
 	assert.Equal(t, orgUsers[1].Role, "Viewer")
-	err = apiClient.DeleteUserFromOrg(orgUser.ID, newOrg.ID)
+	err = apiClient.DeleteUserFromOrg(slug.Make(newOrg.Name), orgUser.ID)
 	orgUsers = apiClient.ListOrgUsers(newOrg.ID)
 	assert.Equal(t, len(orgUsers), 1)
 	assert.Nil(t, err)

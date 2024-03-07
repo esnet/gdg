@@ -43,22 +43,32 @@ func newOrgCommand() simplecobra.Commander {
 func newSetOrgCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "set",
-		Short: "Set <OrgId>, 0 removes filter",
-		Long:  "Set <OrgId>, 0	removes filter",
+		Short: "Set --orgSlugName --orgName to set user Org",
+		Long:  "Set --orgSlugName --orgName to set user Org",
+		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+			cmd.PersistentFlags().StringP("orgName", "o", "", "Set user Org by Name (not slug)")
+			cmd.PersistentFlags().StringP("orgSlugName", "", "", "Set user Org by slug name")
+
+		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			if len(args) < 1 {
-				return errors.New("requires an Org ID and name")
+			orgName, _ := cd.CobraCommand.Flags().GetString("orgName")
+			slugName, _ := cd.CobraCommand.Flags().GetString("orgSlugName")
+			if orgName != "" || slugName != "" {
+				var useSlug = false
+				if slugName != "" {
+					useSlug = true
+					orgName = slugName
+				}
+				err := rootCmd.GrafanaSvc().SetOrganizationByName(orgName, useSlug)
+				if err != nil {
+					log.Fatal("unable to set Org ID, ", err.Error())
+				}
 			}
-			OrgId := args[0]
-			orgId, err := strconv.ParseInt(OrgId, 10, 64)
-			if err != nil {
-				log.Fatal("invalid Org ID, could not parse value to a numeric value")
-			}
-			err = rootCmd.GrafanaSvc().SetOrganization(orgId)
-			if err != nil {
-				log.Fatal("unable to set Org ID", "err", err)
-			}
-			slog.Info("Successfully set Org ID for context", "context", config.Config().GetGDGConfig().GetContext())
+
+			rootCmd.GrafanaSvc().InitOrganizations()
+			userOrg := rootCmd.GrafanaSvc().GetUserOrganization()
+			slog.Info("New Org is now set to", slog.String("orgName", userOrg.Name))
+
 			return nil
 
 		},
@@ -144,7 +154,7 @@ func newListUsers() simplecobra.Commander {
 }
 
 func newUpdateUserRoleCmd() simplecobra.Commander {
-	description := "updateUserRole <orgId> <userId> <role>"
+	description := "updateUserRole <orgSlugName> <userId> <role>"
 	return &support.SimpleCommand{
 		NameP: "updateUserRole",
 		Short: description,
@@ -153,17 +163,15 @@ func newUpdateUserRoleCmd() simplecobra.Commander {
 			if len(args) < 3 {
 				return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [admin, editor, viewer]")
 			}
-			orgId, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				log.Fatal("unable to parse orgId to numeric value")
-			}
+			orgSlug := args[0]
+			roleName := args[2]
 			userId, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
 			slog.Info("Listing org users for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"login", "orgId", "name", "email", "role"})
-			err = rootCmd.GrafanaSvc().UpdateUserInOrg(args[2], userId, orgId)
+			err = rootCmd.GrafanaSvc().UpdateUserInOrg(roleName, orgSlug, userId)
 			if err != nil {
 				slog.Error("Unable to update Org user")
 			} else {
@@ -175,26 +183,23 @@ func newUpdateUserRoleCmd() simplecobra.Commander {
 }
 
 func newAddUserRoleCmd() simplecobra.Commander {
-	description := "addUser <orgId> <userId> <role>"
+	description := "addUser <orgSlugName> <userId> <role>"
 	return &support.SimpleCommand{
 		NameP: "addUser",
 		Short: description,
 		Long:  description,
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			if len(args) < 3 {
-				return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [admin, editor, viewer]")
+				return fmt.Errorf("requires the following parameters to be specified: [<orgSlugName> <userId> <role>]\nValid roles are: [admin, editor, viewer]")
 			}
-			orgId, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				log.Fatal("unable to parse orgId to numeric value")
-			}
+			orgSlug := args[0]
 			userId, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
 			slog.Info("Add user to org for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"login", "orgId", "name", "email", "role"})
-			err = rootCmd.GrafanaSvc().AddUserToOrg(args[2], userId, orgId)
+			err = rootCmd.GrafanaSvc().AddUserToOrg(args[2], orgSlug, userId)
 			if err != nil {
 				slog.Error("Unable to add user to Org")
 			} else {
@@ -213,18 +218,15 @@ func newDeleteUserRoleCmd() simplecobra.Commander {
 		Long:  description,
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			if len(args) < 2 {
-				return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId>]")
+				return fmt.Errorf("requires the following parameters to be specified: [<orgSlugName> <userId>]")
 			}
-			orgId, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				log.Fatal("unable to parse orgId to numeric value")
-			}
+			orgSlug := args[0]
 			userId, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
 			slog.Info("Update org for context", "context", config.Config().GetGDGConfig().GetContext())
-			err = rootCmd.GrafanaSvc().DeleteUserFromOrg(userId, orgId)
+			err = rootCmd.GrafanaSvc().DeleteUserFromOrg(orgSlug, userId)
 			if err != nil {
 				slog.Error("Unable to remove user from Org")
 			} else {

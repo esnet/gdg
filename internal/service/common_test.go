@@ -45,21 +45,16 @@ func TestUserPath(t *testing.T) {
 }
 func TestBuildDashboardPath(t *testing.T) {
 	result := BuildResourceFolder("General", config.DashboardResource)
-	assert.Equal(t, "test/data/org_1/dashboards/General", result)
+	assert.Equal(t, "test/data/org_your-org/dashboards/General", result)
 }
 
 func TestBuildFolderSourcePath(t *testing.T) {
 	result := buildResourcePath(slug.Make("Some Folder"), config.FolderResource)
-	assert.Equal(t, "test/data/org_1/folders/some-folder.json", result)
+	assert.Equal(t, "test/data/org_your-org/folders/some-folder.json", result)
 
 }
 
 func TestBuildDataSourcePath(t *testing.T) {
 	result := buildResourcePath(slug.Make("My DS"), config.ConnectionResource)
-	assert.Equal(t, "test/data/org_1/connections/my-ds.json", result)
-}
-
-func TestBuildAlertNotificationPath(t *testing.T) {
-	result := buildResourcePath("SomeNotification", config.AlertNotificationResource)
-	assert.Equal(t, "test/data/org_1/alertnotifications/SomeNotification.json", result)
+	assert.Equal(t, "test/data/org_your-org/connections/my-ds.json", result)
 }

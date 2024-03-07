@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
-	"log"
 	"log/slog"
-	"os"
 	"path"
 	"regexp"
 )
@@ -16,10 +15,8 @@ import (
 type ResourceType string
 
 const (
-	AlertNotificationResource    = "alertnotifications"
 	ConnectionPermissionResource = "connections-permissions"
 	ConnectionResource           = "connections"
-	LegacyConnections            = "datasources"
 	DashboardResource            = "dashboards"
 	FolderPermissionResource     = "folders-permissions"
 	FolderResource               = "folders"
@@ -30,10 +27,11 @@ const (
 	UserResource                 = "users"
 	TemplatesResource            = "templates"
 	SecureSecretsResource        = "secure"
+	minPasswordLength            = 8
+	maxPasswordLength            = 20
 )
 
 var orgNamespacedResource = map[ResourceType]bool{
-	AlertNotificationResource:    true,
 	ConnectionPermissionResource: true,
 	ConnectionResource:           true,
 	DashboardResource:            true,
@@ -56,8 +54,8 @@ func (s *ResourceType) String() string {
 // GetPath returns the path of the resource type, if Namespaced, will delimit the path by org Id
 func (s *ResourceType) GetPath(basePath string) string {
 	if s.isNamespaced() {
-		orgId := Config().GetDefaultGrafanaConfig().GetOrganizationId()
-		return path.Join(basePath, fmt.Sprintf("%s_%d", OrganizationMetaResource, orgId), s.String())
+		orgName := slug.Make(Config().GetDefaultGrafanaConfig().GetOrganizationName())
+		return path.Join(basePath, fmt.Sprintf("%s_%s", OrganizationMetaResource, orgName), s.String())
 
 	}
 	return path.Join(basePath, s.String())
@@ -166,10 +164,28 @@ func (s *GrafanaConfig) GetPath(r ResourceType) string {
 	return r.GetPath(s.OutputPath)
 }
 
+// GetUserSettings returns configured UserSettings
+func (s *GrafanaConfig) GetUserSettings() *UserSettings {
+	if s.UserSettings == nil {
+		return &UserSettings{
+			RandomPassword: false,
+		}
+	}
+	//Set default values if none are set
+	if s.UserSettings.MinLength == 0 {
+		s.UserSettings.MinLength = minPasswordLength
+	}
+	if s.UserSettings.MaxLength == 0 {
+		s.UserSettings.MaxLength = maxPasswordLength
+	}
+
+	return s.UserSettings
+}
+
 // GetOrgMonitoredFolders return the OrganizationMonitoredFolders that override a given Org
-func (s *GrafanaConfig) GetOrgMonitoredFolders(orgId int64) []string {
+func (s *GrafanaConfig) GetOrgMonitoredFolders(orgName string) []string {
 	for _, item := range s.MonitoredFoldersOverride {
-		if item.OrganizationId == orgId && len(item.Folders) > 0 {
+		if item.OrganizationName == orgName && len(item.Folders) > 0 {
 			return item.Folders
 		}
 	}
@@ -179,7 +195,7 @@ func (s *GrafanaConfig) GetOrgMonitoredFolders(orgId int64) []string {
 
 // GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.
 func (s *GrafanaConfig) GetMonitoredFolders() []string {
-	orgFolders := s.GetOrgMonitoredFolders(s.OrganizationId)
+	orgFolders := s.GetOrgMonitoredFolders(s.GetOrganizationName())
 	if len(orgFolders) > 0 {
 		return orgFolders
 	}
@@ -192,16 +208,6 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 
 // Validate will return terminate if any deprecated configuration is found.
 func (s *GrafanaConfig) Validate() {
-	if len(s.LegacyConnectionSettings) > 0 {
-		log.Fatal("Using 'datasources' is now deprecated, please use 'connections' instead")
-	}
-	//Validate Connections
-	//TODO: remove code after next release
-	legacyCheck := s.GetPath(LegacyConnections)
-	if _, err := os.Stat(legacyCheck); !os.IsNotExist(err) {
-		log.Fatalf("Your export contains a datasource directry which is deprecated.  Please remove or "+
-			"rename directory to '%s'", ConnectionResource)
-	}
 
 }
 

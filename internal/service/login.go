@@ -3,6 +3,7 @@ package service
 import (
 	"crypto/tls"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 
@@ -56,10 +57,19 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		Schemes:  []string{u.Scheme},
 		// NumRetries: 3,
 	}
-	// Sets Organization one client if one is configured
-	if s.grafanaConf.OrganizationId != 0 {
+
+	if s.grafanaConf.OrganizationName != "" {
+		orgId, err := api.NewExtendedApi().GetConfiguredOrgId(s.grafanaConf.OrganizationName)
+		if err != nil {
+			slog.Info("unable to determine org ID, falling back")
+			orgId = 1
+		}
 		opts = append(opts, func(clientCfg *client.TransportConfig) {
-			clientCfg.OrgID = s.grafanaConf.OrganizationId
+			clientCfg.OrgID = orgId
+		})
+	} else {
+		opts = append(opts, func(clientCfg *client.TransportConfig) {
+			clientCfg.OrgID = config.DefaultOrganizationId
 		})
 	}
 	for _, opt := range opts {

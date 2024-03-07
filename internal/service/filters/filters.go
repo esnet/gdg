@@ -17,10 +17,10 @@ const (
 	TagsFilter    FilterType = "TagsFilter"
 	DashFilter    FilterType = "DashFilter"
 	FolderFilter  FilterType = "FolderFilter"
-	TeamFilter    FilterType = "TeamFilter"
 	DefaultFilter FilterType = "default"
 	Name          FilterType = "Name"
 	AuthLabel     FilterType = "AuthLabel"
+	OrgFilter     FilterType = "OrgFilter"
 )
 
 func (s FilterType) String() string {

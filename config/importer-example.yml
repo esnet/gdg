@@ -26,6 +26,10 @@ contexts:
     storage: "any_label"
     output_path: test/data
     enterprise_support: true
+    user:
+      random_password: true
+      min_length: 8
+      max_length: 20
     connections:
       exclude_filters:
         - matches:
@@ -75,7 +79,6 @@ contexts:
     url: https://grafana.com
     user_name: admin
     password: admin
-    organization_id: 1
     filter_override:
       ignore_dashboard_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
@@ -95,14 +98,13 @@ contexts:
               regex: ".*"
           secure_data: "default.json"
     url: https://staging.grafana.com
-    organization_id: 1
     filter_override:
       ignore_dashboard_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - Folder1
       - Folder2
     watched_folders_override:
-      - organization_id: 0
+      - organization_name: "Some Other Org"
         folders:
           - General
           - SpecialFolder

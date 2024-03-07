@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/orgs"
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/tidwall/gjson"
 	"log"
 	"log/slog"
 	"path/filepath"
@@ -17,33 +19,64 @@ import (
 
 // OrganizationsApi Contract definition
 type OrganizationsApi interface {
-	ListOrganizations() []*models.OrgDTO
-	DownloadOrganizations() []string
-	UploadOrganizations() []string
-	SetOrganization(id int64) error
+	ListOrganizations(filter filters.Filter) []*models.OrgDTO
+	DownloadOrganizations(filter filters.Filter) []string
+	UploadOrganizations(filter filters.Filter) []string
+	SetOrganizationByName(name string, useSlug bool) error
 	//Manage Active Organization
 	GetUserOrganization() *models.OrgDetailsDTO
 	GetTokenOrganization() *models.OrgDetailsDTO
 	SetUserOrganizations(id int64) error
+	ListUserOrganizations() ([]*models.UserOrgDTO, error)
 	InitOrganizations()
 	//Org Users
 	ListOrgUsers(orgId int64) []*models.OrgUserDTO
-	AddUserToOrg(role string, userId, orgId int64) error
-	DeleteUserFromOrg(userId, orgId int64) error
-	UpdateUserInOrg(role string, userId, orgId int64) error
+	AddUserToOrg(role, orgSlug string, userId int64) error
+	DeleteUserFromOrg(orgId string, userId int64) error
+	UpdateUserInOrg(role, orgSlug string, userId int64) error
+}
+
+func NewOrganizationFilter(args ...string) filters.Filter {
+	filterObj := filters.NewBaseFilter()
+	if len(args) == 0 || args[0] == "" {
+		return filterObj
+	}
+
+	filterObj.AddFilter(filters.OrgFilter, args[0])
+	return filterObj
 }
 
 // InitOrganizations will context switch to configured organization and invoke a different call depending on the access level.
 func (s *DashNGoImpl) InitOrganizations() {
 	var orgInfo *models.OrgDetailsDTO
+	var orgEntity models.OrgDetailsDTO
 
 	if s.grafanaConf.IsAdminEnabled() || s.grafanaConf.IsBasicAuth() {
 		orgInfo = s.GetUserOrganization()
 		if orgInfo == nil {
 			log.Fatal("Unable to retrieve requested user's org")
 		}
-		if orgInfo.ID != s.grafanaConf.GetOrganizationId() {
-			err := s.SetUserOrganizations(s.grafanaConf.GetOrganizationId())
+		if orgInfo.Name != s.grafanaConf.GetOrganizationName() {
+			userOrgs, err := s.ListUserOrganizations()
+			if err != nil {
+				log.Fatal("Unable to switch user's Org")
+			}
+			found := false
+			for _, org := range userOrgs {
+				if org.Name == s.grafanaConf.GetOrganizationName() {
+					orgEntity.ID = org.OrgID
+					orgEntity.Name = org.Name
+					found = true
+					break
+				}
+			}
+			if !found {
+				log.Fatalf("User does not have access to org: '%s', Unable to switch user's Org", s.grafanaConf.GetOrganizationName())
+			}
+
+		}
+		if orgInfo.Name != s.grafanaConf.GetOrganizationName() {
+			err := s.SetUserOrganizations(orgEntity.ID)
 			if err != nil {
 				log.Fatal("Unable to switch user's Org")
 			}
@@ -51,50 +84,52 @@ func (s *DashNGoImpl) InitOrganizations() {
 
 	} else {
 		orgInfo = &models.OrgDetailsDTO{
-			ID: s.grafanaConf.GetOrganizationId(),
+			Name: s.grafanaConf.GetOrganizationName(),
 		}
 
 	}
 }
 
-// getOrganizations returns organization for a given id.
-func (s *DashNGoImpl) getOrganization(id int64) (*models.OrgDetailsDTO, error) {
-	data, err := s.GetClient().Orgs.GetOrgByID(id)
-	if err != nil {
-		return nil, err
-	}
-
-	return data.GetPayload(), nil
-
-}
-
-// SetOrganization sets organization for a given id.
-func (s *DashNGoImpl) SetOrganization(id int64) error {
-	//Removes Org filter
-	if id <= 1 {
-		slog.Warn("organization is not a valid value, resetting to default value of 1.")
-		s.grafanaConf.OrganizationId = 1
-	}
+func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 
 	if s.grafanaConf.IsAdminEnabled() || s.grafanaConf.IsBasicAuth() {
-		organization, err := s.getOrganization(id)
+		payload, err := s.ListUserOrganizations()
 		if err != nil {
-			return errors.New("invalid org Id, org is not found")
+			return err
 		}
-		s.grafanaConf.OrganizationId = organization.ID
+		var requestOrg *models.UserOrgDTO
+
+		for ndx, orgEntity := range payload {
+			orgName := orgEntity.Name
+			if useSlug {
+				orgName = slug.Make(orgName)
+			}
+			if orgName == name {
+				requestOrg = payload[ndx]
+				break
+			}
+		}
+		if requestOrg == nil {
+			log.Fatalf("unable to set org.  Please ensure you have the correct permissions and the org name is correct")
+		}
+		s.grafanaConf.OrganizationName = requestOrg.Name
 	} else {
 		tokenOrg := s.GetTokenOrganization()
-		if tokenOrg.ID != id {
-			log.Fatalf("you have no BasicAuth configured, and token org are non-changeable.  Please configure a different token associated with Org %d, OR configure basic auth.", id)
+		orgName := tokenOrg.Name
+		if useSlug {
+			orgName = slug.Make(orgName)
 		}
-		s.grafanaConf.OrganizationId = id
+		if orgName != name {
+			log.Fatalf("you have no BasicAuth configured, and token org are non-changeable.  Please configure a different token associated with Org %s, OR configure basic auth.", orgName)
+		}
 	}
 
 	return config.Config().SaveToDisk(false)
+
 }
 
 // ListOrganizations List all dashboards
-func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
+func (s *DashNGoImpl) ListOrganizations(filter filters.Filter) []*models.OrgDTO {
 	if !s.grafanaConf.IsAdminEnabled() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
@@ -113,11 +148,17 @@ func (s *DashNGoImpl) ListOrganizations() []*models.OrgDTO {
 			log.Fatalf("%s, err: %v", msg, err)
 		}
 	}
-	return orgList.GetPayload()
+	var result []*models.OrgDTO
+	for _, org := range orgList.Payload {
+		if filter.GetFilter(filters.OrgFilter) == "" || filter.GetFilter(filters.OrgFilter) == org.Name {
+			result = append(result, org)
+		}
+	}
+	return result
 }
 
 // DownloadOrganizations Download organizations
-func (s *DashNGoImpl) DownloadOrganizations() []string {
+func (s *DashNGoImpl) DownloadOrganizations(filter filters.Filter) []string {
 	if !s.grafanaConf.IsAdminEnabled() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations")
 		return nil
@@ -128,7 +169,7 @@ func (s *DashNGoImpl) DownloadOrganizations() []string {
 		dataFiles []string
 	)
 
-	orgsListing := s.ListOrganizations()
+	orgsListing := s.ListOrganizations(filter)
 	for _, organisation := range orgsListing {
 		if dsPacked, err = json.MarshalIndent(organisation, "", "	"); err != nil {
 			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Name)
@@ -146,7 +187,7 @@ func (s *DashNGoImpl) DownloadOrganizations() []string {
 }
 
 // UploadOrganizations Upload organizations to Grafana
-func (s *DashNGoImpl) UploadOrganizations() []string {
+func (s *DashNGoImpl) UploadOrganizations(filter filters.Filter) []string {
 	if !s.grafanaConf.IsAdminEnabled() {
 		slog.Error("No valid Grafana Admin configured, cannot upload Organizations")
 		return nil
@@ -159,7 +200,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, err: %v", err)
 	}
-	orgListing := s.ListOrganizations()
+	orgListing := s.ListOrganizations(filter)
 	orgMap := map[string]bool{}
 	for _, entry := range orgListing {
 		orgMap[entry.Name] = true
@@ -178,6 +219,10 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 			slog.Warn("failed to unmarshall folder", "err", err)
 			continue
 		}
+		rawOrgName := gjson.GetBytes(rawFolder, "name").String()
+		if filter.GetFilter(filters.OrgFilter) != "" && rawOrgName != filter.GetFilter(filters.OrgFilter) {
+			continue
+		}
 		if _, ok := orgMap[newOrg.Name]; ok {
 			slog.Info("Organization already exists, skipping", "organization", newOrg.Name)
 			continue
@@ -185,7 +230,7 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 
 		_, err = s.GetBasicAuthClient().Orgs.CreateOrg(&newOrg)
 		if err != nil {
-			slog.Error("failed to create folder", "organization", newOrg.Name)
+			slog.Error("failed to create organization", "organization", newOrg.Name)
 			continue
 		}
 		result = append(result, newOrg.Name)
@@ -194,14 +239,15 @@ func (s *DashNGoImpl) UploadOrganizations() []string {
 	return result
 }
 
-// SwitchOrganization switch organization context
-func (s *DashNGoImpl) SwitchOrganization(id int64) error {
+// SwitchOrganizationByName switch organization context
+func (s *DashNGoImpl) SwitchOrganizationByName(orgName string) error {
 	if !s.grafanaConf.IsBasicAuth() {
 		slog.Warn("Basic auth required for Org switching.  Ignoring Org setting and continuing")
 		return nil
 	}
 	valid := false
-	if id > 1 {
+	var orgId int64 = 1
+	if orgName != "" {
 		var orgsPayload []*models.OrgDTO
 		orgList, err := s.GetBasicAuthClient().Orgs.SearchOrgs(orgs.NewSearchOrgsParams())
 		if err != nil {
@@ -213,17 +259,17 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 		}
 		for _, orgEntry := range orgsPayload {
 			slog.Debug("", "orgID", orgEntry.ID, "OrgName", orgEntry.Name)
-			if orgEntry.ID == s.grafanaConf.GetOrganizationId() {
+			if orgEntry.Name == s.grafanaConf.GetOrganizationName() {
 				valid = true
+				orgId = orgEntry.ID
 				break
 			}
 		}
 
-	}
-	//Fallback on default
-	if id < 2 {
-		id = 1 // DefaultOrgID
+	} else {
+		//Fallback on default
 		valid = true
+		orgId = config.DefaultOrganizationId
 	}
 
 	//We retrieved all the orgs successfully and none of them matched the requested ID
@@ -231,7 +277,7 @@ func (s *DashNGoImpl) SwitchOrganization(id int64) error {
 		log.Fatalf("The Specified OrgId does not match any existing organization.  Please check your configuration and try again.")
 	}
 
-	status, err := s.GetBasicAuthClient().SignedInUser.UserSetUsingOrg(id)
+	status, err := s.GetBasicAuthClient().SignedInUser.UserSetUsingOrg(orgId)
 	if err != nil {
 		log.Fatalf("%s for %v\n", err, status)
 		return err
@@ -259,6 +305,16 @@ func (s *DashNGoImpl) getAssociatedActiveOrg(apiClient *client.GrafanaHTTPAPI) *
 	return payload.GetPayload()
 }
 
+func (s *DashNGoImpl) ListUserOrganizations() ([]*models.UserOrgDTO, error) {
+	payload, err := s.GetBasicAuthClient().SignedInUser.GetSignedInUserOrgList()
+	if err != nil {
+		return nil, err
+	}
+
+	return payload.GetPayload(), nil
+
+}
+
 func (s *DashNGoImpl) SetUserOrganizations(id int64) error {
 	payload, err := s.GetBasicAuthClient().SignedInUser.UserSetUsingOrg(id)
 	if err == nil {
@@ -283,7 +339,7 @@ func (s *DashNGoImpl) ListOrgUsers(orgId int64) []*models.OrgUserDTO {
 	return resp.GetPayload()
 }
 
-func (s *DashNGoImpl) AddUserToOrg(role string, userId, orgId int64) error {
+func (s *DashNGoImpl) AddUserToOrg(role, orgSlug string, userId int64) error {
 	userInfo, err := s.getUserById(userId)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve user with Id: %d", userId)
@@ -292,25 +348,59 @@ func (s *DashNGoImpl) AddUserToOrg(role string, userId, orgId int64) error {
 		LoginOrEmail: userInfo.Login,
 		Role:         role,
 	}
+
+	orgId, err := s.getOrgIdFromSlug(orgSlug)
+	if err != nil {
+		return fmt.Errorf("unable to find a valid org with slug value of %s", orgSlug)
+	}
+
 	_, err = s.GetAdminClient().Orgs.AddOrgUser(orgId, request)
 	return err
 }
 
-func (s *DashNGoImpl) DeleteUserFromOrg(userId, orgId int64) error {
+func (s *DashNGoImpl) DeleteUserFromOrg(orgSlugName string, userId int64) error {
 	p := orgs.NewRemoveOrgUserParams()
+	orgId, err := s.getOrgIdFromSlug(orgSlugName)
+	if err != nil {
+		return err
+	}
 	p.OrgID = orgId
 	p.UserID = userId
-	_, err := s.GetAdminClient().Orgs.RemoveOrgUser(userId, orgId)
+	_, err = s.GetAdminClient().Orgs.RemoveOrgUser(userId, orgId)
 	return err
 }
 
-func (s *DashNGoImpl) UpdateUserInOrg(role string, userId, orgId int64) error {
+func (s *DashNGoImpl) getOrgIdFromSlug(slugName string) (int64, error) {
+	//Get Org
+	organizations, err := s.ListUserOrganizations()
+	if err != nil {
+		return 0, fmt.Errorf("unable to retrieve user organizations, %w", err)
+	}
+	var orgId int64
+	for _, org := range organizations {
+		if slug.Make(org.Name) == slugName {
+			orgId = org.OrgID
+			break
+		}
+	}
+	if orgId == 0 {
+		return 0, fmt.Errorf("unable to find org with matching slug name of %s", slugName)
+	}
+	return orgId, nil
+}
+
+func (s *DashNGoImpl) UpdateUserInOrg(role, orgSlug string, userId int64) error {
 	p := orgs.NewUpdateOrgUserParams()
+	orgId, err := s.getOrgIdFromSlug(orgSlug)
+	if err != nil {
+		return err
+	}
 	p.OrgID = orgId
 	p.UserID = userId
 	p.Body = &models.UpdateOrgUserCommand{
 		Role: role,
 	}
-	_, err := s.GetAdminClient().Orgs.UpdateOrgUser(p)
+
+	_, err = s.GetAdminClient().Orgs.UpdateOrgUser(p)
 	return err
 }

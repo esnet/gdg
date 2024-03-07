@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +28,6 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 		},
 		CommandsList: []simplecobra.Commander{
 			newDashboardCommand(),
-			newAlertNotificationsCommand(),
 			newConnectionsCommand(),
 			newFolderCommand(),
 			newLibraryElementsCommand(),
@@ -37,4 +37,14 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 		},
 	}
 
+}
+
+// GetOrganizationName wrapper for verbose version below.
+func GetOrganizationName() string {
+	return config.Config().GetDefaultGrafanaConfig().GetOrganizationName()
+}
+
+// GetContext wrapper for verbose version below.
+func GetContext() string {
+	return config.Config().GetGDGConfig().GetContext()
 }

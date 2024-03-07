@@ -118,12 +118,14 @@ Command can use `organizations` or `org` to set the organizations in the configu
 NOTE: this only manages top level of the orgs structure. Mainly used for a lazy man pattern.
 
 ```sh
-./bin/gdg tools org set <orgID> -- Sets a given Org filter.  All Dashboards and Datasources etc are uploaded to the given Org only.
+./bin/gdg tools org set --orgName <name> OR --orgSlugName <name> -- Sets a given Org filter.  All Dashboards and Datasources etc are uploaded to the given Org only.
 ```
+
+Additionally `addUser`, `updateUserRole`, `deleteUser`, `listUsers` are all used to manage a user's membership within a given organization.
 
 ### Users
 
-CRUD is under the 'backup' command.  The tools allows you to promote a given user to a grafana admin if you have the permission to do so.
+CRUD is under the 'backup' command.  The tools subcommand allows you to promote a given user to a grafana admin if you have the permission to do so.
 
 NOTE: admin user is always ignored.
 

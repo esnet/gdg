@@ -18,7 +18,6 @@ func NewExtendedApi() *ExtendedApi {
 	o := ExtendedApi{
 		grafanaCfg: cfg,
 	}
-
 	return &o
 }
 
