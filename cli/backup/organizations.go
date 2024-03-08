@@ -57,16 +57,22 @@ func newOrganizationsListCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			filter := service.NewOrganizationFilter(parseOrganizationGlobalFlags(cd.CobraCommand)...)
 			slog.Info("Listing organizations for context", "context", config.Config().GetGDGConfig().GetContext())
-			rootCmd.TableObj.AppendHeader(table.Row{"id", "organization Name", "org slug ID"})
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "organization Name", "org slug ID", "HomeDashboardUID", "Theme", "WeekStart"})
 			listOrganizations := rootCmd.GrafanaSvc().ListOrganizations(filter)
 			sort.Slice(listOrganizations, func(a, b int) bool {
-				return listOrganizations[a].ID < listOrganizations[b].ID
+				return listOrganizations[a].Organization.ID < listOrganizations[b].Organization.ID
 			})
 			if len(listOrganizations) == 0 {
 				slog.Info("No organizations found")
 			} else {
 				for _, org := range listOrganizations {
-					rootCmd.TableObj.AppendRow(table.Row{org.ID, org.Name, slug.Make(org.Name)})
+					rootCmd.TableObj.AppendRow(table.Row{org.Organization.ID,
+						org.Organization.Name,
+						slug.Make(org.Organization.Name),
+						org.Preferences.HomeDashboardUID,
+						org.Preferences.Theme,
+						org.Preferences.WeekStart,
+					})
 				}
 				rootCmd.TableObj.Render()
 			}

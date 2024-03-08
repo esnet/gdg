@@ -1,4 +1,9 @@
 {
-	"id": 3,
-	"name": "Moo"
+  "organization": {
+    "id": 3,
+    "name": "Moo"
+  },
+  "preferences": {
+    "homeDashboardUID": "000000004"
+  }
 }
