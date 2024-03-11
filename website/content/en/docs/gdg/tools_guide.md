@@ -123,6 +123,29 @@ NOTE: this only manages top level of the orgs structure. Mainly used for a lazy 
 
 Additionally `addUser`, `updateUserRole`, `deleteUser`, `listUsers` are all used to manage a user's membership within a given organization.
 
+
+### Organizations Preferences
+
+There are a few properties that can be set to change behavior.  Keep in mind that all of these entity need to be owned by the Org, you cannot reference to a dashboard outside of a given org.
+
+```sh
+## will set the weekstart as Tuesday and a default Org theme of dark
+gdg t orgs prefs set --orgName "Main Org." --theme dark --weekstart tuesday
+## Retrieve the Orgs Preferences
+gdg t orgs prefs get --orgName "Main Org."
+```
+
+
+```
+┌──────────────────┬─────────┐
+│ FIELD            │ VALUE   │
+├──────────────────┼─────────┤
+│ HomeDashboardUID │         │
+│ Theme            │ dark    │
+│ WeekStart        │ tuesday │
+└──────────────────┴─────────┘
+```
+
 ### Users
 
 CRUD is under the 'backup' command.  The tools subcommand allows you to promote a given user to a grafana admin if you have the permission to do so.
