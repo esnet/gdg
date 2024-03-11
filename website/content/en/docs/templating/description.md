@@ -18,7 +18,7 @@ context_name:
   token: ""
   user_name: admin
   password: admin
-  organization_id: 0
+  organization_name: Main Org.
   watched_folders_override: [ ]
   watched:
     - General
@@ -131,9 +131,9 @@ Iterating and conditionals.
 ```json
 {
   "link_text": [
-    {{if .enabledlight}}   // conditional to check if to insert or not 
-    {{ range $v := .lightsources}}  // Iterating through list 
-    {{ $v }}  // Inserting value 
+    {{if .enabledlight}}   // conditional to check if to insert or not
+    {{ range $v := .lightsources}}  // Iterating through list
+    {{ $v }}  // Inserting value
     {{ end }}
     {{ end }}
   ]

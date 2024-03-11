@@ -18,6 +18,7 @@ toc: true
  - This is mentioned below, but `datasources` config key was deprecated and replaced with `connections`.  Previous version would warn about the change, that functionality has been removed.  Please Update to using connections, if you haven't already done so.
 
  - The import/export dashboards keyword provided confusion.  It has been phased out bit by bit, but all references to it should now be fully removed.  Import is now 'download', and export is now 'upload'.
+ - `organization_i` is deprecated in the importer config in favor of `organization_name`.
 
 
 

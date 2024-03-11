@@ -55,7 +55,7 @@ url: http://localhost:3000
 token: "SomeTokenHere"
 user_name: admin
 password: admin
-organization_id: 1
+organization_name: Main Org.
 watched:
     - General
     - Other
@@ -73,7 +73,7 @@ filter_override:
 output_path: test/data
 ```
 
-The organization_id is set to 1.  In the configuration which matches 'Main Org.' and is the default if unspecified.
+The organization_name is set to `Main Org.` and is the default if unspecified.
 
 
 ### Inspect Current Auth Org
