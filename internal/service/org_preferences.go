@@ -67,7 +67,7 @@ func (s *DashNGoImpl) scopeIntoOrg(orgName string, runTask func() (interface{}, 
 
 // UploadOrgPreferences Updates the preferences for a given organization.  Returns error if org is not found.
 func (s *DashNGoImpl) UploadOrgPreferences(orgName string, pref *models.Preferences) error {
-	f := func() (interface{}, error) {
+	runTask := func() (interface{}, error) {
 		if pref == nil {
 			return nil, fmt.Errorf("preferences are nil, cannot update")
 		}
@@ -85,10 +85,10 @@ func (s *DashNGoImpl) UploadOrgPreferences(orgName string, pref *models.Preferen
 		}
 		return status, nil
 	}
-	_, err := s.scopeIntoOrg(orgName, f)
+	_, err := s.scopeIntoOrg(orgName, runTask)
 	if err != nil {
 		return err
 	}
-	slog.Info("Organization Preferences were update")
+	slog.Info("Organization Preferences were updated")
 	return nil
 }

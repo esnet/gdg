@@ -73,7 +73,7 @@ func newUpdateOrgPreferenceCmd() simplecobra.Commander {
 
 			err = rootCmd.GrafanaSvc().UploadOrgPreferences(org, prefere)
 			if err != nil {
-				log.Fatal("Failed to update org preferences")
+				log.Fatalf("Failed to update org preferences, %v", err)
 			}
 			slog.Info("Preferences update for organization", slog.Any("organization", org))
 
