@@ -1,6 +1,7 @@
 package config
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
@@ -8,7 +9,7 @@ import (
 	"github.com/sethvargo/go-password/password"
 	"github.com/spf13/viper"
 	"log/slog"
-	"math/rand/v2"
+	"math/big"
 	"os"
 	"path/filepath"
 )
@@ -74,7 +75,12 @@ func (u *UserSettings) GetPassword(username string) string {
 		return u.defaultUserPassword(username)
 	}
 
-	passLength := rand.IntN(u.MaxLength-u.MinLength) + u.MinLength
+	nBig, err := rand.Int(rand.Reader, big.NewInt(int64(u.MaxLength)))
+	if err != nil {
+		slog.Warn("Failed to get random value")
+		return u.defaultUserPassword(username)
+	}
+	passLength := int(nBig.Int64() + int64(u.MinLength))
 	res, err := password.Generate(passLength, 1, 1, false, false)
 	if err != nil {
 		slog.Warn("unable to generate a proper random password, falling back on default password pattern",

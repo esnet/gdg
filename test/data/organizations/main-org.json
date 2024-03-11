@@ -1,4 +1,7 @@
 {
-	"id": 1,
-	"name": "Main Org."
+  "organization": {
+    "id": 1,
+    "name": "Main Org."
+  },
+  "preferences": {}
 }

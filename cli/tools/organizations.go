@@ -35,6 +35,8 @@ func newOrgCommand() simplecobra.Commander {
 			newUpdateUserRoleCmd(),
 			newAddUserRoleCmd(),
 			newDeleteUserRoleCmd(),
+			//Preferences
+			newOrgPreferenceCommand(),
 		},
 	}
 
@@ -53,6 +55,9 @@ func newSetOrgCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			orgName, _ := cd.CobraCommand.Flags().GetString("orgName")
 			slugName, _ := cd.CobraCommand.Flags().GetString("orgSlugName")
+			if orgName == "" && slugName == "" {
+				return errors.New("must set either --orgName or --orgSlugName flag")
+			}
 			if orgName != "" || slugName != "" {
 				var useSlug = false
 				if slugName != "" {

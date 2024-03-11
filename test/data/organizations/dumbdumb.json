@@ -1,4 +1,7 @@
 {
-	"id": 2,
-	"name": "DumbDumb"
+  "organization": {
+    "id": 2,
+    "name": "DumbDumb"
+  },
+  "preferences": {}
 }
