@@ -74,7 +74,7 @@ func newOrganizationsListCmd() simplecobra.Commander {
 						org.Preferences.WeekStart,
 					})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, listOrganizations)
 			}
 			return nil
 		},
@@ -101,7 +101,7 @@ func newOrganizationsDownloadCmd() simplecobra.Commander {
 				for _, org := range listOrganizations {
 					rootCmd.TableObj.AppendRow(table.Row{org})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, listOrganizations)
 			}
 			return nil
 		},
@@ -121,14 +121,14 @@ func newOrganizationsUploadCmd() simplecobra.Commander {
 			slog.Info("Uploading Folders for context: ", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			filter := service.NewOrganizationFilter(parseOrganizationGlobalFlags(cd.CobraCommand)...)
-			folders := rootCmd.GrafanaSvc().UploadOrganizations(filter)
-			if len(folders) == 0 {
-				slog.Info("No Orgs were uploaded")
+			organizations := rootCmd.GrafanaSvc().UploadOrganizations(filter)
+			if len(organizations) == 0 {
+				slog.Info("No Organizations were uploaded")
 			} else {
-				for _, folder := range folders {
+				for _, folder := range organizations {
 					rootCmd.TableObj.AppendRow(table.Row{folder})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, organizations)
 			}
 			return nil
 		},

@@ -56,7 +56,7 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 					rootCmd.TableObj.AppendRow(table.Row{"", "", "    PERMISSION--->", entry.UserLogin, entry.Team, entry.Role, entry.PermissionName}, rowConfigAutoMerge)
 				}
 			}
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, folders)
 			return nil
 		},
 	}
@@ -83,7 +83,7 @@ func newFolderPermissionDownloadCmd() simplecobra.Commander {
 			for _, folder := range folders {
 				rootCmd.TableObj.AppendRow(table.Row{folder})
 			}
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, folders)
 			return nil
 		},
 	}
@@ -109,7 +109,7 @@ func newFolderPermissionUploadCmd() simplecobra.Commander {
 			for _, folder := range folders {
 				rootCmd.TableObj.AppendRow(table.Row{folder})
 			}
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, folders)
 			return nil
 		},
 	}

@@ -73,7 +73,7 @@ func newTeamsListCmd() simplecobra.Commander {
 						}
 					}
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, teams)
 			}
 			return nil
 		},
@@ -102,7 +102,7 @@ func newTeamsDownloadCmd() simplecobra.Commander {
 						rootCmd.TableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
 					}
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
 			return nil
 		},
@@ -134,7 +134,7 @@ func newTeamsUploadCmd() simplecobra.Commander {
 						}
 					}
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
 			return nil
 		},
@@ -160,7 +160,7 @@ func newTeamsClearCmd() simplecobra.Commander {
 				for _, team := range teams {
 					rootCmd.TableObj.AppendRow(table.Row{"team", team.ID, team.Name})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, teams)
 			}
 			return nil
 		},

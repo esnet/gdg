@@ -55,7 +55,7 @@ func newClearConnectionsCmd() simplecobra.Commander {
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"datasource", file})
 			}
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, savedFiles)
 			return nil
 		},
 	}
@@ -79,7 +79,7 @@ func newUploadConnectionsCmd() simplecobra.Commander {
 			for _, file := range exportedList {
 				rootCmd.TableObj.AppendRow(table.Row{"datasource", file})
 			}
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, exportedList)
 			return nil
 		},
 	}
@@ -105,7 +105,7 @@ func newDownloadConnectionsCmd() simplecobra.Commander {
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"datasource", file})
 			}
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, savedFiles)
 			return nil
 		},
 	}
@@ -134,7 +134,7 @@ func newListConnectionsCmd() simplecobra.Commander {
 					url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
 					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, dsListing)
 			}
 			return nil
 		},

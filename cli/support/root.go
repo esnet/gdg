@@ -2,11 +2,15 @@ package support
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/bep/simplecobra"
 	appconfig "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/spf13/cobra"
+	"log"
 	"os"
 )
 
@@ -30,6 +34,21 @@ type RootCommand struct {
 	TableObj table.Writer
 
 	CommandEntries []simplecobra.Commander
+}
+
+func (cmd *RootCommand) Render(command *cobra.Command, data interface{}) {
+	output, _ := command.Flags().GetString("output")
+	if output == "json" {
+		data, err := json.MarshalIndent(data, "", "    ")
+		if err != nil {
+			log.Fatal("unable to render result to JSON", err)
+		}
+		fmt.Print(string(data))
+
+	} else {
+		cmd.TableObj.Render()
+	}
+
 }
 
 // RootOption used to configure the Root Command struct
@@ -89,6 +108,7 @@ func (c *RootCommand) Init(cd *simplecobra.Commandeer) error {
 
 	persistentFlags := cmd.PersistentFlags()
 	persistentFlags.StringP("config", "c", "", "Configuration Override")
+	persistentFlags.StringP("output", "", "table", "output format: (table, json)")
 	if c.TableObj == nil {
 		c.TableObj = table.NewWriter()
 		c.TableObj.SetOutputMirror(os.Stdout)

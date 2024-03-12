@@ -67,7 +67,7 @@ func newFolderClearCmd() simplecobra.Commander {
 				for _, folder := range folders {
 					rootCmd.TableObj.AppendRow(table.Row{folder})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, folders)
 			}
 			return nil
 		},
@@ -94,7 +94,7 @@ func newFolderListCmd() simplecobra.Commander {
 				for _, folder := range folders {
 					rootCmd.TableObj.AppendRow(table.Row{folder.ID, folder.UID, folder.Title})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, folders)
 			}
 			return nil
 		},
@@ -119,7 +119,7 @@ func newFolderDownloadCmd() simplecobra.Commander {
 				for _, folder := range folders {
 					rootCmd.TableObj.AppendRow(table.Row{folder})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, folders)
 			}
 			return nil
 		},
@@ -144,7 +144,7 @@ func newFolderUploadCmd() simplecobra.Commander {
 				for _, folder := range folders {
 					rootCmd.TableObj.AppendRow(table.Row{folder})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, folders)
 			}
 			return nil
 		},

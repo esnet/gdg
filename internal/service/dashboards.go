@@ -10,10 +10,8 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
-	"github.com/zeitlinger/conflate"
-	"time"
-
 	"github.com/tidwall/pretty"
+	"github.com/zeitlinger/conflate"
 	"golang.org/x/exp/maps"
 	"log"
 	"log/slog"
@@ -109,7 +107,6 @@ func (s *DashNGoImpl) LintDashboards(req LintRequest) []string {
 				}
 			} else {
 				slog.Error("AutoFix is not possible for dashboard.", slog.String("dashboard", file))
-				time.Sleep(time.Second * 5)
 			}
 		}
 

@@ -95,7 +95,7 @@ func newGetUserOrgCmd() simplecobra.Commander {
 				slog.Info("No organizations found")
 			} else {
 				rootCmd.TableObj.AppendRow(table.Row{org.ID, org.Name})
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, map[string]interface{}{"id": org.ID, "name": org.Name})
 			}
 			return nil
 
@@ -119,7 +119,7 @@ func newGetTokenOrgCmd() simplecobra.Commander {
 				slog.Info("No tokens were found")
 			} else {
 				rootCmd.TableObj.AppendRow(table.Row{org.ID, org.Name})
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, map[string]interface{}{"id": org.ID, "name": org.Name})
 			}
 			return nil
 		},
@@ -150,7 +150,7 @@ func newListUsers() simplecobra.Commander {
 				for _, user := range users {
 					rootCmd.TableObj.AppendRow(table.Row{user.UserID, user.Login, user.OrgID, user.Name, user.Email, user.Role})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, users)
 			}
 			return nil
 		},

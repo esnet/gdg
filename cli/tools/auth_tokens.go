@@ -61,7 +61,7 @@ func newListTokensCmd() simplecobra.Commander {
 
 					rootCmd.TableObj.AppendRow(table.Row{apiKey.ID, apiKey.Name, apiKey.Role, formattedDate})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, apiKeys)
 			}
 			return nil
 		},
@@ -86,7 +86,7 @@ func newDeleteTokenCmd() simplecobra.Commander {
 				for _, file := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{"user", file})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
 			return nil
 		},
@@ -130,7 +130,7 @@ func newNewTokenCmd() simplecobra.Commander {
 
 				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "token"})
 				rootCmd.TableObj.AppendRow(table.Row{key.ID, key.Name, key.Key})
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, map[string]interface{}{"id": key.ID, "name": key.Name, "token": key.Key})
 			}
 
 			return nil

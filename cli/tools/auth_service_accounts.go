@@ -71,7 +71,7 @@ func newListServiceAccountCmd() simplecobra.Commander {
 						}
 					}
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, apiKeys)
 			}
 
 			return nil
@@ -107,7 +107,7 @@ func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
 				for _, token := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{id, "service token", token})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
 			return nil
 		},
@@ -131,7 +131,7 @@ func newDeleteServiceAccountCmd() simplecobra.Commander {
 				for _, file := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{"user", file})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
 			return nil
 		},
@@ -175,7 +175,8 @@ func newServiceAccount() simplecobra.Commander {
 
 				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "role"})
 				rootCmd.TableObj.AppendRow(table.Row{serviceAcct.ID, serviceAcct.Name, serviceAcct.Role})
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand,
+					map[string]interface{}{"id": serviceAcct.ID, "name": serviceAcct.Name, "role": serviceAcct.Role})
 			}
 			return nil
 		},
@@ -220,7 +221,11 @@ func newServiceAccountTokenCmd() simplecobra.Commander {
 
 				rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "token_id", "name", "token"})
 				rootCmd.TableObj.AppendRow(table.Row{serviceID, key.ID, key.Name, key.Key})
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand,
+					map[string]interface{}{"serviceID": serviceID,
+						"token_id": key.ID,
+						"name":     key.Name,
+						"token":    key.Key})
 			}
 
 			return nil
