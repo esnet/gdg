@@ -109,7 +109,7 @@ func newOrganizationsDownloadCmd() simplecobra.Commander {
 
 }
 func newOrganizationsUploadCmd() simplecobra.Commander {
-	description := "upload Orgs to grafana"
+	description := "upload Organizations to grafana"
 	return &support.SimpleCommand{
 		NameP: "upload",
 		Short: description,

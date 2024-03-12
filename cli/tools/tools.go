@@ -13,7 +13,7 @@ func NewToolsCommand() simplecobra.Commander {
 		NameP:        "tools",
 		Short:        description,
 		Long:         description,
-		CommandsList: []simplecobra.Commander{newContextCmd(), newDevelCmd(), newUserCommand(), newAuthCmd(), newOrgCommand()},
+		CommandsList: []simplecobra.Commander{newContextCmd(), newDevelCmd(), newUserCommand(), newAuthCmd(), newOrgCommand(), newDashboardCmd()},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"t"}
 		},

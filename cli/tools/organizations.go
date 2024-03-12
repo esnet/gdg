@@ -128,7 +128,7 @@ func newGetTokenOrgCmd() simplecobra.Commander {
 }
 
 func newListUsers() simplecobra.Commander {
-	description := "list an Organization users"
+	description := "listUsers <orgId> list an Organization users"
 	return &support.SimpleCommand{
 		NameP: "listUsers",
 		Short: description,
@@ -216,7 +216,7 @@ func newAddUserRoleCmd() simplecobra.Commander {
 }
 
 func newDeleteUserRoleCmd() simplecobra.Commander {
-	description := "deleteUser removes a user from the given Organization (This will NOT delete the actual user from Grafana)"
+	description := "deleteUser <orgId> <userId> removes a user from the given Organization (This will NOT delete the actual user from Grafana)"
 	return &support.SimpleCommand{
 		NameP: "deleteUser",
 		Short: description,
@@ -227,6 +227,7 @@ func newDeleteUserRoleCmd() simplecobra.Commander {
 			}
 			orgSlug := args[0]
 			userId, err := strconv.ParseInt(args[1], 10, 64)
+
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
