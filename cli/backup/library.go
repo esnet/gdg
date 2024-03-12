@@ -56,7 +56,7 @@ func newLibraryElementsClearCmd() simplecobra.Commander {
 
 			} else {
 				slog.Info("libraries were deleted", "count", len(deletedLibrarys))
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, deletedLibrarys)
 			}
 			return nil
 		},
@@ -82,7 +82,7 @@ func newLibraryElementsListCmd() simplecobra.Commander {
 
 			}
 			if len(elements) > 0 {
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, elements)
 			} else {
 				slog.Info("No library found")
 			}
@@ -107,7 +107,7 @@ func newLibraryElementsDownloadCmd() simplecobra.Commander {
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"library", file})
 			}
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, savedFiles)
 			return nil
 		},
 	}
@@ -130,7 +130,7 @@ func newLibraryElementsUploadCmd() simplecobra.Commander {
 				for _, link := range elements {
 					rootCmd.TableObj.AppendRow(table.Row{link})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, elements)
 			} else {
 				slog.Info("No library found")
 			}
@@ -162,7 +162,7 @@ func newLibraryElementsListConnectionsCmd() simplecobra.Commander {
 				rootCmd.TableObj.AppendRow(table.Row{dash["id"].(json.Number), dash["uid"].(string), link.Meta.Slug, dash["title"].(string), link.Meta.FolderTitle})
 			}
 			if len(elements) > 0 {
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, elements)
 			} else {
 				slog.Info("No library found")
 			}

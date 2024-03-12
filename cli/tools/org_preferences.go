@@ -106,7 +106,7 @@ func newGetOrgPreferenceCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendRow(table.Row{"Theme", pref.Theme})
 			rootCmd.TableObj.AppendRow(table.Row{"WeekStart", pref.WeekStart})
 
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, pref)
 
 			return nil
 

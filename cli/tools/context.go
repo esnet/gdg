@@ -47,8 +47,8 @@ func newContextClearCmd() simplecobra.Commander {
 func newListContextCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "list",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
-			r.TableObj.AppendHeader(table.Row{"context", "active"})
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+			rootCmd.TableObj.AppendHeader(table.Row{"context", "active"})
 			contexts := config.Config().GetGDGConfig().GetContexts()
 			activeContext := config.Config().GetGDGConfig().GetContext()
 			for key := range contexts {
@@ -57,11 +57,11 @@ func newListContextCmd() simplecobra.Commander {
 					key = fmt.Sprintf("*%s", activeContext)
 					active = true
 				}
-				_ = active
-				r.TableObj.AppendRow(table.Row{key, active})
+				rootCmd.TableObj.AppendRow(table.Row{key, active})
 			}
 
-			r.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, contexts)
+
 			return nil
 		},
 		Short: "List context",

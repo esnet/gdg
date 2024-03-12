@@ -65,7 +65,7 @@ func newUsersListCmd() simplecobra.Commander {
 					rootCmd.TableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsAdmin,
 						user.IsDisabled, defaultPassword, labels})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, users)
 			}
 
 			return nil
@@ -92,7 +92,7 @@ func newUsersDownloadCmd() simplecobra.Commander {
 				for _, file := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{"user", file})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
 			return nil
 		},
@@ -123,7 +123,7 @@ func newUsersUploadCmd() simplecobra.Commander {
 					rootCmd.TableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email,
 						user.IsGrafanaAdmin, user.IsDisabled, user.Password, labels})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
 			return nil
 		},
@@ -149,7 +149,7 @@ func newUsersClearCmd() simplecobra.Commander {
 				for _, file := range savedFiles {
 					rootCmd.TableObj.AppendRow(table.Row{"user", file})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
 			return nil
 		},

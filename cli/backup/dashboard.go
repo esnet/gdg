@@ -78,7 +78,7 @@ func newClearDashboardsCmd() simplecobra.Commander {
 				slog.Info("No dashboards were found. 0 dashboards were removed")
 			} else {
 				slog.Info("dashboards were deleted", "count", len(deletedDashboards))
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, deletedDashboards)
 			}
 			return nil
 		},
@@ -116,7 +116,7 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 				rootCmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
 			}
 			if len(boards) > 0 {
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, boards)
 			} else {
 				slog.Info("No dashboards found")
 			}
@@ -145,7 +145,7 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"dashboard", file})
 			}
-			rootCmd.TableObj.Render()
+			rootCmd.Render(cd.CobraCommand, savedFiles)
 			return nil
 		},
 	}
@@ -197,7 +197,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 
 			}
 			if len(boards) > 0 {
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, boards)
 			} else {
 				slog.Info("No dashboards found")
 			}

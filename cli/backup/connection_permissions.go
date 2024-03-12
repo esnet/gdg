@@ -64,7 +64,7 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 						}
 					}
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, connections)
 			}
 			return nil
 		},
@@ -95,7 +95,7 @@ func newConnectionsPermissionClearCmd() simplecobra.Commander {
 				for _, connections := range connections {
 					rootCmd.TableObj.AppendRow(table.Row{connections})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, connections)
 			}
 
 			return nil
@@ -127,7 +127,7 @@ func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 				for _, connections := range connections {
 					rootCmd.TableObj.AppendRow(table.Row{connections})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, connections)
 			}
 			return nil
 		},
@@ -155,7 +155,7 @@ func newConnectionsPermissionUploadCmd() simplecobra.Commander {
 				for _, connections := range connections {
 					rootCmd.TableObj.AppendRow(table.Row{connections})
 				}
-				rootCmd.TableObj.Render()
+				rootCmd.Render(cd.CobraCommand, connections)
 			}
 			return nil
 		},
