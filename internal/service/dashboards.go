@@ -25,6 +25,62 @@ import (
 	"github.com/thoas/go-funk"
 )
 
+func NewDashboardFilter(entries ...string) filters.Filter {
+	if len(entries) != 3 {
+		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
+	}
+	folderFilter := entries[0]
+	dashboardFilter := entries[1]
+	tagsFilter := entries[2]
+	if tagsFilter == "" {
+		tagsFilter = "[]"
+	}
+
+	filterObj := filters.NewBaseFilter()
+	filterObj.AddFilter(filters.FolderFilter, folderFilter)
+	filterObj.AddFilter(filters.DashFilter, dashboardFilter)
+	filterObj.AddFilter(filters.TagsFilter, tagsFilter)
+	quoteRegex, _ := regexp.Compile("['\"]+")
+	filterObj.AddRegex(filters.FolderFilter, quoteRegex)
+	//Add Folder Validation
+	filterObj.AddValidation(filters.FolderFilter, func(i interface{}) bool {
+		val, ok := i.(map[filters.FilterType]string)
+		if !ok {
+			return ok
+		}
+		//Check folder
+		if folderFilter, ok = val[filters.FolderFilter]; ok {
+			if filterObj.GetFilter(filters.FolderFilter) == "" {
+				return true
+			} else {
+				return folderFilter == filterObj.GetFilter(filters.FolderFilter)
+			}
+		} else {
+			return true
+		}
+	})
+
+	//Add DashValidation
+	filterObj.AddValidation(filters.DashFilter, func(i interface{}) bool {
+		val, ok := i.(map[filters.FilterType]string)
+		if !ok {
+			return ok
+		}
+
+		if dashboardFilter, ok = val[filters.DashFilter]; ok {
+			if filterObj.GetFilter(filters.DashFilter) == "" {
+				return true
+			}
+			return dashboardFilter == filterObj.GetFilter(filters.DashFilter)
+		} else {
+			return true
+		}
+
+	})
+
+	return filterObj
+}
+
 func (s *DashNGoImpl) LintDashboards(req types.LintRequest) []string {
 	var (
 		rawBoard []byte
@@ -129,62 +185,6 @@ func (s *DashNGoImpl) getDashboardByUid(uid string) (*models.DashboardFullWithMe
 	}
 	return data.GetPayload(), nil
 
-}
-
-func NewDashboardFilter(entries ...string) filters.Filter {
-	if len(entries) != 3 {
-		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
-	}
-	folderFilter := entries[0]
-	dashboardFilter := entries[1]
-	tagsFilter := entries[2]
-	if tagsFilter == "" {
-		tagsFilter = "[]"
-	}
-
-	filterObj := filters.NewBaseFilter()
-	filterObj.AddFilter(filters.FolderFilter, folderFilter)
-	filterObj.AddFilter(filters.DashFilter, dashboardFilter)
-	filterObj.AddFilter(filters.TagsFilter, tagsFilter)
-	quoteRegex, _ := regexp.Compile("['\"]+")
-	filterObj.AddRegex(filters.FolderFilter, quoteRegex)
-	//Add Folder Validation
-	filterObj.AddValidation(filters.FolderFilter, func(i interface{}) bool {
-		val, ok := i.(map[filters.FilterType]string)
-		if !ok {
-			return ok
-		}
-		//Check folder
-		if folderFilter, ok = val[filters.FolderFilter]; ok {
-			if filterObj.GetFilter(filters.FolderFilter) == "" {
-				return true
-			} else {
-				return folderFilter == filterObj.GetFilter(filters.FolderFilter)
-			}
-		} else {
-			return true
-		}
-	})
-
-	//Add DashValidation
-	filterObj.AddValidation(filters.DashFilter, func(i interface{}) bool {
-		val, ok := i.(map[filters.FilterType]string)
-		if !ok {
-			return ok
-		}
-
-		if dashboardFilter, ok = val[filters.DashFilter]; ok {
-			if filterObj.GetFilter(filters.DashFilter) == "" {
-				return true
-			}
-			return dashboardFilter == filterObj.GetFilter(filters.DashFilter)
-		} else {
-			return true
-		}
-
-	})
-
-	return filterObj
 }
 
 // ListDashboards List all dashboards optionally filtered by folder name. If folderFilters

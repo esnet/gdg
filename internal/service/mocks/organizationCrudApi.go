@@ -70,17 +70,17 @@ func (_c *organizationCrudApi_DownloadOrganizations_Call) RunAndReturn(run func(
 	return _c
 }
 
-// ListOrganizations provides a mock function with given fields: filter
-func (_m *organizationCrudApi) ListOrganizations(filter filters.Filter) []*types.OrgsDTOWithPreferences {
-	ret := _m.Called(filter)
+// ListOrganizations provides a mock function with given fields: filter, withPreferences
+func (_m *organizationCrudApi) ListOrganizations(filter filters.Filter, withPreferences bool) []*types.OrgsDTOWithPreferences {
+	ret := _m.Called(filter, withPreferences)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListOrganizations")
 	}
 
 	var r0 []*types.OrgsDTOWithPreferences
-	if rf, ok := ret.Get(0).(func(filters.Filter) []*types.OrgsDTOWithPreferences); ok {
-		r0 = rf(filter)
+	if rf, ok := ret.Get(0).(func(filters.Filter, bool) []*types.OrgsDTOWithPreferences); ok {
+		r0 = rf(filter, withPreferences)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*types.OrgsDTOWithPreferences)
@@ -97,13 +97,14 @@ type organizationCrudApi_ListOrganizations_Call struct {
 
 // ListOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *organizationCrudApi_Expecter) ListOrganizations(filter interface{}) *organizationCrudApi_ListOrganizations_Call {
-	return &organizationCrudApi_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter)}
+//   - withPreferences bool
+func (_e *organizationCrudApi_Expecter) ListOrganizations(filter interface{}, withPreferences interface{}) *organizationCrudApi_ListOrganizations_Call {
+	return &organizationCrudApi_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter, withPreferences)}
 }
 
-func (_c *organizationCrudApi_ListOrganizations_Call) Run(run func(filter filters.Filter)) *organizationCrudApi_ListOrganizations_Call {
+func (_c *organizationCrudApi_ListOrganizations_Call) Run(run func(filter filters.Filter, withPreferences bool)) *organizationCrudApi_ListOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(filters.Filter))
+		run(args[0].(filters.Filter), args[1].(bool))
 	})
 	return _c
 }
@@ -113,7 +114,7 @@ func (_c *organizationCrudApi_ListOrganizations_Call) Return(_a0 []*types.OrgsDT
 	return _c
 }
 
-func (_c *organizationCrudApi_ListOrganizations_Call) RunAndReturn(run func(filters.Filter) []*types.OrgsDTOWithPreferences) *organizationCrudApi_ListOrganizations_Call {
+func (_c *organizationCrudApi_ListOrganizations_Call) RunAndReturn(run func(filters.Filter, bool) []*types.OrgsDTOWithPreferences) *organizationCrudApi_ListOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }

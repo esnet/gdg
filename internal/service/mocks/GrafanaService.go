@@ -1989,17 +1989,17 @@ func (_c *GrafanaService_ListOrgUsers_Call) RunAndReturn(run func(int64) []*mode
 	return _c
 }
 
-// ListOrganizations provides a mock function with given fields: filter
-func (_m *GrafanaService) ListOrganizations(filter filters.Filter) []*internaltypes.OrgsDTOWithPreferences {
-	ret := _m.Called(filter)
+// ListOrganizations provides a mock function with given fields: filter, withPreferences
+func (_m *GrafanaService) ListOrganizations(filter filters.Filter, withPreferences bool) []*internaltypes.OrgsDTOWithPreferences {
+	ret := _m.Called(filter, withPreferences)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListOrganizations")
 	}
 
 	var r0 []*internaltypes.OrgsDTOWithPreferences
-	if rf, ok := ret.Get(0).(func(filters.Filter) []*internaltypes.OrgsDTOWithPreferences); ok {
-		r0 = rf(filter)
+	if rf, ok := ret.Get(0).(func(filters.Filter, bool) []*internaltypes.OrgsDTOWithPreferences); ok {
+		r0 = rf(filter, withPreferences)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*internaltypes.OrgsDTOWithPreferences)
@@ -2016,13 +2016,14 @@ type GrafanaService_ListOrganizations_Call struct {
 
 // ListOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *GrafanaService_Expecter) ListOrganizations(filter interface{}) *GrafanaService_ListOrganizations_Call {
-	return &GrafanaService_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter)}
+//   - withPreferences bool
+func (_e *GrafanaService_Expecter) ListOrganizations(filter interface{}, withPreferences interface{}) *GrafanaService_ListOrganizations_Call {
+	return &GrafanaService_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter, withPreferences)}
 }
 
-func (_c *GrafanaService_ListOrganizations_Call) Run(run func(filter filters.Filter)) *GrafanaService_ListOrganizations_Call {
+func (_c *GrafanaService_ListOrganizations_Call) Run(run func(filter filters.Filter, withPreferences bool)) *GrafanaService_ListOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(filters.Filter))
+		run(args[0].(filters.Filter), args[1].(bool))
 	})
 	return _c
 }
@@ -2032,7 +2033,7 @@ func (_c *GrafanaService_ListOrganizations_Call) Return(_a0 []*internaltypes.Org
 	return _c
 }
 
-func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filters.Filter) []*internaltypes.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
+func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filters.Filter, bool) []*internaltypes.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -45,10 +45,11 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 	}
 
 	httpConfig := &client.TransportConfig{
-		Host:     u.Host,
-		BasePath: path,
-		Schemes:  []string{u.Scheme},
-		// NumRetries: 3,
+		Host:         u.Host,
+		BasePath:     path,
+		Schemes:      []string{u.Scheme},
+		NumRetries:   config.Config().GetGDGConfig().GetAppGlobals().RetryCount,
+		RetryTimeout: config.Config().GetGDGConfig().GetAppGlobals().GetRetryTimeout(),
 	}
 
 	if s.grafanaConf.OrganizationName != "" {

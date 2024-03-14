@@ -85,7 +85,7 @@ type OrgPreferencesApi interface {
 }
 
 type organizationCrudApi interface {
-	ListOrganizations(filter filters.Filter) []*gdgType.OrgsDTOWithPreferences
+	ListOrganizations(filter filters.Filter, withPreferences bool) []*gdgType.OrgsDTOWithPreferences
 	DownloadOrganizations(filter filters.Filter) []string
 	UploadOrganizations(filter filters.Filter) []string
 }

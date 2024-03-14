@@ -21,7 +21,7 @@ func TestOrganizationCrud(t *testing.T) {
 	}
 	apiClient, _, cleanup := initTest(t, nil)
 	defer cleanup()
-	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter())
+	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter(), true)
 	assert.Equal(t, len(orgs), 1)
 	mainOrg := orgs[0]
 	assert.Equal(t, mainOrg.Organization.ID, int64(1))
@@ -31,7 +31,7 @@ func TestOrganizationCrud(t *testing.T) {
 	assert.True(t, slices.Contains(newOrgs, "DumbDumb"))
 	assert.True(t, slices.Contains(newOrgs, "Moo"))
 	//Filter Org
-	orgs = apiClient.ListOrganizations(service.NewOrganizationFilter("DumbDumb"))
+	orgs = apiClient.ListOrganizations(service.NewOrganizationFilter("DumbDumb"), true)
 	assert.Equal(t, len(orgs), 1)
 	assert.Equal(t, orgs[0].Organization.Name, "DumbDumb")
 
@@ -48,7 +48,7 @@ func TestOrganizationUserMembership(t *testing.T) {
 	defer cleanup()
 	//Create Orgs in case they aren't already present.
 	apiClient.UploadOrganizations(service.NewOrganizationFilter())
-	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter())
+	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter(), true)
 	sort.Slice(orgs, func(a, b int) bool {
 		return orgs[a].Organization.ID < orgs[b].Organization.ID
 	})

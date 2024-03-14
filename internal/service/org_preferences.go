@@ -3,9 +3,10 @@ package service
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
-	"log/slog"
 )
 
 // GetOrgPreferences returns the preferences for a given Org
@@ -33,7 +34,7 @@ func (s *DashNGoImpl) scopeIntoOrg(orgName string, runTask func() (interface{}, 
 	currentOrg := s.getAssociatedActiveOrg(s.GetClient())
 	orgNameBackup := s.grafanaConf.OrganizationName
 	s.grafanaConf.OrganizationName = orgName
-	orgEntity, err := s.getOrgIdFromSlug(slug.Make(orgName))
+	orgEntity, err := s.getOrgIdFromSlug(slug.Make(orgName), false)
 	if err != nil {
 		return nil, err
 	}
