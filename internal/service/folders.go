@@ -19,18 +19,6 @@ import (
 	"strings"
 )
 
-// FoldersApi Contract definition
-type FoldersApi interface {
-	ListFolder(filter filters.Filter) []*models.Hit
-	DownloadFolders(filter filters.Filter) []string
-	UploadFolders(filter filters.Filter) []string
-	DeleteAllFolders(filter filters.Filter) []string
-	//Permissions
-	ListFolderPermissions(filter filters.Filter) map[*models.Hit][]*models.DashboardACLInfoDTO
-	DownloadFolderPermissions(filter filters.Filter) []string
-	UploadFolderPermissions(filter filters.Filter) []string
-}
-
 func NewFolderFilter() filters.Filter {
 	filterObj := filters.NewBaseFilter()
 	filterObj.AddValidation(filters.FolderFilter, func(i interface{}) bool {
@@ -165,7 +153,6 @@ func (s *DashNGoImpl) ListFolder(filter filters.Filter) []*models.Hit {
 	p := search.NewSearchParams()
 	p.Type = &searchTypeFolder
 	folderListing, err := s.GetClient().Search.Search(p)
-	folderListing.GetPayload()
 	if err != nil {
 		log.Fatal("unable to retrieve folder list.")
 	}

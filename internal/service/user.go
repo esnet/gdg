@@ -20,18 +20,6 @@ import (
 	"strings"
 )
 
-// UsersApi Contract definition
-type UsersApi interface {
-	//UserApi
-	ListUsers(filter filters.Filter) []*models.UserSearchHitDTO
-	DownloadUsers(filter filters.Filter) []string
-	UploadUsers(filter filters.Filter) []types.UserProfileWithAuth
-	DeleteAllUsers(filter filters.Filter) []string
-	// Tools
-	PromoteUser(userLogin string) (string, error)
-	GetUserInfo() (*models.UserProfileDTO, error)
-}
-
 func NewUserFilter(label string) filters.Filter {
 	filterEntity := filters.NewBaseFilter()
 	if label == "" {

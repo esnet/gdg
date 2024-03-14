@@ -27,20 +27,6 @@ func (s FilterType) String() string {
 	return string(s)
 }
 
-type Filter interface {
-	//Regex Tooling
-	AddRegex(FilterType, *regexp.Regexp)
-	//Entity filterMap
-	GetEntity(FilterType) []string   // Returns slice of filter values or default value from Config
-	GetFilter(key FilterType) string //Get the Filter value
-	//FilterValid(key FilterType, value string) bool //true if filter match
-	AddFilter(key FilterType, value string) //Add a filter to match against for a given type
-
-	ValidateAll(interface{}) bool //ValidateAll if Entry is valid
-	InvokeValidation(FilterType, interface{}) bool
-	AddValidation(FilterType, func(interface{}) bool)
-}
-
 // BaseFilter is designed to be fairly generic, there shouldn't be any reason to extend it, but if you have a specialized
 // use case feel free to do so.
 type BaseFilter struct {
@@ -160,6 +146,6 @@ func (s *BaseFilter) AddFilter(key FilterType, value string) {
 
 func (s *BaseFilter) Init() {
 	s.filterMap = make(map[FilterType]string)
-	s.validationMethods = make(map[FilterType]func(interface{}) bool, 0)
+	s.validationMethods = make(map[FilterType]func(interface{}) bool)
 	s.validationPatterns = make(map[FilterType]*regexp.Regexp)
 }

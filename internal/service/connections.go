@@ -14,15 +14,6 @@ import (
 	"log"
 )
 
-// ConnectionsApi Contract definition
-type ConnectionsApi interface {
-	ListConnections(filter filters.Filter) []models.DataSourceListItemDTO
-	DownloadConnections(filter filters.Filter) []string
-	UploadConnections(filter filters.Filter) []string
-	DeleteAllConnections(filter filters.Filter) []string
-	ConnectionPermissions
-}
-
 // NewConnectionFilter
 func NewConnectionFilter(name string) filters.Filter {
 	filterEntity := filters.NewBaseFilter()

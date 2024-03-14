@@ -16,7 +16,7 @@ func TestRelativePathLogin(t *testing.T) {
 		os.Chdir("../..")
 	}
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "http://localhost:3000/grafana/")
-	config.InitConfig("config/testing.yml", "'")
+	config.InitGdgConfig("config/testing.yml", "'")
 	defer os.Unsetenv("GDG_CONTEXTS__TESTING__URL")
 
 	svc := NewApiService("dummy")
@@ -39,7 +39,7 @@ func TestSlug(t *testing.T) {
 func TestUserPath(t *testing.T) {
 	err := os.Setenv("GDG_CONTEXT_NAME", "qa")
 	assert.Nil(t, err)
-	config.InitConfig("testing.yml", "'")
+	config.InitGdgConfig("testing.yml", "'")
 	path := BuildResourceFolder("", config.UserResource)
 	assert.Equal(t, "test/data/users/", path)
 }

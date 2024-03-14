@@ -18,14 +18,6 @@ import (
 	"strings"
 )
 
-type LibraryElementsApi interface {
-	ListLibraryElements(filter filters.Filter) []*models.LibraryElementDTO
-	ListLibraryElementsConnections(filter filters.Filter, connectionID string) []*models.DashboardFullWithMeta
-	DownloadLibraryElements(filter filters.Filter) []string
-	UploadLibraryElements(filter filters.Filter) []string
-	DeleteAllLibraryElements(filter filters.Filter) []string
-}
-
 const (
 	listLibraryPanels int64 = 1
 	listLibraryVars   int64 = 2

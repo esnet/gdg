@@ -27,7 +27,7 @@ func main() {
 		slog.Warn("unable to load default configuration, no fallback")
 	}
 
-	config.InitConfig(*cfgName, defaultConfiguration)
+	config.InitGdgConfig(*cfgName, defaultConfiguration)
 	config.InitTemplateConfig(*tmpCfgName)
 	cfg := config.Config()
 	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, cfg.IsDebug())

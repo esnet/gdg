@@ -16,14 +16,6 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-type ConnectionPermissions interface {
-	// Permissions Enterprise only
-	ListConnectionPermissions(filter filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO
-	DownloadConnectionPermissions(filter filters.Filter) []string
-	UploadConnectionPermissions(filter filters.Filter) []string
-	DeleteAllConnectionPermissions(filter filters.Filter) []string
-}
-
 // ListConnectionPermissions lists all connection permission matching the given filter
 func (s *DashNGoImpl) ListConnectionPermissions(filter filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO {
 	if !s.grafanaConf.IsEnterprise() {

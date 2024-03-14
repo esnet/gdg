@@ -18,38 +18,6 @@ import (
 	"strings"
 )
 
-type organizationCrudApi interface {
-	ListOrganizations(filter filters.Filter) []*types.OrgsDTOWithPreferences
-	DownloadOrganizations(filter filters.Filter) []string
-	UploadOrganizations(filter filters.Filter) []string
-}
-
-type organizationToolsApi interface {
-	//Manage Active Organization
-	SetOrganizationByName(name string, useSlug bool) error
-	GetUserOrganization() *models.OrgDetailsDTO
-	GetTokenOrganization() *models.OrgDetailsDTO
-	SetUserOrganizations(id int64) error
-	ListUserOrganizations() ([]*models.UserOrgDTO, error)
-}
-
-// organizationUserCrudApi  Manages user memberships to an org
-type organizationUserCrudApi interface {
-	ListOrgUsers(orgId int64) []*models.OrgUserDTO
-	AddUserToOrg(role, orgSlug string, userId int64) error
-	DeleteUserFromOrg(orgId string, userId int64) error
-	UpdateUserInOrg(role, orgSlug string, userId int64) error
-}
-
-// OrganizationsApi Contract definition
-type OrganizationsApi interface {
-	organizationCrudApi
-	organizationToolsApi
-	organizationUserCrudApi
-	OrgPreferencesApi
-	InitOrganizations()
-}
-
 func NewOrganizationFilter(args ...string) filters.Filter {
 	filterObj := filters.NewBaseFilter()
 	if len(args) == 0 || args[0] == "" {
@@ -65,7 +33,7 @@ func (s *DashNGoImpl) InitOrganizations() {
 	var orgInfo *models.OrgDetailsDTO
 	var orgEntity models.OrgDetailsDTO
 
-	if s.grafanaConf.IsAdminEnabled() || s.grafanaConf.IsBasicAuth() {
+	if s.grafanaConf.IsGrafanaAdmin() || s.grafanaConf.IsBasicAuth() {
 		orgInfo = s.GetUserOrganization()
 		if orgInfo == nil {
 			log.Fatal("Unable to retrieve requested user's org")
@@ -106,7 +74,7 @@ func (s *DashNGoImpl) InitOrganizations() {
 
 func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 
-	if s.grafanaConf.IsAdminEnabled() || s.grafanaConf.IsBasicAuth() {
+	if s.grafanaConf.IsGrafanaAdmin() || s.grafanaConf.IsBasicAuth() {
 		payload, err := s.ListUserOrganizations()
 		if err != nil {
 			return err
@@ -144,7 +112,7 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 
 // ListOrganizations List all dashboards
 func (s *DashNGoImpl) ListOrganizations(filter filters.Filter) []*types.OrgsDTOWithPreferences {
-	if !s.grafanaConf.IsAdminEnabled() {
+	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
 	}
@@ -181,7 +149,7 @@ func (s *DashNGoImpl) ListOrganizations(filter filters.Filter) []*types.OrgsDTOW
 
 // DownloadOrganizations Download organizations
 func (s *DashNGoImpl) DownloadOrganizations(filter filters.Filter) []string {
-	if !s.grafanaConf.IsAdminEnabled() {
+	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations")
 		return nil
 	}
@@ -210,7 +178,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter filters.Filter) []string {
 
 // UploadOrganizations Upload organizations to Grafana
 func (s *DashNGoImpl) UploadOrganizations(filter filters.Filter) []string {
-	if !s.grafanaConf.IsAdminEnabled() {
+	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot upload Organizations")
 		return nil
 	}

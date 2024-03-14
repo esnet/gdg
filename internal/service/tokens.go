@@ -9,12 +9,6 @@ import (
 	"log"
 )
 
-type TokenApi interface {
-	ListAPIKeys() []*models.APIKeyDTO
-	DeleteAllTokens() []string
-	CreateAPIKey(name, role string, expiration int64) (*models.NewAPIKeyResult, error)
-}
-
 // ListAPIKeys returns a list of all known API Keys and service accounts
 func (s *DashNGoImpl) ListAPIKeys() []*models.APIKeyDTO {
 	params := api_keys.NewGetAPIkeysParams()

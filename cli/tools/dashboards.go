@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/service/types"
 	"github.com/spf13/cobra"
 	"log/slog"
 )
@@ -45,7 +45,7 @@ func newDashboardLintCmd() simplecobra.Commander {
 			slog.Info("This is mainly provided as a convenience GDG, if you find yourself relying on this tool heavily, please have a look at: github.com/grafana/dashboard-linter/")
 			dashboard, _ := cd.CobraCommand.Flags().GetString("dashboard")
 			folder, _ := cd.CobraCommand.Flags().GetString("folder")
-			filterReq := service.LintRequest{
+			filterReq := types.LintRequest{
 				StrictFlag:    lintStrictFlag,
 				VerboseFlag:   lintVerboseFlag,
 				AutoFix:       lintAutofixFlag,

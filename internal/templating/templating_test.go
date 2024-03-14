@@ -18,7 +18,7 @@ func TestGenerate(t *testing.T) {
 	if strings.Contains(dir, "templating") {
 		os.Chdir("../..")
 	}
-	config.InitConfig("testing.yml", "")
+	config.InitGdgConfig("testing.yml", "")
 	config.InitTemplateConfig("templates-example")
 	template := NewTemplate()
 	data, err := template.Generate("template_example")
