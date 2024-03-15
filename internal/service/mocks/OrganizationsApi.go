@@ -399,17 +399,17 @@ func (_c *OrganizationsApi_ListOrgUsers_Call) RunAndReturn(run func(int64) []*mo
 	return _c
 }
 
-// ListOrganizations provides a mock function with given fields: filter
-func (_m *OrganizationsApi) ListOrganizations(filter filters.Filter) []*types.OrgsDTOWithPreferences {
-	ret := _m.Called(filter)
+// ListOrganizations provides a mock function with given fields: filter, withPreferences
+func (_m *OrganizationsApi) ListOrganizations(filter filters.Filter, withPreferences bool) []*types.OrgsDTOWithPreferences {
+	ret := _m.Called(filter, withPreferences)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListOrganizations")
 	}
 
 	var r0 []*types.OrgsDTOWithPreferences
-	if rf, ok := ret.Get(0).(func(filters.Filter) []*types.OrgsDTOWithPreferences); ok {
-		r0 = rf(filter)
+	if rf, ok := ret.Get(0).(func(filters.Filter, bool) []*types.OrgsDTOWithPreferences); ok {
+		r0 = rf(filter, withPreferences)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*types.OrgsDTOWithPreferences)
@@ -426,13 +426,14 @@ type OrganizationsApi_ListOrganizations_Call struct {
 
 // ListOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *OrganizationsApi_Expecter) ListOrganizations(filter interface{}) *OrganizationsApi_ListOrganizations_Call {
-	return &OrganizationsApi_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter)}
+//   - withPreferences bool
+func (_e *OrganizationsApi_Expecter) ListOrganizations(filter interface{}, withPreferences interface{}) *OrganizationsApi_ListOrganizations_Call {
+	return &OrganizationsApi_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter, withPreferences)}
 }
 
-func (_c *OrganizationsApi_ListOrganizations_Call) Run(run func(filter filters.Filter)) *OrganizationsApi_ListOrganizations_Call {
+func (_c *OrganizationsApi_ListOrganizations_Call) Run(run func(filter filters.Filter, withPreferences bool)) *OrganizationsApi_ListOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(filters.Filter))
+		run(args[0].(filters.Filter), args[1].(bool))
 	})
 	return _c
 }
@@ -442,7 +443,7 @@ func (_c *OrganizationsApi_ListOrganizations_Call) Return(_a0 []*types.OrgsDTOWi
 	return _c
 }
 
-func (_c *OrganizationsApi_ListOrganizations_Call) RunAndReturn(run func(filters.Filter) []*types.OrgsDTOWithPreferences) *OrganizationsApi_ListOrganizations_Call {
+func (_c *OrganizationsApi_ListOrganizations_Call) RunAndReturn(run func(filters.Filter, bool) []*types.OrgsDTOWithPreferences) *OrganizationsApi_ListOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
