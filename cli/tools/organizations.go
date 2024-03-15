@@ -208,7 +208,7 @@ func newAddUserRoleCmd() simplecobra.Commander {
 			if err != nil {
 				slog.Error("Unable to add user to Org")
 			} else {
-				slog.Info("User has been add to Org")
+				slog.Info("User has been add to Org", slog.Any("userId", userId), slog.String("organization", orgSlug))
 			}
 			return nil
 		},

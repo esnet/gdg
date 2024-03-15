@@ -58,11 +58,11 @@ func newOrganizationsListCmd() simplecobra.Commander {
 			filter := service.NewOrganizationFilter(parseOrganizationGlobalFlags(cd.CobraCommand)...)
 			includePreferences, _ := cd.CobraCommand.Flags().GetBool("with-preferences")
 
+			headerRow := table.Row{"id", "organization Name", "org slug ID"}
 			if includePreferences {
-				rootCmd.TableObj.AppendHeader(table.Row{"id", "organization Name", "org slug ID", "HomeDashboardUID", "Theme", "WeekStart"})
-			} else {
-				rootCmd.TableObj.AppendHeader(table.Row{"id", "organization Name", "org slug ID"})
+				headerRow = append(headerRow, table.Row{"HomeDashboardUID", "Theme", "WeekStart"}...)
 			}
+			rootCmd.TableObj.AppendHeader(headerRow)
 			listOrganizations := rootCmd.GrafanaSvc().ListOrganizations(filter, includePreferences)
 			slog.Info("Listing organizations for context",
 				slog.Any("count", len(listOrganizations)),
@@ -74,19 +74,15 @@ func newOrganizationsListCmd() simplecobra.Commander {
 				slog.Info("No organizations found")
 			} else {
 				for _, org := range listOrganizations {
+					data := table.Row{org.Organization.ID,
+						org.Organization.Name,
+						slug.Make(org.Organization.Name)}
 					if includePreferences {
-						rootCmd.TableObj.AppendRow(table.Row{org.Organization.ID,
-							org.Organization.Name,
-							slug.Make(org.Organization.Name),
-							org.Preferences.HomeDashboardUID,
+						data = append(data, table.Row{org.Preferences.HomeDashboardUID,
 							org.Preferences.Theme,
-							org.Preferences.WeekStart,
-						})
-					} else {
-						rootCmd.TableObj.AppendRow(table.Row{org.Organization.ID,
-							org.Organization.Name,
-							slug.Make(org.Organization.Name)})
+							org.Preferences.WeekStart}...)
 					}
+					rootCmd.TableObj.AppendRow(data)
 
 				}
 				rootCmd.Render(cd.CobraCommand, listOrganizations)
