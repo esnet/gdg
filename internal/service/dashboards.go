@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/esnet/gdg/internal/service/types"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/grafana/dashboard-linter/lint"
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
@@ -24,24 +25,7 @@ import (
 	"github.com/thoas/go-funk"
 )
 
-// DashboardsApi Contract definition
-type DashboardsApi interface {
-	ListDashboards(filter filters.Filter) []*models.Hit
-	DownloadDashboards(filter filters.Filter) []string
-	UploadDashboards(filter filters.Filter)
-	DeleteAllDashboards(filter filters.Filter) []string
-	LintDashboards(req LintRequest) []string
-}
-
-type LintRequest struct {
-	StrictFlag    bool
-	VerboseFlag   bool
-	AutoFix       bool
-	DashboardSlug string
-	FolderName    string
-}
-
-func (s *DashNGoImpl) LintDashboards(req LintRequest) []string {
+func (s *DashNGoImpl) LintDashboards(req types.LintRequest) []string {
 	var (
 		rawBoard []byte
 	)

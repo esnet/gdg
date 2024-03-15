@@ -18,14 +18,6 @@ import (
 	"log"
 )
 
-type TeamsApi interface {
-	//Team
-	DownloadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
-	UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
-	ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
-	DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, error)
-}
-
 type UserPermission models.PermissionType
 
 const (

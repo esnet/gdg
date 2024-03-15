@@ -3,10 +3,10 @@ package tools
 import (
 	"bufio"
 	"fmt"
-	"golang.org/x/exp/slices"
 	"log"
 	"log/slog"
 	"os"
+	"slices"
 	"strings"
 )
 

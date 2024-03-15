@@ -20,7 +20,7 @@ func InitConfiguration(cmd *cobra.Command) {
 	}
 
 	//Registers sub CommandsList
-	config.InitConfig(configOverride, DefaultConfig)
+	config.InitGdgConfig(configOverride, DefaultConfig)
 	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, config.Config().IsDebug())
 
 	//Validate current configuration

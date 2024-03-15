@@ -107,7 +107,7 @@ func (s *Configuration) NewContext(name string) {
 			"basicAuthPassword": promptAnswers.DSPassword,
 		}
 
-		location := filepath.Join(answers.OutputPath, SecureSecretsResource)
+		location := filepath.Join(answers.OutputPath, string(SecureSecretsResource))
 		err = os.MkdirAll(location, 0750)
 		if err != nil {
 			log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)

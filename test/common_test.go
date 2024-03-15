@@ -189,7 +189,7 @@ func createSimpleClient(t *testing.T, cfgName *string) (service.GrafanaService, 
 	err = os.Setenv("GDG_CONTEXTS__TESTING__URL", fmt.Sprintf("http://%s", actualPort))
 	assert.Nil(t, err)
 
-	config.InitConfig(*cfgName, "'")
+	config.InitGdgConfig(*cfgName, "'")
 	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	assert.NotNil(t, conf)
 	//Hack for Local testing

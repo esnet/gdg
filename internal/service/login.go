@@ -2,33 +2,25 @@ package service
 
 import (
 	"crypto/tls"
+	"github.com/esnet/gdg/internal/api"
+	"github.com/esnet/gdg/internal/config"
+	"github.com/go-openapi/strfmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
 
-	"github.com/esnet/gdg/internal/api"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/go-openapi/strfmt"
-
 	"github.com/grafana/grafana-openapi-client-go/client"
 )
-
-// AuthenticationApi Contract definition
-type AuthenticationApi interface {
-	TokenApi
-	ServiceAccountApi
-	Login()
-}
 
 // Login sets admin flag and provisions the Extended API for calls unsupported by the OpenAPI spec.
 func (s *DashNGoImpl) Login() {
 	var err error
-	//Will only succeed for BasicAuth
+	// Will only succeed for BasicAuth
 	userInfo, err := s.GetUserInfo()
 	// Sets state based on user permissions
 	if err == nil {
-		s.grafanaConf.SetAdmin(userInfo.IsGrafanaAdmin)
+		s.grafanaConf.SetGrafanaAdmin(userInfo.IsGrafanaAdmin)
 	}
 
 	s.extended = api.NewExtendedApi()
@@ -45,12 +37,13 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 	var err error
 	u, err := url.Parse(s.grafanaConf.URL)
 	if err != nil {
-		log.Fatal("invalid Grafana URL")
+		log.Fatal("invalid Grafana URL", s.grafanaConf.URL)
 	}
 	path, err := url.JoinPath(u.Path, "api")
 	if err != nil {
 		log.Fatal("invalid Grafana URL Path")
 	}
+
 	httpConfig := &client.TransportConfig{
 		Host:     u.Host,
 		BasePath: path,
@@ -61,7 +54,7 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 	if s.grafanaConf.OrganizationName != "" {
 		orgId, err := api.NewExtendedApi().GetConfiguredOrgId(s.grafanaConf.OrganizationName)
 		if err != nil {
-			slog.Info("unable to determine org ID, falling back")
+			slog.Error("unable to determine org ID, falling back", slog.Any("err", err))
 			orgId = 1
 		}
 		opts = append(opts, func(clientCfg *client.TransportConfig) {
@@ -98,7 +91,7 @@ func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
 
 // GetAdminClient Returns the admin defaultClient if one is configured
 func (s *DashNGoImpl) GetAdminClient() *client.GrafanaHTTPAPI {
-	if !s.grafanaConf.IsAdminEnabled() || s.grafanaConf.UserName == "" {
+	if !s.grafanaConf.IsGrafanaAdmin() || s.grafanaConf.UserName == "" {
 		log.Fatal("Unable to get Grafana Admin SecureData. ")
 	}
 	return s.GetBasicAuthClient()

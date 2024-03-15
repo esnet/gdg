@@ -12,15 +12,6 @@ import (
 	"log"
 )
 
-type ServiceAccountApi interface {
-	ListServiceAccounts() []*types.ServiceAccountDTOWithTokens
-	ListServiceAccountsTokens(id int64) ([]*models.TokenDTO, error)
-	DeleteAllServiceAccounts() []string
-	DeleteServiceAccountTokens(serviceId int64) []string
-	CreateServiceAccountToken(name int64, role string, expiration int64) (*models.NewAPIKeyResult, error)
-	CreateServiceAccount(name, role string, expiration int64) (*models.ServiceAccountDTO, error)
-}
-
 func (s *DashNGoImpl) CreateServiceAccount(name, role string, expiration int64) (*models.ServiceAccountDTO, error) {
 	p := service_accounts.NewCreateServiceAccountParams()
 	p.Body = &models.CreateServiceAccountForm{

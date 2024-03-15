@@ -55,7 +55,7 @@ func InterceptStdout() (*os.File, *os.File, func()) {
 	backupErr := os.Stderr
 	r, w, _ := os.Pipe()
 	//Restore streams
-	config.InitConfig("testing", "")
+	config.InitGdgConfig("testing", "")
 	applog.InitializeAppLogger(w, w, false)
 	cleanup := func() {
 		os.Stdout = backupStd

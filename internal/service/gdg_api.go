@@ -9,20 +9,6 @@ import (
 	"sync"
 )
 
-type GrafanaService interface {
-	OrganizationsApi
-	DashboardsApi
-	ConnectionsApi
-	UsersApi
-	FoldersApi
-	LibraryElementsApi
-	TeamsApi
-
-	AuthenticationApi
-	//MetaData
-	GetServerInfo() map[string]interface{}
-}
-
 var (
 	instance        *DashNGoImpl
 	initServiceOnce sync.Once

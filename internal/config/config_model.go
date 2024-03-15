@@ -4,62 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
 	"log/slog"
-	"path"
 	"regexp"
 )
-
-type ResourceType string
-
-const (
-	ConnectionPermissionResource = "connections-permissions"
-	ConnectionResource           = "connections"
-	DashboardResource            = "dashboards"
-	FolderPermissionResource     = "folders-permissions"
-	FolderResource               = "folders"
-	LibraryElementResource       = "libraryelements"
-	OrganizationResource         = "organizations"
-	OrganizationMetaResource     = "org"
-	TeamResource                 = "teams"
-	UserResource                 = "users"
-	TemplatesResource            = "templates"
-	SecureSecretsResource        = "secure"
-	minPasswordLength            = 8
-	maxPasswordLength            = 20
-)
-
-var orgNamespacedResource = map[ResourceType]bool{
-	ConnectionPermissionResource: true,
-	ConnectionResource:           true,
-	DashboardResource:            true,
-	FolderPermissionResource:     true,
-	FolderResource:               true,
-	LibraryElementResource:       true,
-	TeamResource:                 true,
-}
-
-// isNamespaced returns true if the resource type is namespaced
-func (s *ResourceType) isNamespaced() bool {
-	return orgNamespacedResource[*s]
-}
-
-// String returns the string representation of the resource type
-func (s *ResourceType) String() string {
-	return string(*s)
-}
-
-// GetPath returns the path of the resource type, if Namespaced, will delimit the path by org Id
-func (s *ResourceType) GetPath(basePath string) string {
-	if s.isNamespaced() {
-		orgName := slug.Make(Config().GetDefaultGrafanaConfig().GetOrganizationName())
-		return path.Join(basePath, fmt.Sprintf("%s_%s", OrganizationMetaResource, orgName), s.String())
-
-	}
-	return path.Join(basePath, s.String())
-}
 
 // FiltersEnabled returns true if the filters are enabled for the resource type
 func (ds *ConnectionSettings) FiltersEnabled() bool {
@@ -97,7 +46,7 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 			}
 		}
 		if valid {
-			return entry.GetAuth(path)
+			return entry.GetConnectionAuth(path)
 		}
 
 	}
@@ -211,9 +160,9 @@ func (s *GrafanaConfig) Validate() {
 
 }
 
-// IsAdminEnabled returns true if the admin is set, represents a GrafanaAdmin
-func (s *GrafanaConfig) IsAdminEnabled() bool {
-	return s.adminEnabled
+// IsGrafanaAdmin returns true if the admin is set, represents a GrafanaAdmin
+func (s *GrafanaConfig) IsGrafanaAdmin() bool {
+	return s.grafanaAdminEnabled
 }
 
 // GetCredentials return credentials for a given datasource or falls back on default value

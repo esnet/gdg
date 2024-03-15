@@ -8,16 +8,10 @@ import (
 	"log/slog"
 )
 
-// OrgPreferencesApi Contract definition
-type OrgPreferencesApi interface {
-	GetOrgPreferences(orgName string) (*models.Preferences, error)
-	UploadOrgPreferences(orgName string, pref *models.Preferences) error
-}
-
 // GetOrgPreferences returns the preferences for a given Org
 // orgName: The name of the organization whose preferences we should retrieve
 func (s *DashNGoImpl) GetOrgPreferences(orgName string) (*models.Preferences, error) {
-	if !s.grafanaConf.IsAdminEnabled() {
+	if !s.grafanaConf.IsGrafanaAdmin() {
 		return nil, errors.New("no valid Grafana Admin configured, cannot retrieve Organizations Preferences")
 	}
 	f := func() (interface{}, error) {
@@ -45,10 +39,10 @@ func (s *DashNGoImpl) scopeIntoOrg(orgName string, runTask func() (interface{}, 
 	}
 	defer func() {
 		s.grafanaConf.OrganizationName = orgNameBackup
-		//restore scoped Org
+		// restore scoped Org
 		err = s.SetUserOrganizations(currentOrg.ID)
 		if err != nil {
-			slog.Warn("unable to restore previous Org")
+			slog.Warn("unable to restore previous Org", slog.Any("err", err))
 		}
 	}()
 
