@@ -183,8 +183,8 @@ Inserting a comma delimited list
 As part of the installation you will have access to gdg-generate.
 
 
-{{< callout note >}}--config and --template-config are optional parameters.  gdg-generate will fallback on defaults if
-none are specified
+{{< callout note >}}--config, --template-config, and -t are optional parameters.  gdg-generate will fallback on defaults if
+none are specified.  If -t is not provided, all templates will be processed
  {{< /callout >}}
 
 ```sh

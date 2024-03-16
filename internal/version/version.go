@@ -2,6 +2,7 @@ package version
 
 import (
 	"fmt"
+	"log/slog"
 	"runtime"
 )
 
@@ -19,3 +20,11 @@ var GoVersion = runtime.Version()
 
 // OsArch returns the os and arch used to build the binary
 var OsArch = fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH)
+
+func PrintVersionInfo() {
+	slog.Info(fmt.Sprintf("Build Date: %s", BuildDate))
+	slog.Info(fmt.Sprintf("Git Commit: %s", GitCommit))
+	slog.Info(fmt.Sprintf("Version: %s", Version))
+	slog.Info(fmt.Sprintf("Go Version: %s", GoVersion))
+	slog.Info(fmt.Sprintf("OS / Arch: %s", OsArch))
+}
