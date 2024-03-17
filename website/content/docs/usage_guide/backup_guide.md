@@ -1,35 +1,20 @@
 ---
-title: "Backup Commands Guide"
+title: "Backup Guide"
 weight: 16
 ---
 
 Every namespace supporting CRUD operations has the functions: list, download, upload, clear operating on only the monitored folders.
 
 
-
-### Alert Notifications (DEPRECATED)
-
-This will stop working soon both as a concept in grafana and something that GDG will support.
-
-Allows you to manage alertnotifications (an) if you have any setup
-
-```sh
-./bin/gdg backup an list -- Lists all alert notifications
-./bin/gdg backup an download -- retrieve and save all alertnotifications from grafana
-./bin/gdg backup an upload  -- writes all local alert notifications to grafana
-./bin/gdg backup an clear -- Deletes all alert notifications
-```
-
 ### Connections
-#### (was: DataSources)
 
-Note:  Starting with 0.4.6 this was renamed to connections.
+{{< callout note >}} Starting with v0.4.6 "Datasources" this was renamed to connections. {{< /callout >}}
 
-Connections credentials are keyed by the name of the DataSource.  See see [config example](https://github.com/esnet/gdg/blob/master/conf/importer-example.yml).  If the connection JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
+Connections credentials are keyed by the name of the DataSource.  See [config example](https://github.com/esnet/gdg/blob/master/config/importer-example.yml).  If the connection JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from _organization_ specified in configuration file otherwise current organization user is used.
 
 
-All commands can use `connection` or `c` to manage datasources.  (Legacy options of `datasource` and `ds` are also supported)
+All commands can use `connection` or `c` to manage datasources.
 
 ```sh
 ./bin/gdg backup c list -- Lists all current connections

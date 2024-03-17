@@ -1,5 +1,5 @@
 ---
-title: "Enterprise User Guide"
+title: "Enterprise Guide"
 weight: 18
 ---
 The features listed below are for the enterprise edition of Grafana only.  They will not work on the OSS version.

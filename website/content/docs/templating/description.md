@@ -101,7 +101,8 @@ Additionally, there a few functions exposed and available to you that allows you
 | QuotedStringJoin | {{ .lightsources \| QuotedStringJoin }} | [sun,moon,lightbulb] | "sun","moon","lightbulb" |
 ```
 
-There is also a large collection of functions that have been imported from [sprig](https://masterminds.github.io/sprig/) and are available for use.
+There is also a large collection of functions that have been imported from [sprig](https://masterminds.github.io/sprig/)
+and are available for use.
 
 ### Example Templating Snippets
 
@@ -112,7 +113,8 @@ Data Injection
   "annotations": {
     "list": [
       {
-        "$$hashKey": "{{ .title | lower | ToSlug}}",  // Inserting data and piping it to two different functions.  In this case, ToLower is redundant, but it serves as a chained example.
+        "$$hashKey": "{{ .title | lower | ToSlug}}",
+        // Inserting data and piping it to two different functions.  In this case, ToLower is redundant, but it serves as a chained example.
         "builtIn": 1,
         "datasource": "Grafana",
         "enable": true,
@@ -131,33 +133,64 @@ Iterating and conditionals.
 ```json
 {
   "link_text": [
-    {{if .enabledlight}}   // conditional to check if to insert or not
-    {{ range $v := .lightsources}}  // Iterating through list
-    {{ $v }}  // Inserting value
-    {{ end }}
-    {{ end }}
+    {
+    {
+      if
+      .enabledlight
+    }
+  }
+    // conditional to check if to insert or not
+    {
+    {
+      range
+      $v: =
+      .lightsources
+    }
+  }
+    // Iterating through list
+    {
+    {
+      $v
+    }
+  }
+    // Inserting value
+    {
+    {
+      end
+    }
+  }
+    {
+    {
+      end
+    }
+  }
   ]
 }
 ```
+
 Inserting a comma delimited list
 
 ```json
 "link_url": [
-        "{{ .lightsources | join "," }}",
-        "/grafana/d/000000003/bandwidth-dashboard",
-        "/grafana/d/xk26IFhmk/flow-data",
+"{{ .lightsources | join ", " }}",
+"/grafana/d/000000003/bandwidth-dashboard",
+"/grafana/d/xk26IFhmk/flow-data",
 ]
 ```
+
 ### Usage
 
 As part of the installation you will have access to gdg-generate.
 
-NOTE: -c and -ct are optional parameters as is -t if you're relying on the defaults.
--t will filter the config and only process the template you've specified.
+
+{{< callout note >}}--config and --template-config are optional parameters.  gdg-generate will fallback on defaults if
+none are specified
+ {{< /callout >}}
 
 ```sh
-gdg-generate -c config/importer.yml --ct config/template.yaml -t template_example
+gdg-generate --config config/importer.yml --template-config config/template.yaml template generate  -t template_example
 ```
+
 Example output:
 
 ```sh

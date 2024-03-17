@@ -2,9 +2,22 @@
 title: "Developer Guide"
 weight: 19
 ---
+
+## Dependencies
+
+Development requirements.
+  - As gdg is written in [go](https://go.dev/), a current compiler is required.
+  - task management tool [go-task](https://github.com/go-task/task). [Installation](https://taskfile.dev/installation/)
+  - [Docker](https://www.docker.com/products/docker-desktop/) for running tests
+
+Install the remaining dependencies via: `task install_tools`
+
 ## Running Tests
-1. Bring up a grafana instance locally with default credentials of admin/admin.  `docker-compose up -d grafana`
-2. Once the instance is up simply run `go test ./...` or `make test`
+
+BasicAuth:
+   `task test`
+Token:
+  `task test_tokens`
 
 ## Making a release
 
