@@ -1,4 +1,3 @@
 User-agent: *
-Allow: /
-
-Sitemap: https://software.es.net/gdg/sitemap.xml
+Disallow: /admin/
+Sitemap: https://software.es.net/sitemap.xml
