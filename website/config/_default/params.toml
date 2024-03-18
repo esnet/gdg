@@ -20,9 +20,9 @@ mainSections = ["docs"]
   containerBreakpoint = "lg" # "", "sm", "md", "lg" (default), "xl", "xxl", or "fluid"
 
   ## Button
-  navBarButton = true # false (default) or true
-  navBarButtonUrl = "/docs/prologue/introduction/"
-  navBarButtonText = "Get started"
+  navBarButton = false # false (default) or true
+  navBarButtonUrl = "/gdg/docs/gdg/installation/"
+  navBarButtonText = "Getting started"
 
   # FlexSearch
   flexSearch = true # true (default) or false

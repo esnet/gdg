@@ -54,15 +54,14 @@ func (t *templateImpl) ListTemplates() []string {
 func (t *templateImpl) Generate(templateName string) (map[string][]string, error) {
 	result := make(map[string][]string)
 	//Remove extension if included
-	templateName = strings.ReplaceAll(templateName, ".go.tmpl", "")
 	cfg := config.Config()
 	var entities []config.TemplateDashboards
-	entities = cfg.GetTemplateConfig().Entities.Dashboards
-	if templateName != "" {
-		entity, ok := cfg.GetTemplateConfig().GetTemplate(templateName)
-		if ok {
-			entities = append(entities, *entity)
-		}
+	templateName = strings.ReplaceAll(templateName, ".go.tmpl", "")
+	templateEntity, ok := cfg.GetTemplateConfig().GetTemplate(templateName)
+	if ok {
+		entities = append(entities, *templateEntity)
+	} else {
+		entities = cfg.GetTemplateConfig().Entities.Dashboards
 	}
 	for _, entity := range entities {
 		result[entity.TemplateName] = make([]string, 0)
@@ -93,7 +92,8 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 			//Merge two maps.
 			tmpl, err := template.New("").Funcs(fns).Parse(string(templateData))
 			if err != nil {
-				slog.Error("unable to parse template")
+				slog.Error("unable to parse template", slog.Any("err", err))
+				continue
 			}
 
 			//Create new file.
