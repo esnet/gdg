@@ -82,7 +82,7 @@ global:
 ```
 ## Cloud Configuration
 
-Several S3 compatible cloud providers are supported.  Please see this [section](https://software.es.net/gdg/docs/gdg/cloud_configuration/) for more detailed instructions.
+Several S3 compatible cloud providers are supported.  Please see this [section](https://software.es.net/gdg/docs/gdg/cloud-configuration/) for more detailed instructions.
 
 ## Connection
 
