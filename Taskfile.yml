@@ -2,14 +2,14 @@ version: "3"
 
 vars:
   BIN_NAME: gdg
-  VERSION : { sh: grep "const Version " internal/version/version.go | sed -E 's/.*"(.+)"$$/\1/' }
+  VERSION: { sh: grep "const Version " internal/version/version.go | sed -E 's/.*"(.+)"$$/\1/' }
   GIT_COMMIT: { sh: git rev-parse HEAD }
   GIT_DIRTY: { sh: test -n "`git status --porcelain`" && echo "+CHANGES" || true }
   BUILD_DATE: { sh: date '+%Y-%m-%d-%H:%M:%S' }
   IMAGE_NAME: "esnet/gdg"
   LD_FLAGS: "-s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/internal/version.BuildDate={{ .BUILD_DATE }} "
 
-dotenv: ['.env']
+dotenv: [ '.env' ]
 
 tasks:
   default:
@@ -23,7 +23,7 @@ tasks:
       - go install github.com/securego/gosec/v2/cmd/gosec@master
       - go install golang.org/x/vuln/cmd/govulncheck@latest
       - go install github.com/vektra/mockery/v2@v2.42.0
-
+      - go install github.com/goreleaser/goreleaser@v1.24.0
   security:
     desc: "Run security scan"
     cmds:
@@ -31,54 +31,54 @@ tasks:
   lint:
     desc: "Lint project, skipping test files."
     cmds:
-      - golangci-lint run --timeout=30m --skip-dirs "(^|/)test($|/)" --skip-files "_test.go"  ./... 
+      - golangci-lint run --timeout=30m --skip-dirs "(^|/)test($|/)" --skip-files "_test.go"  ./...
   spellcheck:
     desc: "Check Spelling across code"
     cmds:
-      - misspell .  | grep -v "website" 
+      - misspell .  | grep -v "website"
   lint_tests:
     desc: "Lint project, including test files."
     cmds:
-      - golangci-lint run ./... 
+      - golangci-lint run ./...
   authors:
     desc: "Building GDG"
     cmds:
       - echo "Authors\n=======\n" > AUTHORS.md
       - "git log --raw | grep \"^Author: \" | sort | uniq | cut -d ' ' -f2 | sed 's/^/- /' >> AUTHORS.md"
     silent: false
-  mocks: 
+  mocks:
     desc: "Re-generate Mocks"
     cmds:
       - rm -fr internal/service/mocks
-      - mockery 
+      - mockery
   linux:
     desc: "Build linux binary"
     cmds:
-      - env GOOS='linux' GOARCH='amd64' go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}_linux cmd/gdg/main.go  
+      - env GOOS='linux' GOARCH='amd64' go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}_linux cmd/gdg/main.go
   build_all:
-    desc: "Buiding All binaries" 
+    desc: "Buiding All binaries"
     cmds:
       - task: build
       - task: build_generate
   build:
-    desc: "Buiding {{ .BIN_NAME }} {{ .VERSION }}" 
+    desc: "Buiding {{ .BIN_NAME }} {{ .VERSION }}"
     cmds:
       - echo "GOPATH=${GOPATH}"
-      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }} cmd/gdg/main.go 
+      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }} cmd/gdg/main.go
   build_generate:
-    desc: "Buiding {{ .BIN_NAME }}-generate {{ .VERSION }}" 
+    desc: "Buiding {{ .BIN_NAME }}-generate {{ .VERSION }}"
     cmds:
       - echo "GOPATH=${GOPATH}"
-      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}-generate cmd/gdg-generate/main.go 
-  install: 
-    desc: "installing {{ .BIN_NAME }} {{ .VERSION }}" 
-    cmds: 
+      - go build -ldflags "{{ .LD_FLAGS }}" -o bin/{{ .BIN_NAME }}-generate cmd/gdg-generate/main.go
+  install:
+    desc: "installing {{ .BIN_NAME }} {{ .VERSION }}"
+    cmds:
       - echo "GOPATH=${GOPATH}"
       - go install -ldflags "{{ .LD_FLAGS}}" cmd/gdg/main.go
     silent: false
-  push: 
+  push:
     desc: "Pushing docker image to registry: latest {{ .VERSION }} {{ .GIT_COMMIT }}"
-    deps: [tag]
+    deps: [ tag ]
     cmds:
       - docker push $(IMAGE_NAME):{{ .GIT_COMMIT }}
       - docker push $(IMAGE_NAME):{{ .VERSION }}
@@ -86,37 +86,37 @@ tasks:
   clean:
     desc: "clean up data"
     cmds:
-      - "test ! -e bin/{{ .BIN_NAME }} || rm bin/{{ .BIN_NAME }}" 
+      - "test ! -e bin/{{ .BIN_NAME }} || rm bin/{{ .BIN_NAME }}"
       - "rm -fr dist/"
-  release-snapshot: 
-    deps: [clean]
+  release-snapshot:
+    deps: [ clean ]
     desc: "Release Snapshot"
     cmds:
       - goreleaser build --snapshot
-  release: 
-    deps: [clean]
+  release:
+    deps: [ clean ]
     desc: "TEST Release of GDG, no validation, no publish"
     cmds:
       - goreleaser release --skip=publish,validate
 
   test:
-      desc: "test check"
-      cmds:
-        - go test -v -coverpkg=./... -covermode=atomic -coverprofile=coverage.out  ./... 
-        - go tool cover -html=coverage.out
-      env:
-        GRAFANA_INTEGRATION: "1"
-        TEST_TOKEN_CONFIG: "0"
+    desc: "test check"
+    cmds:
+      - go test -v -coverpkg=./... -covermode=atomic -coverprofile=coverage.out  ./...
+      - go tool cover -html=coverage.out
+    env:
+      GRAFANA_INTEGRATION: "1"
+      TEST_TOKEN_CONFIG: "0"
   test_tokens:
-      desc: "test Token Based Only"
-      cmds:
-        - go test -v -coverpkg=./... -covermode=atomic -coverprofile=coverage.out ./...
-        - go tool cover -html=coverage.out
-      env:
-        GRAFANA_INTEGRATION: "1"
-        TEST_TOKEN_CONFIG: "1"
+    desc: "test Token Based Only"
+    cmds:
+      - go test -v -coverpkg=./... -covermode=atomic -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out
+    env:
+      GRAFANA_INTEGRATION: "1"
+      TEST_TOKEN_CONFIG: "1"
 
   vuln_check:
-      desc: "Vulnerability check"
-      cmds:
-        - govulncheck ./...
+    desc: "Vulnerability check"
+    cmds:
+      - govulncheck ./...

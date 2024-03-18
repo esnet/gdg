@@ -91,10 +91,11 @@ You need to adjust three parts in the configuration in order to function:
 ├── bin
 |   └── gdg
 └── exports
-    └── dashboards
-        ├── Example
-        |   └── cluster-scaling.json
-        └── Infrastructure
-            └── aws-ecs.json
+    └── org_main-org
+        |   └── dashboards
+        |       └─ Example
+        |       |  └── cluster-scaling.json
+        |       └─ Infrastructure
+        |          └── aws-ecs.json
 ```
-You can execute `./bin/gdg dash export` to upload the local dashboards to your Grafana. Afterwards, you can try running `./bin/gdg dash list` in order to confirm that your dashboards were uploaded successfully.
+You can execute `./bin/gdg backup dash export` to upload the local dashboards to your Grafana. Afterwards, you can try running `./bin/gdg dash list` in order to confirm that your dashboards were uploaded successfully.

@@ -1,12 +1,12 @@
 ---
-title: "Templating Tool"
+title: "Usage Guide"
 weight: 1
 ---
 
 GDG has now introduced a new supporting tool that works in conjunction with GDG. It is currently dependent on the GDG
 configuration
 since it will operate on the currently selected context. You can confirm what the current context is by
-running `gdg ctx show`
+running `gdg tools ctx show`
 
 For example, my current output is as follows:
 
@@ -24,29 +24,20 @@ context_name:
     - General
     - Other
   connections:
-    exclude_filters:
-      - { }
     credential_rules:
       - rules:
           - field: name
             regex: misc
           - field: url
-        auth:
-          user: user
-          password: password
+        secure_data: "misc.json"
       - rules:
           - field: url
             regex: .*esproxy2*
-        auth:
-          user: admin
-          password: secret
+        secure_data: "proxy.json"
       - rules:
           - field: name
             regex: .*
-        auth:
-          user: user
-          password: password
-  datasources: { }
+        secure_data: "default.json"
   filter_override:
     ignore_dashboard_filters: false
   output_path: test/data
@@ -55,7 +46,7 @@ context_name:
 Most of the config isn't that interesting, except the output_path will be used to determine where the newly generated
 dashboards will be. Make sure you have a valid configuration before continuing.
 
-## What does gdg-generate do?
+### What does gdg-generate do?
 
 There are use cases where an almost identical dashboard is needed except we need to replace certain parts of it.
 
@@ -63,6 +54,8 @@ For example, parts of a query need to be different, a different title, brand it 
 logo, or footer. All of these are difficult to control from grafana itself and even in the best case scenario it's not
 great user experience. This allows you to configure and generate a new dashboard with any set of variables and
 dictionaries that you will seed to the tool.
+
+### Configuration
 
 The configuration that drives this application is `templates.yml`. You can see an example below.
 
@@ -73,7 +66,7 @@ entities:
       output: ## The section below defines one or multiple destination and the associated configuration
         ## that goes with it.
         - folder: "General"  ## Name of the new folder where the template will be created
-          org_id: 2  ## Organization ID, will be converted to a name in a future version
+          organization_name: "Main Org."
           dashboard_name: ""  ## Optional, defaults to template_name.json
           template_data: ## Template Data the dictionary of datasets that can be used in the template,
             # it's basically your 'seed data'.  Everything is contains is absolutely arbitrary
@@ -133,37 +126,14 @@ Iterating and conditionals.
 ```json
 {
   "link_text": [
-    {
-    {
-      if
-      .enabledlight
-    }
-  }
+    {{ if .enabledlight }}
     // conditional to check if to insert or not
-    {
-    {
-      range
-      $v: =
-      .lightsources
-    }
-  }
-    // Iterating through list
-    {
-    {
-      $v
-    }
-  }
-    // Inserting value
-    {
-    {
-      end
-    }
-  }
-    {
-    {
-      end
-    }
-  }
+      {{ range $v: = .lightsources }}
+        // Iterating through list
+        {{ $v }}
+      // Inserting value
+      {{ end }}
+    {{ end }}
   ]
 }
 ```
@@ -172,9 +142,9 @@ Inserting a comma delimited list
 
 ```json
 "link_url": [
-"{{ .lightsources | join ", " }}",
-"/grafana/d/000000003/bandwidth-dashboard",
-"/grafana/d/xk26IFhmk/flow-data",
+  "{{ .lightsources | join ", " }}",
+  "/grafana/d/000000003/bandwidth-dashboard",
+  "/grafana/d/xk26IFhmk/flow-data",
 ]
 ```
 

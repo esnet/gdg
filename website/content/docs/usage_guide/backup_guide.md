@@ -8,7 +8,7 @@ Every namespace supporting CRUD operations has the functions: list, download, up
 
 ### Connections
 
-{{< callout note >}} Starting with v0.4.6 "Datasources" this was renamed to connections. {{< /callout >}}
+{{< callout note >}} Starting with v0.4.6 "Datasources" was renamed to connections. {{< /callout >}}
 
 Connections credentials are keyed by the name of the DataSource.  See [config example](https://github.com/esnet/gdg/blob/master/config/importer-example.yml).  If the connection JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from _organization_ specified in configuration file otherwise current organization user is used.
@@ -105,7 +105,7 @@ The listing includes the folder name, followed by several lines with "PERMISSION
 
 Library elements are components that can be shared among multiple dashboards.  Folder matching will still be applied, so any folders not monitored will be ignored unless explicitly specified.  If wildcard flag is enabled, all elements will be acted on irrelevant of folder location
 
-All commands can use `libraryelements` aliased to `library` and `lib` for laziness purposes.
+All commands can use `libraryelements` aliased to `library` and `lib` for laziness purposes.  A more extensive tutorial is available [here](https://software.es.net/gdg/docs/tutorials/library_elements/)
 
 ```sh
 ./bin/gdg backup lib list -- Lists all library components
@@ -118,10 +118,17 @@ All commands can use `libraryelements` aliased to `library` and `lib` for lazine
 
 
 ### Organizations
-#### Auth:  Requires Grafana Admin (Tokens not supported, Org Admins don't have access)
+
+{{< callout context="danger" title="Danger" icon="alert-octagon" >}}
+Auth:  Requires Grafana Admin
+
+  - Tokens/service account tokens are tied to a specific org and are therefore not supported.
+  - Organization Admins don't have access to list all Orgs, therefore are also not supported.
+
+  {{< /callout >}}
+
 Command can use `organizations` or `org` to manage organizations.
 
-NOTE: this only manages top level of the orgs structure. It's mainly useful to maintain consistency.
 
 ```sh
 ./bin/gdg backup org list -- Lists all organizations
@@ -129,12 +136,9 @@ NOTE: this only manages top level of the orgs structure. It's mainly useful to m
 ./bin/gdg backup org download -- Download Orgs to grafana
 ```
 
+A tutorial on working with [organizations](https://software.es.net/gdg/docs/tutorials/organization-and-authentication/) is available.
+
 ### Teams
-
-{{< callout context="caution" title="Caution" icon="alert-triangle" >}}
-Admin team members are unable to be exported back.  Currently all members except the server admin will be exported as regular members
-{{< /callout >}}
-
 
 {{< callout context="caution" title="Caution" icon="alert-triangle" >}}
 Users need to be created before team export can succeed
