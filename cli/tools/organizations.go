@@ -216,7 +216,7 @@ func newAddUserRoleCmd() simplecobra.Commander {
 }
 
 func newDeleteUserRoleCmd() simplecobra.Commander {
-	description := "deleteUser <orgId> <userId> removes a user from the given Organization (This will NOT delete the actual user from Grafana)"
+	description := "deleteUser <orgSlug> <userId> removes a user from the given Organization (This will NOT delete the actual user from Grafana)"
 	return &support.SimpleCommand{
 		NameP: "deleteUser",
 		Short: description,

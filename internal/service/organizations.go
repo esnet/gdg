@@ -253,7 +253,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.Filter) []string {
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, err: %v", err)
 	}
-	orgListing := s.ListOrganizations(filter, true)
+	orgListing := s.ListOrganizations(filter, false)
 	orgMap := map[string]bool{}
 	for _, entry := range orgListing {
 		orgMap[entry.Organization.Name] = true
