@@ -8,6 +8,9 @@ vars:
   BUILD_DATE: { sh: date '+%Y-%m-%d-%H:%M:%S' }
   IMAGE_NAME: "esnet/gdg"
   LD_FLAGS: "-s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/internal/version.BuildDate={{ .BUILD_DATE }} "
+  LEFTHOOK_VERSION: "v1.6.7"
+  MOCKERY_VERSION: "v2.42.0"
+  RELEASER_VERSION: "v1.24.0"
 
 dotenv: [ '.env' ]
 
@@ -22,8 +25,11 @@ tasks:
       - go install github.com/client9/misspell/cmd/misspell@latest
       - go install github.com/securego/gosec/v2/cmd/gosec@master
       - go install golang.org/x/vuln/cmd/govulncheck@latest
-      - go install github.com/vektra/mockery/v2@v2.42.0
-      - go install github.com/goreleaser/goreleaser@v1.24.0
+      - go install github.com/vektra/mockery/v2@{{ .MOCKERY_VERSION}}
+      - go install github.com/goreleaser/goreleaser@{{ .RELEASER_VERSION }} 
+      - go install github.com/evilmartians/lefthook@{{ .LEFTHOOK_VERSION }}
+      - lefthook install
+
   security:
     desc: "Run security scan"
     cmds:
