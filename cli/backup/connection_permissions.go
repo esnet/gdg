@@ -2,6 +2,7 @@ package backup
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
@@ -20,6 +21,14 @@ func newConnectionsPermissionCmd() simplecobra.Commander {
 		NameP: "permission",
 		Short: description,
 		Long:  description,
+		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
+			valid := tools.ValidateMinimumVersion("v10.4.0", r.GrafanaSvc()) && config.Config().GetDefaultGrafanaConfig().EnterpriseSupport
+			if !valid {
+				return errors.New("connection Permissions requires grafana version v10.4.0 and enterprise_support to be configured for the gdg context")
+			}
+			return nil
+
+		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"l", "permissions"}
 		},
@@ -50,7 +59,6 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 			slog.Info("Listing Connection Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 			connections := rootCmd.GrafanaSvc().ListConnectionPermissions(filters)
-			_ = connections
 
 			if len(connections) == 0 {
 				slog.Info("No connections found")
@@ -58,9 +66,15 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 				for link, perms := range connections {
 					url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
 					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
-					if perms != nil && perms.Enabled {
-						for _, perm := range perms.Permissions {
-							rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, "    PERMISSION-->", perm.PermissionName, perm.Team, perm.UserEmail})
+					if perms != nil {
+						for _, perm := range perms {
+							permLabel := ""
+							if perm.BuiltInRole == "" {
+								permLabel = perm.Permission
+							} else {
+								permLabel = perm.BuiltInRole
+							}
+							rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, "    PERMISSION-->", permLabel, perm.RoleName, perm.Team, perm.UserLogin})
 						}
 					}
 				}
@@ -82,7 +96,7 @@ func newConnectionsPermissionClearCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Clear all connections permissions")
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all connections on: '%s' "+
-				"(Or all permission matching yoru --connection filter).  Do you wish to continue (y/n) ", config.Config().GetGDGConfig().ContextName,
+				"(Or all permission matching your --connection filter).  Do you wish to continue (y/n) ", config.Config().GetGDGConfig().ContextName,
 			), "", true)
 			rootCmd.TableObj.AppendHeader(table.Row{"cleared connection permissions"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")

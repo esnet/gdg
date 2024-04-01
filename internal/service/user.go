@@ -151,7 +151,7 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []types.UserProfileWith
 				slog.Error("unable to read user back from grafana", "username", newUser.Email, "userID", userCreated.GetPayload().ID)
 				continue
 			}
-			userListings = append(userListings, types.UserProfileWithAuth{UserProfileDTO: *resp.GetPayload(), Password: newUser.Password})
+			userListings = append(userListings, types.UserProfileWithAuth{UserProfileDTO: *resp.GetPayload(), Password: string(newUser.Password)})
 		}
 	}
 

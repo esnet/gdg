@@ -4,6 +4,7 @@ context_name: testing
 contexts:
   testing:
     output_path: test/data
+    enterprise_support: true
     connections:
       credential_rules:
         - rules:

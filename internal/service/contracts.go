@@ -36,7 +36,7 @@ type ConnectionsApi interface {
 
 type ConnectionPermissions interface {
 	// Permissions Enterprise only
-	ListConnectionPermissions(filter filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO
+	ListConnectionPermissions(filter filters.Filter) map[*models.DataSourceListItemDTO][]*models.ResourcePermissionDTO
 	DownloadConnectionPermissions(filter filters.Filter) []string
 	UploadConnectionPermissions(filter filters.Filter) []string
 	DeleteAllConnectionPermissions(filter filters.Filter) []string
