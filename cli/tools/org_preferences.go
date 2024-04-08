@@ -32,10 +32,11 @@ func newOrgPreferenceCommand() simplecobra.Commander {
 }
 
 func newUpdateOrgPreferenceCmd() simplecobra.Commander {
+	description := "Set --orgName [--homeDashUid, --theme, --weekstart] to set Org preferences"
 	return &support.SimpleCommand{
 		NameP: "set",
-		Short: "Set --orgName [--homeDashUid, --theme, --weekstart] to set Org preferences",
-		Long:  "Set --orgName [--homeDashUid, --theme, --weekstart] to set Org preferences",
+		Short: description,
+		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.PersistentFlags().StringP("orgName", "", "", "Organization Name")
 			cmd.PersistentFlags().StringP("homeDashUid", "", "", "UID for the home dashboard")
@@ -85,10 +86,11 @@ func newUpdateOrgPreferenceCmd() simplecobra.Commander {
 }
 
 func newGetOrgPreferenceCmd() simplecobra.Commander {
+	description := "get --orgName returns org preferences"
 	return &support.SimpleCommand{
 		NameP: "get",
-		Short: "get <orgName> returns org preferences",
-		Long:  "get <orgId> returns org preferences",
+		Short: description,
+		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.PersistentFlags().StringP("orgName", "", "", "Organization Name")
 		},
