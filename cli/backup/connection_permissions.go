@@ -10,7 +10,9 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
+	"log"
 	"log/slog"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -44,6 +46,15 @@ func newConnectionsPermissionCmd() simplecobra.Commander {
 	}
 }
 
+// getConnectionTbWriter returns a table object for use with newConnectionsPermissionListCmd
+func getConnectionTblWriter() table.Writer {
+	writer := table.NewWriter()
+	writer.SetOutputMirror(os.Stdout)
+	writer.SetStyle(table.StyleLight)
+	writer.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"}, table.RowConfig{AutoMerge: true})
+	return writer
+}
+
 func newConnectionsPermissionListCmd() simplecobra.Commander {
 	description := "List Connection Permissions"
 	return &support.SimpleCommand{
@@ -57,28 +68,37 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)
 			slog.Info("Listing Connection Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
-			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 			connections := rootCmd.GrafanaSvc().ListConnectionPermissions(filters)
-
 			if len(connections) == 0 {
 				slog.Info("No connections found")
 			} else {
+				output, _ := cd.CobraCommand.Flags().GetString("output")
+				if output == "json" {
+					log.Fatal("json output is not supported for connection permission listing")
+				}
 				for link, perms := range connections {
+					wr := getConnectionTblWriter()
 					url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
-					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
+					wr.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
+					wr.Render()
 					if perms != nil {
+						twConfigs := table.NewWriter()
+						twConfigs.SetOutputMirror(os.Stdout)
+						twConfigs.SetStyle(table.StyleColoredCyanWhiteOnBlack)
+						twConfigs.AppendHeader(table.Row{"Connection UID", "Permission", "RoleName", "Team", "UserLogin"})
 						for _, perm := range perms {
 							permLabel := ""
+							_ = permLabel
 							if perm.BuiltInRole == "" {
 								permLabel = perm.Permission
 							} else {
 								permLabel = perm.BuiltInRole
 							}
-							rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, "    PERMISSION-->", permLabel, perm.RoleName, perm.Team, perm.UserLogin})
+							twConfigs.AppendRow(table.Row{link.UID, permLabel, perm.RoleName, perm.Team, perm.UserLogin})
 						}
+						twConfigs.Render()
 					}
 				}
-				rootCmd.Render(cd.CobraCommand, connections)
 			}
 			return nil
 		},
