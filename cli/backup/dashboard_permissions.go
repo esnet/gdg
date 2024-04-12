@@ -14,8 +14,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newConnectionsPermissionCmd() simplecobra.Commander {
-	description := "Connections Permission"
+func newDashboardPermissionCmd() simplecobra.Commander {
+	description := "Dashboard Permission"
 	return &support.SimpleCommand{
 		NameP: "permission",
 		Short: description,
@@ -24,10 +24,10 @@ func newConnectionsPermissionCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"p", "permissions"}
 		},
 		CommandsList: []simplecobra.Commander{
-			newConnectionsPermissionListCmd(),
-			newConnectionsPermissionDownloadCmd(),
-			newConnectionsPermissionUploadCmd(),
-			newConnectionsPermissionClearCmd(),
+			newDashboardPermissionListCmd(),
+			newDashboardPermissionDownloadCmd(),
+			newDashboardPermissionUploadCmd(),
+			newDashboardPermissionClearCmd(),
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
@@ -35,8 +35,8 @@ func newConnectionsPermissionCmd() simplecobra.Commander {
 	}
 }
 
-func newConnectionsPermissionListCmd() simplecobra.Commander {
-	description := "List Connection Permissions"
+func newDashboardPermissionListCmd() simplecobra.Commander {
+	description := "List Dashboard Permissions"
 	return &support.SimpleCommand{
 		NameP: "list",
 		Short: description,
@@ -45,32 +45,43 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
-			filters := service.NewConnectionFilter(connectionFilter)
-			slog.Info("Listing Connection Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
+			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			slog.Info("Listing Dashboard Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
-			connections := rootCmd.GrafanaSvc().ListConnectionPermissions(filters)
-			_ = connections
+			permissions := rootCmd.GrafanaSvc().ListDashboardPermissions(filters)
 
-			if len(connections) == 0 {
-				slog.Info("No connections found")
+			if len(permissions) == 0 {
+				slog.Info("No Dashboards found")
 			} else {
-				for link, perms := range connections {
-					url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
-					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
-					if perms != nil && perms.Enabled {
-						for _, perm := range perms.Permissions {
-							rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, "    PERMISSION-->", perm.PermissionName, perm.Team, perm.UserEmail})
+				rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "URL"})
+				for _, perms := range permissions {
+					urlValue := getDashboardUrl(perms.Dashboard)
+					link := perms.Dashboard
+					rootCmd.TableObj.AppendRow(table.Row{
+						link.ID, link.Title, link.Slug, link.FolderTitle,
+						link.UID, urlValue,
+					})
+					if perms.Permissions != nil {
+						for _, dashPerm := range perms.Permissions {
+
 						}
 					}
+					//		if perms != nil && perms.Enabled {
+					//			for _, perm := range perms.Permissions {
+					//				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, "    PERMISSION-->", perm.PermissionName, perm.Team, perm.UserEmail})
+					//			}
+					//		}
 				}
-				rootCmd.Render(cd.CobraCommand, connections)
+				//	rootCmd.Render(cd.CobraCommand, connections)
 			}
+			//else {
+
+			//}
 			return nil
 		},
 	}
 }
-func newConnectionsPermissionClearCmd() simplecobra.Commander {
+func newDashboardPermissionClearCmd() simplecobra.Commander {
 	description := "Clear Connection Permissions"
 	return &support.SimpleCommand{
 		NameP: "clear",
@@ -84,26 +95,26 @@ func newConnectionsPermissionClearCmd() simplecobra.Commander {
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all connections on: '%s' "+
 				"(Or all permission matching yoru --connection filter).  Do you wish to continue (y/n) ", config.Config().GetGDGConfig().ContextName,
 			), "", true)
-			rootCmd.TableObj.AppendHeader(table.Row{"cleared connection permissions"})
-			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
-			filters := service.NewConnectionFilter(connectionFilter)
-			connections := rootCmd.GrafanaSvc().DeleteAllConnectionPermissions(filters)
+			rootCmd.TableObj.AppendHeader(table.Row{"cleared Dashboard permissions"})
+			//connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
+			//filters := service.NewConnectionFilter(connectionFilter)
+			//connections := rootCmd.GrafanaSvc().DeleteAllConnectionPermissions(filters)
 
-			if len(connections) == 0 {
-				slog.Info("No connections found")
-			} else {
-				for _, connections := range connections {
-					rootCmd.TableObj.AppendRow(table.Row{connections})
-				}
-				rootCmd.Render(cd.CobraCommand, connections)
-			}
+			//if len(connections) == 0 {
+			//	slog.Info("No connections found")
+			//} else {
+			//	for _, connections := range connections {
+			//		rootCmd.TableObj.AppendRow(table.Row{connections})
+			//	}
+			//	rootCmd.Render(cd.CobraCommand, connections)
+			//}
 
 			return nil
 		},
 	}
 }
 
-func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
+func newDashboardPermissionDownloadCmd() simplecobra.Commander {
 	description := "Download Connection Permissions"
 	return &support.SimpleCommand{
 		NameP: "download",
@@ -133,7 +144,7 @@ func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 		},
 	}
 }
-func newConnectionsPermissionUploadCmd() simplecobra.Commander {
+func newDashboardPermissionUploadCmd() simplecobra.Commander {
 	description := "Upload Connection Permissions"
 	return &support.SimpleCommand{
 		NameP: "upload",
