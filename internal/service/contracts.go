@@ -15,6 +15,7 @@ type ServerInfoApi interface {
 type GrafanaService interface {
 	OrganizationsApi
 	DashboardsApi
+	DashboardPermissionsApi
 	ConnectionsApi
 	UsersApi
 	FoldersApi
@@ -55,6 +56,13 @@ type DashboardsApi interface {
 	UploadDashboards(filter filters.Filter)
 	DeleteAllDashboards(filter filters.Filter) []string
 	LintDashboards(req types.LintRequest) []string
+}
+
+type DashboardPermissionsApi interface {
+	ListDashboardPermissions(filterReq filters.Filter) ([]DashboardAndPermissions, error)
+	DownloadDashboardPermissions(filterReq filters.Filter) ([]string, error)
+	ClearDashboardPermissions(filterReq filters.Filter) error
+	UploadDashboardPermissions(filterReq filters.Filter) ([]string, error)
 }
 
 // FoldersApi Contract definition

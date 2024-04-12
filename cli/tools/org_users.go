@@ -110,7 +110,7 @@ func newUpdateUserRoleCmd() simplecobra.Commander {
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
-			slog.Info("Listing org users for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Updating User role for context", slog.Any("context", config.Config().GetGDGConfig().GetContext()))
 			rootCmd.TableObj.AppendHeader(table.Row{"login", "orgId", "name", "email", "role"})
 			err = rootCmd.GrafanaSvc().UpdateUserInOrg(roleName, orgSlug, userId)
 			if err != nil {
@@ -143,6 +143,8 @@ func newAddUserRoleCmd() simplecobra.Commander {
 				log.Fatal("unable to parse userId to numeric value")
 			}
 			slog.Info("Add user to org for context",
+				slog.Any("userId", userId),
+				slog.Any("orgSlug", orgSlug),
 				slog.Any("context", config.Config().GetGDGConfig().GetContext()),
 				slog.Any("organization", config.Config().GetDefaultGrafanaConfig().OrganizationName),
 			)
@@ -152,7 +154,7 @@ func newAddUserRoleCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"login", "orgId", "name", "email", "role"})
 			err = rootCmd.GrafanaSvc().AddUserToOrg(role, orgSlug, userId)
 			if err != nil {
-				slog.Error("Unable to add user to Org", slog.Any("err", err.Error()))
+				slog.Error("Unable to add user to Org, already exists", slog.Any("err", err.Error()))
 			} else {
 				slog.Info("User has been add to Org", slog.Any("userId", userId), slog.String("organization", orgSlug))
 			}

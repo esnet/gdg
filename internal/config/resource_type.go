@@ -12,6 +12,7 @@ type ResourceType string
 const (
 	ConnectionPermissionResource ResourceType = "connections-permissions"
 	ConnectionResource           ResourceType = "connections"
+	DashboardPermissionsResource ResourceType = "dashboards-permissions"
 	DashboardResource            ResourceType = "dashboards"
 	FolderPermissionResource     ResourceType = "folders-permissions"
 	FolderResource               ResourceType = "folders"
@@ -26,6 +27,7 @@ const (
 
 var orgNamespacedResource = map[ResourceType]bool{
 	ConnectionPermissionResource: true,
+	DashboardPermissionsResource: true,
 	ConnectionResource:           true,
 	DashboardResource:            true,
 	FolderPermissionResource:     true,

@@ -600,7 +600,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 
 		// Extract Folder Name based on path
-		folderName, err = getFolderFromResourcePath(s.grafanaConf.Storage, file)
+		folderName, err = getFolderFromResourcePath(s.grafanaConf.Storage, file, config.DashboardResource)
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 		}

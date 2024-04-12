@@ -10,6 +10,8 @@ import (
 
 	models "github.com/grafana/grafana-openapi-client-go/models"
 
+	service "github.com/esnet/gdg/internal/service"
+
 	types "github.com/esnet/gdg/internal/service/types"
 )
 
@@ -70,6 +72,52 @@ func (_c *GrafanaService_AddUserToOrg_Call) Return(_a0 error) *GrafanaService_Ad
 }
 
 func (_c *GrafanaService_AddUserToOrg_Call) RunAndReturn(run func(string, string, int64) error) *GrafanaService_AddUserToOrg_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ClearDashboardPermissions provides a mock function with given fields: filterReq
+func (_m *GrafanaService) ClearDashboardPermissions(filterReq filters.Filter) error {
+	ret := _m.Called(filterReq)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ClearDashboardPermissions")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(filters.Filter) error); ok {
+		r0 = rf(filterReq)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GrafanaService_ClearDashboardPermissions_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ClearDashboardPermissions'
+type GrafanaService_ClearDashboardPermissions_Call struct {
+	*mock.Call
+}
+
+// ClearDashboardPermissions is a helper method to define mock.On call
+//   - filterReq filters.Filter
+func (_e *GrafanaService_Expecter) ClearDashboardPermissions(filterReq interface{}) *GrafanaService_ClearDashboardPermissions_Call {
+	return &GrafanaService_ClearDashboardPermissions_Call{Call: _e.mock.On("ClearDashboardPermissions", filterReq)}
+}
+
+func (_c *GrafanaService_ClearDashboardPermissions_Call) Run(run func(filterReq filters.Filter)) *GrafanaService_ClearDashboardPermissions_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(filters.Filter))
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ClearDashboardPermissions_Call) Return(_a0 error) *GrafanaService_ClearDashboardPermissions_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *GrafanaService_ClearDashboardPermissions_Call) RunAndReturn(run func(filters.Filter) error) *GrafanaService_ClearDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -881,6 +929,64 @@ func (_c *GrafanaService_DownloadConnections_Call) Return(_a0 []string) *Grafana
 }
 
 func (_c *GrafanaService_DownloadConnections_Call) RunAndReturn(run func(filters.Filter) []string) *GrafanaService_DownloadConnections_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DownloadDashboardPermissions provides a mock function with given fields: filterReq
+func (_m *GrafanaService) DownloadDashboardPermissions(filterReq filters.Filter) ([]string, error) {
+	ret := _m.Called(filterReq)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DownloadDashboardPermissions")
+	}
+
+	var r0 []string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(filters.Filter) ([]string, error)); ok {
+		return rf(filterReq)
+	}
+	if rf, ok := ret.Get(0).(func(filters.Filter) []string); ok {
+		r0 = rf(filterReq)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(filters.Filter) error); ok {
+		r1 = rf(filterReq)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GrafanaService_DownloadDashboardPermissions_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DownloadDashboardPermissions'
+type GrafanaService_DownloadDashboardPermissions_Call struct {
+	*mock.Call
+}
+
+// DownloadDashboardPermissions is a helper method to define mock.On call
+//   - filterReq filters.Filter
+func (_e *GrafanaService_Expecter) DownloadDashboardPermissions(filterReq interface{}) *GrafanaService_DownloadDashboardPermissions_Call {
+	return &GrafanaService_DownloadDashboardPermissions_Call{Call: _e.mock.On("DownloadDashboardPermissions", filterReq)}
+}
+
+func (_c *GrafanaService_DownloadDashboardPermissions_Call) Run(run func(filterReq filters.Filter)) *GrafanaService_DownloadDashboardPermissions_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(filters.Filter))
+	})
+	return _c
+}
+
+func (_c *GrafanaService_DownloadDashboardPermissions_Call) Return(_a0 []string, _a1 error) *GrafanaService_DownloadDashboardPermissions_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *GrafanaService_DownloadDashboardPermissions_Call) RunAndReturn(run func(filters.Filter) ([]string, error)) *GrafanaService_DownloadDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1741,6 +1847,64 @@ func (_c *GrafanaService_ListConnections_Call) Return(_a0 []models.DataSourceLis
 }
 
 func (_c *GrafanaService_ListConnections_Call) RunAndReturn(run func(filters.Filter) []models.DataSourceListItemDTO) *GrafanaService_ListConnections_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListDashboardPermissions provides a mock function with given fields: filterReq
+func (_m *GrafanaService) ListDashboardPermissions(filterReq filters.Filter) ([]service.DashboardAndPermissions, error) {
+	ret := _m.Called(filterReq)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListDashboardPermissions")
+	}
+
+	var r0 []service.DashboardAndPermissions
+	var r1 error
+	if rf, ok := ret.Get(0).(func(filters.Filter) ([]service.DashboardAndPermissions, error)); ok {
+		return rf(filterReq)
+	}
+	if rf, ok := ret.Get(0).(func(filters.Filter) []service.DashboardAndPermissions); ok {
+		r0 = rf(filterReq)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]service.DashboardAndPermissions)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(filters.Filter) error); ok {
+		r1 = rf(filterReq)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GrafanaService_ListDashboardPermissions_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListDashboardPermissions'
+type GrafanaService_ListDashboardPermissions_Call struct {
+	*mock.Call
+}
+
+// ListDashboardPermissions is a helper method to define mock.On call
+//   - filterReq filters.Filter
+func (_e *GrafanaService_Expecter) ListDashboardPermissions(filterReq interface{}) *GrafanaService_ListDashboardPermissions_Call {
+	return &GrafanaService_ListDashboardPermissions_Call{Call: _e.mock.On("ListDashboardPermissions", filterReq)}
+}
+
+func (_c *GrafanaService_ListDashboardPermissions_Call) Run(run func(filterReq filters.Filter)) *GrafanaService_ListDashboardPermissions_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(filters.Filter))
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ListDashboardPermissions_Call) Return(_a0 []service.DashboardAndPermissions, _a1 error) *GrafanaService_ListDashboardPermissions_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(filters.Filter) ([]service.DashboardAndPermissions, error)) *GrafanaService_ListDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2662,6 +2826,64 @@ func (_c *GrafanaService_UploadConnections_Call) Return(_a0 []string) *GrafanaSe
 }
 
 func (_c *GrafanaService_UploadConnections_Call) RunAndReturn(run func(filters.Filter) []string) *GrafanaService_UploadConnections_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UploadDashboardPermissions provides a mock function with given fields: filterReq
+func (_m *GrafanaService) UploadDashboardPermissions(filterReq filters.Filter) ([]string, error) {
+	ret := _m.Called(filterReq)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UploadDashboardPermissions")
+	}
+
+	var r0 []string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(filters.Filter) ([]string, error)); ok {
+		return rf(filterReq)
+	}
+	if rf, ok := ret.Get(0).(func(filters.Filter) []string); ok {
+		r0 = rf(filterReq)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(filters.Filter) error); ok {
+		r1 = rf(filterReq)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GrafanaService_UploadDashboardPermissions_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadDashboardPermissions'
+type GrafanaService_UploadDashboardPermissions_Call struct {
+	*mock.Call
+}
+
+// UploadDashboardPermissions is a helper method to define mock.On call
+//   - filterReq filters.Filter
+func (_e *GrafanaService_Expecter) UploadDashboardPermissions(filterReq interface{}) *GrafanaService_UploadDashboardPermissions_Call {
+	return &GrafanaService_UploadDashboardPermissions_Call{Call: _e.mock.On("UploadDashboardPermissions", filterReq)}
+}
+
+func (_c *GrafanaService_UploadDashboardPermissions_Call) Run(run func(filterReq filters.Filter)) *GrafanaService_UploadDashboardPermissions_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(filters.Filter))
+	})
+	return _c
+}
+
+func (_c *GrafanaService_UploadDashboardPermissions_Call) Return(_a0 []string, _a1 error) *GrafanaService_UploadDashboardPermissions_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *GrafanaService_UploadDashboardPermissions_Call) RunAndReturn(run func(filters.Filter) ([]string, error)) *GrafanaService_UploadDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }

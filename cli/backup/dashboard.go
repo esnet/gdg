@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/grafana/grafana-openapi-client-go/models"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
@@ -50,6 +52,8 @@ func newDashboardCommand() simplecobra.Commander {
 			newDownloadDashboardsCmd(),
 			newUploadDashboardsCmd(),
 			newClearDashboardsCmd(),
+			// Permissions
+			newDashboardPermissionCmd(),
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
@@ -151,6 +155,19 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 	}
 }
 
+func getDashboardUrl(link *models.Hit) string {
+	base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().URL)
+	var baseHost string
+	if err != nil {
+		baseHost = "http://unknown/"
+		slog.Warn("unable to determine grafana base host for dashboard", slog.String("dashboard-uid", link.UID))
+	} else {
+		base.Path = ""
+		baseHost = base.String()
+	}
+	return fmt.Sprintf("%s%s", baseHost, link.URL)
+}
+
 func newListDashboardsCmd() simplecobra.Commander {
 	description := "List all dashboards from grafana"
 	return &support.SimpleCommand{
@@ -181,21 +198,8 @@ func newListDashboardsCmd() simplecobra.Commander {
 			count := 0
 
 			for _, link := range boards {
-				base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().URL)
-				var baseHost string
-				if err != nil {
-					baseHost = "http://unknown/"
-					slog.Warn("unable to determine grafana base host for dashboard", slog.String("dashboard-uid", link.UID))
-				} else {
-					base.Path = ""
-					baseHost = base.String()
-				}
-				if string(link.Type) == service.SearchTypeFolder {
-					slog.Debug("skipping entry for", slog.Any("slug", link.Slug), slog.Any("url", fmt.Sprintf("%s/%s", baseHost, link.UID)), slog.Any("type", link.Type))
-					continue
-				}
+				urlValue := getDashboardUrl(link)
 				count++
-				urlValue := fmt.Sprintf("%s%s", baseHost, link.URL)
 				var tagVal string
 				if len(link.Tags) > 0 {
 					tagValByte, err := json.Marshal(link.Tags)

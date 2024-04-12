@@ -22,7 +22,7 @@ func newConnectionsPermissionCmd() simplecobra.Commander {
 		Short: description,
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
-			cmd.Aliases = []string{"l", "permissions"}
+			cmd.Aliases = []string{"p", "permissions"}
 		},
 		CommandsList: []simplecobra.Commander{
 			newConnectionsPermissionListCmd(),
