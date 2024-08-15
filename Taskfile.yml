@@ -8,7 +8,7 @@ vars:
   BUILD_DATE: { sh: date '+%Y-%m-%d-%H:%M:%S' }
   IMAGE_NAME: "esnet/gdg"
   LD_FLAGS: "-s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/internal/version.BuildDate={{ .BUILD_DATE }} "
-  LEFTHOOK_VERSION: "v1.6.7"
+  LEFTHOOK_VERSION: "v1.7.13"
   MOCKERY_VERSION: "v2.42.0"
   RELEASER_VERSION: "v1.24.0"
 
@@ -37,7 +37,7 @@ tasks:
   lint:
     desc: "Lint project, skipping test files."
     cmds:
-      - golangci-lint run --timeout=30m --skip-dirs "(^|/)test($|/)" --skip-files "_test.go"  ./...
+      - golangci-lint run --timeout=30m  ./...
   spellcheck:
     desc: "Check Spelling across code"
     cmds:
