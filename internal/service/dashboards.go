@@ -198,8 +198,8 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 	var boardLinks = make([]*models.Hit, 0)
 	var deduplicatedLinks = make(map[int64]*models.Hit)
 
-	var page uint = 1
-	var limit uint = 5000 // Upper bound of Grafana API call
+	var page int64 = 1
+	var limit int64 = 5000 // Upper bound of Grafana API call
 
 	var tagsParams = make([]string, 0)
 	tagsParams = append(tagsParams, filterReq.GetEntity(filters.TagsFilter)...)
@@ -210,8 +210,8 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 			if tag != "" {
 				searchParams.Tag = []string{tag}
 			}
-			searchParams.Limit = tools.PtrOf(int64(limit))
-			searchParams.Page = tools.PtrOf(int64(page))
+			searchParams.Limit = tools.PtrOf(limit)
+			searchParams.Page = tools.PtrOf(page)
 			searchParams.Type = tools.PtrOf(searchTypeDashboard)
 
 			pageBoardLinks, err := s.GetClient().Search.Search(searchParams)
@@ -219,7 +219,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 				log.Fatal("Failed to retrieve dashboards", err)
 			}
 			boardLinks = append(boardLinks, pageBoardLinks.GetPayload()...)
-			if len(pageBoardLinks.GetPayload()) < int(limit) {
+			if int64(len(pageBoardLinks.GetPayload())) < limit {
 				break
 			}
 			page += 1

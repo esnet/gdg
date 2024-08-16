@@ -2,7 +2,6 @@ package backup
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
@@ -159,7 +158,7 @@ func newLibraryElementsListConnectionsCmd() simplecobra.Commander {
 			slog.Info("Listing library connections for context", "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range elements {
 				dash := link.Dashboard.(map[string]interface{})
-				rootCmd.TableObj.AppendRow(table.Row{dash["id"].(json.Number), dash["uid"].(string), link.Meta.Slug, dash["title"].(string), link.Meta.FolderTitle})
+				rootCmd.TableObj.AppendRow(table.Row{dash["id"], dash["uid"], link.Meta.Slug, dash["title"], link.Meta.FolderTitle})
 			}
 			if len(elements) > 0 {
 				rootCmd.Render(cd.CobraCommand, elements)

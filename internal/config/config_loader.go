@@ -274,7 +274,7 @@ func InitGdgConfig(override, defaultConfig string) {
 
 	if err != nil && ok {
 		slog.Info("No configuration file has been found, creating a default configuration")
-		err = os.MkdirAll("config", os.ModePerm)
+		err = os.MkdirAll("config", 0750)
 		if err != nil {
 			log.Fatal("unable to create configuration folder: 'config'")
 		}
