@@ -247,8 +247,6 @@
     "ids": [
       "TableOfContents",
       "api-sdk-changes",
-      "auth",
-      "auth--requires-grafana-admin-tokens-not-supported-org-admins-dont-have-access",
       "authentication",
       "authentication-management",
       "authentication-token",
@@ -259,7 +257,6 @@
       "bug-fixes-1",
       "bug-fixes-2",
       "buildingrunning-gdg",
-      "buildingrunning-the-app",
       "buttonColorMode",
       "can-i-use-gdg-to-backup-grafana",
       "changes",
@@ -302,9 +299,7 @@
       "folders-update",
       "gdg",
       "general",
-      "getting-started",
       "global-flags",
-      "heading",
       "homebrew-installation",
       "i-need-feature-x-can-you-please-add-that-in",
       "i-need-help-where-do-i-go",
@@ -325,7 +320,6 @@
       "new-features",
       "new-features-1",
       "new-features-2",
-      "notes",
       "notes-on-05x",
       "offcanvasNavMain",
       "offcanvasNavMainLabel",
@@ -373,7 +367,6 @@
       "version-prior-to-v042",
       "version-v042-v051",
       "what-does-gdg-generate-do",
-      "what-is-the-meaning-of-life",
       "why-does-gdg-not-list-all-my-dashboards",
       "wild-card-flag"
     ]
