@@ -56,7 +56,8 @@ type MatchingRule struct {
 
 // FilterOverrides model wraps filter overrides for grafana
 type FilterOverrides struct {
-	IgnoreDashboardFilters bool `yaml:"ignore_dashboard_filters"`
+	IgnoreDashboardFilters         bool `yaml:"ignore_dashboard_filters"`
+	DownloadNestedDashboardFolders bool `yaml:"download_nested_dashboard_folders"`
 }
 
 // ConnectionFilters model wraps connection filters for grafana

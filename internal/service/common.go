@@ -59,11 +59,7 @@ func BuildResourceFolder(folderName string, resourceType config.ResourceType) st
 	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
 	}
-	strSeperator := string(os.PathSeparator)
 
-	if strings.Contains(folderName, strSeperator) {
-		folderName = strings.ReplaceAll(folderName, strSeperator, fmt.Sprintf("//%s", strSeperator))
-	}
 	v := fmt.Sprintf("%s/%s", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
 	tools.CreateDestinationPath(v)
 	return v

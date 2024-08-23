@@ -190,6 +190,10 @@ func (s *DashNGoImpl) getDashboardByUid(uid string) (*models.DashboardFullWithMe
 // ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
 func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
+	return s.listDashboardsAndFolders(filterReq, false)
+}
+
+func (s *DashNGoImpl) listDashboardsAndFolders(filterReq filters.Filter, allTypes bool) []*models.Hit {
 	// Fallback on defaults
 	if filterReq == nil {
 		filterReq = NewDashboardFilter("", "", "")
@@ -212,7 +216,9 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 			}
 			searchParams.Limit = tools.PtrOf(limit)
 			searchParams.Page = tools.PtrOf(page)
-			searchParams.Type = tools.PtrOf(searchTypeDashboard)
+			if allTypes == false {
+				searchParams.Type = tools.PtrOf(searchTypeDashboard)
+			}
 
 			pageBoardLinks, err := s.GetClient().Search.Search(searchParams)
 			if err != nil {
@@ -257,7 +263,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 			continue
 		}
 		validUid = filterReq.GetFilter(filters.DashFilter) == "" || link.Slug == filterReq.GetFilter(filters.DashFilter)
-		if link.FolderID == 0 {
+		if link.FolderID == 0 && link.Type == "dash-db" {
 			link.FolderTitle = DefaultFolderName
 		}
 
@@ -284,9 +290,16 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 		metaData   *dashboards.GetDashboardByUIDOK
 	)
 
-	boardLinks = s.ListDashboards(filter)
+	var nesting = config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().DownloadNestedDashboardFolders
+	slog.Info("Downloading dashboards with ", "nested", nesting)
+	boardLinks = s.listDashboardsAndFolders(filter, nesting)
 	var boards []string
 	for _, link := range boardLinks {
+		if link.Type != "dash-db" {
+			slog.Debug("Ignoring dashboard-folder", "folder", link.Title)
+			continue
+		}
+
 		if metaData, err = s.GetClient().Dashboards.GetDashboardByUID(link.UID); err != nil {
 			slog.Error("unable to get Dashboard by UID", "err", err, "Dashboard-URI", link.URI)
 			continue
@@ -298,7 +311,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 			continue
 		}
 
-		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.FolderTitle, config.DashboardResource), metaData.Payload.Meta.Slug)
+		fileName := buildDashboardFileName(link, metaData.Payload.Meta.Slug, boardLinks)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.Payload.Meta.Slug)
 		} else {
@@ -307,6 +320,33 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 
 	}
 	return boards
+}
+
+func buildDashboardFileName(db *models.Hit, dbSlug string, boardLinks []*models.Hit) string {
+	folderPath := db.FolderTitle
+	currentFolderUid := db.FolderUID
+	for currentFolderUid != "" {
+		parent := findDashboardFolderByUID(currentFolderUid, boardLinks)
+		if parent != nil && parent.FolderUID != "" {
+			currentFolderUid = parent.FolderUID
+			folderPath = fmt.Sprintf("%s/%s", parent.FolderTitle, folderPath)
+		} else {
+			currentFolderUid = ""
+		}
+	}
+
+	fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderPath, config.DashboardResource), dbSlug)
+	return fileName
+}
+
+// nested folders don't have FolderID set - only FolderUID
+func findDashboardFolderByUID(uid string, boardLinks []*models.Hit) *models.Hit {
+	for _, entry := range boardLinks {
+		if entry.UID == uid {
+			return entry
+		}
+	}
+	return nil
 }
 
 // createFolder Creates a new folder with the given name.
