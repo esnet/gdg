@@ -216,7 +216,7 @@ func (s *DashNGoImpl) listDashboardsAndFolders(filterReq filters.Filter, allType
 			}
 			searchParams.Limit = tools.PtrOf(limit)
 			searchParams.Page = tools.PtrOf(page)
-			if allTypes == false {
+			if !allTypes {
 				searchParams.Type = tools.PtrOf(searchTypeDashboard)
 			}
 
@@ -263,7 +263,7 @@ func (s *DashNGoImpl) listDashboardsAndFolders(filterReq filters.Filter, allType
 			continue
 		}
 		validUid = filterReq.GetFilter(filters.DashFilter) == "" || link.Slug == filterReq.GetFilter(filters.DashFilter)
-		if link.FolderID == 0 && link.Type == "dash-db" {
+		if link.FolderID == 0 && string(link.Type) == searchTypeDashboard {
 			link.FolderTitle = DefaultFolderName
 		}
 
@@ -290,12 +290,12 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 		metaData   *dashboards.GetDashboardByUIDOK
 	)
 
-	var nesting = config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().DownloadNestedDashboardFolders
+	var nesting = config.Config().GetDefaultGrafanaConfig().DownloadNestedDashboardFolders
 	slog.Info("Downloading dashboards with ", "nested", nesting)
 	boardLinks = s.listDashboardsAndFolders(filter, nesting)
 	var boards []string
 	for _, link := range boardLinks {
-		if link.Type != "dash-db" {
+		if string(link.Type) != searchTypeDashboard {
 			slog.Debug("Ignoring dashboard-folder", "folder", link.Title)
 			continue
 		}
