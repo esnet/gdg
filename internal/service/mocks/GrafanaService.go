@@ -1509,6 +1509,51 @@ func (_c *GrafanaService_InitOrganizations_Call) RunAndReturn(run func()) *Grafa
 	return _c
 }
 
+// IsEnterprise provides a mock function with given fields:
+func (_m *GrafanaService) IsEnterprise() bool {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for IsEnterprise")
+	}
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func() bool); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
+// GrafanaService_IsEnterprise_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IsEnterprise'
+type GrafanaService_IsEnterprise_Call struct {
+	*mock.Call
+}
+
+// IsEnterprise is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) IsEnterprise() *GrafanaService_IsEnterprise_Call {
+	return &GrafanaService_IsEnterprise_Call{Call: _e.mock.On("IsEnterprise")}
+}
+
+func (_c *GrafanaService_IsEnterprise_Call) Run(run func()) *GrafanaService_IsEnterprise_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_IsEnterprise_Call) Return(_a0 bool) *GrafanaService_IsEnterprise_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *GrafanaService_IsEnterprise_Call) RunAndReturn(run func() bool) *GrafanaService_IsEnterprise_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // LintDashboards provides a mock function with given fields: req
 func (_m *GrafanaService) LintDashboards(req types.LintRequest) []string {
 	ret := _m.Called(req)
@@ -1605,19 +1650,19 @@ func (_c *GrafanaService_ListAPIKeys_Call) RunAndReturn(run func() []*models.API
 }
 
 // ListConnectionPermissions provides a mock function with given fields: filter
-func (_m *GrafanaService) ListConnectionPermissions(filter filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO {
+func (_m *GrafanaService) ListConnectionPermissions(filter filters.Filter) []internaltypes.ConnectionPermissionItem {
 	ret := _m.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListConnectionPermissions")
 	}
 
-	var r0 map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO
-	if rf, ok := ret.Get(0).(func(filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO); ok {
+	var r0 []internaltypes.ConnectionPermissionItem
+	if rf, ok := ret.Get(0).(func(filters.Filter) []internaltypes.ConnectionPermissionItem); ok {
 		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO)
+			r0 = ret.Get(0).([]internaltypes.ConnectionPermissionItem)
 		}
 	}
 
@@ -1642,12 +1687,12 @@ func (_c *GrafanaService_ListConnectionPermissions_Call) Run(run func(filter fil
 	return _c
 }
 
-func (_c *GrafanaService_ListConnectionPermissions_Call) Return(_a0 map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO) *GrafanaService_ListConnectionPermissions_Call {
+func (_c *GrafanaService_ListConnectionPermissions_Call) Return(_a0 []internaltypes.ConnectionPermissionItem) *GrafanaService_ListConnectionPermissions_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *GrafanaService_ListConnectionPermissions_Call) RunAndReturn(run func(filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO) *GrafanaService_ListConnectionPermissions_Call {
+func (_c *GrafanaService_ListConnectionPermissions_Call) RunAndReturn(run func(filters.Filter) []internaltypes.ConnectionPermissionItem) *GrafanaService_ListConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }

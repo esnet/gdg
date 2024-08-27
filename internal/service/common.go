@@ -14,7 +14,6 @@ import (
 
 var (
 	DefaultFolderName   = "General"
-	DefaultFolderId     = int64(0)
 	searchTypeDashboard = "dash-db"
 	searchTypeFolder    = "dash-folder"
 )
@@ -59,10 +58,10 @@ func BuildResourceFolder(folderName string, resourceType config.ResourceType) st
 	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
 	}
-	strSeperator := string(os.PathSeparator)
+	strSeparator := string(os.PathSeparator)
 
-	if strings.Contains(folderName, strSeperator) {
-		folderName = strings.ReplaceAll(folderName, strSeperator, fmt.Sprintf("//%s", strSeperator))
+	if strings.Contains(folderName, strSeparator) {
+		folderName = strings.ReplaceAll(folderName, strSeparator, fmt.Sprintf("//%s", strSeparator))
 	}
 	v := fmt.Sprintf("%s/%s", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
 	tools.CreateDestinationPath(v)

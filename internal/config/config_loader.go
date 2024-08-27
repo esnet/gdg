@@ -176,6 +176,14 @@ func (s *Configuration) IsDebug() bool {
 	return false
 }
 
+// IsApiDebug returns true if debug mode is enabled for APIs
+func (s *Configuration) IsApiDebug() bool {
+	if val := s.GetViperConfig(ViperGdgConfig); val != nil {
+		return val.GetBool("global.api_debug")
+	}
+	return false
+}
+
 // IgnoreSSL returns true if SSL errors should be ignored
 func (s *Configuration) IgnoreSSL() bool {
 	return s.GetViperConfig(ViperGdgConfig).GetBool("global.ignore_ssl_errors")

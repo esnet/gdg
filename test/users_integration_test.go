@@ -2,6 +2,8 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/pkg/test_tooling"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"os"
 	"testing"
 
@@ -9,13 +11,10 @@ import (
 )
 
 func TestUsers(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
 	apiClient.DeleteAllUsers(service.NewUserFilter("")) //clear any previous state
 	users := apiClient.ListUsers(service.NewUserFilter(""))
@@ -24,5 +23,19 @@ func TestUsers(t *testing.T) {
 	assert.Equal(t, adminUser.ID, int64(1))
 	assert.Equal(t, adminUser.Login, "admin")
 	assert.Equal(t, adminUser.IsAdmin, true)
+	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
+	assert.Equal(t, len(newUsers), 2)
+	users = apiClient.ListUsers(service.NewUserFilter(""))
+	assert.Equal(t, len(users), 3)
+	var user *models.UserSearchHitDTO
+	for ndx, userItem := range users {
+		if userItem.Name == "supertux" {
+			user = users[ndx]
+		}
+	}
+	assert.NotNil(t, user)
+	assert.Equal(t, user.Login, "tux")
+	assert.Equal(t, user.Email, "s@s.com")
+	assert.Equal(t, user.LastSeenAtAge, "10 years")
 
 }

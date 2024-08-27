@@ -3,20 +3,99 @@ package test
 import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
-
+	"github.com/esnet/gdg/internal/types"
+	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"log/slog"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConnectionsCRUD(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
+func TestConnectionPermissionsCrud(t *testing.T) {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
+		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, true)
+	defer cleanup()
+	//Upload all connections
+	filtersEntity := service.NewConnectionFilter("")
+	connectionsAdded := apiClient.UploadConnections(filtersEntity)
+	assert.Equal(t, len(connectionsAdded), 3)
+	//Upload all users
+	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
+	assert.Equal(t, len(newUsers), 2)
+	//Upload all teams
+	filter := service.NewTeamFilter("")
+	teams := apiClient.UploadTeams(filter)
+	assert.Equal(t, len(teams), 2)
+	//Get current Permissions
+	permissionFilters := service.NewConnectionFilter("")
+	currentPerms := apiClient.ListConnectionPermissions(permissionFilters)
+	assert.Equal(t, len(currentPerms), 3)
+	var entry *types.ConnectionPermissionItem
+	for ndx, item := range currentPerms {
+		if item.Connection.Name == "Google Sheets" {
+			entry = &currentPerms[ndx]
+			break
+		}
+	}
+	assert.NotNil(t, entry)
+	assert.Equal(t, len(entry.Permissions), 4)
 
-	apiClient, _, cleanup := initTest(t, nil)
+	removed := apiClient.DeleteAllConnectionPermissions(permissionFilters)
+	assert.Equal(t, len(removed), 3)
+	currentPerms = apiClient.ListConnectionPermissions(permissionFilters)
+	for ndx, item := range currentPerms {
+		if item.Connection.Name == "Google Sheets" {
+			entry = &currentPerms[ndx]
+			break
+		}
+	}
+	assert.Equal(t, 2, len(entry.Permissions))
+	updated := apiClient.UploadConnectionPermissions(permissionFilters)
+	assert.Equal(t, 3, len(updated))
+	currentPerms = apiClient.ListConnectionPermissions(permissionFilters)
+	for ndx, item := range currentPerms {
+		if item.Connection.Name == "Google Sheets" {
+			entry = &currentPerms[ndx]
+			break
+		}
+	}
+	assert.Equal(t, len(entry.Permissions), 7)
+	currentPerms = apiClient.ListConnectionPermissions(permissionFilters)
+	var foundTux, foundBob, foundTeam bool
+	for _, item := range entry.Permissions {
+		if item.UserLogin == "tux" {
+			foundTux = true
+			assert.Equal(t, item.Permission, "Admin")
+			assert.Equal(t, len(item.Actions), 8)
+			assert.True(t, strings.Contains(item.RoleName, "managed:users"))
+			assert.True(t, strings.Contains(item.RoleName, "permissions"))
+		} else if item.UserLogin == "bob" {
+			foundBob = true
+			assert.Equal(t, item.Permission, "Edit")
+			assert.Equal(t, len(item.Actions), 4)
+			assert.True(t, strings.Contains(item.RoleName, "managed:users"))
+			assert.True(t, strings.Contains(item.RoleName, "permissions"))
+		} else if item.Team == "musicians" {
+			foundTeam = true
+			assert.Equal(t, item.Permission, "Query")
+			assert.Equal(t, len(item.Actions), 2)
+			assert.True(t, strings.Contains(item.RoleName, "managed:teams"))
+			assert.True(t, strings.Contains(item.RoleName, "permissions"))
+		}
+	}
+	assert.True(t, foundTux)
+	assert.True(t, foundBob)
+	assert.True(t, foundTeam)
+
+}
+
+func TestConnectionsCRUD(t *testing.T) {
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {
@@ -55,7 +134,7 @@ func TestConnectionFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	_, _, cleanup := initTest(t, nil)
+	_, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {

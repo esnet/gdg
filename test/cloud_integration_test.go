@@ -1,7 +1,10 @@
 package test
 
 import (
+	"context"
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/pkg/test_tooling"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/stretchr/testify/assert"
 	_ "gocloud.dev/blob/memblob"
 	"log/slog"
@@ -10,11 +13,9 @@ import (
 )
 
 func TestCloudDataSourceCRUD(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-
-	apiClient, _, cleanup := initTest(t, nil)
+	assert.NoError(t, path.FixTestDir("test", ".."))
+	t.Log("Running Cloud Tests")
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {
@@ -28,8 +29,9 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	apiClient.UploadConnections(dsFilter)
 	dsList := apiClient.ListConnections(dsFilter)
 	assert.True(t, len(dsList) > 0)
-	SetupCloudFunction([]string{"s3", "testing"})
-	//SetupCloudFunction(apiClient, []string{"mem", "testing"})
+	_, cancel, apiClient, err := test_tooling.SetupCloudFunction([]string{"s3", "testing"})
+	assert.NoError(t, err)
+	defer cancel()
 
 	slog.Info("Importing DataSources")
 	dsStringList := apiClient.DownloadConnections(dsFilter) //Saving to S3
@@ -49,19 +51,12 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 // TestDashboardCloudCrud will load testing_data to Grafana from local context.  Switch to CLoud,
 // Save all data to Cloud, wipe grafana and reload data back into grafana and validate
 func TestDashboardCloudCRUD(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-	err := os.Setenv("GDG_CONTEXT_NAME", "testing")
-	assert.Nil(t, err, "Failed to set context name via env to testing")
-
-	apiClient, _, cleanup := initTest(t, nil)
-	defer func() {
-		cleanErr := cleanup()
-		if cleanErr != nil {
-			slog.Error("unable to clean up after test", slog.Any("err", cleanErr))
-		}
-	}()
+	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
+	assert.NoError(t, path.FixTestDir("test", ".."))
+	var err error
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	defer cleanup()
+	//defer cleanup, "Failed to cleanup test containers for %s", t.Name())
 	//Wipe all data from grafana
 	dashFilter := service.NewDashboardFilter("", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
@@ -69,8 +64,11 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	apiClient.UploadDashboards(dashFilter)
 	boards := apiClient.ListDashboards(dashFilter)
 	assert.True(t, len(boards) > 0)
+	var cancel context.CancelFunc
 
-	_, apiClient = SetupCloudFunction([]string{"s3", "testing"})
+	_, cancel, apiClient, err = test_tooling.SetupCloudFunction([]string{"s3", "testing"})
+	assert.NoError(t, err)
+	defer cancel()
 
 	//At this point all operations are reading/writing from Minio
 	slog.Info("Importing Dashboards")

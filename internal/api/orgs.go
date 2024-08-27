@@ -6,6 +6,7 @@ import (
 	"github.com/avast/retry-go"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -16,11 +17,16 @@ import (
 func (extended *ExtendedApi) GetConfiguredOrgId(orgName string) (int64, error) {
 	var result []*models.UserOrgDTO
 	fetch := func() error {
-		return extended.getRequestBuilder().
+		req := extended.getRequestBuilder().
 			Path("api/user/orgs").
 			ToJSON(&result).
-			Method(http.MethodGet).
-			Fetch(context.Background())
+			Method(http.MethodGet)
+
+		if extended.debug {
+			log.Printf("%v", req)
+		}
+
+		return req.Fetch(context.Background())
 	}
 
 	/* There's something goofy here.  This seems to fail sporadically in grafana if we keep swapping orgs too fast.

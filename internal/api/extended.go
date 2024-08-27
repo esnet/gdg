@@ -11,12 +11,14 @@ import (
 
 type ExtendedApi struct {
 	grafanaCfg *config.GrafanaConfig
+	debug      bool
 }
 
 func NewExtendedApi() *ExtendedApi {
-	cfg := config.Config().GetDefaultGrafanaConfig()
+	cfg := config.Config()
 	o := ExtendedApi{
-		grafanaCfg: cfg,
+		grafanaCfg: cfg.GetDefaultGrafanaConfig(),
+		debug:      cfg.IsApiDebug(),
 	}
 	return &o
 }

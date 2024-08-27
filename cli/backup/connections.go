@@ -131,12 +131,16 @@ func newListConnectionsCmd() simplecobra.Commander {
 				slog.Info("No connections found")
 			} else {
 				for _, link := range dsListing {
-					url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
-					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
+					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, getConnectionURL(link.UID)})
 				}
 				rootCmd.Render(cd.CobraCommand, dsListing)
 			}
 			return nil
 		},
 	}
+}
+
+func getConnectionURL(uid string) string {
+	url := config.Config().GetDefaultGrafanaConfig().URL
+	return fmt.Sprintf("%s/connections/datasources/edit/%s", url, uid)
 }

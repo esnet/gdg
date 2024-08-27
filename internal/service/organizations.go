@@ -119,11 +119,8 @@ func (s *DashNGoImpl) InitOrganizations() {
 			}
 		}
 
-	} else {
-		orgInfo = &models.OrgDetailsDTO{
-			Name: s.grafanaConf.GetOrganizationName(),
-		}
-
+	} else if s.grafanaConf.GetOrganizationName() != "unknown" {
+		slog.Warn("Tokens do no operate across multiple Organizations. Cannot verify or scope into the given org. Please be sure your token belongs to the correct organization", slog.String("configure organization", s.grafanaConf.GetOrganizationName()))
 	}
 
 	if s.grafanaConf.IsGrafanaAdmin() {

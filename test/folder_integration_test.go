@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/esnet/gdg/pkg/test_tooling"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +12,7 @@ func TestFolderCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)

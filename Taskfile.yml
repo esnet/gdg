@@ -111,7 +111,6 @@ tasks:
       - go test -v -coverpkg=./... -covermode=atomic -coverprofile=coverage.out  ./...
       - go tool cover -html=coverage.out
     env:
-      GRAFANA_INTEGRATION: "1"
       TEST_TOKEN_CONFIG: "0"
   test_tokens:
     desc: "test Token Based Only"
@@ -119,7 +118,6 @@ tasks:
       - go test -v -coverpkg=./... -covermode=atomic -coverprofile=coverage.out ./...
       - go tool cover -html=coverage.out
     env:
-      GRAFANA_INTEGRATION: "1"
       TEST_TOKEN_CONFIG: "1"
 
   vuln_check:

@@ -256,11 +256,11 @@ func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMe
 	if userDTO.Permission == AdminUserPermission {
 		adminPatch := teams.NewUpdateTeamMemberParams()
 		adminPatch.TeamID = fmt.Sprintf("%d", team.ID)
-		adminPatch.UserID = userDTO.UserID
+		adminPatch.UserID = user.ID
 		adminPatch.Body = &models.UpdateTeamMemberCommand{Permission: AdminUserPermission}
-		response, err := s.GetClient().Teams.UpdateTeamMember(adminPatch)
-		if err != nil {
-			return "", err
+		response, updateErr := s.GetClient().Teams.UpdateTeamMember(adminPatch)
+		if updateErr != nil {
+			return "", updateErr
 		}
 		slog.Debug("Updated permissions for user on team ", "username", userDTO.Name, "teamName", team.Name, "message", response.GetPayload().Message)
 	}

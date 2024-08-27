@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/slices"
@@ -19,7 +20,7 @@ func TestOrganizationCrud(t *testing.T) {
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
 	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter(), true)
 	assert.Equal(t, len(orgs), 1)
@@ -41,10 +42,10 @@ func TestOrganizationUserMembership(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
 	//Create Orgs in case they aren't already present.
 	apiClient.UploadOrganizations(service.NewOrganizationFilter())
@@ -57,7 +58,7 @@ func TestOrganizationUserMembership(t *testing.T) {
 	apiClient.UploadUsers(service.NewUserFilter(""))
 	// get users
 	users := apiClient.ListUsers(service.NewUserFilter(""))
-	assert.Equal(t, len(users), 2)
+	assert.Equal(t, len(users), 3)
 	var orgUser *models.UserSearchHitDTO
 	for _, u := range users {
 		if u.Login == "tux" {
@@ -94,10 +95,10 @@ func TestOrganizationProperties(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
 	apiClient.UploadDashboards(service.NewDashboardFilter("", "", ""))
 	defer apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))

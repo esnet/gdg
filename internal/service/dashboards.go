@@ -261,7 +261,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 			link.FolderTitle = DefaultFolderName
 		}
 
-		if validFolder && validUid {
+		if validUid {
 			deduplicatedLinks[link.ID] = boardLinks[ndx]
 		}
 	}
@@ -310,15 +310,15 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 }
 
 // createFolder Creates a new folder with the given name.
-func (s *DashNGoImpl) createdFolder(folderName string) (int64, error) {
+func (s *DashNGoImpl) createdFolder(folderName string) (string, error) {
 	request := &models.CreateFolderCommand{
 		Title: folderName,
 	}
 	folder, err := s.GetClient().Folders.CreateFolder(request)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	return folder.GetPayload().ID, nil
+	return folder.GetPayload().UID, nil
 
 }
 
@@ -329,7 +329,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 	var (
 		rawBoard   []byte
 		folderName string
-		folderId   int64
+		folderUid  string
 	)
 	path := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
 	filesInDir, err := s.storage.FindAllFiles(path, true)
@@ -339,7 +339,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 	//Delete all dashboards that match prior to import
 	s.DeleteAllDashboards(filterReq)
 
-	folderMap := getFolderNameIDMap(s.ListFolder(NewFolderFilter()))
+	folderUidMap := getFolderNameUIDMap(s.ListFolder(NewFolderFilter()))
 
 	// Fallback on defaults
 	if filterReq == nil {
@@ -397,7 +397,6 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 
 		if folderName == "" || folderName == DefaultFolderName {
-			folderId = DefaultFolderId
 			folderName = DefaultFolderName
 		}
 		if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
@@ -411,19 +410,20 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 
 		if folderName == DefaultFolderName {
-			folderId = DefaultFolderId
+			folderUid = ""
 		} else {
 
-			if val, ok := folderMap[folderName]; ok {
-				folderId = val
+			if val, ok := folderUidMap[folderName]; ok {
+				//folderId = val
+				folderUid = val
 			} else {
 				if filterReq.ValidateAll(validateMap) {
 					id, folderErr := s.createdFolder(folderName)
 					if folderErr != nil {
 						log.Panic("Unable to create required folder")
 					} else {
-						folderMap[folderName] = id
-						folderId = id
+						folderUidMap[folderName] = id
+						folderUid = id
 					}
 				}
 			}
@@ -439,7 +439,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		//zero out ID.  Can't create a new dashboard if an ID already exists.
 		delete(data, "id")
 		importDashReq := &models.ImportDashboardRequest{
-			FolderID:  folderId,
+			FolderUID: folderUid,
 			Overwrite: true,
 			Dashboard: data,
 		}

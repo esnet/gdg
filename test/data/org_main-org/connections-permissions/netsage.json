@@ -1,0 +1,82 @@
+{
+	"Connection": {
+		"access": "proxy",
+		"database": "om-netsage-irnc-*",
+		"id": 3,
+		"isDefault": true,
+		"jsonData": {
+			"esVersion": 70,
+			"keepCookies": [],
+			"logLevelField": "",
+			"logMessageField": "",
+			"maxConcurrentShardRequests": "256",
+			"timeField": "start"
+		},
+		"name": "netsage",
+		"orgId": 1,
+		"type": "elasticsearch",
+		"typeLogoUrl": "public/app/plugins/datasource/elasticsearch/img/elasticsearch.svg",
+		"typeName": "Elasticsearch",
+		"uid": "rg9qPqP7z",
+		"url": "https://netsage-elk1.grnoc.iu.edu/esproxy2/"
+	},
+	"Permissions": [
+		{
+			"actions": [
+				"datasources.permissions:write",
+				"datasources.caching:read",
+				"datasources.caching:write",
+				"datasources:read",
+				"datasources:query",
+				"datasources:write",
+				"datasources:delete",
+				"datasources.permissions:read"
+			],
+			"id": 584,
+			"isManaged": true,
+			"permission": "Admin",
+			"roleName": "managed:users:1:permissions",
+			"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"userId": 1,
+			"userLogin": "admin"
+		},
+		{
+			"actions": [
+				"datasources.permissions:write",
+				"datasources.caching:write",
+				"datasources:delete",
+				"datasources.permissions:read",
+				"datasources:write",
+				"datasources:query",
+				"datasources:read",
+				"datasources.caching:read"
+			],
+			"builtInRole": "Admin",
+			"id": 350,
+			"permission": "Admin",
+			"roleName": "basic:admin"
+		},
+		{
+			"actions": [
+				"datasources:read",
+				"datasources:query"
+			],
+			"builtInRole": "Viewer",
+			"id": 580,
+			"isManaged": true,
+			"permission": "Query",
+			"roleName": "managed:builtins:viewer:permissions"
+		},
+		{
+			"actions": [
+				"datasources:read",
+				"datasources:query"
+			],
+			"builtInRole": "Editor",
+			"id": 582,
+			"isManaged": true,
+			"permission": "Query",
+			"roleName": "managed:builtins:editor:permissions"
+		}
+	]
+}
