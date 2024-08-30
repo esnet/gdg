@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/esnet/gdg/internal/config"
+	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -45,8 +46,11 @@ func TestHitBehaviour(t *testing.T) {
 }
 
 func TestBuildDashboardFileName(t *testing.T) {
-	expectedResult := "test/data/org_main-org/dashboards/root/narf/zort.json"
-	expectedResultOther := "test/data/org_main-org/dashboards/root/poit.json"
+	config.InitGdgConfig("testing.yml", "'")
+	orgName := slug.Make(config.Config().GetDefaultGrafanaConfig().GetOrganizationName())
+
+	expectedResult := "test/data/org_" + orgName + "/dashboards/root/narf/zort.json"
+	expectedResultOther := "test/data/org_" + orgName + "/dashboards/root/poit.json"
 
 	rootFolder := createDummyFolder("root", 21, "x21", nil)
 	subFolder := createDummyFolder("narf", 23, "x23", rootFolder)
@@ -59,7 +63,6 @@ func TestBuildDashboardFileName(t *testing.T) {
 	boardList = append(boardList, subFolder)
 	boardList = append(boardList, dummyDashboard)
 
-	config.InitGdgConfig("testing.yml", "'")
 	result := buildDashboardFileName(dummyDashboard, "zort", boardList)
 	resultOther := buildDashboardFileName(dummyDashboardOther, "poit", boardList)
 
