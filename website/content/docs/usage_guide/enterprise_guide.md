@@ -6,15 +6,15 @@ The features listed below are for the enterprise edition of Grafana only.  They 
 
 In order to use these features you need.
 
-1. Update your context to enable enterprise features.  Simply add the following flag to your context.
+1. Have a running Enterprise version of grafana, I'll defer to the grafana community on instructions on how to set this up.
 
-`enterprise_support: true`
+For a docker setup, you need to set:
 
-2. Have a running Enterprise version of grafana, I'll defer to the grafana community on instructions on how to set this up.
+`GF_ENTERPRISE_LICENSE_TEXT='jwt token value'`
 
 ### Connections Permissions
 
-Note:  Available with +v0.4.6.  All of these commands are a subset of the connection command.
+Note:  Available with +v0.4.6.  All of these commands are a subset of the connection command.  Requires grafana version: +v10.2.3
 
 All commands can use `permission` or `p` to manage connection permissions.
 
@@ -29,12 +29,32 @@ You can additionally filter by connection slug in order to only operate on a sin
 
 `./bin/gdg c permission list --connection my-elastic-connection `
 
+
+{{< details "Permission Listing" >}}
 ```
-┌─────┬───────────┬──────────────────────────────────────────┬───────────────────────────────────────────────┬───────────────────────┬────────────────────────────────────────────┐
-│  ID │ UID       │ NAME                                     │ SLUG                     │ TYPE               │ DEFAULT               │ URL                                        │
-├─────┼───────────┼──────────────────────────────────────────┼──────────────────────────┼────────────────────┼───────────────────────┼────────────────────────────────────────────┤
-│ 712 │ t5xBsTQ4k │ My Elastic Connection                    │ my-elastic-connection    │  elasticsearch     │ false                 │ http://localhost:3000//datasource/edit/712 │
-│ 712 │ t5xBsTQ4k │     PERMISSION-->                        │ Edit                     │                    │ sa-gdg-authscope-test │                                            │
-│ 712 │ t5xBsTQ4k │     PERMISSION-->                        │ Query                    │                    │ authscope_team_arm    │                                            │
-└─────┴───────────┴──────────────────────────────────────────┴──────────────────────────┴────────────────────┴───────────────────────┴────────────────────────────────────────────┘
-````
+┌────┬───────────┬───────────────────┬───────────────┬─────────────────────────────────┬────────────────────────────────┬──────────────────────────────────────────────────────────────┐
+│ ID │ UID       │ NAME              │ SLUG          │ TYPE                            │ DEFAULT                        │ URL                                                          │
+├────┼───────────┼───────────────────┼───────────────┼─────────────────────────────────┼────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│  1 │ uL86Byf4k │ Google Sheets     │ google-sheets │ grafana-googlesheets-datasource │ false                          │ http://localhost:3000/connections/datasources/edit/uL86Byf4k │
+│  1 │ uL86Byf4k │     PERMISSION--> │ Admin         │ User                            │ user:admin                     │                                                              │
+│  1 │ uL86Byf4k │     PERMISSION--> │ Edit          │ User                            │ user:tux                       │                                                              │
+│  1 │ uL86Byf4k │     PERMISSION--> │ Query         │ User                            │ user:sa-1-test-service-account │                                                              │
+│  1 │ uL86Byf4k │     PERMISSION--> │ Query         │ Team                            │ team:engineers                 │                                                              │
+│  1 │ uL86Byf4k │     PERMISSION--> │ Admin         │ BuiltinRole                     │ builtInRole:Admin              │                                                              │
+│  1 │ uL86Byf4k │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Viewer             │                                                              │
+│  1 │ uL86Byf4k │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Editor             │                                                              │
+│  3 │ rg9qPqP7z │ netsage           │ netsage       │ elasticsearch                   │ true                           │ http://localhost:3000/connections/datasources/edit/rg9qPqP7z │
+│  3 │ rg9qPqP7z │     PERMISSION--> │ Admin         │ User                            │ user:admin                     │                                                              │
+│  3 │ rg9qPqP7z │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Editor             │                                                              │
+│  3 │ rg9qPqP7z │     PERMISSION--> │ Admin         │ BuiltinRole                     │ builtInRole:Admin              │                                                              │
+│  3 │ rg9qPqP7z │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Viewer             │                                                              │
+│  2 │ i6uqEqE7k │ Netsage TSDS      │ netsage-tsds  │ globalnoc-tsds-datasource       │ false                          │ http://localhost:3000/connections/datasources/edit/i6uqEqE7k │
+│  2 │ i6uqEqE7k │     PERMISSION--> │ Admin         │ User                            │ user:admin                     │                                                              │
+│  2 │ i6uqEqE7k │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Viewer             │                                                              │
+│  2 │ i6uqEqE7k │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Editor             │                                                              │
+│  2 │ i6uqEqE7k │     PERMISSION--> │ Admin         │ BuiltinRole                     │ builtInRole:Admin              │                                                              │
+└────┴───────────┴───────────────────┴───────────────┴─────────────────────────────────┴────────────────────────────────┴──────────────────────────────────────────────────────────────┘
+```
+{{< /details >}}
+
+

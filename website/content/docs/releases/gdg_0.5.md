@@ -10,7 +10,7 @@ toc: true
 
 ##  Release Notes for v0.5.2
 ### Changes
-- [#229](https://github.com/esnet/gdg/issues/229) Datasource auth has been moved to a file based configuration under secure/.  This allows for any number of secure values to be passed in.  Using the wizard for initial config is recommended, or see test data for some examples.
+  - [#229](https://github.com/esnet/gdg/issues/229) Datasource auth has been moved to a file based configuration under secure/.  This allows for any number of secure values to be passed in.  Using the wizard for initial config is recommended, or see test data for some examples.
   - [#168](https://github.com/esnet/gdg/issues/168) Introduced a new tool called gdg-generate which allows for templating of dashboards using go.tmpl syntax.
   - gdg context has been moved under tools.  ie. `gdg tools ctx` instead of `gdg ctx`
   - [#221](https://github.com/esnet/gdg/issues/221) Version check no longer requires a valid configuration
