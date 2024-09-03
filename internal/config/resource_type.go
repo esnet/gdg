@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"github.com/gosimple/slug"
 	"path"
+
+	"github.com/gosimple/slug"
 )
 
 type ResourceType string

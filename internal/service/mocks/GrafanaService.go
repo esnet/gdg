@@ -1793,68 +1793,20 @@ func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filters.Filt
 	return _c
 }
 
-// ListFolder provides a mock function with given fields: filter
-func (_m *GrafanaService) ListFolder(filter filters.Filter) []*models.Hit {
-	ret := _m.Called(filter)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ListFolder")
-	}
-
-	var r0 []*models.Hit
-	if rf, ok := ret.Get(0).(func(filters.Filter) []*models.Hit); ok {
-		r0 = rf(filter)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.Hit)
-		}
-	}
-
-	return r0
-}
-
-// GrafanaService_ListFolder_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListFolder'
-type GrafanaService_ListFolder_Call struct {
-	*mock.Call
-}
-
-// ListFolder is a helper method to define mock.On call
-//   - filter filters.Filter
-func (_e *GrafanaService_Expecter) ListFolder(filter interface{}) *GrafanaService_ListFolder_Call {
-	return &GrafanaService_ListFolder_Call{Call: _e.mock.On("ListFolder", filter)}
-}
-
-func (_c *GrafanaService_ListFolder_Call) Run(run func(filter filters.Filter)) *GrafanaService_ListFolder_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(filters.Filter))
-	})
-	return _c
-}
-
-func (_c *GrafanaService_ListFolder_Call) Return(_a0 []*models.Hit) *GrafanaService_ListFolder_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *GrafanaService_ListFolder_Call) RunAndReturn(run func(filters.Filter) []*models.Hit) *GrafanaService_ListFolder_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // ListFolderPermissions provides a mock function with given fields: filter
-func (_m *GrafanaService) ListFolderPermissions(filter filters.Filter) map[*models.Hit][]*models.DashboardACLInfoDTO {
+func (_m *GrafanaService) ListFolderPermissions(filter filters.Filter) map[*internaltypes.FolderDetails][]*models.DashboardACLInfoDTO {
 	ret := _m.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListFolderPermissions")
 	}
 
-	var r0 map[*models.Hit][]*models.DashboardACLInfoDTO
-	if rf, ok := ret.Get(0).(func(filters.Filter) map[*models.Hit][]*models.DashboardACLInfoDTO); ok {
+	var r0 map[*internaltypes.FolderDetails][]*models.DashboardACLInfoDTO
+	if rf, ok := ret.Get(0).(func(filters.Filter) map[*internaltypes.FolderDetails][]*models.DashboardACLInfoDTO); ok {
 		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[*models.Hit][]*models.DashboardACLInfoDTO)
+			r0 = ret.Get(0).(map[*internaltypes.FolderDetails][]*models.DashboardACLInfoDTO)
 		}
 	}
 
@@ -1879,12 +1831,60 @@ func (_c *GrafanaService_ListFolderPermissions_Call) Run(run func(filter filters
 	return _c
 }
 
-func (_c *GrafanaService_ListFolderPermissions_Call) Return(_a0 map[*models.Hit][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
+func (_c *GrafanaService_ListFolderPermissions_Call) Return(_a0 map[*internaltypes.FolderDetails][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *GrafanaService_ListFolderPermissions_Call) RunAndReturn(run func(filters.Filter) map[*models.Hit][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
+func (_c *GrafanaService_ListFolderPermissions_Call) RunAndReturn(run func(filters.Filter) map[*internaltypes.FolderDetails][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListFolders provides a mock function with given fields: filter
+func (_m *GrafanaService) ListFolders(filter filters.Filter) []*internaltypes.FolderDetails {
+	ret := _m.Called(filter)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListFolders")
+	}
+
+	var r0 []*internaltypes.FolderDetails
+	if rf, ok := ret.Get(0).(func(filters.Filter) []*internaltypes.FolderDetails); ok {
+		r0 = rf(filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*internaltypes.FolderDetails)
+		}
+	}
+
+	return r0
+}
+
+// GrafanaService_ListFolders_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListFolders'
+type GrafanaService_ListFolders_Call struct {
+	*mock.Call
+}
+
+// ListFolders is a helper method to define mock.On call
+//   - filter filters.Filter
+func (_e *GrafanaService_Expecter) ListFolders(filter interface{}) *GrafanaService_ListFolders_Call {
+	return &GrafanaService_ListFolders_Call{Call: _e.mock.On("ListFolders", filter)}
+}
+
+func (_c *GrafanaService_ListFolders_Call) Run(run func(filter filters.Filter)) *GrafanaService_ListFolders_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(filters.Filter))
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ListFolders_Call) Return(_a0 []*internaltypes.FolderDetails) *GrafanaService_ListFolders_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *GrafanaService_ListFolders_Call) RunAndReturn(run func(filters.Filter) []*internaltypes.FolderDetails) *GrafanaService_ListFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }

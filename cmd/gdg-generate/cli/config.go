@@ -2,11 +2,12 @@ package cli
 
 import (
 	"fmt"
+	"log"
+	"log/slog"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
-	"log"
-	"log/slog"
 )
 
 var showConfigCmd = &cobra.Command{

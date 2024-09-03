@@ -162,15 +162,24 @@ func newListDashboardsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "Tags", "URL"})
+			cfg := config.Config().GetDefaultGrafanaConfig()
+			if cfg.GetDashboardSettings().NestedFolders {
+				rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "NestedPath", "UID", "Tags", "URL"})
+			} else {
+				rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "UID", "Tags", "URL"})
+			}
 
 			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
 
-			slog.Info("Listing dashboards for context",
-				slog.String("context", GetContext()),
-				slog.String("orgName", GetOrganizationName()),
-				slog.Any("count", len(boards)))
+			printCount := func(count int) {
+				slog.Info("Listing dashboards for context",
+					slog.String("context", GetContext()),
+					slog.String("orgName", GetOrganizationName()),
+					slog.Any("count", count))
+			}
+			count := 0
+
 			for _, link := range boards {
 				base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().URL)
 				var baseHost string
@@ -181,6 +190,11 @@ func newListDashboardsCmd() simplecobra.Commander {
 					base.Path = ""
 					baseHost = base.String()
 				}
+				if string(link.Type) == service.SearchTypeFolder {
+					slog.Debug("skipping entry for", slog.Any("slug", link.Slug), slog.Any("url", fmt.Sprintf("%s/%s", baseHost, link.UID)), slog.Any("type", link.Type))
+					continue
+				}
+				count++
 				urlValue := fmt.Sprintf("%s%s", baseHost, link.URL)
 				var tagVal string
 				if len(link.Tags) > 0 {
@@ -190,12 +204,15 @@ func newListDashboardsCmd() simplecobra.Commander {
 					}
 				}
 
-				rootCmd.TableObj.AppendRow(table.Row{
-					link.ID, link.Title, link.Slug, link.FolderTitle,
-					link.UID, tagVal, urlValue,
-				})
+				baseRow := table.Row{link.ID, link.Title, link.Slug, link.FolderTitle}
+				if cfg.GetDashboardSettings().NestedFolders {
+					baseRow = append(baseRow, service.GetNestedFolder(link.FolderTitle, link.FolderUID, rootCmd.GrafanaSvc()))
+				}
+				baseRow = append(baseRow, table.Row{link.UID, tagVal, urlValue}...)
+				rootCmd.TableObj.AppendRow(baseRow)
 
 			}
+			printCount(count)
 			if len(boards) > 0 {
 				rootCmd.Render(cd.CobraCommand, boards)
 			} else {

@@ -3,15 +3,16 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"log"
 	"log/slog"
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/grafana/grafana-openapi-client-go/models"
+
 	"github.com/gosimple/slug"
-	"log"
 )
 
 // NewConnectionFilter
@@ -109,7 +110,6 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 
 	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource))
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource), false)
-
 	if err != nil {
 		slog.Error("failed to list files in directory for datasources", "err", err)
 	}
@@ -139,7 +139,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 
 			secureLocation := config.Config().GetDefaultGrafanaConfig().GetPath(config.SecureSecretsResource)
 			credentials, err := dsConfig.GetCredentials(newDS, secureLocation)
-			if err != nil { //Attempt to get Credentials by URL regex
+			if err != nil { // Attempt to get Credentials by URL regex
 				slog.Warn("DataSource has no secureData configured.  Please check your configuration.")
 			}
 
@@ -149,15 +149,15 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 			}
 
 			if credentials != nil {
-				//Sets basic auth if secureData contains it
+				// Sets basic auth if secureData contains it
 				if credentials.User() != "" && (*credentials)["basicAuthPassword"] != "" {
 					newDS.BasicAuthUser = credentials.User()
 					newDS.BasicAuth = true
 				}
-				//Pass any secure data that GDG is configured to use
+				// Pass any secure data that GDG is configured to use
 				newDS.SecureJSONData = *credentials
 			} else {
-				//if credentials are nil, then basicAuth has to be false
+				// if credentials are nil, then basicAuth has to be false
 				newDS.BasicAuth = false
 			}
 

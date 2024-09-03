@@ -3,6 +3,11 @@ package test_tooling
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"os"
+	"strings"
+	"testing"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -12,10 +17,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
 	"gopkg.in/yaml.v3"
-	"log/slog"
-	"os"
-	"strings"
-	"testing"
 )
 
 const (
@@ -25,22 +26,19 @@ const (
 	EnableTokenTestsEnv = "TEST_TOKEN_CONFIG"
 )
 
-func InitTest(t *testing.T, cfgName *string, useEnterprise bool) (service.GrafanaService, *viper.Viper, testcontainers.Container, func() error) {
+func InitTest(t *testing.T, cfgName *string, envProp map[string]string) (service.GrafanaService, *viper.Viper, testcontainers.Container, func() error) {
 	var (
-		additionalEnv map[string]string
-		suffix        string
-		err           error
+		suffix string
+		err    error
 	)
 
-	if useEnterprise {
-		additionalEnv, err = containers.SetupGrafanaLicense()
-		if err != nil {
-			slog.Error("no valid grafana license found, skipping enterprise tests")
-			t.Skip()
-		}
+	if len(envProp) == 0 {
+		envProp = containers.DefaultGrafanaEnv()
+	}
+	if _, ok := envProp[containers.EnterpriseLicenceKey]; ok {
 		suffix = "-enterprise"
 	}
-	localGrafanaContainer, cancel := containers.SetupGrafanaContainer(additionalEnv, "", suffix)
+	localGrafanaContainer, cancel := containers.SetupGrafanaContainer(envProp, "", suffix)
 	apiClient, v := CreateSimpleClient(t, cfgName, localGrafanaContainer)
 	noOp := func() error {
 		cancel()
@@ -56,7 +54,7 @@ func InitTest(t *testing.T, cfgName *string, useEnterprise bool) (service.Grafan
 	err = yaml.Unmarshal(testData, &data)
 	assert.Nil(t, err)
 
-	apiClient.DeleteAllTokens() //Remove any old data
+	apiClient.DeleteAllTokens() // Remove any old data
 	tokenName, _ := uuid.NewUUID()
 	newKey, err := apiClient.CreateAPIKey(tokenName.String(), "admin", 0)
 	assert.Nil(t, err)
@@ -75,7 +73,7 @@ func InitTest(t *testing.T, cfgName *string, useEnterprise bool) (service.Grafan
 	tokenCfg, err := os.CreateTemp("config", "token*.yml")
 	assert.Nil(t, err, "Unable to create token configuration file")
 	newCfg := tokenCfg.Name()
-	err = os.WriteFile(newCfg, updatedCfg, 0600)
+	err = os.WriteFile(newCfg, updatedCfg, 0o600)
 	assert.Nil(t, err)
 
 	cleanUp := func() error {
@@ -85,7 +83,6 @@ func InitTest(t *testing.T, cfgName *string, useEnterprise bool) (service.Grafan
 
 	apiClient, v = CreateSimpleClient(t, &newCfg, localGrafanaContainer)
 	return apiClient, v, localGrafanaContainer, cleanUp
-
 }
 
 func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.Container) (service.GrafanaService, *viper.Viper) {
@@ -106,7 +103,7 @@ func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.
 	config.InitGdgConfig(*cfgName, "'")
 	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	assert.NotNil(t, conf)
-	//Hack for Local testing
+	// Hack for Local testing
 	contextName := conf.GetString("context_name")
 	conf.Set(fmt.Sprintf("context.%s.url", contextName), grafanaHost)
 	assert.Equal(t, contextName, "testing")

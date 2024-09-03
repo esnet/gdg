@@ -1,15 +1,17 @@
 package test
 
 import (
-	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/types"
-	"github.com/esnet/gdg/pkg/test_tooling"
-	"github.com/grafana/grafana-openapi-client-go/models"
 	"log/slog"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/types"
+	"github.com/esnet/gdg/pkg/test_tooling"
+	"github.com/esnet/gdg/pkg/test_tooling/containers"
+	"github.com/grafana/grafana-openapi-client-go/models"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -18,20 +20,26 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, true)
+	props := containers.DefaultGrafanaEnv()
+	err := containers.SetupGrafanaLicense(&props)
+	if err != nil {
+		slog.Error("no valid grafana license found, skipping enterprise tests")
+		t.Skip()
+	}
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, props)
 	defer cleanup()
-	//Upload all connections
+	// Upload all connections
 	filtersEntity := service.NewConnectionFilter("")
 	connectionsAdded := apiClient.UploadConnections(filtersEntity)
 	assert.Equal(t, len(connectionsAdded), 3)
-	//Upload all users
+	// Upload all users
 	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(newUsers), 2)
-	//Upload all teams
+	// Upload all teams
 	filter := service.NewTeamFilter("")
 	teams := apiClient.UploadTeams(filter)
 	assert.Equal(t, len(teams), 2)
-	//Get current Permissions
+	// Get current Permissions
 	permissionFilters := service.NewConnectionFilter("")
 	currentPerms := apiClient.ListConnectionPermissions(permissionFilters)
 	assert.Equal(t, len(currentPerms), 3)
@@ -91,11 +99,10 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 	assert.True(t, foundTux)
 	assert.True(t, foundBob)
 	assert.True(t, foundTeam)
-
 }
 
 func TestConnectionsCRUD(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, containers.DefaultGrafanaEnv())
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {
@@ -117,7 +124,7 @@ func TestConnectionsCRUD(t *testing.T) {
 	}
 	assert.NotNil(t, dsItem)
 	validateConnection(t, *dsItem)
-	//Import Dashboards
+	// Import Dashboards
 	slog.Info("Importing connections")
 	list := apiClient.DownloadConnections(filtersEntity)
 	assert.Equal(t, len(list), len(dataSources))
@@ -134,7 +141,7 @@ func TestConnectionFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	_, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	_, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {
@@ -174,7 +181,7 @@ func TestConnectionFilter(t *testing.T) {
 	}
 	assert.NotNil(t, dsItem)
 	validateConnection(t, *dsItem)
-	//Import Dashboards
+	// Import Dashboards
 	slog.Info("Importing connections")
 	list := apiClient.DownloadConnections(filtersEntity)
 	assert.Equal(t, len(list), len(dataSources))
@@ -194,5 +201,4 @@ func validateConnection(t *testing.T, dsItem models.DataSourceListItemDTO) {
 	assert.Equal(t, "https://netsage-elk1.grnoc.iu.edu/esproxy2/", dsItem.URL)
 	assert.True(t, dsItem.BasicAuth)
 	assert.True(t, dsItem.IsDefault)
-
 }

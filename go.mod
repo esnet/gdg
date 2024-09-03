@@ -27,7 +27,6 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.33.0
-	github.com/thoas/go-funk v0.9.3
 	github.com/tidwall/gjson v1.17.3
 	github.com/tidwall/pretty v1.2.1
 	github.com/zeitlinger/conflate v0.0.0-20230622100834-279724abda8c

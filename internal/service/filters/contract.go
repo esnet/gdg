@@ -3,15 +3,15 @@ package filters
 import "regexp"
 
 type Filter interface {
-	//Regex Tooling
+	// Regex Tooling
 	AddRegex(FilterType, *regexp.Regexp)
-	//Entity filterMap
+	// Entity filterMap
 	GetEntity(FilterType) []string   // Returns slice of filter values or default value from Config
-	GetFilter(key FilterType) string //Get the Filter value
-	//FilterValid(key FilterType, value string) bool //true if filter match
-	AddFilter(key FilterType, value string) //Add a filter to match against for a given type
+	GetFilter(key FilterType) string // Get the Filter value
+	// FilterValid(key FilterType, value string) bool //true if filter match
+	AddFilter(key FilterType, value string) // Add a filter to match against for a given type
 
-	ValidateAll(interface{}) bool //ValidateAll if Entry is valid
+	ValidateAll(interface{}) bool // ValidateAll if Entry is valid
 	InvokeValidation(FilterType, interface{}) bool
 	AddValidation(FilterType, func(interface{}) bool)
 }

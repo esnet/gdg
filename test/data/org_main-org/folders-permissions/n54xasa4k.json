@@ -1,0 +1,41 @@
+[
+	{
+		"created": "2024-09-10T17:44:31.000Z",
+		"folderId": 1,
+		"isFolder": true,
+		"permission": 4,
+		"permissionName": "Admin",
+		"title": "Ignored",
+		"uid": "N54xASa4k",
+		"updated": "2024-09-10T17:44:31.000Z",
+		"url": "/dashboards/f/N54xASa4k/ignored",
+		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+		"userEmail": "admin@localhost",
+		"userId": 1,
+		"userLogin": "admin"
+	},
+	{
+		"created": "2024-09-10T17:44:31.000Z",
+		"folderId": 1,
+		"isFolder": true,
+		"permission": 2,
+		"permissionName": "Edit",
+		"role": "Editor",
+		"title": "Ignored",
+		"uid": "N54xASa4k",
+		"updated": "2024-09-10T17:44:31.000Z",
+		"url": "/dashboards/f/N54xASa4k/ignored"
+	},
+	{
+		"created": "2024-09-10T17:44:31.000Z",
+		"folderId": 1,
+		"isFolder": true,
+		"permission": 1,
+		"permissionName": "View",
+		"role": "Viewer",
+		"title": "Ignored",
+		"uid": "N54xASa4k",
+		"updated": "2024-09-10T17:44:31.000Z",
+		"url": "/dashboards/f/N54xASa4k/ignored"
+	}
+]

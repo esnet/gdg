@@ -2,14 +2,15 @@ package service
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/internal/types"
+	"log"
 	"log/slog"
+
+	"github.com/esnet/gdg/internal/types"
 
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/grafana/grafana-openapi-client-go/client/service_accounts"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
-	"log"
 )
 
 func (s *DashNGoImpl) CreateServiceAccount(name, role string, expiration int64) (*models.ServiceAccountDTO, error) {
@@ -21,7 +22,6 @@ func (s *DashNGoImpl) CreateServiceAccount(name, role string, expiration int64) 
 	data, err := s.GetClient().ServiceAccounts.CreateServiceAccount(p)
 	if err != nil {
 		log.Fatalf("unable to create a service request, serviceName: %s, role: %s", name, role)
-
 	}
 
 	return data.GetPayload(), nil
@@ -37,7 +37,6 @@ func (s *DashNGoImpl) CreateServiceAccountToken(serviceAccountId int64, name str
 	token, err := s.GetClient().ServiceAccounts.CreateToken(p)
 	if err != nil {
 		log.Fatalf("unable to create token '%s' for service account ID: %d, err: %v", name, serviceAccountId, err)
-
 	}
 
 	return token.GetPayload(), nil
@@ -66,7 +65,6 @@ func (s *DashNGoImpl) ListServiceAccounts() []*types.ServiceAccountDTOWithTokens
 				slog.Warn("failed to retrieve tokens for service account", "serviceAccountId", item.ServiceAccount.ID)
 			}
 		}
-
 	}
 
 	return result

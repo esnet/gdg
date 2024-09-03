@@ -3,12 +3,13 @@ package test_tooling
 import (
 	"context"
 	"fmt"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"log"
 	"log/slog"
 	"os"
+
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/pkg/test_tooling/containers"
 )
 
 func SetupCloudFunction(params []string) (context.Context, context.CancelFunc, service.GrafanaService, error) {
@@ -28,7 +29,7 @@ func SetupCloudFunction(params []string) (context.Context, context.CancelFunc, s
 	}
 	minioHost := fmt.Sprintf("http://%s", actualPort)
 	slog.Info("Minio container is up and running", slog.Any("hostname", fmt.Sprintf("http://%s", wwwPort)))
-	var m = map[string]string{
+	m := map[string]string{
 		service.InitBucket: "true",
 		service.CloudType:  params[0],
 		service.Prefix:     "dummy",

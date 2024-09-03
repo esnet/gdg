@@ -26,7 +26,7 @@ func DeepCopy[T any](value T) (*T, error) {
 
 // CreateDestinationPath Handle osMkdir Errors
 func CreateDestinationPath(v string) {
-	err := os.MkdirAll(v, 0750)
+	err := os.MkdirAll(v, 0o750)
 	if err != nil {
 		log.Fatalf("unable to create path %s, err: %s", v, err.Error())
 	}

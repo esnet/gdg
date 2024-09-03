@@ -2,11 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/spf13/cobra"
 	"log"
 	"log/slog"
 	"os"
+
+	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/spf13/cobra"
 )
 
 var tplCmd = &cobra.Command{

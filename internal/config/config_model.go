@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/grafana/grafana-openapi-client-go/models"
-	"github.com/tidwall/gjson"
 	"log/slog"
 	"regexp"
+
+	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/tidwall/gjson"
 )
 
 // FiltersEnabled returns true if the filters are enabled for the resource type
@@ -22,10 +23,10 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 		slog.Warn("Unable to marshall Connection, unable to fetch credentials")
 		return nil, fmt.Errorf("unable to marshall Connection, unable to fetch credentials")
 	}
-	//Get SecureData based on New Matching Rules
+	// Get SecureData based on New Matching Rules
 	parser := gjson.ParseBytes(data)
 	for _, entry := range ds.MatchingRules {
-		//Check Rules
+		// Check Rules
 		valid := true
 		for _, rule := range entry.Rules {
 			fieldObject := parser.Get(rule.Field)
@@ -62,7 +63,7 @@ func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
 		return true
 	}
 
-	//Since filters are always converted only check we need should be this one.
+	// Since filters are always converted only check we need should be this one.
 	if ds.FilterRules != nil {
 		for _, field := range ds.FilterRules {
 
@@ -78,7 +79,7 @@ func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
 				return true
 			}
 			match := p.Match([]byte(fieldValue))
-			//If inclusive, then the boolean is flipped
+			// If inclusive, then the boolean is flipped
 			if field.Inclusive {
 				match = !match
 			}
@@ -89,7 +90,13 @@ func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
 	}
 
 	return false
+}
 
+func (s *GrafanaConfig) GetDashboardSettings() *DashboardSettings {
+	if s.DashboardSettings == nil {
+		s.DashboardSettings = new(DashboardSettings)
+	}
+	return s.DashboardSettings
 }
 
 // GetFilterOverrides returns the filter overrides for the connection
@@ -120,7 +127,7 @@ func (s *GrafanaConfig) GetUserSettings() *UserSettings {
 			RandomPassword: false,
 		}
 	}
-	//Set default values if none are set
+	// Set default values if none are set
 	if s.UserSettings.MinLength == 0 {
 		s.UserSettings.MinLength = minPasswordLength
 	}
@@ -157,7 +164,6 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 
 // Validate will return terminate if any deprecated configuration is found.
 func (s *GrafanaConfig) Validate() {
-
 }
 
 // IsGrafanaAdmin returns true if the admin is set, represents a GrafanaAdmin

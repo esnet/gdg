@@ -2,14 +2,15 @@ package service
 
 import (
 	"crypto/tls"
-	"github.com/esnet/gdg/internal/api"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/go-openapi/strfmt"
-	"github.com/grafana/grafana-openapi-client-go/models"
 	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
+
+	"github.com/esnet/gdg/internal/api"
+	"github.com/esnet/gdg/internal/config"
+	"github.com/go-openapi/strfmt"
+	"github.com/grafana/grafana-openapi-client-go/models"
 
 	"github.com/grafana/grafana-openapi-client-go/client"
 )

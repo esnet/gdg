@@ -1,21 +1,20 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"log/slog"
+	"path/filepath"
+	"strings"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	"log/slog"
 
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/maps"
-	"strings"
-
-	"encoding/json"
-	"path/filepath"
-
-	"log"
 )
 
 type UserPermission models.PermissionType
@@ -54,14 +53,14 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
 	teamPath := BuildResourceFolder("", config.TeamResource)
 	for ndx, team := range teamListing {
-		//Teams
+		// Teams
 		teamFileName := filepath.Join(teamPath, GetSlug(team.Name), "team.json")
 		teamData, err := json.MarshalIndent(&teamListing[ndx], "", "\t")
 		if err != nil {
 			slog.Error("could not serialize team object for team name", "teamName", team.Name)
 			continue
 		}
-		//Members
+		// Members
 		memberFileName := filepath.Join(teamPath, GetSlug(team.Name), "members.json")
 		members, err := s.GetClient().Teams.GetTeamMembers(fmt.Sprintf("%d", team.ID))
 		if err != nil {
@@ -73,7 +72,7 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][
 			slog.Error("could not serialize team members object for team name", "teamName", team.Name)
 			continue
 		}
-		//Writing Files
+		// Writing Files
 		if err = s.storage.WriteFile(teamFileName, teamData); err != nil {
 			slog.Error("could not write file", "teamName", team.Name, "err", err)
 		} else if err = s.storage.WriteFile(memberFileName, membersData); err != nil {
@@ -92,14 +91,14 @@ func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*
 		slog.Error("failed to list files in directory for teams", "err", err)
 	}
 	exportedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
-	//Clear previous data.
+	// Clear previous data.
 	_, err = s.DeleteTeam(filter)
 	if err != nil {
 		log.Fatalf("Failed to clear previous data, aborting")
 	}
 	for _, fileLocation := range filesInDir {
 		if strings.HasSuffix(fileLocation, "team.json") {
-			//Export Team
+			// Export Team
 			var rawTeam []byte
 			if rawTeam, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
@@ -120,7 +119,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*
 			}
 
 			newTeam.ID = teamCreated.GetPayload().TeamID
-			//Export Team Members (if exist)
+			// Export Team Members (if exist)
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
 

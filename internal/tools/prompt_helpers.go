@@ -31,7 +31,7 @@ func GetUserConfirmation(msg, error string, terminate bool) bool {
 			slog.Error("Invalid response, please try again.  Only [yes/no] are supported")
 			continue
 		}
-		//Validate Response
+		// Validate Response
 		if ans[0] != 'y' && terminate {
 			log.Fatal(error)
 		} else if ans[0] != 'y' {
@@ -39,5 +39,4 @@ func GetUserConfirmation(msg, error string, terminate bool) bool {
 		}
 		return true
 	}
-
 }

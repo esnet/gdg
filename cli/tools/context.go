@@ -4,21 +4,24 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+	"strings"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"log/slog"
 
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 func newContextCmd() simplecobra.Commander {
 	v := &support.SimpleCommand{
 		NameP: "contexts",
-		CommandsList: []simplecobra.Commander{newContextClearCmd(), newListContextCmd(),
-			newContextCopy(), newShowContext(), newDeleteContext(), newContext(), newSetContext()},
+		CommandsList: []simplecobra.Commander{
+			newContextClearCmd(), newListContextCmd(),
+			newContextCopy(), newShowContext(), newDeleteContext(), newContext(), newSetContext(),
+		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
@@ -93,7 +96,6 @@ func newContextCopy() simplecobra.Commander {
 	}
 
 	return v
-
 }
 
 func newShowContext() simplecobra.Commander {
@@ -131,7 +133,6 @@ func newDeleteContext() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }
 
 func newContext() simplecobra.Commander {

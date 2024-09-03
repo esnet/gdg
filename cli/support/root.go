@@ -5,18 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/bep/simplecobra"
 	appconfig "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log"
-	"os"
 )
 
-var (
-	DefaultConfig string
-)
+var DefaultConfig string
 
 // RootCommand struct wraps the root command and supporting services needed
 type RootCommand struct {
@@ -48,7 +47,6 @@ func (cmd *RootCommand) Render(command *cobra.Command, data interface{}) {
 	} else {
 		cmd.TableObj.Render()
 	}
-
 }
 
 // RootOption used to configure the Root Command struct
@@ -82,7 +80,6 @@ func (c *RootCommand) PreRun(this, runner *simplecobra.Commandeer) error {
 // initConfiguration Loads configuration, and setups fail over case
 func (c *RootCommand) initConfiguration() {
 	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, false)
-
 }
 
 // Name returns the cli command name

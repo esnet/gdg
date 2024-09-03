@@ -2,6 +2,7 @@ package backup
 
 import (
 	"context"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
@@ -36,7 +37,6 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 			newUsersCommand(),
 		},
 	}
-
 }
 
 // GetOrganizationName wrapper for verbose version below.

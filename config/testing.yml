@@ -4,7 +4,6 @@ context_name: testing
 contexts:
   testing:
     output_path: test/data
-    enterprise_support: true
     connections:
       credential_rules:
         - rules:
@@ -21,7 +20,10 @@ contexts:
     user_name: admin
     organization_name: Main Org.
     password: admin
-    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    filter_override:
+      ignore_dashboard_filters: false
+    dashboard_settings:
+      nested_folders: false
     watched:
       - General
       - Other
@@ -42,8 +44,9 @@ contexts:
     url: https://grafana.com
     user_name: admin
     password: admin
+    dashboard_settings:
+      nested_folders: false
     organization_name: Your Org
-    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
       - General
   qa:
@@ -66,14 +69,15 @@ contexts:
           secure_data: "default.json"
     url: https://staging.grafana.com
     organization_name: Your Org
-    ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    dashboard_settings:
+      nested_folders: false
     watched:
       - Folder1
       - Folder2
 
 
 global:
-  debug: true
+  debug: false
   api_debug: false
   ignore_ssl_errors: false ##when set to true will ignore invalid SSL errors
   retry_count: 1 ## Will retry any failed API request up to 3 times.

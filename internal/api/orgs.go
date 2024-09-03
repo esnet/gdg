@@ -3,13 +3,14 @@ package api
 import (
 	"context"
 	"errors"
-	"github.com/avast/retry-go"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/grafana/grafana-openapi-client-go/models"
 	"log"
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/avast/retry-go"
+	"github.com/esnet/gdg/internal/config"
+	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
 // GetConfiguredOrgId needed to call grafana API in order to configure the Grafana API correctly.  Invoking
@@ -35,7 +36,7 @@ func (extended *ExtendedApi) GetConfiguredOrgId(orgName string) (int64, error) {
 	*/
 	delay := time.Second * 5
 	var count uint = 5
-	//Giving user configured value preference over defaults
+	// Giving user configured value preference over defaults
 	if config.Config().GetGDGConfig().GetAppGlobals().RetryCount != 0 {
 		count = uint(config.Config().GetGDGConfig().GetAppGlobals().RetryCount) // #nosec G115
 	}
@@ -50,7 +51,6 @@ func (extended *ExtendedApi) GetConfiguredOrgId(orgName string) (int64, error) {
 				slog.String("orgName", orgName),
 				slog.Any("err", err))
 		}))
-
 	if err != nil {
 		return 0, err
 	}

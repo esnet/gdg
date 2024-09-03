@@ -1,19 +1,20 @@
 package templating
 
 import (
+	"os"
+	"slices"
+	"strings"
+	"testing"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
-	"os"
-	"slices"
-	"strings"
-	"testing"
 )
 
 func TestGenerate(t *testing.T) {
-	//Setup
+	// Setup
 	dir, err := os.Getwd()
 	assert.Nil(t, err)
 	if strings.Contains(dir, "templating") {
@@ -28,13 +29,13 @@ func TestGenerate(t *testing.T) {
 	generatedFiles := data["template_example"]
 	assert.True(t, slices.Contains(generatedFiles, "test/data/org_main-org/dashboards/General/testing-foobar.json"))
 	assert.True(t, slices.Contains(generatedFiles, "test/data/org_some-other-org/dashboards/Testing/template_example.json"))
-	//Remove output to avoid conflicting with other tests
+	// Remove output to avoid conflicting with other tests
 	defer func() {
 		os.Remove(generatedFiles[0])
 		os.Remove(generatedFiles[1])
 	}()
 
-	//Obtain first Config and validate output.
+	// Obtain first Config and validate output.
 	cfg := config.Config().GetTemplateConfig()
 	templateCfg := cfg.Entities.Dashboards[0].DashboardEntities[0]
 	rawData, err := os.ReadFile("test/data/org_main-org/dashboards/General/testing-foobar.json")
@@ -55,5 +56,4 @@ func TestGenerate(t *testing.T) {
 		assert.True(t, strings.Contains(val.String(), entry.String()))
 
 	}
-
 }

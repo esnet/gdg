@@ -2,13 +2,14 @@ package backup
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"log/slog"
 
 	"github.com/spf13/cobra"
 )
@@ -20,7 +21,6 @@ func getFolderFilter() filters.Filter {
 		return nil
 	}
 	return service.NewFolderFilter()
-
 }
 
 func newFolderCommand() simplecobra.Commander {
@@ -30,7 +30,7 @@ func newFolderCommand() simplecobra.Commander {
 		Short: description,
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
-			cmd.Aliases = []string{"fld", "folder"}
+			cmd.Aliases = []string{"fld", "folder", "f"}
 			cmd.PersistentFlags().BoolVar(&useFolderFilters, "use-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
@@ -44,7 +44,6 @@ func newFolderCommand() simplecobra.Commander {
 			newFolderUploadCmd(),
 		},
 	}
-
 }
 
 func newFolderClearCmd() simplecobra.Commander {
@@ -85,14 +84,24 @@ func newFolderListCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
-			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "title"})
-			folders := rootCmd.GrafanaSvc().ListFolder(getFolderFilter())
+			cfg := config.Config().GetDefaultGrafanaConfig()
+			if cfg.GetDashboardSettings().NestedFolders {
+				rootCmd.TableObj.AppendHeader(table.Row{"uid", "title", "nestedPath"})
+			} else {
+				rootCmd.TableObj.AppendHeader(table.Row{"uid", "title"})
+			}
+			folders := rootCmd.GrafanaSvc().ListFolders(getFolderFilter())
 
 			if len(folders) == 0 {
 				slog.Info("No folders found")
 			} else {
 				for _, folder := range folders {
-					rootCmd.TableObj.AppendRow(table.Row{folder.ID, folder.UID, folder.Title})
+					row := table.Row{folder.UID, folder.Title}
+					if cfg.GetDashboardSettings().NestedFolders {
+						row = append(row, folder.NestedPath)
+					}
+
+					rootCmd.TableObj.AppendRow(row)
 				}
 				rootCmd.Render(cd.CobraCommand, folders)
 			}
@@ -100,6 +109,7 @@ func newFolderListCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newFolderDownloadCmd() simplecobra.Commander {
 	description := "Download Folders from grafana"
 	return &support.SimpleCommand{
@@ -125,6 +135,7 @@ func newFolderDownloadCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newFolderUploadCmd() simplecobra.Commander {
 	description := "upload Folders to grafana"
 	return &support.SimpleCommand{

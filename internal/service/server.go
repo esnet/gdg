@@ -16,5 +16,4 @@ func (s *DashNGoImpl) GetServerInfo() map[string]interface{} {
 	result["Version"] = t.Version
 
 	return result
-
 }

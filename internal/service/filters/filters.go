@@ -2,12 +2,13 @@ package filters
 
 import (
 	"encoding/json"
-	"github.com/esnet/gdg/internal/config"
 	"log/slog"
-
-	"github.com/thoas/go-funk"
 	"regexp"
 	"strings"
+
+	"github.com/esnet/gdg/internal/config"
+	"github.com/samber/lo"
+	"golang.org/x/exp/maps"
 )
 
 // FilterType Currently supported filters
@@ -62,7 +63,7 @@ func (s *BaseFilter) getEntities(name FilterType, defaultVal []string) []string 
 		return defaultVal
 	}
 	entityFilter := s.GetFilter(name)
-	//regex
+	// regex
 	if s.getRegex(name) != nil {
 		entityFilter = s.getRegex(name).ReplaceAllString(entityFilter, "")
 	}
@@ -90,7 +91,6 @@ func (s *BaseFilter) GetEntity(name FilterType) []string {
 	default:
 		return defaultResponse
 	}
-
 }
 
 func (s *BaseFilter) AddValidation(name FilterType, f func(interface{}) bool) {
@@ -99,7 +99,6 @@ func (s *BaseFilter) AddValidation(name FilterType, f func(interface{}) bool) {
 	}
 
 	s.validationMethods[name] = f
-
 }
 
 func (s *BaseFilter) InvokeValidation(name FilterType, i interface{}) bool {
@@ -127,8 +126,11 @@ func (s *BaseFilter) ValidateAll(items interface{}) bool {
 
 // GetTypes returns all the current keys for the configured Filter
 func (s *BaseFilter) GetTypes() []string {
-	keys := funk.Keys(s.filterMap)
-	return keys.([]string)
+	keys := maps.Keys(s.filterMap)
+	stringKeys := lo.Map(keys, func(item FilterType, index int) string {
+		return string(item)
+	})
+	return stringKeys
 }
 
 // GetFilter returns the value of the filter

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/version"

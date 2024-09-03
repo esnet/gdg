@@ -108,7 +108,7 @@ func (s *Configuration) NewContext(name string) {
 		}
 
 		location := filepath.Join(answers.OutputPath, string(SecureSecretsResource))
-		err = os.MkdirAll(location, 0750)
+		err = os.MkdirAll(location, 0o750)
 		if err != nil {
 			log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
 		}
@@ -117,7 +117,7 @@ func (s *Configuration) NewContext(name string) {
 			log.Fatalf("unable to turn map into json representation.  location: %s, %v", location, err)
 		}
 		secretFileLocation := filepath.Join(location, "default.json")
-		err = os.WriteFile(secretFileLocation, data, 0600)
+		err = os.WriteFile(secretFileLocation, data, 0o600)
 		if err != nil {
 			log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
 		}

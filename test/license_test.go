@@ -1,17 +1,25 @@
 package test
 
 import (
-	"github.com/esnet/gdg/pkg/test_tooling"
-	"github.com/stretchr/testify/assert"
+	"log/slog"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling"
+	"github.com/esnet/gdg/pkg/test_tooling/containers"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLicenseEnterpriseCheck(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer cleanup()
 	assert.False(t, apiClient.IsEnterprise())
-	enterpriseClient, _, _, enterpriseCleanup := test_tooling.InitTest(t, nil, true)
+	props := containers.DefaultGrafanaEnv()
+	err := containers.SetupGrafanaLicense(&props)
+	if err != nil {
+		slog.Error("no valid grafana license found, skipping enterprise tests")
+		t.Skip()
+	}
+	enterpriseClient, _, _, enterpriseCleanup := test_tooling.InitTest(t, nil, props)
 	defer enterpriseCleanup()
 	assert.True(t, enterpriseClient.IsEnterprise())
-
 }

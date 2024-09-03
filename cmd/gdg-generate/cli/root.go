@@ -1,14 +1,15 @@
 package cli
 
 import (
+	"log"
+	"log/slog"
+	"os"
+
 	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/config"
 	appconfig "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/templating"
 	"github.com/spf13/cobra"
-	"log"
-	"log/slog"
-	"os"
 )
 
 var (

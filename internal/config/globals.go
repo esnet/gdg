@@ -36,5 +36,4 @@ func (app *AppGlobals) GetRetryTimeout() time.Duration {
 	}
 
 	return *app.retryTimeout
-
 }

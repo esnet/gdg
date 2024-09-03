@@ -2,12 +2,13 @@ package service
 
 import (
 	"context"
-	"github.com/esnet/gdg/internal/api"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/spf13/viper"
 	"log/slog"
 	"os"
 	"sync"
+
+	"github.com/esnet/gdg/internal/api"
+	"github.com/esnet/gdg/internal/config"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -61,7 +62,7 @@ func (s *DashNGoImpl) SetStorage(v Storage) {
 }
 
 func configureStorage(obj *DashNGoImpl) {
-	//config
+	// config
 	storageType, appData := config.Config().GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
 
 	var err error
@@ -82,7 +83,7 @@ func configureStorage(obj *DashNGoImpl) {
 }
 
 func NewApiService(override ...string) GrafanaService {
-	//Used for Testing purposes
+	// Used for Testing purposes
 	if len(override) > 0 {
 		return newInstance()
 	}

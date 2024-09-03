@@ -2,14 +2,15 @@ package backup
 
 import (
 	"context"
+	"log"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log"
-	"log/slog"
 )
 
 func newLibraryElementsCommand() simplecobra.Commander {
@@ -44,23 +45,22 @@ func newLibraryElementsClearCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			//filter := getLibraryGlobalFlags(cli)
-			deletedLibrarys := rootCmd.GrafanaSvc().DeleteAllLibraryElements(nil)
+			deletedLibraries := rootCmd.GrafanaSvc().DeleteAllLibraryElements(nil)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
-			for _, file := range deletedLibrarys {
+			for _, file := range deletedLibraries {
 				rootCmd.TableObj.AppendRow(table.Row{"library", file})
 			}
-			if len(deletedLibrarys) == 0 {
+			if len(deletedLibraries) == 0 {
 				slog.Info("No library were found.  0 libraries removed")
-
 			} else {
-				slog.Info("libraries were deleted", "count", len(deletedLibrarys))
-				rootCmd.Render(cd.CobraCommand, deletedLibrarys)
+				slog.Info("libraries were deleted", "count", len(deletedLibraries))
+				rootCmd.Render(cd.CobraCommand, deletedLibraries)
 			}
 			return nil
 		},
 	}
 }
+
 func newLibraryElementsListCmd() simplecobra.Commander {
 	description := "List all library Elements"
 	return &support.SimpleCommand{
@@ -78,7 +78,6 @@ func newLibraryElementsListCmd() simplecobra.Commander {
 			slog.Info("Listing library for context", "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range elements {
 				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Meta.FolderName, link.Name, link.Type})
-
 			}
 			if len(elements) > 0 {
 				rootCmd.Render(cd.CobraCommand, elements)
@@ -90,6 +89,7 @@ func newLibraryElementsListCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newLibraryElementsDownloadCmd() simplecobra.Commander {
 	description := "Download all library from grafana to local file system"
 	return &support.SimpleCommand{
@@ -111,6 +111,7 @@ func newLibraryElementsDownloadCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newLibraryElementsUploadCmd() simplecobra.Commander {
 	description := "upload all library to grafana"
 	return &support.SimpleCommand{

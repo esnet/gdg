@@ -2,12 +2,13 @@ package tools
 
 import (
 	"context"
+	"log"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log"
-	"log/slog"
 )
 
 func newOrgPreferenceCommand() simplecobra.Commander {
@@ -17,18 +18,16 @@ func newOrgPreferenceCommand() simplecobra.Commander {
 		Long:  "Update organization preferences",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
-
 		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"preference", "pref", "p", "prefs"}
 		},
 		CommandsList: []simplecobra.Commander{
-			//Preferences
+			// Preferences
 			newGetOrgPreferenceCmd(),
 			newUpdateOrgPreferenceCmd(),
 		},
 	}
-
 }
 
 func newUpdateOrgPreferenceCmd() simplecobra.Commander {
@@ -41,7 +40,6 @@ func newUpdateOrgPreferenceCmd() simplecobra.Commander {
 			cmd.PersistentFlags().StringP("homeDashUid", "", "", "UID for the home dashboard")
 			cmd.PersistentFlags().StringP("theme", "", "", "light, dark")
 			cmd.PersistentFlags().StringP("weekstart", "", "", "day of the week (sunday, monday, etc)")
-
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("update the org preferences")
@@ -78,10 +76,8 @@ func newUpdateOrgPreferenceCmd() simplecobra.Commander {
 			slog.Info("Preferences update for organization", slog.Any("organization", org))
 
 			return nil
-
 		},
 	}
-
 }
 
 func newGetOrgPreferenceCmd() simplecobra.Commander {
@@ -109,8 +105,6 @@ func newGetOrgPreferenceCmd() simplecobra.Commander {
 			rootCmd.Render(cd.CobraCommand, pref)
 
 			return nil
-
 		},
 	}
-
 }

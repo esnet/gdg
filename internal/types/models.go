@@ -7,6 +7,11 @@ type ServiceAccountDTOWithTokens struct {
 	Tokens         []*models.TokenDTO
 }
 
+type FolderDetails struct {
+	*models.Hit
+	NestedPath string
+}
+
 type UserProfileWithAuth struct {
 	models.UserProfileDTO
 	Password string

@@ -4,6 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"log/slog"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
@@ -13,11 +19,6 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/orgs"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
-	"log"
-	"log/slog"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 func NewOrganizationFilter(args ...string) filters.Filter {
@@ -48,11 +49,11 @@ func (s *DashNGoImpl) sanitizeOrganizationMembership() {
 		return
 	}
 	userId := userInfo.ID
-	var currentUserOrgs = map[int64]bool{}
+	currentUserOrgs := map[int64]bool{}
 	for _, org := range userOrgs {
 		currentUserOrgs[org.OrgID] = true
 	}
-	//https://github.com/grafana/grafana/issues/79062 Broken state for Orgs, ensuring not in range
+	// https://github.com/grafana/grafana/issues/79062 Broken state for Orgs, ensuring not in range
 	if tools.InRange([]tools.VersionRange{{MinVersion: "v10.2.1", MaxVersion: "v10.2.2"}}, s) {
 		slog.Error("version check fails.  Cannot programmatically fix org membership in version v10.2.1-v10.2.2.  " +
 			"Please ensure the configured grafana admin is added to the orgs below")
@@ -75,12 +76,10 @@ func (s *DashNGoImpl) sanitizeOrganizationMembership() {
 				slog.Error("unable to add user to org", slog.Any("userId", userInfo.ID), slog.String("userName", userInfo.Login), slog.String("Organization", org.Organization.Name))
 			} else {
 				slog.Info("added user to org", slog.Any("userId", userInfo.ID), slog.String("userName", userInfo.Login), slog.String("Organization", org.Organization.Name))
-
 			}
 
 		}
 	}
-
 }
 
 // InitOrganizations will context switch to configured organization and invoke a different call depending on the access level.
@@ -130,7 +129,6 @@ func (s *DashNGoImpl) InitOrganizations() {
 }
 
 func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
-
 	if s.grafanaConf.IsGrafanaAdmin() || s.grafanaConf.IsBasicAuth() {
 		payload, err := s.ListUserOrganizations()
 		if err != nil {
@@ -164,7 +162,6 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 	}
 
 	return config.Config().SaveToDisk(false)
-
 }
 
 // ListOrganizations List all dashboards
@@ -245,7 +242,6 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.Filter) []string {
 		result    []string
 		rawFolder []byte
 	)
-	//syncedMap := new(sync.Map)
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.OrganizationResource), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, err: %v", err)
@@ -338,12 +334,12 @@ func (s *DashNGoImpl) SwitchOrganizationByName(orgName string) error {
 		}
 
 	} else {
-		//Fallback on default
+		// Fallback on default
 		valid = true
 		orgId = config.DefaultOrganizationId
 	}
 
-	//We retrieved all the orgs successfully and none of them matched the requested ID
+	// We retrieved all the orgs successfully and none of them matched the requested ID
 	if !valid {
 		log.Fatalf("The Specified OrgId does not match any existing organization.  Please check your configuration and try again.")
 	}
@@ -383,7 +379,6 @@ func (s *DashNGoImpl) ListUserOrganizations() ([]*models.UserOrgDTO, error) {
 	}
 
 	return payload.GetPayload(), nil
-
 }
 
 func (s *DashNGoImpl) SetUserOrganizations(id int64) error {
@@ -439,7 +434,7 @@ func (s *DashNGoImpl) DeleteUserFromOrg(orgSlugName string, userId int64) error 
 }
 
 func (s *DashNGoImpl) getOrgIdFromSlug(slugName string, useAdminListing bool) (*models.UserOrgDTO, error) {
-	//Get Org
+	// Get Org
 	var orgId int64
 	var orgEntity *models.UserOrgDTO
 
@@ -474,7 +469,6 @@ func (s *DashNGoImpl) getOrgIdFromSlug(slugName string, useAdminListing bool) (*
 		return nil, fmt.Errorf("unable to find org with matching slug name of %s", slugName)
 	}
 	return orgEntity, nil
-
 }
 
 func (s *DashNGoImpl) UpdateUserInOrg(role, orgSlug string, userId int64) error {

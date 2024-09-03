@@ -4,6 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"log/slog"
+	"path/filepath"
+	"sort"
+	"strings"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
@@ -13,11 +19,6 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/users"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/pretty"
-	"log"
-	"log/slog"
-	"path/filepath"
-	"sort"
-	"strings"
 )
 
 func NewUserFilter(label string) filters.Filter {
@@ -47,7 +48,6 @@ func (s *DashNGoImpl) GetUserInfo() (*models.UserProfileDTO, error) {
 		return userInfo.GetPayload(), err
 	}
 	return nil, err
-
 }
 
 func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
@@ -79,7 +79,6 @@ func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 
 	}
 	return importedUsers
-
 }
 
 func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
@@ -94,9 +93,9 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []types.UserProfileWith
 	var userListings []types.UserProfileWithAuth
 	var rawUser []byte
 	userList := s.ListUsers(filter)
-	var currentUsers = make(map[string]*models.UserSearchHitDTO, 0)
+	currentUsers := make(map[string]*models.UserSearchHitDTO, 0)
 
-	//Build current User Mapping
+	// Build current User Mapping
 	for ndx, i := range userList {
 		key := slug.Make(i.Login) + ".json"
 		currentUsers[key] = userList[ndx]
@@ -115,17 +114,17 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []types.UserProfileWith
 			}
 			var newUser models.AdminCreateUserForm
 
-			//generate user password
+			// generate user password
 			password := s.grafanaConf.GetUserSettings().GetPassword(file)
 
-			var data = make(map[string]interface{})
+			data := make(map[string]interface{})
 			if err = json.Unmarshal(rawUser, &data); err != nil {
 				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
 				continue
 			}
 			data["password"] = password
 
-			//Get raw version of payload once more with password
+			// Get raw version of payload once more with password
 			if rawUser, err = json.Marshal(data); err != nil {
 				slog.Error("failed to marshall file to include password", "filename", fileLocation, "err", err)
 			}
@@ -202,13 +201,11 @@ func (s *DashNGoImpl) DeleteAllUsers(filter filters.Filter) []string {
 		}
 	}
 	return deletedUsers
-
 }
 
 // PromoteUser promote the user to have Admin Access
 func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
-
-	//Get all users
+	// Get all users
 	userListing := s.ListUsers(filters.NewBaseFilter())
 	var user *models.UserSearchHitDTO
 	for ndx, item := range userListing {
@@ -216,7 +213,6 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 			user = userListing[ndx]
 			break
 		}
-
 	}
 
 	if user == nil {
@@ -232,7 +228,6 @@ func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 	}
 
 	return msg.GetPayload().Message, nil
-
 }
 
 // getUserById get the user by ID

@@ -4,19 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"log/slog"
 	"maps"
 	"os"
+
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 const (
 	defaultGrafanaVersion    = "11.1.4-ubuntu"
 	defaultGrafanaVersionEnv = "GRAFANA_TEST_VERSION"
-	enterpriseLicenceKey     = "GF_ENTERPRISE_LICENSE_TEXT"
-	enterpriseLicenceKeyEnv  = "ENTERPRISE_LICENSE"
+	EnterpriseLicenceKey     = "GF_ENTERPRISE_LICENSE_TEXT"
+	EnterpriseLicenceKeyEnv  = "ENTERPRISE_LICENSE"
 	DefaultCloudUser         = "test"
 	DefaultCloudPass         = "secretsss"
 )
@@ -50,33 +51,36 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 		}
 	}
 	return minioC, cancel
-
 }
 
-func SetupGrafanaLicense() (map[string]string, error) {
-	val := os.Getenv(enterpriseLicenceKeyEnv)
-	m := map[string]string{enterpriseLicenceKey: val}
+func SetupGrafanaLicense(props *map[string]string) error {
+	val := os.Getenv(EnterpriseLicenceKeyEnv)
+	(*props)[EnterpriseLicenceKey] = val
 	if val == "" {
-		return nil, errors.New("no valid enterprise license found")
+		return errors.New("no valid enterprise license found")
 	}
-	return m, nil
+	return nil
+}
+
+func DefaultGrafanaEnv() map[string]string {
+	return map[string]string{
+		"GF_INSTALL_PLUGINS":         "grafana-googlesheets-datasource",
+		"GF_AUTH_ANONYMOUS_ENABLED":  "true",
+		"GF_SECURITY_ADMIN_PASSWORD": "admin", // This is a no-op right now, but we should trickle this up to
+		// allow setting grafana admin credentials.
+	}
 }
 
 func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageSuffix string) (testcontainers.Container, func()) {
 	retry := func() (testcontainers.Container, func(), error) {
-		defaultProps := map[string]string{
-			"GF_INSTALL_PLUGINS":         "grafana-googlesheets-datasource",
-			"GF_AUTH_ANONYMOUS_ENABLED":  "true",
-			"GF_SECURITY_ADMIN_PASSWORD": "admin", // This is a no-op right now, but we should trickle this up to
-			// allow setting grafana admin credentials.
-		}
+		defaultProps := DefaultGrafanaEnv()
 		if version == "" {
 			version = os.Getenv(defaultGrafanaVersionEnv)
 			if version == "" {
 				version = defaultGrafanaVersion
 			}
 		}
-		//merge properties
+		// merge properties
 		maps.Copy(defaultProps, additionalEnvProps)
 		ctx := context.Background()
 		req := testcontainers.ContainerRequest{
@@ -89,7 +93,6 @@ func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageS
 			ContainerRequest: req,
 			Started:          true,
 		})
-
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to retrieve valid container, %w", err)
 		}
@@ -105,7 +108,7 @@ func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageS
 		return grafanaC, cancel, nil
 	}
 
-	//retry a few times just in case.
+	// retry a few times just in case.
 	for i := 0; i < 3; i++ {
 		container, cancelFn, err := retry()
 		if err == nil {
@@ -117,5 +120,4 @@ func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageS
 
 	log.Fatal("Unable to start container")
 	return nil, nil
-
 }

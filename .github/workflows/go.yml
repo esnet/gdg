@@ -16,11 +16,13 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.23.0"
-
       - name: Verify go version
         run: go version
+      - name: Install GoTest
+        run: go install gotest.tools/gotestsum@latest
       - name: Test
         env:
           ENTERPRISE_LICENSE: ${{ secrets.ENTERPRISE_LICENSE }}
-        run: go test -v ./...
+        run: gotestsum --junitfile report.xml --format testname 
+#         - go test -v ./...
 

@@ -1,5 +1,9 @@
 package config
 
+type DashboardSettings struct {
+	NestedFolders bool `mapstructure:"nested_folders" yaml:"nested_folders"`
+}
+
 // GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
 	Storage                  string                `mapstructure:"storage" yaml:"storage"`
@@ -14,6 +18,7 @@ type GrafanaConfig struct {
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	FilterOverrides          *FilterOverrides      `mapstructure:"filter_override" yaml:"filter_override"`
+	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
 	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
 }
 
@@ -43,7 +48,6 @@ func (s *GrafanaConfig) GetOrganizationName() string {
 		return DefaultOrganizationName
 	}
 	return "unknown"
-
 }
 
 // SetGrafanaAdmin sets true if user has admin permissions

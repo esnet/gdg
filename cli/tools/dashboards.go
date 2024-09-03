@@ -2,16 +2,19 @@ package tools
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service/types"
 	"github.com/spf13/cobra"
-	"log/slog"
 )
 
-var lintStrictFlag bool
-var lintVerboseFlag bool
-var lintAutofixFlag bool
+var (
+	lintStrictFlag  bool
+	lintVerboseFlag bool
+	lintAutofixFlag bool
+)
 
 func newDashboardCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
