@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/stretchr/testify/assert"
@@ -14,9 +15,8 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
-	apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	slog.Info("Exporting all Library Elements")
 	apiClient.UploadLibraryElements(filtersEntity)

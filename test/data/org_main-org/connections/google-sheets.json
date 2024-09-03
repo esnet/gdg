@@ -1,19 +1,14 @@
 {
-	"id": 1,
-	"orgId": 1,
-	"uid": "uL86Byf4k",
-	"name": "Google Sheets",
-	"type": "grafana-googlesheets-datasource",
-	"typeLogoUrl": "public/plugins/grafana-googlesheets-datasource/img/sheets.svg",
 	"access": "proxy",
-	"url": "",
-	"user": "",
-	"database": "",
-	"basicAuth": false,
-	"readOnly": false,
-	"isDefault": true,
+	"basicAuth": true,
+	"id": 1,
 	"jsonData": {
 		"authType": "key"
 	},
-	"secureJsonData": null
+	"name": "Google Sheets",
+	"orgId": 1,
+	"type": "grafana-googlesheets-datasource",
+	"typeLogoUrl": "public/plugins/grafana-googlesheets-datasource/img/sheets.svg",
+	"typeName": "Google Sheets",
+	"uid": "uL86Byf4k"
 }

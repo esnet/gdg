@@ -1,0 +1,121 @@
+{
+	"Connection": {
+		"access": "proxy",
+		"id": 1,
+		"jsonData": {
+			"authType": "key"
+		},
+		"name": "Google Sheets",
+		"orgId": 1,
+		"type": "grafana-googlesheets-datasource",
+		"typeLogoUrl": "public/plugins/grafana-googlesheets-datasource/img/sheets.svg",
+		"typeName": "Google Sheets",
+		"uid": "uL86Byf4k"
+	},
+	"Permissions": [
+		{
+			"actions": [
+				"datasources.permissions:read",
+				"datasources.permissions:write",
+				"datasources.caching:read",
+				"datasources.caching:write",
+				"datasources:read",
+				"datasources:query",
+				"datasources:write",
+				"datasources:delete"
+			],
+			"id": 560,
+			"isManaged": true,
+			"permission": "Admin",
+			"roleName": "managed:users:1:permissions",
+			"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"userId": 1,
+			"userLogin": "admin"
+		},
+		{
+			"actions": [
+				"datasources.caching:read",
+				"datasources.caching:write",
+				"datasources:read",
+				"datasources:query",
+				"datasources:write",
+				"datasources:delete",
+				"datasources.permissions:read",
+				"datasources.permissions:write"
+			],
+			"id": 607,
+			"isManaged": true,
+			"permission": "Admin",
+			"roleName": "managed:users:3:permissions",
+			"userAvatarUrl": "/avatar/b0af9e9c1c0acf1dc93d4dc9d6bcafb1",
+			"userId": 3,
+			"userLogin": "tux"
+		},
+		{
+			"actions": [
+				"datasources:delete",
+				"datasources:read",
+				"datasources:query",
+				"datasources:write"
+			],
+			"id": 615,
+			"isManaged": true,
+			"permission": "Edit",
+			"roleName": "managed:users:2:permissions",
+			"userAvatarUrl": "/avatar/64029c12d260bd5e3cb2504f4155998f",
+			"userId": 2,
+			"userLogin": "bob"
+		},
+		{
+			"actions": [
+				"datasources:read",
+				"datasources:query"
+			],
+			"id": 619,
+			"isManaged": true,
+			"permission": "Query",
+			"roleName": "managed:teams:2:permissions",
+			"team": "musicians",
+			"teamAvatarUrl": "/avatar/80ca0095115d85b522e59fa72b51a213",
+			"teamId": 2
+		},
+		{
+			"actions": [
+				"datasources.permissions:write",
+				"datasources.caching:write",
+				"datasources:delete",
+				"datasources.permissions:read",
+				"datasources:write",
+				"datasources:query",
+				"datasources:read",
+				"datasources.caching:read"
+			],
+			"builtInRole": "Admin",
+			"id": 350,
+			"permission": "Admin",
+			"roleName": "basic:admin"
+		},
+		{
+			"actions": [
+				"datasources:read",
+				"datasources:query"
+			],
+			"builtInRole": "Viewer",
+			"id": 556,
+			"isManaged": true,
+			"permission": "Query",
+			"roleName": "managed:builtins:viewer:permissions"
+		},
+		{
+			"actions": [
+				"datasources:read",
+				"datasources:query"
+			],
+			"builtInRole": "Editor",
+			"id": 558,
+			"isManaged": true,
+			"permission": "Query",
+			"roleName": "managed:builtins:editor:permissions"
+		}
+	]
+}

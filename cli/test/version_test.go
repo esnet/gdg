@@ -7,6 +7,7 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/gdg/internal/version"
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"strings"
@@ -43,7 +44,7 @@ func TestVersionErrCommand(t *testing.T) {
 	}
 	path, _ := os.Getwd()
 	fmt.Println(path)
-	data, err := os.ReadFile("../../config/testing.yml")
+	data, err := os.ReadFile("../../config/" + common.DefaultTestConfig)
 	assert.Nil(t, err)
 
 	err = cli.Execute(string(data), []string{"dumb", "dumb"}, optionMockSvc())

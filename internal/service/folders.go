@@ -281,6 +281,15 @@ func getFolderNameIDMap(folders []*models.Hit) map[string]int64 {
 	return folderMap
 }
 
+// getFolderNameUIDMap helper function to build a mapping for name to folderID
+func getFolderNameUIDMap(folders []*models.Hit) map[string]string {
+	var folderMap = make(map[string]string)
+	for _, folder := range folders {
+		folderMap[folder.Title] = folder.UID
+	}
+	return folderMap
+}
+
 // Creates a reverse look up map, where the values are the keys and the keys are the values.
 func reverseLookUp[T comparable, Y comparable](m map[T]Y) map[Y]T {
 	reverse := make(map[Y]T, 0)

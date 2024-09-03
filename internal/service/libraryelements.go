@@ -83,7 +83,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 		dataFiles []string
 	)
 
-	folderMap := reverseLookUp(getFolderNameIDMap(s.ListFolder(nil)))
+	folderMap := reverseLookUp(getFolderNameUIDMap(s.ListFolder(nil)))
 	listing = s.ListLibraryElements(filter)
 	for _, item := range listing {
 		if dsPacked, err = json.MarshalIndent(item, "", "	"); err != nil {
@@ -92,7 +92,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 		}
 		folderName := DefaultFolderName
 
-		if val, ok := folderMap[item.FolderID]; ok {
+		if val, ok := folderMap[item.FolderUID]; ok {
 			folderName = val
 		}
 

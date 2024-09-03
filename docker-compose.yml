@@ -9,11 +9,12 @@ services:
             - MINIO_ROOT_USER=test
             - MINIO_ROOT_PASSWORD=secretsss
     grafana:
-        image: grafana/grafana:10.0.0-ubuntu
+        image: grafana/grafana-enterprise:11.1.4-ubuntu
         ports:
             - 3000:3000
         environment:
             - GF_INSTALL_PLUGINS=grafana-googlesheets-datasource
+            - GF_ENTERPRISE_LICENSE_TEXT=${ENTERPRISE_LICENSE}
 
     influx:
       image: influxdb:latest

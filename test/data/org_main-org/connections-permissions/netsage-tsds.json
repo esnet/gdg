@@ -1,0 +1,75 @@
+{
+	"Connection": {
+		"access": "proxy",
+		"id": 2,
+		"jsonData": {
+			"keepCookies": []
+		},
+		"name": "Netsage TSDS",
+		"orgId": 1,
+		"type": "globalnoc-tsds-datasource",
+		"typeLogoUrl": "public/img/icn-datasource.svg",
+		"typeName": "globalnoc-tsds-datasource",
+		"uid": "i6uqEqE7k",
+		"url": "https://netsage-archive.grnoc.iu.edu/irnc/services/"
+	},
+	"Permissions": [
+		{
+			"actions": [
+				"datasources:write",
+				"datasources:delete",
+				"datasources.permissions:read",
+				"datasources.permissions:write",
+				"datasources.caching:read",
+				"datasources.caching:write",
+				"datasources:read",
+				"datasources:query"
+			],
+			"id": 572,
+			"isManaged": true,
+			"permission": "Admin",
+			"roleName": "managed:users:1:permissions",
+			"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+			"userId": 1,
+			"userLogin": "admin"
+		},
+		{
+			"actions": [
+				"datasources.permissions:write",
+				"datasources.caching:write",
+				"datasources:delete",
+				"datasources.permissions:read",
+				"datasources:write",
+				"datasources:query",
+				"datasources:read",
+				"datasources.caching:read"
+			],
+			"builtInRole": "Admin",
+			"id": 350,
+			"permission": "Admin",
+			"roleName": "basic:admin"
+		},
+		{
+			"actions": [
+				"datasources:read",
+				"datasources:query"
+			],
+			"builtInRole": "Viewer",
+			"id": 568,
+			"isManaged": true,
+			"permission": "Query",
+			"roleName": "managed:builtins:viewer:permissions"
+		},
+		{
+			"actions": [
+				"datasources:read",
+				"datasources:query"
+			],
+			"builtInRole": "Editor",
+			"id": 570,
+			"isManaged": true,
+			"permission": "Query",
+			"roleName": "managed:builtins:editor:permissions"
+		}
+	]
+}

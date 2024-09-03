@@ -174,8 +174,3 @@ func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceComman
 
 	return nil, fmt.Errorf("no datasource credentials found for '%s', falling back on default", dataSourceName.Name)
 }
-
-// IsEnterprise Returns true when enterprise is enabled
-func (s *GrafanaConfig) IsEnterprise() bool {
-	return s.EnterpriseSupport
-}

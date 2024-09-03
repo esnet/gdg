@@ -1,20 +1,15 @@
 {
-	"id": 9,
-	"orgId": 1,
-	"uid": "i6uqEqE7k",
-	"name": "Netsage TSDS",
-	"type": "globalnoc-tsds-datasource",
-	"typeLogoUrl": "public/img/icn-datasource.svg",
 	"access": "proxy",
-	"url": "https://netsage-archive.grnoc.iu.edu/irnc/services/",
-	"password": "",
-	"user": "",
-	"database": "",
-	"basicAuth": false,
-	"readOnly": false,
-	"isDefault": false,
+	"basicAuth": true,
+	"id": 1,
 	"jsonData": {
 		"keepCookies": []
 	},
-	"secureJsonData": null
+	"name": "Netsage TSDS",
+	"orgId": 1,
+	"type": "globalnoc-tsds-datasource",
+	"typeLogoUrl": "public/img/icn-datasource.svg",
+	"typeName": "globalnoc-tsds-datasource",
+	"uid": "i6uqEqE7k",
+	"url": "https://netsage-archive.grnoc.iu.edu/irnc/services/"
 }

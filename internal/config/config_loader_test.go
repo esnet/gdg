@@ -3,6 +3,8 @@ package config_test
 import (
 	"fmt"
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/pkg/test_tooling/common"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/slices"
 	"log/slog"
@@ -15,17 +17,10 @@ import (
 )
 
 func DuplicateConfig(t *testing.T) string {
-	dir, _ := os.Getwd()
-	var err error
-	//Fix test path
-	if strings.Contains(dir, "config") {
-		err = os.Chdir("../..")
-		assert.Nil(t, err, "Failed to change to base directory ")
-	}
-
-	err = os.Setenv("GDG_CONTEXT_NAME", "production")
+	assert.NoError(t, path.FixTestDir("config", "../.."))
+	err := os.Setenv("GDG_CONTEXT_NAME", "production")
 	assert.Nil(t, err, "Failed to set override GDG context name via ENV")
-	data, err := os.ReadFile("config/testing.yml")
+	data, err := os.ReadFile("config/" + common.DefaultTestConfig)
 	assert.Nil(t, err, "Failed to read test configuration file")
 	destination := os.TempDir()
 	cfgFile := fmt.Sprintf("%s/config.yml", destination)
@@ -48,7 +43,7 @@ func TestSetup(t *testing.T) {
 	}
 
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
-	config.InitGdgConfig("testing.yml", "")
+	config.InitGdgConfig(common.DefaultTestConfig, "")
 	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	slog.Info(conf.ConfigFileUsed())
 
@@ -71,7 +66,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 	}
 
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
-	config.InitGdgConfig("testing.yml", "")
+	config.InitGdgConfig(common.DefaultTestConfig, "")
 	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	slog.Info(conf.ConfigFileUsed())
 
@@ -116,7 +111,7 @@ func TestSetupDifferentPath(t *testing.T) {
 func TestConfigEnv(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
-	config.InitGdgConfig("testing.yml", "")
+	config.InitGdgConfig(common.DefaultTestConfig, "")
 	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "testing")
@@ -126,7 +121,7 @@ func TestConfigEnv(t *testing.T) {
 	assert.Equal(t, grafanaConfig.URL, url)
 	os.Setenv("GDG_CONTEXT_NAME", "production")
 	os.Setenv("GDG_CONTEXTS__PRODUCTION__URL", "grafana.com")
-	config.InitGdgConfig("testing.yml", "")
+	config.InitGdgConfig(common.DefaultTestConfig, "")
 	conf = config.Config().GetViperConfig(config.ViperGdgConfig)
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")

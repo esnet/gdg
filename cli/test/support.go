@@ -6,6 +6,7 @@ import (
 	applog "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"log/slog"
 
 	"github.com/stretchr/testify/assert"
@@ -29,7 +30,7 @@ func setupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.Grafa
 	}
 
 	r, w, cleanup := InterceptStdout()
-	data, err := os.ReadFile("../../config/testing.yml")
+	data, err := os.ReadFile("../../config/" + common.DefaultTestConfig)
 	assert.Nil(t, err)
 
 	err = process(testSvc, data, optionMockSvc)

@@ -5,6 +5,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"os"
 	"strings"
@@ -19,7 +20,7 @@ func TestDashboardCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -78,7 +79,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, container, cleanup := test_tooling.InitTest(t, nil, false)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -113,7 +114,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	//
 	os.Setenv("GDG_CONTEXTS__TESTING__IGNORE_FILTERS", "true")
 	defer os.Unsetenv("")
-	apiClient, _ = createSimpleClient(t, nil)
+	apiClient, _ = test_tooling.CreateSimpleClient(t, nil, container)
 	filterNone := service.NewDashboardFilter("", "", "")
 	apiClient.UploadDashboards(filterNone)
 	//Listing with no filter
@@ -142,7 +143,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
 	emptyFilter := filters.NewBaseFilter()
 
@@ -181,7 +182,7 @@ func TestWildcardFilter(t *testing.T) {
 	}
 
 	// Setup Filters
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
 	emptyFilter := service.NewDashboardFilter("", "", "")
 

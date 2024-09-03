@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/maps"
 	"log/slog"
@@ -19,12 +20,12 @@ func TestTeamCRUD(t *testing.T) {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
 	filter := service.NewTeamFilter("")
-	apiClient, _, cleanup := initTest(t, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
 	defer cleanup()
 	slog.Info("Exporting current user list")
 	apiClient.UploadUsers(service.NewUserFilter(""))
 	users := apiClient.ListUsers(service.NewUserFilter(""))
-	assert.Equal(t, len(users), 2)
+	assert.Equal(t, len(users), 3)
 	slog.Info("Exporting all teams")
 	apiClient.UploadTeams(filter)
 	slog.Info("Listing all Teams")

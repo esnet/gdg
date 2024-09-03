@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	transport "github.com/aws/smithy-go/endpoints"
+	"net/url"
+
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/s3blob"
 	"log"
@@ -18,6 +20,19 @@ import (
 	"strings"
 	"sync"
 )
+
+// AWS Crud
+type Resolver struct {
+	URL *url.URL
+}
+
+func (r *Resolver) ResolveEndpoint(_ context.Context, params s3.EndpointParameters) (transport.Endpoint, error) {
+	u := *r.URL
+	u.Path += "/" + *params.Bucket
+	return transport.Endpoint{URI: u}, nil
+}
+
+//
 
 type CloudStorage struct {
 	BucketRef   *blob.Bucket
@@ -134,39 +149,54 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 
 	//Pattern specifically for Self hosted S3 compatible instances Minio / Ceph
 	if boolStrCheck(getMapValue(Custom, "false", stringEmpty, appData)) {
-		var sess *session.Session
-		creds := credentials.NewStaticCredentials(
+		creds := credentials.NewStaticCredentialsProvider(
 			getMapValue(AccessId, os.Getenv("AWS_ACCESS_KEY"), stringEmpty, appData),
 			getMapValue(SecretKey, os.Getenv("AWS_SECRET_KEY"), stringEmpty, appData), "")
-		sess, err = session.NewSession(&aws.Config{
-			Credentials:      creds,
-			Endpoint:         aws.String(getMapValue(Endpoint, "http://localhost:9000", stringEmpty, appData)),
-			DisableSSL:       aws.Bool(getMapValue(SSLEnabled, "false", stringEmpty, appData) != "true"),
-			S3ForcePathStyle: aws.Bool(true),
-			Region:           aws.String(getMapValue(Region, "us-east-1", stringEmpty, appData)),
-		})
-		if err != nil {
-			errorMsg = err.Error()
+		host := getMapValue(Endpoint, "http://localhost:9000", stringEmpty, appData)
+		cloudCfg := &aws.Config{
+			Credentials:  creds,
+			Region:       getMapValue(Region, "us-east-1", stringEmpty, appData),
+			BaseEndpoint: &host,
 		}
-		bucketObj, err = s3blob.OpenBucket(context.Background(), sess, appData["bucket_name"], nil)
+		session := s3.NewFromConfig(*cloudCfg,
+			func(o *s3.Options) {
+				o.UsePathStyle = true //  <---- here
+			},
+			func(o *s3.Options) {
+				endpointURL, _ := url.Parse(host) // or where ever you ran minio
+				s3.WithEndpointResolverV2(&Resolver{URL: endpointURL})
+			},
+		)
+		if session == nil {
+			errorMsg = "No valid session could be created"
+		}
+		bucketObj, err = s3blob.OpenBucketV2(context.Background(), session, appData["bucket_name"], nil)
 		if err != nil {
 			errorMsg = err.Error()
 		}
 		if err == nil && boolStrCheck(getMapValue(InitBucket, "false", stringEmpty, appData)) {
+			slog.Info("attempting to bootstrap bucket", slog.Any("bucket", appData[BucketName]))
 			//Attempts to initiate bucket
-			initBucketOnce.Do(func() {
-				client := s3.New(sess)
+			createBucket := func() {
 				m := s3.CreateBucketInput{
 					Bucket: aws.String(appData[BucketName]),
 				}
 				//attempt to create bucket
-				_, err := client.CreateBucket(&m)
+				_, err := session.CreateBucket(context.Background(), &m)
 				if err != nil {
 					slog.Warn("bucket already exists or cannot be created", "bucket", *m.Bucket)
 				} else {
 					slog.Info("bucket has been created", "bucket", *m.Bucket)
 				}
-			})
+			}
+
+			if os.Getenv("TESTING") != "1" {
+				initBucketOnce.Do(func() {
+					createBucket()
+				})
+			} else {
+				createBucket()
+			}
 
 		}
 

@@ -5,6 +5,7 @@ import (
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/go-openapi/strfmt"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"log"
 	"log/slog"
 	"net/http"
@@ -17,10 +18,13 @@ import (
 func (s *DashNGoImpl) Login() {
 	var err error
 	// Will only succeed for BasicAuth
-	userInfo, err := s.GetUserInfo()
-	// Sets state based on user permissions
-	if err == nil {
-		s.grafanaConf.SetGrafanaAdmin(userInfo.IsGrafanaAdmin)
+	if s.grafanaConf.IsBasicAuth() {
+		var userInfo *models.UserProfileDTO
+		userInfo, err = s.GetUserInfo()
+		// Sets state based on user permissions
+		if err == nil {
+			s.grafanaConf.SetGrafanaAdmin(userInfo.IsGrafanaAdmin)
+		}
 	}
 
 	s.extended = api.NewExtendedApi()
@@ -50,21 +54,24 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		Schemes:      []string{u.Scheme},
 		NumRetries:   config.Config().GetGDGConfig().GetAppGlobals().RetryCount,
 		RetryTimeout: config.Config().GetGDGConfig().GetAppGlobals().GetRetryTimeout(),
+		Debug:        s.apiDebug,
 	}
 
-	if s.grafanaConf.OrganizationName != "" {
-		orgId, err := api.NewExtendedApi().GetConfiguredOrgId(s.grafanaConf.OrganizationName)
-		if err != nil {
-			slog.Error("unable to determine org ID, falling back", slog.Any("err", err))
-			orgId = 1
+	if s.grafanaConf.IsBasicAuth() {
+		if s.grafanaConf.OrganizationName != "" {
+			orgId, err := api.NewExtendedApi().GetConfiguredOrgId(s.grafanaConf.OrganizationName)
+			if err != nil {
+				slog.Error("unable to determine org ID, falling back", slog.Any("err", err))
+				orgId = 1
+			}
+			opts = append(opts, func(clientCfg *client.TransportConfig) {
+				clientCfg.OrgID = orgId
+			})
+		} else {
+			opts = append(opts, func(clientCfg *client.TransportConfig) {
+				clientCfg.OrgID = config.DefaultOrganizationId
+			})
 		}
-		opts = append(opts, func(clientCfg *client.TransportConfig) {
-			clientCfg.OrgID = orgId
-		})
-	} else {
-		opts = append(opts, func(clientCfg *client.TransportConfig) {
-			clientCfg.OrgID = config.DefaultOrganizationId
-		})
 	}
 	for _, opt := range opts {
 		if opt != nil {
@@ -83,6 +90,7 @@ func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
 	if s.grafanaConf.APIToken != "" {
 		grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
 			clientCfg.APIKey = s.grafanaConf.APIToken
+			clientCfg.Debug = s.apiDebug
 		})
 		return grafanaClient
 	} else {
@@ -102,6 +110,7 @@ func (s *DashNGoImpl) GetAdminClient() *client.GrafanaHTTPAPI {
 func (s *DashNGoImpl) GetBasicAuthClient() *client.GrafanaHTTPAPI {
 	grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
 		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.Password)
+		clientCfg.Debug = s.apiDebug
 	})
 	return grafanaClient
 }

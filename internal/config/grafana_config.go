@@ -4,7 +4,6 @@ package config
 type GrafanaConfig struct {
 	Storage                  string                `mapstructure:"storage" yaml:"storage"`
 	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
-	EnterpriseSupport        bool                  `mapstructure:"enterprise_support" yaml:"enterprise_support"`
 	URL                      string                `mapstructure:"url" yaml:"url"`
 	APIToken                 string                `mapstructure:"token" yaml:"token"`
 	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
@@ -40,7 +39,11 @@ func (s *GrafanaConfig) GetOrganizationName() string {
 	if s.OrganizationName != "" {
 		return s.OrganizationName
 	}
-	return DefaultOrganizationName
+	if s.IsBasicAuth() {
+		return DefaultOrganizationName
+	}
+	return "unknown"
+
 }
 
 // SetGrafanaAdmin sets true if user has admin permissions

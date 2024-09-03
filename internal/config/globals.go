@@ -8,6 +8,7 @@ import (
 // AppGlobals is the global configuration for the application
 type AppGlobals struct {
 	Debug           bool           `mapstructure:"debug" yaml:"debug"`
+	ApiDebug        bool           `mapstructure:"api_debug" yaml:"api_debug"`
 	IgnoreSSLErrors bool           `mapstructure:"ignore_ssl_errors" yaml:"ignore_ssl_errors"`
 	RetryCount      int            `mapstructure:"retry_count" yaml:"retry_count"`
 	RetryDelay      string         `mapstructure:"retry_delay" yaml:"retry_delay"`

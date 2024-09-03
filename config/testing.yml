@@ -4,6 +4,7 @@ context_name: testing
 contexts:
   testing:
     output_path: test/data
+    enterprise_support: true
     connections:
       credential_rules:
         - rules:
@@ -18,6 +19,7 @@ contexts:
           secure_data: "default.json"
     url: http://localhost:3000
     user_name: admin
+    organization_name: Main Org.
     password: admin
     ignore_filters: False  # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
@@ -72,8 +74,10 @@ contexts:
 
 global:
   debug: true
+  api_debug: false
   ignore_ssl_errors: false ##when set to true will ignore invalid SSL errors
-
+  retry_count: 1 ## Will retry any failed API request up to 3 times.
+  retry_delay: 1s  ## will wait for specified duration before trying again.
 
 storage_engine:
   test:

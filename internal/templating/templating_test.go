@@ -3,6 +3,7 @@ package templating
 import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 	"os"
@@ -18,7 +19,7 @@ func TestGenerate(t *testing.T) {
 	if strings.Contains(dir, "templating") {
 		os.Chdir("../..")
 	}
-	config.InitGdgConfig("testing.yml", "")
+	config.InitGdgConfig(common.DefaultTestConfig, "")
 	config.InitTemplateConfig("templates-example")
 	template := NewTemplate()
 	data, err := template.Generate("template_example")

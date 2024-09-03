@@ -50,17 +50,28 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 			slog.Info("Listing Connection Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 			connections := rootCmd.GrafanaSvc().ListConnectionPermissions(filters)
-			_ = connections
 
 			if len(connections) == 0 {
 				slog.Info("No connections found")
 			} else {
-				for link, perms := range connections {
-					url := fmt.Sprintf("%s/datasource/edit/%d", config.Config().GetDefaultGrafanaConfig().URL, link.ID)
-					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, url})
-					if perms != nil && perms.Enabled {
-						for _, perm := range perms.Permissions {
-							rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, "    PERMISSION-->", perm.PermissionName, perm.Team, perm.UserEmail})
+				for _, item := range connections {
+					rootCmd.TableObj.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, service.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID)})
+					if item.Permissions != nil {
+						for _, perm := range item.Permissions {
+							permissionType := "BuiltinRole"
+							value := ""
+							if perm.BuiltInRole != "" {
+								value = "builtInRole:" + perm.BuiltInRole
+							} else if perm.UserLogin != "" {
+								permissionType = "User"
+								value = "user:" + perm.UserLogin
+							} else if perm.Team != "" {
+								permissionType = "Team"
+								value = "team:" + perm.Team
+							} else {
+								permissionType = "unsupported"
+							}
+							rootCmd.TableObj.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, "    PERMISSION-->", perm.Permission, permissionType, value})
 						}
 					}
 				}
@@ -144,7 +155,7 @@ func newConnectionsPermissionUploadCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Uploading connections permissions")
-			rootCmd.TableObj.AppendHeader(table.Row{"connection permission"})
+			rootCmd.TableObj.AppendHeader(table.Row{"connection permission applied"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)
 			connections := rootCmd.GrafanaSvc().UploadConnectionPermissions(filters)

@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/service/types"
+	customModels "github.com/esnet/gdg/internal/types"
 	gdgType "github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
@@ -23,6 +24,11 @@ type GrafanaService interface {
 	AuthenticationApi
 	//MetaData
 	ServerInfoApi
+	LicenseApi
+}
+
+type LicenseApi interface {
+	IsEnterprise() bool
 }
 
 // ConnectionsApi Contract definition
@@ -36,7 +42,7 @@ type ConnectionsApi interface {
 
 type ConnectionPermissions interface {
 	// Permissions Enterprise only
-	ListConnectionPermissions(filter filters.Filter) map[*models.DataSourceListItemDTO]*models.DataSourcePermissionsDTO
+	ListConnectionPermissions(filter filters.Filter) []customModels.ConnectionPermissionItem
 	DownloadConnectionPermissions(filter filters.Filter) []string
 	UploadConnectionPermissions(filter filters.Filter) []string
 	DeleteAllConnectionPermissions(filter filters.Filter) []string

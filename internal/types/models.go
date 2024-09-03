@@ -16,3 +16,8 @@ type OrgsDTOWithPreferences struct {
 	Organization *models.OrgDTO      `json:"organization"`
 	Preferences  *models.Preferences `json:"preferences"` // Preferences are preferences associated with a given org.  theme, dashboard, timezone, etc
 }
+
+type ConnectionPermissionItem struct {
+	Connection  *models.DataSourceListItemDTO
+	Permissions []*models.ResourcePermissionDTO
+}

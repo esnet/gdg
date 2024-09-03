@@ -6,6 +6,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/spf13/viper"
 	"log/slog"
+	"os"
 	"sync"
 )
 
@@ -20,6 +21,7 @@ type DashNGoImpl struct {
 	grafanaConf *config.GrafanaConfig
 	configRef   *viper.Viper
 	debug       bool
+	apiDebug    bool
 	storage     Storage
 }
 
@@ -34,9 +36,20 @@ func newInstance() *DashNGoImpl {
 	obj := &DashNGoImpl{}
 	obj.grafanaConf = config.Config().GetDefaultGrafanaConfig()
 	obj.configRef = config.Config().GetViperConfig(config.ViperGdgConfig)
-	obj.Login()
-
 	obj.debug = config.Config().IsDebug()
+	obj.apiDebug = config.Config().IsApiDebug()
+	if obj.apiDebug {
+		err := os.Setenv("DEBUG", "1")
+		if err != nil {
+			slog.Debug("unable to set debug env value", slog.Any("err", err))
+		}
+	} else {
+		err := os.Setenv("DEBUG", "0")
+		if err != nil {
+			slog.Debug("unable to set debug env value", slog.Any("err", err))
+		}
+	}
+	obj.Login()
 	configureStorage(obj)
 
 	return obj

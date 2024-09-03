@@ -9,43 +9,18 @@ on:
 
 jobs:
   test:
-    strategy:
-      matrix:
-        go: [ {version: 1.23.0, token: 1}, {version: 1.23.0, token: 0}]
-        grafana: [ 10.1.4 ]
-
-    env:
-      GRAFANA_INTEGRATION: 1
-      TEST_TOKEN_CONFIG: "${{ matrix.go.token }}"
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go.version }}
+          go-version: "1.23.0"
+
       - name: Verify go version
         run: go version
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      - name: Validate ENV Value
-        shell: bash
-        run: | 
-          echo "token IS $TEST_TOKEN_CONFIG"
-      - name: Calc coverage
-        if: "${{ matrix.go.version == '1.23.0' && matrix.grafana == '10.1.4' && matrix.go.token == '0' }}"
-        run: |
-          go test -v -covermode=atomic -coverprofile=coverage.out ./...
-      - name: Convert coverage.out to coverage.lcov
-        if: "${{ matrix.go.version == '1.23.0' && matrix.grafana == '10.1.4' && matrix.go.token == '0' }}"
-        uses: jandelgado/gcov2lcov-action@v1.0.9
-      - name: Test 
-        if: "${{ matrix.go.token == '1' }}"
+      - name: Test
+        env:
+          ENTERPRISE_LICENSE: ${{ secrets.ENTERPRISE_LICENSE }}
         run: go test -v ./...
+
