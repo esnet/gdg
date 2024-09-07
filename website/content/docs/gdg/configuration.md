@@ -220,7 +220,7 @@ contexts:
   testing:
     output_path: test/data
     connections:
-      exclude_filters:
+      filters:
         - field: "name"
           regex: "Google Sheets"
         - field: "type"

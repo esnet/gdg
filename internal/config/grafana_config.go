@@ -24,7 +24,7 @@ type MonitoredOrgFolders struct {
 
 // ConnectionSettings contains Filters and Matching Rules for Grafana
 type ConnectionSettings struct {
-	FilterRules   []MatchingRule     `mapstructure:"exclude_filters" yaml:"exclude_filters,omitempty"`
+	FilterRules   []MatchingRule     `mapstructure:"filters" yaml:"filters,omitempty"`
 	MatchingRules []RegexMatchesList `mapstructure:"credential_rules" yaml:"credential_rules,omitempty"`
 }
 

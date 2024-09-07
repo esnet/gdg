@@ -37,7 +37,7 @@ func (extended *ExtendedApi) GetConfiguredOrgId(orgName string) (int64, error) {
 	var count uint = 5
 	//Giving user configured value preference over defaults
 	if config.Config().GetGDGConfig().GetAppGlobals().RetryCount != 0 {
-		count = uint(config.Config().GetGDGConfig().GetAppGlobals().RetryCount)
+		count = uint(config.Config().GetGDGConfig().GetAppGlobals().RetryCount) // #nosec G115
 	}
 	if config.Config().GetGDGConfig().GetAppGlobals().GetRetryTimeout() != time.Millisecond*100 {
 		delay = config.Config().GetGDGConfig().GetAppGlobals().GetRetryTimeout()
