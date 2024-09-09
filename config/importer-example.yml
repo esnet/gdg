@@ -31,13 +31,12 @@ contexts:
       min_length: 8
       max_length: 20
     connections:
-      exclude_filters:
-        - matches:
-            - field: "name"
-              regex: "DEV-*|-Dev-*"
-            - field: "type"
-              regex: "elasticsearch"
-              inclusive: true
+      filters:
+        - field: "name"
+          regex: "DEV-*|-Dev-*"
+        - field: "type"
+          regex: "elasticsearch"
+          inclusive: true
       credential_rules:
         - rules:
             - field: "name"

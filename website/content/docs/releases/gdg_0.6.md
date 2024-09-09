@@ -12,8 +12,12 @@ toc: true
 
 Release Date: TBD
 
+
+### Breaking Changes
+  - [#289](https://github.com/esnet/gdg/issues/289)Config: Connection settings renamed `exclude_filters' to `filters`
+
 ### Changes
-  - Enterprise config flag removed, future versions will programmatically determining version of grafana.
+  - Enterprise config flag removed, future versions will programmatically determine version of grafana.
   - [#283](https://github.com/esnet/gdg/issues/283)  Fixing small bug with library connections
   - [#288](https://github.com/esnet/gdg/pull/288) Enterprise: Connection permission will require min. v10.2.3
 
