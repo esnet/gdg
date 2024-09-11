@@ -14,7 +14,7 @@ const (
 	OrgNameOverride      = "GDG_CONTEXTS__TESTING__ORGANIZATION_NAME"
 	EnableNestedBehavior = "GDG_CONTEXTS__TESTING__DASHBOARD_SETTINGS__NESTED_FOLDERS"
 	grafanaNestedToggle  = "GF_FEATURE_TOGGLES_ENABLE"
-	IgnoreDashFilters    = "GDG_CONTEXTS__TESTING__FILTER_OVERRIDE__IGNORE_DASHBOARD_FILTERS"
+	IgnoreDashFilters    = "GDG_CONTEXTS__TESTING__DASHBOARD_SETTINGS__IGNORE_FILTERS"
 )
 
 // setupNestedProps adds the nestedFolder feature to the given Env properties map

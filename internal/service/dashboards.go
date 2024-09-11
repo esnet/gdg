@@ -154,7 +154,7 @@ func (s *DashNGoImpl) LintDashboards(req types.LintRequest) []string {
 			continue
 		}
 		if req.FolderName != "" {
-			if !slices.Contains(validFolders, req.FolderName) && !config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+			if !slices.Contains(validFolders, req.FolderName) && !config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
 				slog.Debug("Skipping file since it doesn't match any valid folders", "filename", file)
 				continue
 			}
@@ -322,7 +322,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		}
 
 		// accepts all folders
-		if config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+		if config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
 			validFolder = true
 		} else if validateFolderRegex(folderFilters, folderMatch) { //
 			validFolder = true
@@ -606,7 +606,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		if folderName == "" {
 			folderName = DefaultFolderName
 		}
-		if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+		if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
 			slog.Debug("Skipping file since it doesn't match any valid folders", "filename", file)
 			continue
 		}

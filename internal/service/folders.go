@@ -167,7 +167,7 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*types.Fo
 // ListFolder list the current existing folders that match the given filter.
 func (s *DashNGoImpl) ListFolders(filter filters.Filter) []*types.FolderDetails {
 	result := make([]*types.FolderDetails, 0)
-	if config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters {
+	if config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
 		filter = nil
 	}
 	if err := s.nestedFoldersSanityCheck(); err != nil {

@@ -43,7 +43,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.Filter, conn
 }
 
 func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.LibraryElementDTO {
-	ignoreFilters := config.Config().GetDefaultGrafanaConfig().GetFilterOverrides().IgnoreDashboardFilters
+	ignoreFilters := config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters
 	folderFilter := NewFolderFilter()
 	if ignoreFilters {
 		folderFilter = nil
