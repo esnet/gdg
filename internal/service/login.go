@@ -38,6 +38,24 @@ func ignoreSSL(transportConfig *client.TransportConfig) {
 
 type NewClientOpts func(transportConfig *client.TransportConfig)
 
+func GetOrgNameClientOpts(orgName string) NewClientOpts {
+	if orgName != "" {
+		return func(transportConfig *client.TransportConfig) {
+			orgId, err := api.NewExtendedApi().GetConfiguredOrgId(orgName)
+			if err != nil {
+				slog.Error("unable to determine org ID, falling back", slog.Any("err", err))
+				orgId = 1
+			}
+
+			transportConfig.OrgID = orgId
+		}
+	}
+
+	return func(clientCfg *client.TransportConfig) {
+		clientCfg.OrgID = config.DefaultOrganizationId
+	}
+}
+
 func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAPI, *client.TransportConfig) {
 	var err error
 	u, err := url.Parse(s.grafanaConf.URL)
@@ -58,21 +76,9 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		Debug:        s.apiDebug,
 	}
 
-	if s.grafanaConf.IsBasicAuth() {
-		if s.grafanaConf.OrganizationName != "" {
-			orgId, err := api.NewExtendedApi().GetConfiguredOrgId(s.grafanaConf.OrganizationName)
-			if err != nil {
-				slog.Error("unable to determine org ID, falling back", slog.Any("err", err))
-				orgId = 1
-			}
-			opts = append(opts, func(clientCfg *client.TransportConfig) {
-				clientCfg.OrgID = orgId
-			})
-		} else {
-			opts = append(opts, func(clientCfg *client.TransportConfig) {
-				clientCfg.OrgID = config.DefaultOrganizationId
-			})
-		}
+	// If more than one opts is passed, depend on the caller to setup his required configuration
+	if s.grafanaConf.IsBasicAuth() && len(opts) == 1 {
+		opts = append(opts, GetOrgNameClientOpts(s.grafanaConf.OrganizationName))
 	}
 	for _, opt := range opts {
 		if opt != nil {
@@ -99,21 +105,31 @@ func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
 	}
 }
 
+func (s *DashNGoImpl) GetBasicClientWithOpts(opts ...NewClientOpts) *client.GrafanaHTTPAPI {
+	allOpts := s.getDefaultBasicOpts()
+	allOpts = append(allOpts, opts...)
+	grafanaClient, _ := s.getNewClient(allOpts...)
+	return grafanaClient
+}
+
 // GetAdminClient Returns the admin defaultClient if one is configured
 func (s *DashNGoImpl) GetAdminClient() *client.GrafanaHTTPAPI {
 	if !s.grafanaConf.IsGrafanaAdmin() || s.grafanaConf.UserName == "" {
 		log.Fatal("Unable to get Grafana Admin SecureData. ")
 	}
-	return s.GetBasicAuthClient()
+	return s.GetBasicClientWithOpts()
+}
+
+func (s *DashNGoImpl) getDefaultBasicOpts() []NewClientOpts {
+	return []NewClientOpts{func(clientCfg *client.TransportConfig) {
+		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.Password)
+		clientCfg.Debug = s.apiDebug
+	}}
 }
 
 // GetBasicAuthClient returns a basic auth grafana API Client
 func (s *DashNGoImpl) GetBasicAuthClient() *client.GrafanaHTTPAPI {
-	grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
-		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.Password)
-		clientCfg.Debug = s.apiDebug
-	})
-	return grafanaClient
+	return s.GetBasicClientWithOpts()
 }
 
 // ignoreSSLErrors when called replaces the default http legacyClient to ignore invalid SSL issues.

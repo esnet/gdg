@@ -54,22 +54,21 @@ func newUpdateOrgPreferenceCmd() simplecobra.Commander {
 				log.Fatal("At least one of [--homeDashUid, --theme, --weekstart] needs to be set")
 			}
 
-			rootCmd.GrafanaSvc().InitOrganizations()
-			prefere, err := rootCmd.GrafanaSvc().GetOrgPreferences(org)
+			preferences, err := rootCmd.GrafanaSvc().GetOrgPreferences(org)
 			if err != nil {
 				log.Fatal(err.Error())
 			}
 			if home != "" {
-				prefere.HomeDashboardUID = home
+				preferences.HomeDashboardUID = home
 			}
 			if theme != "" {
-				prefere.Theme = theme
+				preferences.Theme = theme
 			}
 			if weekstart != "" {
-				prefere.WeekStart = weekstart
+				preferences.WeekStart = weekstart
 			}
 
-			err = rootCmd.GrafanaSvc().UploadOrgPreferences(org, prefere)
+			err = rootCmd.GrafanaSvc().UploadOrgPreferences(org, preferences)
 			if err != nil {
 				log.Fatalf("Failed to update org preferences, %v", err)
 			}
@@ -84,14 +83,13 @@ func newGetOrgPreferenceCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "get",
 		Short: "get <orgName> returns org preferences",
-		Long:  "get <orgId> returns org preferences",
+		Long:  "get <orgName> returns org preferences",
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.PersistentFlags().StringP("orgName", "", "", "Organization Name")
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			orgName, _ := cd.CobraCommand.Flags().GetString("orgName")
 
-			rootCmd.GrafanaSvc().InitOrganizations()
 			pref, err := rootCmd.GrafanaSvc().GetOrgPreferences(orgName)
 			if err != nil {
 				log.Fatal(err.Error())
