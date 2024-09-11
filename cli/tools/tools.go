@@ -2,11 +2,20 @@ package tools
 
 import (
 	"context"
+	"slices"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/spf13/cobra"
 )
+
+func getBasicRoles() []string {
+	return []string{"admin", "editor", "viewer"}
+}
+
+func validBasicRole(role string) bool {
+	return slices.Contains(getBasicRoles(), role)
+}
 
 func NewToolsCommand() simplecobra.Commander {
 	description := "A collection of tools to manage a grafana instance"

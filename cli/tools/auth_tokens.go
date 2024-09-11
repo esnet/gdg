@@ -2,12 +2,12 @@ package tools
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"log"
 	"log/slog"
-	"slices"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
@@ -101,7 +101,7 @@ func newNewTokenCmd() simplecobra.Commander {
 		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			if len(args) < 2 {
-				return errors.New("requires a key name and a role('admin','viewer','editor') [ttl optional] ")
+				return fmt.Errorf("requires a key name and a role(%s) [ttl optional] ", strings.Join(getBasicRoles(), ", "))
 			}
 			name := args[0]
 			role := args[1]
@@ -119,8 +119,8 @@ func newNewTokenCmd() simplecobra.Commander {
 				expiration = 0
 			}
 
-			if !slices.Contains([]string{"admin", "editor", "viewer"}, role) {
-				log.Fatal("Invalid role specified")
+			if !validBasicRole(role) {
+				log.Fatalf("Invalid role specified, '%s'.  Valid roles are:[%s]", role, strings.Join(getBasicRoles(), ", "))
 			}
 			key, err := rootCmd.GrafanaSvc().CreateAPIKey(name, role, expiration)
 			if err != nil {
