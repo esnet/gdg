@@ -3,17 +3,18 @@ package tools
 import (
 	"context"
 	"errors"
+	"log"
+	"log/slog"
+	"slices"
+	"sort"
+	"strconv"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"log"
-	"log/slog"
 
 	"github.com/spf13/cobra"
-	"slices"
-	"sort"
-	"strconv"
 )
 
 func newServiceAccountCmd() simplecobra.Commander {
@@ -222,10 +223,12 @@ func newServiceAccountTokenCmd() simplecobra.Commander {
 				rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "token_id", "name", "token"})
 				rootCmd.TableObj.AppendRow(table.Row{serviceID, key.ID, key.Name, key.Key})
 				rootCmd.Render(cd.CobraCommand,
-					map[string]interface{}{"serviceID": serviceID,
-						"token_id": key.ID,
-						"name":     key.Name,
-						"token":    key.Key})
+					map[string]interface{}{
+						"serviceID": serviceID,
+						"token_id":  key.ID,
+						"name":      key.Name,
+						"token":     key.Key,
+					})
 			}
 
 			return nil

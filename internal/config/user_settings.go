@@ -4,9 +4,10 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"fmt"
-	"github.com/sethvargo/go-password/password"
 	"log/slog"
 	"math/big"
+
+	"github.com/sethvargo/go-password/password"
 )
 
 const (
@@ -49,7 +50,7 @@ func (u *UserSettings) defaultUserPassword(username string) string {
 	}
 
 	username = username + ".json"
-	//generate user password
+	// generate user password
 	h := sha256.New()
 	passwordVal := func() string {
 		h.Write([]byte(username))

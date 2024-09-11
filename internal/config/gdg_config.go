@@ -25,5 +25,4 @@ func (app *GDGAppConfiguration) GetAppGlobals() *AppGlobals {
 		app.Global = &AppGlobals{}
 	}
 	return app.Global
-
 }

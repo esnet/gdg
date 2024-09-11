@@ -49,21 +49,21 @@ type CredentialRule struct {
 
 // MatchingRule defines a single matching rule for Grafana Connections
 type MatchingRule struct {
-	Field     string `yaml:"field,omitempty"`
-	Regex     string `yaml:"regex,omitempty"`
-	Inclusive bool   `yaml:"inclusive,omitempty"`
+	Field     string `yaml:"field,omitempty" mapstructure:"field,omitempty"`
+	Regex     string `yaml:"regex,omitempty" mapstructure:"regex,omitempty"`
+	Inclusive bool   `yaml:"inclusive,omitempty" mapstructure:"inclusive,omitempty"`
 }
 
+// TODO: Move setting into DashboardSettings
 // FilterOverrides model wraps filter overrides for grafana
 type FilterOverrides struct {
-	IgnoreDashboardFilters bool `yaml:"ignore_dashboard_filters"`
+	IgnoreDashboardFilters bool `yaml:"ignore_dashboard_filters" mapstructure:"ignore_dashboard_filters" `
 }
 
 // ConnectionFilters model wraps connection filters for grafana
 type ConnectionFilters struct {
-	NameExclusions  string   `yaml:"name_exclusions"`
-	ConnectionTypes []string `yaml:"valid_types"`
-	//	pattern         *regexp.Regexp
+	NameExclusions  string   `yaml:"name_exclusions" mapstructure:"name_exclusions"`
+	ConnectionTypes []string `yaml:"valid_types" mapstructure:"valid_types"`
 }
 
 func (g GrafanaConnection) User() string {

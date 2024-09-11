@@ -1,0 +1,12 @@
+{
+	"access": "proxy",
+	"id": 1,
+	"isDefault": true,
+	"jsonData": {},
+	"name": "prometheus",
+	"orgId": 2,
+	"type": "prometheus",
+	"typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+	"typeName": "Prometheus",
+	"uid": "edx482u9lu8lcb"
+}

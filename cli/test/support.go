@@ -1,18 +1,19 @@
 package test
 
 import (
+	"io"
+	"log/slog"
+	"os"
+	"testing"
+
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	applog "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
-	"log/slog"
 
 	"github.com/stretchr/testify/assert"
-	"io"
-	"os"
-	"testing"
 )
 
 // setupAndExecuteMockingServices  will create a mock for varous required entities allowing to test the CLI flag parsing
@@ -46,7 +47,6 @@ func setupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.Grafa
 	out, _ := io.ReadAll(r)
 	outStr := string(out)
 	return outStr, clean
-
 }
 
 // InterceptStdout is a test helper function that will redirect all stdout in and out to a different file stream.
@@ -55,18 +55,16 @@ func InterceptStdout() (*os.File, *os.File, func()) {
 	backupStd := os.Stdout
 	backupErr := os.Stderr
 	r, w, _ := os.Pipe()
-	//Restore streams
+	// Restore streams
 	config.InitGdgConfig("testing", "")
 	applog.InitializeAppLogger(w, w, false)
 	cleanup := func() {
 		os.Stdout = backupStd
 		os.Stderr = backupErr
 		applog.InitializeAppLogger(os.Stdout, os.Stderr, false)
-
 	}
 	os.Stdout = w
 	os.Stderr = w
 
 	return r, w, cleanup
-
 }

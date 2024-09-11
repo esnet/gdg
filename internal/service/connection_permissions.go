@@ -3,13 +3,14 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/esnet/gdg/internal/tools"
-	"github.com/esnet/gdg/internal/types"
-	"github.com/grafana/grafana-openapi-client-go/client/access_control"
 	"log"
 	"log/slog"
 	"path/filepath"
 	"strings"
+
+	"github.com/esnet/gdg/internal/tools"
+	"github.com/esnet/gdg/internal/types"
+	"github.com/grafana/grafana-openapi-client-go/client/access_control"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -43,9 +44,9 @@ func (s *DashNGoImpl) ListConnectionPermissions(filter filters.Filter) []types.C
 		permission, err := s.getConnectionPermission(connection.UID)
 		if err != nil {
 			slog.Error("unable to retrieve connection permissions for ID.",
-				slog.Any("err", err),
 				slog.Any("uid", connection.UID),
 				slog.Any("connection_name", connection.Name),
+				slog.Any("err", err),
 			)
 			continue
 		}
@@ -197,7 +198,6 @@ func getPermissionType(perm models.ResourcePermissionDTO) PermissionType {
 	}
 
 	return ConnectionRolePermission
-
 }
 
 // updatedConnectionPermission a given permission associated with a given resource.  If permission is empty string, it will be removed, otherwise it will be added.
@@ -214,8 +214,8 @@ func (s *DashNGoImpl) updatedConnectionPermission(key *models.DataSourceListItem
 			slog.Info("Skipping modifications to admin role permission")
 			return nil
 		}
-		//update User Role
-		//POST /api/access-control/datasources/:uid/builtInRoles/:builtinRoleName
+		// update User Role
+		// POST /api/access-control/datasources/:uid/builtInRoles/:builtinRoleName
 		p := access_control.NewSetResourcePermissionsForBuiltInRoleParams()
 		p.BuiltInRole = perm.BuiltInRole
 		p.Resource = connectionResourceType
@@ -233,7 +233,7 @@ func (s *DashNGoImpl) updatedConnectionPermission(key *models.DataSourceListItem
 			slog.Info("Skipping modifications to admin user permission")
 			return nil
 		}
-		//POST /api/access-control/datasources/:uid/users/:id
+		// POST /api/access-control/datasources/:uid/users/:id
 		p := access_control.NewSetResourcePermissionsForUserParams()
 		p.UserID = perm.UserID
 		p.Body = &models.SetPermissionCommand{Permission: permission}
@@ -247,8 +247,8 @@ func (s *DashNGoImpl) updatedConnectionPermission(key *models.DataSourceListItem
 			return err
 		}
 	case ConnectionTeamPermission:
-		//delete Team
-		//POST /api/access-control/datasources/:uid/builtInRoles/:builtinRoleName
+		// delete Team
+		// POST /api/access-control/datasources/:uid/builtInRoles/:builtinRoleName
 		p := access_control.NewSetResourcePermissionsForTeamParams()
 		p.TeamID = perm.TeamID
 		p.Resource = connectionResourceType
@@ -266,7 +266,6 @@ func (s *DashNGoImpl) updatedConnectionPermission(key *models.DataSourceListItem
 		return fmt.Errorf("permission type %s is not supported", permType)
 	}
 	return nil
-
 }
 
 // getConnectionPermission Get all permissions for a given connection

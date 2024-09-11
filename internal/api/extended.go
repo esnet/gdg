@@ -2,13 +2,13 @@ package api
 
 import (
 	"crypto/tls"
+	"net/http"
+
 	"github.com/carlmjohnson/requests"
 	"github.com/esnet/gdg/internal/config"
-	"net/http"
 )
 
-//Most of these methods are here due to limitations in existing libraries being used.
-
+// Most of these methods are here due to limitations in existing libraries being used.
 type ExtendedApi struct {
 	grafanaCfg *config.GrafanaConfig
 	debug      bool
@@ -24,7 +24,6 @@ func NewExtendedApi() *ExtendedApi {
 }
 
 func (extended *ExtendedApi) getRequestBuilder() *requests.Builder {
-
 	req := requests.URL(extended.grafanaCfg.URL)
 	if config.Config().IgnoreSSL() {
 		customTransport := http.DefaultTransport.(*http.Transport).Clone()

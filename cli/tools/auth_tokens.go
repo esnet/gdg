@@ -3,16 +3,17 @@ package tools
 import (
 	"context"
 	"errors"
-	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/spf13/cobra"
 	"log"
 	"log/slog"
 	"slices"
 	"sort"
 	"strconv"
+
+	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/internal/config"
+	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/spf13/cobra"
 )
 
 func newTokensCmd() simplecobra.Commander {
@@ -43,7 +44,6 @@ func newListTokensCmd() simplecobra.Commander {
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "role", "expiration"})
 			apiKeys := rootCmd.GrafanaSvc().ListAPIKeys()
 			sort.SliceStable(apiKeys, func(i, j int) bool {
@@ -76,7 +76,6 @@ func newDeleteTokenCmd() simplecobra.Commander {
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllTokens()
 			slog.Info("Delete Tokens for context: ", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})

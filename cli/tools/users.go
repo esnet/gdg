@@ -2,11 +2,12 @@ package tools
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/spf13/cobra"
-	"log/slog"
 )
 
 func newUserCommand() simplecobra.Commander {
@@ -16,7 +17,6 @@ func newUserCommand() simplecobra.Commander {
 		Long:  "Provides some utility to manage grafana users from the CLI.  Please note, as the credentials cannot be imported, the export with generate a default password for any user not already present",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
-
 		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"u", "user"}
@@ -24,7 +24,6 @@ func newUserCommand() simplecobra.Commander {
 		InitCFunc:    nil,
 		CommandsList: []simplecobra.Commander{newPromoteUserCmd()},
 	}
-
 }
 
 func newPromoteUserCmd() simplecobra.Commander {
@@ -44,7 +43,6 @@ func newPromoteUserCmd() simplecobra.Commander {
 				slog.Info("Please note user is a grafana admin, not necessarily an Org admin.  You may need to promote yourself manually per org")
 			}
 			return nil
-
 		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"godmode", "promote"}

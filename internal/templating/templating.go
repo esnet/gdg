@@ -2,14 +2,15 @@ package templating
 
 import (
 	"fmt"
-	"github.com/Masterminds/sprig/v3"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools"
 	"log/slog"
 	"os"
 	"strings"
 	"text/template"
+
+	"github.com/Masterminds/sprig/v3"
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/tools"
 )
 
 type Templating interface {
@@ -17,8 +18,7 @@ type Templating interface {
 	ListTemplates() []string
 }
 
-type templateImpl struct {
-}
+type templateImpl struct{}
 
 func NewTemplate() Templating {
 	return &templateImpl{}
@@ -53,7 +53,7 @@ func (t *templateImpl) ListTemplates() []string {
 
 func (t *templateImpl) Generate(templateName string) (map[string][]string, error) {
 	result := make(map[string][]string)
-	//Remove extension if included
+	// Remove extension if included
 	cfg := config.Config()
 	var entities []config.TemplateDashboards
 	templateName = strings.ReplaceAll(templateName, ".go.tmpl", "")
@@ -89,14 +89,14 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 			)
 			grafana.OrganizationName = outputEntity.OrganizationName
 			outputPath := service.BuildResourceFolder(outputEntity.Folder, config.DashboardResource)
-			//Merge two maps.
+			// Merge two maps.
 			tmpl, err := template.New("").Funcs(fns).Parse(string(templateData))
 			if err != nil {
 				slog.Error("unable to parse template", slog.Any("err", err))
 				continue
 			}
 
-			//Create new file.
+			// Create new file.
 			tools.CreateDestinationPath(outputPath)
 			dashboardName := entity.TemplateName
 			if outputEntity.DashboardName != "" {
@@ -126,7 +126,6 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 		}
 	}
 	return result, nil
-
 }
 
 func init() {

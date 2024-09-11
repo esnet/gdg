@@ -3,13 +3,14 @@ package backup
 import (
 	"context"
 	"fmt"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"log/slog"
 
 	"github.com/spf13/cobra"
 )
@@ -81,6 +82,7 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newConnectionsPermissionClearCmd() simplecobra.Commander {
 	description := "Clear Connection Permissions"
 	return &support.SimpleCommand{
@@ -144,6 +146,7 @@ func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newConnectionsPermissionUploadCmd() simplecobra.Commander {
 	description := "Upload Connection Permissions"
 	return &support.SimpleCommand{

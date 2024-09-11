@@ -5,5 +5,5 @@ pre-commit:
   commands:
     backend-format:
       glob: '**/*.go'
-      run: gofmt -w -s {staged_files}
+      run: gofumpt -l -w .
       stage_fixed: true

@@ -16,4 +16,5 @@ type Storage interface {
 	ReadFile(filename string) ([]byte, error)                    // ReadFile returns byte array or error with data from file
 	FindAllFiles(folder string, fullPath bool) ([]string, error) // FindAllFiles recursively list all files for a given path
 	Name() string                                                // Name of storage engine
+	GetPrefix() string                                           // Prefix used by storage engine
 }

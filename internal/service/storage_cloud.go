@@ -4,21 +4,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	transport "github.com/aws/smithy-go/endpoints"
-	"net/url"
-
-	"gocloud.dev/blob"
-	"gocloud.dev/blob/s3blob"
 	"log"
 	"log/slog"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	transport "github.com/aws/smithy-go/endpoints"
+
+	"gocloud.dev/blob"
+	"gocloud.dev/blob/s3blob"
 )
 
 // AWS Crud
@@ -62,12 +63,16 @@ var (
 	initBucketOnce sync.Once
 )
 
+func (s *CloudStorage) GetPrefix() string {
+	return s.Prefix
+}
+
 // getCloudLocation appends prefix to path
 func (s *CloudStorage) getCloudLocation(fileName string) string {
 	if s.Prefix == "<nil>" {
 		s.Prefix = ""
 	}
-	//Skip if prefix is already in Path.
+	// Skip if prefix is already in Path.
 	if len(s.Prefix) > 0 && strings.Contains(fileName, s.Prefix) {
 		return fileName
 	}
@@ -84,7 +89,6 @@ func (s *CloudStorage) ReadFile(filename string) ([]byte, error) {
 	}
 	ctx := context.Background()
 	return s.BucketRef.ReadAll(ctx, s.getCloudLocation(filename))
-
 }
 
 // WriteFile persists data to Cloud Provider Storage returning error if operation failed
@@ -147,7 +151,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		return nil, errors.New("cannot convert appData to string map")
 	}
 
-	//Pattern specifically for Self hosted S3 compatible instances Minio / Ceph
+	// Pattern specifically for Self hosted S3 compatible instances Minio / Ceph
 	if boolStrCheck(getMapValue(Custom, "false", stringEmpty, appData)) {
 		creds := credentials.NewStaticCredentialsProvider(
 			getMapValue(AccessId, os.Getenv("AWS_ACCESS_KEY"), stringEmpty, appData),
@@ -176,12 +180,12 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		}
 		if err == nil && boolStrCheck(getMapValue(InitBucket, "false", stringEmpty, appData)) {
 			slog.Info("attempting to bootstrap bucket", slog.Any("bucket", appData[BucketName]))
-			//Attempts to initiate bucket
+			// Attempts to initiate bucket
 			createBucket := func() {
 				m := s3.CreateBucketInput{
 					Bucket: aws.String(appData[BucketName]),
 				}
-				//attempt to create bucket
+				// attempt to create bucket
 				_, err := session.CreateBucket(context.Background(), &m)
 				if err != nil {
 					slog.Warn("bucket already exists or cannot be created", "bucket", *m.Bucket)
@@ -201,7 +205,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		}
 
 	} else {
-		var cloudURL = fmt.Sprintf("%s://%s", appData["cloud_type"], appData["bucket_name"])
+		cloudURL := fmt.Sprintf("%s://%s", appData["cloud_type"], appData["bucket_name"])
 		bucketObj, err = blob.OpenBucket(c, cloudURL)
 		errorMsg = fmt.Sprintf("failed to open bucket %s", cloudURL)
 	}
@@ -226,7 +230,6 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 // on how the user configures quotes the value.
 func boolStrCheck(val string) bool {
 	return strings.ToLower(val) == "true" || val == "1"
-
 }
 
 // getMapValue a generic utility that will get a value from a map and return a default if key does not exist

@@ -4,6 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"log/slog"
+	"strings"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
@@ -13,9 +17,6 @@ import (
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
-	"log"
-	"log/slog"
-	"strings"
 )
 
 const (
@@ -48,11 +49,11 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 		folderFilter = nil
 	}
 
-	folderNameMap := getFolderNameIDMap(s.ListFolder(folderFilter))
+	folderNameMap := getFolderNameIDMap(s.ListFolders(folderFilter))
 	values := maps.Values(folderNameMap)
-	var buf = strings.Builder{}
-	//Check to see if General should be included
-	//If Ignore Filters OR General is in monitored list, add 0 folder
+	buf := strings.Builder{}
+	// Check to see if General should be included
+	// If Ignore Filters OR General is in monitored list, add 0 folder
 	if (!ignoreFilters && slices.Contains(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), DefaultFolderName)) || ignoreFilters {
 		buf.WriteString("0,")
 	} else {
@@ -69,7 +70,6 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 	libraryElements, err := s.GetClient().LibraryElements.GetLibraryElements(params)
 	if err != nil {
 		log.Fatalf("Unable to list Library Elements %v", err)
-
 	}
 	return libraryElements.GetPayload().Result.Elements
 }
@@ -83,7 +83,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 		dataFiles []string
 	)
 
-	folderMap := reverseLookUp(getFolderNameUIDMap(s.ListFolder(nil)))
+	folderMap := reverseLookUp(s.getFolderNameUIDMap(s.ListFolders(nil)))
 	listing = s.ListLibraryElements(filter)
 	for _, item := range listing {
 		if dsPacked, err = json.MarshalIndent(item, "", "	"); err != nil {
@@ -121,7 +121,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 
 	currentLibElements := s.ListLibraryElements(filter)
 	libMapping := make(map[string]*models.LibraryElementDTO, 0)
-	//Build a mapping by UID
+	// Build a mapping by UID
 	for ndx, item := range currentLibElements {
 		libMapping[item.UID] = currentLibElements[ndx]
 	}
@@ -146,7 +146,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 				slog.Error("Unable to determine folder name of library component, skipping.", "filename", file)
 				continue
 			}
-			//Get UID
+			// Get UID
 			if Results[1].Exists() {
 				libraryUID = Results[1].String()
 			} else {

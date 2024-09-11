@@ -2,25 +2,86 @@ package test
 
 import (
 	"encoding/json"
+	"log/slog"
+	"os"
+	"slices"
+	"strings"
+	"testing"
+
+	"github.com/testcontainers/testcontainers-go"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
-	"os"
-	"strings"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"log/slog"
-	"slices"
 )
+
+func TestDashboardNestedFolderCRUD(t *testing.T) {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
+		t.Skip("skipping token based tests")
+	}
+	containerObj, cleanup := test_tooling.InitOrganizations(t, false)
+	dockerContainer := containerObj.(*testcontainers.DockerContainer)
+	if strings.Contains(dockerContainer.Image, grafana10) {
+		t.Log("Nested folders not supported prior to v11.0, skipping test")
+		t.Skip()
+	}
+	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
+	assert.NoError(t, os.Setenv(test_tooling.EnableNestedBehavior, "true"))
+	assert.NoError(t, os.Setenv(test_tooling.IgnoreDashFilters, "true"))
+
+	defer func() {
+		os.Unsetenv(test_tooling.OrgNameOverride)
+		os.Unsetenv(test_tooling.EnableNestedBehavior)
+		os.Unsetenv(test_tooling.IgnoreDashFilters)
+		cleanup()
+	}()
+
+	apiClient, _ := test_tooling.CreateSimpleClient(t, nil, containerObj)
+
+	filtersEntity := service.NewDashboardFilter("", "", "")
+	slog.Info("Exporting all dashboards")
+	apiClient.UploadDashboards(filtersEntity)
+	slog.Info("Listing all dashboards")
+	boards := apiClient.ListDashboards(filtersEntity)
+	slog.Info("Imported dashboards", "count", len(boards))
+	var generalBoard *models.Hit
+	var nestedFolder *models.Hit
+	for ndx, board := range boards {
+		slog.Info(board.Slug)
+		if board.Slug == "rabbitmq-overview" {
+			generalBoard = boards[ndx]
+		}
+		if board.Slug == "node-exporter-full" {
+			nestedFolder = boards[ndx]
+		}
+	}
+	assert.NotNil(t, generalBoard)
+	assert.NotNil(t, nestedFolder)
+	nestedPath := service.GetNestedFolder(nestedFolder.FolderTitle, nestedFolder.FolderUID, apiClient)
+	assert.Equal(t, nestedPath, "Others/dummy")
+
+	// Import Dashboards
+	numBoards := 3
+	slog.Info("Importing Dashboards")
+	list := apiClient.DownloadDashboards(filtersEntity)
+	assert.Equal(t, len(list), numBoards)
+	slog.Info("Deleting Dashboards")
+	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
+	assert.Equal(t, len(deleteList), numBoards)
+	slog.Info("List Dashboards again")
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), 0)
+}
 
 func TestDashboardCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -53,7 +114,7 @@ func TestDashboardCRUD(t *testing.T) {
 	assert.True(t, ignoredSkipped)
 	validateGeneralBoard(t, generalBoard)
 	validateOtherBoard(t, otherBoard)
-	//Validate filters
+	// Validate filters
 
 	filterFolder := service.NewDashboardFilter("Other", "", "")
 	boards = apiClient.ListDashboards(filterFolder)
@@ -62,7 +123,7 @@ func TestDashboardCRUD(t *testing.T) {
 	boards = apiClient.ListDashboards(dashboardFilter)
 	assert.Equal(t, 1, len(boards))
 
-	//Import Dashboards
+	// Import Dashboards
 	numBoards := 16
 	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(filtersEntity)
@@ -79,7 +140,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, container, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, container, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -99,7 +160,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	assert.Equal(t, 13, len(boards))
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
 	assert.Equal(t, 13, len(deleteList))
-	//Multiple Tags behavior
+	// Multiple Tags behavior
 	slog.Info("Uploading all dashboards, filtered by tags")
 	data, err = json.Marshal([]string{"flow"})
 	assert.NoError(t, err)
@@ -117,7 +178,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	apiClient, _ = test_tooling.CreateSimpleClient(t, nil, container)
 	filterNone := service.NewDashboardFilter("", "", "")
 	apiClient.UploadDashboards(filterNone)
-	//Listing with no filter
+	// Listing with no filter
 	boards = apiClient.ListDashboards(filterNone)
 	assert.Equal(t, 16, len(boards))
 
@@ -128,7 +189,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	slog.Info("Listing dashboards by tag")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, 8, len(deleteList))
-	//Listing with
+	// Listing with
 	data, err = json.Marshal([]string{"flow", "netsage"})
 	assert.NoError(t, err)
 	filtersEntity = service.NewDashboardFilter("", "", string(data))
@@ -143,7 +204,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer cleanup()
 	emptyFilter := filters.NewBaseFilter()
 
@@ -162,7 +223,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 		validateTags(t, board)
 	}
 
-	//Import Dashboards
+	// Import Dashboards
 	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(filtersEntity)
 	assert.Equal(t, len(list), len(boards))
@@ -182,7 +243,7 @@ func TestWildcardFilter(t *testing.T) {
 	}
 
 	// Setup Filters
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer cleanup()
 	emptyFilter := service.NewDashboardFilter("", "", "")
 
@@ -247,7 +308,6 @@ func validateGeneralBoard(t *testing.T, board *models.Hit) {
 	assert.Equal(t, board.Type, models.HitType("dash-db"))
 	assert.Equal(t, board.FolderID, int64(0))
 	assert.Equal(t, board.FolderTitle, "General")
-
 }
 
 func validateTags(t *testing.T, board *models.Hit) {
@@ -256,6 +316,5 @@ func validateTags(t *testing.T, board *models.Hit) {
 	allTags := []string{"netsage", "flow"}
 	for _, tag := range board.Tags {
 		assert.True(t, slices.Contains(allTags, tag))
-
 	}
 }

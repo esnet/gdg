@@ -2,6 +2,8 @@ package backup
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
@@ -9,7 +11,6 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log/slog"
 )
 
 func parseTeamGlobalFlags(command *cobra.Command) []string {
@@ -45,7 +46,6 @@ func newTeamsCommand() simplecobra.Commander {
 			newTeamsClearCmd(),
 		},
 	}
-
 }
 
 func newTeamsListCmd() simplecobra.Commander {
@@ -79,6 +79,7 @@ func newTeamsListCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newTeamsDownloadCmd() simplecobra.Commander {
 	description := "download teams from grafana"
 	return &support.SimpleCommand{
@@ -107,8 +108,8 @@ func newTeamsDownloadCmd() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }
+
 func newTeamsUploadCmd() simplecobra.Commander {
 	description := "upload teams to grafana"
 	return &support.SimpleCommand{
@@ -140,6 +141,7 @@ func newTeamsUploadCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newTeamsClearCmd() simplecobra.Commander {
 	description := "Delete All Team from grafana"
 	return &support.SimpleCommand{

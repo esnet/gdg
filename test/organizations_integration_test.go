@@ -1,14 +1,15 @@
 package test
 
 import (
+	"os"
+	"sort"
+	"testing"
+
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/slices"
-	"os"
-	"sort"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +21,7 @@ func TestOrganizationCrud(t *testing.T) {
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer cleanup()
 	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter(), true)
 	assert.Equal(t, len(orgs), 1)
@@ -28,14 +29,14 @@ func TestOrganizationCrud(t *testing.T) {
 	assert.Equal(t, mainOrg.Organization.ID, int64(1))
 	assert.Equal(t, mainOrg.Organization.Name, "Main Org.")
 	newOrgs := apiClient.UploadOrganizations(service.NewOrganizationFilter())
-	assert.Equal(t, len(newOrgs), 2)
+	assert.Equal(t, len(newOrgs), 3)
 	assert.True(t, slices.Contains(newOrgs, "DumbDumb"))
 	assert.True(t, slices.Contains(newOrgs, "Moo"))
-	//Filter Org
+	assert.True(t, slices.Contains(newOrgs, "testing"))
+	// Filter Org
 	orgs = apiClient.ListOrganizations(service.NewOrganizationFilter("DumbDumb"), true)
 	assert.Equal(t, len(orgs), 1)
 	assert.Equal(t, orgs[0].Organization.Name, "DumbDumb")
-
 }
 
 func TestOrganizationUserMembership(t *testing.T) {
@@ -45,16 +46,16 @@ func TestOrganizationUserMembership(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer cleanup()
-	//Create Orgs in case they aren't already present.
+	// Create Orgs in case they aren't already present.
 	apiClient.UploadOrganizations(service.NewOrganizationFilter())
 	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter(), true)
 	sort.Slice(orgs, func(a, b int) bool {
 		return orgs[a].Organization.ID < orgs[b].Organization.ID
 	})
 	newOrg := orgs[2]
-	//Create Users in case they aren't already present.
+	// Create Users in case they aren't already present.
 	apiClient.UploadUsers(service.NewUserFilter(""))
 	// get users
 	users := apiClient.ListUsers(service.NewUserFilter(""))
@@ -67,10 +68,10 @@ func TestOrganizationUserMembership(t *testing.T) {
 		}
 	}
 	assert.NotNil(t, orgUser)
-	//Reset if any state exists.
+	// Reset if any state exists.
 	err := apiClient.DeleteUserFromOrg(slug.Make(newOrg.Organization.Name), orgUser.ID)
 	assert.Nil(t, err)
-	//Start CRUD test
+	// Start CRUD test
 	orgUsers := apiClient.ListOrgUsers(newOrg.Organization.ID)
 	assert.Equal(t, len(orgUsers), 1)
 	assert.Equal(t, orgUsers[0].Login, "admin")
@@ -98,7 +99,7 @@ func TestOrganizationProperties(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, false)
+	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
 	defer cleanup()
 	apiClient.UploadDashboards(service.NewDashboardFilter("", "", ""))
 	defer apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))

@@ -2,10 +2,10 @@ package log
 
 import (
 	"context"
-	"github.com/lmittmann/tint"
 	"log/slog"
-
 	"os"
+
+	"github.com/lmittmann/tint"
 )
 
 type ContextHandler struct {
@@ -19,7 +19,7 @@ type ContextHandler struct {
 func NewContextHandler(h slog.Handler, out *os.File, err *os.File, opts *tint.Options) *ContextHandler {
 	ch := &ContextHandler{outStream: out, errStream: err, options: opts}
 	if lh, ok := h.(*ContextHandler); ok {
-		if lh.outStream == out && lh.errStream == err {
+		if lh.outStream == out && lh.errStream == err && lh.options.Level == opts.Level {
 			return lh
 		}
 	}
@@ -45,7 +45,6 @@ func (h *ContextHandler) Enabled(ctx context.Context, level slog.Level) bool {
 }
 
 func (h *ContextHandler) Handle(ctx context.Context, r slog.Record) error {
-
 	if r.Level >= slog.LevelWarn {
 		return h.errorHandler.Handle(ctx, r)
 	}

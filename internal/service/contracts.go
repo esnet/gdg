@@ -22,7 +22,7 @@ type GrafanaService interface {
 	TeamsApi
 
 	AuthenticationApi
-	//MetaData
+	// MetaData
 	ServerInfoApi
 	LicenseApi
 }
@@ -59,12 +59,12 @@ type DashboardsApi interface {
 
 // FoldersApi Contract definition
 type FoldersApi interface {
-	ListFolder(filter filters.Filter) []*models.Hit
+	ListFolders(filter filters.Filter) []*customModels.FolderDetails
 	DownloadFolders(filter filters.Filter) []string
 	UploadFolders(filter filters.Filter) []string
 	DeleteAllFolders(filter filters.Filter) []string
-	//Permissions
-	ListFolderPermissions(filter filters.Filter) map[*models.Hit][]*models.DashboardACLInfoDTO
+	// Permissions
+	ListFolderPermissions(filter filters.Filter) map[*customModels.FolderDetails][]*models.DashboardACLInfoDTO
 	DownloadFolderPermissions(filter filters.Filter) []string
 	UploadFolderPermissions(filter filters.Filter) []string
 }
@@ -97,7 +97,7 @@ type organizationCrudApi interface {
 }
 
 type organizationToolsApi interface {
-	//Manage Active Organization
+	// Manage Active Organization
 	SetOrganizationByName(name string, useSlug bool) error
 	GetUserOrganization() *models.OrgDetailsDTO
 	GetTokenOrganization() *models.OrgDetailsDTO
@@ -132,7 +132,7 @@ type ServiceAccountApi interface {
 }
 
 type TeamsApi interface {
-	//Team
+	// Team
 	DownloadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
 	UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
 	ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
@@ -147,7 +147,7 @@ type TokenApi interface {
 
 // UsersApi Contract definition
 type UsersApi interface {
-	//UserApi
+	// UserApi
 	ListUsers(filter filters.Filter) []*models.UserSearchHitDTO
 	DownloadUsers(filter filters.Filter) []string
 	UploadUsers(filter filters.Filter) []gdgType.UserProfileWithAuth

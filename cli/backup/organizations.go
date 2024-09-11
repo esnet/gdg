@@ -2,6 +2,9 @@ package backup
 
 import (
 	"context"
+	"log/slog"
+	"sort"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
@@ -9,8 +12,6 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log/slog"
-	"sort"
 )
 
 func parseOrganizationGlobalFlags(command *cobra.Command) []string {
@@ -41,7 +42,6 @@ func newOrganizationsCommand() simplecobra.Commander {
 			newOrganizationsUploadCmd(),
 		},
 	}
-
 }
 
 func newOrganizationsListCmd() simplecobra.Commander {
@@ -74,13 +74,17 @@ func newOrganizationsListCmd() simplecobra.Commander {
 				slog.Info("No organizations found")
 			} else {
 				for _, org := range listOrganizations {
-					data := table.Row{org.Organization.ID,
+					data := table.Row{
+						org.Organization.ID,
 						org.Organization.Name,
-						slug.Make(org.Organization.Name)}
+						slug.Make(org.Organization.Name),
+					}
 					if includePreferences {
-						data = append(data, table.Row{org.Preferences.HomeDashboardUID,
+						data = append(data, table.Row{
+							org.Preferences.HomeDashboardUID,
 							org.Preferences.Theme,
-							org.Preferences.WeekStart}...)
+							org.Preferences.WeekStart,
+						}...)
 					}
 					rootCmd.TableObj.AppendRow(data)
 
@@ -90,8 +94,8 @@ func newOrganizationsListCmd() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }
+
 func newOrganizationsDownloadCmd() simplecobra.Commander {
 	description := "download Organizations"
 	return &support.SimpleCommand{
@@ -117,8 +121,8 @@ func newOrganizationsDownloadCmd() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }
+
 func newOrganizationsUploadCmd() simplecobra.Commander {
 	description := "upload Organizations to grafana"
 	return &support.SimpleCommand{
@@ -144,5 +148,4 @@ func newOrganizationsUploadCmd() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }

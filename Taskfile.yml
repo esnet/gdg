@@ -28,12 +28,18 @@ tasks:
       - go install github.com/vektra/mockery/v2@{{ .MOCKERY_VERSION}}
       - go install github.com/goreleaser/goreleaser@{{ .RELEASER_VERSION }} 
       - go install github.com/evilmartians/lefthook@{{ .LEFTHOOK_VERSION }}
+      - go install mvdan.cc/gofumpt@v0.7.0
+
       - lefthook install
 
   security:
     desc: "Run security scan"
     cmds:
       - gosec --exclude=G402,G304  ./...
+  format:
+    desc: reformat the code to match stricter conventions
+    cmds:
+      - gofumpt -l -w .
   lint:
     desc: "Lint project, skipping test files."
     cmds:

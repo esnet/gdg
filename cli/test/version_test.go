@@ -2,6 +2,10 @@ package test
 
 import (
 	"fmt"
+	"os"
+	"strings"
+	"testing"
+
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service"
@@ -9,13 +13,10 @@ import (
 	"github.com/esnet/gdg/internal/version"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"strings"
-	"testing"
 )
 
 func TestVersionCommand(t *testing.T) {
-	var execMe = func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
+	execMe := func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
 		err := cli.Execute(string(data), []string{"version"}, optionMockSvc())
 		return err
 	}

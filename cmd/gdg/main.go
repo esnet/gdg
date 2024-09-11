@@ -1,19 +1,18 @@
 package main
 
 import (
-	"github.com/esnet/gdg/cli"
-	"github.com/esnet/gdg/cli/support"
 	"log"
 	"os"
+
+	"github.com/esnet/gdg/cli"
+	"github.com/esnet/gdg/cli/support"
 
 	api "github.com/esnet/gdg/internal/service"
 )
 
-var (
-	getGrafanaSvc = func() api.GrafanaService {
-		return api.NewApiService()
-	}
-)
+var getGrafanaSvc = func() api.GrafanaService {
+	return api.NewApiService()
+}
 
 func main() {
 	setGrafanaSvc := func() support.RootOption {

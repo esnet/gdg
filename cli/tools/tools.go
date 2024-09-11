@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/spf13/cobra"
@@ -25,5 +26,4 @@ func NewToolsCommand() simplecobra.Commander {
 			return cd.CobraCommand.Help()
 		},
 	}
-
 }

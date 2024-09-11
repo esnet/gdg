@@ -2,14 +2,15 @@ package backup
 
 import (
 	"context"
+	"log/slog"
+	"strings"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log/slog"
-	"strings"
 )
 
 func newUsersCommand() simplecobra.Commander {
@@ -32,7 +33,6 @@ func newUsersCommand() simplecobra.Commander {
 			newUsersClearCmd(),
 		},
 	}
-
 }
 
 func newUsersListCmd() simplecobra.Commander {
@@ -53,7 +53,7 @@ func newUsersListCmd() simplecobra.Commander {
 				slog.Info("No users found")
 			} else {
 				cfg := config.Config().GetDefaultGrafanaConfig()
-				var defaultPassword = "Unknown"
+				defaultPassword := "Unknown"
 				for _, user := range users {
 					var labels string
 					if len(user.AuthLabels) > 0 {
@@ -62,8 +62,10 @@ func newUsersListCmd() simplecobra.Commander {
 					if !cfg.GetUserSettings().RandomPassword {
 						defaultPassword = cfg.GetUserSettings().GetPassword(user.Login)
 					}
-					rootCmd.TableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email, user.IsAdmin,
-						user.IsDisabled, defaultPassword, labels})
+					rootCmd.TableObj.AppendRow(table.Row{
+						user.ID, user.Login, user.Name, user.Email, user.IsAdmin,
+						user.IsDisabled, defaultPassword, labels,
+					})
 				}
 				rootCmd.Render(cd.CobraCommand, users)
 			}
@@ -72,6 +74,7 @@ func newUsersListCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newUsersDownloadCmd() simplecobra.Commander {
 	description := "download users from grafana"
 	return &support.SimpleCommand{
@@ -98,6 +101,7 @@ func newUsersDownloadCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newUsersUploadCmd() simplecobra.Commander {
 	description := "upload users to grafana"
 	return &support.SimpleCommand{
@@ -120,8 +124,10 @@ func newUsersUploadCmd() simplecobra.Commander {
 					if len(user.AuthLabels) > 0 {
 						labels = strings.Join(user.AuthLabels, ", ")
 					}
-					rootCmd.TableObj.AppendRow(table.Row{user.ID, user.Login, user.Name, user.Email,
-						user.IsGrafanaAdmin, user.IsDisabled, user.Password, labels})
+					rootCmd.TableObj.AppendRow(table.Row{
+						user.ID, user.Login, user.Name, user.Email,
+						user.IsGrafanaAdmin, user.IsDisabled, user.Password, labels,
+					})
 				}
 				rootCmd.Render(cd.CobraCommand, savedFiles)
 			}
@@ -129,6 +135,7 @@ func newUsersUploadCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newUsersClearCmd() simplecobra.Commander {
 	description := "delete all users"
 	return &support.SimpleCommand{

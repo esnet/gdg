@@ -3,19 +3,19 @@ package service
 import (
 	"errors"
 	"fmt"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/tools"
-	"github.com/gosimple/slug"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/tools"
+	"github.com/gosimple/slug"
 )
 
 var (
 	DefaultFolderName   = "General"
 	searchTypeDashboard = "dash-db"
-	searchTypeFolder    = "dash-folder"
+	SearchTypeFolder    = "dash-folder"
 )
 
 func GetSlug(title string) string {
@@ -34,9 +34,9 @@ func updateSlug(board string) string {
 
 // getFolderFromResourcePath if a use encodes a path separator in path, we can't determine the folder name.  This strips away
 // all the known components of a resource type leaving only the folder name.
-func getFolderFromResourcePath(storageEngine string, filePath string, resourceType config.ResourceType) (string, error) {
+func getFolderFromResourcePath(storageEngine string, filePath string) (string, error) {
 	basePath := fmt.Sprintf("%s/", config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource))
-	//Take into account cloud prefix is enabled
+	// Take into account cloud prefix is enabled
 	if storageEngine != "" {
 		cloudType, data := config.Config().GetCloudConfiguration(storageEngine)
 		if cloudType != "local" && data["prefix"] != "" {
@@ -48,7 +48,6 @@ func getFolderFromResourcePath(storageEngine string, filePath string, resourceTy
 	ndx := strings.LastIndex(folderName, string(os.PathSeparator))
 	if ndx != -1 {
 		folderName = folderName[0:ndx]
-		slog.Debug("Folder name is", "folder", folderName)
 		return folderName, nil
 	}
 	return "", errors.New("unable to parse resource to retrieve folder name")
@@ -58,11 +57,7 @@ func BuildResourceFolder(folderName string, resourceType config.ResourceType) st
 	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
 	}
-	strSeparator := string(os.PathSeparator)
 
-	if strings.Contains(folderName, strSeparator) {
-		folderName = strings.ReplaceAll(folderName, strSeparator, fmt.Sprintf("//%s", strSeparator))
-	}
 	v := fmt.Sprintf("%s/%s", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
 	tools.CreateDestinationPath(v)
 	return v
@@ -72,5 +67,4 @@ func buildResourcePath(folderName string, resourceType config.ResourceType) stri
 	v := fmt.Sprintf("%s/%s.json", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
 	tools.CreateDestinationPath(filepath.Dir(v))
 	return v
-
 }

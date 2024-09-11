@@ -1,6 +1,10 @@
 package test
 
 import (
+	"io"
+	"strings"
+	"testing"
+
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service"
@@ -9,9 +13,6 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"io"
-	"strings"
-	"testing"
 )
 
 func TestConnectionCommand(t *testing.T) {

@@ -2,8 +2,9 @@ package tools
 
 import (
 	"fmt"
-	"golang.org/x/mod/semver"
 	"log/slog"
+
+	"golang.org/x/mod/semver"
 )
 
 const (
@@ -25,7 +26,6 @@ func (v VersionRange) Validate() bool {
 	}
 
 	return true
-
 }
 
 // InRange returns true if the current grafana version in within all of the ranges

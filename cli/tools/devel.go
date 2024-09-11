@@ -2,11 +2,12 @@ package tools
 
 import (
 	"context"
+	"log/slog"
+	"os"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/spf13/cobra"
-	"log/slog"
-	"os"
 )
 
 func newDevelCmd() simplecobra.Commander {
@@ -58,7 +59,6 @@ func newCompletion() simplecobra.Commander {
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.ValidArgs = []string{"bash", "zsh", "fish", "powershell"}
 			cmd.Args = cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs)
-
 		},
 	}
 }

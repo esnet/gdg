@@ -2,12 +2,13 @@ package cli
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/backup"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/cli/tools"
 	assets "github.com/esnet/gdg/config"
-	"log/slog"
 )
 
 // Execute executes a command.

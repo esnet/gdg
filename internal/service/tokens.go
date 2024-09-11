@@ -2,11 +2,11 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"log/slog"
 
 	"github.com/grafana/grafana-openapi-client-go/client/api_keys"
 	"github.com/grafana/grafana-openapi-client-go/models"
-	"log"
 )
 
 // ListAPIKeys returns a list of all known API Keys and service accounts
@@ -49,13 +49,12 @@ func (s *DashNGoImpl) CreateAPIKey(name, role string, expiration int64) (*models
 		return nil, fmt.Errorf("unable to create a new API Key")
 	}
 	return newKey.GetPayload(), nil
-
 }
+
 func (s *DashNGoImpl) deleteAPIKey(id int64) error {
 	_, err := s.GetClient().APIKeys.DeleteAPIkey(id)
 	if err != nil {
 		return fmt.Errorf("failed to delete API Key: %d", id)
 	}
 	return nil
-
 }

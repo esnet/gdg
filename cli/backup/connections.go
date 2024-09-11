@@ -3,12 +3,13 @@ package backup
 import (
 	"context"
 	"fmt"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"log/slog"
 
 	"github.com/spf13/cobra"
 )
@@ -110,6 +111,7 @@ func newDownloadConnectionsCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newListConnectionsCmd() simplecobra.Commander {
 	description := "List all connections for the given Organization"
 	return &support.SimpleCommand{

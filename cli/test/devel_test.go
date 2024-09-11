@@ -1,16 +1,17 @@
 package test
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/stretchr/testify/assert"
-	"strings"
-	"testing"
 )
 
 func TestDevelSrvInfo(t *testing.T) {
-	var execMe = func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
+	execMe := func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
 		expected := make(map[string]interface{})
 		expected["Database"] = "db"
 		expected["Commit"] = "commit"

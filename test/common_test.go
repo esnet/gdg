@@ -1,12 +1,18 @@
 package test
 
 import (
-	"github.com/esnet/gdg/pkg/test_tooling"
-	"github.com/esnet/gdg/pkg/test_tooling/path"
-	"github.com/joho/godotenv"
 	"log/slog"
 	"os"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
+	"github.com/joho/godotenv"
+)
+
+const (
+	grafana10 = "10.2.3-ubuntu"
+	grafana11 = "11.1.5-ubuntu"
 )
 
 func TestMain(m *testing.M) {
@@ -16,14 +22,15 @@ func TestMain(m *testing.M) {
 	}
 
 	err = godotenv.Load(".env")
-	//set global log level
+	// set global log level
 	slog.SetLogLoggerLevel(slog.LevelDebug) // Set global log level to Debug
-	grafanaTestVersions := []string{"10.2.3-ubuntu", "11.1.5-ubuntu"}
+	grafanaTestVersions := []string{grafana10, grafana11}
 	testModes := []string{"basicAuth", "token"}
 	if os.Getenv("DEVELOPER") == "1" {
 		slog.Debug("Limiting to single testMode and grafana version", slog.Any("grafanaVersion", grafanaTestVersions[1]), slog.String("testMode", testModes[0]))
-		grafanaTestVersions = grafanaTestVersions[1:]
-		testModes = testModes[0:1]
+		// grafanaTestVersions = grafanaTestVersions[1:]
+		grafanaTestVersions = grafanaTestVersions[0:1]
+		// testModes = testModes[0:1]
 	}
 
 	for _, version := range grafanaTestVersions {

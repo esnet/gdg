@@ -2,12 +2,13 @@ package backup
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log/slog"
 )
 
 func newFolderPermissionCommand() simplecobra.Commander {
@@ -61,6 +62,7 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newFolderPermissionDownloadCmd() simplecobra.Commander {
 	description := "download Folders Permissions"
 	return &support.SimpleCommand{
@@ -88,6 +90,7 @@ func newFolderPermissionDownloadCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func newFolderPermissionUploadCmd() simplecobra.Commander {
 	description := "upload Folders Permissions"
 	return &support.SimpleCommand{

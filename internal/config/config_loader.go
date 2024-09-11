@@ -3,16 +3,15 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/esnet/gdg/internal/tools"
-	"github.com/thoas/go-funk"
+	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/internal/tools"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
-	"log"
 )
 
 func (s *Configuration) GetViperConfig(name string) *viper.Viper {
@@ -36,7 +35,6 @@ func (s *Configuration) ClearContexts() {
 	}
 
 	slog.Info("All contexts were cleared")
-
 }
 
 // GetDefaultGrafanaConfig returns the default aka. selected grafana config
@@ -50,12 +48,11 @@ func (s *Configuration) GetDefaultGrafanaConfig() *GrafanaConfig {
 		log.Fatalf("Context: '%s' is not found.  Please check your config", name)
 	}
 	return nil
-
 }
 
 // CopyContext Makes a copy of the specified context and write to disk
 func (s *Configuration) CopyContext(src, dest string) {
-	//Validate context
+	// Validate context
 	contexts := s.GetGDGConfig().GetContexts()
 	if len(contexts) == 0 {
 		log.Fatal("Cannot set context.  No valid configuration found in importer.yml")
@@ -67,7 +64,6 @@ func (s *Configuration) CopyContext(src, dest string) {
 	newCopy, err := tools.DeepCopy(*cfg)
 	if err != nil {
 		log.Fatal("unable to make a copy of contexts")
-
 	}
 	contexts[dest] = newCopy
 	s.GetGDGConfig().ContextName = dest
@@ -90,12 +86,11 @@ func (s *Configuration) PrintContext(name string) {
 		log.Fatal("failed to serialize context", "err", err)
 	}
 	fmt.Printf("---%s:\n%s\n\n", name, string(d))
-
 }
 
 // DeleteContext remove a given context
 func (s *Configuration) DeleteContext(name string) {
-	name = strings.ToLower(name) //ensure name is lower case
+	name = strings.ToLower(name) // ensure name is lower case
 	contexts := s.GetGDGConfig().GetContexts()
 	_, ok := contexts[name]
 	if !ok {
@@ -134,7 +129,6 @@ func (s *Configuration) ChangeContext(name string) {
 
 // SaveToDisk Persists current configuration to disk
 func (s *Configuration) SaveToDisk(useViper bool) error {
-
 	if useViper {
 		return s.GetViperConfig(ViperGdgConfig).WriteConfig()
 	}
@@ -142,7 +136,7 @@ func (s *Configuration) SaveToDisk(useViper bool) error {
 	file := s.GetViperConfig(ViperGdgConfig).ConfigFileUsed()
 	data, err := yaml.Marshal(s.gdgConfig)
 	if err == nil {
-		err = os.WriteFile(file, data, 0600)
+		err = os.WriteFile(file, data, 0o600)
 	}
 
 	return err
@@ -213,44 +207,6 @@ func (s *TemplatingConfig) GetTemplate(name string) (*TemplateDashboards, bool) 
 	return nil, false
 }
 
-// setMapValueEnvOverride recursively iterate over the keys and updates the map value accordingly
-func setMapValueEnvOverride(keys []string, mapValue map[string]interface{}, value interface{}) {
-	if len(keys) > 1 {
-		rawInnerObject, ok := mapValue[keys[0]]
-		if !ok {
-			slog.Warn("No Inner map exists, cannot set Env Override")
-			return
-		}
-
-		innerMap, ok := rawInnerObject.(map[string]interface{})
-		if !ok {
-			slog.Warn("cannot traverse full map path.  Unable to set ENV override. Returning ")
-			return
-		}
-		setMapValueEnvOverride(keys[1:], innerMap, value)
-	} else {
-		mapValue[keys[0]] = value
-	}
-
-}
-
-// applyEnvOverrides a bit of a hack to get around a viper limitation.
-// GetStringMap does not apply env overrides, so we have to traverse it again
-// and reset missing values
-func applyEnvOverrides(contexts map[string]interface{}, mapName string, config *viper.Viper) map[string]interface{} {
-	keys := config.AllKeys()
-	matchKey := fmt.Sprintf("contexts.%s", config.GetString("context_name"))
-	filteredKeys := funk.Filter(keys, func(s string) bool { return strings.Contains(s, matchKey) })
-	keys = filteredKeys.([]string)
-	for _, key := range keys {
-		value := config.Get(key)
-		newKey := strings.Replace(key, fmt.Sprintf("%s.", mapName), "", 1)
-		setMapValueEnvOverride(strings.Split(newKey, "."), contexts, value)
-	}
-
-	return contexts
-}
-
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
 func buildConfigSearchPath(configFile string, appName *string) []string {
 	var configDirs []string
@@ -282,11 +238,11 @@ func InitGdgConfig(override, defaultConfig string) {
 
 	if err != nil && ok {
 		slog.Info("No configuration file has been found, creating a default configuration")
-		err = os.MkdirAll("config", 0750)
+		err = os.MkdirAll("config", 0o750)
 		if err != nil {
 			log.Fatal("unable to create configuration folder: 'config'")
 		}
-		err = os.WriteFile("config/importer.yml", []byte(defaultConfig), 0600)
+		err = os.WriteFile("config/importer.yml", []byte(defaultConfig), 0o600)
 		if err != nil {
 			log.Panic("Could not persist default config locally")
 		}
@@ -301,28 +257,13 @@ func InitGdgConfig(override, defaultConfig string) {
 		log.Fatal("Invalid configuration detected, please fix your configuration and try again.")
 	}
 	if configData.viperConfiguration == nil {
-		configData.viperConfiguration = make(map[string]*viper.Viper, 0)
+		configData.viperConfiguration = make(map[string]*viper.Viper)
 	}
 	configData.viperConfiguration[ViperGdgConfig] = v
-
-	//unmarshall struct
-	contexts := configData.GetViperConfig(ViperGdgConfig).GetStringMap("contexts")
-	contexts = applyEnvOverrides(contexts, "contexts", v)
-
-	contextMaps, err := yaml.Marshal(contexts)
-	if err != nil {
-		log.Fatal("Failed to decode context map, please check your configuration")
-	}
-	err = yaml.Unmarshal(contextMaps, &configData.gdgConfig.Contexts)
-	if err != nil {
-		log.Fatal("No valid configuration file has been found")
-	}
-
 }
 
 // readViperConfig utilizes the viper library to load the config from the selected paths
 func readViperConfig[T any](appName string, configDirs []string, object *T) (*viper.Viper, error) {
-
 	v := viper.New()
 	v.SetEnvPrefix("GDG")
 	replacer := strings.NewReplacer(".", "__")
@@ -336,7 +277,7 @@ func readViperConfig[T any](appName string, configDirs []string, object *T) (*vi
 
 	err := v.ReadInConfig()
 	if err == nil {
-		//Marshall the data read into a app struct
+		// Marshall the data read into app struct
 		err = v.Unmarshal(object)
 	}
 

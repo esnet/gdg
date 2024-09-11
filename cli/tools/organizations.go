@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"log/slog"
+	"strconv"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
-	"log"
-	"log/slog"
-	"strconv"
 )
 
 func newOrgCommand() simplecobra.Commander {
@@ -21,7 +22,6 @@ func newOrgCommand() simplecobra.Commander {
 		Long:  "Manage organizations",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
-
 		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"org", "orgs"}
@@ -30,16 +30,15 @@ func newOrgCommand() simplecobra.Commander {
 			newSetOrgCmd(),
 			newGetUserOrgCmd(),
 			newGetTokenOrgCmd(),
-			//Users
+			// Users
 			newListUsers(),
 			newUpdateUserRoleCmd(),
 			newAddUserRoleCmd(),
 			newDeleteUserRoleCmd(),
-			//Preferences
+			// Preferences
 			newOrgPreferenceCommand(),
 		},
 	}
-
 }
 
 func newSetOrgCmd() simplecobra.Commander {
@@ -50,7 +49,6 @@ func newSetOrgCmd() simplecobra.Commander {
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.PersistentFlags().StringP("orgName", "o", "", "Set user Org by Name (not slug)")
 			cmd.PersistentFlags().StringP("orgSlugName", "", "", "Set user Org by slug name")
-
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			orgName, _ := cd.CobraCommand.Flags().GetString("orgName")
@@ -59,7 +57,7 @@ func newSetOrgCmd() simplecobra.Commander {
 				return errors.New("must set either --orgName or --orgSlugName flag")
 			}
 			if orgName != "" || slugName != "" {
-				var useSlug = false
+				useSlug := false
 				if slugName != "" {
 					useSlug = true
 					orgName = slugName
@@ -75,10 +73,8 @@ func newSetOrgCmd() simplecobra.Commander {
 			slog.Info("New Org is now set to", slog.String("orgName", userOrg.Name))
 
 			return nil
-
 		},
 	}
-
 }
 
 func newGetUserOrgCmd() simplecobra.Commander {
@@ -98,10 +94,8 @@ func newGetUserOrgCmd() simplecobra.Commander {
 				rootCmd.Render(cd.CobraCommand, map[string]interface{}{"id": org.ID, "name": org.Name})
 			}
 			return nil
-
 		},
 	}
-
 }
 
 func newGetTokenOrgCmd() simplecobra.Commander {
@@ -111,7 +105,6 @@ func newGetTokenOrgCmd() simplecobra.Commander {
 		Short: description,
 		Long:  description,
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-
 			slog.Info("Display token organization for context'", "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name"})
 			org := rootCmd.GrafanaSvc().GetTokenOrganization()
@@ -124,7 +117,6 @@ func newGetTokenOrgCmd() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }
 
 func newListUsers() simplecobra.Commander {
@@ -155,7 +147,6 @@ func newListUsers() simplecobra.Commander {
 			return nil
 		},
 	}
-
 }
 
 func newUpdateUserRoleCmd() simplecobra.Commander {
@@ -227,7 +218,6 @@ func newDeleteUserRoleCmd() simplecobra.Commander {
 			}
 			orgSlug := args[0]
 			userId, err := strconv.ParseInt(args[1], 10, 64)
-
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}

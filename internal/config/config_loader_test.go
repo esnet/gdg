@@ -2,18 +2,18 @@ package config_test
 
 import (
 	"fmt"
-	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/pkg/test_tooling/common"
-	"github.com/esnet/gdg/pkg/test_tooling/path"
-	"github.com/grafana/grafana-openapi-client-go/models"
-	"golang.org/x/exp/slices"
 	"log/slog"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/pkg/test_tooling/common"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
+	"github.com/grafana/grafana-openapi-client-go/models"
+	"golang.org/x/exp/slices"
+
 	"github.com/stretchr/testify/assert"
-	"github.com/thoas/go-funk"
 )
 
 func DuplicateConfig(t *testing.T) string {
@@ -24,14 +24,14 @@ func DuplicateConfig(t *testing.T) string {
 	assert.Nil(t, err, "Failed to read test configuration file")
 	destination := os.TempDir()
 	cfgFile := fmt.Sprintf("%s/config.yml", destination)
-	err = os.WriteFile(cfgFile, data, 0600)
+	err = os.WriteFile(cfgFile, data, 0o600)
 	assert.Nil(t, err, "Failed to save configuration file")
 
 	return cfgFile
 }
 
 func TestSetup(t *testing.T) {
-	//clear all ENV values
+	// clear all ENV values
 	for _, key := range os.Environ() {
 		if strings.Contains(key, "GDG_") {
 			os.Unsetenv(key)
@@ -58,7 +58,7 @@ func TestSetup(t *testing.T) {
 }
 
 func TestWatchedFoldersConfig(t *testing.T) {
-	//clear all ENV values
+	// clear all ENV values
 	for _, key := range os.Environ() {
 		if strings.Contains(key, "GDG_") {
 			os.Unsetenv(key)
@@ -92,7 +92,6 @@ func TestWatchedFoldersConfig(t *testing.T) {
 	folders = grafanaConf.GetMonitoredFolders()
 	assert.False(t, slices.Contains(folders, "SpecialFolder"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
-
 }
 
 // Ensures that if the config is on a completely different path, the searchPath is updated accordingly
@@ -133,14 +132,14 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	assert.Equal(t, "", grafana.UserName)
 	assert.Equal(t, "", grafana.Password)
 	folders := grafana.GetMonitoredFolders()
-	assert.True(t, funk.Contains(folders, "Folder1"))
-	assert.True(t, funk.Contains(folders, "Folder2"))
+	assert.True(t, slices.Contains(folders, "Folder1"))
+	assert.True(t, slices.Contains(folders, "Folder2"))
 	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(config.ConnectionResource))
 	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(config.DashboardResource))
 	dsSettings := grafana.ConnectionSettings
 	request := models.AddDataSourceCommand{}
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)
-	//Last Entry is the default
+	// Last Entry is the default
 	secureLoc := grafana.GetPath(config.SecureSecretsResource)
 	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(secureLoc)
 	assert.Nil(t, err)

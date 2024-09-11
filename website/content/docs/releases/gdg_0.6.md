@@ -15,8 +15,10 @@ Release Date: TBD
 
 ### Breaking Changes
   - [#289](https://github.com/esnet/gdg/issues/289)Config: Connection settings renamed `exclude_filters' to `filters`
+  - Folder Permissions are now saving as uid.json rather than folder name.  Nested folder allows for name collisions, using uids should avoid that issue.
 
 ### Changes
+  - [#171](https://github.com/esnet/gdg/issues/171) Nested Folder support added. (Only available in grafana +v11)
   - Enterprise config flag removed, future versions will programmatically determine version of grafana.
   - [#283](https://github.com/esnet/gdg/issues/283)  Fixing small bug with library connections
   - [#288](https://github.com/esnet/gdg/pull/288) Enterprise: Connection permission will require min. v10.2.3
