@@ -82,7 +82,11 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.Filter) []string 
 			slog.Error("Unable to marshall file", "err", err, "folderName", folder.Title)
 			continue
 		}
-		dsPath := buildResourcePath(slug.Make(folder.UID), config.FolderPermissionResource)
+		fileName := folder.NestedPath
+		if fileName == "" {
+			fileName = folder.Title
+		}
+		dsPath := buildResourcePath(slug.Make(fileName), config.FolderPermissionResource)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "filename", slug.Make(folder.Title))
 		} else {

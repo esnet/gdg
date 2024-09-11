@@ -113,8 +113,10 @@ func (s *DashNGoImpl) nestedFoldersSanityCheck() error {
 			if strings.Contains(val, "nestedFolders") && !s.grafanaConf.GetDashboardSettings().NestedFolders /* grafana has nested folders but GDG is configured to ignore those */ {
 				slog.Warn("You have nested folders enabled on your grafana instance and the setting disabled in your settings.  Some Dashboards backup and restore may not work as intended.")
 				return nil
-			} else if s.grafanaConf.GetDashboardSettings().NestedFolders /* and grafana has nested folder disabled */ {
+			} else if !strings.Contains(val, "nestedFolders") && s.grafanaConf.GetDashboardSettings().NestedFolders /* and grafana has nested folder disabled */ {
 				return displayGdgMisconfigured()
+			} else {
+				return nil
 			}
 		} else if s.grafanaConf.GetDashboardSettings().NestedFolders { //"feature_toggles" no set, which currently means nested_folders is disabled.
 			return displayGdgMisconfigured()
