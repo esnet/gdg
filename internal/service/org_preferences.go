@@ -3,9 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 
-	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
@@ -15,75 +13,34 @@ func (s *DashNGoImpl) GetOrgPreferences(orgName string) (*models.Preferences, er
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		return nil, errors.New("no valid Grafana Admin configured, cannot retrieve Organizations Preferences")
 	}
-	f := func() (interface{}, error) {
-		orgPreferences, err := s.GetClient().OrgPreferences.GetOrgPreferences()
-		if err != nil {
-			return nil, err
-		}
-		return orgPreferences.GetPayload(), nil
-	}
-	result, err := s.scopeIntoOrg(orgName, f)
+	orgPreferences, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(orgName)).OrgPreferences.GetOrgPreferences()
 	if err != nil {
 		return nil, err
 	}
-	return result.(*models.Preferences), nil
-}
-
-// scopeIntoOrg changes the organization, performs an operation, and reverts the Org to the previous value.
-func (s *DashNGoImpl) scopeIntoOrg(orgName string, runTask func() (interface{}, error)) (interface{}, error) {
-	currentOrg := s.getAssociatedActiveOrg(s.GetClient())
-	orgNameBackup := s.grafanaConf.OrganizationName
-	s.grafanaConf.OrganizationName = orgName
-	orgEntity, err := s.getOrgIdFromSlug(slug.Make(orgName), false)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		s.grafanaConf.OrganizationName = orgNameBackup
-		// restore scoped Org
-		err = s.SetUserOrganizations(currentOrg.ID)
-		if err != nil {
-			slog.Warn("unable to restore previous Org", slog.Any("err", err))
-		}
-	}()
-
-	err = s.SetUserOrganizations(orgEntity.OrgID)
-	if err != nil {
-		return nil, fmt.Errorf("unable to scope into requested org. %w", err)
-	}
-
-	res, err := runTask()
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
+	return orgPreferences.GetPayload(), nil
 }
 
 // UploadOrgPreferences Updates the preferences for a given organization.  Returns error if org is not found.
-func (s *DashNGoImpl) UploadOrgPreferences(orgName string, pref *models.Preferences) error {
-	runTask := func() (interface{}, error) {
-		if pref == nil {
-			return nil, fmt.Errorf("preferences are nil, cannot update")
-		}
-
-		update := &models.UpdatePrefsCmd{}
-		update.HomeDashboardUID = pref.HomeDashboardUID
-		update.Language = pref.Language
-		update.Timezone = pref.Timezone
-		update.Theme = pref.Theme
-		update.WeekStart = pref.WeekStart
-
-		status, err := s.GetClient().OrgPreferences.UpdateOrgPreferences(update)
-		if err != nil {
-			return nil, err
-		}
-		return status, nil
+func (s *DashNGoImpl) UploadOrgPreferences(orgName string, preferenceRequest *models.Preferences) error {
+	if !s.grafanaConf.IsGrafanaAdmin() {
+		return errors.New("no valid Grafana Admin configured, cannot update Organizations Preferences")
 	}
-	_, err := s.scopeIntoOrg(orgName, runTask)
+
+	if preferenceRequest == nil {
+		return fmt.Errorf("preferences are nil, cannot update")
+	}
+
+	update := &models.UpdatePrefsCmd{}
+	update.HomeDashboardUID = preferenceRequest.HomeDashboardUID
+	update.Language = preferenceRequest.Language
+	update.Timezone = preferenceRequest.Timezone
+	update.Theme = preferenceRequest.Theme
+	update.WeekStart = preferenceRequest.WeekStart
+
+	_, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(orgName)).OrgPreferences.UpdateOrgPreferences(update)
 	if err != nil {
 		return err
 	}
-	slog.Info("Organization Preferences were updated")
+
 	return nil
 }
