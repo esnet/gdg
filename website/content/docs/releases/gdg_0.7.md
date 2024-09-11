@@ -7,7 +7,12 @@ images: [ ]
 weight: 196
 toc: true
 ---
+
 ## Release Notes for v0.7.0
+
+Issues with go releaser process.  No ChangeLog
+
+## Release Notes for v0.7.1
 
 Major features in this release are:
   - Improvement in performance when dealing with multiple organizations users and preference management.
@@ -22,17 +27,17 @@ Additionally, api_debug has been introduced.  When enabled it will print every r
   - Folder Permissions are now saving as slug of nested folder path rather than folder name.  Nested folder allows for name collisions, so foobar/dummy/abcd ==> foobar-dummy-abcd.json
   - Config: ignore_dashboard_filters property has been renamed to dashboard_settings.ignore_filters.
 
-  previously
+Previous behavior:
   ```yaml
   filter_override:
      ignore_dashboard_filters: true
   ```
 
-  has been deprecated in favor of
+has been deprecated in favor of
 
   ```yaml
   dashboard_settings:
-    ignore_filters: true
+   ignore_filters: true
 
   ```
 
@@ -53,3 +58,7 @@ Additionally, api_debug has been introduced.  When enabled it will print every r
 ### Developer Changes
   - Upgraded to latest grafana openapi client.
   - [#269](https://github.com/esnet/gdg/issues/269) Adding a google analytics tracking on the gdg website.
+
+## Release Notes for v0.7.0
+
+

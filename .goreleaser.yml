@@ -1,12 +1,10 @@
 # This is an example .goreleaser.yml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
+version: 2
 before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod tidy
-
-source:
-  rlcp: true
 
 
 builds:
@@ -114,7 +112,7 @@ brews:
     homepage: https://software.es.net/gdg
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
     description: Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager for grafana supporting backup/restore to local filesystem, s3, gcs, azure, and other S3 compatible storage engines.
-    folder: Formula
+    directory: Formula
     repository:
       owner: esnet
       name: homebrew-gdg
@@ -145,7 +143,7 @@ archives:
 checksum:
   name_template: "checksums.txt"
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  version_template: "{{ .Tag }}-next"
 changelog:
   sort: asc
   filters:

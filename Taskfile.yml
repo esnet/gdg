@@ -10,7 +10,7 @@ vars:
   LD_FLAGS: "-s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/internal/version.BuildDate={{ .BUILD_DATE }} "
   LEFTHOOK_VERSION: "v1.7.13"
   MOCKERY_VERSION: "v2.42.0"
-  RELEASER_VERSION: "v1.24.0"
+  RELEASER_VERSION: "v2.2.0"
 
 dotenv: [ '.env' ]
 
@@ -26,7 +26,7 @@ tasks:
       - go install github.com/securego/gosec/v2/cmd/gosec@latest
       - go install golang.org/x/vuln/cmd/govulncheck@latest
       - go install github.com/vektra/mockery/v2@{{ .MOCKERY_VERSION}}
-      - go install github.com/goreleaser/goreleaser@{{ .RELEASER_VERSION }} 
+      - go install github.com/goreleaser/goreleaser/v2@{{ .RELEASER_VERSION }} 
       - go install github.com/evilmartians/lefthook@{{ .LEFTHOOK_VERSION }}
       - go install mvdan.cc/gofumpt@v0.7.0
 
