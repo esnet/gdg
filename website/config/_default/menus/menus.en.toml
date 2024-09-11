@@ -42,13 +42,12 @@
 
 [[main]]
   name = "Docs"
-  url = "/docs/gdg/installation/"
+  url = "/docs/gdg/getting-started/"
   weight = 10
 
 [[main]]
   name = "Release Notes"
-  # url = "/docs/releases/gdg_0.6/"
-  url = "/docs/releases/version-v0.6/"
+  url = "/docs/releases/version-v0.7/"
   weight = 10
 
 

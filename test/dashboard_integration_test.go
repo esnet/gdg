@@ -253,8 +253,8 @@ func TestWildcardFilter(t *testing.T) {
 
 	// Enable Wildcard
 	testingContext := config.Config().GetGDGConfig().GetContexts()["testing"]
-	testingContext.GetFilterOverrides().IgnoreDashboardFilters = true
-	assert.True(t, testingContext.GetFilterOverrides().IgnoreDashboardFilters)
+	testingContext.GetDashboardSettings().IgnoreFilters = true
+	assert.True(t, testingContext.GetDashboardSettings().IgnoreFilters)
 
 	// Testing Exporting with Wildcard
 	apiClient.UploadDashboards(emptyFilter)

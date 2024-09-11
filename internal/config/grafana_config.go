@@ -2,6 +2,7 @@ package config
 
 type DashboardSettings struct {
 	NestedFolders bool `mapstructure:"nested_folders" yaml:"nested_folders"`
+	IgnoreFilters bool `yaml:"ignore_filters" mapstructure:"ignore_filters" `
 }
 
 // GrafanaConfig model wraps auth and watched list for grafana
@@ -17,7 +18,6 @@ type GrafanaConfig struct {
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
-	FilterOverrides          *FilterOverrides      `mapstructure:"filter_override" yaml:"filter_override"`
 	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
 	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
 }

@@ -20,9 +20,8 @@ contexts:
     user_name: admin
     organization_name: Main Org.
     password: admin
-    filter_override:
-      ignore_dashboard_filters: false
     dashboard_settings:
+      ignore_filters: false
       nested_folders: false
     watched:
       - General

@@ -99,14 +99,6 @@ func (s *GrafanaConfig) GetDashboardSettings() *DashboardSettings {
 	return s.DashboardSettings
 }
 
-// GetFilterOverrides returns the filter overrides for the connection
-func (s *GrafanaConfig) GetFilterOverrides() *FilterOverrides {
-	if s.FilterOverrides == nil {
-		s.FilterOverrides = &FilterOverrides{IgnoreDashboardFilters: false}
-	}
-	return s.FilterOverrides
-}
-
 // GetDataSourceSettings returns the datasource settings for the connection
 func (s *GrafanaConfig) GetDataSourceSettings() *ConnectionSettings {
 	if s.ConnectionSettings == nil {

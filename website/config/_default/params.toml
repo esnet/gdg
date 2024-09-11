@@ -21,7 +21,7 @@ mainSections = ["docs"]
 
   ## Button
   navBarButton = false # false (default) or true
-  navBarButtonUrl = "/gdg/docs/gdg/installation/"
+  navBarButtonUrl = "/gdg/docs/gdg/getting-started/"
   navBarButtonText = "Getting started"
 
   # FlexSearch

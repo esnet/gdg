@@ -41,7 +41,12 @@ global:
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
 - API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
-- Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list. The dashboards are downloaded as JSON files in the `$OUTPUT_PATH/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$OUTPUT_PATH` is the path defined in the `dashboard_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder from which the dashboards were downloaded
+- Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list. The dashboards are downloaded as JSON files in the `$OUTPUT_PATH/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$OUTPUT_PATH` is the path defined in the `dashboard_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder from which the dashboards were downloaded.
+
+
+{{< callout context="note" title="Note" icon="info-circle" >}}
+Starting with verions 0.7.0 regex patterns for folders are now supported, ex: Other|General, folder/*
+{{< /callout >}}
 
 After you are done, and you can execute `./bin/gdg dash list` successfully, eg.:
 ```
