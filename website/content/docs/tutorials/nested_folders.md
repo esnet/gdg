@@ -74,3 +74,18 @@ watched:
 │ fdxll3nd7jv9cc │ someFolder │ Others/someFolder   │
 └────────────────┴────────────┴──────────────┘
 ```
+
+## Folder Permission
+
+Starging with GDG v0.7 file name convention are the slug of the full nested path rather than folder name.
+
+```sh
+┌─────────────────────────────────────────────────────────────┐
+│ FILENAME                                                    │
+├─────────────────────────────────────────────────────────────┤
+│ test/data/org_testing/folders-permissions/others-dummy.json │
+│ test/data/org_testing/folders-permissions/dummy.json        │
+│ test/data/org_testing/folders-permissions/others.json       │
+│ test/data/org_testing/folders-permissions/somefolder.json   │
+└─────────────────────────────────────────────────────────────┘
+```

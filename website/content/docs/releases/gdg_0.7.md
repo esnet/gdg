@@ -19,6 +19,7 @@ Additionally, api_debug has been introduced.  When enabled it will print every r
 ### Breaking Changes
   - [#289](https://github.com/esnet/gdg/issues/289) Config: Connection settings renamed `exclude_filters` to `filters`
   - Folder Permissions are now saving as uid.json rather than folder name.  Nested folder allows for name collisions, using uids should avoid that issue.
+  - Folder Permissions are now saving as slug of nested folder path rather than folder name.  Nested folder allows for name collisions, so foobar/dummy/abcd ==> foobar-dummy-abcd.json
   - Config: ignore_dashboard_filters property has been renamed to dashboard_settings.ignore_filters.
 
   previously

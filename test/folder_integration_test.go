@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gosimple/slug"
+
 	"github.com/testcontainers/testcontainers-go"
 
 	"github.com/esnet/gdg/internal/types"
@@ -70,7 +72,7 @@ func TestFolderPermissions(t *testing.T) {
 	data := apiClient.DownloadFolderPermissions(nil)
 	assert.Equal(t, len(data), 2)
 	permissionKeys := lo.Map(slices.Collect(maps.Keys(result)), func(item *types.FolderDetails, index int) string {
-		return fmt.Sprintf("test/data/org_main-org/folders-permissions/%s.json", strings.ToLower(item.UID))
+		return fmt.Sprintf("test/data/org_main-org/folders-permissions/%s.json", slug.Make(item.NestedPath))
 	})
 	for _, item := range data {
 		assert.True(t, slices.Contains(permissionKeys, item))
@@ -116,7 +118,7 @@ func TestFolderNestedPermissions(t *testing.T) {
 	data := apiClient.DownloadFolderPermissions(nil)
 	assert.Equal(t, len(data), 4)
 	permissionKeys := lo.Map(slices.Collect(maps.Keys(result)), func(item *types.FolderDetails, index int) string {
-		return fmt.Sprintf("test/data/org_testing/folders-permissions/%s.json", strings.ToLower(item.UID))
+		return fmt.Sprintf("test/data/org_testing/folders-permissions/%s.json", slug.Make(item.NestedPath))
 	})
 	for _, item := range data {
 		assert.True(t, slices.Contains(permissionKeys, item))

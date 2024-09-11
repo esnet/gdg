@@ -28,9 +28,8 @@ func TestMain(m *testing.M) {
 	testModes := []string{"basicAuth", "token"}
 	if os.Getenv("DEVELOPER") == "1" {
 		slog.Debug("Limiting to single testMode and grafana version", slog.Any("grafanaVersion", grafanaTestVersions[1]), slog.String("testMode", testModes[0]))
-		// grafanaTestVersions = grafanaTestVersions[1:]
-		grafanaTestVersions = grafanaTestVersions[0:1]
-		// testModes = testModes[0:1]
+		grafanaTestVersions = grafanaTestVersions[1:]
+		testModes = testModes[0:1]
 	}
 
 	for _, version := range grafanaTestVersions {
