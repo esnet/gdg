@@ -16,11 +16,30 @@ Please find the generated documentation [here](https://software.es.net/gdg/) and
 
 ![Quickstart screen](website/static/quickstart.gif)
 
+## Supported Versions
+
+GDG community will try to support the last 2 major version of grafana.  Though there is nothing preventing you from using it with any version of grafana you are dependent on what the API supports/doesn't support and changes that have been added since then.
+
+New features particularly related to Orgs, ACLs, roles etc are far less likely to work the older your version is.
+
+Current Entities supported (See official docs for more details)
+
+ - Connections
+ - Dashboards
+ - Folders (With Permissions)
+ - Organizations
+ - Teams
+ - Users
+ - Library Elements
+
+Grafana Enterprise Only feature
+ - Connection Permissions
+
 ## Release conventions.
 
 GDG mostly follows the semver conventions with some minor modifications.
 
-For those that are unfamiliar semver referes to X.Y.Z version patterns with 
+For those that are unfamiliar semver referes to X.Y.Z version patterns with
 
   - X = Major version
   - Y = Minor version
@@ -28,12 +47,11 @@ For those that are unfamiliar semver referes to X.Y.Z version patterns with
 
 Most regular releases will increment the patch number.  ie. 0.4.5 is a regular release, and next normal release would be 0.4.6.
 
-Minor version change will likely introduce some breaking change.   For example, renaming datasources to connections or some 
-configuration changes that are not backward compatible etc.  
+Minor version change will likely introduce some breaking change.   For example, renaming datasources to connections or some
+configuration changes that are not backward compatible etc.
 
-Major version: Is a major feature set change for example, removing cloud support in the base release and introducing a plugin system 
-would be 1.X release.  Splitting the GDG binary into a tools and backup cli, or introducing a diff tooling that allow you to compare 
+Major version: Is a major feature set change for example, removing cloud support in the base release and introducing a plugin system
+would be 1.X release.  Splitting the GDG binary into a tools and backup cli, or introducing a diff tooling that allow you to compare
 contexts.  i.e.  `gdg diff dashboards prod staging` is a major divergences from the current expectations so it'll be a major version bump.
 
 For more info, please see the release notes and documentation both available [here](https://software.es.net/gdg/)
-

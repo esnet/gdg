@@ -85,8 +85,8 @@ Please see the API Changes notes [below](https://software.es.net/gdg/docs/releas
 
  ```yaml
    context_name:
-     filter_override:
-      ignore_dashboard_filters: false #
+     dashboard_settings:
+       ignore_filters: false #
 ```
 #### LibraryElements support added.
 
@@ -130,5 +130,3 @@ changes some of the cloud behavior.  It relies on the system authentication rath
 Please see the related docs on how to configure your environment.
 
 As the Stow library was removed, SFTP has been dropped.  The list of current supported cloud providers are: S3, GS, Azure.
-
-

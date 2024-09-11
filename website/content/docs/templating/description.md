@@ -38,8 +38,8 @@ context_name:
           - field: name
             regex: .*
         secure_data: "default.json"
-  filter_override:
-    ignore_dashboard_filters: false
+  dashboard_settings:
+    ignore_filters: false
   output_path: test/data
 ```
 

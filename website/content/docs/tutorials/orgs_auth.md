@@ -68,8 +68,8 @@ connections:
             user: user
             password: password
 datasources: {}
-filter_override:
-    ignore_dashboard_filters: false
+dashboard_settings:
+    ignore_filters: false
 output_path: test/data
 ```
 

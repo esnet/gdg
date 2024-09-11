@@ -22,8 +22,8 @@ The folders that it DOES monitor, it is assumed that gdg has full control over. 
 PS. if you want to list/import etc all dashboards, you can set the following config for your context.
 
 ```yaml
-    filter_override:
-      ignore_dashboard_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+    dashboard_settings:
+      ignore_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
 
 ```
 
