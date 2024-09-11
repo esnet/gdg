@@ -157,6 +157,19 @@ gdg t orgs prefs get --orgName "Main Org."
 └──────────────────┴─────────┘
 ```
 
+### Organization Users CRUD
+
+```sh
+gdg tools organizations users add [OrgSlug] [userID] Role[admin,editor,viewer] ## Add user to org
+    example:  gdg tools organizations users add testing 3 admin
+gdg tools organizations users list OrgID ## List all users for a given org
+    example:  gdg tools organizations users list 4
+gdg tools organizations users updateRole [OrgSlug] [UserId] Role[admin,editor,viewer]
+    example: gdg tools organizations users updateRole testing 2 admin
+gdg tools organizations users currentOrg  ## displays the logged in User's current associated Org
+gdg tools organizations users delete OrgID  ## Removes a user from the given org
+```
+
 ### Users
 
 CRUD is under the 'backup' command.  The tools subcommand allows you to promote a given user to a grafana admin if you have the permission to do so.
