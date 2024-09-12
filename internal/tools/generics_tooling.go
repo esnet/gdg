@@ -6,10 +6,6 @@ import (
 	"os"
 )
 
-func PtrOf[T any](value T) *T {
-	return &value
-}
-
 func DeepCopy[T any](value T) (*T, error) {
 	origJSON, err := json.Marshal(value)
 	if err != nil {

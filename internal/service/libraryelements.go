@@ -8,9 +8,10 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/esnet/gdg/internal/tools/ptr"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -66,7 +67,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 
 	params := library_elements.NewGetLibraryElementsParams()
 	params.FolderFilter = &folderList
-	params.Kind = tools.PtrOf(listLibraryPanels)
+	params.Kind = ptr.Of(listLibraryPanels)
 	libraryElements, err := s.GetClient().LibraryElements.GetLibraryElements(params)
 	if err != nil {
 		log.Fatalf("Unable to list Library Elements %v", err)

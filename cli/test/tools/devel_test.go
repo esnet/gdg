@@ -1,8 +1,10 @@
-package test
+package tools
 
 import (
 	"strings"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling"
 
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
@@ -21,7 +23,7 @@ func TestDevelSrvInfo(t *testing.T) {
 		err := cli.Execute(string(data), []string{"tools", "devel", "srvinfo"}, optionMockSvc())
 		return err
 	}
-	outStr, closeReader := setupAndExecuteMockingServices(t, execMe)
+	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
 	defer closeReader()
 
 	assert.True(t, strings.Contains(outStr, "Version="))
@@ -37,15 +39,15 @@ func TestDevelSrvCompletion(t *testing.T) {
 		}
 	}
 
-	outStr, closeReader := setupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "fish"}))
+	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "fish"}))
 	assert.True(t, strings.Contains(outStr, "fish"))
 	assert.True(t, strings.Contains(outStr, "__completion_prepare_completions"))
 	closeReader()
-	outStr, closeReader = setupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "bash"}))
+	outStr, closeReader = test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "bash"}))
 	assert.True(t, strings.Contains(outStr, "bash"))
 	assert.True(t, strings.Contains(outStr, "flag_parsing_disabled"))
 	closeReader()
-	outStr, closeReader = setupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "zsh"}))
+	outStr, closeReader = test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "zsh"}))
 	assert.True(t, strings.Contains(outStr, "shellCompDirectiveKeepOrder"))
 	closeReader()
 }

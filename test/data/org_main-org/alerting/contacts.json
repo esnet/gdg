@@ -1,0 +1,16 @@
+[
+	{
+		"name": "discord",
+		"orgId": 1,
+		"receivers": [
+			{
+				"settings": {
+					"url": "https://www.discord.com?q=woot",
+					"use_discord_username": false
+				},
+				"type": "discord",
+				"uid": "fdxmqkyb5gl4xb"
+			}
+		]
+	}
+]

@@ -21,6 +21,7 @@ type GrafanaService interface {
 	FoldersApi
 	LibraryElementsApi
 	TeamsApi
+	AlertingApi
 
 	AuthenticationApi
 	// MetaData
@@ -56,6 +57,13 @@ type DashboardsApi interface {
 	UploadDashboards(filter filters.Filter)
 	DeleteAllDashboards(filter filters.Filter) []string
 	LintDashboards(req types.LintRequest) []string
+}
+
+type AlertingApi interface {
+	ListContactPoints() ([]*models.EmbeddedContactPoint, error)
+	DownloadContactPoints() (string, error)
+	ClearContactPoints() ([]string, error)
+	UploadContactPoints() ([]string, error)
 }
 
 type DashboardPermissionsApi interface {

@@ -1,10 +1,12 @@
 package test
 
 import (
-	"fmt"
-	"os"
+	"io"
 	"strings"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
 
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
@@ -16,11 +18,12 @@ import (
 )
 
 func TestVersionCommand(t *testing.T) {
+	assert.NoError(t, path.FixTestDir("test", "../.."))
 	execMe := func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
 		err := cli.Execute(string(data), []string{"version"}, optionMockSvc())
 		return err
 	}
-	outStr, closeReader := setupAndExecuteMockingServices(t, execMe)
+	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
 	defer closeReader()
 
 	assert.True(t, strings.Contains(outStr, "Build Date:"))
@@ -33,6 +36,7 @@ func TestVersionCommand(t *testing.T) {
 }
 
 func TestVersionErrCommand(t *testing.T) {
+	assert.NoError(t, path.FixTestDir("test", "../.."))
 	testSvc := new(mocks.GrafanaService)
 	getMockSvc := func() service.GrafanaService {
 		return testSvc
@@ -43,12 +47,14 @@ func TestVersionErrCommand(t *testing.T) {
 			response.GrafanaSvc = getMockSvc
 		}
 	}
-	path, _ := os.Getwd()
-	fmt.Println(path)
-	data, err := os.ReadFile("../../config/" + common.DefaultTestConfig)
-	assert.Nil(t, err)
-
-	err = cli.Execute(string(data), []string{"dumb", "dumb"}, optionMockSvc())
+	r, w, cleanup := test_tooling.InterceptStdout()
+	defer cleanup()
+	err := cli.Execute(common.DefaultTestConfig, []string{"dumb", "dumb"}, optionMockSvc())
 	assert.NotNil(t, err)
+	assert.NoError(t, w.Close())
+
 	assert.Equal(t, err.Error(), `command error: unknown command "dumb" for "gdg"`)
+	out, _ := io.ReadAll(r)
+	output := string(out)
+	assert.True(t, strings.Contains(output, "gdg [command] --help\" for more information about a command"))
 }
