@@ -32,28 +32,35 @@ You can additionally filter by connection slug in order to only operate on a sin
 
 {{< details "Permission Listing" >}}
 ```
-┌────┬───────────┬───────────────────┬───────────────┬─────────────────────────────────┬────────────────────────────────┬──────────────────────────────────────────────────────────────┐
-│ ID │ UID       │ NAME              │ SLUG          │ TYPE                            │ DEFAULT                        │ URL                                                          │
-├────┼───────────┼───────────────────┼───────────────┼─────────────────────────────────┼────────────────────────────────┼──────────────────────────────────────────────────────────────┤
-│  1 │ uL86Byf4k │ Google Sheets     │ google-sheets │ grafana-googlesheets-datasource │ false                          │ http://localhost:3000/connections/datasources/edit/uL86Byf4k │
-│  1 │ uL86Byf4k │     PERMISSION--> │ Admin         │ User                            │ user:admin                     │                                                              │
-│  1 │ uL86Byf4k │     PERMISSION--> │ Edit          │ User                            │ user:tux                       │                                                              │
-│  1 │ uL86Byf4k │     PERMISSION--> │ Query         │ User                            │ user:sa-1-test-service-account │                                                              │
-│  1 │ uL86Byf4k │     PERMISSION--> │ Query         │ Team                            │ team:engineers                 │                                                              │
-│  1 │ uL86Byf4k │     PERMISSION--> │ Admin         │ BuiltinRole                     │ builtInRole:Admin              │                                                              │
-│  1 │ uL86Byf4k │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Viewer             │                                                              │
-│  1 │ uL86Byf4k │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Editor             │                                                              │
-│  3 │ rg9qPqP7z │ netsage           │ netsage       │ elasticsearch                   │ true                           │ http://localhost:3000/connections/datasources/edit/rg9qPqP7z │
-│  3 │ rg9qPqP7z │     PERMISSION--> │ Admin         │ User                            │ user:admin                     │                                                              │
-│  3 │ rg9qPqP7z │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Editor             │                                                              │
-│  3 │ rg9qPqP7z │     PERMISSION--> │ Admin         │ BuiltinRole                     │ builtInRole:Admin              │                                                              │
-│  3 │ rg9qPqP7z │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Viewer             │                                                              │
-│  2 │ i6uqEqE7k │ Netsage TSDS      │ netsage-tsds  │ globalnoc-tsds-datasource       │ false                          │ http://localhost:3000/connections/datasources/edit/i6uqEqE7k │
-│  2 │ i6uqEqE7k │     PERMISSION--> │ Admin         │ User                            │ user:admin                     │                                                              │
-│  2 │ i6uqEqE7k │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Viewer             │                                                              │
-│  2 │ i6uqEqE7k │     PERMISSION--> │ Query         │ BuiltinRole                     │ builtInRole:Editor             │                                                              │
-│  2 │ i6uqEqE7k │     PERMISSION--> │ Admin         │ BuiltinRole                     │ builtInRole:Admin              │                                                              │
-└────┴───────────┴───────────────────┴───────────────┴─────────────────────────────────┴────────────────────────────────┴──────────────────────────────────────────────────────────────┘
+┌────┬───────────┬───────────────┬───────────────┬─────────────────────────────────┬─────────┬──────────────────────────────────────────────────────────────┐
+│ ID │ UID       │ NAME          │ SLUG          │ TYPE                            │ DEFAULT │ URL                                                          │
+├────┼───────────┼───────────────┼───────────────┼─────────────────────────────────┼─────────┼──────────────────────────────────────────────────────────────┤
+│  1 │ uL86Byf4k │ Google Sheets │ google-sheets │ grafana-googlesheets-datasource │ false   │ http://localhost:3000/connections/datasources/edit/uL86Byf4k │
+└────┴───────────┴───────────────┴───────────────┴─────────────────────────────────┴─────────┴──────────────────────────────────────────────────────────────┘
+╔════════════════╦════════════════════╦═════════════════╦════════════════════╗
+║ CONNECTION UID ║ PERMISSION GRANTED ║ PERMISSION TYPE ║ PERMISSION GRANTEE ║
+╠════════════════╬════════════════════╬═════════════════╬════════════════════╣
+║ uL86Byf4k      ║ Admin              ║ User            ║ user:admin         ║
+║ uL86Byf4k      ║ Admin              ║ User            ║ user:tux           ║
+║ uL86Byf4k      ║ Edit               ║ User            ║ user:bob           ║
+║ uL86Byf4k      ║ Query              ║ Team            ║ team:musicians     ║
+║ uL86Byf4k      ║ Query              ║ BuiltinRole     ║ builtInRole:Viewer ║
+║ uL86Byf4k      ║ Query              ║ BuiltinRole     ║ builtInRole:Editor ║
+║ uL86Byf4k      ║ Admin              ║ BuiltinRole     ║ builtInRole:Admin  ║
+╚════════════════╩════════════════════╩═════════════════╩════════════════════╝
+┌────┬───────────┬─────────┬─────────┬───────────────┬─────────┬──────────────────────────────────────────────────────────────┐
+│ ID │ UID       │ NAME    │ SLUG    │ TYPE          │ DEFAULT │ URL                                                          │
+├────┼───────────┼─────────┼─────────┼───────────────┼─────────┼──────────────────────────────────────────────────────────────┤
+│  3 │ rg9qPqP7z │ netsage │ netsage │ elasticsearch │ true    │ http://localhost:3000/connections/datasources/edit/rg9qPqP7z │
+└────┴───────────┴─────────┴─────────┴───────────────┴─────────┴──────────────────────────────────────────────────────────────┘
+╔════════════════╦════════════════════╦═════════════════╦════════════════════╗
+║ CONNECTION UID ║ PERMISSION GRANTED ║ PERMISSION TYPE ║ PERMISSION GRANTEE ║
+╠════════════════╬════════════════════╬═════════════════╬════════════════════╣
+║ rg9qPqP7z      ║ Admin              ║ User            ║ user:admin         ║
+║ rg9qPqP7z      ║ Admin              ║ BuiltinRole     ║ builtInRole:Admin  ║
+║ rg9qPqP7z      ║ Query              ║ BuiltinRole     ║ builtInRole:Viewer ║
+║ rg9qPqP7z      ║ Query              ║ BuiltinRole     ║ builtInRole:Editor ║
+╚════════════════╩════════════════════╩═════════════════╩════════════════════╝
 ```
 {{< /details >}}
 
