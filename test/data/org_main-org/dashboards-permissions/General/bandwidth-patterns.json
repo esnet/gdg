@@ -1,0 +1,41 @@
+[
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 2,
+		"permission": 4,
+		"permissionName": "Admin",
+		"slug": "bandwidth-patterns",
+		"title": "Bandwidth Patterns",
+		"uid": "000000004",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/000000004/bandwidth-patterns",
+		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+		"userEmail": "admin@localhost",
+		"userId": 1,
+		"userLogin": "admin"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 2,
+		"permission": 2,
+		"permissionName": "Edit",
+		"role": "Editor",
+		"slug": "bandwidth-patterns",
+		"title": "Bandwidth Patterns",
+		"uid": "000000004",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/000000004/bandwidth-patterns"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 2,
+		"permission": 1,
+		"permissionName": "View",
+		"role": "Viewer",
+		"slug": "bandwidth-patterns",
+		"title": "Bandwidth Patterns",
+		"uid": "000000004",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/000000004/bandwidth-patterns"
+	}
+]

@@ -25,7 +25,7 @@ func (r RegexMatchesList) GetConnectionAuth(path string) (*GrafanaConnection, er
 	}
 	secretLocation := filepath.Join(path, r.SecureData)
 	result := new(GrafanaConnection)
-	raw, err := os.ReadFile(secretLocation)
+	raw, err := os.ReadFile(secretLocation) // #nosec G304
 	if err != nil {
 		msg := "unable to read secrets at location"
 		slog.Error(msg, slog.String("file", secretLocation))

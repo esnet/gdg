@@ -1,0 +1,70 @@
+[
+	{
+		"created": "2024-09-15T16:38:16.000Z",
+		"dashboardId": 1,
+		"permission": 2,
+		"permissionName": "Edit",
+		"slug": "bandwidth-dashboard",
+		"title": "Bandwidth Dashboard",
+		"uid": "000000003",
+		"updated": "2024-09-15T16:38:16.000Z",
+		"url": "/d/000000003/bandwidth-dashboard",
+		"userAvatarUrl": "/avatar/64029c12d260bd5e3cb2504f4155998f",
+		"userEmail": "bob@aol.com",
+		"userId": 2,
+		"userLogin": "bob"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 1,
+		"permission": 4,
+		"permissionName": "Admin",
+		"slug": "bandwidth-dashboard",
+		"title": "Bandwidth Dashboard",
+		"uid": "000000003",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/000000003/bandwidth-dashboard",
+		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+		"userEmail": "admin@localhost",
+		"userId": 1,
+		"userLogin": "admin"
+	},
+	{
+		"created": "2024-09-15T16:38:26.000Z",
+		"dashboardId": 1,
+		"permission": 4,
+		"permissionName": "Admin",
+		"slug": "bandwidth-dashboard",
+		"team": "musicians",
+		"teamAvatarUrl": "/avatar/80ca0095115d85b522e59fa72b51a213",
+		"teamId": 2,
+		"title": "Bandwidth Dashboard",
+		"uid": "000000003",
+		"updated": "2024-09-15T16:38:26.000Z",
+		"url": "/d/000000003/bandwidth-dashboard"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 1,
+		"permission": 1,
+		"permissionName": "View",
+		"role": "Viewer",
+		"slug": "bandwidth-dashboard",
+		"title": "Bandwidth Dashboard",
+		"uid": "000000003",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/000000003/bandwidth-dashboard"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 1,
+		"permission": 2,
+		"permissionName": "Edit",
+		"role": "Editor",
+		"slug": "bandwidth-dashboard",
+		"title": "Bandwidth Dashboard",
+		"uid": "000000003",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/000000003/bandwidth-dashboard"
+	}
+]

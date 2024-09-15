@@ -1,0 +1,41 @@
+[
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 3,
+		"permission": 4,
+		"permissionName": "Admin",
+		"slug": "individual-flows-per-country",
+		"title": "Individual Flows per Country",
+		"uid": "80IVUboZk",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/80IVUboZk/individual-flows-per-country",
+		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+		"userEmail": "admin@localhost",
+		"userId": 1,
+		"userLogin": "admin"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 3,
+		"permission": 2,
+		"permissionName": "Edit",
+		"role": "Editor",
+		"slug": "individual-flows-per-country",
+		"title": "Individual Flows per Country",
+		"uid": "80IVUboZk",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/80IVUboZk/individual-flows-per-country"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 3,
+		"permission": 1,
+		"permissionName": "View",
+		"role": "Viewer",
+		"slug": "individual-flows-per-country",
+		"title": "Individual Flows per Country",
+		"uid": "80IVUboZk",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/80IVUboZk/individual-flows-per-country"
+	}
+]

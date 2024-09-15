@@ -1,0 +1,18 @@
+[
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 19,
+		"folderId": 11,
+		"permission": 4,
+		"permissionName": "Admin",
+		"slug": "flows-by-science-discipline",
+		"title": "Flows by Science Discipline",
+		"uid": "WNn1qyaiz",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/WNn1qyaiz/flows-by-science-discipline",
+		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+		"userEmail": "admin@localhost",
+		"userId": 1,
+		"userLogin": "admin"
+	}
+]

@@ -1,0 +1,41 @@
+[
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 6,
+		"permission": 4,
+		"permissionName": "Admin",
+		"slug": "other-flow-stats",
+		"title": "Other Flow Stats",
+		"uid": "CJC1FFhmz",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/CJC1FFhmz/other-flow-stats",
+		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+		"userEmail": "admin@localhost",
+		"userId": 1,
+		"userLogin": "admin"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 6,
+		"permission": 2,
+		"permissionName": "Edit",
+		"role": "Editor",
+		"slug": "other-flow-stats",
+		"title": "Other Flow Stats",
+		"uid": "CJC1FFhmz",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/CJC1FFhmz/other-flow-stats"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 6,
+		"permission": 1,
+		"permissionName": "View",
+		"role": "Viewer",
+		"slug": "other-flow-stats",
+		"title": "Other Flow Stats",
+		"uid": "CJC1FFhmz",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/CJC1FFhmz/other-flow-stats"
+	}
+]

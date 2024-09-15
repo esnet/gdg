@@ -59,7 +59,7 @@ type DashboardsApi interface {
 }
 
 type DashboardPermissionsApi interface {
-	ListDashboardPermissions(filterReq filters.Filter) ([]DashboardAndPermissions, error)
+	ListDashboardPermissions(filterReq filters.Filter) ([]gdgType.DashboardAndPermissions, error)
 	DownloadDashboardPermissions(filterReq filters.Filter) ([]string, error)
 	ClearDashboardPermissions(filterReq filters.Filter) error
 	UploadDashboardPermissions(filterReq filters.Filter) ([]string, error)

@@ -9,23 +9,20 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/esnet/gdg/internal/types"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-type DashboardAndPermissions struct {
-	Dashboard   *models.Hit
-	Permissions []*models.DashboardACLInfoDTO
-}
-
-func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.Filter) ([]DashboardAndPermissions, error) {
+func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.Filter) ([]types.DashboardAndPermissions, error) {
 	validateDashboardEnterpriseSupport(s)
 	dashboards := s.ListDashboards(filterReq)
-	var result []DashboardAndPermissions
+	var result []types.DashboardAndPermissions
 	for _, dashboard := range dashboards {
-		item := DashboardAndPermissions{Dashboard: dashboard}
+		item := types.DashboardAndPermissions{Dashboard: dashboard}
 		perms, err := s.GetClient().DashboardPermissions.GetDashboardPermissionsListByUID(dashboard.UID)
 		if err != nil {
 			slog.Warn("Unable to retrieve permissions for dashboard",

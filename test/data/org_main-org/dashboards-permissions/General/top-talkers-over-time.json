@@ -1,0 +1,41 @@
+[
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 8,
+		"permission": 4,
+		"permissionName": "Admin",
+		"slug": "top-talkers-over-time",
+		"title": "Top Talkers Over Time",
+		"uid": "b35BWxAZz",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/b35BWxAZz/top-talkers-over-time",
+		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+		"userEmail": "admin@localhost",
+		"userId": 1,
+		"userLogin": "admin"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 8,
+		"permission": 1,
+		"permissionName": "View",
+		"role": "Viewer",
+		"slug": "top-talkers-over-time",
+		"title": "Top Talkers Over Time",
+		"uid": "b35BWxAZz",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/b35BWxAZz/top-talkers-over-time"
+	},
+	{
+		"created": "2024-09-14T20:51:23.000Z",
+		"dashboardId": 8,
+		"permission": 2,
+		"permissionName": "Edit",
+		"role": "Editor",
+		"slug": "top-talkers-over-time",
+		"title": "Top Talkers Over Time",
+		"uid": "b35BWxAZz",
+		"updated": "2024-09-14T20:51:23.000Z",
+		"url": "/d/b35BWxAZz/top-talkers-over-time"
+	}
+]

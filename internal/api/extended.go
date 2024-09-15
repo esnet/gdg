@@ -27,7 +27,7 @@ func (extended *ExtendedApi) getRequestBuilder() *requests.Builder {
 	req := requests.URL(extended.grafanaCfg.URL)
 	if config.Config().IgnoreSSL() {
 		customTransport := http.DefaultTransport.(*http.Transport).Clone()
-		customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
 		req = req.Transport(customTransport)
 	}
 

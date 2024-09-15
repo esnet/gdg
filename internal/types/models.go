@@ -26,3 +26,8 @@ type ConnectionPermissionItem struct {
 	Connection  *models.DataSourceListItemDTO
 	Permissions []*models.ResourcePermissionDTO
 }
+
+type DashboardAndPermissions struct {
+	Dashboard   *models.Hit
+	Permissions []*models.DashboardACLInfoDTO
+}

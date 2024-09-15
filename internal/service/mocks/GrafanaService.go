@@ -10,8 +10,6 @@ import (
 
 	models "github.com/grafana/grafana-openapi-client-go/models"
 
-	service "github.com/esnet/gdg/internal/service"
-
 	types "github.com/esnet/gdg/internal/service/types"
 )
 
@@ -1852,23 +1850,23 @@ func (_c *GrafanaService_ListConnections_Call) RunAndReturn(run func(filters.Fil
 }
 
 // ListDashboardPermissions provides a mock function with given fields: filterReq
-func (_m *GrafanaService) ListDashboardPermissions(filterReq filters.Filter) ([]service.DashboardAndPermissions, error) {
+func (_m *GrafanaService) ListDashboardPermissions(filterReq filters.Filter) ([]internaltypes.DashboardAndPermissions, error) {
 	ret := _m.Called(filterReq)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListDashboardPermissions")
 	}
 
-	var r0 []service.DashboardAndPermissions
+	var r0 []internaltypes.DashboardAndPermissions
 	var r1 error
-	if rf, ok := ret.Get(0).(func(filters.Filter) ([]service.DashboardAndPermissions, error)); ok {
+	if rf, ok := ret.Get(0).(func(filters.Filter) ([]internaltypes.DashboardAndPermissions, error)); ok {
 		return rf(filterReq)
 	}
-	if rf, ok := ret.Get(0).(func(filters.Filter) []service.DashboardAndPermissions); ok {
+	if rf, ok := ret.Get(0).(func(filters.Filter) []internaltypes.DashboardAndPermissions); ok {
 		r0 = rf(filterReq)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]service.DashboardAndPermissions)
+			r0 = ret.Get(0).([]internaltypes.DashboardAndPermissions)
 		}
 	}
 
@@ -1899,12 +1897,12 @@ func (_c *GrafanaService_ListDashboardPermissions_Call) Run(run func(filterReq f
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboardPermissions_Call) Return(_a0 []service.DashboardAndPermissions, _a1 error) *GrafanaService_ListDashboardPermissions_Call {
+func (_c *GrafanaService_ListDashboardPermissions_Call) Return(_a0 []internaltypes.DashboardAndPermissions, _a1 error) *GrafanaService_ListDashboardPermissions_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(filters.Filter) ([]service.DashboardAndPermissions, error)) *GrafanaService_ListDashboardPermissions_Call {
+func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(filters.Filter) ([]internaltypes.DashboardAndPermissions, error)) *GrafanaService_ListDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
