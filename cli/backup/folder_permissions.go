@@ -3,6 +3,7 @@ package backup
 import (
 	"context"
 	"log/slog"
+	"os"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
@@ -31,6 +32,15 @@ func newFolderPermissionCommand() simplecobra.Commander {
 	}
 }
 
+// getConnectionTbWriter returns a table object for use with newConnectionsPermissionListCmd
+func getFolderPermTblWriter() table.Writer {
+	writer := table.NewWriter()
+	writer.SetOutputMirror(os.Stdout)
+	writer.SetStyle(table.StyleLight)
+	writer.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name"}, table.RowConfig{AutoMerge: true})
+	return writer
+}
+
 func newFolderPermissionListCmd() simplecobra.Commander {
 	description := "list Folder Permissions"
 	return &support.SimpleCommand{
@@ -44,7 +54,7 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 			rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
 
 			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
-			rootCmd.TableObj.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name", "UserID", "Team Name", "Role", "Permission Name"}, rowConfigAutoMerge)
+			rootCmd.TableObj.AppendHeader(table.Row{"folderUid", "folder ID", "folder Name", "UserID", "Team Name", "Role", "Permission Name"}, rowConfigAutoMerge)
 			folders := rootCmd.GrafanaSvc().ListFolderPermissions(getFolderFilter())
 
 			if len(folders) == 0 {
@@ -52,12 +62,20 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 				return nil
 			}
 			for key, value := range folders {
-				rootCmd.TableObj.AppendRow(table.Row{key.ID, key.UID, key.Title})
-				for _, entry := range value {
-					rootCmd.TableObj.AppendRow(table.Row{"", "", "    PERMISSION--->", entry.UserLogin, entry.Team, entry.Role, entry.PermissionName}, rowConfigAutoMerge)
+				writer := getFolderPermTblWriter()
+				writer.AppendRow(table.Row{key.UID, key.ID, key.Title})
+				writer.Render()
+				if len(value) > 0 {
+					twConfigs := table.NewWriter()
+					twConfigs.SetOutputMirror(os.Stdout)
+					twConfigs.SetStyle(table.StyleDouble)
+					twConfigs.AppendHeader(table.Row{"Folder UID", "UserID", "Team Name", "Role", "Permission Name"})
+					for _, entry := range value {
+						twConfigs.AppendRow(table.Row{key.UID, entry.UserLogin, entry.Team, entry.Role, entry.PermissionName})
+					}
+					twConfigs.Render()
 				}
 			}
-			rootCmd.Render(cd.CobraCommand, folders)
 			return nil
 		},
 	}

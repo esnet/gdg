@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
@@ -36,6 +37,15 @@ func newConnectionsPermissionCmd() simplecobra.Commander {
 	}
 }
 
+// getConnectionTbWriter returns a table object for use with newConnectionsPermissionListCmd
+func getConnPermTblWriter() table.Writer {
+	writer := table.NewWriter()
+	writer.SetOutputMirror(os.Stdout)
+	writer.SetStyle(table.StyleLight)
+	writer.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"}, table.RowConfig{AutoMerge: true})
+	return writer
+}
+
 func newConnectionsPermissionListCmd() simplecobra.Commander {
 	description := "List Connection Permissions"
 	return &support.SimpleCommand{
@@ -56,8 +66,14 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 				slog.Info("No connections found")
 			} else {
 				for _, item := range connections {
-					rootCmd.TableObj.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, service.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID)})
+					writer := getConnPermTblWriter()
+					writer.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, service.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID)})
+					writer.Render()
 					if item.Permissions != nil {
+						twConfigs := table.NewWriter()
+						twConfigs.SetOutputMirror(os.Stdout)
+						twConfigs.SetStyle(table.StyleDouble)
+						twConfigs.AppendHeader(table.Row{"Connection UID", "Permission Granted", "Permission Type", "Permission Grantee"})
 						for _, perm := range item.Permissions {
 							permissionType := "BuiltinRole"
 							value := ""
@@ -72,11 +88,12 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 							} else {
 								permissionType = "unsupported"
 							}
-							rootCmd.TableObj.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, "    PERMISSION-->", perm.Permission, permissionType, value})
+							twConfigs.AppendRow(table.Row{item.Connection.UID, perm.Permission, permissionType, value})
 						}
+						twConfigs.Render()
 					}
 				}
-				rootCmd.Render(cd.CobraCommand, connections)
+				// rootCmd.Render(cd.CobraCommand, connections)
 			}
 			return nil
 		},
