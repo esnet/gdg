@@ -1,0 +1,35 @@
+{
+	"apiVersion": 1,
+	"contactPoints": [
+		{
+			"name": "discord",
+			"orgId": 4,
+			"receivers": [
+				{
+					"settings": {
+						"url": "https://www.discord.com?q=woot",
+						"use_discord_username": false
+					},
+					"type": "discord",
+					"uid": "fdxmqkyb5gl4xb"
+				}
+			]
+		},
+		{
+			"name": "email receiver",
+			"orgId": 4,
+			"receivers": [
+				{
+					"settings": {
+						"addresses": "\u003cexample@email.com\u003e"
+					},
+					"type": "email",
+					"uid": "edxmyx0pdyo74a"
+				}
+			]
+		}
+	],
+	"groups": null,
+	"muteTimes": null,
+	"policies": null
+}
