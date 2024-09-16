@@ -136,7 +136,7 @@ func (s *DashNGoImpl) GetBasicAuthClient() *client.GrafanaHTTPAPI {
 // only to be used for testing, highly discouraged in production.
 func ignoreSSLErrors() (*http.Client, *http.Transport) {
 	customTransport := http.DefaultTransport.(*http.Transport).Clone()
-	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
 	httpclient := &http.Client{Transport: customTransport}
 	return httpclient, customTransport
 }

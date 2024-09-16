@@ -65,3 +65,50 @@ You can additionally filter by connection slug in order to only operate on a sin
 {{< /details >}}
 
 
+### Dashboard Permissions
+
+Note:  Available with +v0.7.2.  All of these commands are a subset of the dashboard command.
+
+All commands can use `permission` or `p` to manage connection permissions.
+
+```sh
+./bin/gdg dash permission list -- Lists all current connections permissions
+./bin/gdg dash permission download -- Download all connections from grafana to local file system
+./bin/gdg dash permission upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
+./bin/gdg dash permission clear -- Deletes all connections Permissions (Leaving only the default values)
+```
+
+
+You can additionally filter by dashboard slug in order to only operate on a single connection.
+
+
+{{< details "Permission Listing" >}}
+```
+┌────┬─────────────────────┬─────────────────────┬─────────┬───────────┬───────────────────────────────────────────────────────┐
+│ ID │ NAME                │ SLUG                │ TYPE    │ UID       │ URL                                                   │
+├────┼─────────────────────┼─────────────────────┼─────────┼───────────┼───────────────────────────────────────────────────────┤
+│  1 │ Bandwidth Dashboard │ bandwidth-dashboard │ General │ 000000003 │ http://localhost:3000/d/000000003/bandwidth-dashboard │
+└────┴─────────────────────┴─────────────────────┴─────────┴───────────┴───────────────────────────────────────────────────────┘
+╔═══════════════╦═════════════════════╦════════════╦═══════════╦══════════╦════════════╗
+║ DASHBOARD UID ║ DASHBOARD TITLE     ║ USERLOGIN  ║ TEAM      ║ ROLENAME ║ PERMISSION ║
+╠═══════════════╬═════════════════════╬════════════╬═══════════╬══════════╬════════════╣
+║ 000000003     ║ Bandwidth Dashboard ║ user:admin ║           ║          ║ Admin      ║
+║ 000000003     ║ Bandwidth Dashboard ║ user:bob   ║           ║          ║ Edit       ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║ musicians ║          ║ Admin      ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║           ║ Editor   ║ Edit       ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║           ║ Viewer   ║ View       ║
+╚═══════════════╩═════════════════════╩════════════╩═══════════╩══════════╩════════════╝
+┌────┬────────────────────┬────────────────────┬─────────┬───────────┬──────────────────────────────────────────────────────┐
+│ ID │ NAME               │ SLUG               │ TYPE    │ UID       │ URL                                                  │
+├────┼────────────────────┼────────────────────┼─────────┼───────────┼──────────────────────────────────────────────────────┤
+│  2 │ Bandwidth Patterns │ bandwidth-patterns │ General │ 000000004 │ http://localhost:3000/d/000000004/bandwidth-patterns │
+└────┴────────────────────┴────────────────────┴─────────┴───────────┴──────────────────────────────────────────────────────┘
+╔═══════════════╦════════════════════╦════════════╦══════╦══════════╦════════════╗
+║ DASHBOARD UID ║ DASHBOARD TITLE    ║ USERLOGIN  ║ TEAM ║ ROLENAME ║ PERMISSION ║
+╠═══════════════╬════════════════════╬════════════╬══════╬══════════╬════════════╣
+║ 000000004     ║ Bandwidth Patterns ║ user:admin ║      ║          ║ Admin      ║
+║ 000000004     ║ Bandwidth Patterns ║            ║      ║ Editor   ║ Edit       ║
+║ 000000004     ║ Bandwidth Patterns ║            ║      ║ Viewer   ║ View       ║
+╚═══════════════╩════════════════════╩════════════╩══════╩══════════╩════════════╝
+```
+{{< /details >}}

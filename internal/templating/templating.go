@@ -74,7 +74,7 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 			slog.Warn("Continuing to process remaining templates")
 			continue
 		}
-		templateData, err := os.ReadFile(fileLocation)
+		templateData, err := os.ReadFile(fileLocation) // #nosec G304
 		if err != nil {
 			slog.Error("unable to open file", slog.Any("file", fileLocation))
 			slog.Warn("Continuing to process remaining templates")

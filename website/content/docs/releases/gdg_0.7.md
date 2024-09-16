@@ -8,11 +8,19 @@ weight: 196
 toc: true
 ---
 
-## Release Notes for v0.7.0
 
-Issues with go releaser process.  No ChangeLog
+## Release Notes for v0.7.2
+**Release Date: TBD**
+
+### Breaking Changes
+
+
+### Changes
+ - [#274](https://github.com/esnet/gdg/pull/274) Adding Dashboard Permissions, enterprise feature.
+ -
 
 ## Release Notes for v0.7.1
+**Release Date: 09/11/2024**
 
 Major features in this release are:
   - Improvement in performance when dealing with multiple organizations users and preference management.
@@ -59,6 +67,9 @@ has been deprecated in favor of
   - Upgraded to latest grafana openapi client.
   - [#269](https://github.com/esnet/gdg/issues/269) Adding a google analytics tracking on the gdg website.
 
+
 ## Release Notes for v0.7.0
+**Release Date: 09/11/2024**
 
 
+Issues with go releaser process.  No ChangeLog

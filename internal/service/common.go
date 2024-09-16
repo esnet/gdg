@@ -34,8 +34,8 @@ func updateSlug(board string) string {
 
 // getFolderFromResourcePath if a use encodes a path separator in path, we can't determine the folder name.  This strips away
 // all the known components of a resource type leaving only the folder name.
-func getFolderFromResourcePath(storageEngine string, filePath string) (string, error) {
-	basePath := fmt.Sprintf("%s/", config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource))
+func getFolderFromResourcePath(storageEngine string, filePath string, resourceType config.ResourceType) (string, error) {
+	basePath := fmt.Sprintf("%s/", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType))
 	// Take into account cloud prefix is enabled
 	if storageEngine != "" {
 		cloudType, data := config.Config().GetCloudConfiguration(storageEngine)
