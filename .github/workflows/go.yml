@@ -23,6 +23,10 @@ jobs:
       - name: Test
         env:
           ENTERPRISE_LICENSE: ${{ secrets.ENTERPRISE_LICENSE }}
-        run: gotestsum --junitfile report.xml --format testname 
-#         - go test -v ./...
+        run: gotestsum --junitfile report.xml --format testname -- -coverprofile=cover.out ./...
+      - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true # optional (default = false)
+          files: cover.out
+          token: ${{ secrets.CODECOV_TOKEN }} 
 
