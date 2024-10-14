@@ -1,4 +1,10 @@
-[![Build Status](https://github.com/esnet/gdg/actions/workflows/go.yml/badge.svg)](https://github.com/esnet/gdg/actions/workflows/go.yml)[![Build Status](https://github.com/esnet/gdg/actions/workflows/hugo.yml/badge.svg)](https://github.com/esnet/gdg/actions/workflows/hugo.yml)[![Go Report Card](https://goreportcard.com/badge/github.com/esnet/gdg)](https://goreportcard.com/report/github.com/esnet/gdg)[![GoDoc](https://godoc.org/github.com/esnet/gdg?status.svg)](https://godoc.org/github.com/esnet/gdg)[![codecov](https://codecov.io/gh/esnet/gdg/graph/badge.svg?token=sVEr9Zj6f3)](https://codecov.io/gh/esnet/gdg)
+[![Build Status](https://github.com/esnet/gdg/actions/workflows/go.yml/badge.svg)](https://github.com/esnet/gdg/actions/workflows/go.yml)
+[![Build Status](https://github.com/esnet/gdg/actions/workflows/hugo.yml/badge.svg)](https://github.com/esnet/gdg/actions/workflows/hugo.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/esnet/gdg)](https://goreportcard.com/report/github.com/esnet/gdg)
+[![GoDoc](https://godoc.org/github.com/esnet/gdg?status.svg)](https://godoc.org/github.com/esnet/gdg)
+[![codecov](https://codecov.io/gh/esnet/gdg/graph/badge.svg?token=sVEr9Zj6f3)](https://codecov.io/gh/esnet/gdg)
+[![GitHub release](https://img.shields.io/github/release/esnet/gdg.svg)](https://github.com/esnet/gdg/releases)
+
 
 # Grafana dash-n-grab
 
