@@ -24,8 +24,7 @@ jobs:
         env:
           ENTERPRISE_LICENSE: ${{ secrets.ENTERPRISE_LICENSE }}
         run:  |
-          gotestsum --junitfile report.xml --format testname  -- -coverprofile=cover.out  -covermode=atomic -coverpkg=github.com/esnet/gdg/cli/...,github.com/esnet/gdg/cmd/...,github.com/esnet/gdg/internal/...,github.com/esnet/gdg/pkg/...  ./...
-          cp cover.out cover.tmp && cat cover.tmp | grep -v "mocks" > cover.out
+          gotestsum --junitfile report.xml --format testname  -- -coverprofile=cover.out  -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks" | tr '\n' ',' )   ./...
       - uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true # optional (default = false)
