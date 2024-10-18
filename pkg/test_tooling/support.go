@@ -1,6 +1,7 @@
-package test
+package test_tooling
 
 import (
+	"context"
 	"io"
 	"log/slog"
 	"os"
@@ -16,9 +17,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// setupAndExecuteMockingServices  will create a mock for varous required entities allowing to test the CLI flag parsing
+// SetupAndExecuteMockingServices  will create a mock for varous required entities allowing to test the CLI flag parsing
 // process: function that setups mocks and invokes the Execute command
-func setupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error) (string, func()) {
+func SetupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error) (string, func()) {
 	testSvc := new(mocks.GrafanaService)
 	getMockSvc := func() service.GrafanaService {
 		return testSvc
@@ -31,7 +32,7 @@ func setupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.Grafa
 	}
 
 	r, w, cleanup := InterceptStdout()
-	data, err := os.ReadFile("../../config/" + common.DefaultTestConfig)
+	data, err := os.ReadFile("config/" + common.DefaultTestConfig)
 	assert.Nil(t, err)
 
 	err = process(testSvc, data, optionMockSvc)
@@ -51,13 +52,15 @@ func setupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.Grafa
 
 // InterceptStdout is a test helper function that will redirect all stdout in and out to a different file stream.
 // It returns the stdout, stderr, and a function to be invoked to close the streams.
-func InterceptStdout() (*os.File, *os.File, func()) {
+func InterceptStdout() (*os.File, *os.File, context.CancelFunc) {
 	backupStd := os.Stdout
 	backupErr := os.Stderr
-	r, w, _ := os.Pipe()
+	r, w, e := os.Pipe()
+	if e != nil {
+		panic(e)
+	}
 	// Restore streams
 	config.InitGdgConfig("testing", "")
-	applog.InitializeAppLogger(w, w, false)
 	cleanup := func() {
 		os.Stdout = backupStd
 		os.Stderr = backupErr
@@ -65,6 +68,7 @@ func InterceptStdout() (*os.File, *os.File, func()) {
 	}
 	os.Stdout = w
 	os.Stderr = w
+	applog.InitializeAppLogger(os.Stdout, os.Stderr, true)
 
 	return r, w, cleanup
 }

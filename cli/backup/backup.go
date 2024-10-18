@@ -35,6 +35,7 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 			newOrganizationsCommand(),
 			newTeamsCommand(),
 			newUsersCommand(),
+			newAlertingCommand(),
 		},
 	}
 }

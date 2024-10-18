@@ -5,9 +5,10 @@ import (
 	"log"
 	"log/slog"
 
+	"github.com/esnet/gdg/internal/tools/ptr"
+
 	"github.com/esnet/gdg/internal/types"
 
-	"github.com/esnet/gdg/internal/tools"
 	"github.com/grafana/grafana-openapi-client-go/client/service_accounts"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
@@ -44,8 +45,8 @@ func (s *DashNGoImpl) CreateServiceAccountToken(serviceAccountId int64, name str
 
 func (s *DashNGoImpl) ListServiceAccounts() []*types.ServiceAccountDTOWithTokens {
 	p := service_accounts.NewSearchOrgServiceAccountsWithPagingParams()
-	p.Disabled = tools.PtrOf(false)
-	p.Perpage = tools.PtrOf(int64(5000))
+	p.Disabled = ptr.Of(false)
+	p.Perpage = ptr.Of(int64(5000))
 
 	resp, err := s.GetClient().ServiceAccounts.SearchOrgServiceAccountsWithPaging(p)
 	if err != nil {
