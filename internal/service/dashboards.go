@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/esnet/gdg/internal/tools/ptr"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/service/types"
@@ -279,9 +281,9 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 			if tag != "" {
 				searchParams.Tag = []string{tag}
 			}
-			searchParams.Limit = tools.PtrOf(limit)
-			searchParams.Page = tools.PtrOf(page)
-			searchParams.Type = tools.PtrOf(searchTypeDashboard)
+			searchParams.Limit = ptr.Of(limit)
+			searchParams.Page = ptr.Of(page)
+			searchParams.Type = ptr.Of(searchTypeDashboard)
 
 			pageBoardLinks, err := s.GetClient().Search.Search(searchParams)
 			if err != nil {

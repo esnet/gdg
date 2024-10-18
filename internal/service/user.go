@@ -10,9 +10,10 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/esnet/gdg/internal/tools/ptr"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/tools"
 	"github.com/esnet/gdg/internal/types"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/admin_users"
@@ -164,8 +165,8 @@ func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDT
 	}
 	var filteredUsers []*models.UserSearchHitDTO
 	params := users.NewSearchUsersParams()
-	params.Page = tools.PtrOf(int64(1))
-	params.Perpage = tools.PtrOf(int64(5000))
+	params.Page = ptr.Of(int64(1))
+	params.Perpage = ptr.Of(int64(5000))
 	usersList, err := s.GetClient().Users.SearchUsers(params)
 	if err != nil {
 		log.Fatal(err.Error())

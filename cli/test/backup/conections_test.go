@@ -1,9 +1,11 @@
-package test
+package backup
 
 import (
 	"io"
 	"strings"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling"
 
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
@@ -38,12 +40,12 @@ func TestConnectionCommand(t *testing.T) {
 			response.GrafanaSvc = getMockSvc
 		}
 	}
-	r, w, cleanup := InterceptStdout()
+	r, w, cleanup := test_tooling.InterceptStdout()
 
 	err := cli.Execute(common.DefaultTestConfig, []string{"backup", "connections", "list"}, optionMockSvc())
 	assert.Nil(t, err)
 	defer cleanup()
-	w.Close()
+	assert.NoError(t, w.Close())
 
 	out, _ := io.ReadAll(r)
 	outStr := string(out)

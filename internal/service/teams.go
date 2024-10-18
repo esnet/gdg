@@ -183,20 +183,6 @@ func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*mo
 	return result
 }
 
-// Get a specific Team
-// Return nil if team cannot be found
-//func (s *DashNGoImpl) getTeam(teamName string, filter filters.Filter) *models.TeamDTO {
-//	teamListing := maps.Keys(s.ListTeams(filter))
-//	var team *models.TeamDTO
-//	for ndx, item := range teamListing {
-//		if item.Name == teamName {
-//			team = teamListing[ndx]
-//			break
-//		}
-//	}
-//	return team
-//}
-
 // DeleteTeam removes all Teams
 func (s *DashNGoImpl) DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, error) {
 	teamListing := maps.Keys(s.ListTeams(filter))

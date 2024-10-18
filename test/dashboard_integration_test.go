@@ -8,7 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/tools"
+	"github.com/esnet/gdg/internal/tools/ptr"
+
 	"github.com/esnet/gdg/internal/types"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/samber/lo"
@@ -266,7 +267,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	// Get current Permissions
 	currentPerms, err := apiClient.ListDashboardPermissions(nil)
 	assert.Equal(t, len(currentPerms), 16)
-	entry := tools.PtrOf(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item types.DashboardAndPermissions, index int) bool {
+	entry := ptr.Of(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item types.DashboardAndPermissions, index int) bool {
 		return item.Dashboard.Title == "Bandwidth Dashboard"
 	})))
 	assert.NotNil(t, entry)
@@ -282,7 +283,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	assert.Equal(t, len(addPerms), 16)
 	currentPerms, err = apiClient.ListDashboardPermissions(nil)
 	entry = nil
-	entry = tools.PtrOf(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item types.DashboardAndPermissions, index int) bool {
+	entry = ptr.Of(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item types.DashboardAndPermissions, index int) bool {
 		return item.Dashboard.Title == "Bandwidth Dashboard"
 	})))
 	assert.NotNil(t, entry)
