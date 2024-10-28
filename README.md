@@ -37,6 +37,8 @@ Current Entities supported (See official docs for more details)
  - Teams
  - Users
  - Library Elements
+ - Alert rules
+ - Contact points
 
 Grafana Enterprise Only feature
  - Connection Permissions
