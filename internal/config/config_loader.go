@@ -208,31 +208,37 @@ func (s *TemplatingConfig) GetTemplate(name string) (*TemplateDashboards, bool) 
 }
 
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
-func buildConfigSearchPath(configFile string, appName *string) []string {
+func buildConfigSearchPath(configFile string, appName string) ([]string, string, string) {
+	ext := filepath.Ext(configFile)
 	var configDirs []string
 	if configFile != "" {
 		configFileDir := filepath.Dir(configFile)
 		if configFileDir != "" {
 			configDirs = append([]string{configFileDir}, configSearchPaths...)
 		}
-		*appName = filepath.Base(configFile)
-		*appName = strings.TrimSuffix(*appName, filepath.Ext(*appName))
+		appName = filepath.Base(configFile)
+		appName = strings.TrimSuffix(appName, filepath.Ext(appName))
 	} else {
 		configDirs = append(configDirs, configSearchPaths...)
 	}
+	if ext == "" {
+		ext = "yaml"
+	} else {
+		ext = ext[1:] // strip leading dot
+	}
 
-	return configDirs
+	return configDirs, appName, ext
 }
 
 func InitGdgConfig(override, defaultConfig string) {
 	configData = &Configuration{}
 	appName := "importer"
-	configDirs := buildConfigSearchPath(override, &appName)
+	configDirs, appName, ext := buildConfigSearchPath(override, appName)
 	var err error
 	var v *viper.Viper
 	configData.gdgConfig = new(GDGAppConfiguration)
 
-	v, err = readViperConfig[GDGAppConfiguration](appName, configDirs, configData.gdgConfig)
+	v, err = readViperConfig[GDGAppConfiguration](appName, configDirs, configData.gdgConfig, ext)
 	var configFileNotFoundError viper.ConfigFileNotFoundError
 	ok := errors.As(err, &configFileNotFoundError)
 
@@ -248,7 +254,7 @@ func InitGdgConfig(override, defaultConfig string) {
 		}
 		appName = "importer"
 
-		v, err = readViperConfig[GDGAppConfiguration](appName, configDirs, configData.gdgConfig)
+		v, err = readViperConfig[GDGAppConfiguration](appName, configDirs, configData.gdgConfig, "")
 		if err != nil {
 			log.Panic(err)
 		}
@@ -263,12 +269,17 @@ func InitGdgConfig(override, defaultConfig string) {
 }
 
 // readViperConfig utilizes the viper library to load the config from the selected paths
-func readViperConfig[T any](appName string, configDirs []string, object *T) (*viper.Viper, error) {
+func readViperConfig[T any](appName string, configDirs []string, object *T, ext string) (*viper.Viper, error) {
 	v := viper.New()
 	v.SetEnvPrefix("GDG")
 	replacer := strings.NewReplacer(".", "__")
 	v.SetEnvKeyReplacer(replacer)
 	v.SetConfigName(appName)
+	if ext == "" {
+		v.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
+	} else {
+		v.SetConfigType(ext)
+	}
 	for _, dir := range configDirs {
 		v.AddConfigPath(dir)
 	}

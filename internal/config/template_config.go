@@ -31,10 +31,10 @@ func InitTemplateConfig(override string) {
 		log.Fatal("GDG configuration was not able to be loaded, cannot continue")
 	}
 	appName := "templates"
-	configDirs := buildConfigSearchPath(override, &appName)
+	configDirs, appName, ext := buildConfigSearchPath(override, appName)
 	configData.templatingConfig = new(TemplatingConfig)
 
-	v, err := readViperConfig[TemplatingConfig](appName, configDirs, configData.templatingConfig)
+	v, err := readViperConfig[TemplatingConfig](appName, configDirs, configData.templatingConfig, ext)
 	if err != nil {
 		log.Fatal("unable to read templating configuration")
 	}
