@@ -2,22 +2,16 @@ package cli
 
 import (
 	"context"
-	"log/slog"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/backup"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/cli/tools"
-	assets "github.com/esnet/gdg/config"
 )
 
 // Execute executes a command.
-func Execute(defaultCfg string, args []string, options ...support.RootOption) error {
+func Execute(args []string, options ...support.RootOption) error {
 	var err error
-	support.DefaultConfig, err = assets.GetFile(defaultCfg)
-	if err != nil {
-		slog.Warn("unable to find load default configuration", "err", err)
-	}
 	rootCmd := support.NewRootCmd(getNewRootCmd(), options...)
 	x, err := simplecobra.New(rootCmd)
 	if err != nil {
@@ -41,6 +35,7 @@ func getNewRootCmd() *support.RootCommand {
 		NameP: "gdg",
 		CommandEntries: []simplecobra.Commander{
 			newVersionCmd(),
+			newDefaultConfig(),
 			tools.NewToolsCommand(),
 			backup.NewBackupCommand(),
 		},

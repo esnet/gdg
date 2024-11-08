@@ -11,17 +11,10 @@ import (
 // InitConfiguration Loads configuration, and setups fail over case
 func InitConfiguration(cmd *cobra.Command) {
 	configOverride, _ := cmd.Flags().GetString("config")
-	if DefaultConfig == "" {
-		raw, err := os.ReadFile("config/importer-example.yml")
-		if err == nil {
-			DefaultConfig = string(raw)
-		} else {
-			DefaultConfig = ""
-		}
-	}
-
 	// Registers sub CommandsList
-	config.InitGdgConfig(configOverride, DefaultConfig)
+	if config.Config() == nil {
+		config.InitGdgConfig(configOverride)
+	}
 	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, config.Config().IsDebug())
 
 	// Validate current configuration

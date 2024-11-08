@@ -11,7 +11,6 @@ import (
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
-	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -42,7 +41,7 @@ func TestConnectionCommand(t *testing.T) {
 	}
 	r, w, cleanup := test_tooling.InterceptStdout()
 
-	err := cli.Execute(common.DefaultTestConfig, []string{"backup", "connections", "list"}, optionMockSvc())
+	err := cli.Execute([]string{"backup", "connections", "list"}, optionMockSvc())
 	assert.Nil(t, err)
 	defer cleanup()
 	assert.NoError(t, w.Close())

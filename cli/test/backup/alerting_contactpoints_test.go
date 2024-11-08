@@ -13,7 +13,6 @@ import (
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/gdg/pkg/test_tooling"
-	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -66,7 +65,7 @@ func TestUploadContactPoints(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(common.DefaultTestConfig, listCmd, optionMockSvc())
+		err := cli.Execute(listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -129,7 +128,7 @@ func TestDownloadContactPoints(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(common.DefaultTestConfig, listCmd, optionMockSvc())
+		err := cli.Execute(listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -210,7 +209,7 @@ func TestListContactPoints(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(common.DefaultTestConfig, listCmd, optionMockSvc())
+		err := cli.Execute(listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -285,7 +284,7 @@ func TestClearContactPoints(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(common.DefaultTestConfig, clearCmd, optionMockSvc())
+		err := cli.Execute(clearCmd, optionMockSvc())
 		assert.Nil(t, err)
 		defer cleanup()
 		assert.NoError(t, w.Close())

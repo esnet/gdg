@@ -13,14 +13,13 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 	"github.com/esnet/gdg/internal/version"
-	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestVersionCommand(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("test", "../.."))
-	execMe := func(mock *mocks.GrafanaService, data []byte, optionMockSvc func() support.RootOption) error {
-		err := cli.Execute(string(data), []string{"version"}, optionMockSvc())
+	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
+		err := cli.Execute([]string{"version"}, optionMockSvc())
 		return err
 	}
 	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
@@ -49,7 +48,7 @@ func TestVersionErrCommand(t *testing.T) {
 	}
 	r, w, cleanup := test_tooling.InterceptStdout()
 	defer cleanup()
-	err := cli.Execute(common.DefaultTestConfig, []string{"dumb", "dumb"}, optionMockSvc())
+	err := cli.Execute([]string{"dumb", "dumb"}, optionMockSvc())
 	assert.NotNil(t, err)
 	assert.NoError(t, w.Close())
 

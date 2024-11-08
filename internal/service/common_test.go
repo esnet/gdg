@@ -15,14 +15,14 @@ func fixEnvironment(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("service", "../.."))
 	err := os.Setenv("GDG_CONTEXT_NAME", "qa")
 	assert.Nil(t, err)
-	config.InitGdgConfig(common.DefaultTestConfig, "'")
+	config.InitGdgConfig(common.DefaultTestConfig)
 }
 
 func TestRelativePathLogin(t *testing.T) {
 	envKey := "GDG_CONTEXTS__QA__URL"
 	assert.NoError(t, os.Setenv(envKey, "http://localhost:3000/grafana/"))
 	fixEnvironment(t)
-	config.InitGdgConfig(common.DefaultTestConfig, "'")
+	config.InitGdgConfig(common.DefaultTestConfig)
 	defer assert.NoError(t, os.Unsetenv(envKey))
 
 	svc := NewApiService("dummy")
