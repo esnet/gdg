@@ -16,6 +16,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestDefaultConfigCommand(t *testing.T) {
+	assert.NoError(t, path.FixTestDir("test", "../.."))
+	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
+		err := cli.Execute([]string{"default-config"}, optionMockSvc())
+		return err
+	}
+	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
+	defer closeReader()
+
+	assert.True(t, strings.Contains(outStr, "storage_engine"))
+	assert.True(t, strings.Contains(outStr, "global"))
+	assert.True(t, strings.Contains(outStr, "context_name:"))
+	assert.True(t, strings.Contains(outStr, "contexts:"))
+}
+
 func TestVersionCommand(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("test", "../.."))
 	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
