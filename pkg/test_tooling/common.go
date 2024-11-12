@@ -100,7 +100,7 @@ func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.
 		slog.Info("Grafana Test container running", slog.String("host", grafanaHost+"/login"), slog.String("imageVersion", dockerContainer.Image))
 	}
 
-	config.InitGdgConfig(*cfgName, "'")
+	config.InitGdgConfig(*cfgName)
 	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
 	assert.NotNil(t, conf)
 	// Hack for Local testing

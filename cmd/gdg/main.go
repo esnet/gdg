@@ -21,7 +21,7 @@ func main() {
 		}
 	}
 
-	err := cli.Execute("importer-example.yml", os.Args[1:], setGrafanaSvc())
+	err := cli.Execute(os.Args[1:], setGrafanaSvc())
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}

@@ -5,7 +5,8 @@ import (
 	"log/slog"
 	"os"
 
-	assets "github.com/esnet/gdg/config"
+	"github.com/esnet/gdg/internal/version"
+
 	"github.com/esnet/gdg/internal/config"
 	appconfig "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/templating"
@@ -33,6 +34,7 @@ func init() {
 
 func initConfig() {
 	var err error
+	slog.Info("Running gdg-generate", slog.Any("version", version.Version))
 	cfgFile, err = rootCmd.Flags().GetString("config")
 	if err != nil {
 		log.Fatal("unable to get config file")
@@ -42,12 +44,7 @@ func initConfig() {
 		log.Fatal("unable to get template config file")
 	}
 
-	defaultConfiguration, err := assets.GetFile("importer-example.yml")
-	if err != nil {
-		slog.Warn("unable to load default configuration, no fallback")
-	}
-
-	config.InitGdgConfig(cfgFile, defaultConfiguration)
+	config.InitGdgConfig(cfgFile)
 	config.InitTemplateConfig(tplCfgFile)
 	cfg := config.Config()
 	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, cfg.IsDebug())

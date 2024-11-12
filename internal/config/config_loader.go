@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -9,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -19,6 +19,14 @@ func (s *Configuration) GetViperConfig(name string) *viper.Viper {
 		return nil
 	}
 	return s.viperConfiguration[name]
+}
+
+func (s *Configuration) DefaultConfig() string {
+	cfg, err := assets.GetFile("importer-example.yml")
+	if err != nil {
+		slog.Warn("unable to find load default configuration", "err", err)
+	}
+	return cfg
 }
 
 func (s *Configuration) ClearContexts() {
@@ -143,7 +151,7 @@ func (s *Configuration) SaveToDisk(useViper bool) error {
 }
 
 var (
-	configData        = new(Configuration)
+	configData        *Configuration
 	configSearchPaths = []string{"config", ".", "../config", "../../config", "/etc/gdg"}
 )
 
@@ -208,53 +216,50 @@ func (s *TemplatingConfig) GetTemplate(name string) (*TemplateDashboards, bool) 
 }
 
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
-func buildConfigSearchPath(configFile string, appName *string) []string {
+func buildConfigSearchPath(configFile string) ([]string, string, string) {
+	ext := filepath.Ext(configFile)
+	appName := filepath.Base(configFile)
+
 	var configDirs []string
 	if configFile != "" {
 		configFileDir := filepath.Dir(configFile)
 		if configFileDir != "" {
 			configDirs = append([]string{configFileDir}, configSearchPaths...)
 		}
-		*appName = filepath.Base(configFile)
-		*appName = strings.TrimSuffix(*appName, filepath.Ext(*appName))
+		appName = filepath.Base(configFile)
+		appName = strings.TrimSuffix(appName, filepath.Ext(appName))
 	} else {
 		configDirs = append(configDirs, configSearchPaths...)
 	}
+	if ext == "" {
+		ext = "yaml"
+	} else {
+		ext = ext[1:] // strip leading dot
+	}
 
-	return configDirs
+	return configDirs, appName, ext
 }
 
-func InitGdgConfig(override, defaultConfig string) {
+func InitGdgConfig(override string) {
+	if override == "" && configData != nil {
+		return
+	}
 	configData = &Configuration{}
-	appName := "importer"
-	configDirs := buildConfigSearchPath(override, &appName)
+	var configDirs []string
+	var ext, appName string
+	if override == "" {
+		configDirs, appName, ext = buildConfigSearchPath("config/importer.yml")
+	} else {
+		configDirs, appName, ext = buildConfigSearchPath(override)
+	}
 	var err error
 	var v *viper.Viper
 	configData.gdgConfig = new(GDGAppConfiguration)
 
-	v, err = readViperConfig[GDGAppConfiguration](appName, configDirs, configData.gdgConfig)
-	var configFileNotFoundError viper.ConfigFileNotFoundError
-	ok := errors.As(err, &configFileNotFoundError)
-
-	if err != nil && ok {
-		slog.Info("No configuration file has been found, creating a default configuration")
-		err = os.MkdirAll("config", 0o750)
-		if err != nil {
-			log.Fatal("unable to create configuration folder: 'config'")
-		}
-		err = os.WriteFile("config/importer.yml", []byte(defaultConfig), 0o600)
-		if err != nil {
-			log.Panic("Could not persist default config locally")
-		}
-		appName = "importer"
-
-		v, err = readViperConfig[GDGAppConfiguration](appName, configDirs, configData.gdgConfig)
-		if err != nil {
-			log.Panic(err)
-		}
-
-	} else if err != nil { // config is found but is invalid
-		log.Fatal("Invalid configuration detected, please fix your configuration and try again.")
+	v, err = readViperConfig[GDGAppConfiguration](appName, configDirs, configData.gdgConfig, ext)
+	if err != nil {
+		log.Fatal("No configuration file has been found or config is invalid.  Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg'].  " +
+			"Try using `gdg default-config > config/importer.yml` go use the default example")
 	}
 	if configData.viperConfiguration == nil {
 		configData.viperConfiguration = make(map[string]*viper.Viper)
@@ -263,12 +268,17 @@ func InitGdgConfig(override, defaultConfig string) {
 }
 
 // readViperConfig utilizes the viper library to load the config from the selected paths
-func readViperConfig[T any](appName string, configDirs []string, object *T) (*viper.Viper, error) {
+func readViperConfig[T any](appName string, configDirs []string, object *T, ext string) (*viper.Viper, error) {
 	v := viper.New()
 	v.SetEnvPrefix("GDG")
 	replacer := strings.NewReplacer(".", "__")
 	v.SetEnvKeyReplacer(replacer)
 	v.SetConfigName(appName)
+	if ext == "" {
+		v.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
+	} else {
+		v.SetConfigType(ext)
+	}
 	for _, dir := range configDirs {
 		v.AddConfigPath(dir)
 	}
