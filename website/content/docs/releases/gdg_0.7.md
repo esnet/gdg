@@ -13,11 +13,18 @@ toc: true
 **Release Date: TBD**
 
 ### Breaking Changes
+  - [#318](https://github.com/esnet/gdg/pull/318) Removed the default config fall back.  For backup and tools functionality
+a valid configuration file is now required.  A new cli parameter is introduced: `default-config` which will print an example configuration
+to stdout.
+### Changes
+  - [#319](https://github.com/esnet/gdg/pull/319) Remove the requirement for GF_FEATURE_TOGGLES_ENABLE for nested folder as it was incorrectly required in 0.7.1
+  - [#302](https://github.com/esnet/gdg/pull/302) Adding Contact Points support.
+  - [#303](https://github.com/esnet/gdg/pull/303) Cleaning up Permission based listings.
+  - [#274](https://github.com/esnet/gdg/pull/274) Adding Dashboard Permissions, enterprise feature.
 
 
 ### Changes
  - [#274](https://github.com/esnet/gdg/pull/274) Adding Dashboard Permissions, enterprise feature.
- -
 
 ## Release Notes for v0.7.1
 **Release Date: 09/11/2024**

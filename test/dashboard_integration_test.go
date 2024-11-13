@@ -57,7 +57,7 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 	var generalBoard *models.Hit
 	var nestedFolder *models.Hit
 	for ndx, board := range boards {
-		slog.Info(board.Slug)
+
 		if board.Slug == "rabbitmq-overview" {
 			generalBoard = boards[ndx]
 		}

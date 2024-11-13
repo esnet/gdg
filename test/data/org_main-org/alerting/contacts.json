@@ -12,5 +12,17 @@
 				"uid": "fdxmqkyb5gl4xb"
 			}
 		]
+	},
+	{
+		"name": "email receiver",
+		"orgId": 1,
+		"receivers": [
+			{
+				"settings": {
+					"addresses": "\u003cexample@email.com\u003e"
+				},
+				"type": "email"
+			}
+		]
 	}
 ]

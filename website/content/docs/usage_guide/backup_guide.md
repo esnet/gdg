@@ -5,6 +5,22 @@ weight: 16
 
 Every namespace supporting CRUD operations has the functions: list, download, upload, clear operating on only the monitored folders.
 
+### Alerting
+
+Alerting is made up of several type of entities: ContactPoints, Alert Rules, Notification Policy and finally Templates.
+Currently only Contact Points is supported.
+
+#### Contact Points
+
+{{< callout note >}} Grafana has a contact point type named 'grafana-default-email' that has an inconsistent behavior.
+Unless it has been modified, GDG will ignore it on listing, download and upload.  If it has been modified, it will not be able to clear it due to grafana restriction  {{< /callout >}}
+
+```sh
+./bin/gdg backup alerting contactpoints list -- Lists all current contact points
+./bin/gdg backup alerting contactpoints download  -- Download all known contact points
+./bin/gdg backup alerting contactpoints upload -- Upload all contact points
+./bin/gdg backup alerting contactpoints clear -- Clear all contact points
+```
 
 ### Connections
 

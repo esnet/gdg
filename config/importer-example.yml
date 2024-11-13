@@ -58,7 +58,7 @@ contexts:
     password: admin
     dashboard_settings:
       ignore_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
-      nested_folders: true # If true, the dashboard-download will create the proper nesting of (sub)folders - WARN: not (yet) compatible with the upload-feature!!!
+      nested_folders: true
     watched:
       - General
       - Other
