@@ -2,7 +2,7 @@ name: Validating Release of GDG on Tag
 on:
   push:
    branches: 
-     - master
+     - main
 
 jobs:
   validate_release:

@@ -2,7 +2,7 @@ name: Release GDG on Tag
 on:
   push:
 #   branches: 
-#     - master
+#     - main
     tags:
       - v*
 

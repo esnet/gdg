@@ -16,7 +16,7 @@ The following remote backup locations are supported:
   - Azure Storage
   - S3 Compantible Storage (Minio, Ceph, etc)
 
-Please find the generated documentation [here](https://software.es.net/gdg/) and the code for updating the docs is available [here](https://github.com/esnet/gdg/blob/master/documentation/content/docs/usage_guide.md)
+Please find the generated documentation [here](https://software.es.net/gdg/) and the code for updating the docs is available [here](https://github.com/esnet/gdg/blob/main/documentation/content/docs/usage_guide.md)
 
 ## Quickstart
 

@@ -2,7 +2,7 @@ name: Publish Documentation
 on:
   push:
 #   branches: 
-#     - master
+#     - main
 # Update for given branch for one of releases, otherwise only release on tags
 #     - feature/fixingReleaseDocs
     tags:
