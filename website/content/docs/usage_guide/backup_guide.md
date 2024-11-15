@@ -10,7 +10,7 @@ Every namespace supporting CRUD operations has the functions: list, download, up
 
 {{< callout note >}} Starting with v0.4.6 "Datasources" was renamed to connections. {{< /callout >}}
 
-Connections credentials are keyed by the name of the DataSource.  See [config example](https://github.com/esnet/gdg/blob/master/config/importer-example.yml).  If the connection JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
+Connections credentials are keyed by the name of the DataSource.  See [config example](https://github.com/esnet/gdg/blob/main/config/importer-example.yml).  If the connection JSON doesn't have auth enabled, the credentials are ignored.  If Credentials are missing, we'll fall back on default credentials if any exist.  The password is set as a value for basicAuthPassword in the API payload.
 Datasources are imported or exported from _organization_ specified in configuration file otherwise current organization user is used.
 
 

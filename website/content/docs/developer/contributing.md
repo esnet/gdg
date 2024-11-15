@@ -30,7 +30,7 @@ In order to add a new feature you will need to:
 2. Extend the service to be able to list/download/upload etc the entities.
 3. Write a unit test for the given entities. If need be add some seed data under test/data/
 4. Update the documentation accordingly to reflect the new changes. All docs live under
-   the [website/content](https://github.com/esnet/gdg/tree/master/website/content/docs). All files are in markdown. If
+   the [website/content](https://github.com/esnet/gdg/tree/main/website/content/docs). All files are in markdown. If
    you wish you can load the website locally by running: `npm install && hugo serve`
 
 #### Testing

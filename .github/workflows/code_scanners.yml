@@ -2,10 +2,10 @@ name: Code Scanners
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 env:
   GO_VERSION: 1.23.0

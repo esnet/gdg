@@ -5,7 +5,7 @@ weight: 14
 
 ## Configuration
 
-make a copy of [config/importer-example.yml](https://github.com/esnet/gdg/blob/master/config/importer-example.yml) and
+make a copy of [config/importer-example.yml](https://github.com/esnet/gdg/blob/main/config/importer-example.yml) and
 name it `config/importer.yml` or simply run `gdg tools ctx new <name>` which will walk you through setting up a new
 context to use with your grafana installation.
 
