@@ -6,6 +6,12 @@ labels: bug
 assignees: safaci2000
 
 ---
+## Before Opening a Bug did you?
+
+- Look at the [FAQ](https://software.es.net/gdg/docs/gdg/frequently-asked-questions/)
+- Configuration Documentation found [here](https://software.es.net/gdg/docs/gdg/configuration/)
+- Did you look at the [example](https://github.com/esnet/gdg/blob/main/config/importer-example.yml) config?
+
 
 **Describe the bug**
 A clear and concise description of what the bug is.  If applicable and possible the JSON of dashboard or datasource that is causing issues with credentials removed would be helpful.
