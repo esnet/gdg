@@ -91,41 +91,12 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 }
 
 // nestedFoldersSanityCheck returns an error if minimum Version does not match, if grafana settings has nested folders enabled
-// but configuration does not match
+// but minimum version is not met.
 func (s *DashNGoImpl) nestedFoldersSanityCheck() error {
 	if s.grafanaConf.GetDashboardSettings().NestedFolders && !tools.ValidateMinimumVersion(minimumNestedDashboardVersion, s) {
 		log.Fatalf("Minimum version required for nested folders is %s", minimumNestedDashboardVersion)
 	}
-	handleError := func() error {
-		slog.Warn("Either you don't have admin access or we're unable to retrieve grafana settings.  " +
-			"Unable to perform a sanity check on the grafana settings.  Continuing with best effort")
-		return nil
-	}
-	displayGdgMisconfigured := func() error {
-		slog.Warn("You have nested folders configured for grafana, but your gdg settings do not match.  Some Dashboards backup and restore may not work as intended.")
-		return nil
-	}
-	if s.grafanaConf.IsGrafanaAdmin() {
-		payload, err := s.GetAdminClient().Admin.AdminGetSettings()
-		if err != nil {
-			return handleError()
-		}
-		preferences := payload.GetPayload()
-		if val, ok := preferences["feature_toggles"]["enable"]; ok {
-			if strings.Contains(val, "nestedFolders") && !s.grafanaConf.GetDashboardSettings().NestedFolders /* grafana has nested folders but GDG is configured to ignore those */ {
-				slog.Warn("You have nested folders enabled on your grafana instance and the setting disabled in your settings.  Some Dashboards backup and restore may not work as intended.")
-				return nil
-			} else if !strings.Contains(val, "nestedFolders") && s.grafanaConf.GetDashboardSettings().NestedFolders /* and grafana has nested folder disabled */ {
-				return displayGdgMisconfigured()
-			} else {
-				return nil
-			}
-		} else if s.grafanaConf.GetDashboardSettings().NestedFolders { //"feature_toggles" no set, which currently means nested_folders is disabled.
-			return displayGdgMisconfigured()
-		}
-	}
-
-	return handleError()
+	return nil
 }
 
 func (s *DashNGoImpl) LintDashboards(req types.LintRequest) []string {
