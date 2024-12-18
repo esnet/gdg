@@ -14,23 +14,36 @@ assignees: safaci2000
 
 
 **Describe the bug**
-A clear and concise description of what the bug is.  If applicable and possible the JSON of dashboard or datasource that is causing issues with credentials removed would be helpful.
+A clear and concise description of what the bug is.  If applicable and possible the JSON of the entity that is causing issues with credentials removed would be helpful.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+1. Command executed was....
+2. 
+3. 
 4. See error
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Desktop (please complete the following information):**
- - GDG Version: [e.g. 0.1.10 output of gdg version]
- - Grafana Version: [e.g. 8.3.6] 
- - Configuration for Importer
+**Debugging Data (please complete the following information):**
+Please provide the output of the following commands:
+1. gdg version
+   
+```sh
 
+```
+2. gdg tools devel srvinfo  (If you are able to connect to your grafana instance)
+   
+```sh
+
+```
+3. Redacted output of: gdg tools contexts show  (Or include your config )
+   
+```yaml
+
+```
 
 **Additional context**
+
 Add any other context about the problem here.
