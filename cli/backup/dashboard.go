@@ -193,6 +193,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 			}
 			count := 0
 
+			folders := rootCmd.GrafanaSvc().ListFolders(service.NewFolderFilter())
 			for _, link := range boards {
 				urlValue := getDashboardUrl(link)
 				count++
@@ -206,7 +207,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 
 				baseRow := table.Row{link.ID, link.Title, link.Slug, link.FolderTitle}
 				if cfg.GetDashboardSettings().NestedFolders {
-					baseRow = append(baseRow, service.GetNestedFolder(link.FolderTitle, link.FolderUID, rootCmd.GrafanaSvc()))
+					baseRow = append(baseRow, service.GetNestedFolder(link.FolderTitle, link.FolderUID, folders))
 				}
 				baseRow = append(baseRow, table.Row{link.UID, tagVal, urlValue}...)
 				rootCmd.TableObj.AppendRow(baseRow)

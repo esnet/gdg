@@ -1,10 +1,13 @@
 package test
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/esnet/gdg/internal/storage"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
@@ -26,7 +29,7 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, props)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, props)
 	defer cleanup()
 	// Upload all connections
 	filtersEntity := service.NewConnectionFilter("")
@@ -102,7 +105,7 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 }
 
 func TestConnectionsCRUD(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, containers.DefaultGrafanaEnv())
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, containers.DefaultGrafanaEnv())
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {
@@ -141,7 +144,7 @@ func TestConnectionFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	_, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	_, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {
@@ -164,7 +167,10 @@ func TestConnectionFilter(t *testing.T) {
 	testingContext = config.Config().GetGDGConfig().GetContexts()["testing"]
 	_ = testingContext
 
-	apiClient := service.NewApiService("dummy")
+	localEngine := storage.NewLocalStorage(context.Background())
+	apiClient := service.NewTestApiService(localEngine, func() *config.Configuration {
+		return config.Config()
+	})
 
 	filtersEntity := service.NewConnectionFilter("")
 	slog.Info("Exporting all connections")

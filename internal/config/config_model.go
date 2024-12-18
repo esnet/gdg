@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"log/slog"
 	"regexp"
 
@@ -156,6 +157,9 @@ func (s *GrafanaConfig) GetMonitoredFolders() []string {
 
 // Validate will return terminate if any deprecated configuration is found.
 func (s *GrafanaConfig) Validate() {
+	if s.GetDashboardSettings().IgnoreBadFolders && s.GetDashboardSettings().NestedFolders {
+		log.Fatal("Ignoring bad folders is incompatible with nested folders. Please disable nested folders or ignore bad folders")
+	}
 }
 
 // IsGrafanaAdmin returns true if the admin is set, represents a GrafanaAdmin
