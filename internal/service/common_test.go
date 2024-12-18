@@ -44,8 +44,8 @@ func TestSlug(t *testing.T) {
 
 func TestUserPath(t *testing.T) {
 	fixEnvironment(t)
-	path := BuildResourceFolder("", config.UserResource)
-	assert.Equal(t, "test/data/users/", path)
+	userPath := BuildResourceFolder("", config.UserResource)
+	assert.Equal(t, "test/data/users/", userPath)
 }
 
 func TestBuildDashboardPath(t *testing.T) {

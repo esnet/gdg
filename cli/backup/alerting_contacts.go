@@ -8,7 +8,6 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -49,7 +48,7 @@ func newListContactPointsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			rootCmd.TableObj.AppendHeader(table.Row{"uid", "name", "slug", "type", "provenance", "settings"})
+			rootCmd.TableObj.AppendHeader(table.Row{"uid", "name", "type", "settings"})
 			contactPoints, err := rootCmd.GrafanaSvc().ListContactPoints()
 			slog.Info("Listing contact points for context",
 				slog.String("Organization", GetOrganizationName()),
@@ -71,7 +70,7 @@ func newListContactPointsCmd() simplecobra.Commander {
 					if link.Type != nil {
 						typeVal = *link.Type
 					}
-					rootCmd.TableObj.AppendRow(table.Row{link.UID, link.Name, service.GetSlug(link.Name), typeVal, link.Provenance, string(rawBytes)})
+					rootCmd.TableObj.AppendRow(table.Row{link.UID, link.Name, typeVal, string(rawBytes)})
 				}
 				rootCmd.Render(cd.CobraCommand, contactPoints)
 			}

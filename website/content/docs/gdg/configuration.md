@@ -268,9 +268,33 @@ Watched folders under grafana is a white list of folders that are being managed 
 
 ## Dashboards
 
-By default ONLY the General folder is inspected.  You may override this behavior by
+By default, ONLY the General folder is inspected.  You may override this behavior by setting a list of watched folder
 
+example:
 
+```yaml
+    watched:
+      - Folder1
+      - Folder2
+      - Prod*[a-zA-Z0-9]+$
+```
+You can use a combination of folder names and regex patterns.  If you need to monitor a different set for various
+organization you can additionally set the watched_folders_override as detailed below.
+
+If you do not watch to set an approved watch list, then you can configure gdg to ignore all filters.
+```yaml
+        dashboard_settings:
+            ignore_filters: true
+```
+
+Starting with V11 of grafana, nested_folders are supported. To enable that feature use:
+
+```yaml
+        dashboard_settings:
+          nested_folders: true
+```
+
+This will likely be become a default behavior once grafana 12 is released.
 ## Organization
 
 The organization is set for a given context via the `orgnization_name`.  If the org is not set, gdg will fallback on the default value that grafana starts out with `Main Org.`

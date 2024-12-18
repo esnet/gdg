@@ -169,7 +169,8 @@ func TestListContactPoints(t *testing.T) {
 			name: "ListingTest",
 			validateFn: func(t *testing.T, output string) {
 				assert.True(t, strings.Contains(output, "WRN GDG does not manage the 'email receiver' entity."))
-				assert.True(t, strings.Contains(output, "PROVENANCE"))
+				assert.True(t, strings.Contains(output, "discordUid"))
+				assert.True(t, strings.Contains(output, "slackUid"))
 				assert.True(t, strings.Contains(output, "Discord"))
 				assert.True(t, strings.Contains(output, "Slack"))
 				// validate Type
@@ -180,11 +181,13 @@ func TestListContactPoints(t *testing.T) {
 				testSvc.EXPECT().InitOrganizations().Return()
 				resp := []*models.EmbeddedContactPoint{
 					{
+						UID:      "discordUid",
 						Name:     "Discord",
 						Type:     ptr.Of("discordType"),
 						Settings: map[string]any{"token": "secret", "someValue": "result"},
 					},
 					{
+						UID:      "slackUid",
 						Name:     "Slack",
 						Type:     ptr.Of("slackType"),
 						Settings: map[string]any{"token": "secret", "slack": "rocks"},
