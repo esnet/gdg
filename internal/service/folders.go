@@ -205,7 +205,10 @@ func (s *DashNGoImpl) ListFolders(filter filters.Filter) []*types.FolderDetails 
 	}
 	for ndx, val := range folderListing {
 		valid := s.checkFolderName(val.Title)
-		if !valid {
+		if !valid && s.grafanaConf.GetDashboardSettings().IgnoreBadFolder {
+			slog.Info("Skipping folder due to invalid character", slog.Any("folderTitle", val.Title))
+			continue
+		} else if !valid && !s.grafanaConf.GetDashboardSettings().IgnoreBadFolder {
 			log.Fatalf("Folder has an invalid character and is not supported. Path separators are not allowed. folderName: %s", val.Title)
 		}
 		filterValue := val.Title

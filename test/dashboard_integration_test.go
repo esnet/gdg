@@ -67,7 +67,8 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 	}
 	assert.NotNil(t, generalBoard)
 	assert.NotNil(t, nestedFolder)
-	nestedPath := service.GetNestedFolder(nestedFolder.FolderTitle, nestedFolder.FolderUID, apiClient)
+	folders := apiClient.ListFolders(service.NewFolderFilter())
+	nestedPath := service.GetNestedFolder(nestedFolder.FolderTitle, nestedFolder.FolderUID, folders)
 	assert.Equal(t, nestedPath, "Others/dummy")
 
 	// Import Dashboards
