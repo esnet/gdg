@@ -43,6 +43,7 @@ Please provide the output of the following commands:
 ```yaml
 
 ```
+4. Are you using Local storage? Cloud S3 buckets? Which cloud provider are you using? Please share as much of your config as you can with any secrets redacted.
 
 **Additional context**
 
