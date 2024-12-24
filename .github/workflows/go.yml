@@ -25,7 +25,7 @@ jobs:
           ENTERPRISE_LICENSE: ${{ secrets.ENTERPRISE_LICENSE }}
         run:  |
           gotestsum --junitfile report.xml --format testname  -- -coverprofile=cover.out  -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks" | tr '\n' ',' )   ./...
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true # optional (default = false)
           files: cover.out
