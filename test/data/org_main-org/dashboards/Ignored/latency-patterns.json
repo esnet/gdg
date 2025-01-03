@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 12,
+  "id": 28,
   "iteration": 1599168872440,
   "links": [],
   "panels": [
@@ -41,31 +41,31 @@
       "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
       "id": 1,
       "link_text": [
-        "What is the current state of the network?", 
-        "What are the top sources/destinations of flows?", 
-        "What are the top flows by organization?", 
-        "What do individual flows look like?", 
-        "What are the top flows by country?", 
-        "What are the flows by science discipline?", 
-        "What are the flows by project?", 
-        "Who are the top talkers over time?", 
-        "What are the patterns in science data transfers in the network?", 
-        "What are the bandwidth patterns in the network?", 
-        "What are the current flow data summary statistics?", 
+        "What is the current state of the network?",
+        "What are the top sources/destinations of flows?",
+        "What are the top flows by organization?",
+        "What do individual flows look like?",
+        "What are the top flows by country?",
+        "What are the flows by science discipline?",
+        "What are the flows by project?",
+        "Who are the top talkers over time?",
+        "What are the patterns in science data transfers in the network?",
+        "What are the bandwidth patterns in the network?",
+        "What are the current flow data summary statistics?",
         "Advanced Flow Analysis"
       ],
       "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard", 
-        "/grafana/d/xk26IFhmk/flow-data", 
-        "/grafana/d/QfzDJKhik/flow-data-per-organization", 
-        "/grafana/d/-l3_u8nWk/individual-flows", 
-        "/grafana/d/fgrOzz_mk/flow-data-per-country", 
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline", 
-        "/grafana/d/ie7TeomGz/flow-data-for-projects", 
-        "/grafana/d/b35BWxAZz/top-talkers-over-time", 
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns", 
-        "/grafana/d/000000004/bandwidth-patterns", 
-        "/grafana/d/CJC1FFhmz/other-flow-stats", 
+        "/grafana/d/000000003/bandwidth-dashboard",
+        "/grafana/d/xk26IFhmk/flow-data",
+        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+        "/grafana/d/-l3_u8nWk/individual-flows",
+        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+        "/grafana/d/000000004/bandwidth-patterns",
+        "/grafana/d/CJC1FFhmz/other-flow-stats",
         "/grafana/d/VuuXrnPWz/flow-analysis"
       ],
       "links": [],
@@ -77,7 +77,7 @@
       "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
       "transparent": true,
       "type": "netsagenavigation"
-    }, 
+    },
     {
       "content": "\u003ccenter\u003e\u003ch1\u003e\u003cb\u003eLatency Patterns\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003eThis dashboard shows heatmaps for latency across links using perfSONAR active testing data. \u003c/center\u003e\n\u003ccenter\u003eThe horizontal axis represents days and the vertical axis represents time of day.\u003c/center\u003e\n\u003ccenter\u003eDarker squares show longer delays in data transmissions at those hours. \u003c/center\u003e\n\u003ccenter\u003eThe accompanying graphs show the latency over time and a histogram of the latency in milliseconds.\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e\n",
       "datasource": null,
@@ -99,7 +99,7 @@
       "title": "",
       "transparent": true,
       "type": "text"
-    }, 
+    },
     {
       "collapsed": false,
       "datasource": null,
@@ -121,7 +121,7 @@
       },
       "title": "$source -\u003e $destination",
       "type": "row"
-    }, 
+    },
     {
       "aggregate": "AVG",
       "color": {
@@ -130,7 +130,7 @@
         "customColors": [
           {
             "color": "#006837"
-          }, 
+          },
           {
             "color": "#aa0526"
           }
@@ -239,8 +239,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["$measurement"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -268,7 +268,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "$$hashKey": "object:86",
                 "left": "destination_description",
@@ -296,7 +296,7 @@
         "show": true,
         "showCrosshair": true
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -401,8 +401,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -427,7 +427,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -464,7 +464,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "short",
           "label": null,
@@ -478,7 +478,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -583,8 +583,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -609,7 +609,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -645,7 +645,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "none",
           "label": null,
@@ -659,7 +659,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "collapsed": false,
       "datasource": null,
@@ -683,7 +683,7 @@
       },
       "title": "$source -\u003e $destination",
       "type": "row"
-    }, 
+    },
     {
       "aggregate": "AVG",
       "color": {
@@ -692,7 +692,7 @@
         "customColors": [
           {
             "color": "#006837"
-          }, 
+          },
           {
             "color": "#aa0526"
           }
@@ -805,8 +805,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["$measurement"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -834,7 +834,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "$$hashKey": "object:86",
                 "left": "destination_description",
@@ -862,7 +862,7 @@
         "show": true,
         "showCrosshair": true
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -970,8 +970,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -996,7 +996,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -1033,7 +1033,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "short",
           "label": null,
@@ -1047,7 +1047,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -1155,8 +1155,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -1181,7 +1181,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -1217,7 +1217,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "none",
           "label": null,
@@ -1231,7 +1231,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "collapsed": false,
       "datasource": null,
@@ -1255,7 +1255,7 @@
       },
       "title": "$source -\u003e $destination",
       "type": "row"
-    }, 
+    },
     {
       "aggregate": "AVG",
       "color": {
@@ -1264,7 +1264,7 @@
         "customColors": [
           {
             "color": "#006837"
-          }, 
+          },
           {
             "color": "#aa0526"
           }
@@ -1377,8 +1377,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["$measurement"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -1406,7 +1406,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "$$hashKey": "object:86",
                 "left": "destination_description",
@@ -1434,7 +1434,7 @@
         "show": true,
         "showCrosshair": true
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -1542,8 +1542,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -1568,7 +1568,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -1605,7 +1605,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "short",
           "label": null,
@@ -1619,7 +1619,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -1727,8 +1727,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -1753,7 +1753,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -1789,7 +1789,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "none",
           "label": null,
@@ -1803,7 +1803,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "collapsed": false,
       "datasource": null,
@@ -1827,7 +1827,7 @@
       },
       "title": "$source -\u003e $destination",
       "type": "row"
-    }, 
+    },
     {
       "aggregate": "AVG",
       "color": {
@@ -1836,7 +1836,7 @@
         "customColors": [
           {
             "color": "#006837"
-          }, 
+          },
           {
             "color": "#aa0526"
           }
@@ -1949,8 +1949,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["$measurement"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -1978,7 +1978,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "$$hashKey": "object:86",
                 "left": "destination_description",
@@ -2006,7 +2006,7 @@
         "show": true,
         "showCrosshair": true
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -2114,8 +2114,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -2140,7 +2140,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -2177,7 +2177,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "short",
           "label": null,
@@ -2191,7 +2191,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -2299,8 +2299,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -2325,7 +2325,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -2361,7 +2361,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "none",
           "label": null,
@@ -2375,7 +2375,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "collapsed": false,
       "datasource": null,
@@ -2399,7 +2399,7 @@
       },
       "title": "$source -\u003e $destination",
       "type": "row"
-    }, 
+    },
     {
       "aggregate": "AVG",
       "color": {
@@ -2408,7 +2408,7 @@
         "customColors": [
           {
             "color": "#006837"
-          }, 
+          },
           {
             "color": "#aa0526"
           }
@@ -2521,8 +2521,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["$measurement"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -2550,7 +2550,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "$$hashKey": "object:86",
                 "left": "destination_description",
@@ -2578,7 +2578,7 @@
         "show": true,
         "showCrosshair": true
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -2686,8 +2686,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -2712,7 +2712,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -2749,7 +2749,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "short",
           "label": null,
@@ -2763,7 +2763,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "aliasColors": {},
       "bars": true,
@@ -2871,8 +2871,8 @@
           "metricValueAliases": [""],
           "metricValues_array": ["Select Metric Value"],
           "metric_array": [
-            "source_description", 
-            "destination_description", 
+            "source_description",
+            "destination_description",
             "source"
           ],
           "metrics": [
@@ -2897,7 +2897,7 @@
                 "left": "source_description",
                 "op": "=",
                 "right": "$source"
-              }, 
+              },
               {
                 "left": "destination_description",
                 "op": "=",
@@ -2933,7 +2933,7 @@
           "max": null,
           "min": null,
           "show": true
-        }, 
+        },
         {
           "format": "none",
           "label": null,
@@ -2947,7 +2947,7 @@
         "align": false,
         "alignLevel": null
       }
-    }, 
+    },
     {
       "collapsed": false,
       "datasource": null,
@@ -2961,7 +2961,7 @@
       "panels": [],
       "title": "",
       "type": "row"
-    }, 
+    },
     {
       "content": "\u003cdiv class=\"netsage_footer\"\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@lbl.gov\"\u003enetsage@lbl.gov \u003c/a\u003e Thanks! \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e\n",
       "datasource": null,
@@ -3014,7 +3014,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -3039,7 +3039,7 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -3057,12 +3057,12 @@
             "selected": true,
             "text": "latency_avg",
             "value": "latency_avg"
-          }, 
+          },
           {
             "selected": false,
             "text": "latency_min",
             "value": "latency_min"
-          }, 
+          },
           {
             "selected": false,
             "text": "latency_max",
@@ -3072,7 +3072,7 @@
         "query": "latency_avg, latency_min, latency_max",
         "skipUrlSync": false,
         "type": "custom"
-      }, 
+      },
       {
         "allValue": null,
         "current": {
@@ -3104,15 +3104,15 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "5s", 
-      "10s", 
-      "30s", 
-      "1m", 
-      "5m", 
-      "15m", 
-      "30m", 
-      "1h", 
-      "2h", 
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
       "1d"
     ],
     "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]

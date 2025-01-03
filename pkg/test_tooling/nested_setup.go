@@ -4,6 +4,8 @@ import (
 	"log/slog"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config"
+
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/stretchr/testify/assert"
@@ -33,10 +35,13 @@ func setupNestedProps(t *testing.T, enterprise bool) map[string]string {
 }
 
 // InitOrganizations will upload all known organizations and return the grafana container object
-func InitOrganizations(t *testing.T, enterprise bool) (testcontainers.Container, func() error) {
+func InitOrganizations(t *testing.T) (testcontainers.Container, func() error) {
+	if config.Config() == nil {
+		config.InitGdgConfig("testing")
+	}
 	props := setupNestedProps(t, false)
-	apiClient, _, containerObj, cleanup := InitTest(t, nil, props)
+	apiClient, containerObj, cleanup := InitTest(t, service.DefaultConfigProvider, props)
 	newOrgs := apiClient.UploadOrganizations(service.NewOrganizationFilter())
-	assert.Equal(t, 3, len(newOrgs))
+	assert.Equal(t, 4, len(newOrgs))
 	return containerObj, cleanup
 }

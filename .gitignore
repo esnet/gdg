@@ -11,3 +11,4 @@ config/token*.yml
 config/templates.yml
 website/node_modules/
 .env
+.DS_Store

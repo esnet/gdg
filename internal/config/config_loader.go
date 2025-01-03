@@ -14,11 +14,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func (s *Configuration) GetViperConfig(name string) *viper.Viper {
-	if s.viperConfiguration == nil {
-		return nil
-	}
-	return s.viperConfiguration[name]
+func (s *Configuration) GetViperConfig() *viper.Viper {
+	return s.gdgViperConfig
 }
 
 func (s *Configuration) DefaultConfig() string {
@@ -138,10 +135,10 @@ func (s *Configuration) ChangeContext(name string) {
 // SaveToDisk Persists current configuration to disk
 func (s *Configuration) SaveToDisk(useViper bool) error {
 	if useViper {
-		return s.GetViperConfig(ViperGdgConfig).WriteConfig()
+		return s.GetViperConfig().WriteConfig()
 	}
 
-	file := s.GetViperConfig(ViperGdgConfig).ConfigFileUsed()
+	file := s.GetViperConfig().ConfigFileUsed()
 	data, err := yaml.Marshal(s.gdgConfig)
 	if err == nil {
 		err = os.WriteFile(file, data, 0o600)
@@ -172,7 +169,7 @@ func (s *Configuration) GetContexts() map[string]*GrafanaConfig {
 
 // IsDebug returns true if debug mode is enabled
 func (s *Configuration) IsDebug() bool {
-	if val := s.GetViperConfig(ViperGdgConfig); val != nil {
+	if val := s.GetViperConfig(); val != nil {
 		return val.GetBool("global.debug")
 	}
 	return false
@@ -180,7 +177,7 @@ func (s *Configuration) IsDebug() bool {
 
 // IsApiDebug returns true if debug mode is enabled for APIs
 func (s *Configuration) IsApiDebug() bool {
-	if val := s.GetViperConfig(ViperGdgConfig); val != nil {
+	if val := s.GetViperConfig(); val != nil {
 		return val.GetBool("global.api_debug")
 	}
 	return false
@@ -188,7 +185,7 @@ func (s *Configuration) IsApiDebug() bool {
 
 // IgnoreSSL returns true if SSL errors should be ignored
 func (s *Configuration) IgnoreSSL() bool {
-	return s.GetViperConfig(ViperGdgConfig).GetBool("global.ignore_ssl_errors")
+	return s.GetViperConfig().GetBool("global.ignore_ssl_errors")
 }
 
 func Config() *Configuration {
@@ -261,10 +258,7 @@ func InitGdgConfig(override string) {
 		log.Fatal("No configuration file has been found or config is invalid.  Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg'].  " +
 			"Try using `gdg default-config > config/importer.yml` go use the default example")
 	}
-	if configData.viperConfiguration == nil {
-		configData.viperConfiguration = make(map[string]*viper.Viper)
-	}
-	configData.viperConfiguration[ViperGdgConfig] = v
+	configData.gdgViperConfig = v
 }
 
 // readViperConfig utilizes the viper library to load the config from the selected paths

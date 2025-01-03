@@ -168,7 +168,7 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*types.Fo
 	return r
 }
 
-// ListFolder list the current existing folders that match the given filter.
+// ListFolders list the current existing folders that match the given filter.
 func (s *DashNGoImpl) ListFolders(filter filters.Filter) []*types.FolderDetails {
 	result := make([]*types.FolderDetails, 0)
 	if config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
@@ -205,7 +205,10 @@ func (s *DashNGoImpl) ListFolders(filter filters.Filter) []*types.FolderDetails 
 	}
 	for ndx, val := range folderListing {
 		valid := s.checkFolderName(val.Title)
-		if !valid {
+		if !valid && s.grafanaConf.GetDashboardSettings().IgnoreBadFolders {
+			slog.Info("Skipping folder due to invalid character", slog.Any("folderTitle", val.Title))
+			continue
+		} else if !valid && !s.grafanaConf.GetDashboardSettings().IgnoreBadFolders {
 			log.Fatalf("Folder has an invalid character and is not supported. Path separators are not allowed. folderName: %s", val.Title)
 		}
 		filterValue := val.Title

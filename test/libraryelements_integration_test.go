@@ -16,7 +16,7 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	slog.Info("Exporting all Library Elements")

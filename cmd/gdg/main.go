@@ -11,7 +11,7 @@ import (
 )
 
 var getGrafanaSvc = func() api.GrafanaService {
-	return api.NewApiService()
+	return api.NewDashNGoImpl()
 }
 
 func main() {

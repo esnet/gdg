@@ -21,12 +21,67 @@ import (
 
 const (
 	GrafanaTestVersionEnv = "GRAFANA_TEST_VERSION"
-
 	// #nosec G101
 	EnableTokenTestsEnv = "TEST_TOKEN_CONFIG"
+	TokenEnabledValue   = "1"
 )
 
-func InitTest(t *testing.T, cfgName *string, envProp map[string]string) (service.GrafanaService, *viper.Viper, testcontainers.Container, func() error) {
+type ConfigProviderFunc func() *config.Configuration
+
+// TODO: use to construct a testcontainer configuration entity
+func getCloudConfigProvider(container testcontainers.Container) config.Provider {
+	return func() *config.Configuration {
+		config.InitGdgConfig(common.DefaultTestConfig)
+		cfg := config.Config()
+		return cfg
+	}
+}
+
+func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]string) (service.GrafanaService, testcontainers.Container, func() error) {
+	var (
+		suffix string
+		err    error
+	)
+
+	if len(envProp) == 0 {
+		envProp = containers.DefaultGrafanaEnv()
+	}
+	if _, ok := envProp[containers.EnterpriseLicenceKey]; ok {
+		suffix = "-enterprise"
+	}
+	localGrafanaContainer, cancel := containers.SetupGrafanaContainer(envProp, "", suffix)
+	apiClient := CreateSimpleClientWithConfig(t, cfgProvider, localGrafanaContainer)
+	noOp := func() error {
+		cancel()
+		return nil
+	}
+
+	if os.Getenv(EnableTokenTestsEnv) != TokenEnabledValue {
+		return apiClient, localGrafanaContainer, noOp
+	}
+
+	// Setup Token Auth
+	apiClient.DeleteAllTokens() // Remove any old data
+	tokenName, _ := uuid.NewUUID()
+	newKey, err := apiClient.CreateAPIKey(tokenName.String(), "admin", 0)
+	assert.Nil(t, err)
+
+	cfg := cfgProvider()
+	grafana := cfg.GetDefaultGrafanaConfig()
+	grafana.UserName = ""
+	grafana.Password = ""
+	grafana.APIToken = newKey.Key
+
+	cleanUp := func() error {
+		cancel()
+		return nil
+	}
+
+	apiClient = CreateSimpleClientWithConfig(t, cfgProvider, localGrafanaContainer)
+	return apiClient, localGrafanaContainer, cleanUp
+}
+
+func InitTestLegacy(t *testing.T, cfgName *string, envProp map[string]string) (service.GrafanaService, *viper.Viper, testcontainers.Container, func() error) {
 	var (
 		suffix string
 		err    error
@@ -45,7 +100,7 @@ func InitTest(t *testing.T, cfgName *string, envProp map[string]string) (service
 		return nil
 	}
 
-	if os.Getenv(EnableTokenTestsEnv) != "1" {
+	if os.Getenv(EnableTokenTestsEnv) != TokenEnabledValue {
 		return apiClient, v, localGrafanaContainer, noOp
 	}
 
@@ -85,6 +140,33 @@ func InitTest(t *testing.T, cfgName *string, envProp map[string]string) (service
 	return apiClient, v, localGrafanaContainer, cleanUp
 }
 
+func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, container testcontainers.Container) service.GrafanaService {
+	cfg := cfgProvider()
+	if cfg == nil {
+		t.Fatal("No valid configuration returned from config provider")
+	}
+
+	actualPort, err := container.Endpoint(context.Background(), "")
+	grafanaHost := fmt.Sprintf("http://%s", actualPort)
+	cfg.GetDefaultGrafanaConfig().URL = grafanaHost
+	dockerContainer, ok := container.(*testcontainers.DockerContainer)
+	if ok {
+		slog.Info("Grafana Test container running", slog.String("host", grafanaHost+"/login"), slog.String("imageVersion", dockerContainer.Image))
+	}
+
+	storageEngine, err := service.ConfigureStorage(cfgProvider)
+	assert.NoError(t, err)
+	client := service.NewTestApiService(storageEngine, cfgProvider)
+	path, _ := os.Getwd()
+	if strings.Contains(path, "test") {
+		err := os.Chdir("..")
+		if err != nil {
+			slog.Warn("unable to set directory to parent")
+		}
+	}
+	return client
+}
+
 func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.Container) (service.GrafanaService, *viper.Viper) {
 	if cfgName == nil {
 		cfgName = new(string)
@@ -101,13 +183,17 @@ func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.
 	}
 
 	config.InitGdgConfig(*cfgName)
-	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
+	conf := config.Config().GetViperConfig()
 	assert.NotNil(t, conf)
 	// Hack for Local testing
 	contextName := conf.GetString("context_name")
 	conf.Set(fmt.Sprintf("context.%s.url", contextName), grafanaHost)
 	assert.Equal(t, contextName, "testing")
-	client := service.NewApiService("dummy")
+	storageEngine, err := service.ConfigureStorage(func() *config.Configuration {
+		return config.Config()
+	})
+	assert.NoError(t, err)
+	client := service.NewTestApiService(storageEngine, nil)
 	path, _ := os.Getwd()
 	if strings.Contains(path, "test") {
 		err := os.Chdir("..")

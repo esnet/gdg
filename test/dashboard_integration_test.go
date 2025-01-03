@@ -29,12 +29,13 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("skipping token based tests")
 	}
-	containerObj, cleanup := test_tooling.InitOrganizations(t, false)
+	containerObj, cleanup := test_tooling.InitOrganizations(t)
 	dockerContainer := containerObj.(*testcontainers.DockerContainer)
 	if strings.Contains(dockerContainer.Image, grafana10) {
 		t.Log("Nested folders not supported prior to v11.0, skipping test")
 		t.Skip()
 	}
+
 	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
 	assert.NoError(t, os.Setenv(test_tooling.EnableNestedBehavior, "true"))
 	assert.NoError(t, os.Setenv(test_tooling.IgnoreDashFilters, "true"))
@@ -67,7 +68,8 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 	}
 	assert.NotNil(t, generalBoard)
 	assert.NotNil(t, nestedFolder)
-	nestedPath := service.GetNestedFolder(nestedFolder.FolderTitle, nestedFolder.FolderUID, apiClient)
+	folders := apiClient.ListFolders(service.NewFolderFilter())
+	nestedPath := service.GetNestedFolder(nestedFolder.FolderTitle, nestedFolder.FolderUID, folders)
 	assert.Equal(t, nestedPath, "Others/dummy")
 
 	// Import Dashboards
@@ -87,7 +89,7 @@ func TestDashboardCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -146,7 +148,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, container, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, container, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -210,7 +212,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	emptyFilter := filters.NewBaseFilter()
 
@@ -253,7 +255,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, props)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, props)
 	defer cleanup()
 	// Upload all dashboards
 	apiClient.UploadDashboards(nil)
@@ -317,7 +319,7 @@ func TestWildcardFilter(t *testing.T) {
 	}
 
 	// Setup Filters
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	emptyFilter := service.NewDashboardFilter("", "", "")
 

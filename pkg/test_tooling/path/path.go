@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-const testEnv = "TESTING"
+const TestEnvKey = "TESTING"
 
 func FixTestDir(packageName string, newPath string) error {
-	err := os.Setenv(testEnv, "1")
+	err := os.Setenv(TestEnvKey, "1")
 	if err != nil {
 		return err
 	}

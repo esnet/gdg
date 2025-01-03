@@ -21,7 +21,7 @@ func TestOrganizationCrud(t *testing.T) {
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter(), true)
 	assert.Equal(t, len(orgs), 1)
@@ -29,7 +29,7 @@ func TestOrganizationCrud(t *testing.T) {
 	assert.Equal(t, mainOrg.Organization.ID, int64(1))
 	assert.Equal(t, mainOrg.Organization.Name, "Main Org.")
 	newOrgs := apiClient.UploadOrganizations(service.NewOrganizationFilter())
-	assert.Equal(t, len(newOrgs), 3)
+	assert.Equal(t, len(newOrgs), 4)
 	assert.True(t, slices.Contains(newOrgs, "DumbDumb"))
 	assert.True(t, slices.Contains(newOrgs, "Moo"))
 	assert.True(t, slices.Contains(newOrgs, "testing"))
@@ -46,7 +46,7 @@ func TestOrganizationUserMembership(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	// Create Orgs in case they aren't already present.
 	apiClient.UploadOrganizations(service.NewOrganizationFilter())
@@ -99,7 +99,7 @@ func TestOrganizationProperties(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	apiClient.UploadDashboards(service.NewDashboardFilter("", "", ""))
 	defer apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))

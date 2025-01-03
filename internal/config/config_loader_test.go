@@ -44,7 +44,7 @@ func TestSetup(t *testing.T) {
 
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
 	config.InitGdgConfig(common.DefaultTestConfig)
-	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
+	conf := config.Config().GetViperConfig()
 	slog.Info(conf.ConfigFileUsed())
 
 	confobj := config.Config().GetGDGConfig()
@@ -67,7 +67,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 
 	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "qa"))
 	config.InitGdgConfig(common.DefaultTestConfig)
-	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
+	conf := config.Config().GetViperConfig()
 	slog.Info(conf.ConfigFileUsed())
 
 	confobj := config.Config().GetGDGConfig()
@@ -98,7 +98,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 func TestSetupDifferentPath(t *testing.T) {
 	cfgFile := DuplicateConfig(t)
 	config.InitGdgConfig(cfgFile)
-	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
+	conf := config.Config().GetViperConfig()
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "production")
@@ -111,7 +111,7 @@ func TestConfigEnv(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
 	config.InitGdgConfig(common.DefaultTestConfig)
-	conf := config.Config().GetViperConfig(config.ViperGdgConfig)
+	conf := config.Config().GetViperConfig()
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "testing")
 	url := conf.GetString("contexts.testing.url")
@@ -121,7 +121,7 @@ func TestConfigEnv(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "production")
 	os.Setenv("GDG_CONTEXTS__PRODUCTION__URL", "grafana.com")
 	config.InitGdgConfig(common.DefaultTestConfig)
-	conf = config.Config().GetViperConfig(config.ViperGdgConfig)
+	conf = config.Config().GetViperConfig()
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")
 }

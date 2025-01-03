@@ -21,7 +21,7 @@ func TestTeamCRUD(t *testing.T) {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
 	filter := service.NewTeamFilter("")
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	slog.Info("Exporting current user list")
 	apiClient.UploadUsers(service.NewUserFilter(""))

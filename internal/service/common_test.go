@@ -1,8 +1,11 @@
 package service
 
 import (
+	"context"
 	"os"
 	"testing"
+
+	"github.com/esnet/gdg/internal/storage"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -23,9 +26,13 @@ func TestRelativePathLogin(t *testing.T) {
 	assert.NoError(t, os.Setenv(envKey, "http://localhost:3000/grafana/"))
 	fixEnvironment(t)
 	config.InitGdgConfig(common.DefaultTestConfig)
-	defer assert.NoError(t, os.Unsetenv(envKey))
+	defer func() {
+		assert.NoError(t, os.Unsetenv(envKey))
+		assert.NoError(t, os.Unsetenv(path.TestEnvKey))
+	}()
 
-	svc := NewApiService("dummy")
+	localEngine := storage.NewLocalStorage(context.Background())
+	svc := NewTestApiService(localEngine, nil)
 	_, cfg := svc.(*DashNGoImpl).getNewClient()
 	assert.Equal(t, cfg.Host, "localhost:3000")
 	assert.Equal(t, cfg.BasePath, "/grafana/api")

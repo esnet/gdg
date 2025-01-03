@@ -1,8 +1,9 @@
 package config
 
 type DashboardSettings struct {
-	NestedFolders bool `mapstructure:"nested_folders" yaml:"nested_folders"`
-	IgnoreFilters bool `yaml:"ignore_filters" mapstructure:"ignore_filters" `
+	NestedFolders    bool `mapstructure:"nested_folders" yaml:"nested_folders"`
+	IgnoreFilters    bool `yaml:"ignore_filters" mapstructure:"ignore_filters" `
+	IgnoreBadFolders bool `yaml:"ignore_bad_folders" mapstructure:"ignore_bad_folders"`
 }
 
 // GrafanaConfig model wraps auth and watched list for grafana

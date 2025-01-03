@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config"
 	"github.com/gosimple/slug"
 
 	"github.com/testcontainers/testcontainers-go"
@@ -26,7 +27,7 @@ func TestFolderCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
@@ -49,9 +50,34 @@ func TestFolderCRUD(t *testing.T) {
 	assert.Equal(t, len(folders), 0)
 }
 
+func TestFolderCRUDInvalidChar(t *testing.T) {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
+		t.Skip("Skipping Token configuration, BasicAuth required to setup org structure")
+	}
+	containerObj, cleanup := test_tooling.InitOrganizations(t)
+	defer cleanup()
+
+	//
+	config.InitGdgConfig("testing")
+	cfg := config.Config()
+	cfg.GetDefaultGrafanaConfig().OrganizationName = "Bad Folder"
+	cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreBadFolders = true
+
+	cfgProvider := func() *config.Configuration {
+		return cfg
+	}
+
+	orgClient := test_tooling.CreateSimpleClientWithConfig(t, cfgProvider, containerObj)
+	orgClient.UploadFolders(nil)
+	slog.Info("Listing all Folders")
+	folders := orgClient.ListFolders(nil)
+	assert.Equal(t, len(folders), 2)
+	cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreBadFolders = false
+}
+
 // TODO: write a full CRUD validation of folder permissions
 func TestFolderPermissions(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
@@ -84,7 +110,7 @@ func TestFolderNestedPermissions(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("skipping token based tests")
 	}
-	containerObj, cleanup := test_tooling.InitOrganizations(t, false)
+	containerObj, cleanup := test_tooling.InitOrganizations(t)
 	dockerContainer := containerObj.(*testcontainers.DockerContainer)
 	if strings.Contains(dockerContainer.Image, grafana10) {
 		t.Log("Nested folders not supported prior to v11.0, skipping test")
@@ -130,7 +156,7 @@ func TestFolderNestedCRUD(t *testing.T) {
 		t.Skip("skipping token based tests")
 	}
 
-	containerObj, cleanup := test_tooling.InitOrganizations(t, false)
+	containerObj, cleanup := test_tooling.InitOrganizations(t)
 
 	dockerContainer := containerObj.(*testcontainers.DockerContainer)
 	if strings.Contains(dockerContainer.Image, grafana10) {

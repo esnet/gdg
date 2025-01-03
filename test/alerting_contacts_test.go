@@ -12,7 +12,7 @@ import (
 )
 
 func TestContactsCrud(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {

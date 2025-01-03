@@ -10,7 +10,7 @@ import (
 )
 
 func TestLicenseEnterpriseCheck(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	assert.False(t, apiClient.IsEnterprise())
 	props := containers.DefaultGrafanaEnv()
@@ -19,7 +19,7 @@ func TestLicenseEnterpriseCheck(t *testing.T) {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	enterpriseClient, _, _, enterpriseCleanup := test_tooling.InitTest(t, nil, props)
+	enterpriseClient, _, _, enterpriseCleanup := test_tooling.InitTestLegacy(t, nil, props)
 	defer enterpriseCleanup()
 	assert.True(t, enterpriseClient.IsEnterprise())
 }
