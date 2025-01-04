@@ -1,6 +1,6 @@
 ---
 title: "Usage Guide"
-weight: 1
+weight: 20
 ---
 
 GDG has now introduced a new supporting tool that works in conjunction with GDG. It is currently dependent on the GDG

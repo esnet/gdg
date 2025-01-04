@@ -160,7 +160,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		if session == nil {
 			errorMsg = "No valid session could be created"
 		}
-		bucketObj, err = s3blob.OpenBucketV2(context.Background(), session, appData["bucket_name"], nil)
+		bucketObj, err = s3blob.OpenBucketV2(context.Background(), session, appData[BucketName], nil)
 		if err != nil {
 			errorMsg = err.Error()
 		}
@@ -191,7 +191,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		}
 
 	} else {
-		cloudURL := fmt.Sprintf("%s://%s", appData["cloud_type"], appData["bucket_name"])
+		cloudURL := fmt.Sprintf("%s://%s", appData[CloudType], appData[BucketName])
 		bucketObj, err = blob.OpenBucket(c, cloudURL)
 		errorMsg = fmt.Sprintf("failed to open bucket %s", cloudURL)
 	}

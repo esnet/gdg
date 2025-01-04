@@ -1,6 +1,6 @@
 ---
 title: "Contributing"
-weight: 2
+weight: 42
 ---
 
 First of all, gdg contains two binaries.  `gdg` which manages grafana entities and provide some tooling facilities

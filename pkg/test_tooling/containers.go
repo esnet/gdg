@@ -38,10 +38,8 @@ func SetupCloudFunction(params []string) (context.Context, context.CancelFunc, s
 		storage.AccessId:   "test",
 		storage.SecretKey:  "secretsss",
 		storage.BucketName: bucketName,
-		storage.Kind:       "cloud",
 		storage.Custom:     "true",
 		storage.Endpoint:   minioHost,
-		storage.SSLEnabled: "false",
 	}
 
 	cfgObj := config.Config().GetGDGConfig()

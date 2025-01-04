@@ -1,6 +1,6 @@
 ---
 title: "Getting Started"
-weight: 13
+weight: 11
 ---
 
 ### Setup new configuration

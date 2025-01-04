@@ -4,7 +4,7 @@ description: "Release Notes for v0.7"
 date: 2024-09-11T00:00:00
 draft: false
 images: [ ]
-weight: 196
+weight: 7
 toc: true
 ---
 

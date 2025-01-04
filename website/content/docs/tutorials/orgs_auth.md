@@ -1,6 +1,6 @@
 ---
 title: "Organization and Authentication"
-weight: 3
+weight: 33
 date: 2023-09-01T00:00:00
 ---
 

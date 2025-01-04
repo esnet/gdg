@@ -149,7 +149,7 @@ func (s *Configuration) SaveToDisk(useViper bool) error {
 
 var (
 	configData        *Configuration
-	configSearchPaths = []string{"config", ".", "../config", "../../config", "/etc/gdg"}
+	configSearchPaths = []string{"config", ".", "/etc/gdg"}
 )
 
 // GetCloudConfiguration Returns storage type and configuration
@@ -157,7 +157,7 @@ func (s *Configuration) GetCloudConfiguration(configName string) (string, map[st
 	appData := s.GetGDGConfig().StorageEngine[configName]
 	storageType := "local"
 	if len(appData) != 0 {
-		storageType = appData["kind"]
+		storageType = "cloud"
 	}
 	return storageType, appData
 }
