@@ -58,7 +58,11 @@ contexts:
     password: admin
     dashboard_settings:
       ignore_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+      ## Enables nested folders supported.
       nested_folders: true
+      ## When set to true, will silently skip any invalid folders,
+      ## otherwise fatal error occurs for any invalid folder detected.  If you run this as a job/cron it's not a recommended setting.
+      ignore_bad_folders: false
     watched:
       - General
       - Other

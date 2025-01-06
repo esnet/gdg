@@ -2,8 +2,6 @@ package config
 
 import (
 	"log"
-
-	"github.com/spf13/viper"
 )
 
 type TemplatingConfig struct {
@@ -39,12 +37,8 @@ func InitTemplateConfig(override string) {
 	}
 	configData.templatingConfig = new(TemplatingConfig)
 
-	v, err := readViperConfig[TemplatingConfig](appName, configDirs, configData.templatingConfig, ext)
+	_, err := readViperConfig[TemplatingConfig](appName, configDirs, configData.templatingConfig, ext)
 	if err != nil {
 		log.Fatal("unable to read templating configuration")
 	}
-	if configData.viperConfiguration == nil {
-		configData.viperConfiguration = make(map[string]*viper.Viper)
-	}
-	configData.viperConfiguration[ViperTemplateConfig] = v
 }

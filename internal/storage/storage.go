@@ -1,14 +1,10 @@
-package service
+package storage
 
 import (
 	_ "gocloud.dev/blob/azureblob"
 	_ "gocloud.dev/blob/gcsblob"
 	_ "gocloud.dev/blob/s3blob"
 )
-
-type ContextStorage string
-
-const StorageContext = ContextStorage("storage")
 
 // TODO: pull all the cloud based interaction into a Plugin System
 type Storage interface {

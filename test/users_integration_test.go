@@ -17,7 +17,7 @@ func TestUsers(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTest(t, nil, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	apiClient.DeleteAllUsers(service.NewUserFilter("")) // clear any previous state
 	users := apiClient.ListUsers(service.NewUserFilter(""))

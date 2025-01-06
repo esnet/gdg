@@ -1,4 +1,4 @@
-package service
+package storage
 
 import (
 	"context"
@@ -27,7 +27,7 @@ type Resolver struct {
 	URL *url.URL
 }
 
-func (r *Resolver) ResolveEndpoint(_ context.Context, params s3.EndpointParameters) (transport.Endpoint, error) {
+func (r *Resolver) ResolveEndpoint(ctx context.Context, params s3.EndpointParameters) (transport.Endpoint, error) {
 	u := *r.URL
 	u.Path += "/" + *params.Bucket
 	return transport.Endpoint{URI: u}, nil
@@ -41,20 +41,6 @@ type CloudStorage struct {
 	Prefix      string
 	StorageName string
 }
-
-const (
-	CloudType  = "cloud_type"
-	BucketName = "bucket_name"
-	Prefix     = "prefix"
-	Kind       = "kind"
-	Custom     = "custom"
-	AccessId   = "access_id"
-	SecretKey  = "secret_key"
-	Endpoint   = "endpoint"
-	Region     = "region"
-	SSLEnabled = "ssl_enabled"
-	InitBucket = "init_bucket"
-)
 
 var (
 	stringEmpty = func(key string) bool {
@@ -142,7 +128,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		errorMsg  string
 	)
 
-	contextVal := c.Value(StorageContext)
+	contextVal := c.Value(Context)
 	if contextVal == nil {
 		return nil, errors.New("cannot configure GCP storage, context missing")
 	}

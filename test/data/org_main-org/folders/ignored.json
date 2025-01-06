@@ -1,5 +1,11 @@
 {
 	"id": 1,
+	"permanentlyDeleteDate": "0001-01-01T00:00:00.000Z",
+	"tags": [],
 	"title": "Ignored",
-	"uid": "N54xASa4k"
+	"type": "dash-folder",
+	"uid": "N54xASa4k",
+	"uri": "db/ignored",
+	"url": "/dashboards/f/N54xASa4k/ignored",
+	"NestedPath": "Ignored"
 }

@@ -296,6 +296,17 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 			folderMatch = getNestedFolder(folderMatch, link.FolderUID, folderUid)
 		}
 
+		// validate folder name
+		folderValid := s.checkFolderName(folderMatch)
+		if !s.grafanaConf.GetDashboardSettings().NestedFolders && !folderValid {
+			if !s.grafanaConf.GetDashboardSettings().IgnoreBadFolders {
+				log.Fatal("Invalid folder name detected, interrupting process.", slog.String("folderTitle", folderMatch))
+			} else if s.grafanaConf.GetDashboardSettings().IgnoreBadFolders {
+				slog.Warn("Invalid folder name detected, Skipping dashboards in folder", slog.String("folderTitle", folderMatch), slog.String("dashboard", link.Title))
+				continue
+			}
+		}
+
 		// accepts all folders
 		if config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
 			validFolder = true
@@ -312,6 +323,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*models.Hit {
 		if link.FolderID == 0 && string(link.Type) == searchTypeDashboard {
 			link.FolderTitle = DefaultFolderName
 		}
+		// check folder
 
 		if validUid {
 			deduplicatedLinks[link.ID] = boardLinks[ndx]
@@ -371,8 +383,8 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 
 // GetNestedFolder returns a nested path for a given folder.
 // Public version of GetNestedFolder, do not call from within service, not optimized.
-func GetNestedFolder(folderTitle, folderUID string, svc GrafanaService) string {
-	folderUid := getFolderUIDEntityMap(svc.ListFolders(NewFolderFilter()))
+func GetNestedFolder(folderTitle, folderUID string, folders []*customTypes.FolderDetails) string {
+	folderUid := getFolderUIDEntityMap(folders)
 	return getNestedFolder(folderTitle, folderUID, folderUid)
 }
 
