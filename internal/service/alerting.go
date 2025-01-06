@@ -51,7 +51,7 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 		return item.Name != emailReceiver
 	})
 
-	dsPath := buildResourcePath("contacts", config.AlertingResource)
+	dsPath := buildResourcePath("contacts", config.AlertingResource, s.isLocal())
 	if dsPacked, err = json.MarshalIndent(payload.ContactPoints, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
@@ -60,6 +60,10 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 	}
 
 	return dsPath, nil
+}
+
+func (s *DashNGoImpl) isLocal() bool {
+	return s.storage.Name() == "LocalStorage"
 }
 
 func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
@@ -78,7 +82,7 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 		m[i.UID] = currentContacts[ndx]
 	}
 
-	fileLocation := buildResourcePath("contacts", config.AlertingResource)
+	fileLocation := buildResourcePath("contacts", config.AlertingResource, s.isLocal())
 	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}

@@ -34,37 +34,40 @@ func updateSlug(board string) string {
 
 // getFolderFromResourcePath if a use encodes a path separator in path, we can't determine the folder name.  This strips away
 // all the known components of a resource type leaving only the folder name.
-func getFolderFromResourcePath(storageEngine string, filePath string, resourceType config.ResourceType) (string, error) {
+func getFolderFromResourcePath(storageEngine string, filePath string, resourceType config.ResourceType, prefix string) (string, error) {
 	basePath := fmt.Sprintf("%s/", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType))
-	// Take into account cloud prefix is enabled
-	if storageEngine != "" {
-		cloudType, data := config.Config().GetCloudConfiguration(storageEngine)
-		if cloudType != "local" && data["prefix"] != "" {
-			basePath = fmt.Sprintf("%s/%s", data["prefix"], basePath)
-		}
+	if prefix != "" {
+		basePath = filepath.Join(prefix, basePath)
 	}
 
 	folderName := strings.Replace(filePath, basePath, "", 1)
 	ndx := strings.LastIndex(folderName, string(os.PathSeparator))
 	if ndx != -1 {
 		folderName = folderName[0:ndx]
+		if len(folderName) > 1 && folderName[0] == '/' {
+			folderName = folderName[1:]
+		}
 		return folderName, nil
 	}
 	return "", errors.New("unable to parse resource to retrieve folder name")
 }
 
-func BuildResourceFolder(folderName string, resourceType config.ResourceType) string {
+func BuildResourceFolder(folderName string, resourceType config.ResourceType, createDestination bool) string {
 	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
 	}
 
 	v := fmt.Sprintf("%s/%s", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
-	tools.CreateDestinationPath(v)
+	if createDestination {
+		tools.CreateDestinationPath(v)
+	}
 	return v
 }
 
-func buildResourcePath(folderName string, resourceType config.ResourceType) string {
+func buildResourcePath(folderName string, resourceType config.ResourceType, createDestination bool) string {
 	v := fmt.Sprintf("%s/%s.json", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
-	tools.CreateDestinationPath(filepath.Dir(v))
+	if createDestination {
+		tools.CreateDestinationPath(filepath.Dir(v))
+	}
 	return v
 }

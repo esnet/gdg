@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config"
+
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -30,7 +32,9 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	apiClient.UploadConnections(dsFilter)
 	dsList := apiClient.ListConnections(dsFilter)
 	assert.True(t, len(dsList) > 0)
-	_, cancel, apiClient, err := test_tooling.SetupCloudFunction([]string{"s3", "testing"})
+	_, cancel, apiClient, err := test_tooling.SetupCloudFunctionOpt(
+		test_tooling.SetCloudType("custom"),
+		test_tooling.SetBucketName("testing"))
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -67,7 +71,51 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	assert.True(t, len(boards) > 0)
 	var cancel context.CancelFunc
 
-	_, cancel, apiClient, err = test_tooling.SetupCloudFunction([]string{"s3", "testing"})
+	_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
+		test_tooling.SetCloudType("custom"),
+		test_tooling.SetBucketName("testing"))
+	assert.NoError(t, err)
+	defer cancel()
+
+	// At this point all operations are reading/writing from Minio
+	slog.Info("Importing Dashboards")
+	list := apiClient.DownloadDashboards(dashFilter) // Saving to S3
+	assert.Equal(t, len(list), len(boards))
+	slog.Info("Deleting Dashboards") // Clearing Grafana
+	deleteList := apiClient.DeleteAllDashboards(dashFilter)
+	assert.Equal(t, len(list), len(deleteList))
+	boards = apiClient.ListDashboards(dashFilter)
+	assert.Equal(t, len(boards), 0)
+	// Load Data from S3
+	apiClient.UploadDashboards(dashFilter)        // ReLoad data from S3 backup
+	boards = apiClient.ListDashboards(dashFilter) // Read data
+	assert.Equal(t, len(list), len(boards))       // verify
+	apiClient.DeleteAllDashboards(dashFilter)
+}
+
+func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
+	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
+	assert.NoError(t, path.FixTestDir("test", ".."))
+	var err error
+	config.InitGdgConfig("testing")
+	// apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	defer cleanup()
+	// defer cleanup, "Failed to cleanup test containers for %s", t.Name())
+	// Wipe all data from grafana
+	dashFilter := service.NewDashboardFilter("", "", "")
+	apiClient.DeleteAllDashboards(dashFilter)
+	// Load data into grafana
+	apiClient.UploadDashboards(dashFilter)
+	boards := apiClient.ListDashboards(dashFilter)
+	assert.True(t, len(boards) > 0)
+	var cancel context.CancelFunc
+
+	_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
+		test_tooling.SetCloudType("custom"),
+		test_tooling.SetPrefix("/dummy"),
+		test_tooling.SetBucketName("testing"))
+
 	assert.NoError(t, err)
 	defer cancel()
 

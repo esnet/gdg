@@ -14,12 +14,31 @@ import (
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 )
 
-func SetupCloudFunction(params []string) (context.Context, context.CancelFunc, service.GrafanaService, error) {
+type CloudTestOpt func(m *map[string]string)
+
+func SetBucketName(bucketName string) CloudTestOpt {
+	return func(m *map[string]string) {
+		(*m)[storage.BucketName] = bucketName
+	}
+}
+
+func SetCloudType(cloudType string) CloudTestOpt {
+	return func(m *map[string]string) {
+		(*m)[storage.CloudType] = cloudType
+	}
+}
+
+func SetPrefix(prefix string) CloudTestOpt {
+	return func(m *map[string]string) {
+		(*m)[storage.Prefix] = prefix
+	}
+}
+
+func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.CancelFunc, service.GrafanaService, error) {
 	errorFunc := func(err error) (context.Context, context.CancelFunc, service.GrafanaService, error) {
 		return nil, nil, nil, err
 	}
 	_ = os.Setenv(storage.InitBucket, "true")
-	bucketName := params[1]
 	container, cancel := containers.BootstrapCloudStorage("", "")
 	wwwPort, err := container.PortEndpoint(context.Background(), "9001", "")
 	if err != nil {
@@ -33,13 +52,15 @@ func SetupCloudFunction(params []string) (context.Context, context.CancelFunc, s
 	slog.Info("Minio container is up and running", slog.Any("hostname", fmt.Sprintf("http://%s", wwwPort)))
 	m := map[string]string{
 		storage.InitBucket: "true",
-		storage.CloudType:  params[0],
+		storage.CloudType:  "cloud",
 		storage.Prefix:     "dummy",
 		storage.AccessId:   "test",
 		storage.SecretKey:  "secretsss",
-		storage.BucketName: bucketName,
-		storage.Custom:     "true",
+		storage.BucketName: "testing",
 		storage.Endpoint:   minioHost,
+	}
+	for _, opt := range opts {
+		opt(&m)
 	}
 
 	cfgObj := config.Config().GetGDGConfig()
@@ -49,14 +70,10 @@ func SetupCloudFunction(params []string) (context.Context, context.CancelFunc, s
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, storage.Context, m)
-	configMap := map[string]string{}
-	for key, value := range m {
-		configMap[key] = fmt.Sprintf("%v", value)
-	}
 
 	s, err := storage.NewCloudStorage(ctx)
 	if err != nil {
-		log.Fatalf("Could not instantiate cloud storage for type: %s", params[0])
+		log.Fatalf("Could not instantiate cloud storage for type: %s", m[storage.CloudType])
 	}
 
 	apiClient := service.NewTestApiService(s, func() *config.Configuration {

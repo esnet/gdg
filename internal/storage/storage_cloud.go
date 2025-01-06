@@ -94,6 +94,10 @@ func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 		return nil, errors.New("unable to find valid bucket to list files from")
 	}
 	folderName := s.getCloudLocation(folder)
+	// Strip off the leading / if one is included
+	if folderName[0] == '/' {
+		folderName = folderName[1:]
+	}
 
 	var fileList []string
 	opts := blob.ListOptions{}
@@ -139,6 +143,11 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 
 	// Pattern specifically for Self hosted S3 compatible instances Minio / Ceph
 	if boolStrCheck(getMapValue(Custom, "false", stringEmpty, appData)) {
+		slog.Warn("The 'custom' flag is deprecated, please set the 'cloud_type' value to 'custom' instead")
+		appData[CloudType] = Custom
+	}
+
+	if getMapValue(CloudType, "s3", stringEmpty, appData) == Custom {
 		creds := credentials.NewStaticCredentialsProvider(
 			getMapValue(AccessId, os.Getenv("AWS_ACCESS_KEY"), stringEmpty, appData),
 			getMapValue(SecretKey, os.Getenv("AWS_SECRET_KEY"), stringEmpty, appData), "")

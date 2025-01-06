@@ -51,25 +51,25 @@ func TestSlug(t *testing.T) {
 
 func TestUserPath(t *testing.T) {
 	fixEnvironment(t)
-	userPath := BuildResourceFolder("", config.UserResource)
+	userPath := BuildResourceFolder("", config.UserResource, false)
 	assert.Equal(t, "test/data/users/", userPath)
 }
 
 func TestBuildDashboardPath(t *testing.T) {
 	fixEnvironment(t)
-	result := BuildResourceFolder("General", config.DashboardResource)
+	result := BuildResourceFolder("General", config.DashboardResource, false)
 	assert.Equal(t, "test/data/org_your-org/dashboards/General", result)
 }
 
 func TestBuildFolderSourcePath(t *testing.T) {
 	fixEnvironment(t)
-	result := buildResourcePath(slug.Make("Some Folder"), config.FolderResource)
+	result := buildResourcePath(slug.Make("Some Folder"), config.FolderResource, false)
 	assert.Equal(t, "test/data/org_your-org/folders/some-folder.json", result)
 }
 
 func TestBuildDataSourcePath(t *testing.T) {
 	fixEnvironment(t)
 
-	result := buildResourcePath(slug.Make("My DS"), config.ConnectionResource)
+	result := buildResourcePath(slug.Make("My DS"), config.ConnectionResource, false)
 	assert.Equal(t, "test/data/org_your-org/connections/my-ds.json", result)
 }

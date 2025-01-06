@@ -16,12 +16,3 @@ services:
             - GF_ENTERPRISE_LICENSE_TEXT=${ENTERPRISE_LICENSE}
 #           - GF_FEATURE_TOGGLES_ENABLE=nestedFolders
 #           - GF_SECURITY_ADMIN_PASSWORD=secret
-
-    influx:
-      image: influxdb:latest
-      container_name: influxdb
-      security_opt:
-        - no-new-privileges:true
-      restart: unless-stopped
-      ports:
-        - "8086:8086"

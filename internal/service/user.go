@@ -60,7 +60,7 @@ func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
 	userListing := s.ListUsers(filter)
 	var importedUsers []string
 
-	userPath := BuildResourceFolder("", config.UserResource)
+	userPath := BuildResourceFolder("", config.UserResource, s.isLocal())
 	for ndx, user := range userListing {
 		if s.isAdminUser(user.ID, user.Name) {
 			slog.Info("Skipping admin super user")
