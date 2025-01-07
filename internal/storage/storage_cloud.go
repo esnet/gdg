@@ -59,7 +59,7 @@ func (s *CloudStorage) getCloudLocation(fileName string) string {
 		s.Prefix = ""
 	}
 	// Skip if prefix is already in Path.
-	if len(s.Prefix) > 0 && strings.Contains(fileName, s.Prefix) {
+	if len(s.Prefix) > 0 && (strings.Contains(fileName, s.Prefix) || strings.Contains(fileName, s.Prefix[1:])) {
 		return fileName
 	}
 	if fileName[0] != '/' && s.Prefix != "" {
@@ -214,7 +214,10 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		BucketRef:  bucketObj,
 	}
 
-	if val, ok := appData[Prefix]; ok {
+	if val, prefixOk := appData[Prefix]; prefixOk {
+		if len(val) > 0 && val[0] == '/' {
+			val = val[1:]
+		}
 		entity.Prefix = val
 	}
 

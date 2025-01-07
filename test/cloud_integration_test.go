@@ -96,10 +96,12 @@ func TestDashboardCloudCRUD(t *testing.T) {
 func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	var err error
+	var (
+		err    error
+		cancel context.CancelFunc
+	)
 	config.InitGdgConfig("testing")
-	// apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	apiClient, container, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
 	// defer cleanup, "Failed to cleanup test containers for %s", t.Name())
 	// Wipe all data from grafana
@@ -109,28 +111,86 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 	apiClient.UploadDashboards(dashFilter)
 	boards := apiClient.ListDashboards(dashFilter)
 	assert.True(t, len(boards) > 0)
-	var cancel context.CancelFunc
 
-	_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
-		test_tooling.SetCloudType("custom"),
-		test_tooling.SetPrefix("/dummy"),
-		test_tooling.SetBucketName("testing"))
+	// Tests all type of combination that can potential break things for cloud + test output config
+	testcases := []struct {
+		disabled bool
+		name     string
+		prefix   string
+		output   string
+		id       int
+	}{
+		{
+			name:   "base default test",
+			prefix: "dummy",
+			output: "test/data",
+		},
+		{
+			name:   "no prefix",
+			prefix: "",
+			output: "test/data",
+		},
+		{
+			name:   "no prefix, slash output",
+			prefix: "",
+			output: "/test/data",
+		},
+		{
+			name:   "/prefix and no output",
+			prefix: "/dummy",
+			output: "",
+			id:     5,
+		},
+		{
+			name:   "/prefix and no slash output",
+			prefix: "/dummy",
+			output: "test/data",
+		},
+		{
+			name:   "/prefix and /output",
+			prefix: "/dummy",
+			output: "/test/data",
+		},
+		{
+			name:   "/prefix and no output",
+			prefix: "/dummy",
+			output: "",
+		},
+	}
 
-	assert.NoError(t, err)
-	defer cancel()
+	for _, tc := range testcases {
+		if tc.disabled {
+			slog.Info("Skipping test, disabled", "name", tc.name)
+			continue
+		}
+		slog.Warn("Running testcase", "name", tc.name)
+		config.InitGdgConfig("testing")
+		_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
+			test_tooling.SetCloudType("custom"),
+			test_tooling.SetPrefix(tc.prefix),
+			test_tooling.SetBucketName("testing"))
 
-	// At this point all operations are reading/writing from Minio
-	slog.Info("Importing Dashboards")
-	list := apiClient.DownloadDashboards(dashFilter) // Saving to S3
-	assert.Equal(t, len(list), len(boards))
-	slog.Info("Deleting Dashboards") // Clearing Grafana
-	deleteList := apiClient.DeleteAllDashboards(dashFilter)
-	assert.Equal(t, len(list), len(deleteList))
-	boards = apiClient.ListDashboards(dashFilter)
-	assert.Equal(t, len(boards), 0)
-	// Load Data from S3
-	apiClient.UploadDashboards(dashFilter)        // ReLoad data from S3 backup
-	boards = apiClient.ListDashboards(dashFilter) // Read data
-	assert.Equal(t, len(list), len(boards))       // verify
-	apiClient.DeleteAllDashboards(dashFilter)
+		apiClient = test_tooling.CreateSimpleClientWithConfig(t, func() *config.Configuration {
+			cfg := config.Config()
+			cfg.GetDefaultGrafanaConfig().OutputPath = tc.output
+			return cfg
+		}, container)
+		assert.NoError(t, err)
+
+		// At this point all operations are reading/writing from Minio
+		slog.Info("Importing Dashboards")
+		list := apiClient.DownloadDashboards(dashFilter) // Saving to S3
+		assert.Equal(t, len(list), len(boards))
+		slog.Info("Deleting Dashboards") // Clearing Grafana
+		deleteList := apiClient.DeleteAllDashboards(dashFilter)
+		assert.Equal(t, len(list), len(deleteList))
+		boards = apiClient.ListDashboards(dashFilter)
+		assert.Equal(t, len(boards), 0)
+		// Load Data from S3
+		apiClient.UploadDashboards(dashFilter)        // ReLoad data from S3 backup
+		boards = apiClient.ListDashboards(dashFilter) // Read data
+		assert.Equal(t, len(list), len(boards))       // verify
+
+		cancel()
+	}
 }

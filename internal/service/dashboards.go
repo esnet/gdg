@@ -502,11 +502,16 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 
 		invalidCount := lo.FilterMap(filesInDir, func(file string, index int) (string, bool) {
 			// check dashboardPath depth.
+			dashboardPath = p.ReplaceAllString(dashboardPath, "")
 			pathFile := strings.Replace(file, dashboardPath, "", 1)
-			if s.storage.GetPrefix() != "" {
-				pathFile = strings.Replace(pathFile, s.storage.GetPrefix(), "", 1)
-			}
 
+			if s.storage.GetPrefix() != "" {
+				prefix := p.ReplaceAllString(s.storage.GetPrefix(), "")
+				pathFile = strings.Replace(pathFile, prefix, "", 1)
+			}
+			// strip away extra slashes
+			pathFile = strings.ReplaceAll(pathFile, "//", "/")
+			// remove leading slash
 			pathFile = p.ReplaceAllString(pathFile, "")
 			elements := strings.Split(pathFile, string(os.PathSeparator))
 			if len(elements) > 2 {
@@ -585,7 +590,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = getFolderFromResourcePath(s.grafanaConf.Storage, file, config.DashboardResource, s.storage.GetPrefix())
+		folderName, err = getFolderFromResourcePath(file, config.DashboardResource, s.storage.GetPrefix())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 		}

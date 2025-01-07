@@ -34,10 +34,16 @@ func updateSlug(board string) string {
 
 // getFolderFromResourcePath if a use encodes a path separator in path, we can't determine the folder name.  This strips away
 // all the known components of a resource type leaving only the folder name.
-func getFolderFromResourcePath(storageEngine string, filePath string, resourceType config.ResourceType, prefix string) (string, error) {
+func getFolderFromResourcePath(filePath string, resourceType config.ResourceType, prefix string) (string, error) {
 	basePath := fmt.Sprintf("%s/", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType))
 	if prefix != "" {
+		if prefix[0] != filePath[0] && prefix[0] == '/' {
+			prefix = prefix[1:]
+		}
 		basePath = filepath.Join(prefix, basePath)
+	}
+	if basePath[0] == '/' {
+		basePath = basePath[1:]
 	}
 
 	folderName := strings.Replace(filePath, basePath, "", 1)
