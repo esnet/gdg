@@ -16,15 +16,25 @@ toc: true
   - [#318](https://github.com/esnet/gdg/pull/318) Removed the default config fall back.  For backup and tools functionality
 a valid configuration file is now required.  A new cli parameter is introduced: `default-config` which will print an example configuration
 to stdout.
-### Changes
+### Feature Changes
   - [#319](https://github.com/esnet/gdg/pull/319) Remove the requirement for GF_FEATURE_TOGGLES_ENABLE for nested folder as it was incorrectly required in 0.7.1
   - [#302](https://github.com/esnet/gdg/pull/302) Adding Contact Points support.
-  - [#303](https://github.com/esnet/gdg/pull/303) Cleaning up Permission based listings.
+  - [#303](https://github.com/esnet/gdg/pull/303) Cleaning up Permission based listings. (Visualization)
   - [#274](https://github.com/esnet/gdg/pull/274) Adding Dashboard Permissions, enterprise feature.
+  - [#324](https://github.com/esnet/gdg/pull/324) Introducing a new config option to disregard bad folders
 
+Example:
+```yaml
+  dashboard_settings:
+    ignore_bad_folders: true
+  ```
 
-### Changes
- - [#274](https://github.com/esnet/gdg/pull/274) Adding Dashboard Permissions, enterprise feature.
+### Security Fixes / Technical Debt
+  - [#326](https://github.com/esnet/gdg/pull/326) Bump golang.org/x/crypto from 0.28.0 to 0.31.0
+  - [#327](https://github.com/esnet/gdg/pull/327) Security Fix: Non-linear parsing of case-insensitive content in net/html
+  - [#328](https://github.com/esnet/gdg/pull/328) Security: Fixing NPM security issues. #328
+  - [320](https://github.com/esnet/gdg/pull/320) Changed default branch from `master` to `main`
+
 
 ## Release Notes for v0.7.1
 **Release Date: 09/11/2024**
