@@ -20,7 +20,7 @@ Please find the generated documentation [here](https://software.es.net/gdg/) and
 
 ## Quickstart
 
-![Quickstart screen](website/static/quickstart.gif)
+[<img src="website/static/quickstart.gif" width="100%" height="100%" alt="Quickstart screen">](https://raw.githubusercontent.com/esnet/gdg/refs/heads/feature/demo/website/static/quickstart.gif)
 
 ## Supported Versions
 
