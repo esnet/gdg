@@ -88,7 +88,7 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 				slog.Any("data", outputEntity.TemplateData),
 			)
 			grafana.OrganizationName = outputEntity.OrganizationName
-			outputPath := service.BuildResourceFolder(outputEntity.Folder, config.DashboardResource)
+			outputPath := service.BuildResourceFolder(outputEntity.Folder, config.DashboardResource, true)
 			// Merge two maps.
 			tmpl, err := template.New("").Funcs(fns).Parse(string(templateData))
 			if err != nil {

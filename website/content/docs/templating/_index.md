@@ -1,4 +1,4 @@
 ---
-title: "GDG Generate Docs (templating)"
+title: "Generate Docs (templating)"
 weight: 4
 ---

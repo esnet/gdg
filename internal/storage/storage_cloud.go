@@ -59,7 +59,7 @@ func (s *CloudStorage) getCloudLocation(fileName string) string {
 		s.Prefix = ""
 	}
 	// Skip if prefix is already in Path.
-	if len(s.Prefix) > 0 && strings.Contains(fileName, s.Prefix) {
+	if len(s.Prefix) > 0 && (strings.Contains(fileName, s.Prefix) || strings.Contains(fileName, s.Prefix[1:])) {
 		return fileName
 	}
 	if fileName[0] != '/' && s.Prefix != "" {
@@ -94,6 +94,10 @@ func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 		return nil, errors.New("unable to find valid bucket to list files from")
 	}
 	folderName := s.getCloudLocation(folder)
+	// Strip off the leading / if one is included
+	if folderName[0] == '/' {
+		folderName = folderName[1:]
+	}
 
 	var fileList []string
 	opts := blob.ListOptions{}
@@ -139,6 +143,11 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 
 	// Pattern specifically for Self hosted S3 compatible instances Minio / Ceph
 	if boolStrCheck(getMapValue(Custom, "false", stringEmpty, appData)) {
+		slog.Warn("The 'custom' flag is deprecated, please set the 'cloud_type' value to 'custom' instead")
+		appData[CloudType] = Custom
+	}
+
+	if getMapValue(CloudType, "s3", stringEmpty, appData) == Custom {
 		creds := credentials.NewStaticCredentialsProvider(
 			getMapValue(AccessId, os.Getenv("AWS_ACCESS_KEY"), stringEmpty, appData),
 			getMapValue(SecretKey, os.Getenv("AWS_SECRET_KEY"), stringEmpty, appData), "")
@@ -160,7 +169,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		if session == nil {
 			errorMsg = "No valid session could be created"
 		}
-		bucketObj, err = s3blob.OpenBucketV2(context.Background(), session, appData["bucket_name"], nil)
+		bucketObj, err = s3blob.OpenBucketV2(context.Background(), session, appData[BucketName], nil)
 		if err != nil {
 			errorMsg = err.Error()
 		}
@@ -191,7 +200,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		}
 
 	} else {
-		cloudURL := fmt.Sprintf("%s://%s", appData["cloud_type"], appData["bucket_name"])
+		cloudURL := fmt.Sprintf("%s://%s", appData[CloudType], appData[BucketName])
 		bucketObj, err = blob.OpenBucket(c, cloudURL)
 		errorMsg = fmt.Sprintf("failed to open bucket %s", cloudURL)
 	}
@@ -205,7 +214,10 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		BucketRef:  bucketObj,
 	}
 
-	if val, ok := appData[Prefix]; ok {
+	if val, prefixOk := appData[Prefix]; prefixOk {
+		if len(val) > 0 && val[0] == '/' {
+			val = val[1:]
+		}
 		entity.Prefix = val
 	}
 

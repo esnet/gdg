@@ -1,6 +1,6 @@
 ---
 title: "Frequently Asked Questions"
-weight: 1
+weight: 13
 ---
 
 ### Can I use GDG to backup grafana?

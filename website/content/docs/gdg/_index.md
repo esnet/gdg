@@ -1,4 +1,4 @@
 ---
-title: "GDG Docs"
+title: "GDG"
 weight: 2
 ---

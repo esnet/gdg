@@ -1,6 +1,6 @@
 ---
 title: "Working with Library Panels"
-weight: 2
+weight: 32
 ---
 
 Starting with version 0.4, library panels are going to be supported. It's a bit special and the behavior is somewhat unique.

@@ -8,19 +8,19 @@ type DashboardSettings struct {
 
 // GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
-	Storage                  string                `mapstructure:"storage" yaml:"storage"`
-	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
-	URL                      string                `mapstructure:"url" yaml:"url"`
 	APIToken                 string                `mapstructure:"token" yaml:"token"`
-	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
-	Password                 string                `mapstructure:"password" yaml:"password"`
-	OrganizationName         string                `mapstructure:"organization_name" yaml:"organization_name"`
-	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
-	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
-	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
+	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
+	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
+	OrganizationName         string                `mapstructure:"organization_name" yaml:"organization_name"`
 	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
+	Password                 string                `mapstructure:"password" yaml:"password"`
+	Storage                  string                `mapstructure:"storage" yaml:"storage"`
+	URL                      string                `mapstructure:"url" yaml:"url"`
+	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
+	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
+	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
 }
 
 type MonitoredOrgFolders struct {

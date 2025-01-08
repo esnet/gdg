@@ -370,7 +370,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 			continue
 		}
 
-		fileName := buildDashboardFileName(link, metaData.GetPayload().Meta.Slug, folderUidMap, useNestedFolders)
+		fileName := buildDashboardFileName(link, metaData.GetPayload().Meta.Slug, folderUidMap, useNestedFolders, s.grafanaConf.Storage == "")
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
@@ -406,14 +406,14 @@ func getNestedFolder(folderTitle, folderUID string, folderUidMap map[string]*cus
 }
 
 // buildDashboardFileName for a given dashboard, a full nested folder path is constructed
-func buildDashboardFileName(db *models.Hit, dbSlug string, folderUidMap map[string]*customTypes.FolderDetails, nested bool) string {
+func buildDashboardFileName(db *models.Hit, dbSlug string, folderUidMap map[string]*customTypes.FolderDetails, nested, createDestination bool) string {
 	var folderPath string
 	if nested {
 		folderPath = getNestedFolder(db.FolderTitle, db.FolderUID, folderUidMap)
 	} else {
 		folderPath = db.FolderTitle
 	}
-	fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderPath, config.DashboardResource), dbSlug)
+	fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderPath, config.DashboardResource, createDestination), dbSlug)
 	return fileName
 }
 
@@ -488,8 +488,8 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		folderName string
 		folderUid  string
 	)
-	path := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
-	filesInDir, err := s.storage.FindAllFiles(path, true)
+	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
+	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
 		log.Fatalf("unable to find any files to export from storage engine, err: %v", err)
 	}
@@ -501,12 +501,17 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 
 		invalidCount := lo.FilterMap(filesInDir, func(file string, index int) (string, bool) {
-			// check path depth.
-			pathFile := strings.Replace(file, path, "", 1)
-			if s.storage.GetPrefix() != "" {
-				pathFile = strings.Replace(pathFile, s.storage.GetPrefix(), "", 1)
-			}
+			// check dashboardPath depth.
+			dashboardPath = p.ReplaceAllString(dashboardPath, "")
+			pathFile := strings.Replace(file, dashboardPath, "", 1)
 
+			if s.storage.GetPrefix() != "" {
+				prefix := p.ReplaceAllString(s.storage.GetPrefix(), "")
+				pathFile = strings.Replace(pathFile, prefix, "", 1)
+			}
+			// strip away extra slashes
+			pathFile = strings.ReplaceAll(pathFile, "//", "/")
+			// remove leading slash
 			pathFile = p.ReplaceAllString(pathFile, "")
 			elements := strings.Split(pathFile, string(os.PathSeparator))
 			if len(elements) > 2 {
@@ -516,7 +521,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 			return file, false
 		})
 		if len(invalidCount) > 0 {
-			log.Fatal("nested folder feature is disabled in GDG but import path contains a nested folder.  Please fix the import or configuration.  ", slog.String("files", strings.Join(invalidCount, ", ")))
+			log.Fatal("nested folder feature is disabled in GDG but import dashboardPath contains a nested folder.  Please fix the import or configuration.  ", slog.String("files", strings.Join(invalidCount, ", ")))
 		}
 
 	}
@@ -584,8 +589,8 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 			alreadyProcessed[board["uid"]] = true
 		}
 
-		// Extract Folder Name based on path
-		folderName, err = getFolderFromResourcePath(s.grafanaConf.Storage, file, config.DashboardResource)
+		// Extract Folder Name based on dashboardPath
+		folderName, err = getFolderFromResourcePath(file, config.DashboardResource, s.storage.GetPrefix())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 		}

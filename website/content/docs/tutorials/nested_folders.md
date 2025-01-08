@@ -1,6 +1,6 @@
 ---
 title: "Working with Nested Folders"
-weight: 4
+weight: 34
 ---
 
 Starting with GDG 0.7, support for nested folders has been added.  This feature requires grafana 11+.  You can watch a Intro [video](https://www.youtube.com/watch?v=R9mehA0EssU) or read the offical annoucements [here](https://grafana.com/docs/grafana-cloud/whats-new/2024-02-27-subfolders/).
