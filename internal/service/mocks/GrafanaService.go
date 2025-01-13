@@ -3113,8 +3113,21 @@ func (_c *GrafanaService_UploadDashboardPermissions_Call) RunAndReturn(run func(
 }
 
 // UploadDashboards provides a mock function with given fields: filter
-func (_m *GrafanaService) UploadDashboards(filter filters.Filter) {
-	_m.Called(filter)
+func (_m *GrafanaService) UploadDashboards(filter filters.Filter) error {
+	ret := _m.Called(filter)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UploadDashboards")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(filters.Filter) error); ok {
+		r0 = rf(filter)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // GrafanaService_UploadDashboards_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadDashboards'
@@ -3135,12 +3148,12 @@ func (_c *GrafanaService_UploadDashboards_Call) Run(run func(filter filters.Filt
 	return _c
 }
 
-func (_c *GrafanaService_UploadDashboards_Call) Return() *GrafanaService_UploadDashboards_Call {
-	_c.Call.Return()
+func (_c *GrafanaService_UploadDashboards_Call) Return(_a0 error) *GrafanaService_UploadDashboards_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *GrafanaService_UploadDashboards_Call) RunAndReturn(run func(filters.Filter)) *GrafanaService_UploadDashboards_Call {
+func (_c *GrafanaService_UploadDashboards_Call) RunAndReturn(run func(filters.Filter) error) *GrafanaService_UploadDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }

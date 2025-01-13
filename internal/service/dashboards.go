@@ -370,7 +370,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 			continue
 		}
 
-		fileName := buildDashboardFileName(link, metaData.GetPayload().Meta.Slug, folderUidMap, useNestedFolders, s.grafanaConf.Storage == "")
+		fileName := buildDashboardFileName(link, metaData.GetPayload().Meta.Slug, folderUidMap, useNestedFolders, s.isLocal(), s.globalConf.ClearOutput)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
@@ -406,14 +406,14 @@ func getNestedFolder(folderTitle, folderUID string, folderUidMap map[string]*cus
 }
 
 // buildDashboardFileName for a given dashboard, a full nested folder path is constructed
-func buildDashboardFileName(db *models.Hit, dbSlug string, folderUidMap map[string]*customTypes.FolderDetails, nested, createDestination bool) string {
+func buildDashboardFileName(db *models.Hit, dbSlug string, folderUidMap map[string]*customTypes.FolderDetails, nested, createDestination, clearOutput bool) string {
 	var folderPath string
 	if nested {
 		folderPath = getNestedFolder(db.FolderTitle, db.FolderUID, folderUidMap)
 	} else {
 		folderPath = db.FolderTitle
 	}
-	fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderPath, config.DashboardResource, createDestination), dbSlug)
+	fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderPath, config.DashboardResource, createDestination, clearOutput), dbSlug)
 	return fileName
 }
 
@@ -482,7 +482,7 @@ func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, erro
 
 // UploadDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folder doesn't exist, it'll be created.
-func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
+func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 	var (
 		rawBoard   []byte
 		folderName string
@@ -491,13 +491,13 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
 	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
-		log.Fatalf("unable to find any files to export from storage engine, err: %v", err)
+		return fmt.Errorf("unable to find any files to export from storage engine, err: %w", err)
 	}
 
 	if !s.grafanaConf.GetDashboardSettings().NestedFolders {
 		p, regexErr := regexp.Compile(nestedDashboardRegexFilter)
 		if regexErr != nil {
-			log.Fatal("unable to compile nested folder validation regex patter")
+			return fmt.Errorf("unable to compile nested folder validation regex patter, err: %w", regexErr)
 		}
 
 		invalidCount := lo.FilterMap(filesInDir, func(file string, index int) (string, bool) {
@@ -521,7 +521,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 			return file, false
 		})
 		if len(invalidCount) > 0 {
-			log.Fatal("nested folder feature is disabled in GDG but import dashboardPath contains a nested folder.  Please fix the import or configuration.  ", slog.String("files", strings.Join(invalidCount, ", ")))
+			return fmt.Errorf("nested folder feature is disabled in GDG but import dashboardPath contains a nested folder.  Please fix the import or configuration.  Files: %s", strings.Join(invalidCount, ", "))
 		}
 
 	}
@@ -584,7 +584,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 
 		}
 		if _, ok := alreadyProcessed[board["uid"]]; ok {
-			log.Fatalf("Board with same UID was already processed.  Please check your backup folder. This may occur if you pulled the data multiple times with configuration of: nested folder enabled and disabled, uid: %v, title: %v", board["uid"], slug.Make((board["title"]).(string)))
+			return fmt.Errorf("Board with same UID was already processed.  Please check your backup folder. This may occur if you pulled the data multiple times with configuration of: nested folder enabled and disabled, uid: %v, title: %v", board["uid"], slug.Make((board["title"]).(string)))
 		} else {
 			alreadyProcessed[board["uid"]] = true
 		}
@@ -641,6 +641,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) {
 		}
 
 	}
+	return nil
 }
 
 // DeleteAllDashboards clears all current dashboards being monitored.  Any folder not white listed

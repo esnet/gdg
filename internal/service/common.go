@@ -58,22 +58,22 @@ func getFolderFromResourcePath(filePath string, resourceType config.ResourceType
 	return "", errors.New("unable to parse resource to retrieve folder name")
 }
 
-func BuildResourceFolder(folderName string, resourceType config.ResourceType, createDestination bool) string {
+func BuildResourceFolder(folderName string, resourceType config.ResourceType, createDestination bool, clearOutput bool) string {
 	if resourceType == config.DashboardResource && folderName == "" {
 		folderName = DefaultFolderName
 	}
 
 	v := fmt.Sprintf("%s/%s", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
 	if createDestination {
-		tools.CreateDestinationPath(v)
+		tools.CreateDestinationPath(config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), clearOutput, v)
 	}
 	return v
 }
 
-func buildResourcePath(folderName string, resourceType config.ResourceType, createDestination bool) string {
+func buildResourcePath(folderName string, resourceType config.ResourceType, createDestination bool, clearOutput bool) string {
 	v := fmt.Sprintf("%s/%s.json", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
 	if createDestination {
-		tools.CreateDestinationPath(filepath.Dir(v))
+		tools.CreateDestinationPath(config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), clearOutput, filepath.Dir(v))
 	}
 	return v
 }

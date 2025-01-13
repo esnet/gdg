@@ -6,6 +6,16 @@ weight: 101
 
 Global flags are configuration that applies to all contexts.  The following flags are all nested under `globals:`
 
+### Clear Output
+
+`clear_output` when set to true will remove all files in the destination folder prior to importing the data.
+
+ie.  if fetching all dashboards for the default org, then all files in the folder: `{output_path}/org_main-org/dashboards` will be removed.
+
+{{< callout context="caution" title="Caution" icon="alert-triangle" >}}
+Be careful when using this pattern.  This removes all related files, if the operation fails all previous backups for that entity type will be lost.
+{{< /callout >}}
+
 ### Debug
 
 When `debug` is set to true, verbose debugging is enabled.  Usually only needed for debugging when issues arise.

@@ -76,7 +76,7 @@ func (s *DashNGoImpl) DownloadConnections(filter filters.Filter) []string {
 			continue
 		}
 
-		dsPath := buildResourcePath(slug.Make(ds.Name), config.ConnectionResource, s.isLocal())
+		dsPath := buildResourcePath(slug.Make(ds.Name), config.ConnectionResource, s.isLocal(), s.globalConf.ClearOutput)
 
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "filename", slug.Make(ds.Name), "err", err)

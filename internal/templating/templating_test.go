@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/pkg/test_tooling/path"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -15,11 +17,7 @@ import (
 
 func TestGenerate(t *testing.T) {
 	// Setup
-	dir, err := os.Getwd()
-	assert.Nil(t, err)
-	if strings.Contains(dir, "templating") {
-		os.Chdir("../..")
-	}
+	assert.NoError(t, path.FixTestDir("templating", "../.."))
 	config.InitGdgConfig(common.DefaultTestConfig)
 	config.InitTemplateConfig("templates-example")
 	template := NewTemplate()

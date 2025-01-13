@@ -7,10 +7,11 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/esnet/gdg/internal/tools"
+
 	"github.com/Masterminds/sprig/v3"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools"
 )
 
 type Templating interface {
@@ -88,16 +89,16 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 				slog.Any("data", outputEntity.TemplateData),
 			)
 			grafana.OrganizationName = outputEntity.OrganizationName
-			outputPath := service.BuildResourceFolder(outputEntity.Folder, config.DashboardResource, true)
+			outputPath := service.BuildResourceFolder(outputEntity.Folder, config.DashboardResource, true, false)
 			// Merge two maps.
-			tmpl, err := template.New("").Funcs(fns).Parse(string(templateData))
-			if err != nil {
+			tmpl, tmplErr := template.New("").Funcs(fns).Parse(string(templateData))
+			if tmplErr != nil {
 				slog.Error("unable to parse template", slog.Any("err", err))
 				continue
 			}
 
 			// Create new file.
-			tools.CreateDestinationPath(outputPath)
+			tools.CreateDestinationPath("", false, outputPath)
 			dashboardName := entity.TemplateName
 			if outputEntity.DashboardName != "" {
 				dashboardName = service.GetSlug(outputEntity.DashboardName)

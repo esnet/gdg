@@ -59,7 +59,7 @@ func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq filters.Filter) ([]
 			continue
 		}
 
-		dsPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.Dashboard.FolderTitle, config.DashboardPermissionsResource, s.isLocal()), slug.Make(link.Dashboard.Title))
+		dsPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.Dashboard.FolderTitle, config.DashboardPermissionsResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(link.Dashboard.Title))
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(link.Dashboard.Title), "error", err.Error())
 		} else {

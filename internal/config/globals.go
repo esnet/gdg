@@ -12,6 +12,7 @@ type AppGlobals struct {
 	IgnoreSSLErrors bool           `mapstructure:"ignore_ssl_errors" yaml:"ignore_ssl_errors"`
 	RetryCount      int            `mapstructure:"retry_count" yaml:"retry_count"`
 	RetryDelay      string         `mapstructure:"retry_delay" yaml:"retry_delay"`
+	ClearOutput     bool           `mapstructure:"clear_output" yaml:"clear_output"`
 	retryTimeout    *time.Duration `mapstructure:"-" yaml:"-"`
 }
 

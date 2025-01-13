@@ -86,7 +86,7 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.Filter) []string 
 		if fileName == "" {
 			fileName = folder.Title
 		}
-		dsPath := buildResourcePath(slug.Make(fileName), config.FolderPermissionResource, s.isLocal())
+		dsPath := buildResourcePath(slug.Make(fileName), config.FolderPermissionResource, s.isLocal(), s.globalConf.ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "filename", slug.Make(folder.Title))
 		} else {
@@ -240,7 +240,7 @@ func (s *DashNGoImpl) DownloadFolders(filter filters.Filter) []string {
 			slog.Error("Unable to serialize data to JSON", "err", err, "folderName", folder.Title)
 			continue
 		}
-		dsPath := buildResourcePath(folder.Title, config.FolderResource, s.isLocal())
+		dsPath := buildResourcePath(folder.Title, config.FolderResource, s.isLocal(), s.globalConf.ClearOutput)
 
 		if !s.checkFolderName(folder.Title) {
 			slog.Warn("Folder has an invalid character and is not supported, skipping folder", "folderName", folder.Title)
@@ -252,8 +252,8 @@ func (s *DashNGoImpl) DownloadFolders(filter filters.Filter) []string {
 			if slugFolder != folder.NestedPath {
 				dsPath = strings.Replace(dsPath, slugFolder, folder.NestedPath, 1)
 				baseFolder := filepath.Dir(dsPath)
-				if s.isLocal() {
-					tools.CreateDestinationPath(baseFolder)
+				if s.isLocal() { //&& baseFolder != "" {
+					tools.CreateDestinationPath("", false, baseFolder)
 				}
 			}
 		}

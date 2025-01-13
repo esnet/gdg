@@ -25,6 +25,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	DashboardCount = 16
+)
+
 func TestDashboardNestedFolderCRUD(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("skipping token based tests")
@@ -51,7 +55,7 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	slog.Info("Exporting all dashboards")
-	apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 	slog.Info("Imported dashboards", "count", len(boards))
@@ -89,7 +93,8 @@ func TestDashboardCRUD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -98,7 +103,7 @@ func TestDashboardCRUD(t *testing.T) {
 	}()
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	slog.Info("Exporting all dashboards")
-	apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 	slog.Info("Imported dashboards", "count", len(boards))
@@ -132,16 +137,62 @@ func TestDashboardCRUD(t *testing.T) {
 	assert.Equal(t, 1, len(boards))
 
 	// Import Dashboards
-	numBoards := 16
 	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(filtersEntity)
-	assert.Equal(t, len(list), numBoards)
+	assert.Equal(t, len(list), DashboardCount)
 	slog.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
-	assert.Equal(t, len(deleteList), numBoards)
+	assert.Equal(t, len(deleteList), DashboardCount)
 	slog.Info("List Dashboards again")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
+}
+
+// If a duplicate file with the same UID exists, the upload should fail.  Having a cleanup flag turned on, should
+// fix that issue.
+func TestDashboardCleanUpCrud(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
+	config.InitGdgConfig("testing")
+	cfgProvider := func() *config.Configuration {
+		cfg := config.Config()
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = true
+		return cfg
+	}
+	apiClient, containerObj, cleanup := test_tooling.InitTest(t, cfgProvider, nil)
+	defer func() {
+		err := cleanup()
+		if err != nil {
+			slog.Warn("Unable to clean up after dashboard tests")
+		}
+	}()
+	filtersEntity := service.NewDashboardFilter("", "", "")
+	slog.Info("Exporting all dashboards")
+	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
+	slog.Info("Listing all dashboards")
+	boards := apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), DashboardCount+1) // Includes the Ignored folder
+	// Create another copy of the dashboard json
+	// copy file
+	data, err := os.ReadFile("test/data/org_main-org/dashboards/General/bandwidth-dashboard.json")
+	assert.NoError(t, err)
+	err = os.WriteFile("test/data/org_main-org/dashboards/General/bandwidth-dashboard-copy.json", data, 0o644)
+	assert.NoError(t, err)
+	defer os.Remove("test/data/org_main-org/dashboards/General/bandwidth-dashboard-copy.json")
+	cfgProvider = func() *config.Configuration {
+		cfg := config.Config()
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = true
+		globals := cfg.GetGDGConfig().Global
+		globals.ClearOutput = true
+		return cfg
+	}
+	apiClient = test_tooling.CreateSimpleClientWithConfig(t, cfgProvider, containerObj)
+	apiClient.DownloadDashboards(filtersEntity)
+	assert.Nil(t, err)
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), DashboardCount+1) // includes the ignored folder
 }
 
 func TestDashboardCRUDTags(t *testing.T) {
@@ -161,7 +212,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	filtersEntity := service.NewDashboardFilter("", "", string(data))
 
 	slog.Info("Uploading all dashboards, filtered by tags")
-	apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 	slog.Info("Removing all dashboards")
@@ -173,7 +224,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	data, err = json.Marshal([]string{"flow"})
 	assert.NoError(t, err)
 	filtersEntity = service.NewDashboardFilter("", "", string(data))
-	apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
 	slog.Info("Listing all dashboards")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, 8, len(boards))
@@ -185,10 +236,10 @@ func TestDashboardCRUDTags(t *testing.T) {
 	defer os.Unsetenv("")
 	apiClient, _ = test_tooling.CreateSimpleClient(t, nil, container)
 	filterNone := service.NewDashboardFilter("", "", "")
-	apiClient.UploadDashboards(filterNone)
+	assert.NoError(t, apiClient.UploadDashboards(filterNone))
 	// Listing with no filter
 	boards = apiClient.ListDashboards(filterNone)
-	assert.Equal(t, 16, len(boards))
+	assert.Equal(t, DashboardCount, len(boards))
 
 	data, err = json.Marshal([]string{"flow"})
 	assert.NoError(t, err)
@@ -221,7 +272,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	filtersEntity := service.NewDashboardFilter("", "", string(data))
 
 	slog.Info("Exporting all dashboards")
-	apiClient.UploadDashboards(emptyFilter)
+	assert.NoError(t, apiClient.UploadDashboards(emptyFilter))
 
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
@@ -258,7 +309,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, props)
 	defer cleanup()
 	// Upload all dashboards
-	apiClient.UploadDashboards(nil)
+	assert.NoError(t, apiClient.UploadDashboards(nil))
 	// Upload all users
 	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(newUsers), 2)
@@ -268,7 +319,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	assert.Equal(t, len(teams), 2)
 	// Get current Permissions
 	currentPerms, err := apiClient.ListDashboardPermissions(nil)
-	assert.Equal(t, len(currentPerms), 16)
+	assert.Equal(t, len(currentPerms), DashboardCount)
 	entry := ptr.Of(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item types.DashboardAndPermissions, index int) bool {
 		return item.Dashboard.Title == "Bandwidth Dashboard"
 	})))
@@ -278,11 +329,11 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	assert.NoError(t, apiClient.ClearDashboardPermissions(nil))
 	currentPerms, err = apiClient.ListDashboardPermissions(nil)
 	assert.NoError(t, err)
-	assert.Equal(t, len(currentPerms), 16)
+	assert.Equal(t, len(currentPerms), DashboardCount)
 	assert.Equal(t, len(currentPerms[0].Permissions), 0)
 	addPerms, err := apiClient.UploadDashboardPermissions(nil)
 	assert.NoError(t, err)
-	assert.Equal(t, len(addPerms), 16)
+	assert.Equal(t, len(addPerms), DashboardCount)
 	currentPerms, err = apiClient.ListDashboardPermissions(nil)
 	entry = nil
 	entry = ptr.Of(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item types.DashboardAndPermissions, index int) bool {
@@ -333,10 +384,10 @@ func TestWildcardFilter(t *testing.T) {
 	assert.True(t, testingContext.GetDashboardSettings().IgnoreFilters)
 
 	// Testing Exporting with Wildcard
-	apiClient.UploadDashboards(emptyFilter)
+	assert.NoError(t, apiClient.UploadDashboards(emptyFilter))
 	boards := apiClient.ListDashboards(emptyFilter)
 
-	apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
 	boards_filtered := apiClient.ListDashboards(emptyFilter)
 
 	assert.Equal(t, len(boards), len(boards_filtered))
