@@ -77,7 +77,7 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.Filter) []str
 			slog.Error("unable to marshall json ", "err", err.Error(), "connectionName", connection.Connection.Name)
 			continue
 		}
-		dsPath := buildResourcePath(slug.Make(connection.Connection.Name), config.ConnectionPermissionResource, s.isLocal())
+		dsPath := buildResourcePath(slug.Make(connection.Connection.Name), config.ConnectionPermissionResource, s.isLocal(), s.globalConf.ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(connection.Connection.Name), "error", err.Error())
 		} else {

@@ -116,6 +116,7 @@ contexts:
 global:
   debug: true
   api_debug: false
+  clear_output: true
   ignore_ssl_errors: false ##when set to true will ignore invalid SSL errors
   retry_count: 3 ## Will retry any failed API request up to 3 times.
   retry_delay: 5s  ## will wait for specified duration before trying again.

@@ -54,7 +54,7 @@ type ConnectionPermissions interface {
 type DashboardsApi interface {
 	ListDashboards(filter filters.Filter) []*models.Hit
 	DownloadDashboards(filter filters.Filter) []string
-	UploadDashboards(filter filters.Filter)
+	UploadDashboards(filter filters.Filter) error
 	DeleteAllDashboards(filter filters.Filter) []string
 	LintDashboards(req types.LintRequest) []string
 }

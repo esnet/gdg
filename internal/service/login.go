@@ -73,7 +73,7 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		Schemes:      []string{u.Scheme},
 		NumRetries:   config.Config().GetGDGConfig().GetAppGlobals().RetryCount,
 		RetryTimeout: config.Config().GetGDGConfig().GetAppGlobals().GetRetryTimeout(),
-		Debug:        s.apiDebug,
+		Debug:        s.globalConf.ApiDebug,
 	}
 
 	// If more than one opts is passed, depend on the caller to setup his required configuration
@@ -97,7 +97,7 @@ func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
 	if s.grafanaConf.APIToken != "" {
 		grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
 			clientCfg.APIKey = s.grafanaConf.APIToken
-			clientCfg.Debug = s.apiDebug
+			clientCfg.Debug = s.globalConf.ApiDebug
 		})
 		return grafanaClient
 	} else {
@@ -123,7 +123,7 @@ func (s *DashNGoImpl) GetAdminClient() *client.GrafanaHTTPAPI {
 func (s *DashNGoImpl) getDefaultBasicOpts() []NewClientOpts {
 	return []NewClientOpts{func(clientCfg *client.TransportConfig) {
 		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.Password)
-		clientCfg.Debug = s.apiDebug
+		clientCfg.Debug = s.globalConf.ApiDebug
 	}}
 }
 

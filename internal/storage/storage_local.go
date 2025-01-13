@@ -64,7 +64,7 @@ func (s *LocalStorage) WriteFile(filename string, data []byte) error {
 }
 
 func (s *LocalStorage) Name() string {
-	return "LocalStorage"
+	return LocalStorageType.String()
 }
 
 func (s *LocalStorage) FindAllFiles(folder string, fullPath bool) ([]string, error) {

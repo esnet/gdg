@@ -108,7 +108,10 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
 				), "", true)
 			}
-			rootCmd.GrafanaSvc().UploadDashboards(filter)
+			err := rootCmd.GrafanaSvc().UploadDashboards(filter)
+			if err != nil {
+				return err
+			}
 
 			rootCmd.TableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
 			boards := rootCmd.GrafanaSvc().ListDashboards(filter)
