@@ -1,53 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Configuration on GDG</title>
-    <link>http://localhost:1313/gdg/docs/gdg/configuration/</link>
-    <description>Recent content in Configuration on GDG</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <atom:link href="http://localhost:1313/gdg/docs/gdg/configuration/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Structure</title>
-      <link>http://localhost:1313/gdg/docs/gdg/configuration/structure/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gdg/docs/gdg/configuration/structure/</guid>
-      <description>GDG Configuration is based on a YAML configuration. It also has the option to override configuration values via environmental variables.</description>
-    </item>
-    <item>
-      <title>Globals</title>
-      <link>http://localhost:1313/gdg/docs/gdg/configuration/globals/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gdg/docs/gdg/configuration/globals/</guid>
-      <description>Global flags are configuration that applies to all contexts. The following flags are all nested under globals:&#xA;Debug When debug is set to true, verbose debugging is enabled.</description>
-    </item>
-    <item>
-      <title>Storage</title>
-      <link>http://localhost:1313/gdg/docs/gdg/configuration/storage/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gdg/docs/gdg/configuration/storage/</guid>
-      <description>This is only needed if you intend to use a cloud provider to store your backups. If you are downloading your backups to your local file system you can skip this section.</description>
-    </item>
-    <item>
-      <title>Contexts</title>
-      <link>http://localhost:1313/gdg/docs/gdg/configuration/contexts/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gdg/docs/gdg/configuration/contexts/</guid>
-      <description>Contexts define a connection to grafana and how to interact with it, authenticate, how to map the connection credentials, how users are created etc.</description>
-    </item>
-    <item>
-      <title>Debugging</title>
-      <link>http://localhost:1313/gdg/docs/gdg/configuration/debugging/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gdg/docs/gdg/configuration/debugging/</guid>
-      <description>Debugging / Trouble shooting There are two configuration flags that can be very useful to determine the issue.&#xA;... global: debug: true api_debug: true&#xD;The debug flag enables very logging which may provide some insight on the core issue that you&amp;rsquo;re running into.</description>
-    </item>
-    <item>
-      <title>Legacy</title>
-      <link>http://localhost:1313/gdg/docs/gdg/configuration/legacy/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gdg/docs/gdg/configuration/legacy/</guid>
-      <description>Configuration This is mostly left for reference to older documentation patterns for previous versions.&#xA;Connection Connection Credentials Version v0.4.2-v0.5.1 Legacy Behavior&#xD;Preview behavior did not support the use of a secure/secureData.</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Configuration on GDG</title><link>https://software.es.net/gdg/docs/gdg/configuration/</link><description>Recent content in Configuration on GDG</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://software.es.net/gdg/docs/gdg/configuration/index.xml" rel="self" type="application/rss+xml"/><item><title>Structure</title><link>https://software.es.net/gdg/docs/gdg/configuration/structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/structure/</guid><description>GDG Configuration is based on a YAML configuration. It also has the option to override configuration values via environmental variables.</description></item><item><title>Globals</title><link>https://software.es.net/gdg/docs/gdg/configuration/globals/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/globals/</guid><description>Global flags are configuration that applies to all contexts. The following flags are all nested under globals:
+Clear Output clear_output when set to true will remove all files in the destination folder prior to importing the data.</description></item><item><title>Storage</title><link>https://software.es.net/gdg/docs/gdg/configuration/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/storage/</guid><description>This is only needed if you intend to use a cloud provider to store your backups. If you are downloading your backups to your local file system you can skip this section.</description></item><item><title>Contexts</title><link>https://software.es.net/gdg/docs/gdg/configuration/contexts/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/contexts/</guid><description>Contexts define a connection to grafana and how to interact with it, authenticate, how to map the connection credentials, how users are created etc.</description></item><item><title>Debugging</title><link>https://software.es.net/gdg/docs/gdg/configuration/debugging/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/debugging/</guid><description>Debugging / Trouble shooting There are two configuration flags that can be very useful to determine the issue.
+... global: debug: true api_debug: trueThe debug flag enables very logging which may provide some insight on the core issue that you&amp;rsquo;re running into.</description></item><item><title>Legacy</title><link>https://software.es.net/gdg/docs/gdg/configuration/legacy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/legacy/</guid><description>Configuration This is mostly left for reference to older documentation patterns for previous versions.
+Connection Connection Credentials Version v0.4.2-v0.5.1 Legacy BehaviorPreview behavior did not support the use of a secure/secureData.</description></item></channel></rss>
