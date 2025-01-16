@@ -12,10 +12,6 @@ import (
 )
 
 func TestLibraryElementsCRUD(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-
 	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	filtersEntity := service.NewDashboardFilter("", "", "")

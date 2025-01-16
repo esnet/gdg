@@ -10,7 +10,7 @@ toc: true
 
 
 ## Release Notes for v0.7.2
-**Release Date: TBD**
+**Release Date: 01/17/2025**
 
 ### Breaking Changes
   - [#318](https://github.com/esnet/gdg/pull/318) Only affects those with no valid configuration present. Removed the default
@@ -18,9 +18,10 @@ toc: true
     which will print an example configuration to stdout.
 ### Feature Changes
   - [#319](https://github.com/esnet/gdg/pull/319) Remove the requirement for GF_FEATURE_TOGGLES_ENABLE for nested folder as it was incorrectly required in 0.7.1
-  - [#302](https://github.com/esnet/gdg/pull/302) Adding Contact Points support.
+  - [#302](https://github.com/esnet/gdg/pull/302) Adding Alerting Contact Points support. (Beta Feature, API/format may change in the next release)
   - [#303](https://github.com/esnet/gdg/pull/303) Cleaning up Permission based listings. (Visualization)
   - [#274](https://github.com/esnet/gdg/pull/274) Adding Dashboard Permissions, enterprise feature.
+  - [#337](https://github.com/esnet/gdg/pull/337) Fix to maintain UIDs when updating dashboards
   - [#324](https://github.com/esnet/gdg/pull/324) Introducing a new config option to disregard bad folders
 
 Example:
@@ -28,12 +29,17 @@ Example:
   dashboard_settings:
     ignore_bad_folders: true
   ```
+### Bug Fixes
+  - [#330](https://github.com/esnet/gdg/pull/330) Fix bug with leading prefix in path when using cloud storage
+  - [#333](https://github.com/esnet/gdg/pull/333) Fix bug with documentation search
+  - [#314](https://github.com/esnet/gdg/pull/314) Update README to reflected newly supported features
 
 ### Security Fixes / Technical Debt
   - [#326](https://github.com/esnet/gdg/pull/326) Bump golang.org/x/crypto from 0.28.0 to 0.31.0
   - [#327](https://github.com/esnet/gdg/pull/327) Security Fix: Non-linear parsing of case-insensitive content in net/html
   - [#328](https://github.com/esnet/gdg/pull/328) Security: Fixing NPM security issues. #328
   - [320](https://github.com/esnet/gdg/pull/320) Changed default branch from `master` to `main`
+  - [332](https://github.com/esnet/gdg/pull/332) Added a VHS tape to programmatically re-generate quickstart.gif
 
 
 ## Release Notes for v0.7.1
