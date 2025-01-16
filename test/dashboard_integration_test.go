@@ -90,9 +90,6 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 }
 
 func TestDashboardCRUD(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
 	config.InitGdgConfig("testing")
 	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer func() {
@@ -151,10 +148,6 @@ func TestDashboardCRUD(t *testing.T) {
 // If a duplicate file with the same UID exists, the upload should fail.  Having a cleanup flag turned on, should
 // fix that issue.
 func TestDashboardCleanUpCrud(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-
 	config.InitGdgConfig("testing")
 	cfgProvider := func() *config.Configuration {
 		cfg := config.Config()
@@ -196,9 +189,6 @@ func TestDashboardCleanUpCrud(t *testing.T) {
 }
 
 func TestDashboardCRUDTags(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
 	apiClient, _, container, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer func() {
 		err := cleanup()
@@ -260,9 +250,6 @@ func TestDashboardCRUDTags(t *testing.T) {
 }
 
 func TestDashboardTagsFilter(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
 	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	emptyFilter := filters.NewBaseFilter()
@@ -365,10 +352,6 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 }
 
 func TestWildcardFilter(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-
 	// Setup Filters
 	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()

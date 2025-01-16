@@ -15,9 +15,6 @@ import (
 )
 
 func TestOrganizationCrud(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
@@ -40,9 +37,6 @@ func TestOrganizationCrud(t *testing.T) {
 }
 
 func TestOrganizationUserMembership(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
@@ -93,9 +87,6 @@ func TestOrganizationUserMembership(t *testing.T) {
 }
 
 func TestOrganizationProperties(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}

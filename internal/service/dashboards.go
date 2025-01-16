@@ -526,8 +526,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 
 	}
 
-	// Delete all dashboards that match prior to import
-	s.DeleteAllDashboards(filterReq)
+	currentDashboards := s.ListDashboards(filterReq)
 
 	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter()))
 
@@ -641,7 +640,30 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 		}
 
 	}
+
+	for _, item := range currentDashboards {
+		if ok := alreadyProcessed[item.UID]; !ok {
+			slog.Info("Deleting Dashboard not found in backup", "folder", item.FolderTitle, "dashboard", item.Title)
+			err := s.deleteDashboard(item)
+			if err != nil {
+				slog.Error("Unable to delete dashboard", "folder", item.FolderTitle, "dashboard", item.Title)
+			}
+		}
+	}
 	return nil
+}
+
+// deleteDashboard removes a dashboard from grafana.  If the dashboard doesn't exist,
+// an error is returned.
+//
+// Parameters:
+// item - dashboard to be deleted
+//
+// Returns:
+// error - error returned from the grafana API
+func (s *DashNGoImpl) deleteDashboard(item *models.Hit) error {
+	_, err := s.GetClient().Dashboards.DeleteDashboardByUID(item.UID)
+	return err
 }
 
 // DeleteAllDashboards clears all current dashboards being monitored.  Any folder not white listed
@@ -652,7 +674,7 @@ func (s *DashNGoImpl) DeleteAllDashboards(filter filters.Filter) []string {
 	items := s.ListDashboards(filter)
 	for _, item := range items {
 		if filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: item.FolderTitle, filters.DashFilter: item.Slug}) {
-			_, err := s.GetClient().Dashboards.DeleteDashboardByUID(item.UID)
+			err := s.deleteDashboard(item)
 			if err == nil {
 				dashboardListing = append(dashboardListing, item.Title)
 			} else {

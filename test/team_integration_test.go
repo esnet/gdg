@@ -14,9 +14,6 @@ import (
 )
 
 func TestTeamCRUD(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
 	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}

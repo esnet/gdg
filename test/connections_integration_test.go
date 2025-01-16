@@ -141,9 +141,6 @@ func TestConnectionsCRUD(t *testing.T) {
 
 // TestConnectionFilter ensures the regex matching and datasource type filters work as expected
 func TestConnectionFilter(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
 	_, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer func() {
 		cleanErr := cleanup()
