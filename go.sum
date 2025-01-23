@@ -339,6 +339,8 @@ github.com/grafana/gomemcache v0.0.0-20241016125027-0a5bcc5aef40 h1:1TeKhyS+pvzO
 github.com/grafana/gomemcache v0.0.0-20241016125027-0a5bcc5aef40/go.mod h1:IGRj8oOoxwJbHBYl1+OhS9UjQR0dv6SQOep7HqmtyFU=
 github.com/grafana/grafana-openapi-client-go v0.0.0-20240826142251-d1c93bae4198 h1:JEoUdaKnBdZ57YsWiDeAERYu52W4c7g7eAAxY2PpWl8=
 github.com/grafana/grafana-openapi-client-go v0.0.0-20240826142251-d1c93bae4198/go.mod h1:hiZnMmXc9KXNUlvkV2BKFsiWuIFF/fF4wGgYWEjBitI=
+github.com/grafana/grafana-openapi-client-go v0.0.0-20250108132429-8d7e1f158f65 h1:AnfwjPE8TXJO8CX0Q5PvtzGta9Ls3iRASWVV4jHl4KA=
+github.com/grafana/grafana-openapi-client-go v0.0.0-20250108132429-8d7e1f158f65/go.mod h1:hiZnMmXc9KXNUlvkV2BKFsiWuIFF/fF4wGgYWEjBitI=
 github.com/grafana/jsonparser v0.0.0-20241004153430-023329977675 h1:U94jQ2TQr1m3HNyE8efSdyaBbDrdPaWImXyenuKZ/nw=
 github.com/grafana/jsonparser v0.0.0-20241004153430-023329977675/go.mod h1:796sq+UcONnSlzA3RtlBZ+b/hrerkZXiEmO8oMjyRwY=
 github.com/grafana/loki/pkg/push v0.0.0-20241017144940-311797442f0a h1:FqMzx/Gw5jTFhdAmuXfsiJg4Th8AWgm9AxLA153+2OQ=

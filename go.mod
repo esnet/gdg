@@ -16,7 +16,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.14.0
 	github.com/grafana/dashboard-linter v0.0.0-20241017155901-a9d6c25b7bd3
-	github.com/grafana/grafana-openapi-client-go v0.0.0-20240826142251-d1c93bae4198
+	github.com/grafana/grafana-openapi-client-go v0.0.0-20250108132429-8d7e1f158f65
 	github.com/jedib0t/go-pretty/v6 v6.6.5
 	github.com/joho/godotenv v1.5.1
 	github.com/lmittmann/tint v1.0.5
