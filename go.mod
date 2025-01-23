@@ -19,7 +19,7 @@ require (
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20240826142251-d1c93bae4198
 	github.com/jedib0t/go-pretty/v6 v6.6.5
 	github.com/joho/godotenv v1.5.1
-	github.com/lmittmann/tint v1.0.5
+	github.com/lmittmann/tint v1.0.6
 	github.com/mattn/go-isatty v0.0.20
 	github.com/samber/lo v1.47.0
 	github.com/sethvargo/go-password v0.3.1
