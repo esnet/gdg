@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.66.0
 	github.com/aws/smithy-go v1.22.0
 	github.com/bep/simplecobra v0.4.0
-	github.com/carlmjohnson/requests v0.24.2
+	github.com/carlmjohnson/requests v0.24.3
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.14.0
