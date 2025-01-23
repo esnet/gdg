@@ -11,15 +11,15 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.74.0
 	github.com/aws/smithy-go v1.22.1
 	github.com/bep/simplecobra v0.4.0
-	github.com/carlmjohnson/requests v0.24.2
+	github.com/carlmjohnson/requests v0.24.3
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.14.0
 	github.com/grafana/dashboard-linter v0.0.0-20241017155901-a9d6c25b7bd3
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20240826142251-d1c93bae4198
-	github.com/jedib0t/go-pretty/v6 v6.6.0
+	github.com/jedib0t/go-pretty/v6 v6.6.5
 	github.com/joho/godotenv v1.5.1
-	github.com/lmittmann/tint v1.0.5
+	github.com/lmittmann/tint v1.0.6
 	github.com/mattn/go-isatty v0.0.20
 	github.com/samber/lo v1.47.0
 	github.com/sethvargo/go-password v0.3.1
