@@ -14,7 +14,7 @@ require (
 	github.com/carlmjohnson/requests v0.24.3
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/google/uuid v1.6.0
-	github.com/gosimple/slug v1.14.0
+	github.com/gosimple/slug v1.15.0
 	github.com/grafana/dashboard-linter v0.0.0-20241017155901-a9d6c25b7bd3
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20240826142251-d1c93bae4198
 	github.com/jedib0t/go-pretty/v6 v6.6.5
@@ -25,14 +25,14 @@ require (
 	github.com/sethvargo/go-password v0.3.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.33.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/pretty v1.2.1
 	github.com/zeitlinger/conflate v0.0.0-20240927101413-c06be92f798f
 	gocloud.dev v0.40.0
-	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
-	golang.org/x/mod v0.21.0
+	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8
+	golang.org/x/mod v0.22.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -253,15 +253,15 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.7.0 // indirect
-	golang.org/x/tools v0.26.0 // indirect
+	golang.org/x/tools v0.29.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/api v0.201.0 // indirect
 	google.golang.org/genproto v0.0.0-20241015192408-796eee8c2d53 // indirect
