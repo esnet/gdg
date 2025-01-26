@@ -27,15 +27,16 @@
   "dependencies": {
     "@hyas/doks-core": "^1.6.1",
     "@hyas/images": "^3.2.0",
-    "@hyas/inline-svg": "^1.0.5",
+    "@hyas/inline-svg": "^1.1.0",
     "@hyas/seo": "^2.3.0",
-    "@tabler/icons": "^2.40.0",
+    "@tabler/icons": "^3.29.0",
     "autoprefixer": "^10.4.20",
     "cross-spawn": "^7.0.6",
     "exec-bin": "^1.0.0",
     "gethyas": "^2.4.2",
     "hugo-installer": "^4.0.1",
     "nanoid": "^5.0.9",
+    "pnpm": "^9.15.4",
     "postcss": "^8.5.1",
     "postcss-cli": "^11.0.0"
   },
