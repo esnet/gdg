@@ -14,6 +14,7 @@ import (
 	"github.com/samber/lo"
 )
 
+// TODO: create a method to simply delete a service account.
 func (s *DashNGoImpl) CreateServiceAccount(name, role string, expiration int64) (*models.ServiceAccountDTO, error) {
 	p := service_accounts.NewCreateServiceAccountParams()
 	p.Body = &models.CreateServiceAccountForm{
@@ -80,12 +81,17 @@ func (s *DashNGoImpl) ListServiceAccountsTokens(id int64) ([]*models.TokenDTO, e
 	return response.GetPayload(), nil
 }
 
+func (s *DashNGoImpl) DeleteServiceAccount(accountId int64) error {
+	_, err := s.GetClient().ServiceAccounts.DeleteServiceAccount(accountId)
+	return err
+}
+
 func (s *DashNGoImpl) DeleteAllServiceAccounts() []string {
 	var accountNames []string
 	accounts := s.ListServiceAccounts()
 	for _, account := range accounts {
 		accountId := account.ServiceAccount.ID
-		_, err := s.GetClient().ServiceAccounts.DeleteServiceAccount(accountId)
+		err := s.DeleteServiceAccount(accountId)
 		if err != nil {
 			slog.Warn("Failed to delete service account", "ServiceAccountId", accountId)
 		} else {

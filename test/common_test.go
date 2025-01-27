@@ -4,6 +4,9 @@ import (
 	"log/slog"
 	"os"
 	"testing"
+	"time"
+
+	"github.com/brianvoe/gofakeit/v6"
 
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -16,6 +19,7 @@ const (
 )
 
 func TestMain(m *testing.M) {
+	gofakeit.Seed(time.Now().Unix()) // If 0 will use crypto/rand to generate a number
 	err := path.FixTestDir("test", "..")
 	if err != nil {
 		panic(err)

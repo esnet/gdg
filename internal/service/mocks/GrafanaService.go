@@ -177,66 +177,6 @@ func (_c *GrafanaService_ClearDashboardPermissions_Call) RunAndReturn(run func(f
 	return _c
 }
 
-// CreateAPIKey provides a mock function with given fields: name, role, expiration
-func (_m *GrafanaService) CreateAPIKey(name string, role string, expiration int64) (*models.NewAPIKeyResult, error) {
-	ret := _m.Called(name, role, expiration)
-
-	if len(ret) == 0 {
-		panic("no return value specified for CreateAPIKey")
-	}
-
-	var r0 *models.NewAPIKeyResult
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string, int64) (*models.NewAPIKeyResult, error)); ok {
-		return rf(name, role, expiration)
-	}
-	if rf, ok := ret.Get(0).(func(string, string, int64) *models.NewAPIKeyResult); ok {
-		r0 = rf(name, role, expiration)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.NewAPIKeyResult)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(string, string, int64) error); ok {
-		r1 = rf(name, role, expiration)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// GrafanaService_CreateAPIKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateAPIKey'
-type GrafanaService_CreateAPIKey_Call struct {
-	*mock.Call
-}
-
-// CreateAPIKey is a helper method to define mock.On call
-//   - name string
-//   - role string
-//   - expiration int64
-func (_e *GrafanaService_Expecter) CreateAPIKey(name interface{}, role interface{}, expiration interface{}) *GrafanaService_CreateAPIKey_Call {
-	return &GrafanaService_CreateAPIKey_Call{Call: _e.mock.On("CreateAPIKey", name, role, expiration)}
-}
-
-func (_c *GrafanaService_CreateAPIKey_Call) Run(run func(name string, role string, expiration int64)) *GrafanaService_CreateAPIKey_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(string), args[2].(int64))
-	})
-	return _c
-}
-
-func (_c *GrafanaService_CreateAPIKey_Call) Return(_a0 *models.NewAPIKeyResult, _a1 error) *GrafanaService_CreateAPIKey_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *GrafanaService_CreateAPIKey_Call) RunAndReturn(run func(string, string, int64) (*models.NewAPIKeyResult, error)) *GrafanaService_CreateAPIKey_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // CreateServiceAccount provides a mock function with given fields: name, role, expiration
 func (_m *GrafanaService) CreateServiceAccount(name string, role string, expiration int64) (*models.ServiceAccountDTO, error) {
 	ret := _m.Called(name, role, expiration)
@@ -297,9 +237,9 @@ func (_c *GrafanaService_CreateServiceAccount_Call) RunAndReturn(run func(string
 	return _c
 }
 
-// CreateServiceAccountToken provides a mock function with given fields: name, role, expiration
-func (_m *GrafanaService) CreateServiceAccountToken(name int64, role string, expiration int64) (*models.NewAPIKeyResult, error) {
-	ret := _m.Called(name, role, expiration)
+// CreateServiceAccountToken provides a mock function with given fields: serviceAccountId, role, expiration
+func (_m *GrafanaService) CreateServiceAccountToken(serviceAccountId int64, role string, expiration int64) (*models.NewAPIKeyResult, error) {
+	ret := _m.Called(serviceAccountId, role, expiration)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateServiceAccountToken")
@@ -308,10 +248,10 @@ func (_m *GrafanaService) CreateServiceAccountToken(name int64, role string, exp
 	var r0 *models.NewAPIKeyResult
 	var r1 error
 	if rf, ok := ret.Get(0).(func(int64, string, int64) (*models.NewAPIKeyResult, error)); ok {
-		return rf(name, role, expiration)
+		return rf(serviceAccountId, role, expiration)
 	}
 	if rf, ok := ret.Get(0).(func(int64, string, int64) *models.NewAPIKeyResult); ok {
-		r0 = rf(name, role, expiration)
+		r0 = rf(serviceAccountId, role, expiration)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.NewAPIKeyResult)
@@ -319,7 +259,7 @@ func (_m *GrafanaService) CreateServiceAccountToken(name int64, role string, exp
 	}
 
 	if rf, ok := ret.Get(1).(func(int64, string, int64) error); ok {
-		r1 = rf(name, role, expiration)
+		r1 = rf(serviceAccountId, role, expiration)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -333,14 +273,14 @@ type GrafanaService_CreateServiceAccountToken_Call struct {
 }
 
 // CreateServiceAccountToken is a helper method to define mock.On call
-//   - name int64
+//   - serviceAccountId int64
 //   - role string
 //   - expiration int64
-func (_e *GrafanaService_Expecter) CreateServiceAccountToken(name interface{}, role interface{}, expiration interface{}) *GrafanaService_CreateServiceAccountToken_Call {
-	return &GrafanaService_CreateServiceAccountToken_Call{Call: _e.mock.On("CreateServiceAccountToken", name, role, expiration)}
+func (_e *GrafanaService_Expecter) CreateServiceAccountToken(serviceAccountId interface{}, role interface{}, expiration interface{}) *GrafanaService_CreateServiceAccountToken_Call {
+	return &GrafanaService_CreateServiceAccountToken_Call{Call: _e.mock.On("CreateServiceAccountToken", serviceAccountId, role, expiration)}
 }
 
-func (_c *GrafanaService_CreateServiceAccountToken_Call) Run(run func(name int64, role string, expiration int64)) *GrafanaService_CreateServiceAccountToken_Call {
+func (_c *GrafanaService_CreateServiceAccountToken_Call) Run(run func(serviceAccountId int64, role string, expiration int64)) *GrafanaService_CreateServiceAccountToken_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(int64), args[1].(string), args[2].(int64))
 	})
@@ -644,53 +584,6 @@ func (_c *GrafanaService_DeleteAllServiceAccounts_Call) RunAndReturn(run func() 
 	return _c
 }
 
-// DeleteAllTokens provides a mock function with given fields:
-func (_m *GrafanaService) DeleteAllTokens() []string {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for DeleteAllTokens")
-	}
-
-	var r0 []string
-	if rf, ok := ret.Get(0).(func() []string); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-
-	return r0
-}
-
-// GrafanaService_DeleteAllTokens_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteAllTokens'
-type GrafanaService_DeleteAllTokens_Call struct {
-	*mock.Call
-}
-
-// DeleteAllTokens is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) DeleteAllTokens() *GrafanaService_DeleteAllTokens_Call {
-	return &GrafanaService_DeleteAllTokens_Call{Call: _e.mock.On("DeleteAllTokens")}
-}
-
-func (_c *GrafanaService_DeleteAllTokens_Call) Run(run func()) *GrafanaService_DeleteAllTokens_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *GrafanaService_DeleteAllTokens_Call) Return(_a0 []string) *GrafanaService_DeleteAllTokens_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *GrafanaService_DeleteAllTokens_Call) RunAndReturn(run func() []string) *GrafanaService_DeleteAllTokens_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // DeleteAllUsers provides a mock function with given fields: filter
 func (_m *GrafanaService) DeleteAllUsers(filter filters.Filter) []string {
 	ret := _m.Called(filter)
@@ -735,6 +628,52 @@ func (_c *GrafanaService_DeleteAllUsers_Call) Return(_a0 []string) *GrafanaServi
 }
 
 func (_c *GrafanaService_DeleteAllUsers_Call) RunAndReturn(run func(filters.Filter) []string) *GrafanaService_DeleteAllUsers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DeleteServiceAccount provides a mock function with given fields: accountId
+func (_m *GrafanaService) DeleteServiceAccount(accountId int64) error {
+	ret := _m.Called(accountId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteServiceAccount")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int64) error); ok {
+		r0 = rf(accountId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GrafanaService_DeleteServiceAccount_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteServiceAccount'
+type GrafanaService_DeleteServiceAccount_Call struct {
+	*mock.Call
+}
+
+// DeleteServiceAccount is a helper method to define mock.On call
+//   - accountId int64
+func (_e *GrafanaService_Expecter) DeleteServiceAccount(accountId interface{}) *GrafanaService_DeleteServiceAccount_Call {
+	return &GrafanaService_DeleteServiceAccount_Call{Call: _e.mock.On("DeleteServiceAccount", accountId)}
+}
+
+func (_c *GrafanaService_DeleteServiceAccount_Call) Run(run func(accountId int64)) *GrafanaService_DeleteServiceAccount_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(int64))
+	})
+	return _c
+}
+
+func (_c *GrafanaService_DeleteServiceAccount_Call) Return(_a0 error) *GrafanaService_DeleteServiceAccount_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *GrafanaService_DeleteServiceAccount_Call) RunAndReturn(run func(int64) error) *GrafanaService_DeleteServiceAccount_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1814,53 +1753,6 @@ func (_c *GrafanaService_LintDashboards_Call) Return(_a0 []string) *GrafanaServi
 }
 
 func (_c *GrafanaService_LintDashboards_Call) RunAndReturn(run func(types.LintRequest) []string) *GrafanaService_LintDashboards_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// ListAPIKeys provides a mock function with given fields:
-func (_m *GrafanaService) ListAPIKeys() []*models.APIKeyDTO {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for ListAPIKeys")
-	}
-
-	var r0 []*models.APIKeyDTO
-	if rf, ok := ret.Get(0).(func() []*models.APIKeyDTO); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.APIKeyDTO)
-		}
-	}
-
-	return r0
-}
-
-// GrafanaService_ListAPIKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListAPIKeys'
-type GrafanaService_ListAPIKeys_Call struct {
-	*mock.Call
-}
-
-// ListAPIKeys is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) ListAPIKeys() *GrafanaService_ListAPIKeys_Call {
-	return &GrafanaService_ListAPIKeys_Call{Call: _e.mock.On("ListAPIKeys")}
-}
-
-func (_c *GrafanaService_ListAPIKeys_Call) Run(run func()) *GrafanaService_ListAPIKeys_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *GrafanaService_ListAPIKeys_Call) Return(_a0 []*models.APIKeyDTO) *GrafanaService_ListAPIKeys_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *GrafanaService_ListAPIKeys_Call) RunAndReturn(run func() []*models.APIKeyDTO) *GrafanaService_ListAPIKeys_Call {
 	_c.Call.Return(run)
 	return _c
 }

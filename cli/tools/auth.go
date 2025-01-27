@@ -13,7 +13,7 @@ func newAuthCmd() simplecobra.Commander {
 		NameP:        "auth",
 		Short:        description,
 		Long:         description,
-		CommandsList: []simplecobra.Commander{newTokensCmd(), newServiceAccountCmd()},
+		CommandsList: []simplecobra.Commander{newServiceAccountCmd()},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},

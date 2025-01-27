@@ -16,53 +16,23 @@ There are two sub commands for auth, service-accounts and tokens (will be deprec
 
 #### Token Management
 
+No longer supported, Deprecated in v0.7.3 as it's been removed from the official grafana API.
 
-```sh
-./bin/gdg tools auth tokens list -- list current tokens (No access to the actual token secret)
-./bin/gdg tools auth tokens new --  Create a new token.  new <name> <role> [ttl in seconds, forever otherwise]
-./bin/gdg tools auth tokens clear -- Deletes all tokens
-```
-
-{{< details "Token Listing" >}}
-```
-┌────┬─────────┬───────┬───────────────┐
-│ ID │ NAME    │ ROLE  │ EXPIRATION    │
-├────┼─────────┼───────┼───────────────┤
-│  1 │ testing │ Admin │ No Expiration │
-└────┴─────────┴───────┴───────────────┘
-```
-{{< /details >}}
-
-Example of creating a new token.
-
-```sh
-./bin/gdg auth tokens new foobar Admin 3600
-```
-
-{{< details "New Token" >}}
-
-┌────┬────────┬─────────────────────────────────────────────────────────────┐
-│ ID │ NAME   │ TOKEN                                                       │
-├────┼────────┼─────────────────────────────────────────────────────────────┤
-│  2 │ foobar │ eyJrIjoiNzU2WVhiMEZpVWNlV3hWSUVZQTuIjoiZm9vYmFyIiwiaWQiOjF9 │
-└────┴────────┴─────────────────────────────────────────────────────────────┘
-
-{{< /details >}}
-
+Please see below on how to add a token to a service account.
 
 #### Service Accounts
 
 
 ```sh
 ./bin/gdg tools auth svc  clear       delete all Service Accounts
-./bin/gdg tools auth svc  clearTokens delete all tokens for Service Account
+./bin/gdg tools auth svc  delete      delete the given service account from grafana
 ./bin/gdg tools auth svc  list        list API Keys
-./bin/gdg tools auth svc  newService  newService <serviceName> <role> [ttl in seconds]
-./bin/gdg tools auth svc  newToken    newToken <serviceAccountID> <name> [ttl in seconds]
+./bin/gdg tools auth svc  new newService <serviceName> <role> [ttl in seconds]
 ```
 
+
 ```sh
-./bin/gdg tools auth svc newService AwesomeSauceSvc admin
+./bin/gdg tools auth svc new AwesomeSauceSvc admin
 ```
 
 {{< details "New Service" >}}
@@ -100,6 +70,29 @@ Example of creating a new token.
 │    │                 │       │        │        3 │ AwesomeToken │ No Expiration │
 └────┴─────────────────┴───────┴────────┴──────────┴──────────────┴───────────────┘
 {{< /details >}}
+
+
+```sh
+./bin/gdg tools auth service-accounts delete 4
+```
+
+```sh
+2025-01-26 16:54:00 INF Deleting Service Accounts for context context=testing serviceAccountId=4
+2025-01-26 16:54:00 INF Service account has been removed serviceAccountId=4
+```
+
+#### Service Account Tokens
+
+```sh
+./bin/gdg tools auth svc tokens new <serviceAccountID> <name> [ttl in seconds]
+./bin/gdg tools auth svc tokens clear <serviceAccountID>
+```
+
+Examples:
+```sh
+./bin/gdg tools auth svc tokens new 4 myToken 0
+./bin/gdg tools auth svc tokens clear 4
+```
 
 ### Dashboard Linter
 
