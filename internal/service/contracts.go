@@ -144,7 +144,7 @@ type ServiceAccountApi interface {
 	DeleteServiceAccount(accountId int64) error
 	DeleteAllServiceAccounts() []string
 	DeleteServiceAccountTokens(serviceId int64) []string
-	CreateServiceAccountToken(serviceAccountId int64, role string, expiration int64) (*models.NewAPIKeyResult, error)
+	CreateServiceAccountToken(serviceAccountId int64, name string, expiration int64) (*models.NewAPIKeyResult, error)
 	CreateServiceAccount(name, role string, expiration int64) (*models.ServiceAccountDTO, error)
 }
 
