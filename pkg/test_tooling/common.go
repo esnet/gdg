@@ -61,9 +61,11 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 	}
 
 	// Setup Token Auth
-	apiClient.DeleteAllTokens() // Remove any old data
-	tokenName, _ := uuid.NewUUID()
-	newKey, err := apiClient.CreateAPIKey(tokenName.String(), "admin", 0)
+	apiClient.DeleteAllServiceAccounts()
+	serviceName, _ := uuid.NewUUID()
+	serviceAccnt, err := apiClient.CreateServiceAccount(serviceName.String(), "admin", 0)
+	assert.NoError(t, err, "Unable to create test service account")
+	newKey, err := apiClient.CreateServiceAccountToken(serviceAccnt.ID, "admin", 0)
 	assert.Nil(t, err)
 
 	cfg := cfgProvider()
@@ -109,13 +111,12 @@ func InitTestLegacy(t *testing.T, cfgName *string, envProp map[string]string) (s
 	err = yaml.Unmarshal(testData, &data)
 	assert.Nil(t, err)
 
-	apiClient.DeleteAllTokens() // Remove any old data
-	tokenName, _ := uuid.NewUUID()
-	newKey, err := apiClient.CreateAPIKey(tokenName.String(), "admin", 0)
+	apiClient.DeleteAllServiceAccounts()
+	serviceName, _ := uuid.NewUUID()
+	serviceAccnt, err := apiClient.CreateServiceAccount(serviceName.String(), "admin", 0)
+	assert.NoError(t, err, "Unable to create test service account")
+	newKey, err := apiClient.CreateServiceAccountToken(serviceAccnt.ID, "admin", 0)
 	assert.Nil(t, err)
-
-	wrapper := map[string]*config.GrafanaConfig{}
-	_ = wrapper
 
 	level1 := data["contexts"].(map[string]interface{})
 	level2 := level1["testing"].(map[string]interface{})
