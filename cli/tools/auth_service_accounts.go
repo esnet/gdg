@@ -25,11 +25,11 @@ func newServiceAccountCmd() simplecobra.Commander {
 		Short: description,
 		Long:  description,
 		CommandsList: []simplecobra.Commander{
+			newServiceAccountTokensCmd(),
 			newListServiceAccountCmd(),
-			newDeleteServiceAccountCmd(),
-			newDeleteServiceAccountTokensCmd(),
+			newClearServiceAccountsCmd(),
+			newDeleteServiceAccountsCmd(),
 			newServiceAccount(),
-			newServiceAccountTokenCmd(),
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
@@ -81,10 +81,10 @@ func newListServiceAccountCmd() simplecobra.Commander {
 	}
 }
 
-func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
-	description := "delete all tokens for Service Account from grafana"
+func newDeleteServiceAccountsCmd() simplecobra.Commander {
+	description := "delete the given service account from grafana"
 	return &support.SimpleCommand{
-		NameP:        "clearTokens",
+		NameP:        "delete",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
@@ -98,25 +98,21 @@ func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
 				log.Fatalf("unable to parse %s as a valid numeric value", idStr)
 			}
 
-			slog.Info("Deleting Service Accounts Tokens for context",
-				"serviceAccountId", id,
-				"context", config.Config().GetGDGConfig().GetContext())
-			savedFiles := rootCmd.GrafanaSvc().DeleteServiceAccountTokens(id)
-			rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "type", "token_name"})
-			if len(savedFiles) == 0 {
-				slog.Info("No Service Accounts tokens found")
+			slog.Info("Deleting Service Accounts for context", "context", config.Config().GetGDGConfig().GetContext(),
+				"serviceAccountId", id)
+			err = rootCmd.GrafanaSvc().DeleteServiceAccount(id)
+			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
+			if err != nil {
+				slog.Info("Unable to delete service account", "err", err.Error())
 			} else {
-				for _, token := range savedFiles {
-					rootCmd.TableObj.AppendRow(table.Row{id, "service token", token})
-				}
-				rootCmd.Render(cd.CobraCommand, savedFiles)
+				slog.Info("Service account has been removed", "serviceAccountId", id)
 			}
 			return nil
 		},
 	}
 }
 
-func newDeleteServiceAccountCmd() simplecobra.Commander {
+func newClearServiceAccountsCmd() simplecobra.Commander {
 	description := "delete all Service Accounts from grafana"
 	return &support.SimpleCommand{
 		NameP:        "clear",
@@ -141,9 +137,9 @@ func newDeleteServiceAccountCmd() simplecobra.Commander {
 }
 
 func newServiceAccount() simplecobra.Commander {
-	description := "newService <serviceName> <role> [ttl in seconds]"
+	description := "new <serviceName> <role> [ttl in seconds]"
 	return &support.SimpleCommand{
-		NameP:        "newService",
+		NameP:        "new",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
@@ -180,58 +176,6 @@ func newServiceAccount() simplecobra.Commander {
 				rootCmd.Render(cd.CobraCommand,
 					map[string]interface{}{"id": serviceAcct.ID, "name": serviceAcct.Name, "role": serviceAcct.Role})
 			}
-			return nil
-		},
-	}
-}
-
-func newServiceAccountTokenCmd() simplecobra.Commander {
-	description := "newToken <serviceAccountID> <name> [ttl in seconds]"
-	return &support.SimpleCommand{
-		NameP:        "newToken",
-		Short:        description,
-		Long:         description,
-		CommandsList: []simplecobra.Commander{newTokensCmd()},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			if len(args) < 2 {
-				return errors.New("requires a service-account ID and token name [ttl optional] ")
-			}
-			serviceIDRaw := args[0]
-			name := args[1]
-			ttl := "0"
-			if len(args) > 2 {
-				ttl = args[2]
-			}
-			var (
-				expiration int64
-				err        error
-			)
-
-			serviceID, err := strconv.ParseInt(serviceIDRaw, 10, 64)
-			if err != nil {
-				log.Fatal("unable to parse serviceID, make sure it's a numeric value")
-			}
-			expiration, err = strconv.ParseInt(ttl, 10, 64)
-			if err != nil {
-				expiration = 0
-			}
-
-			key, err := rootCmd.GrafanaSvc().CreateServiceAccountToken(serviceID, name, expiration)
-			if err != nil {
-				log.Fatal("unable to create api key", "err", err)
-			} else {
-
-				rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "token_id", "name", "token"})
-				rootCmd.TableObj.AppendRow(table.Row{serviceID, key.ID, key.Name, key.Key})
-				rootCmd.Render(cd.CobraCommand,
-					map[string]interface{}{
-						"serviceID": serviceID,
-						"token_id":  key.ID,
-						"name":      key.Name,
-						"token":     key.Key,
-					})
-			}
-
 			return nil
 		},
 	}
