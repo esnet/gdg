@@ -82,9 +82,9 @@ func (_c *ServiceAccountApi_CreateServiceAccount_Call) RunAndReturn(run func(str
 	return _c
 }
 
-// CreateServiceAccountToken provides a mock function with given fields: name, role, expiration
-func (_m *ServiceAccountApi) CreateServiceAccountToken(name int64, role string, expiration int64) (*models.NewAPIKeyResult, error) {
-	ret := _m.Called(name, role, expiration)
+// CreateServiceAccountToken provides a mock function with given fields: serviceAccountId, role, expiration
+func (_m *ServiceAccountApi) CreateServiceAccountToken(serviceAccountId int64, role string, expiration int64) (*models.NewAPIKeyResult, error) {
+	ret := _m.Called(serviceAccountId, role, expiration)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateServiceAccountToken")
@@ -93,10 +93,10 @@ func (_m *ServiceAccountApi) CreateServiceAccountToken(name int64, role string, 
 	var r0 *models.NewAPIKeyResult
 	var r1 error
 	if rf, ok := ret.Get(0).(func(int64, string, int64) (*models.NewAPIKeyResult, error)); ok {
-		return rf(name, role, expiration)
+		return rf(serviceAccountId, role, expiration)
 	}
 	if rf, ok := ret.Get(0).(func(int64, string, int64) *models.NewAPIKeyResult); ok {
-		r0 = rf(name, role, expiration)
+		r0 = rf(serviceAccountId, role, expiration)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.NewAPIKeyResult)
@@ -104,7 +104,7 @@ func (_m *ServiceAccountApi) CreateServiceAccountToken(name int64, role string, 
 	}
 
 	if rf, ok := ret.Get(1).(func(int64, string, int64) error); ok {
-		r1 = rf(name, role, expiration)
+		r1 = rf(serviceAccountId, role, expiration)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -118,14 +118,14 @@ type ServiceAccountApi_CreateServiceAccountToken_Call struct {
 }
 
 // CreateServiceAccountToken is a helper method to define mock.On call
-//   - name int64
+//   - serviceAccountId int64
 //   - role string
 //   - expiration int64
-func (_e *ServiceAccountApi_Expecter) CreateServiceAccountToken(name interface{}, role interface{}, expiration interface{}) *ServiceAccountApi_CreateServiceAccountToken_Call {
-	return &ServiceAccountApi_CreateServiceAccountToken_Call{Call: _e.mock.On("CreateServiceAccountToken", name, role, expiration)}
+func (_e *ServiceAccountApi_Expecter) CreateServiceAccountToken(serviceAccountId interface{}, role interface{}, expiration interface{}) *ServiceAccountApi_CreateServiceAccountToken_Call {
+	return &ServiceAccountApi_CreateServiceAccountToken_Call{Call: _e.mock.On("CreateServiceAccountToken", serviceAccountId, role, expiration)}
 }
 
-func (_c *ServiceAccountApi_CreateServiceAccountToken_Call) Run(run func(name int64, role string, expiration int64)) *ServiceAccountApi_CreateServiceAccountToken_Call {
+func (_c *ServiceAccountApi_CreateServiceAccountToken_Call) Run(run func(serviceAccountId int64, role string, expiration int64)) *ServiceAccountApi_CreateServiceAccountToken_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(int64), args[1].(string), args[2].(int64))
 	})
@@ -185,6 +185,52 @@ func (_c *ServiceAccountApi_DeleteAllServiceAccounts_Call) Return(_a0 []string) 
 }
 
 func (_c *ServiceAccountApi_DeleteAllServiceAccounts_Call) RunAndReturn(run func() []string) *ServiceAccountApi_DeleteAllServiceAccounts_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DeleteServiceAccount provides a mock function with given fields: accountId
+func (_m *ServiceAccountApi) DeleteServiceAccount(accountId int64) error {
+	ret := _m.Called(accountId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteServiceAccount")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int64) error); ok {
+		r0 = rf(accountId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// ServiceAccountApi_DeleteServiceAccount_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteServiceAccount'
+type ServiceAccountApi_DeleteServiceAccount_Call struct {
+	*mock.Call
+}
+
+// DeleteServiceAccount is a helper method to define mock.On call
+//   - accountId int64
+func (_e *ServiceAccountApi_Expecter) DeleteServiceAccount(accountId interface{}) *ServiceAccountApi_DeleteServiceAccount_Call {
+	return &ServiceAccountApi_DeleteServiceAccount_Call{Call: _e.mock.On("DeleteServiceAccount", accountId)}
+}
+
+func (_c *ServiceAccountApi_DeleteServiceAccount_Call) Run(run func(accountId int64)) *ServiceAccountApi_DeleteServiceAccount_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(int64))
+	})
+	return _c
+}
+
+func (_c *ServiceAccountApi_DeleteServiceAccount_Call) Return(_a0 error) *ServiceAccountApi_DeleteServiceAccount_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *ServiceAccountApi_DeleteServiceAccount_Call) RunAndReturn(run func(int64) error) *ServiceAccountApi_DeleteServiceAccount_Call {
 	_c.Call.Return(run)
 	return _c
 }
