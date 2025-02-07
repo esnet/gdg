@@ -33,7 +33,7 @@ require (
 	github.com/tidwall/pretty v1.2.1
 	github.com/zeitlinger/conflate v0.0.0-20240927101413-c06be92f798f
 	gocloud.dev v0.40.0
-	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8
+	golang.org/x/exp v0.0.0-20250207012021-f9890c6ad9f3
 	golang.org/x/mod v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 )
