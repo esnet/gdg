@@ -10,8 +10,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.59
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.76.0
 	github.com/aws/smithy-go v1.22.2
-	github.com/bep/simplecobra v0.4.0
+	github.com/bep/simplecobra v0.5.0
 	github.com/brianvoe/gofakeit/v6 v6.28.0
+	github.com/brianvoe/gofakeit/v7 v7.2.1
 	github.com/carlmjohnson/requests v0.24.3
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/google/uuid v1.6.0
@@ -20,7 +21,7 @@ require (
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20250108132429-8d7e1f158f65
 	github.com/jedib0t/go-pretty/v6 v6.6.5
 	github.com/joho/godotenv v1.5.1
-	github.com/lmittmann/tint v1.0.6
+	github.com/lmittmann/tint v1.0.7
 	github.com/mattn/go-isatty v0.0.20
 	github.com/samber/lo v1.49.1
 	github.com/sethvargo/go-password v0.3.1
@@ -32,8 +33,8 @@ require (
 	github.com/tidwall/pretty v1.2.1
 	github.com/zeitlinger/conflate v0.0.0-20240927101413-c06be92f798f
 	gocloud.dev v0.40.0
-	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8
-	golang.org/x/mod v0.22.0
+	golang.org/x/exp v0.0.0-20250207012021-f9890c6ad9f3
+	golang.org/x/mod v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
