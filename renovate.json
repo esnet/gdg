@@ -6,7 +6,6 @@
     "docker-compose:enableMajor"
   ],
   "enabledManagers": ["gomod", "dockerfile", "docker-compose", "npm"],
-  "ignorePostUpdateFailure": true,
   "ignoreDeps": ["^golang.org/x/"],
   "postUpdateOptions": ["gomodTidy"],
   "labels": ["dependencies", "go", "docker", "javascript"],
