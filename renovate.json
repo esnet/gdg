@@ -3,9 +3,8 @@
 	"extends": [
 		"config:recommended",
 		"docker:enableMajor",
-		"docker-compose:enableMajor"
 	],
-	"enabledManagers": ["gomod", "dockerfile", "docker-compose", "npm"],
+	"enabledManagers": ["gomod", "dockerfile", "npm"],
 	"ignoreDeps": ["^golang.org/x/"],
 	"postUpdateOptions": ["gomodTidy"],
 	"labels": ["dependencies", "go", "docker", "javascript"],
@@ -17,7 +16,7 @@
 			"automerge": false
 		},
 		{
-			"matchManagers": ["dockerfile", "docker-compose"],
+			"matchManagers": ["dockerfile"],
 			"matchUpdateTypes": ["major", "minor", "patch"],
 			"groupName": "docker dependencies",
 			"automerge": false
