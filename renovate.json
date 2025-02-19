@@ -1,38 +1,38 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    "docker:enableMajor",
-    "docker-compose:enableMajor"
-  ],
-  "enabledManagers": ["gomod", "dockerfile", "docker-compose", "npm"],
-  "ignoreDeps": ["^golang.org/x/"],
-  "postUpdateOptions": ["gomodTidy"],
-  "labels": ["dependencies", "go", "docker", "javascript"],
-  "packageRules": [
-    {
-      "matchLanguages": ["golang"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "golang dependencies",
-      "automerge": false
-    },
-    {
-      "matchManagers": ["dockerfile", "docker-compose"],
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "groupName": "docker dependencies",
-      "automerge": false
-    },
-    {
-      "matchLanguages": ["js"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "javascript dependencies",
-      "automerge": true
-    },
-    {
-      "matchDatasources": ["npm"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "npm dependencies",
-      "automerge": true
-    }
-  ]
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:recommended",
+		"docker:enableMajor",
+		"docker-compose:enableMajor"
+	],
+	"enabledManagers": ["gomod", "dockerfile", "docker-compose", "npm"],
+	"ignoreDeps": ["^golang.org/x/"],
+	"postUpdateOptions": ["gomodTidy"],
+	"labels": ["dependencies", "go", "docker", "javascript"],
+	"packageRules": [
+		{
+			"matchCategories": ["golang"],
+			"matchUpdateTypes": ["minor", "patch"],
+			"groupName": "golang dependencies",
+			"automerge": false
+		},
+		{
+			"matchManagers": ["dockerfile", "docker-compose"],
+			"matchUpdateTypes": ["major", "minor", "patch"],
+			"groupName": "docker dependencies",
+			"automerge": false
+		},
+		{
+			"matchCategories": ["js"],
+			"matchUpdateTypes": ["minor", "patch"],
+			"groupName": "javascript dependencies",
+			"automerge": true
+		},
+		{
+			"matchDatasources": ["npm"],
+			"matchUpdateTypes": ["minor", "patch"],
+			"groupName": "npm dependencies",
+			"automerge": true
+		}
+	]
 }
