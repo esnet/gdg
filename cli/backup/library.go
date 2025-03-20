@@ -158,7 +158,7 @@ func newLibraryElementsListConnectionsCmd() simplecobra.Commander {
 			elements := rootCmd.GrafanaSvc().ListLibraryElementsConnections(nil, libElmentUid)
 			slog.Info("Listing library connections for context", "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range elements {
-				dash := link.Dashboard.(map[string]interface{})
+				dash := link.Dashboard.(map[string]any)
 				rootCmd.TableObj.AppendRow(table.Row{dash["id"], dash["uid"], link.Meta.Slug, dash["title"], link.Meta.FolderTitle})
 			}
 			if len(elements) > 0 {

@@ -29,7 +29,7 @@ func NewTeamFilter(entries ...string) filters.Filter {
 	teamFilter := entries[0]
 
 	filterObj.AddFilter(filters.Name, teamFilter)
-	filterObj.AddValidation(filters.Name, func(i interface{}) bool {
+	filterObj.AddValidation(filters.Name, func(i any) bool {
 		switch val := i.(type) {
 		case string:
 			if filterObj.GetFilter(filters.Name) == "" {

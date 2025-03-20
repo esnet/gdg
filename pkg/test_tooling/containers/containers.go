@@ -109,7 +109,7 @@ func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageS
 	}
 
 	// retry a few times just in case.
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		container, cancelFn, err := retry()
 		if err == nil {
 			return container, cancelFn

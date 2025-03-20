@@ -19,3 +19,9 @@ runs:
     - name: Install GoTest
       run: go install gotest.tools/gotestsum@latest
       shell: bash
+    - name: Install Task
+      run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+      shell: bash
+    - name: Installing Go Tools
+      run: ./bin/task install_tools
+      shell: bash

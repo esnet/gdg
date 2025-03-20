@@ -36,11 +36,11 @@ func TestLibraryElementsCRUD(t *testing.T) {
 	}
 	assert.NotNil(t, otherBoard)
 	assert.NotNil(t, generalBoard)
-	validateLibraryElement(t, generalBoard, map[string]interface{}{
+	validateLibraryElement(t, generalBoard, map[string]any{
 		"Name": "Dashboard Makeover - Extra Cleaning Duty Assignment Today",
 		"Type": "table", "UID": "T47RSwQnz", "Kind": int64(1),
 	})
-	validateLibraryElement(t, otherBoard, map[string]interface{}{
+	validateLibraryElement(t, otherBoard, map[string]any{
 		"Name": "Extreme Dashboard Makeover - Mac Oven",
 		"Type": "stat", "UID": "VvzpJ5X7z", "Kind": int64(1),
 	})
@@ -59,8 +59,8 @@ func TestLibraryElementsCRUD(t *testing.T) {
 	assert.Equal(t, connection.Meta.FolderTitle, "Other")
 	assert.True(t, len(connection.Meta.FolderUID) > 0)
 	assert.Equal(t, connection.Meta.Slug, "dashboard-makeover-challenge")
-	assert.Equal(t, connection.Dashboard.(map[string]interface{})["uid"].(string), "F3eInwQ7z")
-	assert.Equal(t, connection.Dashboard.(map[string]interface{})["title"].(string), "Dashboard Makeover Challenge")
+	assert.Equal(t, connection.Dashboard.(map[string]any)["uid"].(string), "F3eInwQ7z")
+	assert.Equal(t, connection.Dashboard.(map[string]any)["title"].(string), "Dashboard Makeover Challenge")
 
 	// Delete All Dashboards
 	apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))
@@ -72,7 +72,7 @@ func TestLibraryElementsCRUD(t *testing.T) {
 	assert.Equal(t, len(boards), 0)
 }
 
-func validateLibraryElement(t *testing.T, board *models.LibraryElementDTO, data map[string]interface{}) {
+func validateLibraryElement(t *testing.T, board *models.LibraryElementDTO, data map[string]any) {
 	assert.Equal(t, board.Name, data["Name"].(string))
 	assert.Equal(t, board.Type, data["Type"].(string))
 	assert.Equal(t, board.UID, data["UID"].(string))

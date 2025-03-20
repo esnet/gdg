@@ -107,7 +107,7 @@ func newServiceAccountTokenCmd() simplecobra.Commander {
 				rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "token_id", "name", "token"})
 				rootCmd.TableObj.AppendRow(table.Row{serviceID, key.ID, key.Name, key.Key})
 				rootCmd.Render(cd.CobraCommand,
-					map[string]interface{}{
+					map[string]any{
 						"serviceID": serviceID,
 						"token_id":  key.ID,
 						"name":      key.Name,

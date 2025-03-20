@@ -55,7 +55,7 @@ func InRange(ranges []VersionRange, api GetVersion) bool {
 }
 
 type GetVersion interface {
-	GetServerInfo() map[string]interface{}
+	GetServerInfo() map[string]any
 }
 
 func ValidateMinimumVersion(minVersion string, api GetVersion) bool {
