@@ -12,7 +12,6 @@ require (
 	github.com/aws/smithy-go v1.22.2
 	github.com/bep/simplecobra v0.5.0
 	github.com/brianvoe/gofakeit/v6 v6.28.0
-	github.com/brianvoe/gofakeit/v7 v7.2.1
 	github.com/carlmjohnson/requests v0.24.3
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/google/uuid v1.6.0
@@ -255,8 +254,8 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
-	golang.org/x/crypto v0.32.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
 	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
