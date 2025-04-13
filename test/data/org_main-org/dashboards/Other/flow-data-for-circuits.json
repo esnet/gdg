@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 14,
+  "id": 30,
   "iteration": 1619186241736,
   "links": [],
   "panels": [
@@ -1367,5 +1367,5 @@
   "timezone": "",
   "title": "Flow Data for Circuits",
   "uid": "xk26IFhmk",
-  "version": 2
+  "version": 1
 }

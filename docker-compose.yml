@@ -8,11 +8,10 @@ services:
             - MINIO_ROOT_USER=test
             - MINIO_ROOT_PASSWORD=secretsss
     grafana:
-        image: grafana/grafana-enterprise:11.5.2-ubuntu
+        image: grafana/grafana-enterprise:11.6.0-ubuntu
         ports:
             - 3000:3000
         environment:
             - GF_INSTALL_PLUGINS=grafana-googlesheets-datasource
             - GF_ENTERPRISE_LICENSE_TEXT=${ENTERPRISE_LICENSE}
-#           - GF_FEATURE_TOGGLES_ENABLE=nestedFolders
 #           - GF_SECURITY_ADMIN_PASSWORD=secret

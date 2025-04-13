@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 21,
   "iteration": 1619117095095,
   "links": [],
   "panels": [
@@ -1843,5 +1843,5 @@
   "timezone": "",
   "title": "Bandwidth Patterns",
   "uid": "000000004",
-  "version": 2
+  "version": 1
 }

@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 5,
+  "id": 24,
   "iteration": 1599168756924,
   "links": [],
   "panels": [
@@ -878,5 +878,5 @@
   "timezone": "",
   "title": "Loss Patterns",
   "uid": "000000006",
-  "version": 2
+  "version": 1
 }

@@ -15,7 +15,7 @@
 	"name": "netsage",
 	"orgId": 1,
 	"type": "elasticsearch",
-	"typeLogoUrl": "/public/app/plugins/datasource/elasticsearch/img/elasticsearch.svg",
+	"typeLogoUrl": "public/app/plugins/datasource/elasticsearch/img/elasticsearch.svg",
 	"typeName": "Elasticsearch",
 	"uid": "rg9qPqP7z",
 	"url": "https://netsage-elk1.grnoc.iu.edu/esproxy2/"
