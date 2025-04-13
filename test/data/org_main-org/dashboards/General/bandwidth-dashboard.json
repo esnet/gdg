@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 20,
+  "id": 1,
   "iteration": 1618867139860,
   "links": [],
   "panels": [
@@ -12787,5 +12787,5 @@
   "timezone": "",
   "title": "Bandwidth Dashboard",
   "uid": "000000003",
-  "version": 1
+  "version": 2
 }

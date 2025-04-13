@@ -11,9 +11,9 @@ type Filter interface {
 	// FilterValid(key FilterType, value string) bool //true if filter match
 	AddFilter(key FilterType, value string) // Add a filter to match against for a given type
 
-	ValidateAll(interface{}) bool // ValidateAll if Entry is valid
-	InvokeValidation(FilterType, interface{}) bool
-	AddValidation(FilterType, func(interface{}) bool)
+	ValidateAll(any) bool // ValidateAll if Entry is valid
+	InvokeValidation(FilterType, any) bool
+	AddValidation(FilterType, func(any) bool)
 }
 
 // Adding an interface to avoid cyclic dependencies lines up to service.ServerInfoApi

@@ -174,7 +174,7 @@ func newServiceAccount() simplecobra.Commander {
 				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "role"})
 				rootCmd.TableObj.AppendRow(table.Row{serviceAcct.ID, serviceAcct.Name, serviceAcct.Role})
 				rootCmd.Render(cd.CobraCommand,
-					map[string]interface{}{"id": serviceAcct.ID, "name": serviceAcct.Name, "role": serviceAcct.Role})
+					map[string]any{"id": serviceAcct.ID, "name": serviceAcct.Name, "role": serviceAcct.Role})
 			}
 			return nil
 		},

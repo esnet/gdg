@@ -51,7 +51,7 @@ type OrganizationsApi_AddUserToOrg_Call struct {
 //   - role string
 //   - orgSlug string
 //   - userId int64
-func (_e *OrganizationsApi_Expecter) AddUserToOrg(role interface{}, orgSlug interface{}, userId interface{}) *OrganizationsApi_AddUserToOrg_Call {
+func (_e *OrganizationsApi_Expecter) AddUserToOrg(role any, orgSlug any, userId any) *OrganizationsApi_AddUserToOrg_Call {
 	return &OrganizationsApi_AddUserToOrg_Call{Call: _e.mock.On("AddUserToOrg", role, orgSlug, userId)}
 }
 
@@ -98,7 +98,7 @@ type OrganizationsApi_DeleteUserFromOrg_Call struct {
 // DeleteUserFromOrg is a helper method to define mock.On call
 //   - orgId string
 //   - userId int64
-func (_e *OrganizationsApi_Expecter) DeleteUserFromOrg(orgId interface{}, userId interface{}) *OrganizationsApi_DeleteUserFromOrg_Call {
+func (_e *OrganizationsApi_Expecter) DeleteUserFromOrg(orgId any, userId any) *OrganizationsApi_DeleteUserFromOrg_Call {
 	return &OrganizationsApi_DeleteUserFromOrg_Call{Call: _e.mock.On("DeleteUserFromOrg", orgId, userId)}
 }
 
@@ -146,7 +146,7 @@ type OrganizationsApi_DownloadOrganizations_Call struct {
 
 // DownloadOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *OrganizationsApi_Expecter) DownloadOrganizations(filter interface{}) *OrganizationsApi_DownloadOrganizations_Call {
+func (_e *OrganizationsApi_Expecter) DownloadOrganizations(filter any) *OrganizationsApi_DownloadOrganizations_Call {
 	return &OrganizationsApi_DownloadOrganizations_Call{Call: _e.mock.On("DownloadOrganizations", filter)}
 }
 
@@ -204,7 +204,7 @@ type OrganizationsApi_GetOrgPreferences_Call struct {
 
 // GetOrgPreferences is a helper method to define mock.On call
 //   - orgName string
-func (_e *OrganizationsApi_Expecter) GetOrgPreferences(orgName interface{}) *OrganizationsApi_GetOrgPreferences_Call {
+func (_e *OrganizationsApi_Expecter) GetOrgPreferences(orgName any) *OrganizationsApi_GetOrgPreferences_Call {
 	return &OrganizationsApi_GetOrgPreferences_Call{Call: _e.mock.On("GetOrgPreferences", orgName)}
 }
 
@@ -378,7 +378,7 @@ type OrganizationsApi_ListOrgUsers_Call struct {
 
 // ListOrgUsers is a helper method to define mock.On call
 //   - orgId int64
-func (_e *OrganizationsApi_Expecter) ListOrgUsers(orgId interface{}) *OrganizationsApi_ListOrgUsers_Call {
+func (_e *OrganizationsApi_Expecter) ListOrgUsers(orgId any) *OrganizationsApi_ListOrgUsers_Call {
 	return &OrganizationsApi_ListOrgUsers_Call{Call: _e.mock.On("ListOrgUsers", orgId)}
 }
 
@@ -427,7 +427,7 @@ type OrganizationsApi_ListOrganizations_Call struct {
 // ListOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
 //   - withPreferences bool
-func (_e *OrganizationsApi_Expecter) ListOrganizations(filter interface{}, withPreferences interface{}) *OrganizationsApi_ListOrganizations_Call {
+func (_e *OrganizationsApi_Expecter) ListOrganizations(filter any, withPreferences any) *OrganizationsApi_ListOrganizations_Call {
 	return &OrganizationsApi_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter, withPreferences)}
 }
 
@@ -531,7 +531,7 @@ type OrganizationsApi_SetOrganizationByName_Call struct {
 // SetOrganizationByName is a helper method to define mock.On call
 //   - name string
 //   - useSlug bool
-func (_e *OrganizationsApi_Expecter) SetOrganizationByName(name interface{}, useSlug interface{}) *OrganizationsApi_SetOrganizationByName_Call {
+func (_e *OrganizationsApi_Expecter) SetOrganizationByName(name any, useSlug any) *OrganizationsApi_SetOrganizationByName_Call {
 	return &OrganizationsApi_SetOrganizationByName_Call{Call: _e.mock.On("SetOrganizationByName", name, useSlug)}
 }
 
@@ -577,7 +577,7 @@ type OrganizationsApi_SetUserOrganizations_Call struct {
 
 // SetUserOrganizations is a helper method to define mock.On call
 //   - id int64
-func (_e *OrganizationsApi_Expecter) SetUserOrganizations(id interface{}) *OrganizationsApi_SetUserOrganizations_Call {
+func (_e *OrganizationsApi_Expecter) SetUserOrganizations(id any) *OrganizationsApi_SetUserOrganizations_Call {
 	return &OrganizationsApi_SetUserOrganizations_Call{Call: _e.mock.On("SetUserOrganizations", id)}
 }
 
@@ -625,7 +625,7 @@ type OrganizationsApi_UpdateUserInOrg_Call struct {
 //   - role string
 //   - orgSlug string
 //   - userId int64
-func (_e *OrganizationsApi_Expecter) UpdateUserInOrg(role interface{}, orgSlug interface{}, userId interface{}) *OrganizationsApi_UpdateUserInOrg_Call {
+func (_e *OrganizationsApi_Expecter) UpdateUserInOrg(role any, orgSlug any, userId any) *OrganizationsApi_UpdateUserInOrg_Call {
 	return &OrganizationsApi_UpdateUserInOrg_Call{Call: _e.mock.On("UpdateUserInOrg", role, orgSlug, userId)}
 }
 
@@ -672,7 +672,7 @@ type OrganizationsApi_UploadOrgPreferences_Call struct {
 // UploadOrgPreferences is a helper method to define mock.On call
 //   - orgName string
 //   - pref *models.Preferences
-func (_e *OrganizationsApi_Expecter) UploadOrgPreferences(orgName interface{}, pref interface{}) *OrganizationsApi_UploadOrgPreferences_Call {
+func (_e *OrganizationsApi_Expecter) UploadOrgPreferences(orgName any, pref any) *OrganizationsApi_UploadOrgPreferences_Call {
 	return &OrganizationsApi_UploadOrgPreferences_Call{Call: _e.mock.On("UploadOrgPreferences", orgName, pref)}
 }
 
@@ -720,7 +720,7 @@ type OrganizationsApi_UploadOrganizations_Call struct {
 
 // UploadOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *OrganizationsApi_Expecter) UploadOrganizations(filter interface{}) *OrganizationsApi_UploadOrganizations_Call {
+func (_e *OrganizationsApi_Expecter) UploadOrganizations(filter any) *OrganizationsApi_UploadOrganizations_Call {
 	return &OrganizationsApi_UploadOrganizations_Call{Call: _e.mock.On("UploadOrganizations", filter)}
 }
 

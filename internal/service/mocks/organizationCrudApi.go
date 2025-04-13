@@ -49,7 +49,7 @@ type organizationCrudApi_DownloadOrganizations_Call struct {
 
 // DownloadOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *organizationCrudApi_Expecter) DownloadOrganizations(filter interface{}) *organizationCrudApi_DownloadOrganizations_Call {
+func (_e *organizationCrudApi_Expecter) DownloadOrganizations(filter any) *organizationCrudApi_DownloadOrganizations_Call {
 	return &organizationCrudApi_DownloadOrganizations_Call{Call: _e.mock.On("DownloadOrganizations", filter)}
 }
 
@@ -98,7 +98,7 @@ type organizationCrudApi_ListOrganizations_Call struct {
 // ListOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
 //   - withPreferences bool
-func (_e *organizationCrudApi_Expecter) ListOrganizations(filter interface{}, withPreferences interface{}) *organizationCrudApi_ListOrganizations_Call {
+func (_e *organizationCrudApi_Expecter) ListOrganizations(filter any, withPreferences any) *organizationCrudApi_ListOrganizations_Call {
 	return &organizationCrudApi_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter, withPreferences)}
 }
 
@@ -146,7 +146,7 @@ type organizationCrudApi_UploadOrganizations_Call struct {
 
 // UploadOrganizations is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *organizationCrudApi_Expecter) UploadOrganizations(filter interface{}) *organizationCrudApi_UploadOrganizations_Call {
+func (_e *organizationCrudApi_Expecter) UploadOrganizations(filter any) *organizationCrudApi_UploadOrganizations_Call {
 	return &organizationCrudApi_UploadOrganizations_Call{Call: _e.mock.On("UploadOrganizations", filter)}
 }
 

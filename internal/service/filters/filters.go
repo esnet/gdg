@@ -31,8 +31,8 @@ func (s FilterType) String() string {
 // BaseFilter is designed to be fairly generic, there shouldn't be any reason to extend it, but if you have a specialized
 // use case feel free to do so.
 type BaseFilter struct {
-	filterMap          map[FilterType]string                 // Matches given field against a given value
-	validationMethods  map[FilterType]func(interface{}) bool // Invokes a function to validate a certain entity type
+	filterMap          map[FilterType]string         // Matches given field against a given value
+	validationMethods  map[FilterType]func(any) bool // Invokes a function to validate a certain entity type
 	validationPatterns map[FilterType]*regexp.Regexp
 }
 
@@ -93,7 +93,7 @@ func (s *BaseFilter) GetEntity(name FilterType) []string {
 	}
 }
 
-func (s *BaseFilter) AddValidation(name FilterType, f func(interface{}) bool) {
+func (s *BaseFilter) AddValidation(name FilterType, f func(any) bool) {
 	if name == "" {
 		name = DefaultFilter
 	}
@@ -101,7 +101,7 @@ func (s *BaseFilter) AddValidation(name FilterType, f func(interface{}) bool) {
 	s.validationMethods[name] = f
 }
 
-func (s *BaseFilter) InvokeValidation(name FilterType, i interface{}) bool {
+func (s *BaseFilter) InvokeValidation(name FilterType, i any) bool {
 	if name == "" {
 		name = "default"
 	}
@@ -113,7 +113,7 @@ func (s *BaseFilter) InvokeValidation(name FilterType, i interface{}) bool {
 }
 
 // Validate Iterates through all validation checks
-func (s *BaseFilter) ValidateAll(items interface{}) bool {
+func (s *BaseFilter) ValidateAll(items any) bool {
 	for _, val := range s.validationMethods {
 		ok := val(items)
 		if !ok {
@@ -148,6 +148,6 @@ func (s *BaseFilter) AddFilter(key FilterType, value string) {
 
 func (s *BaseFilter) Init() {
 	s.filterMap = make(map[FilterType]string)
-	s.validationMethods = make(map[FilterType]func(interface{}) bool)
+	s.validationMethods = make(map[FilterType]func(any) bool)
 	s.validationPatterns = make(map[FilterType]*regexp.Regexp)
 }

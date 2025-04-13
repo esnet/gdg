@@ -107,7 +107,7 @@ func InitTestLegacy(t *testing.T, cfgName *string, envProp map[string]string) (s
 	}
 
 	testData, _ := os.ReadFile(v.ConfigFileUsed())
-	data := map[string]interface{}{}
+	data := map[string]any{}
 	err = yaml.Unmarshal(testData, &data)
 	assert.Nil(t, err)
 
@@ -118,8 +118,8 @@ func InitTestLegacy(t *testing.T, cfgName *string, envProp map[string]string) (s
 	newKey, err := apiClient.CreateServiceAccountToken(serviceAccnt.ID, "admin", 0)
 	assert.Nil(t, err)
 
-	level1 := data["contexts"].(map[string]interface{})
-	level2 := level1["testing"].(map[string]interface{})
+	level1 := data["contexts"].(map[string]any)
+	level2 := level1["testing"].(map[string]any)
 	level2["token"] = newKey.Key
 	level2["user_name"] = ""
 	level2["password"] = ""

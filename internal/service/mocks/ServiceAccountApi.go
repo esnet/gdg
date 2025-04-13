@@ -61,7 +61,7 @@ type ServiceAccountApi_CreateServiceAccount_Call struct {
 //   - name string
 //   - role string
 //   - expiration int64
-func (_e *ServiceAccountApi_Expecter) CreateServiceAccount(name interface{}, role interface{}, expiration interface{}) *ServiceAccountApi_CreateServiceAccount_Call {
+func (_e *ServiceAccountApi_Expecter) CreateServiceAccount(name any, role any, expiration any) *ServiceAccountApi_CreateServiceAccount_Call {
 	return &ServiceAccountApi_CreateServiceAccount_Call{Call: _e.mock.On("CreateServiceAccount", name, role, expiration)}
 }
 
@@ -121,7 +121,7 @@ type ServiceAccountApi_CreateServiceAccountToken_Call struct {
 //   - serviceAccountId int64
 //   - role string
 //   - expiration int64
-func (_e *ServiceAccountApi_Expecter) CreateServiceAccountToken(serviceAccountId interface{}, role interface{}, expiration interface{}) *ServiceAccountApi_CreateServiceAccountToken_Call {
+func (_e *ServiceAccountApi_Expecter) CreateServiceAccountToken(serviceAccountId any, role any, expiration any) *ServiceAccountApi_CreateServiceAccountToken_Call {
 	return &ServiceAccountApi_CreateServiceAccountToken_Call{Call: _e.mock.On("CreateServiceAccountToken", serviceAccountId, role, expiration)}
 }
 
@@ -214,7 +214,7 @@ type ServiceAccountApi_DeleteServiceAccount_Call struct {
 
 // DeleteServiceAccount is a helper method to define mock.On call
 //   - accountId int64
-func (_e *ServiceAccountApi_Expecter) DeleteServiceAccount(accountId interface{}) *ServiceAccountApi_DeleteServiceAccount_Call {
+func (_e *ServiceAccountApi_Expecter) DeleteServiceAccount(accountId any) *ServiceAccountApi_DeleteServiceAccount_Call {
 	return &ServiceAccountApi_DeleteServiceAccount_Call{Call: _e.mock.On("DeleteServiceAccount", accountId)}
 }
 
@@ -262,7 +262,7 @@ type ServiceAccountApi_DeleteServiceAccountTokens_Call struct {
 
 // DeleteServiceAccountTokens is a helper method to define mock.On call
 //   - serviceId int64
-func (_e *ServiceAccountApi_Expecter) DeleteServiceAccountTokens(serviceId interface{}) *ServiceAccountApi_DeleteServiceAccountTokens_Call {
+func (_e *ServiceAccountApi_Expecter) DeleteServiceAccountTokens(serviceId any) *ServiceAccountApi_DeleteServiceAccountTokens_Call {
 	return &ServiceAccountApi_DeleteServiceAccountTokens_Call{Call: _e.mock.On("DeleteServiceAccountTokens", serviceId)}
 }
 
@@ -367,7 +367,7 @@ type ServiceAccountApi_ListServiceAccountsTokens_Call struct {
 
 // ListServiceAccountsTokens is a helper method to define mock.On call
 //   - id int64
-func (_e *ServiceAccountApi_Expecter) ListServiceAccountsTokens(id interface{}) *ServiceAccountApi_ListServiceAccountsTokens_Call {
+func (_e *ServiceAccountApi_Expecter) ListServiceAccountsTokens(id any) *ServiceAccountApi_ListServiceAccountsTokens_Call {
 	return &ServiceAccountApi_ListServiceAccountsTokens_Call{Call: _e.mock.On("ListServiceAccountsTokens", id)}
 }
 

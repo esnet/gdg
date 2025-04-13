@@ -32,7 +32,7 @@ type NewClientOpts_Execute_Call struct {
 
 // Execute is a helper method to define mock.On call
 //   - transportConfig *client.TransportConfig
-func (_e *NewClientOpts_Expecter) Execute(transportConfig interface{}) *NewClientOpts_Execute_Call {
+func (_e *NewClientOpts_Expecter) Execute(transportConfig any) *NewClientOpts_Execute_Call {
 	return &NewClientOpts_Execute_Call{Call: _e.mock.On("Execute", transportConfig)}
 }
 

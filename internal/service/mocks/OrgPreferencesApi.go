@@ -57,7 +57,7 @@ type OrgPreferencesApi_GetOrgPreferences_Call struct {
 
 // GetOrgPreferences is a helper method to define mock.On call
 //   - orgName string
-func (_e *OrgPreferencesApi_Expecter) GetOrgPreferences(orgName interface{}) *OrgPreferencesApi_GetOrgPreferences_Call {
+func (_e *OrgPreferencesApi_Expecter) GetOrgPreferences(orgName any) *OrgPreferencesApi_GetOrgPreferences_Call {
 	return &OrgPreferencesApi_GetOrgPreferences_Call{Call: _e.mock.On("GetOrgPreferences", orgName)}
 }
 
@@ -104,7 +104,7 @@ type OrgPreferencesApi_UploadOrgPreferences_Call struct {
 // UploadOrgPreferences is a helper method to define mock.On call
 //   - orgName string
 //   - pref *models.Preferences
-func (_e *OrgPreferencesApi_Expecter) UploadOrgPreferences(orgName interface{}, pref interface{}) *OrgPreferencesApi_UploadOrgPreferences_Call {
+func (_e *OrgPreferencesApi_Expecter) UploadOrgPreferences(orgName any, pref any) *OrgPreferencesApi_UploadOrgPreferences_Call {
 	return &OrgPreferencesApi_UploadOrgPreferences_Call{Call: _e.mock.On("UploadOrgPreferences", orgName, pref)}
 }
 

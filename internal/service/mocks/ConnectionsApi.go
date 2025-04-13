@@ -51,7 +51,7 @@ type ConnectionsApi_DeleteAllConnectionPermissions_Call struct {
 
 // DeleteAllConnectionPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionsApi_Expecter) DeleteAllConnectionPermissions(filter interface{}) *ConnectionsApi_DeleteAllConnectionPermissions_Call {
+func (_e *ConnectionsApi_Expecter) DeleteAllConnectionPermissions(filter any) *ConnectionsApi_DeleteAllConnectionPermissions_Call {
 	return &ConnectionsApi_DeleteAllConnectionPermissions_Call{Call: _e.mock.On("DeleteAllConnectionPermissions", filter)}
 }
 
@@ -99,7 +99,7 @@ type ConnectionsApi_DeleteAllConnections_Call struct {
 
 // DeleteAllConnections is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionsApi_Expecter) DeleteAllConnections(filter interface{}) *ConnectionsApi_DeleteAllConnections_Call {
+func (_e *ConnectionsApi_Expecter) DeleteAllConnections(filter any) *ConnectionsApi_DeleteAllConnections_Call {
 	return &ConnectionsApi_DeleteAllConnections_Call{Call: _e.mock.On("DeleteAllConnections", filter)}
 }
 
@@ -147,7 +147,7 @@ type ConnectionsApi_DownloadConnectionPermissions_Call struct {
 
 // DownloadConnectionPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionsApi_Expecter) DownloadConnectionPermissions(filter interface{}) *ConnectionsApi_DownloadConnectionPermissions_Call {
+func (_e *ConnectionsApi_Expecter) DownloadConnectionPermissions(filter any) *ConnectionsApi_DownloadConnectionPermissions_Call {
 	return &ConnectionsApi_DownloadConnectionPermissions_Call{Call: _e.mock.On("DownloadConnectionPermissions", filter)}
 }
 
@@ -195,7 +195,7 @@ type ConnectionsApi_DownloadConnections_Call struct {
 
 // DownloadConnections is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionsApi_Expecter) DownloadConnections(filter interface{}) *ConnectionsApi_DownloadConnections_Call {
+func (_e *ConnectionsApi_Expecter) DownloadConnections(filter any) *ConnectionsApi_DownloadConnections_Call {
 	return &ConnectionsApi_DownloadConnections_Call{Call: _e.mock.On("DownloadConnections", filter)}
 }
 
@@ -243,7 +243,7 @@ type ConnectionsApi_ListConnectionPermissions_Call struct {
 
 // ListConnectionPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionsApi_Expecter) ListConnectionPermissions(filter interface{}) *ConnectionsApi_ListConnectionPermissions_Call {
+func (_e *ConnectionsApi_Expecter) ListConnectionPermissions(filter any) *ConnectionsApi_ListConnectionPermissions_Call {
 	return &ConnectionsApi_ListConnectionPermissions_Call{Call: _e.mock.On("ListConnectionPermissions", filter)}
 }
 
@@ -291,7 +291,7 @@ type ConnectionsApi_ListConnections_Call struct {
 
 // ListConnections is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionsApi_Expecter) ListConnections(filter interface{}) *ConnectionsApi_ListConnections_Call {
+func (_e *ConnectionsApi_Expecter) ListConnections(filter any) *ConnectionsApi_ListConnections_Call {
 	return &ConnectionsApi_ListConnections_Call{Call: _e.mock.On("ListConnections", filter)}
 }
 
@@ -339,7 +339,7 @@ type ConnectionsApi_UploadConnectionPermissions_Call struct {
 
 // UploadConnectionPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionsApi_Expecter) UploadConnectionPermissions(filter interface{}) *ConnectionsApi_UploadConnectionPermissions_Call {
+func (_e *ConnectionsApi_Expecter) UploadConnectionPermissions(filter any) *ConnectionsApi_UploadConnectionPermissions_Call {
 	return &ConnectionsApi_UploadConnectionPermissions_Call{Call: _e.mock.On("UploadConnectionPermissions", filter)}
 }
 
@@ -387,7 +387,7 @@ type ConnectionsApi_UploadConnections_Call struct {
 
 // UploadConnections is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionsApi_Expecter) UploadConnections(filter interface{}) *ConnectionsApi_UploadConnections_Call {
+func (_e *ConnectionsApi_Expecter) UploadConnections(filter any) *ConnectionsApi_UploadConnections_Call {
 	return &ConnectionsApi_UploadConnections_Call{Call: _e.mock.On("UploadConnections", filter)}
 }
 

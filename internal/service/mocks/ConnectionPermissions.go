@@ -49,7 +49,7 @@ type ConnectionPermissions_DeleteAllConnectionPermissions_Call struct {
 
 // DeleteAllConnectionPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionPermissions_Expecter) DeleteAllConnectionPermissions(filter interface{}) *ConnectionPermissions_DeleteAllConnectionPermissions_Call {
+func (_e *ConnectionPermissions_Expecter) DeleteAllConnectionPermissions(filter any) *ConnectionPermissions_DeleteAllConnectionPermissions_Call {
 	return &ConnectionPermissions_DeleteAllConnectionPermissions_Call{Call: _e.mock.On("DeleteAllConnectionPermissions", filter)}
 }
 
@@ -97,7 +97,7 @@ type ConnectionPermissions_DownloadConnectionPermissions_Call struct {
 
 // DownloadConnectionPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionPermissions_Expecter) DownloadConnectionPermissions(filter interface{}) *ConnectionPermissions_DownloadConnectionPermissions_Call {
+func (_e *ConnectionPermissions_Expecter) DownloadConnectionPermissions(filter any) *ConnectionPermissions_DownloadConnectionPermissions_Call {
 	return &ConnectionPermissions_DownloadConnectionPermissions_Call{Call: _e.mock.On("DownloadConnectionPermissions", filter)}
 }
 
@@ -145,7 +145,7 @@ type ConnectionPermissions_ListConnectionPermissions_Call struct {
 
 // ListConnectionPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionPermissions_Expecter) ListConnectionPermissions(filter interface{}) *ConnectionPermissions_ListConnectionPermissions_Call {
+func (_e *ConnectionPermissions_Expecter) ListConnectionPermissions(filter any) *ConnectionPermissions_ListConnectionPermissions_Call {
 	return &ConnectionPermissions_ListConnectionPermissions_Call{Call: _e.mock.On("ListConnectionPermissions", filter)}
 }
 
@@ -193,7 +193,7 @@ type ConnectionPermissions_UploadConnectionPermissions_Call struct {
 
 // UploadConnectionPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *ConnectionPermissions_Expecter) UploadConnectionPermissions(filter interface{}) *ConnectionPermissions_UploadConnectionPermissions_Call {
+func (_e *ConnectionPermissions_Expecter) UploadConnectionPermissions(filter any) *ConnectionPermissions_UploadConnectionPermissions_Call {
 	return &ConnectionPermissions_UploadConnectionPermissions_Call{Call: _e.mock.On("UploadConnectionPermissions", filter)}
 }
 

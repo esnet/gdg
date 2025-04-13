@@ -6,7 +6,8 @@
 		"login": "admin",
 		"orgId": 1,
 		"permission": 4,
-		"teamId": 5,
+		"teamId": 1,
+		"teamUID": "ce46e303-8759-4225-8f78-0537916cae6e",
 		"userId": 1
 	},
 	{
@@ -16,8 +17,9 @@
 		"login": "tux",
 		"name": "supertux",
 		"orgId": 1,
-		"teamId": 5,
 		"permission": 4,
-		"userId": 2
+		"teamId": 1,
+		"teamUID": "ce46e303-8759-4225-8f78-0537916cae6e",
+		"userId": 3
 	}
 ]

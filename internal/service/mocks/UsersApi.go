@@ -51,7 +51,7 @@ type UsersApi_DeleteAllUsers_Call struct {
 
 // DeleteAllUsers is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *UsersApi_Expecter) DeleteAllUsers(filter interface{}) *UsersApi_DeleteAllUsers_Call {
+func (_e *UsersApi_Expecter) DeleteAllUsers(filter any) *UsersApi_DeleteAllUsers_Call {
 	return &UsersApi_DeleteAllUsers_Call{Call: _e.mock.On("DeleteAllUsers", filter)}
 }
 
@@ -99,7 +99,7 @@ type UsersApi_DownloadUsers_Call struct {
 
 // DownloadUsers is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *UsersApi_Expecter) DownloadUsers(filter interface{}) *UsersApi_DownloadUsers_Call {
+func (_e *UsersApi_Expecter) DownloadUsers(filter any) *UsersApi_DownloadUsers_Call {
 	return &UsersApi_DownloadUsers_Call{Call: _e.mock.On("DownloadUsers", filter)}
 }
 
@@ -204,7 +204,7 @@ type UsersApi_ListUsers_Call struct {
 
 // ListUsers is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *UsersApi_Expecter) ListUsers(filter interface{}) *UsersApi_ListUsers_Call {
+func (_e *UsersApi_Expecter) ListUsers(filter any) *UsersApi_ListUsers_Call {
 	return &UsersApi_ListUsers_Call{Call: _e.mock.On("ListUsers", filter)}
 }
 
@@ -260,7 +260,7 @@ type UsersApi_PromoteUser_Call struct {
 
 // PromoteUser is a helper method to define mock.On call
 //   - userLogin string
-func (_e *UsersApi_Expecter) PromoteUser(userLogin interface{}) *UsersApi_PromoteUser_Call {
+func (_e *UsersApi_Expecter) PromoteUser(userLogin any) *UsersApi_PromoteUser_Call {
 	return &UsersApi_PromoteUser_Call{Call: _e.mock.On("PromoteUser", userLogin)}
 }
 
@@ -308,7 +308,7 @@ type UsersApi_UploadUsers_Call struct {
 
 // UploadUsers is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *UsersApi_Expecter) UploadUsers(filter interface{}) *UsersApi_UploadUsers_Call {
+func (_e *UsersApi_Expecter) UploadUsers(filter any) *UsersApi_UploadUsers_Call {
 	return &UsersApi_UploadUsers_Call{Call: _e.mock.On("UploadUsers", filter)}
 }
 

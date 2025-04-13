@@ -10,8 +10,8 @@ type moo struct {
 	s string
 }
 
-func (v moo) GetServerInfo() map[string]interface{} {
-	return map[string]interface{}{"Version": v.s}
+func (v moo) GetServerInfo() map[string]any {
+	return map[string]any{"Version": v.s}
 }
 
 func TestGrafanaRange(t *testing.T) {

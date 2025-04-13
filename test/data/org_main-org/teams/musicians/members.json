@@ -6,7 +6,8 @@
 		"login": "admin",
 		"orgId": 1,
 		"permission": 4,
-		"teamId": 6,
+		"teamId": 2,
+		"teamUID": "c775c9a2-9925-43c5-9f95-575e65f39b9e",
 		"userId": 1
 	}
 ]

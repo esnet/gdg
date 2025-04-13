@@ -47,7 +47,7 @@ type organizationUserCrudApi_AddUserToOrg_Call struct {
 //   - role string
 //   - orgSlug string
 //   - userId int64
-func (_e *organizationUserCrudApi_Expecter) AddUserToOrg(role interface{}, orgSlug interface{}, userId interface{}) *organizationUserCrudApi_AddUserToOrg_Call {
+func (_e *organizationUserCrudApi_Expecter) AddUserToOrg(role any, orgSlug any, userId any) *organizationUserCrudApi_AddUserToOrg_Call {
 	return &organizationUserCrudApi_AddUserToOrg_Call{Call: _e.mock.On("AddUserToOrg", role, orgSlug, userId)}
 }
 
@@ -94,7 +94,7 @@ type organizationUserCrudApi_DeleteUserFromOrg_Call struct {
 // DeleteUserFromOrg is a helper method to define mock.On call
 //   - orgId string
 //   - userId int64
-func (_e *organizationUserCrudApi_Expecter) DeleteUserFromOrg(orgId interface{}, userId interface{}) *organizationUserCrudApi_DeleteUserFromOrg_Call {
+func (_e *organizationUserCrudApi_Expecter) DeleteUserFromOrg(orgId any, userId any) *organizationUserCrudApi_DeleteUserFromOrg_Call {
 	return &organizationUserCrudApi_DeleteUserFromOrg_Call{Call: _e.mock.On("DeleteUserFromOrg", orgId, userId)}
 }
 
@@ -142,7 +142,7 @@ type organizationUserCrudApi_ListOrgUsers_Call struct {
 
 // ListOrgUsers is a helper method to define mock.On call
 //   - orgId int64
-func (_e *organizationUserCrudApi_Expecter) ListOrgUsers(orgId interface{}) *organizationUserCrudApi_ListOrgUsers_Call {
+func (_e *organizationUserCrudApi_Expecter) ListOrgUsers(orgId any) *organizationUserCrudApi_ListOrgUsers_Call {
 	return &organizationUserCrudApi_ListOrgUsers_Call{Call: _e.mock.On("ListOrgUsers", orgId)}
 }
 
@@ -190,7 +190,7 @@ type organizationUserCrudApi_UpdateUserInOrg_Call struct {
 //   - role string
 //   - orgSlug string
 //   - userId int64
-func (_e *organizationUserCrudApi_Expecter) UpdateUserInOrg(role interface{}, orgSlug interface{}, userId interface{}) *organizationUserCrudApi_UpdateUserInOrg_Call {
+func (_e *organizationUserCrudApi_Expecter) UpdateUserInOrg(role any, orgSlug any, userId any) *organizationUserCrudApi_UpdateUserInOrg_Call {
 	return &organizationUserCrudApi_UpdateUserInOrg_Call{Call: _e.mock.On("UpdateUserInOrg", role, orgSlug, userId)}
 }
 

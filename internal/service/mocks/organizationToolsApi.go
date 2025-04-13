@@ -197,7 +197,7 @@ type organizationToolsApi_SetOrganizationByName_Call struct {
 // SetOrganizationByName is a helper method to define mock.On call
 //   - name string
 //   - useSlug bool
-func (_e *organizationToolsApi_Expecter) SetOrganizationByName(name interface{}, useSlug interface{}) *organizationToolsApi_SetOrganizationByName_Call {
+func (_e *organizationToolsApi_Expecter) SetOrganizationByName(name any, useSlug any) *organizationToolsApi_SetOrganizationByName_Call {
 	return &organizationToolsApi_SetOrganizationByName_Call{Call: _e.mock.On("SetOrganizationByName", name, useSlug)}
 }
 
@@ -243,7 +243,7 @@ type organizationToolsApi_SetUserOrganizations_Call struct {
 
 // SetUserOrganizations is a helper method to define mock.On call
 //   - id int64
-func (_e *organizationToolsApi_Expecter) SetUserOrganizations(id interface{}) *organizationToolsApi_SetUserOrganizations_Call {
+func (_e *organizationToolsApi_Expecter) SetUserOrganizations(id any) *organizationToolsApi_SetUserOrganizations_Call {
 	return &organizationToolsApi_SetUserOrganizations_Call{Call: _e.mock.On("SetUserOrganizations", id)}
 }
 

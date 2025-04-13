@@ -27,7 +27,7 @@ func NewTemplate() Templating {
 
 var fns = template.FuncMap{
 	"ToSlug": service.GetSlug,
-	"QuotedStringJoin": func(arr []interface{}) string {
+	"QuotedStringJoin": func(arr []any) string {
 		result := ""
 		for ndx, item := range arr {
 			if len(arr)-1 == ndx {

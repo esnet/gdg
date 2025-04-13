@@ -18,19 +18,19 @@ func (_m *ServerInfoApi) EXPECT() *ServerInfoApi_Expecter {
 }
 
 // GetServerInfo provides a mock function with given fields:
-func (_m *ServerInfoApi) GetServerInfo() map[string]interface{} {
+func (_m *ServerInfoApi) GetServerInfo() map[string]any {
 	ret := _m.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetServerInfo")
 	}
 
-	var r0 map[string]interface{}
-	if rf, ok := ret.Get(0).(func() map[string]interface{}); ok {
+	var r0 map[string]any
+	if rf, ok := ret.Get(0).(func() map[string]any); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[string]interface{})
+			r0 = ret.Get(0).(map[string]any)
 		}
 	}
 
@@ -54,12 +54,12 @@ func (_c *ServerInfoApi_GetServerInfo_Call) Run(run func()) *ServerInfoApi_GetSe
 	return _c
 }
 
-func (_c *ServerInfoApi_GetServerInfo_Call) Return(_a0 map[string]interface{}) *ServerInfoApi_GetServerInfo_Call {
+func (_c *ServerInfoApi_GetServerInfo_Call) Return(_a0 map[string]any) *ServerInfoApi_GetServerInfo_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ServerInfoApi_GetServerInfo_Call) RunAndReturn(run func() map[string]interface{}) *ServerInfoApi_GetServerInfo_Call {
+func (_c *ServerInfoApi_GetServerInfo_Call) RunAndReturn(run func() map[string]any) *ServerInfoApi_GetServerInfo_Call {
 	_c.Call.Return(run)
 	return _c
 }

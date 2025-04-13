@@ -59,7 +59,7 @@ type TeamsApi_DeleteTeam_Call struct {
 
 // DeleteTeam is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *TeamsApi_Expecter) DeleteTeam(filter interface{}) *TeamsApi_DeleteTeam_Call {
+func (_e *TeamsApi_Expecter) DeleteTeam(filter any) *TeamsApi_DeleteTeam_Call {
 	return &TeamsApi_DeleteTeam_Call{Call: _e.mock.On("DeleteTeam", filter)}
 }
 
@@ -107,7 +107,7 @@ type TeamsApi_DownloadTeams_Call struct {
 
 // DownloadTeams is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *TeamsApi_Expecter) DownloadTeams(filter interface{}) *TeamsApi_DownloadTeams_Call {
+func (_e *TeamsApi_Expecter) DownloadTeams(filter any) *TeamsApi_DownloadTeams_Call {
 	return &TeamsApi_DownloadTeams_Call{Call: _e.mock.On("DownloadTeams", filter)}
 }
 
@@ -155,7 +155,7 @@ type TeamsApi_ListTeams_Call struct {
 
 // ListTeams is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *TeamsApi_Expecter) ListTeams(filter interface{}) *TeamsApi_ListTeams_Call {
+func (_e *TeamsApi_Expecter) ListTeams(filter any) *TeamsApi_ListTeams_Call {
 	return &TeamsApi_ListTeams_Call{Call: _e.mock.On("ListTeams", filter)}
 }
 
@@ -203,7 +203,7 @@ type TeamsApi_UploadTeams_Call struct {
 
 // UploadTeams is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *TeamsApi_Expecter) UploadTeams(filter interface{}) *TeamsApi_UploadTeams_Call {
+func (_e *TeamsApi_Expecter) UploadTeams(filter any) *TeamsApi_UploadTeams_Call {
 	return &TeamsApi_UploadTeams_Call{Call: _e.mock.On("UploadTeams", filter)}
 }
 

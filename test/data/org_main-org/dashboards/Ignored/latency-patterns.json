@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 28,
+  "id": 10,
   "iteration": 1599168872440,
   "links": [],
   "panels": [
@@ -3120,5 +3120,5 @@
   "timezone": "",
   "title": "Latency Patterns",
   "uid": "000000005",
-  "version": 1
+  "version": 2
 }

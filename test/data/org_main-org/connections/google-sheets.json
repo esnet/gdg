@@ -8,7 +8,7 @@
 	"name": "Google Sheets",
 	"orgId": 1,
 	"type": "grafana-googlesheets-datasource",
-	"typeLogoUrl": "public/plugins/grafana-googlesheets-datasource/img/sheets.svg",
+	"typeLogoUrl": "/public/plugins/grafana-googlesheets-datasource/img/sheets.svg",
 	"typeName": "Google Sheets",
 	"uid": "uL86Byf4k"
 }

@@ -31,7 +31,7 @@ const (
 
 func NewFolderFilter() filters.Filter {
 	filterObj := filters.NewBaseFilter()
-	filterObj.AddValidation(filters.FolderFilter, func(i interface{}) bool {
+	filterObj.AddValidation(filters.FolderFilter, func(i any) bool {
 		val, ok := i.(map[filters.FilterType]string)
 		if !ok {
 			return ok

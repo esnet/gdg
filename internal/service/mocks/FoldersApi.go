@@ -51,7 +51,7 @@ type FoldersApi_DeleteAllFolders_Call struct {
 
 // DeleteAllFolders is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *FoldersApi_Expecter) DeleteAllFolders(filter interface{}) *FoldersApi_DeleteAllFolders_Call {
+func (_e *FoldersApi_Expecter) DeleteAllFolders(filter any) *FoldersApi_DeleteAllFolders_Call {
 	return &FoldersApi_DeleteAllFolders_Call{Call: _e.mock.On("DeleteAllFolders", filter)}
 }
 
@@ -99,7 +99,7 @@ type FoldersApi_DownloadFolderPermissions_Call struct {
 
 // DownloadFolderPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *FoldersApi_Expecter) DownloadFolderPermissions(filter interface{}) *FoldersApi_DownloadFolderPermissions_Call {
+func (_e *FoldersApi_Expecter) DownloadFolderPermissions(filter any) *FoldersApi_DownloadFolderPermissions_Call {
 	return &FoldersApi_DownloadFolderPermissions_Call{Call: _e.mock.On("DownloadFolderPermissions", filter)}
 }
 
@@ -147,7 +147,7 @@ type FoldersApi_DownloadFolders_Call struct {
 
 // DownloadFolders is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *FoldersApi_Expecter) DownloadFolders(filter interface{}) *FoldersApi_DownloadFolders_Call {
+func (_e *FoldersApi_Expecter) DownloadFolders(filter any) *FoldersApi_DownloadFolders_Call {
 	return &FoldersApi_DownloadFolders_Call{Call: _e.mock.On("DownloadFolders", filter)}
 }
 
@@ -195,7 +195,7 @@ type FoldersApi_ListFolderPermissions_Call struct {
 
 // ListFolderPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *FoldersApi_Expecter) ListFolderPermissions(filter interface{}) *FoldersApi_ListFolderPermissions_Call {
+func (_e *FoldersApi_Expecter) ListFolderPermissions(filter any) *FoldersApi_ListFolderPermissions_Call {
 	return &FoldersApi_ListFolderPermissions_Call{Call: _e.mock.On("ListFolderPermissions", filter)}
 }
 
@@ -243,7 +243,7 @@ type FoldersApi_ListFolders_Call struct {
 
 // ListFolders is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *FoldersApi_Expecter) ListFolders(filter interface{}) *FoldersApi_ListFolders_Call {
+func (_e *FoldersApi_Expecter) ListFolders(filter any) *FoldersApi_ListFolders_Call {
 	return &FoldersApi_ListFolders_Call{Call: _e.mock.On("ListFolders", filter)}
 }
 
@@ -291,7 +291,7 @@ type FoldersApi_UploadFolderPermissions_Call struct {
 
 // UploadFolderPermissions is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *FoldersApi_Expecter) UploadFolderPermissions(filter interface{}) *FoldersApi_UploadFolderPermissions_Call {
+func (_e *FoldersApi_Expecter) UploadFolderPermissions(filter any) *FoldersApi_UploadFolderPermissions_Call {
 	return &FoldersApi_UploadFolderPermissions_Call{Call: _e.mock.On("UploadFolderPermissions", filter)}
 }
 
@@ -339,7 +339,7 @@ type FoldersApi_UploadFolders_Call struct {
 
 // UploadFolders is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *FoldersApi_Expecter) UploadFolders(filter interface{}) *FoldersApi_UploadFolders_Call {
+func (_e *FoldersApi_Expecter) UploadFolders(filter any) *FoldersApi_UploadFolders_Call {
 	return &FoldersApi_UploadFolders_Call{Call: _e.mock.On("UploadFolders", filter)}
 }
 

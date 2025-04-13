@@ -51,7 +51,7 @@ type DashboardsApi_DeleteAllDashboards_Call struct {
 
 // DeleteAllDashboards is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *DashboardsApi_Expecter) DeleteAllDashboards(filter interface{}) *DashboardsApi_DeleteAllDashboards_Call {
+func (_e *DashboardsApi_Expecter) DeleteAllDashboards(filter any) *DashboardsApi_DeleteAllDashboards_Call {
 	return &DashboardsApi_DeleteAllDashboards_Call{Call: _e.mock.On("DeleteAllDashboards", filter)}
 }
 
@@ -99,7 +99,7 @@ type DashboardsApi_DownloadDashboards_Call struct {
 
 // DownloadDashboards is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *DashboardsApi_Expecter) DownloadDashboards(filter interface{}) *DashboardsApi_DownloadDashboards_Call {
+func (_e *DashboardsApi_Expecter) DownloadDashboards(filter any) *DashboardsApi_DownloadDashboards_Call {
 	return &DashboardsApi_DownloadDashboards_Call{Call: _e.mock.On("DownloadDashboards", filter)}
 }
 
@@ -147,7 +147,7 @@ type DashboardsApi_LintDashboards_Call struct {
 
 // LintDashboards is a helper method to define mock.On call
 //   - req types.LintRequest
-func (_e *DashboardsApi_Expecter) LintDashboards(req interface{}) *DashboardsApi_LintDashboards_Call {
+func (_e *DashboardsApi_Expecter) LintDashboards(req any) *DashboardsApi_LintDashboards_Call {
 	return &DashboardsApi_LintDashboards_Call{Call: _e.mock.On("LintDashboards", req)}
 }
 
@@ -195,7 +195,7 @@ type DashboardsApi_ListDashboards_Call struct {
 
 // ListDashboards is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *DashboardsApi_Expecter) ListDashboards(filter interface{}) *DashboardsApi_ListDashboards_Call {
+func (_e *DashboardsApi_Expecter) ListDashboards(filter any) *DashboardsApi_ListDashboards_Call {
 	return &DashboardsApi_ListDashboards_Call{Call: _e.mock.On("ListDashboards", filter)}
 }
 
@@ -241,7 +241,7 @@ type DashboardsApi_UploadDashboards_Call struct {
 
 // UploadDashboards is a helper method to define mock.On call
 //   - filter filters.Filter
-func (_e *DashboardsApi_Expecter) UploadDashboards(filter interface{}) *DashboardsApi_UploadDashboards_Call {
+func (_e *DashboardsApi_Expecter) UploadDashboards(filter any) *DashboardsApi_UploadDashboards_Call {
 	return &DashboardsApi_UploadDashboards_Call{Call: _e.mock.On("UploadDashboards", filter)}
 }
 

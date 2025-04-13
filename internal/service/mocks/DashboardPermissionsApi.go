@@ -47,7 +47,7 @@ type DashboardPermissionsApi_ClearDashboardPermissions_Call struct {
 
 // ClearDashboardPermissions is a helper method to define mock.On call
 //   - filterReq filters.Filter
-func (_e *DashboardPermissionsApi_Expecter) ClearDashboardPermissions(filterReq interface{}) *DashboardPermissionsApi_ClearDashboardPermissions_Call {
+func (_e *DashboardPermissionsApi_Expecter) ClearDashboardPermissions(filterReq any) *DashboardPermissionsApi_ClearDashboardPermissions_Call {
 	return &DashboardPermissionsApi_ClearDashboardPermissions_Call{Call: _e.mock.On("ClearDashboardPermissions", filterReq)}
 }
 
@@ -105,7 +105,7 @@ type DashboardPermissionsApi_DownloadDashboardPermissions_Call struct {
 
 // DownloadDashboardPermissions is a helper method to define mock.On call
 //   - filterReq filters.Filter
-func (_e *DashboardPermissionsApi_Expecter) DownloadDashboardPermissions(filterReq interface{}) *DashboardPermissionsApi_DownloadDashboardPermissions_Call {
+func (_e *DashboardPermissionsApi_Expecter) DownloadDashboardPermissions(filterReq any) *DashboardPermissionsApi_DownloadDashboardPermissions_Call {
 	return &DashboardPermissionsApi_DownloadDashboardPermissions_Call{Call: _e.mock.On("DownloadDashboardPermissions", filterReq)}
 }
 
@@ -163,7 +163,7 @@ type DashboardPermissionsApi_ListDashboardPermissions_Call struct {
 
 // ListDashboardPermissions is a helper method to define mock.On call
 //   - filterReq filters.Filter
-func (_e *DashboardPermissionsApi_Expecter) ListDashboardPermissions(filterReq interface{}) *DashboardPermissionsApi_ListDashboardPermissions_Call {
+func (_e *DashboardPermissionsApi_Expecter) ListDashboardPermissions(filterReq any) *DashboardPermissionsApi_ListDashboardPermissions_Call {
 	return &DashboardPermissionsApi_ListDashboardPermissions_Call{Call: _e.mock.On("ListDashboardPermissions", filterReq)}
 }
 
@@ -221,7 +221,7 @@ type DashboardPermissionsApi_UploadDashboardPermissions_Call struct {
 
 // UploadDashboardPermissions is a helper method to define mock.On call
 //   - filterReq filters.Filter
-func (_e *DashboardPermissionsApi_Expecter) UploadDashboardPermissions(filterReq interface{}) *DashboardPermissionsApi_UploadDashboardPermissions_Call {
+func (_e *DashboardPermissionsApi_Expecter) UploadDashboardPermissions(filterReq any) *DashboardPermissionsApi_UploadDashboardPermissions_Call {
 	return &DashboardPermissionsApi_UploadDashboardPermissions_Call{Call: _e.mock.On("UploadDashboardPermissions", filterReq)}
 }
 
