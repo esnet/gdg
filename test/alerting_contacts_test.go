@@ -7,12 +7,19 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
+
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestContactsCrud(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
+	assert.NoError(t, path.FixTestDir("test", ".."))
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {

@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/pkg/test_tooling/path"
+
 	"github.com/esnet/gdg/internal/storage"
 
 	"github.com/esnet/gdg/internal/config"
@@ -20,7 +22,8 @@ import (
 )
 
 func TestConnectionPermissionsCrud(t *testing.T) {
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
+	assert.NoError(t, path.FixTestDir("test", ".."))
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
 	props := containers.DefaultGrafanaEnv()
@@ -29,7 +32,8 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, props)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, props)
 	defer cleanup()
 	// Upload all connections
 	filtersEntity := service.NewConnectionFilter("")
@@ -105,7 +109,8 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 }
 
 func TestConnectionsCRUD(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, containers.DefaultGrafanaEnv())
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, containers.DefaultGrafanaEnv())
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {
@@ -141,7 +146,9 @@ func TestConnectionsCRUD(t *testing.T) {
 
 // TestConnectionFilter ensures the regex matching and datasource type filters work as expected
 func TestConnectionFilter(t *testing.T) {
-	_, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	assert.NoError(t, path.FixTestDir("test", ".."))
+	config.InitGdgConfig("testing")
+	_, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {

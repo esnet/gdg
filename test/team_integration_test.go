@@ -5,6 +5,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config"
+
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -14,11 +16,12 @@ import (
 )
 
 func TestTeamCRUD(t *testing.T) {
-	if os.Getenv("TEST_TOKEN_CONFIG") == "1" {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	filter := service.NewTeamFilter("")
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
 	defer cleanup()
 	slog.Info("Exporting current user list")
 	apiClient.UploadUsers(service.NewUserFilter(""))
@@ -39,6 +42,7 @@ func TestTeamCRUD(t *testing.T) {
 			musicianTeam = teams[ndx]
 		}
 	}
+	assert.NotNil(t, engineerTeam)
 	assert.Equal(t, engineerTeam.Name, "engineers")
 	engineers := teamsMap[engineerTeam]
 	assert.Equal(t, len(engineers), 2)
