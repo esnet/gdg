@@ -3,8 +3,13 @@ package test
 import (
 	"log/slog"
 	"os"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
+
+	"github.com/opentracing/opentracing-go/log"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/brianvoe/gofakeit/v6"
 
@@ -14,9 +19,38 @@ import (
 )
 
 const (
-	grafana10 = "10.2.3-ubuntu"
-	grafana11 = "11.1.5-ubuntu"
+	minimumNestedFoldersVersion = 11
+	defaultGrafanaVersion       = "11.1.5-ubuntu"
+	basicAuth                   = "basicAuth"
+	developerEnv                = "DEVELOPER"
 )
+
+func getGrafanaVersion(tag string) int {
+	parts := strings.Split(tag, ":")
+	if len(parts) < 2 {
+		return 0
+	}
+
+	version := parts[len(parts)-1]
+	parts = strings.Split(version, ".")
+
+	ver, err := strconv.Atoi(parts[0])
+	if err != nil {
+		log.Error(err)
+	}
+	return ver
+}
+
+func TestGrafanaVersion(t *testing.T) {
+	image := "grafana/grafana:10.2.8"
+	expectedVal := 10
+	assert.Equal(t, expectedVal, getGrafanaVersion(image))
+	image = "grafana/grafana:11.2.2"
+	expectedVal = 11
+	assert.Equal(t, 11, getGrafanaVersion(image))
+	image = "grafana/grafana"
+	assert.Equal(t, 0, getGrafanaVersion(image))
+}
 
 func TestMain(m *testing.M) {
 	gofakeit.Seed(time.Now().Unix()) // If 0 will use crypto/rand to generate a number
@@ -28,29 +62,45 @@ func TestMain(m *testing.M) {
 	err = godotenv.Load(".env")
 	// set global log level
 	slog.SetLogLoggerLevel(slog.LevelDebug) // Set global log level to Debug
-	grafanaTestVersions := []string{grafana10, grafana11}
-	testModes := []string{"basicAuth", "token"}
-	if os.Getenv("DEVELOPER") == "1" {
-		slog.Debug("Limiting to single testMode and grafana version", slog.Any("grafanaVersion", grafanaTestVersions[1]), slog.String("testMode", testModes[0]))
-		grafanaTestVersions = grafanaTestVersions[1:]
-		testModes = testModes[0:1]
-	}
 
-	for _, version := range grafanaTestVersions {
-		for _, i := range testModes {
-			os.Setenv(test_tooling.GrafanaTestVersionEnv, version)
-			if i == "token" {
-				os.Setenv(test_tooling.EnableTokenTestsEnv, "1")
-			} else {
-				os.Setenv(test_tooling.EnableTokenTestsEnv, "0")
-			}
-			slog.Info("Running Test suit for",
-				slog.Any("grafanaVersion", version),
-				slog.Any("AuthMode", i))
-			exitVal := m.Run()
-			if exitVal != 0 {
-				panic("Failed to run test with token value of: " + i)
-			}
+	developer := getEnvDefault(developerEnv, test_tooling.FeatureDisabled)
+	version := getEnvDefault(test_tooling.GrafanaTestVersionEnv, defaultGrafanaVersion)
+	// When developer is enabled both token and basic auth tests are executed.
+	if developer == test_tooling.FeatureEnabled {
+		for _, tokenVal := range []string{"0", "1"} {
+			os.Setenv(test_tooling.EnableTokenTestsEnv, tokenVal)
+			runTests(version, tokenVal, m)
 		}
+	} else {
+		tokenVal := getEnvDefault(test_tooling.EnableTokenTestsEnv, "0")
+		runTests(version, tokenVal, m)
 	}
+}
+
+func runTests(version, token string, m *testing.M) {
+	var tokenDesc string
+	if token == test_tooling.FeatureEnabled {
+		tokenDesc = token
+	} else {
+		tokenDesc = basicAuth
+	}
+	slog.Info("Running Test suit for",
+		slog.Any("grafanaVersion", version),
+		slog.Any("AuthMode", tokenDesc))
+
+	os.Setenv(test_tooling.GrafanaTestVersionEnv, version)
+	os.Setenv(test_tooling.EnableTokenTestsEnv, token)
+
+	exitVal := m.Run()
+	if exitVal != 0 {
+		panic("Failed to run test with token value of: " + tokenDesc)
+	}
+}
+
+func getEnvDefault(key, defaultValue string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		return defaultValue
+	}
+	return val
 }

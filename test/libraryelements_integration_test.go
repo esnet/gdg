@@ -4,6 +4,8 @@ import (
 	"log/slog"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config"
+
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/gosimple/slug"
@@ -12,7 +14,8 @@ import (
 )
 
 func TestLibraryElementsCRUD(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	slog.Info("Exporting all Library Elements")

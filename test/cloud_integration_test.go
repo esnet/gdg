@@ -16,9 +16,11 @@ import (
 )
 
 func TestCloudDataSourceCRUD(t *testing.T) {
-	assert.NoError(t, path.FixTestDir("test", ".."))
 	t.Log("Running Cloud Tests")
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	assert.NoError(t, path.FixTestDir("test", ".."))
+	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer func() {
 		cleanErr := cleanup()
 		if cleanErr != nil {
@@ -59,7 +61,8 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	var err error
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
 	// defer cleanup, "Failed to cleanup test containers for %s", t.Name())
 	// Wipe all data from grafana
