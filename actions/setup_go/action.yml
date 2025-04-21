@@ -1,0 +1,21 @@
+name: 'Setup Go'
+description: 'Setup Go Environment'
+inputs:
+  go_version:
+    description: 'Sets Up go project'
+    required: true
+    default: '1.22.0'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: "${{ inputs.go_version }}"
+    - name: Verify go version
+      run: go version
+      shell: bash
+    - name: Install GoTest
+      run: go install gotest.tools/gotestsum@latest
+      shell: bash
