@@ -8,10 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opentracing/opentracing-go/log"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/brianvoe/gofakeit/v6"
+	"github.com/brianvoe/gofakeit/v7"
 
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -36,7 +35,7 @@ func getGrafanaVersion(tag string) int {
 
 	ver, err := strconv.Atoi(parts[0])
 	if err != nil {
-		log.Error(err)
+		slog.Error("failed to convert string version to a numeric value", slog.Any("err", err))
 	}
 	return ver
 }
