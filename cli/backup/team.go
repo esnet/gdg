@@ -3,6 +3,7 @@ package backup
 import (
 	"context"
 	"log/slog"
+	"os"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
@@ -48,6 +49,37 @@ func newTeamsCommand() simplecobra.Commander {
 	}
 }
 
+func getTeamTableWriter() table.Writer {
+	writer := table.NewWriter()
+	writer.SetOutputMirror(os.Stdout)
+	writer.SetStyle(table.StyleLight)
+	writer.AppendHeader(table.Row{"ID", "Name", "Org ID", "Member Count"}, table.RowConfig{AutoMerge: true})
+	return writer
+}
+
+func printTeamListing(teams map[*models.TeamDTO][]*models.TeamMemberDTO) {
+	for team, members := range teams {
+		writer := getTeamTableWriter()
+		writer.AppendRow(table.Row{team.ID, team.Name, team.OrgID, team.MemberCount})
+		writer.Render()
+		var success bool
+		twConfigs := table.NewWriter()
+		twConfigs.SetOutputMirror(os.Stdout)
+		twConfigs.SetStyle(table.StyleDouble)
+		twConfigs.AppendHeader(table.Row{"Team Name", "User ID", "LoginID", "Member Permission"})
+		for _, member := range members {
+			if member == nil {
+				continue
+			}
+			success = true
+			twConfigs.AppendRow(table.Row{team.Name, member.UserID, member.Login, getTeamPermission(member.Permission)})
+		}
+		if success {
+			twConfigs.Render()
+		}
+	}
+}
+
 func newTeamsListCmd() simplecobra.Commander {
 	description := "list teams from grafana"
 	return &support.SimpleCommand{
@@ -65,15 +97,7 @@ func newTeamsListCmd() simplecobra.Commander {
 			if len(teams) == 0 {
 				slog.Info("No teams found")
 			} else {
-				for team, members := range teams {
-					rootCmd.TableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
-					if team.MemberCount > 0 {
-						for _, member := range members {
-							rootCmd.TableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
-						}
-					}
-				}
-				rootCmd.Render(cd.CobraCommand, teams)
+				printTeamListing(teams)
 			}
 			return nil
 		},
@@ -90,20 +114,13 @@ func newTeamsDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Importing Teams for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Downloading Teams and Member data for context", "context", config.Config().GetGDGConfig().GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadTeams(filter)
 			if len(savedFiles) == 0 {
 				slog.Info("No teams found")
 			} else {
-				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "member user ID", "Member Permission"})
-				for team, members := range savedFiles {
-					rootCmd.TableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
-					for _, member := range members {
-						rootCmd.TableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
-					}
-				}
-				rootCmd.Render(cd.CobraCommand, savedFiles)
+				printTeamListing(savedFiles)
 			}
 			return nil
 		},
@@ -126,16 +143,7 @@ func newTeamsUploadCmd() simplecobra.Commander {
 			if len(savedFiles) == 0 {
 				slog.Info("No teams found")
 			} else {
-				rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "created", "memberCount", "member Login", "member Permission"})
-				for team, members := range savedFiles {
-					rootCmd.TableObj.AppendRow(table.Row{team.ID, team.Name, team.Email, team.OrgID, team.MemberCount})
-					if team.MemberCount > 0 {
-						for _, member := range members {
-							rootCmd.TableObj.AppendRow(table.Row{"", "", "", "", "", member.Login, getTeamPermission(member.Permission)})
-						}
-					}
-				}
-				rootCmd.Render(cd.CobraCommand, savedFiles)
+				printTeamListing(savedFiles)
 			}
 			return nil
 		},
