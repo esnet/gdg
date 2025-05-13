@@ -57,7 +57,7 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 }
 
 // IsExcluded returns true if the item should be excluded from the connection List
-func (ds *ConnectionSettings) IsExcluded(item interface{}) bool {
+func (ds *ConnectionSettings) IsExcluded(item any) bool {
 	data, err := json.Marshal(item)
 	if err != nil {
 		slog.Warn("Unable to serialize object, cannot validate")

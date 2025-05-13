@@ -85,7 +85,7 @@ func newGetTokenOrgCmd() simplecobra.Commander {
 				slog.Info("No tokens were found")
 			} else {
 				rootCmd.TableObj.AppendRow(table.Row{org.ID, org.Name})
-				rootCmd.Render(cd.CobraCommand, map[string]interface{}{"id": org.ID, "name": org.Name})
+				rootCmd.Render(cd.CobraCommand, map[string]any{"id": org.ID, "name": org.Name})
 			}
 			return nil
 		},

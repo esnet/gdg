@@ -18,10 +18,10 @@ type TemplateDashboards struct {
 }
 
 type TemplateDashboardEntity struct {
-	Folder           string                 `mapstructure:"folder"`
-	OrganizationName string                 `mapstructure:"organization_name"`
-	DashboardName    string                 `mapstructure:"dashboard_name"`
-	TemplateData     map[string]interface{} `mapstructure:"template_data"`
+	Folder           string         `mapstructure:"folder"`
+	OrganizationName string         `mapstructure:"organization_name"`
+	DashboardName    string         `mapstructure:"dashboard_name"`
+	TemplateData     map[string]any `mapstructure:"template_data"`
 }
 
 func InitTemplateConfig(override string) {

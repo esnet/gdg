@@ -9,7 +9,7 @@ import (
 )
 
 type ServerInfoApi interface {
-	GetServerInfo() map[string]interface{}
+	GetServerInfo() map[string]any
 }
 
 type GrafanaService interface {

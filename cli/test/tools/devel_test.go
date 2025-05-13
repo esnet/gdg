@@ -14,7 +14,7 @@ import (
 
 func TestDevelSrvInfo(t *testing.T) {
 	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
-		expected := make(map[string]interface{})
+		expected := make(map[string]any)
 		expected["Database"] = "db"
 		expected["Commit"] = "commit"
 		expected["Version"] = "version"

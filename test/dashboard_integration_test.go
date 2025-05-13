@@ -30,12 +30,12 @@ const (
 )
 
 func TestDashboardNestedFolderCRUD(t *testing.T) {
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("skipping token based tests")
 	}
 	containerObj, cleanup := test_tooling.InitOrganizations(t)
 	dockerContainer := containerObj.(*testcontainers.DockerContainer)
-	if strings.Contains(dockerContainer.Image, grafana10) {
+	if getGrafanaVersion(dockerContainer.Image) < minimumNestedFoldersVersion {
 		t.Log("Nested folders not supported prior to v11.0, skipping test")
 		t.Skip()
 	}
@@ -189,7 +189,8 @@ func TestDashboardCleanUpCrud(t *testing.T) {
 }
 
 func TestDashboardCRUDTags(t *testing.T) {
-	apiClient, _, container, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, container, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -250,7 +251,8 @@ func TestDashboardCRUDTags(t *testing.T) {
 }
 
 func TestDashboardTagsFilter(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
 	emptyFilter := filters.NewBaseFilter()
 
@@ -287,13 +289,14 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
+	config.InitGdgConfig("testing")
 	props := containers.DefaultGrafanaEnv()
 	err := containers.SetupGrafanaLicense(&props)
 	if err != nil {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, props)
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, props)
 	defer cleanup()
 	// Upload all dashboards
 	assert.NoError(t, apiClient.UploadDashboards(nil))
@@ -353,7 +356,8 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 
 func TestWildcardFilter(t *testing.T) {
 	// Setup Filters
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
 	emptyFilter := service.NewDashboardFilter("", "", "")
 

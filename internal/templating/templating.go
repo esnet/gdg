@@ -3,6 +3,7 @@ package templating
 import (
 	"fmt"
 	"log/slog"
+	"maps"
 	"os"
 	"strings"
 	"text/template"
@@ -27,7 +28,7 @@ func NewTemplate() Templating {
 
 var fns = template.FuncMap{
 	"ToSlug": service.GetSlug,
-	"QuotedStringJoin": func(arr []interface{}) string {
+	"QuotedStringJoin": func(arr []any) string {
 		result := ""
 		for ndx, item := range arr {
 			if len(arr)-1 == ndx {
@@ -130,7 +131,5 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 }
 
 func init() {
-	for key, value := range sprig.TxtFuncMap() {
-		fns[key] = value
-	}
+	maps.Copy(fns, sprig.TxtFuncMap())
 }

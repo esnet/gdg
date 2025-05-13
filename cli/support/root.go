@@ -35,7 +35,7 @@ type RootCommand struct {
 	CommandEntries []simplecobra.Commander
 }
 
-func (cmd *RootCommand) Render(command *cobra.Command, data interface{}) {
+func (cmd *RootCommand) Render(command *cobra.Command, data any) {
 	output, _ := command.Flags().GetString("output")
 	if output == "json" {
 		data, err := json.MarshalIndent(data, "", "    ")

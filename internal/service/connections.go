@@ -19,7 +19,7 @@ import (
 func NewConnectionFilter(name string) filters.Filter {
 	filterEntity := filters.NewBaseFilter()
 	filterEntity.AddFilter(filters.Name, name)
-	filterEntity.AddValidation(filters.DefaultFilter, func(i interface{}) bool {
+	filterEntity.AddValidation(filters.DefaultFilter, func(i any) bool {
 		val, ok := i.(map[filters.FilterType]string)
 		if !ok {
 			return ok

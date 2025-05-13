@@ -53,7 +53,7 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 	quoteRegex, _ := regexp.Compile("['\"]+")
 	filterObj.AddRegex(filters.FolderFilter, quoteRegex)
 	// Add Folder Validation
-	filterObj.AddValidation(filters.FolderFilter, func(i interface{}) bool {
+	filterObj.AddValidation(filters.FolderFilter, func(i any) bool {
 		val, ok := i.(map[filters.FilterType]string)
 		if !ok {
 			return ok
@@ -71,7 +71,7 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 	})
 
 	// Add DashValidation
-	filterObj.AddValidation(filters.DashFilter, func(i interface{}) bool {
+	filterObj.AddValidation(filters.DashFilter, func(i any) bool {
 		val, ok := i.(map[filters.FilterType]string)
 		if !ok {
 			return ok
@@ -552,7 +552,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 			slog.Warn("Unable to read file", "filename", file, "err", err)
 			continue
 		}
-		board := make(map[string]interface{})
+		board := make(map[string]any)
 		if err = json.Unmarshal(rawBoard, &board); err != nil {
 			slog.Warn("Failed to unmarshall file", "filename", file)
 			continue
@@ -560,7 +560,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 		// Extract Tags
 		if filterVal := filterReq.GetFilter(filters.TagsFilter); filterVal != "[]" {
 			var boardTags []string
-			for _, val := range board["tags"].([]interface{}) {
+			for _, val := range board["tags"].([]any) {
 				boardTags = append(boardTags, val.(string))
 			}
 			var requestedSlices []string

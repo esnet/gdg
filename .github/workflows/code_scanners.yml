@@ -7,10 +7,6 @@ on:
     branches:
       - main
 
-env:
-  GO_VERSION: 1.23.4
-
-
 permissions:
   contents: read
   # Optional: allow read access to pull request. Use with `only-new-issues` option.
@@ -23,19 +19,16 @@ jobs:
       matrix:
 #       job_name: [security, vuln_check, lint]
         job_name: [security, lint]
+        go_version: [ 1.24.1]
 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - name: Setup Go
+        uses: ./actions/setup_go
         with:
-          go-version: "1.23.0"
-          cache: false
-      - name: Install Task
-        run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
-      - name: Installing Go Tools
-        run: ./bin/task install_tools      
+          go_version: "${{ matrix.go_version }}"
       - name: Running Scan
         run: ./bin/task ${{ matrix.job_name }}
 

@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config"
+
 	"github.com/samber/lo"
 
 	"github.com/esnet/gdg/internal/service"
@@ -14,10 +16,11 @@ import (
 )
 
 func TestUsers(t *testing.T) {
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
+	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
 	apiClient.DeleteAllUsers(service.NewUserFilter("")) // clear any previous state
 	users := apiClient.ListUsers(service.NewUserFilter(""))

@@ -1,0 +1,32 @@
+name: 'Run Coverage Report'
+description: 'Run Coverage Report'
+inputs:
+  grafana_version:
+    description: 'Sets Up go project'
+    required: true
+    default: '11.1.5'
+  coverage_token:
+    description: 'Token to publish coverage report'
+    required: true
+  enterprise_jwt:
+    description: 'Token for testing enterprise features'
+    required: true
+    default: ''
+
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Integration Reporting Test
+      env:
+        go-version: "${{ inputs.go_version }}"
+        ENTERPRISE_LICENSE: "${{ inputs.enterprise_jwt }}"
+        GRAFANA_TEST_VERSION: "${{ inputs.grafana_version}}"
+        TEST_TOKEN_CONFIG: "0"
+      run:  gotestsum --rerun-fails=2 --junitfile report.xml --format testname  -- -coverprofile=cover.out  -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks" | tr '\n' ',' )   ./...
+      shell: bash
+    - uses: codecov/codecov-action@v5
+      with:
+        fail_ci_if_error: true # optional (default = false)
+        files: cover.out
+        token: ${{ matrix.coverage_token }}

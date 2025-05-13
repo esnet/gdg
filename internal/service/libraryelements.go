@@ -189,13 +189,13 @@ func (s *DashNGoImpl) DeleteAllLibraryElements(filter filters.Filter) []string {
 
 		_, err := s.GetClient().LibraryElements.DeleteLibraryElementByUID(element.UID)
 		if err != nil {
-			logEntries := make([]interface{}, 0)
+			logEntries := make([]any, 0)
 			var serr *library_elements.DeleteLibraryElementByUIDForbidden
 			if errors.As(err, &serr) {
-				logEntries = append(logEntries, []interface{}{"ErrorMessage", *serr.GetPayload().Message}...)
+				logEntries = append(logEntries, []any{"ErrorMessage", *serr.GetPayload().Message}...)
 			}
 
-			logEntries = append(logEntries, []interface{}{"panel", element.Name}...)
+			logEntries = append(logEntries, []any{"panel", element.Name}...)
 			slog.Error("Failed to delete library panel", logEntries...)
 			continue
 		}

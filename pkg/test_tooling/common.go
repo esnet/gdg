@@ -3,6 +3,7 @@ package test_tooling
 import (
 	"context"
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
 	"strings"
@@ -16,14 +17,14 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
-	"gopkg.in/yaml.v3"
 )
 
 const (
 	GrafanaTestVersionEnv = "GRAFANA_TEST_VERSION"
 	// #nosec G101
 	EnableTokenTestsEnv = "TEST_TOKEN_CONFIG"
-	TokenEnabledValue   = "1"
+	FeatureEnabled      = "1"
+	FeatureDisabled     = "0"
 )
 
 type ConfigProviderFunc func() *config.Configuration
@@ -56,7 +57,7 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 		return nil
 	}
 
-	if os.Getenv(EnableTokenTestsEnv) != TokenEnabledValue {
+	if os.Getenv(EnableTokenTestsEnv) != FeatureEnabled {
 		return apiClient, localGrafanaContainer, noOp
 	}
 
@@ -65,9 +66,14 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 	serviceName, _ := uuid.NewUUID()
 	serviceAccnt, err := apiClient.CreateServiceAccount(serviceName.String(), "admin", 0)
 	assert.NoError(t, err, "Unable to create test service account")
+	if err != nil {
+		log.Fatalf("unable to start grafana container for test: %s", t.Name())
+	}
 	newKey, err := apiClient.CreateServiceAccountToken(serviceAccnt.ID, "admin", 0)
 	assert.Nil(t, err)
-
+	if err != nil {
+		log.Fatalf("unable to start grafana container for test: %s", t.Name())
+	}
 	cfg := cfgProvider()
 	grafana := cfg.GetDefaultGrafanaConfig()
 	grafana.UserName = ""
@@ -81,64 +87,6 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 
 	apiClient = CreateSimpleClientWithConfig(t, cfgProvider, localGrafanaContainer)
 	return apiClient, localGrafanaContainer, cleanUp
-}
-
-func InitTestLegacy(t *testing.T, cfgName *string, envProp map[string]string) (service.GrafanaService, *viper.Viper, testcontainers.Container, func() error) {
-	var (
-		suffix string
-		err    error
-	)
-
-	if len(envProp) == 0 {
-		envProp = containers.DefaultGrafanaEnv()
-	}
-	if _, ok := envProp[containers.EnterpriseLicenceKey]; ok {
-		suffix = "-enterprise"
-	}
-	localGrafanaContainer, cancel := containers.SetupGrafanaContainer(envProp, "", suffix)
-	apiClient, v := CreateSimpleClient(t, cfgName, localGrafanaContainer)
-	noOp := func() error {
-		cancel()
-		return nil
-	}
-
-	if os.Getenv(EnableTokenTestsEnv) != TokenEnabledValue {
-		return apiClient, v, localGrafanaContainer, noOp
-	}
-
-	testData, _ := os.ReadFile(v.ConfigFileUsed())
-	data := map[string]interface{}{}
-	err = yaml.Unmarshal(testData, &data)
-	assert.Nil(t, err)
-
-	apiClient.DeleteAllServiceAccounts()
-	serviceName, _ := uuid.NewUUID()
-	serviceAccnt, err := apiClient.CreateServiceAccount(serviceName.String(), "admin", 0)
-	assert.NoError(t, err, "Unable to create test service account")
-	newKey, err := apiClient.CreateServiceAccountToken(serviceAccnt.ID, "admin", 0)
-	assert.Nil(t, err)
-
-	level1 := data["contexts"].(map[string]interface{})
-	level2 := level1["testing"].(map[string]interface{})
-	level2["token"] = newKey.Key
-	level2["user_name"] = ""
-	level2["password"] = ""
-
-	updatedCfg, err := yaml.Marshal(data)
-	assert.Nil(t, err)
-	tokenCfg, err := os.CreateTemp("config", "token*.yml")
-	assert.Nil(t, err, "Unable to create token configuration file")
-	newCfg := tokenCfg.Name()
-	err = os.WriteFile(newCfg, updatedCfg, 0o600)
-	assert.Nil(t, err)
-
-	cleanUp := func() error {
-		cancel()
-		return os.Remove(newCfg)
-	}
-
-	apiClient, v = CreateSimpleClient(t, &newCfg, localGrafanaContainer)
-	return apiClient, v, localGrafanaContainer, cleanUp
 }
 
 func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, container testcontainers.Container) service.GrafanaService {

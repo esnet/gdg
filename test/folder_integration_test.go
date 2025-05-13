@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/service"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/gosimple/slug"
 
@@ -24,7 +26,8 @@ import (
 )
 
 func TestFolderCRUD(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
@@ -74,7 +77,8 @@ func TestFolderCRUDInvalidChar(t *testing.T) {
 
 // TODO: write a full CRUD validation of folder permissions
 func TestFolderPermissions(t *testing.T) {
-	apiClient, _, _, cleanup := test_tooling.InitTestLegacy(t, nil, nil)
+	config.InitGdgConfig("testing")
+	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
@@ -109,7 +113,7 @@ func TestFolderNestedPermissions(t *testing.T) {
 	}
 	containerObj, cleanup := test_tooling.InitOrganizations(t)
 	dockerContainer := containerObj.(*testcontainers.DockerContainer)
-	if strings.Contains(dockerContainer.Image, grafana10) {
+	if getGrafanaVersion(dockerContainer.Image) < minimumNestedFoldersVersion {
 		t.Log("Nested folders not supported prior to v11.0, skipping test")
 		t.Skip()
 	}
@@ -156,7 +160,8 @@ func TestFolderNestedCRUD(t *testing.T) {
 	containerObj, cleanup := test_tooling.InitOrganizations(t)
 
 	dockerContainer := containerObj.(*testcontainers.DockerContainer)
-	if strings.Contains(dockerContainer.Image, grafana10) {
+
+	if getGrafanaVersion(dockerContainer.Image) < minimumNestedFoldersVersion {
 		t.Log("Nested folders not supported prior to v11.0, skipping test")
 		t.Skip()
 	}

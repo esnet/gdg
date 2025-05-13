@@ -48,7 +48,7 @@ func TestGenerate(t *testing.T) {
 	expected = service.GetSlug(templateCfg.TemplateData["title"].(string))
 	valArray := parser.Get("panels.0.link_text").Array()
 	val = parser.Get("panels.0.link_url.0")
-	lightsources := templateCfg.TemplateData["lightsources"].([]interface{})
+	lightsources := templateCfg.TemplateData["lightsources"].([]any)
 	for ndx, entry := range valArray {
 		assert.Equal(t, entry.String(), lightsources[ndx].(string))
 		assert.True(t, strings.Contains(val.String(), entry.String()))

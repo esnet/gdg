@@ -28,7 +28,7 @@ func NewUserFilter(label string) filters.Filter {
 		return filterEntity
 	}
 	filterEntity.AddFilter(filters.AuthLabel, label)
-	filterEntity.AddValidation(filters.DefaultFilter, func(i interface{}) bool {
+	filterEntity.AddValidation(filters.DefaultFilter, func(i any) bool {
 		val, ok := i.(map[filters.FilterType]string)
 		if !ok {
 			return ok
@@ -118,7 +118,7 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []types.UserProfileWith
 			// generate user password
 			password := s.grafanaConf.GetUserSettings().GetPassword(file)
 
-			data := make(map[string]interface{})
+			data := make(map[string]any)
 			if err = json.Unmarshal(rawUser, &data); err != nil {
 				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
 				continue
