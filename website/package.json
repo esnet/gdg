@@ -36,12 +36,12 @@
     "gethyas": "^2.4.2",
     "hugo-installer": "^4.0.1",
     "nanoid": "^5.0.9",
-    "pnpm": "^9.15.4",
+    "pnpm": "^10.11.0",
     "postcss": "^8.5.1",
     "postcss-cli": "^11.0.0"
   },
   "devDependencies": {
-    "shx": "^0.3.4"
+    "shx": "^0.4.0"
   },
   "otherDependencies": {
     "hugo": "0.123.7"
@@ -53,5 +53,5 @@
     "node": ">=18.14.1",
     "pnpm": ">=8.10.0"
   },
-  "packageManager": "pnpm@8.12.0"
+  "packageManager": "pnpm@10.11.0"
 }
