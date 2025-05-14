@@ -58,9 +58,9 @@ func GetOrgNameClientOpts(orgName string) NewClientOpts {
 
 func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAPI, *client.TransportConfig) {
 	var err error
-	u, err := url.Parse(s.grafanaConf.URL)
+	u, err := url.Parse(s.grafanaConf.GetURL())
 	if err != nil {
-		log.Fatal("invalid Grafana URL", s.grafanaConf.URL)
+		log.Fatal("invalid Grafana URL", s.grafanaConf.GetURL())
 	}
 	path, err := url.JoinPath(u.Path, "api")
 	if err != nil {

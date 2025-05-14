@@ -159,7 +159,7 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 }
 
 func getDashboardUrl(link *models.Hit) string {
-	base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().URL)
+	base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().GetURL())
 	var baseHost string
 	if err != nil {
 		baseHost = "http://unknown/"

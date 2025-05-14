@@ -143,6 +143,6 @@ func newListConnectionsCmd() simplecobra.Commander {
 }
 
 func getConnectionURL(uid string) string {
-	url := config.Config().GetDefaultGrafanaConfig().URL
+	url := config.Config().GetDefaultGrafanaConfig().GetURL()
 	return fmt.Sprintf("%s/connections/datasources/edit/%s", url, uid)
 }
