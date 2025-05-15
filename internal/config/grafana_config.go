@@ -1,5 +1,7 @@
 package config
 
+import "strings"
+
 type DashboardSettings struct {
 	NestedFolders    bool `mapstructure:"nested_folders" yaml:"nested_folders"`
 	IgnoreFilters    bool `yaml:"ignore_filters" mapstructure:"ignore_filters" `
@@ -21,6 +23,21 @@ type GrafanaConfig struct {
 	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
 	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
+}
+
+// GetURL returns the URL for Grafana, trimming whitespace and adding a trailing slash if not already present.
+func (s *GrafanaConfig) GetURL() string {
+	if len(s.URL) == 0 {
+		return s.URL
+	}
+	// remove white space
+	s.URL = strings.TrimSpace(s.URL)
+	// add trailing slash if present
+	if s.URL[len(s.URL)-1] != '/' {
+		s.URL = s.URL + "/"
+	}
+
+	return s.URL
 }
 
 type MonitoredOrgFolders struct {
