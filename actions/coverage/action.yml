@@ -14,6 +14,7 @@ inputs:
     default: ''
 
 
+
 runs:
   using: 'composite'
   steps:
@@ -23,10 +24,10 @@ runs:
         ENTERPRISE_LICENSE: "${{ inputs.enterprise_jwt }}"
         GRAFANA_TEST_VERSION: "${{ inputs.grafana_version}}"
         TEST_TOKEN_CONFIG: "0"
-      run:  gotestsum --rerun-fails=2 --junitfile report.xml --format testname  -- -coverprofile=cover.out  -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks" | tr '\n' ',' )   ./...
+      run:  go tool -modfile tools/go.mod gotestsum --junitfile report.xml --format testname  -- -coverprofile=cover.out  -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks" | tr '\n' ',' )   ./...
       shell: bash
     - uses: codecov/codecov-action@v5
       with:
         fail_ci_if_error: true # optional (default = false)
         files: cover.out
-        token: ${{ matrix.coverage_token }}
+        token: "${{ inputs.coverage_token }}"

@@ -19,7 +19,7 @@ jobs:
       matrix:
 #       job_name: [security, vuln_check, lint]
         job_name: [security, lint]
-        go_version: [ 1.24.1]
+        go_version: [ 1.24.3]
 
     runs-on: ubuntu-latest
     steps:

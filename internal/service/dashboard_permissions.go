@@ -22,7 +22,7 @@ func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.Filter) ([]type
 	dashboards := s.ListDashboards(filterReq)
 	var result []types.DashboardAndPermissions
 	for _, dashboard := range dashboards {
-		item := types.DashboardAndPermissions{Dashboard: dashboard}
+		item := types.DashboardAndPermissions{Dashboard: dashboard.Hit}
 		perms, err := s.GetClient().DashboardPermissions.GetDashboardPermissionsListByUID(dashboard.UID)
 		if err != nil {
 			slog.Warn("Unable to retrieve permissions for dashboard",

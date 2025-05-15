@@ -16,9 +16,6 @@ runs:
     - name: Verify go version
       run: go version
       shell: bash
-    - name: Install GoTest
-      run: go install gotest.tools/gotestsum@latest
-      shell: bash
     - name: Install Task
       run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
       shell: bash

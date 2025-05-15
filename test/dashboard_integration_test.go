@@ -8,13 +8,13 @@ import (
 	"strings"
 	"testing"
 
+	customModels "github.com/esnet/gdg/internal/types"
+
 	"github.com/esnet/gdg/internal/tools/ptr"
 
 	"github.com/esnet/gdg/internal/types"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/samber/lo"
-
-	"github.com/testcontainers/testcontainers-go"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
@@ -34,11 +34,6 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 		t.Skip("skipping token based tests")
 	}
 	containerObj, cleanup := test_tooling.InitOrganizations(t)
-	dockerContainer := containerObj.(*testcontainers.DockerContainer)
-	if getGrafanaVersion(dockerContainer.Image) < minimumNestedFoldersVersion {
-		t.Log("Nested folders not supported prior to v11.0, skipping test")
-		t.Skip()
-	}
 
 	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
 	assert.NoError(t, os.Setenv(test_tooling.EnableNestedBehavior, "true"))
@@ -59,8 +54,8 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 	slog.Info("Imported dashboards", "count", len(boards))
-	var generalBoard *models.Hit
-	var nestedFolder *models.Hit
+	var generalBoard *customModels.NestedHit
+	var nestedFolder *customModels.NestedHit
 	for ndx, board := range boards {
 
 		if board.Slug == "rabbitmq-overview" {
@@ -72,9 +67,7 @@ func TestDashboardNestedFolderCRUD(t *testing.T) {
 	}
 	assert.NotNil(t, generalBoard)
 	assert.NotNil(t, nestedFolder)
-	folders := apiClient.ListFolders(service.NewFolderFilter())
-	nestedPath := service.GetNestedFolder(nestedFolder.FolderTitle, nestedFolder.FolderUID, folders)
-	assert.Equal(t, nestedPath, "Others/dummy")
+	assert.Equal(t, nestedFolder.NestedPath, "Others/dummy")
 
 	// Import Dashboards
 	numBoards := 3
@@ -105,8 +98,8 @@ func TestDashboardCRUD(t *testing.T) {
 	boards := apiClient.ListDashboards(filtersEntity)
 	slog.Info("Imported dashboards", "count", len(boards))
 	ignoredSkipped := true
-	var generalBoard *models.Hit
-	var otherBoard *models.Hit
+	var generalBoard *customModels.NestedHit
+	var otherBoard *customModels.NestedHit
 	for ndx, board := range boards {
 		slog.Info(board.Slug)
 		if board.Slug == "latency-patterns" {
@@ -401,7 +394,7 @@ func TestWildcardFilter(t *testing.T) {
 	assert.Equal(t, len(boards), 0)
 }
 
-func validateOtherBoard(t *testing.T, board *models.Hit) {
+func validateOtherBoard(t *testing.T, board *customModels.NestedHit) {
 	assert.True(t, board.UID != "")
 	assert.Equal(t, board.Title, "Flow Information")
 	assert.Equal(t, board.URI, "db/flow-information")
@@ -411,7 +404,7 @@ func validateOtherBoard(t *testing.T, board *models.Hit) {
 	assert.Equal(t, board.FolderTitle, "Other")
 }
 
-func validateGeneralBoard(t *testing.T, board *models.Hit) {
+func validateGeneralBoard(t *testing.T, board *customModels.NestedHit) {
 	assert.True(t, board.UID != "")
 	assert.Equal(t, board.Title, "Individual Flows")
 	assert.Equal(t, board.URI, "db/individual-flows")
@@ -424,7 +417,7 @@ func validateGeneralBoard(t *testing.T, board *models.Hit) {
 	assert.Equal(t, board.FolderTitle, "General")
 }
 
-func validateTags(t *testing.T, board *models.Hit) {
+func validateTags(t *testing.T, board *customModels.NestedHit) {
 	assert.True(t, board.UID != "")
 	assert.True(t, len(board.Tags) > 0)
 	allTags := []string{"netsage", "flow"}

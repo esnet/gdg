@@ -12,6 +12,8 @@ import (
 	"github.com/gosimple/slug"
 )
 
+const pathSeparator = string(os.PathSeparator)
+
 var (
 	DefaultFolderName   = "General"
 	searchTypeDashboard = "dash-db"
@@ -42,7 +44,7 @@ func getFolderFromResourcePath(filePath string, resourceType config.ResourceType
 		}
 		basePath = filepath.Join(prefix, basePath)
 	}
-	if basePath[0] == '/' {
+	if basePath[0] == os.PathSeparator {
 		basePath = basePath[1:]
 	}
 
@@ -50,7 +52,7 @@ func getFolderFromResourcePath(filePath string, resourceType config.ResourceType
 	ndx := strings.LastIndex(folderName, string(os.PathSeparator))
 	if ndx != -1 {
 		folderName = folderName[0:ndx]
-		if len(folderName) > 1 && folderName[0] == '/' {
+		if len(folderName) > 1 && folderName[0] == os.PathSeparator {
 			folderName = folderName[1:]
 		}
 		return folderName, nil
@@ -71,7 +73,7 @@ func BuildResourceFolder(folderName string, resourceType config.ResourceType, cr
 }
 
 func buildResourcePath(folderName string, resourceType config.ResourceType, createDestination bool, clearOutput bool) string {
-	v := fmt.Sprintf("%s/%s.json", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), folderName)
+	v := fmt.Sprintf("%s%s%s.json", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), pathSeparator, folderName)
 	if createDestination {
 		tools.CreateDestinationPath(config.Config().GetDefaultGrafanaConfig().GetPath(resourceType), clearOutput, filepath.Dir(v))
 	}

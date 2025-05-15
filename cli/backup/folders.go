@@ -84,7 +84,6 @@ func newFolderListCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
-			cfg := config.Config().GetDefaultGrafanaConfig()
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "title", "nestedPath"})
 			folders := rootCmd.GrafanaSvc().ListFolders(getFolderFilter())
 
@@ -92,11 +91,7 @@ func newFolderListCmd() simplecobra.Commander {
 				slog.Info("No folders found")
 			} else {
 				for _, folder := range folders {
-					row := table.Row{folder.UID, folder.Title}
-					if cfg.GetDashboardSettings().NestedFolders {
-						row = append(row, folder.NestedPath)
-					}
-
+					row := table.Row{folder.UID, folder.Title, folder.NestedPath}
 					rootCmd.TableObj.AppendRow(row)
 				}
 				rootCmd.Render(cd.CobraCommand, folders)
