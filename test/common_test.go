@@ -18,10 +18,9 @@ import (
 )
 
 const (
-	minimumNestedFoldersVersion = 11
-	defaultGrafanaVersion       = "11.1.5-ubuntu"
-	basicAuth                   = "basicAuth"
-	developerEnv                = "DEVELOPER"
+	defaultGrafanaVersion = "11.6.0-ubuntu"
+	basicAuth             = "basicAuth"
+	developerEnv          = "DEVELOPER"
 )
 
 func getGrafanaVersion(tag string) int {

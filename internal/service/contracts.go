@@ -52,7 +52,7 @@ type ConnectionPermissions interface {
 
 // DashboardsApi Contract definition
 type DashboardsApi interface {
-	ListDashboards(filter filters.Filter) []*models.Hit
+	ListDashboards(filter filters.Filter) []*customModels.NestedHit
 	DownloadDashboards(filter filters.Filter) []string
 	UploadDashboards(filter filters.Filter) error
 	DeleteAllDashboards(filter filters.Filter) []string
@@ -75,12 +75,12 @@ type DashboardPermissionsApi interface {
 
 // FoldersApi Contract definition
 type FoldersApi interface {
-	ListFolders(filter filters.Filter) []*customModels.FolderDetails
+	ListFolders(filter filters.Filter) []*customModels.NestedHit
 	DownloadFolders(filter filters.Filter) []string
 	UploadFolders(filter filters.Filter) []string
 	DeleteAllFolders(filter filters.Filter) []string
 	// Permissions
-	ListFolderPermissions(filter filters.Filter) map[*customModels.FolderDetails][]*models.DashboardACLInfoDTO
+	ListFolderPermissions(filter filters.Filter) map[*customModels.NestedHit][]*models.DashboardACLInfoDTO
 	DownloadFolderPermissions(filter filters.Filter) []string
 	UploadFolderPermissions(filter filters.Filter) []string
 }

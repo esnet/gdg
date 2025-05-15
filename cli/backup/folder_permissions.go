@@ -37,7 +37,7 @@ func getFolderPermTblWriter() table.Writer {
 	writer := table.NewWriter()
 	writer.SetOutputMirror(os.Stdout)
 	writer.SetStyle(table.StyleLight)
-	writer.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name"}, table.RowConfig{AutoMerge: true})
+	writer.AppendHeader(table.Row{"folder ID", "folderUid", "folder Name", "nested path"}, table.RowConfig{AutoMerge: true})
 	return writer
 }
 
@@ -63,7 +63,7 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 			}
 			for key, value := range folders {
 				writer := getFolderPermTblWriter()
-				writer.AppendRow(table.Row{key.UID, key.ID, key.Title})
+				writer.AppendRow(table.Row{key.UID, key.ID, key.Title, key.NestedPath})
 				writer.Render()
 				if len(value) > 0 {
 					twConfigs := table.NewWriter()

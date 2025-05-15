@@ -8,9 +8,7 @@ vars:
   BUILD_DATE: { sh: date '+%Y-%m-%d-%H:%M:%S' }
   IMAGE_NAME: "esnet/gdg"
   LD_FLAGS: "-s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/internal/version.BuildDate={{ .BUILD_DATE }} "
-  LEFTHOOK_VERSION: "v1.7.13"
-  MOCKERY_VERSION: "v2.42.0"
-  RELEASER_VERSION: "v2.2.0"
+  TOOLS_ARG: "-modfile tools/go.mod"
 
 dotenv: [ '.env' ]
 
@@ -21,37 +19,27 @@ tasks:
   install_tools:
     desc: "Install required Dev tools by GDG"
     cmds:
-      - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-      - go install github.com/client9/misspell/cmd/misspell@latest
-      - go install github.com/securego/gosec/v2/cmd/gosec@latest
-      - go install golang.org/x/vuln/cmd/govulncheck@latest
-      - go install github.com/vektra/mockery/v2@{{ .MOCKERY_VERSION}}
-      - go install github.com/goreleaser/goreleaser/v2@{{ .RELEASER_VERSION }} 
-      - go install github.com/evilmartians/lefthook@{{ .LEFTHOOK_VERSION }}
-      - go install mvdan.cc/gofumpt@v0.7.0
-
-      - lefthook install
-
+      - go tool {{ .TOOLS_ARG}} lefthook install
   security:
     desc: "Run security scan"
     cmds:
-      - gosec --exclude=G402,G304  ./...
+      - go tool {{ .TOOLS_ARG}} gosec --exclude=G402,G304  ./...
   format:
     desc: reformat the code to match stricter conventions
     cmds:
-      - gofumpt -l -w .
+      - go tool {{ .TOOLS_ARG}} gofumpt -l -w .
   lint:
     desc: "Lint project, skipping test files."
     cmds:
-      - golangci-lint run --timeout=30m  ./...
+      - go tool {{ .TOOLS_ARG}}  golangci-lint run --timeout=30m  ./...
   spellcheck:
     desc: "Check Spelling across code"
     cmds:
-      - misspell .  | grep -v "website"
+      - go tool {{ .TOOLS_ARG}} misspell .  | grep -v "website"
   lint_tests:
     desc: "Lint project, including test files."
     cmds:
-      - golangci-lint run ./...
+      - go tool {{ .TOOLS_ARG}} golangci-lint run ./...
   authors:
     desc: "Building GDG"
     cmds:
@@ -62,7 +50,7 @@ tasks:
     desc: "Re-generate Mocks"
     cmds:
       - rm -fr internal/service/mocks
-      - mockery
+      - go tool {{ .TOOLS_ARG}} mockery
   linux:
     desc: "Build linux binary"
     cmds:
@@ -104,12 +92,12 @@ tasks:
     deps: [ clean ]
     desc: "Release Snapshot"
     cmds:
-      - goreleaser build --snapshot
+      - go tool {{ .TOOLS_ARG}} goreleaser build --snapshot
   release:
     deps: [ clean ]
     desc: "TEST Release of GDG, no validation, no publish"
     cmds:
-      - goreleaser release --skip=publish,validate
+      - go tool {{ .TOOLS_ARG}}  goreleaser release --skip=publish,validate
 
   test:
     desc: "test check"
@@ -129,4 +117,4 @@ tasks:
   vuln_check:
     desc: "Vulnerability check"
     cmds:
-      - govulncheck ./...
+      - go tool {{ .TOOLS_ARG}} govulncheck ./...

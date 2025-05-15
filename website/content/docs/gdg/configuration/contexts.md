@@ -74,9 +74,7 @@ The entires under `dashboard_settings` define custom behavior for how dashboards
 
 Valid values are:
 
-- `nested_folders`: when enabled will allow for nested folders in the import of both folders and dashboards.  This feature is only available in grafana 11.
 - `ignore_filters`: if you wish to download EVERY folder in grafana and disregard watched folders then set this to true.
-- `ignore_bad_folders`: If a folder contains a special character like a / GDG typically exits with a fatal error.  If this flag is enabled, it will warn and disregard all data in the given folder.  Please note nested_folders cannot be used with ignore_bad_folders.
 
 ### Monitored Folders
 
