@@ -113,14 +113,14 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 				return err
 			}
 
-			rootCmd.TableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
+			rootCmd.TableObj.AppendHeader(table.Row{"Title", "id", "folder", "nested Path", "UID"})
 			boards := rootCmd.GrafanaSvc().ListDashboards(filter)
 
 			slog.Info("dashboards have been uploaded", slog.Any("count", len(boards)),
 				slog.String("context", GetContext()),
 				slog.String("Organization", GetOrganizationName()))
 			for _, link := range boards {
-				rootCmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
+				rootCmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.NestedPath, link.UID})
 			}
 			if len(boards) > 0 {
 				rootCmd.Render(cd.CobraCommand, boards)

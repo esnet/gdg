@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"path/filepath"
 	"strings"
+
+	"github.com/esnet/gdg/internal/tools/encode"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
 
@@ -48,8 +51,10 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 	folderFilter := NewFolderFilter()
 	if ignoreFilters {
 		folderFilter = nil
+		filter = nil
 	}
 
+	// folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter()))
 	folderNameMap := getFolderNameIDMap(s.ListFolders(folderFilter))
 	values := maps.Values(folderNameMap)
 	buf := strings.Builder{}
@@ -72,7 +77,26 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 	if err != nil {
 		log.Fatalf("Unable to list Library Elements %v", err)
 	}
-	return libraryElements.GetPayload().Result.Elements
+	var data []*models.LibraryElementDTO
+	for _, val := range libraryElements.GetPayload().Result.Elements {
+		var nestedPath string
+		if val.FolderUID == "" {
+			nestedPath = DefaultFolderName
+		} else {
+			fld, err := s.getFolderByUid(val.FolderUID)
+			if err != nil {
+				slog.Error("unable to get forder to validate resource")
+				continue
+			}
+			nestedPath = fld.NestedPath
+		}
+
+		if filter == nil || filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: nestedPath}) {
+			data = append(data, val)
+		}
+	}
+
+	return data
 }
 
 // DownloadLibraryElements downloads all the Library Elements
@@ -109,29 +133,36 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.Filter) []string {
 }
 
 // UploadLibraryElements uploads all the Library Elements
-func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
+func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.Filter) []string {
 	var (
 		exported          []string = make([]string, 0)
 		rawLibraryElement []byte
-		folderName        string
+		folderUid         string
 		libraryUID        string
+		folderName        string
 	)
 
 	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource))
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource), true)
-
-	currentLibElements := s.ListLibraryElements(filter)
-	libMapping := make(map[string]*models.LibraryElementDTO, 0)
-	// Build a mapping by UID
-	for ndx, item := range currentLibElements {
-		libMapping[item.UID] = currentLibElements[ndx]
-	}
-
 	if err != nil {
 		slog.Error("failed to list files in directory for library elements", "err", err)
 	}
 
+	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter()))
+
+	_ = folderUidMap
+	currentLibElements := s.ListLibraryElements(filterReq)
+	libMapping := make(map[string]*models.LibraryElementDTO)
+	// Build a mapping by UID
+	for ndx, item := range currentLibElements {
+		libMapping[item.UID] = currentLibElements[ndx]
+	}
+	ignoreFilters := s.grafanaConf.GetDashboardSettings().IgnoreFilters
+
 	for _, file := range filesInDir {
+		baseFile := filepath.Base(file)
+		baseFile = strings.ReplaceAll(baseFile, ".json", "")
+
 		fileLocation := file
 		if strings.HasSuffix(file, ".json") {
 			if rawLibraryElement, err = s.storage.ReadFile(fileLocation); err != nil {
@@ -139,10 +170,18 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 				continue
 			}
 
-			Results := gjson.GetManyBytes(rawLibraryElement, "meta.folderName", "uid")
+			// Extract Folder Name based on dashboardPath
+			folderName, err = getFolderFromResourcePath(file, config.LibraryElementResource, s.storage.GetPrefix())
+			if err != nil {
+				slog.Warn("unable to determine dashboard folder name, falling back on default")
+			}
+			if folderName == "" {
+				folderName = DefaultFolderName
+			}
+			Results := gjson.GetManyBytes(rawLibraryElement, "meta.folderUid", "uid")
 
 			if Results[0].Exists() {
-				folderName = Results[0].String()
+				folderUid = Results[0].String()
 			} else {
 				slog.Error("Unable to determine folder name of library component, skipping.", "filename", file)
 				continue
@@ -158,21 +197,42 @@ func (s *DashNGoImpl) UploadLibraryElements(filter filters.Filter) []string {
 				slog.Warn("Library already exists, skipping", "filename", file)
 				continue
 			}
+			// validateMap := map[filters.FilterType]string{filters.FolderFilter: folderName, filters.DashFilter: baseFile}
 
-			if !slices.Contains(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), folderName) {
-				slog.Warn("Skipping since requested file is not in a folder gdg is configured to manage", "folder", folderName, "file", file)
+			if folderName == DefaultFolderName {
+				folderUid = ""
+			} else {
+				if val, ok := folderUidMap[folderName]; ok {
+					// folderId = val
+					folderUid = val
+				} else {
+					// if filterReq.ValidateAll(validateMap) {
+					newFolders, folderErr := s.createdFolders(folderName)
+					if folderErr != nil {
+						log.Panic("Unable to create required folder")
+					} else {
+						maps.Copy(folderUidMap, newFolders)
+						folderUid = folderUidMap[encode.Decode(folderName)]
+					}
+					//}
+				}
+			}
+			if !ignoreFilters && !slices.Contains(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), folderUid) {
+				slog.Warn("Skipping since requested file is not in a folder gdg is configured to manage", "folder", folderUid, "file", file)
 				continue
 			}
 			var newLibraryRequest models.CreateLibraryElementCommand
-
 			if err = json.Unmarshal(rawLibraryElement, &newLibraryRequest); err != nil {
 				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
 				continue
 			}
+			if folderUid != "" {
+				newLibraryRequest.FolderUID = folderUid
+			}
 
 			entity, err := s.GetClient().LibraryElements.CreateLibraryElement(&newLibraryRequest)
 			if err != nil {
-				slog.Error("Failed to create library element", "err", err)
+				slog.Error("Failed to create library element", "err", err, "resource", fileLocation)
 			} else {
 				exported = append(exported, entity.Payload.Result.Name)
 			}

@@ -151,7 +151,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*
 	return exportedTeams
 }
 
-// List all Teams
+// ListTeams List all Teams in a given org
 func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO, 0)
 	var pageSize int64 = 99999
