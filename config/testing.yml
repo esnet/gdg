@@ -22,10 +22,9 @@ contexts:
     password: admin
     dashboard_settings:
       ignore_filters: false
-      nested_folders: false
     watched:
       - General
-      - Other
+      - linux%2Fgnu/*
   production:
     output_path: prod
     connections:

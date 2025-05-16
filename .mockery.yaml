@@ -1,13 +1,13 @@
-with-expecter: true
-recursive: false
 all: true
-dir: "{{.InterfaceDir}}/mocks"
-outpkg: "mocks"
+dir: '{{.InterfaceDir}}/mocks'
+structname: '{{.InterfaceName}}'
+pkgname: mocks
+recursive: false
 filename: "{{.InterfaceName}}.go"
-mockname: "{{.InterfaceName}}"
+template: testify
 packages:
-    github.com/esnet/gdg/internal/service:
-      config:
-        all: true
-        dir: "{{.InterfaceDir}}/mocks"
-        outpkg: "mocks"
+  github.com/esnet/gdg/internal/service:
+    config:
+      all: true
+      dir: '{{.InterfaceDir}}/mocks'
+      pkgname: mocks

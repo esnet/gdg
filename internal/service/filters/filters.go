@@ -112,7 +112,7 @@ func (s *BaseFilter) InvokeValidation(name FilterType, i any) bool {
 	return false
 }
 
-// Validate Iterates through all validation checks
+// ValidateAll Iterates through all validation checks
 func (s *BaseFilter) ValidateAll(items any) bool {
 	for _, val := range s.validationMethods {
 		ok := val(items)

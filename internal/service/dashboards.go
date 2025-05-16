@@ -202,20 +202,17 @@ func (s *DashNGoImpl) getDashboardByUid(uid string) (*models.DashboardFullWithMe
 
 // validateFolderRegex accepts a list of regular expression and a folder name or path.  Returns true if any of the regex matches
 func validateFolderRegex(acceptList []string, folder string) bool {
-	cfg := config.Config().GetDefaultGrafanaConfig()
-	if cfg.GetDashboardSettings().NestedFolders {
-		for _, pattern := range cfg.GetMonitoredFolders() {
-			p, err := regexp.Compile(pattern)
-			if err != nil {
-				// fallback on exact string match
-				if pattern == folder {
-					return true
-				}
-				continue
-			}
-			if p.MatchString(folder) {
+	for _, pattern := range acceptList {
+		p, err := regexp.Compile(pattern)
+		if err != nil {
+			// fallback on exact string match
+			if pattern == folder {
 				return true
 			}
+			continue
+		}
+		if p.MatchString(folder) {
+			return true
 		}
 	}
 	return slices.Contains(acceptList, folder)
@@ -265,9 +262,10 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*customTypes.Ne
 	if len(tagsParams) == 0 {
 		retrieve("")
 	} else {
+		// need to iterate over all tags since grafana API filters on AND (&&) instead of OR (||)
 		for _, tag := range tagsParams {
-			slog.Info("retrieving dashboard by tag", slog.String("tag", tag))
 			retrieve(tag)
+			slog.Info("retrieving dashboard by tag", slog.String("tag", tag))
 		}
 	}
 
@@ -292,14 +290,27 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*customTypes.Ne
 
 		// accepts all folders
 		if config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
-			validFolder = true
-		} else if validateFolderRegex(folderFilters, folderMatch) { //
+			// if folder filter parameter is enabled, apply given filter
+			if len(folderFilters) > 0 {
+				// reuse filters below since they are intended to be ignored when ignore filters  enabled
+				config.Config().GetDefaultGrafanaConfig().MonitoredFoldersOverride = nil
+				// set monitored folders from CLI param filter
+				config.Config().GetDefaultGrafanaConfig().MonitoredFolders = folderFilters
+				if validateFolderRegex(folderFilters, folderMatch) { // ensure folder matches CLI param filter
+					validFolder = true
+				}
+			} else {
+				validFolder = true
+			}
+		} else if validateFolderRegex(folderFilters, folderMatch) { // ensure folder matches con
 			validFolder = true
 		} else if slices.Contains(folderFilters, DefaultFolderName) && link.FolderID == 0 {
 			link.FolderTitle = DefaultFolderName
 			validFolder = true
 		}
+
 		if !validFolder {
+			slog.Info("Skipping dashboard, as it failed the filter check", "title", link.Title, "folder", link.NestedPath)
 			continue
 		}
 		validUid = filterReq.GetFilter(filters.DashFilter) == "" || link.Slug == filterReq.GetFilter(filters.DashFilter)
@@ -332,8 +343,6 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 
 	folderUidMap := getFolderUIDEntityMap(s.ListFolders(NewFolderFilter()))
 
-	useNestedFolders := config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().NestedFolders
-	slog.Info("Downloading dashboards with ", "nested", useNestedFolders)
 	boardLinks = lo.Map(s.ListDashboards(filter), func(link *customTypes.NestedHit, i int) *models.Hit {
 		return link.Hit
 	})
@@ -356,7 +365,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 			continue
 		}
 
-		fileName := buildDashboardFileName(link, metaData.GetPayload().Meta.Slug, folderUidMap, useNestedFolders, s.isLocal(), s.globalConf.ClearOutput)
+		fileName := buildDashboardFileName(link, metaData.GetPayload().Meta.Slug, folderUidMap, s.isLocal(), s.globalConf.ClearOutput)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
@@ -385,24 +394,20 @@ func getNestedFolder(folderTitle, folderUID string, folderUidMap map[string]*cus
 }
 
 // buildDashboardFileName for a given dashboard, a full nested folder path is constructed
-func buildDashboardFileName(db *models.Hit, dbSlug string, folderUidMap map[string]*customTypes.NestedHit, nested, createDestination, clearOutput bool) string {
-	var folderPath string
-	if nested {
-		folderPath = getNestedFolder(db.FolderTitle, db.FolderUID, folderUidMap)
-	} else {
-		folderPath = db.FolderTitle
-	}
+func buildDashboardFileName(db *models.Hit, dbSlug string, folderUidMap map[string]*customTypes.NestedHit, createDestination, clearOutput bool) string {
+	folderPath := getNestedFolder(db.FolderTitle, db.FolderUID, folderUidMap)
 	fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderPath, config.DashboardResource, createDestination, clearOutput), dbSlug)
 	return fileName
 }
 
 // createFolders Creates a new folder with the given name.  If nested, each sub folder that does not exist is also created
 func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, error) {
-	if !s.grafanaConf.GetDashboardSettings().NestedFolders && strings.Contains(folderName, "/") {
-		log.Fatal("path separator not supported in folder name")
-	}
+	folderUidMap := getFolderUIDEntityMap(s.ListFolders(nil))
+
 	namedUIDMap := getFolderMapping(s.ListFolders(NewFolderFilter()),
-		func(fld *customTypes.NestedHit) string { return fld.Title },
+		func(db *customTypes.NestedHit) string {
+			return getNestedFolder(db.Title, db.FolderUID, folderUidMap)
+		},
 		func(fld *customTypes.NestedHit) *customTypes.NestedHit { return fld },
 	)
 
@@ -429,18 +434,20 @@ func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, erro
 				cnt     int
 				pathErr error
 			)
+			// folder = encode.Decode(folder)
 			if ndx == 0 {
 				cnt, pathErr = folderPath.WriteString(folder)
 			} else {
 				cnt, pathErr = folderPath.WriteString(fmt.Sprintf("/%s", folder))
 			}
+
 			if pathErr != nil || cnt <= 0 {
 				log.Fatal("unable to update folder path, critical logic error")
 			}
 			if val, ok := namedUIDMap[folderPath.String()]; ok {
 				parentUid = val.UID
 			} else {
-				uid, err := cratedBaseFolder(folder, parentUid)
+				uid, err := cratedBaseFolder(encode.Decode(folder), parentUid)
 				if err != nil {
 					return newFoldersMap, err
 				}
@@ -473,38 +480,6 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 		return fmt.Errorf("unable to find any files to export from storage engine, err: %w", err)
 	}
 
-	if !s.grafanaConf.GetDashboardSettings().NestedFolders {
-		p, regexErr := regexp.Compile(nestedDashboardRegexFilter)
-		if regexErr != nil {
-			return fmt.Errorf("unable to compile nested folder validation regex patter, err: %w", regexErr)
-		}
-
-		invalidCount := lo.FilterMap(filesInDir, func(file string, index int) (string, bool) {
-			// check dashboardPath depth.
-			dashboardPath = p.ReplaceAllString(dashboardPath, "")
-			pathFile := strings.Replace(file, dashboardPath, "", 1)
-
-			if s.storage.GetPrefix() != "" {
-				prefix := p.ReplaceAllString(s.storage.GetPrefix(), "")
-				pathFile = strings.Replace(pathFile, prefix, "", 1)
-			}
-			// strip away extra slashes
-			pathFile = strings.ReplaceAll(pathFile, "//", "/")
-			// remove leading slash
-			pathFile = p.ReplaceAllString(pathFile, "")
-			elements := strings.Split(pathFile, string(os.PathSeparator))
-			if len(elements) > 2 {
-				return file, true
-			}
-
-			return file, false
-		})
-		if len(invalidCount) > 0 {
-			return fmt.Errorf("nested folder feature is disabled in GDG but import dashboardPath contains a nested folder.  Please fix the import or configuration.  Files: %s", strings.Join(invalidCount, ", "))
-		}
-
-	}
-
 	currentDashboards := s.ListDashboards(filterReq)
 
 	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter()))
@@ -514,7 +489,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 		filterReq = NewDashboardFilter("", "", "")
 	}
 
-	validFolders := filterReq.GetEntity(filters.FolderFilter)
+	// validFolders := filterReq.GetEntity(filters.FolderFilter)
 	alreadyProcessed := make(map[any]bool)
 
 	// TODO: use gjson instead of reading the 'board' in
@@ -537,7 +512,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 			continue
 		}
 		// Extract Tags
-		if filterVal := filterReq.GetFilter(filters.TagsFilter); filterVal != "[]" {
+		if filterVal := filterReq.GetFilter(filters.TagsFilter); filterVal != "[]" && filterVal != "" {
 			var boardTags []string
 			for _, val := range board["tags"].([]any) {
 				boardTags = append(boardTags, val.(string))
@@ -576,13 +551,13 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 		if folderName == "" {
 			folderName = DefaultFolderName
 		}
-		if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
-			slog.Debug("Skipping file since it doesn't match any valid folders", "filename", file)
-			continue
-		}
+		//if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
+		//	slog.Debug("Skipping file since it doesn't match any valid folders", "filename", file)
+		//	continue
+		//}
 		validateMap := map[filters.FilterType]string{filters.FolderFilter: folderName, filters.DashFilter: baseFile}
 		// If folder OR slug is filtered, then skip if it doesn't match
-		if !filterReq.ValidateAll(validateMap) {
+		if !config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters && !filterReq.ValidateAll(validateMap) {
 			continue
 		}
 

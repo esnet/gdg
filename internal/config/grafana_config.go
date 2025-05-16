@@ -3,7 +3,6 @@ package config
 import "strings"
 
 type DashboardSettings struct {
-	NestedFolders bool `mapstructure:"nested_folders" yaml:"nested_folders"`
 	IgnoreFilters bool `yaml:"ignore_filters" mapstructure:"ignore_filters" `
 }
 

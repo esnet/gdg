@@ -29,60 +29,7 @@ const (
 	DashboardCount = 16
 )
 
-func TestDashboardNestedFolderCRUD(t *testing.T) {
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
-		t.Skip("skipping token based tests")
-	}
-	containerObj, cleanup := test_tooling.InitOrganizations(t)
-
-	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
-	assert.NoError(t, os.Setenv(test_tooling.EnableNestedBehavior, "true"))
-	assert.NoError(t, os.Setenv(test_tooling.IgnoreDashFilters, "true"))
-
-	defer func() {
-		os.Unsetenv(test_tooling.OrgNameOverride)
-		os.Unsetenv(test_tooling.EnableNestedBehavior)
-		os.Unsetenv(test_tooling.IgnoreDashFilters)
-		cleanup()
-	}()
-
-	apiClient, _ := test_tooling.CreateSimpleClient(t, nil, containerObj)
-
-	filtersEntity := service.NewDashboardFilter("", "", "")
-	slog.Info("Exporting all dashboards")
-	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
-	slog.Info("Listing all dashboards")
-	boards := apiClient.ListDashboards(filtersEntity)
-	slog.Info("Imported dashboards", "count", len(boards))
-	var generalBoard *customModels.NestedHit
-	var nestedFolder *customModels.NestedHit
-	for ndx, board := range boards {
-
-		if board.Slug == "rabbitmq-overview" {
-			generalBoard = boards[ndx]
-		}
-		if board.Slug == "node-exporter-full" {
-			nestedFolder = boards[ndx]
-		}
-	}
-	assert.NotNil(t, generalBoard)
-	assert.NotNil(t, nestedFolder)
-	assert.Equal(t, nestedFolder.NestedPath, "Others/dummy")
-
-	// Import Dashboards
-	numBoards := 3
-	slog.Info("Importing Dashboards")
-	list := apiClient.DownloadDashboards(filtersEntity)
-	assert.Equal(t, len(list), numBoards)
-	slog.Info("Deleting Dashboards")
-	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
-	assert.Equal(t, len(deleteList), numBoards)
-	slog.Info("List Dashboards again")
-	boards = apiClient.ListDashboards(filtersEntity)
-	assert.Equal(t, len(boards), 0)
-}
-
-func TestDashboardCRUD(t *testing.T) {
+func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	config.InitGdgConfig("testing")
 	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer func() {
@@ -119,9 +66,14 @@ func TestDashboardCRUD(t *testing.T) {
 	validateOtherBoard(t, otherBoard)
 	// Validate filters
 
-	filterFolder := service.NewDashboardFilter("Other", "", "")
+	filterFolder := service.NewDashboardFilter("linux%2Fgnu", "", "")
 	boards = apiClient.ListDashboards(filterFolder)
 	assert.Equal(t, 8, len(boards))
+	// With Regex filters
+	filterFolder = service.NewDashboardFilter("linux%2Fgnu$", "", "")
+	boards = apiClient.ListDashboards(filterFolder)
+	assert.Equal(t, 4, len(boards))
+	//
 	dashboardFilter := service.NewDashboardFilter("", "flow-information", "")
 	boards = apiClient.ListDashboards(dashboardFilter)
 	assert.Equal(t, 1, len(boards))
@@ -259,7 +211,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 
-	slog.Info("Imported %d dashboards", "count", len(boards))
+	slog.Info("Filtered Count is", "count", len(boards))
 	for _, board := range boards {
 		validateTags(t, board)
 	}
@@ -401,7 +353,8 @@ func validateOtherBoard(t *testing.T, board *customModels.NestedHit) {
 	assert.True(t, strings.Contains(board.URL, board.UID))
 	assert.True(t, strings.Contains(board.URL, board.Slug))
 	assert.Equal(t, board.Type, models.HitType("dash-db"))
-	assert.Equal(t, board.FolderTitle, "Other")
+	assert.Equal(t, board.FolderTitle, "linux/gnu")
+	assert.Equal(t, board.NestedPath, "linux%2Fgnu")
 }
 
 func validateGeneralBoard(t *testing.T, board *customModels.NestedHit) {
@@ -415,6 +368,7 @@ func validateGeneralBoard(t *testing.T, board *customModels.NestedHit) {
 	assert.Equal(t, board.Type, models.HitType("dash-db"))
 	assert.Equal(t, board.FolderID, int64(0))
 	assert.Equal(t, board.FolderTitle, "General")
+	assert.Equal(t, board.NestedPath, "General")
 }
 
 func validateTags(t *testing.T, board *customModels.NestedHit) {
@@ -422,6 +376,7 @@ func validateTags(t *testing.T, board *customModels.NestedHit) {
 	assert.True(t, len(board.Tags) > 0)
 	allTags := []string{"netsage", "flow"}
 	for _, tag := range board.Tags {
-		assert.True(t, slices.Contains(allTags, tag))
+		check := slices.Contains(allTags, tag)
+		assert.True(t, check)
 	}
 }
