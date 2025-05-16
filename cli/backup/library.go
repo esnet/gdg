@@ -5,6 +5,8 @@ import (
 	"log"
 	"log/slog"
 
+	"github.com/esnet/gdg/internal/service"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
@@ -73,7 +75,7 @@ func newLibraryElementsListCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "UID", "Folder", "Name", "Type"})
 
-			elements := rootCmd.GrafanaSvc().ListLibraryElements(nil)
+			elements := rootCmd.GrafanaSvc().ListLibraryElements(service.NewFolderFilter())
 
 			slog.Info("Listing library for context", "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range elements {
