@@ -5,7 +5,7 @@ import (
 	"log"
 	"log/slog"
 
-	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+	"github.com/esnet/gdg/internal/service"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
@@ -46,7 +46,7 @@ func newLibraryElementsClearCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			deletedLibraries := rootCmd.GrafanaSvc().DeleteAllLibraryElements(nil)
+			deletedLibraries := rootCmd.GrafanaSvc().DeleteAllLibraryElements(service.NewLibraryElementFilter())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range deletedLibraries {
 				rootCmd.TableObj.AppendRow(table.Row{"library", file})
@@ -72,13 +72,13 @@ func newLibraryElementsListCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			rootCmd.TableObj.AppendHeader(table.Row{"id", "UID", "Folder", "Name", "Type"})
+			rootCmd.TableObj.AppendHeader(table.Row{"id", "UID", "Nested Folder", "Folder", "Name", "Type"})
 
-			elements := rootCmd.GrafanaSvc().ListLibraryElements(nil)
+			elements := rootCmd.GrafanaSvc().ListLibraryElements(service.NewLibraryElementFilter())
 
-			slog.Info("Listing library for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing library for context", "count", len(elements), "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range elements {
-				rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Meta.FolderName, link.Name, link.Type})
+				rootCmd.TableObj.AppendRow(table.Row{link.Entity.ID, link.Entity.UID, link.NestedPath, link.Entity.Meta.FolderName, link.Entity.Name, link.Entity.Type})
 			}
 			if len(elements) > 0 {
 				rootCmd.Render(cd.CobraCommand, elements)
@@ -101,8 +101,8 @@ func newLibraryElementsDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Downloading library for context", "context", config.Config().GetGDGConfig().GetContext())
-			savedFiles := rootCmd.GrafanaSvc().DownloadLibraryElements(nil)
+			savedFiles := rootCmd.GrafanaSvc().DownloadLibraryElements(service.NewLibraryElementFilter())
+			slog.Info("Downloading library for context", "count", len(savedFiles), "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"library", file})
@@ -123,9 +123,8 @@ func newLibraryElementsUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("exporting lib elements")
-			libraryFilter := v1.NewBaseFilter()
-			elements := rootCmd.GrafanaSvc().UploadLibraryElements(libraryFilter)
+			elements := rootCmd.GrafanaSvc().UploadLibraryElements(service.NewLibraryElementFilter())
+			slog.Info("exporting lib elements", "count", len(elements), "context", config.Config().GetGDGConfig().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"Name"})
 			if len(elements) > 0 {
 				for _, link := range elements {
@@ -155,9 +154,9 @@ func newLibraryElementsListConnectionsCmd() simplecobra.Commander {
 			}
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "UID", "Slug", "Title", "Folder"})
 
-			libElmentUid := args[0]
-			elements := rootCmd.GrafanaSvc().ListLibraryElementsConnections(nil, libElmentUid)
-			slog.Info("Listing library connections for context", "context", config.Config().GetGDGConfig().GetContext())
+			libElementUid := args[0]
+			elements := rootCmd.GrafanaSvc().ListLibraryElementsConnections(service.NewLibraryElementFilter(), libElementUid)
+			slog.Info("Listing library connections for context", "count", len(elements), "context", config.Config().GetGDGConfig().GetContext())
 			for _, link := range elements {
 				dash := link.Dashboard.(map[string]any)
 				rootCmd.TableObj.AppendRow(table.Row{dash["id"], dash["uid"], link.Meta.Slug, dash["title"], link.Meta.FolderTitle})

@@ -1,9 +1,12 @@
 package test
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
 
@@ -19,10 +22,22 @@ func TestTeamCRUD(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
 	filter := service.NewTeamFilter("")
-	defer cleanup()
 	slog.Info("Exporting current user list")
 	apiClient.UploadUsers(service.NewUserFilter(""))
 	users := apiClient.ListUsers(service.NewUserFilter(""))
@@ -53,7 +68,7 @@ func TestTeamCRUD(t *testing.T) {
 	list := apiClient.DownloadTeams(filter)
 	assert.Equal(t, len(list), len(teams))
 	// CleanUp
-	_, err := apiClient.DeleteTeam(filter)
+	_, err = apiClient.DeleteTeam(filter)
 	assert.Nil(t, err)
 	// Remove Users
 	apiClient.DeleteAllUsers(service.NewUserFilter(""))

@@ -1,0 +1,109 @@
+{
+	"Entity": {
+		"folderId": 3,
+		"folderUid": "beoo025pwghdsc",
+		"id": 7,
+		"kind": 1,
+		"meta": {
+			"created": "2025-06-11T19:55:31.000Z",
+			"createdBy": {
+				"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+				"id": 1,
+				"name": "admin"
+			},
+			"folderName": "n+_=23r",
+			"folderUid": "beoo025pwghdsc",
+			"updated": "2025-06-11T19:55:31.000Z",
+			"updatedBy": {
+				"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+				"id": 1,
+				"name": "admin"
+			}
+		},
+		"model": {
+			"datasource": {
+				"type": "testdata",
+				"uid": "EJHgYyf4z"
+			},
+			"description": "",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "blue",
+								"value": null
+							},
+							{
+								"color": "green",
+								"value": 35
+							},
+							{
+								"color": "red",
+								"value": 39
+							}
+						]
+					},
+					"unit": "fahrenheit"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 5,
+				"y": 19
+			},
+			"id": 18,
+			"interval": "",
+			"libraryPanel": {
+				"uid": "kGPSJcu7z"
+			},
+			"links": [],
+			"options": {
+				"colorMode": "background",
+				"graphMode": "none",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"textMode": "auto"
+			},
+			"pluginVersion": "8.5.5",
+			"targets": [
+				{
+					"alias": "Grill",
+					"datasource": {
+						"type": "testdata",
+						"uid": "EJHgYyf4z"
+					},
+					"max": 38,
+					"min": 33,
+					"refId": "A",
+					"scenarioId": "random_walk",
+					"startValue": 33
+				}
+			],
+			"title": "Fridge Temp (F)",
+			"transformations": [],
+			"transparent": true,
+			"type": "stat"
+		},
+		"name": "Extreme Dashboard Makeover - Refrigerator Temperature (F)",
+		"orgId": 1,
+		"type": "stat",
+		"uid": "kGPSJcu7z",
+		"version": 1
+	},
+	"NestedPath": "linux%2Fgnu/Others/n%2B_%3D23r"
+}

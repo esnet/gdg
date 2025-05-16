@@ -8,9 +8,10 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 
-	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+	"github.com/esnet/gdg/internal/service/filters/v2"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -23,13 +24,70 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func NewOrganizationFilter(args ...string) filters.Filter {
-	filterObj := v1.NewBaseFilter()
+func setupOrgReaders(filterObj filters.V2Filter) {
+	obj := models.OrgDTO{}
+	err := filterObj.RegisterReader(reflect.TypeOf(obj), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.(models.OrgDTO)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case filters.OrgFilter:
+			return val.Name, nil
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Org Filter, aborting.")
+	}
+	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.([]byte)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case filters.OrgFilter:
+			{
+				r := gjson.GetBytes(val, "organization.name")
+				if !r.Exists() || r.IsArray() {
+					return nil, fmt.Errorf("no valid connection name found")
+				}
+				return r.String(), nil
+
+			}
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Org Filter, aborting.")
+	}
+}
+
+func NewOrganizationFilter(args ...string) filters.V2Filter {
+	filterObj := v2.NewBaseFilter()
+	setupOrgReaders(filterObj)
 	if len(args) == 0 || args[0] == "" {
 		return filterObj
 	}
 
-	filterObj.AddFilter(filters.OrgFilter, args[0])
+	filterObj.AddValidation(filters.OrgFilter, func(value any, expected any) error {
+		val, expectedValue, convErr := v2.GetParams[string](value, expected, filters.OrgFilter)
+		if convErr != nil {
+			return convErr
+		}
+		if expectedValue == "" {
+			return nil
+		}
+		if val != expectedValue {
+			return fmt.Errorf("failed Org Name filter, expected %v, got %v", expectedValue, val)
+		}
+		return nil
+	}, args[0])
+
 	return filterObj
 }
 
@@ -167,7 +225,7 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 }
 
 // ListOrganizations List all dashboards
-func (s *DashNGoImpl) ListOrganizations(filter filters.Filter, withPreferences bool) []*types.OrgsDTOWithPreferences {
+func (s *DashNGoImpl) ListOrganizations(filter filters.V2Filter, withPreferences bool) []*types.OrgsDTOWithPreferences {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
@@ -188,7 +246,7 @@ func (s *DashNGoImpl) ListOrganizations(filter filters.Filter, withPreferences b
 
 	var resultsData []*types.OrgsDTOWithPreferences
 	for _, org := range orgList.GetPayload() {
-		if filter.GetFilter(filters.OrgFilter) == "" || filter.GetFilter(filters.OrgFilter) == org.Name {
+		if filter.ValidateAll(*org) {
 			if !withPreferences {
 				resultsData = append(resultsData, &types.OrgsDTOWithPreferences{Organization: org, Preferences: &models.Preferences{}})
 			} else {
@@ -206,7 +264,7 @@ func (s *DashNGoImpl) ListOrganizations(filter filters.Filter, withPreferences b
 }
 
 // DownloadOrganizations Download organizations
-func (s *DashNGoImpl) DownloadOrganizations(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadOrganizations(filter filters.V2Filter) []string {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations")
 		return nil
@@ -235,7 +293,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter filters.Filter) []string {
 }
 
 // UploadOrganizations Upload organizations to Grafana
-func (s *DashNGoImpl) UploadOrganizations(filter filters.Filter) []string {
+func (s *DashNGoImpl) UploadOrganizations(filter filters.V2Filter) []string {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot upload Organizations")
 		return nil
@@ -273,8 +331,8 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.Filter) []string {
 			continue
 		}
 		newOrg.Name = jsonOrg.Organization.Name
-		rawOrgName := gjson.GetBytes(rawFolder, "name").String()
-		if filter.GetFilter(filters.OrgFilter) != "" && rawOrgName != filter.GetFilter(filters.OrgFilter) {
+		if !filter.ValidateAll(rawFolder) {
+			slog.Debug("Skipping org, failing filter check", "file", file)
 			continue
 		}
 		updateProperties := func(org *types.OrgsDTOWithPreferences) error {

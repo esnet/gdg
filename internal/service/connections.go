@@ -6,9 +6,11 @@ import (
 	"log"
 	"log/slog"
 	"path/filepath"
+	"reflect"
 	"strings"
 
-	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+	"github.com/esnet/gdg/internal/service/filters/v2"
+	"github.com/tidwall/gjson"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -17,26 +19,85 @@ import (
 	"github.com/gosimple/slug"
 )
 
-// NewConnectionFilter
-func NewConnectionFilter(name string) filters.Filter {
-	filterEntity := v1.NewBaseFilter()
-	filterEntity.AddFilter(filters.Name, name)
-	filterEntity.AddValidation(filters.DefaultFilter, func(i any) bool {
-		val, ok := i.(map[filters.FilterType]string)
+func setupConnectionReaders(filterObj filters.V2Filter) {
+	obj := models.DataSourceListItemDTO{}
+	err := filterObj.RegisterReader(reflect.TypeOf(obj), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.(models.DataSourceListItemDTO)
 		if !ok {
-			return ok
+			return nil, fmt.Errorf("unsupported data type")
 		}
-		if filterEntity.GetFilter(filters.Name) == "" {
-			return true
+		switch filterType {
+		case filters.Name:
+			return val.Name, nil
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
 		}
-		return val[filters.Name] == filterEntity.GetFilter(filters.Name)
 	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Connection Filter, aborting.")
+	}
+	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.([]byte)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case filters.Name:
+			{
+				r := gjson.GetBytes(val, "name")
+				if !r.Exists() || r.IsArray() {
+					return nil, fmt.Errorf("no valid connection name found")
+				}
+				return r.String(), nil
+
+			}
+		case filters.ConnectionName:
+			{
+				r := gjson.GetBytes(val, "Connection.name")
+				if !r.Exists() || r.IsArray() {
+					return nil, fmt.Errorf("no valid connection name found")
+				}
+				return r.String(), nil
+			}
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Connection Filter, aborting.")
+	}
+}
+
+func NewConnectionFilter(name string) filters.V2Filter {
+	filterEntity := v2.NewBaseFilter()
+	setupConnectionReaders(filterEntity)
+	getValidateFunc := func(filterType filters.FilterType) func(value any, expected any) error {
+		return func(value any, expected any) error {
+			val, expression, convErr := v2.GetParams[string](value, expected, filterType)
+			if convErr != nil {
+				return convErr
+			}
+			if expression == "" {
+				return nil
+			}
+			if name != GetSlug(val) {
+				return fmt.Errorf("invalid connection filter. Expected: %v", expression)
+			}
+			return nil
+		}
+	}
+
+	filterEntity.AddValidation(filters.Name, getValidateFunc(filters.Name), name)
+	// used to check filter for connection permissions
+	filterEntity.AddValidation(filters.ConnectionName, getValidateFunc(filters.ConnectionName), name)
 
 	return filterEntity
 }
 
 // ListConnections list all the currently configured datasources
-func (s *DashNGoImpl) ListConnections(filter filters.Filter) []models.DataSourceListItemDTO {
+func (s *DashNGoImpl) ListConnections(filter filters.V2Filter) []models.DataSourceListItemDTO {
 	err := s.SwitchOrganizationByName(s.grafanaConf.GetOrganizationName())
 	if err != nil {
 		log.Fatalf("Failed to switch organization ID %s: ", s.grafanaConf.OrganizationName)
@@ -48,13 +109,13 @@ func (s *DashNGoImpl) ListConnections(filter filters.Filter) []models.DataSource
 	}
 	result := make([]models.DataSourceListItemDTO, 0)
 
-	dsSettings := s.grafanaConf.GetDataSourceSettings()
+	dsSettings := s.grafanaConf.GetConnectionSettings()
 	for _, item := range ds.GetPayload() {
 		if dsSettings.FiltersEnabled() && dsSettings.IsExcluded(item) {
 			slog.Debug("Skipping data source, since it fails datatype filter checks", "datasource", item.Name, "datatype", item.Type)
 			continue
 		}
-		if filter.ValidateAll(map[filters.FilterType]string{filters.Name: GetSlug(item.Name)}) {
+		if filter.Validate(filters.Name, *item) {
 			result = append(result, *item)
 		}
 	}
@@ -64,7 +125,7 @@ func (s *DashNGoImpl) ListConnections(filter filters.Filter) []models.DataSource
 
 // DownloadConnections  will read in all the configured datasources.
 // NOTE: credentials cannot be retrieved and need to be set via configuration
-func (s *DashNGoImpl) DownloadConnections(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadConnections(filter filters.V2Filter) []string {
 	var (
 		dsListing []models.DataSourceListItemDTO
 		dsPacked  []byte
@@ -90,8 +151,8 @@ func (s *DashNGoImpl) DownloadConnections(filter filters.Filter) []string {
 }
 
 // DeleteAllConnections Removes all current datasources
-func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
-	var ds []string = make([]string, 0)
+func (s *DashNGoImpl) DeleteAllConnections(filter filters.V2Filter) []string {
+	ds := make([]string, 0)
 	items := s.ListConnections(filter)
 	for _, item := range items {
 		dsItem, err := s.GetClient().Datasources.DeleteDataSourceByID(fmt.Sprintf("%d", item.ID))
@@ -105,7 +166,7 @@ func (s *DashNGoImpl) DeleteAllConnections(filter filters.Filter) []string {
 }
 
 // UploadConnections exports all connections to grafana using the credentials configured in config file.
-func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
+func (s *DashNGoImpl) UploadConnections(filter filters.V2Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
 	var exported []string
@@ -119,7 +180,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 
 	var rawDS []byte
 
-	dsSettings := s.grafanaConf.GetDataSourceSettings()
+	dsSettings := s.grafanaConf.GetConnectionSettings()
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionResource), file)
 		if strings.HasSuffix(file, ".json") {
@@ -127,16 +188,16 @@ func (s *DashNGoImpl) UploadConnections(filter filters.Filter) []string {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
-			var newDS models.AddDataSourceCommand
+			if !filter.Validate(filters.Name, rawDS) {
+				continue
+			}
 
+			var newDS models.AddDataSourceCommand
 			if err = json.Unmarshal(rawDS, &newDS); err != nil {
 				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
 				continue
 			}
 
-			if !filter.ValidateAll(map[filters.FilterType]string{filters.Name: GetSlug(newDS.Name)}) {
-				continue
-			}
 			dsConfig := s.grafanaConf
 
 			secureLocation := config.Config().GetDefaultGrafanaConfig().GetPath(config.SecureSecretsResource)

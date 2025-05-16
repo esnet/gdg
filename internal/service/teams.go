@@ -7,9 +7,11 @@ import (
 	"log"
 	"log/slog"
 	"path/filepath"
+	"reflect"
 	"strings"
 
-	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+	"github.com/esnet/gdg/internal/service/filters/v2"
+	"github.com/tidwall/gjson"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -25,32 +27,71 @@ const (
 	AdminUserPermission = 4
 )
 
-func NewTeamFilter(entries ...string) filters.Filter {
-	filterObj := v1.NewBaseFilter()
-
-	teamFilter := entries[0]
-
-	filterObj.AddFilter(filters.Name, teamFilter)
-	filterObj.AddValidation(filters.Name, func(i any) bool {
-		switch val := i.(type) {
-		case string:
-			if filterObj.GetFilter(filters.Name) == "" {
-				return true
-			} else if val == filterObj.GetFilter(filters.Name) {
-				return true
-			}
-		default:
-			return false
+func setupTeamReader(filterObj filters.V2Filter) {
+	obj := models.TeamDTO{}
+	err := filterObj.RegisterReader(reflect.TypeOf(obj), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.(models.TeamDTO)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
 		}
+		switch filterType {
+		case filters.Name:
+			return val.Name, nil
 
-		return false
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
 	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Team Filter, obj entity reader failed, aborting.")
+	}
+	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.([]byte)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case filters.Name:
+			{
+				r := gjson.GetBytes(val, "name")
+				if !r.Exists() || r.IsArray() {
+					return nil, fmt.Errorf("no valid connection name found")
+				}
+				return r.String(), nil
+
+			}
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Team Filter, json reader failed, aborting.")
+	}
+}
+
+func NewTeamFilter(entries ...string) filters.V2Filter {
+	filterObj := v2.NewBaseFilter()
+	setupTeamReader(filterObj)
+	filterObj.AddValidation(filters.Name, func(value any, expected any) error {
+		val, expectedValue, convErr := v2.GetParams[string](value, expected, filters.Name)
+		if convErr != nil {
+			return convErr
+		}
+		if expectedValue == "" {
+			return nil
+		}
+		if val != expectedValue {
+			return fmt.Errorf("failed Team Name filter, expected %v, got %v", expectedValue, val)
+		}
+		return nil
+	}, entries[0])
 
 	return filterObj
 }
 
 // DownloadTeams fetches all teams for a given Org
-func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (s *DashNGoImpl) DownloadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
 	teamPath := BuildResourceFolder("", config.TeamResource, s.isLocal(), s.globalConf.ClearOutput)
@@ -87,7 +128,7 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.Filter) map[*models.TeamDTO][
 }
 
 // Export Teams
-func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.TeamResource), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for teams", "err", err)
@@ -104,6 +145,10 @@ func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*
 			var rawTeam []byte
 			if rawTeam, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
+				continue
+			}
+			if !filter.ValidateAll(rawTeam) {
+				slog.Debug("Skipping file, failed Team filter", "file", fileLocation)
 				continue
 			}
 			var newTeam *models.TeamDTO
@@ -153,8 +198,8 @@ func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*
 	return exportedTeams
 }
 
-// List all Teams
-func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+// ListTeams List all Teams in a given org
+func (s *DashNGoImpl) ListTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO, 0)
 	var pageSize int64 = 99999
 	p := teams.NewSearchTeamsParams()
@@ -166,7 +211,7 @@ func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*mo
 
 	getTeamMembers := func(team *models.TeamDTO) {
 		if team.MemberCount > 0 {
-			result[team] = s.listTeamMembers(filter, team.ID)
+			result[team] = s.listTeamMembers(team.ID)
 		} else {
 			result[team] = nil
 		}
@@ -174,7 +219,7 @@ func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*mo
 
 	for _, team := range data.GetPayload().Teams {
 		if filter != nil {
-			if filter.InvokeValidation(filters.Name, team.Name) {
+			if filter.Validate(filters.Name, *team) {
 				getTeamMembers(team)
 			}
 		} else {
@@ -186,11 +231,11 @@ func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*mo
 }
 
 // DeleteTeam removes all Teams
-func (s *DashNGoImpl) DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, error) {
+func (s *DashNGoImpl) DeleteTeam(filter filters.V2Filter) ([]*models.TeamDTO, error) {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	var result []*models.TeamDTO
 	for _, team := range teamListing {
-		if filter != nil && !filter.ValidateAll(team.Name) {
+		if !filter.ValidateAll(*team) {
 			continue
 		}
 		_, err := s.GetClient().Teams.DeleteTeamByID(fmt.Sprintf("%d", team.ID))
@@ -205,7 +250,7 @@ func (s *DashNGoImpl) DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, erro
 }
 
 // List Team Members of specific Team
-func (s *DashNGoImpl) listTeamMembers(filter filters.Filter, teamID int64) []*models.TeamMemberDTO {
+func (s *DashNGoImpl) listTeamMembers(teamID int64) []*models.TeamMemberDTO {
 	teamIDStr := fmt.Sprintf("%d", teamID)
 	members, err := s.GetClient().Teams.GetTeamMembers(teamIDStr)
 	if err != nil {

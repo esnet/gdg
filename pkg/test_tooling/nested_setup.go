@@ -40,8 +40,8 @@ func InitOrganizations(t *testing.T) (testcontainers.Container, func() error) {
 		config.InitGdgConfig("testing")
 	}
 	props := setupNestedProps(t, false)
-	apiClient, containerObj, cleanup := InitTest(t, service.DefaultConfigProvider, props)
-	newOrgs := apiClient.UploadOrganizations(service.NewOrganizationFilter())
+	r := InitTest(t, service.DefaultConfigProvider, props)
+	newOrgs := r.ApiClient.UploadOrganizations(service.NewOrganizationFilter())
 	assert.Equal(t, 4, len(newOrgs))
-	return containerObj, cleanup
+	return r.Container, r.CleanUp
 }

@@ -1,5 +1,5 @@
 {
-  "authLabels": [],
+  "authLabels": ["Google", "foobar"],
   "avatarUrl": "/avatar/b0af9e9c1c0acf1dc93d4dc9d6bcafb1",
   "email": "s@s.com",
   "id": 6,

@@ -64,7 +64,7 @@ func newListServiceAccountCmd() simplecobra.Commander {
 							return apiKey.Tokens[i].ID < apiKey.Tokens[j].ID
 						})
 						for _, token := range apiKey.Tokens {
-							var formattedDate string = token.Expiration.String()
+							formattedDate := token.Expiration.String()
 							date, _ := token.Expiration.Value()
 							if date.(string) == "0001-01-01T00:00:00.000Z" {
 								formattedDate = "No Expiration"

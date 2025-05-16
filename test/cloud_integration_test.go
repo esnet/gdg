@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/pkg/test_tooling/common"
+
 	"github.com/esnet/gdg/internal/config"
 
 	"github.com/esnet/gdg/internal/service"
@@ -18,15 +20,22 @@ import (
 func TestCloudDataSourceCRUD(t *testing.T) {
 	t.Log("Running Cloud Tests")
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
 	defer func() {
-		cleanErr := cleanup()
-		if cleanErr != nil {
-			slog.Error("unable to clean up after test", slog.Any("err", cleanErr))
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
 		}
 	}()
+	apiClient := r.ApiClient
 	// Wipe all data from grafana
 	dsFilter := service.NewConnectionFilter("")
 	apiClient.DeleteAllConnections(dsFilter)
@@ -36,7 +45,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	assert.True(t, len(dsList) > 0)
 	_, cancel, apiClient, err := test_tooling.SetupCloudFunctionOpt(
 		test_tooling.SetCloudType("custom"),
-		test_tooling.SetBucketName("testing"))
+		test_tooling.SetBucketName(common.TestBucketName))
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -58,12 +67,24 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 // TestDashboardCloudCrud will load testing_data to Grafana from local context.  Switch to CLoud,
 // Save all data to Cloud, wipe grafana and reload data back into grafana and validate
 func TestDashboardCloudCRUD(t *testing.T) {
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
+	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	var err error
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	defer cleanup()
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
 	// defer cleanup, "Failed to cleanup test containers for %s", t.Name())
 	// Wipe all data from grafana
 	dashFilter := service.NewDashboardFilter("", "", "")
@@ -76,7 +97,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 
 	_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
 		test_tooling.SetCloudType("custom"),
-		test_tooling.SetBucketName("testing"))
+		test_tooling.SetBucketName(common.TestBucketName))
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -97,16 +118,28 @@ func TestDashboardCloudCRUD(t *testing.T) {
 }
 
 func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
+	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	var (
 		err    error
 		cancel context.CancelFunc
 	)
-	config.InitGdgConfig("testing")
-	apiClient, container, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	defer cleanup()
-	// defer cleanup, "Failed to cleanup test containers for %s", t.Name())
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
+	// defer cleanup, "Failed to clean up test containers for %s", t.Name())
 	// Wipe all data from grafana
 	dashFilter := service.NewDashboardFilter("", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
@@ -167,17 +200,17 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 			continue
 		}
 		slog.Warn("Running testcase", "name", tc.name)
-		config.InitGdgConfig("testing")
+		config.InitGdgConfig(common.DefaultTestConfig)
 		_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
 			test_tooling.SetCloudType("custom"),
 			test_tooling.SetPrefix(tc.prefix),
-			test_tooling.SetBucketName("testing"))
+			test_tooling.SetBucketName(common.TestBucketName))
 
 		apiClient = test_tooling.CreateSimpleClientWithConfig(t, func() *config.Configuration {
 			cfg := config.Config()
 			cfg.GetDefaultGrafanaConfig().OutputPath = tc.output
 			return cfg
-		}, container)
+		}, r.Container)
 		assert.NoError(t, err)
 
 		// At this point all operations are reading/writing from Minio

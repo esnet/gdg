@@ -1,118 +1,121 @@
 {
-	"id": 2,
-	"kind": 1,
-	"meta": {
-		"created": "2025-01-03T22:23:11.000Z",
-		"createdBy": {
-			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
-			"id": 1,
-			"name": "admin"
-		},
-		"folderName": "General",
-		"updated": "2025-01-03T22:23:11.000Z",
-		"updatedBy": {
-			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
-			"id": 1,
-			"name": "admin"
-		}
-	},
-	"model": {
-		"datasource": {
-			"type": "grafana-googlesheets-datasource",
-			"uid": "uL86Byf4k"
-		},
-		"description": "",
-		"fieldConfig": {
-			"defaults": {
-				"color": {
-					"mode": "thresholds"
-				},
-				"custom": {
-					"align": "left",
-					"displayMode": "auto",
-					"inspect": true
-				},
-				"decimals": 0,
-				"mappings": [],
-				"thresholds": {
-					"mode": "absolute",
-					"steps": [
-						{
-							"color": "green",
-							"value": null
-						},
-						{
-							"color": "yellow",
-							"value": 35
-						},
-						{
-							"color": "red",
-							"value": 60
-						}
-					]
-				},
-				"unit": "none"
+	"Entity": {
+		"id": 2,
+		"kind": 1,
+		"meta": {
+			"created": "2025-06-11T19:54:04.000Z",
+			"createdBy": {
+				"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+				"id": 1,
+				"name": "admin"
 			},
-			"overrides": [
-				{
-					"matcher": {
-						"id": "byName",
-						"options": "Purchase Date"
-					},
-					"properties": [
-						{
-							"id": "unit",
-							"value": "dateTimeFromNow"
-						}
-					]
-				}
-			]
-		},
-		"gridPos": {
-			"h": 4,
-			"w": 19,
-			"x": 5,
-			"y": 8
-		},
-		"id": 10,
-		"interval": "",
-		"libraryPanel": {
-			"uid": "u97RX_Q7z"
-		},
-		"links": [],
-		"options": {
-			"footer": {
-				"fields": "",
-				"reducer": [
-					"sum"
-				],
-				"show": false
-			},
-			"showHeader": true
-		},
-		"pluginVersion": "8.5.5",
-		"targets": [
-			{
-				"cacheDurationSeconds": 0,
-				"datasource": {
-					"type": "grafana-googlesheets-datasource",
-					"uid": "uL86Byf4k"
-				},
-				"expr": "web_http_5xx_errors",
-				"legendFormat": "500",
-				"range": "Lighting!A1:BW2",
-				"refId": "A",
-				"spreadsheet": "1uoZrXcnv_ZeKoLk56eaBdTOI8kMYaulZdMxFNQUxmGs",
-				"useTimeFilter": false
+			"folderName": "General",
+			"updated": "2025-06-11T19:54:04.000Z",
+			"updatedBy": {
+				"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+				"id": 1,
+				"name": "admin"
 			}
-		],
-		"title": "Lighting Status",
-		"transformations": [],
-		"type": "table"
+		},
+		"model": {
+			"datasource": {
+				"type": "grafana-googlesheets-datasource",
+				"uid": "uL86Byf4k"
+			},
+			"description": "",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "left",
+						"displayMode": "auto",
+						"inspect": true
+					},
+					"decimals": 0,
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 35
+							},
+							{
+								"color": "red",
+								"value": 60
+							}
+						]
+					},
+					"unit": "none"
+				},
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "Purchase Date"
+						},
+						"properties": [
+							{
+								"id": "unit",
+								"value": "dateTimeFromNow"
+							}
+						]
+					}
+				]
+			},
+			"gridPos": {
+				"h": 4,
+				"w": 19,
+				"x": 5,
+				"y": 8
+			},
+			"id": 10,
+			"interval": "",
+			"libraryPanel": {
+				"uid": "u97RX_Q7z"
+			},
+			"links": [],
+			"options": {
+				"footer": {
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": false
+				},
+				"showHeader": true
+			},
+			"pluginVersion": "8.5.5",
+			"targets": [
+				{
+					"cacheDurationSeconds": 0,
+					"datasource": {
+						"type": "grafana-googlesheets-datasource",
+						"uid": "uL86Byf4k"
+					},
+					"expr": "web_http_5xx_errors",
+					"legendFormat": "500",
+					"range": "Lighting!A1:BW2",
+					"refId": "A",
+					"spreadsheet": "1uoZrXcnv_ZeKoLk56eaBdTOI8kMYaulZdMxFNQUxmGs",
+					"useTimeFilter": false
+				}
+			],
+			"title": "Lighting Status",
+			"transformations": [],
+			"type": "table"
+		},
+		"name": "Dashboard Makeover - Lighting Status",
+		"orgId": 1,
+		"type": "table",
+		"uid": "u97RX_Q7z",
+		"version": 1
 	},
-	"name": "Dashboard Makeover - Lighting Status",
-	"orgId": 1,
-	"type": "table",
-	"uid": "u97RX_Q7z",
-	"version": 1
+	"NestedPath": "General"
 }
