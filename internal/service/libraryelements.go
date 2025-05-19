@@ -47,7 +47,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.Filter, conn
 }
 
 func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.LibraryElementDTO {
-	ignoreFilters := config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters
+	ignoreFilters := s.grafanaConf.GetDashboardSettings().IgnoreFilters
 	folderFilter := NewFolderFilter()
 	if ignoreFilters {
 		folderFilter = nil
@@ -60,7 +60,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.Filter) []*models.Libra
 	buf := strings.Builder{}
 	// Check to see if General should be included
 	// If Ignore Filters OR General is in monitored list, add 0 folder
-	if (!ignoreFilters && slices.Contains(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), DefaultFolderName)) || ignoreFilters {
+	if (!ignoreFilters && slices.Contains(s.grafanaConf.GetMonitoredFolders(), DefaultFolderName)) || ignoreFilters {
 		buf.WriteString("0,")
 	} else {
 		buf.WriteString("")
@@ -163,10 +163,9 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.Filter) []string {
 		baseFile := filepath.Base(file)
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
 
-		fileLocation := file
 		if strings.HasSuffix(file, ".json") {
-			if rawLibraryElement, err = s.storage.ReadFile(fileLocation); err != nil {
-				slog.Error("failed to read file", "file", fileLocation, "err", err)
+			if rawLibraryElement, err = s.storage.ReadFile(file); err != nil {
+				slog.Error("failed to read file", "file", file, "err", err)
 				continue
 			}
 
@@ -178,17 +177,22 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.Filter) []string {
 			if folderName == "" {
 				folderName = DefaultFolderName
 			}
-			Results := gjson.GetManyBytes(rawLibraryElement, "meta.folderUid", "uid")
+			if folderName != DefaultFolderName {
+				Results := gjson.GetBytes(rawLibraryElement, "uid")
+				if Results.Exists() {
+					folderUid = Results.String()
+				} else {
+					slog.Error("Unable to determine folder name of library component, using default folder", "filename", file)
+					folderUid = ""
+				}
 
-			if Results[0].Exists() {
-				folderUid = Results[0].String()
 			} else {
-				slog.Error("Unable to determine folder name of library component, skipping.", "filename", file)
-				continue
+				folderUid = ""
 			}
+			Results := gjson.GetBytes(rawLibraryElement, "uid")
 			// Get UID
-			if Results[1].Exists() {
-				libraryUID = Results[1].String()
+			if Results.Exists() {
+				libraryUID = Results.String()
 			} else {
 				slog.Error("Unable to determine the library panel UID, attempting to export anyways", "filename", file)
 			}
@@ -217,13 +221,13 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.Filter) []string {
 					//}
 				}
 			}
-			if !ignoreFilters && !slices.Contains(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), folderUid) {
+			if !ignoreFilters && !validateFolderRegex(s.grafanaConf.GetMonitoredFolders(), folderName) {
 				slog.Warn("Skipping since requested file is not in a folder gdg is configured to manage", "folder", folderUid, "file", file)
 				continue
 			}
 			var newLibraryRequest models.CreateLibraryElementCommand
 			if err = json.Unmarshal(rawLibraryElement, &newLibraryRequest); err != nil {
-				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
+				slog.Error("failed to unmarshall file", "filename", file, "err", err)
 				continue
 			}
 			if folderUid != "" {
@@ -232,7 +236,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.Filter) []string {
 
 			entity, err := s.GetClient().LibraryElements.CreateLibraryElement(&newLibraryRequest)
 			if err != nil {
-				slog.Error("Failed to create library element", "err", err, "resource", fileLocation)
+				slog.Error("Failed to create library element", "err", err, "resource", file)
 			} else {
 				exported = append(exported, entity.Payload.Result.Name)
 			}

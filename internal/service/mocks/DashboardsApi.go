@@ -227,20 +227,31 @@ func (_c *DashboardsApi_ListDashboards_Call) RunAndReturn(run func(filter filter
 }
 
 // UploadDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) UploadDashboards(filter filters.Filter) error {
+func (_mock *DashboardsApi) UploadDashboards(filter filters.Filter) ([]string, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UploadDashboards")
 	}
 
-	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(filters.Filter) error); ok {
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(filters.Filter) ([]string, error)); ok {
+		return returnFunc(filter)
+	}
+	if returnFunc, ok := ret.Get(0).(func(filters.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
 	}
-	return r0
+	if returnFunc, ok := ret.Get(1).(func(filters.Filter) error); ok {
+		r1 = returnFunc(filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
 }
 
 // DashboardsApi_UploadDashboards_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadDashboards'
@@ -261,12 +272,12 @@ func (_c *DashboardsApi_UploadDashboards_Call) Run(run func(filter filters.Filte
 	return _c
 }
 
-func (_c *DashboardsApi_UploadDashboards_Call) Return(err error) *DashboardsApi_UploadDashboards_Call {
-	_c.Call.Return(err)
+func (_c *DashboardsApi_UploadDashboards_Call) Return(strings []string, err error) *DashboardsApi_UploadDashboards_Call {
+	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *DashboardsApi_UploadDashboards_Call) RunAndReturn(run func(filter filters.Filter) error) *DashboardsApi_UploadDashboards_Call {
+func (_c *DashboardsApi_UploadDashboards_Call) RunAndReturn(run func(filter filters.Filter) ([]string, error)) *DashboardsApi_UploadDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }

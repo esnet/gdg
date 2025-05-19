@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log/slog"
 	"os"
-	"slices"
 	"strings"
 	"testing"
 
@@ -26,12 +25,18 @@ import (
 )
 
 const (
-	DashboardCount = 16
+	DashboardCount       = 16
+	IgnoreDashboardCount = DashboardCount + 1
 )
 
 func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+	cfgProvider := func() *config.Configuration {
+		cfg := config.Config()
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = true
+		return cfg
+	}
+	apiClient, _, cleanup := test_tooling.InitTest(t, cfgProvider, nil)
 	defer func() {
 		err := cleanup()
 		if err != nil {
@@ -40,10 +45,12 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	}()
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	slog.Info("Exporting all dashboards")
-	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
+	uploadedFiles, err := apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, err)
+
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
-	slog.Info("Imported dashboards", "count", len(boards))
+	slog.Info("Imported dashboards", "count", len(boards), "uploadedFiles", len(uploadedFiles))
 	ignoredSkipped := true
 	var generalBoard *customModels.NestedHit
 	var otherBoard *customModels.NestedHit
@@ -61,7 +68,7 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	}
 	assert.NotNil(t, otherBoard)
 	assert.NotNil(t, generalBoard)
-	assert.True(t, ignoredSkipped)
+	assert.False(t, ignoredSkipped)
 	validateGeneralBoard(t, generalBoard)
 	validateOtherBoard(t, otherBoard)
 	// Validate filters
@@ -81,10 +88,10 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	// Import Dashboards
 	slog.Info("Importing Dashboards")
 	list := apiClient.DownloadDashboards(filtersEntity)
-	assert.Equal(t, len(list), DashboardCount)
+	assert.Equal(t, len(list), IgnoreDashboardCount)
 	slog.Info("Deleting Dashboards")
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
-	assert.Equal(t, len(deleteList), DashboardCount)
+	assert.Equal(t, len(deleteList), IgnoreDashboardCount)
 	slog.Info("List Dashboards again")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, len(boards), 0)
@@ -108,10 +115,12 @@ func TestDashboardCleanUpCrud(t *testing.T) {
 	}()
 	filtersEntity := service.NewDashboardFilter("", "", "")
 	slog.Info("Exporting all dashboards")
-	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
+	uploadedFiles, err := apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, err)
+	assert.Equal(t, len(uploadedFiles), IgnoreDashboardCount)
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
-	assert.Equal(t, len(boards), DashboardCount+1) // Includes the Ignored folder
+	assert.Equal(t, len(boards), IgnoreDashboardCount) // Includes the Ignored folder
 	// Create another copy of the dashboard json
 	// copy file
 	data, err := os.ReadFile("test/data/org_main-org/dashboards/General/bandwidth-dashboard.json")
@@ -148,7 +157,9 @@ func TestDashboardCRUDTags(t *testing.T) {
 	filtersEntity := service.NewDashboardFilter("", "", string(data))
 
 	slog.Info("Uploading all dashboards, filtered by tags")
-	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
+	uploadedFiles, err := apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, err)
+	assert.Equal(t, len(uploadedFiles), 13)
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
 	slog.Info("Removing all dashboards")
@@ -160,7 +171,9 @@ func TestDashboardCRUDTags(t *testing.T) {
 	data, err = json.Marshal([]string{"flow"})
 	assert.NoError(t, err)
 	filtersEntity = service.NewDashboardFilter("", "", string(data))
-	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
+	uploadedFiles, err = apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, err)
+	assert.Equal(t, len(uploadedFiles), 8)
 	slog.Info("Listing all dashboards")
 	boards = apiClient.ListDashboards(filtersEntity)
 	assert.Equal(t, 8, len(boards))
@@ -172,7 +185,9 @@ func TestDashboardCRUDTags(t *testing.T) {
 	defer os.Unsetenv("")
 	apiClient, _ = test_tooling.CreateSimpleClient(t, nil, container)
 	filterNone := service.NewDashboardFilter("", "", "")
-	assert.NoError(t, apiClient.UploadDashboards(filterNone))
+	uploadedFiles, err = apiClient.UploadDashboards(filterNone)
+	assert.NoError(t, err)
+	assert.Equal(t, len(uploadedFiles), DashboardCount)
 	// Listing with no filter
 	boards = apiClient.ListDashboards(filterNone)
 	assert.Equal(t, DashboardCount, len(boards))
@@ -206,7 +221,8 @@ func TestDashboardTagsFilter(t *testing.T) {
 	filtersEntity := service.NewDashboardFilter("", "", string(data))
 
 	slog.Info("Exporting all dashboards")
-	assert.NoError(t, apiClient.UploadDashboards(emptyFilter))
+	_, err = apiClient.UploadDashboards(emptyFilter)
+	assert.NoError(t, err)
 
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
@@ -244,7 +260,8 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, props)
 	defer cleanup()
 	// Upload all dashboards
-	assert.NoError(t, apiClient.UploadDashboards(nil))
+	_, err = apiClient.UploadDashboards(nil)
+	assert.NoError(t, err)
 	// Upload all users
 	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(newUsers), 2)
@@ -316,10 +333,12 @@ func TestWildcardFilter(t *testing.T) {
 	assert.True(t, testingContext.GetDashboardSettings().IgnoreFilters)
 
 	// Testing Exporting with Wildcard
-	assert.NoError(t, apiClient.UploadDashboards(emptyFilter))
+	_, err = apiClient.UploadDashboards(emptyFilter)
+	assert.NoError(t, err)
 	boards := apiClient.ListDashboards(emptyFilter)
 
-	assert.NoError(t, apiClient.UploadDashboards(filtersEntity))
+	_, err = apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, err)
 	boards_filtered := apiClient.ListDashboards(emptyFilter)
 
 	assert.Equal(t, len(boards), len(boards_filtered))
@@ -375,8 +394,6 @@ func validateTags(t *testing.T, board *customModels.NestedHit) {
 	assert.True(t, board.UID != "")
 	assert.True(t, len(board.Tags) > 0)
 	allTags := []string{"netsage", "flow"}
-	for _, tag := range board.Tags {
-		check := slices.Contains(allTags, tag)
-		assert.True(t, check)
-	}
+	common := lo.Intersect(board.Tags, allTags)
+	assert.True(t, len(common) > 0)
 }

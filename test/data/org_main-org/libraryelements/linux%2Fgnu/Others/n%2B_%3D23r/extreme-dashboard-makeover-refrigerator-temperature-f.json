@@ -1,5 +1,5 @@
 {
-	"id": 6,
+	"id": 7,
 	"kind": 1,
 	"meta": {
 		"created": "2025-01-03T22:23:11.000Z",
@@ -8,7 +8,8 @@
 			"id": 1,
 			"name": "admin"
 		},
-		"folderName": "General",
+		"folderName": "n+_=23r",
+		"folderUid": "beme8vqgwtukgc",
 		"updated": "2025-01-03T22:23:11.000Z",
 		"updatedBy": {
 			"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
@@ -27,18 +28,21 @@
 				"color": {
 					"mode": "thresholds"
 				},
-				"decimals": 1,
 				"mappings": [],
 				"thresholds": {
 					"mode": "absolute",
 					"steps": [
 						{
-							"color": "super-light-purple",
+							"color": "blue",
 							"value": null
 						},
 						{
+							"color": "green",
+							"value": 35
+						},
+						{
 							"color": "red",
-							"value": 380
+							"value": 39
 						}
 					]
 				},
@@ -47,21 +51,21 @@
 			"overrides": []
 		},
 		"gridPos": {
-			"h": 7,
+			"h": 8,
 			"w": 8,
 			"x": 5,
-			"y": 12
+			"y": 19
 		},
-		"id": 16,
+		"id": 18,
 		"interval": "",
 		"libraryPanel": {
-			"uid": "VvzpJ5X7z"
+			"uid": "kGPSJcu7z"
 		},
 		"links": [],
 		"options": {
 			"colorMode": "background",
 			"graphMode": "none",
-			"justifyMode": "center",
+			"justifyMode": "auto",
 			"orientation": "auto",
 			"reduceOptions": {
 				"calcs": [
@@ -70,30 +74,31 @@
 				"fields": "",
 				"values": false
 			},
-			"textMode": "value_and_name"
+			"textMode": "auto"
 		},
 		"pluginVersion": "8.5.5",
 		"targets": [
 			{
+				"alias": "Grill",
 				"datasource": {
 					"type": "testdata",
 					"uid": "EJHgYyf4z"
 				},
-				"max": 377,
-				"min": 373,
+				"max": 38,
+				"min": 33,
 				"refId": "A",
 				"scenarioId": "random_walk",
-				"startValue": 375
+				"startValue": 33
 			}
 		],
-		"title": "Mac Oven",
+		"title": "Fridge Temp (F)",
 		"transformations": [],
 		"transparent": true,
 		"type": "stat"
 	},
-	"name": "Extreme Dashboard Makeover - Mac Oven",
+	"name": "Extreme Dashboard Makeover - Refrigerator Temperature (F)",
 	"orgId": 1,
 	"type": "stat",
-	"uid": "VvzpJ5X7z",
+	"uid": "kGPSJcu7z",
 	"version": 1
 }

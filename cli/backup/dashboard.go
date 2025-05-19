@@ -114,22 +114,22 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
 				), "", true)
 			}
-			err := rootCmd.GrafanaSvc().UploadDashboards(filter)
+			files, err := rootCmd.GrafanaSvc().UploadDashboards(filter)
 			if err != nil {
 				return err
 			}
 
-			rootCmd.TableObj.AppendHeader(table.Row{"Title", "id", "folder", "nested Path", "UID"})
-			boards := rootCmd.GrafanaSvc().ListDashboards(filter)
+			rootCmd.TableObj.AppendHeader(table.Row{"file"})
+			// boards := rootCmd.GrafanaSvc().ListDashboards(filter)
 
-			slog.Info("dashboards have been uploaded", slog.Any("count", len(boards)),
+			slog.Info("dashboards have been uploaded", slog.Any("count", len(files)),
 				slog.String("context", GetContext()),
 				slog.String("Organization", GetOrganizationName()))
-			for _, link := range boards {
-				rootCmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.NestedPath, link.UID})
+			for _, link := range files {
+				rootCmd.TableObj.AppendRow(table.Row{link})
 			}
-			if len(boards) > 0 {
-				rootCmd.Render(cd.CobraCommand, boards)
+			if len(files) > 0 {
+				rootCmd.Render(cd.CobraCommand, files)
 			} else {
 				slog.Info("No dashboards found")
 			}

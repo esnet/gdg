@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -12,6 +13,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/gosimple/slug"
+
 	"github.com/esnet/gdg/internal/tools/encode"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
@@ -20,7 +23,6 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/service/types"
 	customTypes "github.com/esnet/gdg/internal/types"
-	"github.com/gosimple/slug"
 	"github.com/grafana/dashboard-linter/lint"
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
@@ -234,6 +236,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*customTypes.Ne
 
 	tagsParams := make([]string, 0)
 	tagsParams = append(tagsParams, filterReq.GetEntity(filters.TagsFilter)...)
+	watchedFolders := s.grafanaConf.GetMonitoredFolders()
 
 	retrieve := func(tag string) {
 		for {
@@ -291,7 +294,8 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*customTypes.Ne
 		// accepts all folders
 		if config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
 			// if folder filter parameter is enabled, apply given filter
-			if len(folderFilters) > 0 {
+			overlap := lo.Intersect(watchedFolders, folderFilters)
+			if len(overlap) != len(folderFilters) {
 				// reuse filters below since they are intended to be ignored when ignore filters  enabled
 				config.Config().GetDefaultGrafanaConfig().MonitoredFoldersOverride = nil
 				// set monitored folders from CLI param filter
@@ -310,7 +314,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*customTypes.Ne
 		}
 
 		if !validFolder {
-			slog.Info("Skipping dashboard, as it failed the filter check", "title", link.Title, "folder", link.NestedPath)
+			slog.Debug("Skipping dashboard, as it failed the filter check", "title", link.Title, "folder", link.NestedPath)
 			continue
 		}
 		validUid = filterReq.GetFilter(filters.DashFilter) == "" || link.Slug == filterReq.GetFilter(filters.DashFilter)
@@ -335,17 +339,13 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*customTypes.Ne
 // DownloadDashboards saves all dashboards matching query to configured location
 func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 	var (
-		boardLinks []*models.Hit
+		boardLinks []*customTypes.NestedHit
 		rawBoard   []byte
 		err        error
 		metaData   *dashboards.GetDashboardByUIDOK
 	)
 
-	folderUidMap := getFolderUIDEntityMap(s.ListFolders(NewFolderFilter()))
-
-	boardLinks = lo.Map(s.ListDashboards(filter), func(link *customTypes.NestedHit, i int) *models.Hit {
-		return link.Hit
-	})
+	boardLinks = s.ListDashboards(filter)
 
 	var boards []string
 	for _, link := range boardLinks {
@@ -365,7 +365,8 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
 			continue
 		}
 
-		fileName := buildDashboardFileName(link, metaData.GetPayload().Meta.Slug, folderUidMap, s.isLocal(), s.globalConf.ClearOutput)
+		// fileName := buildDashboardFileName(link.NestedPath, metaData.GetPayload().Meta.Slug, folderUidMap, s.isLocal(), s.globalConf.ClearOutput)
+		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.NestedPath, config.DashboardResource, s.isLocal(), s.globalConf.ClearOutput), metaData.GetPayload().Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
@@ -394,11 +395,10 @@ func getNestedFolder(folderTitle, folderUID string, folderUidMap map[string]*cus
 }
 
 // buildDashboardFileName for a given dashboard, a full nested folder path is constructed
-func buildDashboardFileName(db *models.Hit, dbSlug string, folderUidMap map[string]*customTypes.NestedHit, createDestination, clearOutput bool) string {
-	folderPath := getNestedFolder(db.FolderTitle, db.FolderUID, folderUidMap)
-	fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderPath, config.DashboardResource, createDestination, clearOutput), dbSlug)
-	return fileName
-}
+//func buildDashboardFileName(folderPath, dbSlug string, folderUidMap map[string]*customTypes.NestedHit, createDestination, clearOutput bool) string {
+//	fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderPath, config.DashboardResource, createDestination, clearOutput), dbSlug)
+//	return fileName
+//}
 
 // createFolders Creates a new folder with the given name.  If nested, each sub folder that does not exist is also created
 func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, error) {
@@ -468,16 +468,17 @@ func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, erro
 
 // UploadDashboards finds all the dashboards in the configured location and exports them to grafana.
 // if the folder doesn't exist, it'll be created.
-func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
+func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) ([]string, error) {
 	var (
 		rawBoard   []byte
 		folderName string
 		folderUid  string
+		dashFiles  []string
 	)
 	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
 	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
-		return fmt.Errorf("unable to find any files to export from storage engine, err: %w", err)
+		return nil, fmt.Errorf("unable to find any dashFiles to export from storage engine, err: %w", err)
 	}
 
 	currentDashboards := s.ListDashboards(filterReq)
@@ -492,13 +493,12 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 	// validFolders := filterReq.GetEntity(filters.FolderFilter)
 	alreadyProcessed := make(map[any]bool)
 
-	// TODO: use gjson instead of reading the 'board' in
 	for _, file := range filesInDir {
 		baseFile := filepath.Base(file)
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
 
 		if !strings.HasSuffix(file, ".json") {
-			slog.Warn("Only json files are supported, skipping", "filename", file)
+			slog.Warn("Only json dashFiles are supported, skipping", "filename", file)
 			continue
 		}
 
@@ -511,33 +511,8 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 			slog.Warn("Failed to unmarshall file", "filename", file)
 			continue
 		}
-		// Extract Tags
-		if filterVal := filterReq.GetFilter(filters.TagsFilter); filterVal != "[]" && filterVal != "" {
-			var boardTags []string
-			for _, val := range board["tags"].([]any) {
-				boardTags = append(boardTags, val.(string))
-			}
-			var requestedSlices []string
-			err = json.Unmarshal([]byte(filterVal), &requestedSlices)
-			if err != nil {
-				slog.Warn("unable to decode json of requested tags")
-				requestedSlices = []string{}
-			}
-			valid := false
-			for _, val := range requestedSlices {
-				if slices.Contains(boardTags, val) {
-					valid = true
-					break
-				}
-			}
-			if !valid {
-				slog.Debug("board fails tag filter, ignoring board", slog.Any("title", board["title"]))
-				continue
-			}
-
-		}
 		if _, ok := alreadyProcessed[board["uid"]]; ok {
-			return fmt.Errorf("Board with same UID was already processed.  Please check your backup folder. This may occur if you pulled the data multiple times with configuration of: nested folder enabled and disabled, uid: %v, title: %v", board["uid"], slug.Make((board["title"]).(string)))
+			return nil, fmt.Errorf("Board with same UID was already processed.  Please check your backup folder. This may occur if you pulled the data multiple times with configuration of: nested folder enabled and disabled, uid: %v, title: %v", board["uid"], slug.Make((board["title"]).(string)))
 		} else {
 			alreadyProcessed[board["uid"]] = true
 		}
@@ -551,33 +526,10 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 		if folderName == "" {
 			folderName = DefaultFolderName
 		}
-		//if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
-		//	slog.Debug("Skipping file since it doesn't match any valid folders", "filename", file)
-		//	continue
-		//}
-		validateMap := map[filters.FilterType]string{filters.FolderFilter: folderName, filters.DashFilter: baseFile}
-		// If folder OR slug is filtered, then skip if it doesn't match
-		if !config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters && !filterReq.ValidateAll(validateMap) {
+		folderUidMap, err = s.validateDashUploadEntity(filterReq, folderName, baseFile, &folderUid, folderUidMap, board["tags"])
+		if err != nil {
+			slog.Warn("validation failed, skipping", "file", file, "err", err)
 			continue
-		}
-
-		if folderName == DefaultFolderName {
-			folderUid = ""
-		} else {
-			if val, ok := folderUidMap[folderName]; ok {
-				// folderId = val
-				folderUid = val
-			} else {
-				if filterReq.ValidateAll(validateMap) {
-					newFolders, folderErr := s.createdFolders(folderName)
-					if folderErr != nil {
-						log.Panic("Unable to create required folder")
-					} else {
-						maps.Copy(folderUidMap, newFolders)
-						folderUid = folderUidMap[folderName]
-					}
-				}
-			}
 		}
 
 		// zero out ID.  Can't create a new dashboard if an ID already exists.
@@ -591,6 +543,8 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 		if _, exportError := s.GetClient().Dashboards.ImportDashboard(importDashReq); exportError != nil {
 			slog.Info("error on Exporting dashboard", "dashboard-filename", file, "err", exportError)
 			continue
+		} else {
+			dashFiles = append(dashFiles, file)
 		}
 
 	}
@@ -604,7 +558,60 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) error {
 			}
 		}
 	}
-	return nil
+	return dashFiles, nil
+}
+
+func (s *DashNGoImpl) validateDashUploadEntity(filterReq filters.Filter, folderName string, baseFile string, folderUid *string, folderUidMap map[string]string, rawBoardTags any) (map[string]string, error) {
+	// Extract Tags
+	tagFilter := filterReq.GetFilter(filters.TagsFilter)
+	if filterVal := tagFilter; filterVal != "[]" && filterVal != "" {
+		var boardTags []string
+		for _, val := range rawBoardTags.([]any) {
+			boardTags = append(boardTags, val.(string))
+		}
+		var requestedSlices []string
+		err := json.Unmarshal([]byte(filterVal), &requestedSlices)
+		if err != nil {
+			slog.Warn("unable to decode json of requested tags")
+			requestedSlices = []string{}
+		}
+		valid := false
+		for _, val := range requestedSlices {
+			if slices.Contains(boardTags, val) {
+				valid = true
+				break
+			}
+		}
+		if !valid {
+			return folderUidMap, fmt.Errorf("dashboard fails to pass tag filter: tagFilter: %s", tagFilter)
+		}
+
+	}
+	validateMap := map[filters.FilterType]string{filters.FolderFilter: folderName, filters.DashFilter: baseFile}
+	// If folder OR slug is filtered, then skip if it doesn't match
+	if !s.grafanaConf.GetDashboardSettings().IgnoreFilters && (!filterReq.ValidateAll(validateMap) || !validateFolderRegex(filterReq.GetEntity(filters.FolderFilter), folderName)) {
+		return folderUidMap, errors.New("dashboard fails to pass filter")
+	}
+
+	if folderName == DefaultFolderName {
+		*folderUid = ""
+	} else {
+		if val, ok := folderUidMap[folderName]; ok {
+			// folderId = val
+			*folderUid = val
+		} else {
+			if s.grafanaConf.GetDashboardSettings().IgnoreFilters || filterReq.ValidateAll(validateMap) {
+				newFolders, folderErr := s.createdFolders(folderName)
+				if folderErr != nil {
+					log.Panic("Unable to create required folder")
+				} else {
+					maps.Copy(folderUidMap, newFolders)
+					*folderUid = folderUidMap[folderName]
+				}
+			}
+		}
+	}
+	return folderUidMap, nil
 }
 
 // deleteDashboard removes a dashboard from grafana.  If the dashboard doesn't exist,
