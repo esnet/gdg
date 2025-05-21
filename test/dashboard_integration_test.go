@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/service/filters/v1"
+
 	customModels "github.com/esnet/gdg/internal/types"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
@@ -17,7 +19,6 @@ import (
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
 
@@ -101,6 +102,46 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 // fix that issue.
 func TestDashboardCleanUpCrud(t *testing.T) {
 	config.InitGdgConfig("testing")
+
+	apiClient, containerObj, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+	defer func() {
+		err := cleanup()
+		if err != nil {
+			slog.Warn("Unable to clean up after dashboard tests")
+		}
+	}()
+	filtersEntity := service.NewDashboardFilter("", "", "")
+	slog.Info("Exporting all dashboards")
+	uploadedFiles, err := apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, err)
+	assert.Equal(t, len(uploadedFiles), DashboardCount)
+	slog.Info("Listing all dashboards")
+	boards := apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), DashboardCount) // Includes the Ignored folder
+	// Create another copy of the dashboard json
+	// copy file
+	data, err := os.ReadFile("test/data/org_main-org/dashboards/General/bandwidth-dashboard.json")
+	assert.NoError(t, err)
+	err = os.WriteFile("test/data/org_main-org/dashboards/General/bandwidth-dashboard-copy.json", data, 0o644)
+	assert.NoError(t, err)
+	defer os.Remove("test/data/org_main-org/dashboards/General/bandwidth-dashboard-copy.json")
+	cfgProvider := func() *config.Configuration {
+		cfg := config.Config()
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = true
+		globals := cfg.GetGDGConfig().Global
+		globals.ClearOutput = true
+		return cfg
+	}
+	apiClient = test_tooling.CreateSimpleClientWithConfig(t, cfgProvider, containerObj)
+	apiClient.DownloadDashboards(filtersEntity)
+	assert.Nil(t, err)
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), IgnoreDashboardCount) // includes the ignored folder
+}
+
+// Download relies on Listing behavior so we only need to check that the dashboard listing works properly
+func TestDashListFilters(t *testing.T) {
+	config.InitGdgConfig("testing")
 	cfgProvider := func() *config.Configuration {
 		cfg := config.Config()
 		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = true
@@ -113,33 +154,108 @@ func TestDashboardCleanUpCrud(t *testing.T) {
 			slog.Warn("Unable to clean up after dashboard tests")
 		}
 	}()
-	filtersEntity := service.NewDashboardFilter("", "", "")
-	slog.Info("Exporting all dashboards")
-	uploadedFiles, err := apiClient.UploadDashboards(filtersEntity)
+	encodeTags := func(tags ...string) string {
+		raw, err := json.Marshal(tags)
+		assert.NoError(t, err, "unable to encode tags")
+		return string(raw)
+	}
+	uploadedFiles, err := apiClient.UploadDashboards(nil)
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedFiles), IgnoreDashboardCount)
-	slog.Info("Listing all dashboards")
+	// folder test
+	filtersEntity := service.NewDashboardFilter("linux%2Fgnu/Ot*", "", "")
 	boards := apiClient.ListDashboards(filtersEntity)
-	assert.Equal(t, len(boards), IgnoreDashboardCount) // Includes the Ignored folder
-	// Create another copy of the dashboard json
-	// copy file
-	data, err := os.ReadFile("test/data/org_main-org/dashboards/General/bandwidth-dashboard.json")
-	assert.NoError(t, err)
-	err = os.WriteFile("test/data/org_main-org/dashboards/General/bandwidth-dashboard-copy.json", data, 0o644)
-	assert.NoError(t, err)
-	defer os.Remove("test/data/org_main-org/dashboards/General/bandwidth-dashboard-copy.json")
+	assert.Equal(t, len(boards), 4)
+	//
+	filtersEntity = service.NewDashboardFilter("", "", encodeTags("flow"))
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), 8)
+	// Dash filter
+	filtersEntity = service.NewDashboardFilter("individual-flows-per-country", "", "")
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), 1)
+	// Filtering without ignore flags
 	cfgProvider = func() *config.Configuration {
 		cfg := config.Config()
-		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = true
-		globals := cfg.GetGDGConfig().Global
-		globals.ClearOutput = true
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = false
 		return cfg
 	}
 	apiClient = test_tooling.CreateSimpleClientWithConfig(t, cfgProvider, containerObj)
-	apiClient.DownloadDashboards(filtersEntity)
-	assert.Nil(t, err)
+	// no additional filter
 	boards = apiClient.ListDashboards(filtersEntity)
-	assert.Equal(t, len(boards), DashboardCount+1) // includes the ignored folder
+	assert.Equal(t, len(boards), DashboardCount)
+	// folder test
+	filtersEntity = service.NewDashboardFilter("linux%2Fgnu/Ot*", "", "")
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), 4)
+	//
+	filtersEntity = service.NewDashboardFilter("", "", encodeTags("flow"))
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), 8)
+	// Dash filter
+	filtersEntity = service.NewDashboardFilter("individual-flows-per-country", "", "")
+	boards = apiClient.ListDashboards(filtersEntity)
+	assert.Equal(t, len(boards), 1)
+}
+
+func TestUploadDashboardsBehavior(t *testing.T) {
+	config.InitGdgConfig("testing")
+	cfgProvider := func() *config.Configuration {
+		cfg := config.Config()
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = true
+		return cfg
+	}
+	apiClient, containerObj, cleanup := test_tooling.InitTest(t, cfgProvider, nil)
+	defer func() {
+		err := cleanup()
+		if err != nil {
+			slog.Warn("Unable to clean up after dashboard tests")
+		}
+	}()
+	cleanupDash := func(count int) {
+		items := apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))
+		assert.Equal(t, len(items), count)
+	}
+
+	encodeTags := func(tags ...string) string {
+		raw, err := json.Marshal(tags)
+		assert.NoError(t, err, "unable to encode tags")
+		return string(raw)
+	}
+
+	uploadedFiles, err := apiClient.UploadDashboards(nil)
+	assert.NoError(t, err)
+	assert.Equal(t, len(uploadedFiles), IgnoreDashboardCount)
+	cleanupDash(IgnoreDashboardCount)
+	// folder test
+	// filtersEntity := service.NewDashboardFilter("linux%2Fgnu/Ot*", "", "")
+	// uploadedFiles, err = apiClient.UploadDashboards(filtersEntity)
+	// assert.NoError(t, err)
+	// assert.Equal(t, len(uploadedFiles), 4)
+	// cleanupDash(len(uploadedFiles))
+	// Tags filter
+	filtersEntity := service.NewDashboardFilter("", "", encodeTags("flow"))
+	uploadedFiles, err = apiClient.UploadDashboards(filtersEntity)
+	assert.NoError(t, err)
+	assert.Equal(t, len(uploadedFiles), 8)
+	cleanupDash(len(uploadedFiles))
+	// Dash filter
+	//filtersEntity = service.NewDashboardFilter("individual-flows-per-country", "", "")
+	//uploadedFiles, err = apiClient.UploadDashboards(filtersEntity)
+	//assert.NoError(t, err)
+	//assert.Equal(t, len(uploadedFiles), 1)
+	//cleanupDash(len(uploadedFiles))
+	//
+	cfgProvider = func() *config.Configuration {
+		cfg := config.Config()
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = false
+		return cfg
+	}
+	apiClient = test_tooling.CreateSimpleClientWithConfig(t, cfgProvider, containerObj)
+	uploadedFiles, err = apiClient.UploadDashboards(nil)
+	assert.NoError(t, err)
+	assert.Equal(t, len(uploadedFiles), DashboardCount)
+	cleanupDash(DashboardCount)
 }
 
 func TestDashboardCRUDTags(t *testing.T) {
@@ -214,7 +330,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	config.InitGdgConfig("testing")
 	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
-	emptyFilter := filters.NewBaseFilter()
+	emptyFilter := v1.NewBaseFilter()
 
 	data, err := json.Marshal([]string{"flow", "netsage"})
 	assert.NoError(t, err)

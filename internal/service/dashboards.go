@@ -8,10 +8,15 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"slices"
 	"sort"
 	"strings"
+
+	"github.com/esnet/gdg/internal/service/filters/v1"
+	v2 "github.com/esnet/gdg/internal/service/filters/v2"
+	"github.com/tidwall/gjson"
 
 	"github.com/gosimple/slug"
 
@@ -33,9 +38,87 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-const (
-	nestedDashboardRegexFilter = "^/+"
-)
+func setupDashReaders(filterObj filters.V2Filter) {
+	err := filterObj.RegisterReader(reflect.TypeOf(customTypes.NestedHit{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.(*customTypes.NestedHit)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case filters.FolderFilter:
+			return val.FolderTitle, nil
+		case filters.TagsFilter:
+			return val.Tags, nil
+		case filters.DashFilter:
+			return slug.Make(val.Title), nil
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
+	}
+	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.([]byte)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case filters.FolderFilter:
+			{
+				r := gjson.GetBytes(val, "folderTitle")
+				if !r.Exists() {
+					return "General", nil
+				}
+				return r.String(), nil
+			}
+		case filters.TagsFilter:
+			{
+				r := gjson.GetBytes(val, "tags")
+				if !r.Exists() || !r.IsArray() {
+					return nil, fmt.Errorf("no valid title found")
+				}
+				ar := r.Array()
+				data := lo.Map(ar, func(item gjson.Result, index int) string {
+					return item.String()
+				})
+				return data, nil
+
+			}
+			// return val.Tags, nil
+		case filters.DashFilter:
+			{
+				r := gjson.GetBytes(val, "title")
+				if !r.Exists() || r.String() == "" {
+					return nil, fmt.Errorf("no valid title found")
+				}
+				return r.String(), nil
+			}
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+}
+
+func NewDashboardFilterV2(entries ...string) filters.V2Filter {
+	if len(entries) != 3 {
+		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
+	}
+	folderFilter := entries[0]
+	dashboardFilter := entries[1]
+	tagsFilter := entries[2]
+	if tagsFilter == "" {
+		tagsFilter = "[]"
+	}
+	filterObj := v2.NewBaseFilter()
+	setupDashReaders(filterObj)
+	// Setup Readers
+
+	_, _ = folderFilter, dashboardFilter
+
+	return nil
+}
 
 func NewDashboardFilter(entries ...string) filters.Filter {
 	if len(entries) != 3 {
@@ -48,7 +131,7 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 		tagsFilter = "[]"
 	}
 
-	filterObj := filters.NewBaseFilter()
+	filterObj := v1.NewBaseFilter()
 	filterObj.AddFilter(filters.FolderFilter, folderFilter)
 	filterObj.AddFilter(filters.DashFilter, dashboardFilter)
 	filterObj.AddFilter(filters.TagsFilter, tagsFilter)
@@ -91,13 +174,6 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 
 	return filterObj
 }
-
-//func (s *DashNGoImpl) nestedFoldersSanityCheck() error {
-//	if s.grafanaConf.GetDashboardSettings().NestedFolders && !tools.ValidateMinimumVersion(minimumNestedDashboardVersion, s) {
-//		log.Fatalf("Minimum version required for nested folders is %s", minimumNestedDashboardVersion)
-//	}
-//	return nil
-//}
 
 func (s *DashNGoImpl) LintDashboards(req types.LintRequest) []string {
 	var rawBoard []byte
@@ -217,7 +293,7 @@ func validateFolderRegex(acceptList []string, folder string) bool {
 			return true
 		}
 	}
-	return slices.Contains(acceptList, folder)
+	return false
 }
 
 // ListDashboards List all dashboards optionally filtered by folder name. If folderFilters

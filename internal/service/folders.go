@@ -13,6 +13,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/esnet/gdg/internal/service/filters/v1"
+
 	"github.com/esnet/gdg/internal/tools/encode"
 
 	"github.com/esnet/gdg/internal/config"
@@ -32,7 +34,7 @@ const (
 )
 
 func NewFolderFilter() filters.Filter {
-	filterObj := filters.NewBaseFilter()
+	filterObj := v1.NewBaseFilter()
 	filterObj.AddValidation(filters.FolderFilter, func(i any) bool {
 		val, ok := i.(map[filters.FilterType]string)
 		if !ok {
