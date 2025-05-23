@@ -50,7 +50,7 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	assert.NoError(t, err)
 
 	slog.Info("Listing all dashboards")
-	boards := apiClient.ListDashboards(filtersEntity)
+	boards := apiClient.ListDashboardsLegacy(filtersEntity)
 	slog.Info("Imported dashboards", "count", len(boards), "uploadedFiles", len(uploadedFiles))
 	ignoredSkipped := true
 	var generalBoard *customModels.NestedHit
@@ -75,15 +75,15 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	// Validate filters
 
 	filterFolder := service.NewDashboardFilter("linux%2Fgnu", "", "")
-	boards = apiClient.ListDashboards(filterFolder)
+	boards = apiClient.ListDashboardsLegacy(filterFolder)
 	assert.Equal(t, 8, len(boards))
 	// With Regex filters
 	filterFolder = service.NewDashboardFilter("linux%2Fgnu$", "", "")
-	boards = apiClient.ListDashboards(filterFolder)
+	boards = apiClient.ListDashboardsLegacy(filterFolder)
 	assert.Equal(t, 4, len(boards))
 	//
 	dashboardFilter := service.NewDashboardFilter("", "flow-information", "")
-	boards = apiClient.ListDashboards(dashboardFilter)
+	boards = apiClient.ListDashboardsLegacy(dashboardFilter)
 	assert.Equal(t, 1, len(boards))
 
 	// Import Dashboards
@@ -94,7 +94,7 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
 	assert.Equal(t, len(deleteList), IgnoreDashboardCount)
 	slog.Info("List Dashboards again")
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }
 
@@ -116,7 +116,7 @@ func TestDashboardCleanUpCrud(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedFiles), DashboardCount)
 	slog.Info("Listing all dashboards")
-	boards := apiClient.ListDashboards(filtersEntity)
+	boards := apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), DashboardCount) // Includes the Ignored folder
 	// Create another copy of the dashboard json
 	// copy file
@@ -135,7 +135,7 @@ func TestDashboardCleanUpCrud(t *testing.T) {
 	apiClient = test_tooling.CreateSimpleClientWithConfig(t, cfgProvider, containerObj)
 	apiClient.DownloadDashboards(filtersEntity)
 	assert.Nil(t, err)
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), IgnoreDashboardCount) // includes the ignored folder
 }
 
@@ -164,15 +164,15 @@ func TestDashListFilters(t *testing.T) {
 	assert.Equal(t, len(uploadedFiles), IgnoreDashboardCount)
 	// folder test
 	filtersEntity := service.NewDashboardFilter("linux%2Fgnu/Ot*", "", "")
-	boards := apiClient.ListDashboards(filtersEntity)
+	boards := apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 4)
 	//
 	filtersEntity = service.NewDashboardFilter("", "", encodeTags("flow"))
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 8)
 	// Dash filter
 	filtersEntity = service.NewDashboardFilter("individual-flows-per-country", "", "")
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 1)
 	// Filtering without ignore flags
 	cfgProvider = func() *config.Configuration {
@@ -182,19 +182,19 @@ func TestDashListFilters(t *testing.T) {
 	}
 	apiClient = test_tooling.CreateSimpleClientWithConfig(t, cfgProvider, containerObj)
 	// no additional filter
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), DashboardCount)
 	// folder test
 	filtersEntity = service.NewDashboardFilter("linux%2Fgnu/Ot*", "", "")
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 4)
 	//
 	filtersEntity = service.NewDashboardFilter("", "", encodeTags("flow"))
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 8)
 	// Dash filter
 	filtersEntity = service.NewDashboardFilter("individual-flows-per-country", "", "")
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 1)
 }
 
@@ -277,7 +277,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedFiles), 13)
 	slog.Info("Listing all dashboards")
-	boards := apiClient.ListDashboards(filtersEntity)
+	boards := apiClient.ListDashboardsLegacy(filtersEntity)
 	slog.Info("Removing all dashboards")
 	assert.Equal(t, 13, len(boards))
 	deleteList := apiClient.DeleteAllDashboards(filtersEntity)
@@ -291,7 +291,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedFiles), 8)
 	slog.Info("Listing all dashboards")
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, 8, len(boards))
 	slog.Info("Removing all dashboards")
 	deleteList = apiClient.DeleteAllDashboards(filtersEntity)
@@ -305,7 +305,7 @@ func TestDashboardCRUDTags(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedFiles), DashboardCount)
 	// Listing with no filter
-	boards = apiClient.ListDashboards(filterNone)
+	boards = apiClient.ListDashboardsLegacy(filterNone)
 	assert.Equal(t, DashboardCount, len(boards))
 
 	data, err = json.Marshal([]string{"flow"})
@@ -313,14 +313,14 @@ func TestDashboardCRUDTags(t *testing.T) {
 	filtersEntity = service.NewDashboardFilter("", "", string(data))
 
 	slog.Info("Listing dashboards by tag")
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, 8, len(deleteList))
 	// Listing with
 	data, err = json.Marshal([]string{"flow", "netsage"})
 	assert.NoError(t, err)
 	filtersEntity = service.NewDashboardFilter("", "", string(data))
 
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, 13, len(boards))
 	deleteList = apiClient.DeleteAllDashboards(filtersEntity)
 	assert.Equal(t, 13, len(deleteList))
@@ -341,7 +341,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	assert.NoError(t, err)
 
 	slog.Info("Listing all dashboards")
-	boards := apiClient.ListDashboards(filtersEntity)
+	boards := apiClient.ListDashboardsLegacy(filtersEntity)
 
 	slog.Info("Filtered Count is", "count", len(boards))
 	for _, board := range boards {
@@ -358,7 +358,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	assert.Equal(t, len(deleteList), len(boards))
 
 	slog.Info("List Dashboards again")
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }
 
@@ -451,20 +451,20 @@ func TestWildcardFilter(t *testing.T) {
 	// Testing Exporting with Wildcard
 	_, err = apiClient.UploadDashboards(emptyFilter)
 	assert.NoError(t, err)
-	boards := apiClient.ListDashboards(emptyFilter)
+	boards := apiClient.ListDashboardsLegacy(emptyFilter)
 
 	_, err = apiClient.UploadDashboards(filtersEntity)
 	assert.NoError(t, err)
-	boards_filtered := apiClient.ListDashboards(emptyFilter)
+	boards_filtered := apiClient.ListDashboardsLegacy(emptyFilter)
 
 	assert.Equal(t, len(boards), len(boards_filtered))
 
 	// Testing Listing with Wildcard
 	slog.Info("Listing all dashboards without filter")
-	boards = apiClient.ListDashboards(emptyFilter)
+	boards = apiClient.ListDashboardsLegacy(emptyFilter)
 
 	slog.Info("Listing all dashboards ignoring filter")
-	boards_filtered = apiClient.ListDashboards(filtersEntity)
+	boards_filtered = apiClient.ListDashboardsLegacy(filtersEntity)
 
 	assert.Equal(t, 14, len(boards_filtered))
 
@@ -477,7 +477,7 @@ func TestWildcardFilter(t *testing.T) {
 	assert.Equal(t, len(deleteList), len(boards))
 
 	slog.Info("List Dashboards again")
-	boards = apiClient.ListDashboards(filtersEntity)
+	boards = apiClient.ListDashboardsLegacy(filtersEntity)
 	assert.Equal(t, len(boards), 0)
 }
 

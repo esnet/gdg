@@ -271,7 +271,7 @@ func validateFolderRegex(acceptList []string, folder string) bool {
 
 // ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
-func (s *DashNGoImpl) ListDashboardsV2(filterReq filters.V2Filter) []*customTypes.NestedHit {
+func (s *DashNGoImpl) ListDashboards(filterReq filters.V2Filter) []*customTypes.NestedHit {
 	// Fallback on defaults
 	if filterReq == nil {
 		filterReq = NewDashboardFilterV2("", "", "")
@@ -394,7 +394,7 @@ func (s *DashNGoImpl) ListDashboardsV2(filterReq filters.V2Filter) []*customType
 
 // ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
-func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*customTypes.NestedHit {
+func (s *DashNGoImpl) ListDashboardsLegacy(filterReq filters.Filter) []*customTypes.NestedHit {
 	// Fallback on defaults
 	if filterReq == nil {
 		filterReq = NewDashboardFilter("", "", "")
@@ -509,7 +509,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.Filter) []*customTypes.Ne
 }
 
 // DownloadDashboards saves all dashboards matching query to configured location
-func (s *DashNGoImpl) DownloadDashboards(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadDashboards(filter filters.V2Filter) []string {
 	var (
 		boardLinks []*customTypes.NestedHit
 		rawBoard   []byte
@@ -653,7 +653,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.Filter) ([]string, erro
 		return nil, fmt.Errorf("unable to find any dashFiles to export from storage engine, err: %w", err)
 	}
 
-	currentDashboards := s.ListDashboards(filterReq)
+	currentDashboards := s.ListDashboardsLegacy(filterReq)
 
 	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter()))
 
@@ -805,7 +805,7 @@ func (s *DashNGoImpl) deleteDashboard(item *models.Hit) error {
 func (s *DashNGoImpl) DeleteAllDashboards(filter filters.Filter) []string {
 	dashboardListing := make([]string, 0)
 
-	items := s.ListDashboards(filter)
+	items := s.ListDashboardsLegacy(filter)
 	for _, item := range items {
 		if filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: item.FolderTitle, filters.DashFilter: item.Slug}) {
 			err := s.deleteDashboard(item.Hit)

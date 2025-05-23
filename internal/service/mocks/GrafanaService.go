@@ -1028,7 +1028,7 @@ func (_c *GrafanaService_DownloadDashboardPermissions_Call) RunAndReturn(run fun
 }
 
 // DownloadDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadDashboards(filter filters.Filter) []string {
+func (_mock *GrafanaService) DownloadDashboards(filter filters.V2Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1036,7 +1036,7 @@ func (_mock *GrafanaService) DownloadDashboards(filter filters.Filter) []string 
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(filters.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1057,9 +1057,9 @@ func (_e *GrafanaService_Expecter) DownloadDashboards(filter interface{}) *Grafa
 	return &GrafanaService_DownloadDashboards_Call{Call: _e.mock.On("DownloadDashboards", filter)}
 }
 
-func (_c *GrafanaService_DownloadDashboards_Call) Run(run func(filter filters.Filter)) *GrafanaService_DownloadDashboards_Call {
+func (_c *GrafanaService_DownloadDashboards_Call) Run(run func(filter filters.V2Filter)) *GrafanaService_DownloadDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(filters.Filter))
+		run(args[0].(filters.V2Filter))
 	})
 	return _c
 }
@@ -1069,7 +1069,7 @@ func (_c *GrafanaService_DownloadDashboards_Call) Return(strings []string) *Graf
 	return _c
 }
 
-func (_c *GrafanaService_DownloadDashboards_Call) RunAndReturn(run func(filter filters.Filter) []string) *GrafanaService_DownloadDashboards_Call {
+func (_c *GrafanaService_DownloadDashboards_Call) RunAndReturn(run func(filter filters.V2Filter) []string) *GrafanaService_DownloadDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1935,7 +1935,7 @@ func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(fi
 }
 
 // ListDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListDashboards(filter filters.Filter) []*types0.NestedHit {
+func (_mock *GrafanaService) ListDashboards(filter filters.V2Filter) []*types0.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1943,7 +1943,7 @@ func (_mock *GrafanaService) ListDashboards(filter filters.Filter) []*types0.Nes
 	}
 
 	var r0 []*types0.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(filters.Filter) []*types0.NestedHit); ok {
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*types0.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1964,9 +1964,9 @@ func (_e *GrafanaService_Expecter) ListDashboards(filter interface{}) *GrafanaSe
 	return &GrafanaService_ListDashboards_Call{Call: _e.mock.On("ListDashboards", filter)}
 }
 
-func (_c *GrafanaService_ListDashboards_Call) Run(run func(filter filters.Filter)) *GrafanaService_ListDashboards_Call {
+func (_c *GrafanaService_ListDashboards_Call) Run(run func(filter filters.V2Filter)) *GrafanaService_ListDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(filters.Filter))
+		run(args[0].(filters.V2Filter))
 	})
 	return _c
 }
@@ -1976,7 +1976,54 @@ func (_c *GrafanaService_ListDashboards_Call) Return(nestedHits []*types0.Nested
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filter filters.Filter) []*types0.NestedHit) *GrafanaService_ListDashboards_Call {
+func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filter filters.V2Filter) []*types0.NestedHit) *GrafanaService_ListDashboards_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListDashboardsLegacy provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) ListDashboardsLegacy(filter filters.Filter) []*types0.NestedHit {
+	ret := _mock.Called(filter)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListDashboardsLegacy")
+	}
+
+	var r0 []*types0.NestedHit
+	if returnFunc, ok := ret.Get(0).(func(filters.Filter) []*types0.NestedHit); ok {
+		r0 = returnFunc(filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*types0.NestedHit)
+		}
+	}
+	return r0
+}
+
+// GrafanaService_ListDashboardsLegacy_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListDashboardsLegacy'
+type GrafanaService_ListDashboardsLegacy_Call struct {
+	*mock.Call
+}
+
+// ListDashboardsLegacy is a helper method to define mock.On call
+//   - filter
+func (_e *GrafanaService_Expecter) ListDashboardsLegacy(filter interface{}) *GrafanaService_ListDashboardsLegacy_Call {
+	return &GrafanaService_ListDashboardsLegacy_Call{Call: _e.mock.On("ListDashboardsLegacy", filter)}
+}
+
+func (_c *GrafanaService_ListDashboardsLegacy_Call) Run(run func(filter filters.Filter)) *GrafanaService_ListDashboardsLegacy_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(filters.Filter))
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ListDashboardsLegacy_Call) Return(nestedHits []*types0.NestedHit) *GrafanaService_ListDashboardsLegacy_Call {
+	_c.Call.Return(nestedHits)
+	return _c
+}
+
+func (_c *GrafanaService_ListDashboardsLegacy_Call) RunAndReturn(run func(filter filters.Filter) []*types0.NestedHit) *GrafanaService_ListDashboardsLegacy_Call {
 	_c.Call.Return(run)
 	return _c
 }

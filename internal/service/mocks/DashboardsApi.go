@@ -86,7 +86,7 @@ func (_c *DashboardsApi_DeleteAllDashboards_Call) RunAndReturn(run func(filter f
 }
 
 // DownloadDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) DownloadDashboards(filter filters.Filter) []string {
+func (_mock *DashboardsApi) DownloadDashboards(filter filters.V2Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -94,7 +94,7 @@ func (_mock *DashboardsApi) DownloadDashboards(filter filters.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(filters.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -115,9 +115,9 @@ func (_e *DashboardsApi_Expecter) DownloadDashboards(filter interface{}) *Dashbo
 	return &DashboardsApi_DownloadDashboards_Call{Call: _e.mock.On("DownloadDashboards", filter)}
 }
 
-func (_c *DashboardsApi_DownloadDashboards_Call) Run(run func(filter filters.Filter)) *DashboardsApi_DownloadDashboards_Call {
+func (_c *DashboardsApi_DownloadDashboards_Call) Run(run func(filter filters.V2Filter)) *DashboardsApi_DownloadDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(filters.Filter))
+		run(args[0].(filters.V2Filter))
 	})
 	return _c
 }
@@ -127,7 +127,7 @@ func (_c *DashboardsApi_DownloadDashboards_Call) Return(strings []string) *Dashb
 	return _c
 }
 
-func (_c *DashboardsApi_DownloadDashboards_Call) RunAndReturn(run func(filter filters.Filter) []string) *DashboardsApi_DownloadDashboards_Call {
+func (_c *DashboardsApi_DownloadDashboards_Call) RunAndReturn(run func(filter filters.V2Filter) []string) *DashboardsApi_DownloadDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -180,7 +180,7 @@ func (_c *DashboardsApi_LintDashboards_Call) RunAndReturn(run func(req types.Lin
 }
 
 // ListDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) ListDashboards(filter filters.Filter) []*types0.NestedHit {
+func (_mock *DashboardsApi) ListDashboards(filter filters.V2Filter) []*types0.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -188,7 +188,7 @@ func (_mock *DashboardsApi) ListDashboards(filter filters.Filter) []*types0.Nest
 	}
 
 	var r0 []*types0.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(filters.Filter) []*types0.NestedHit); ok {
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*types0.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -209,9 +209,9 @@ func (_e *DashboardsApi_Expecter) ListDashboards(filter interface{}) *Dashboards
 	return &DashboardsApi_ListDashboards_Call{Call: _e.mock.On("ListDashboards", filter)}
 }
 
-func (_c *DashboardsApi_ListDashboards_Call) Run(run func(filter filters.Filter)) *DashboardsApi_ListDashboards_Call {
+func (_c *DashboardsApi_ListDashboards_Call) Run(run func(filter filters.V2Filter)) *DashboardsApi_ListDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(filters.Filter))
+		run(args[0].(filters.V2Filter))
 	})
 	return _c
 }
@@ -221,7 +221,54 @@ func (_c *DashboardsApi_ListDashboards_Call) Return(nestedHits []*types0.NestedH
 	return _c
 }
 
-func (_c *DashboardsApi_ListDashboards_Call) RunAndReturn(run func(filter filters.Filter) []*types0.NestedHit) *DashboardsApi_ListDashboards_Call {
+func (_c *DashboardsApi_ListDashboards_Call) RunAndReturn(run func(filter filters.V2Filter) []*types0.NestedHit) *DashboardsApi_ListDashboards_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListDashboardsLegacy provides a mock function for the type DashboardsApi
+func (_mock *DashboardsApi) ListDashboardsLegacy(filter filters.Filter) []*types0.NestedHit {
+	ret := _mock.Called(filter)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListDashboardsLegacy")
+	}
+
+	var r0 []*types0.NestedHit
+	if returnFunc, ok := ret.Get(0).(func(filters.Filter) []*types0.NestedHit); ok {
+		r0 = returnFunc(filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*types0.NestedHit)
+		}
+	}
+	return r0
+}
+
+// DashboardsApi_ListDashboardsLegacy_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListDashboardsLegacy'
+type DashboardsApi_ListDashboardsLegacy_Call struct {
+	*mock.Call
+}
+
+// ListDashboardsLegacy is a helper method to define mock.On call
+//   - filter
+func (_e *DashboardsApi_Expecter) ListDashboardsLegacy(filter interface{}) *DashboardsApi_ListDashboardsLegacy_Call {
+	return &DashboardsApi_ListDashboardsLegacy_Call{Call: _e.mock.On("ListDashboardsLegacy", filter)}
+}
+
+func (_c *DashboardsApi_ListDashboardsLegacy_Call) Run(run func(filter filters.Filter)) *DashboardsApi_ListDashboardsLegacy_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(filters.Filter))
+	})
+	return _c
+}
+
+func (_c *DashboardsApi_ListDashboardsLegacy_Call) Return(nestedHits []*types0.NestedHit) *DashboardsApi_ListDashboardsLegacy_Call {
+	_c.Call.Return(nestedHits)
+	return _c
+}
+
+func (_c *DashboardsApi_ListDashboardsLegacy_Call) RunAndReturn(run func(filter filters.Filter) []*types0.NestedHit) *DashboardsApi_ListDashboardsLegacy_Call {
 	_c.Call.Return(run)
 	return _c
 }

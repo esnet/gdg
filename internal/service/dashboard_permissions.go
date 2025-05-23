@@ -21,7 +21,7 @@ import (
 
 func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.Filter) ([]types.DashboardAndPermissions, error) {
 	validateDashboardEnterpriseSupport(s)
-	dashboards := s.ListDashboards(filterReq)
+	dashboards := s.ListDashboardsLegacy(filterReq)
 	var result []types.DashboardAndPermissions
 	for _, dashboard := range dashboards {
 		item := types.DashboardAndPermissions{Dashboard: dashboard}

@@ -70,7 +70,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	apiClient.DeleteAllDashboards(dashFilter)
 	// Load data into grafana
 	apiClient.UploadDashboards(dashFilter)
-	boards := apiClient.ListDashboards(dashFilter)
+	boards := apiClient.ListDashboardsLegacy(dashFilter)
 	assert.True(t, len(boards) > 0)
 	var cancel context.CancelFunc
 
@@ -87,12 +87,12 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	slog.Info("Deleting Dashboards") // Clearing Grafana
 	deleteList := apiClient.DeleteAllDashboards(dashFilter)
 	assert.Equal(t, len(list), len(deleteList))
-	boards = apiClient.ListDashboards(dashFilter)
+	boards = apiClient.ListDashboardsLegacy(dashFilter)
 	assert.Equal(t, len(boards), 0)
 	// Load Data from S3
-	apiClient.UploadDashboards(dashFilter)        // ReLoad data from S3 backup
-	boards = apiClient.ListDashboards(dashFilter) // Read data
-	assert.Equal(t, len(list), len(boards))       // verify
+	apiClient.UploadDashboards(dashFilter)              // ReLoad data from S3 backup
+	boards = apiClient.ListDashboardsLegacy(dashFilter) // Read data
+	assert.Equal(t, len(list), len(boards))             // verify
 	apiClient.DeleteAllDashboards(dashFilter)
 }
 
@@ -112,7 +112,7 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 	apiClient.DeleteAllDashboards(dashFilter)
 	// Load data into grafana
 	apiClient.UploadDashboards(dashFilter)
-	boards := apiClient.ListDashboards(dashFilter)
+	boards := apiClient.ListDashboardsLegacy(dashFilter)
 	assert.True(t, len(boards) > 0)
 
 	// Tests all type of combination that can potential break things for cloud + test output config
@@ -187,12 +187,12 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 		slog.Info("Deleting Dashboards") // Clearing Grafana
 		deleteList := apiClient.DeleteAllDashboards(dashFilter)
 		assert.Equal(t, len(list), len(deleteList))
-		boards = apiClient.ListDashboards(dashFilter)
+		boards = apiClient.ListDashboardsLegacy(dashFilter)
 		assert.Equal(t, len(boards), 0)
 		// Load Data from S3
-		apiClient.UploadDashboards(dashFilter)        // ReLoad data from S3 backup
-		boards = apiClient.ListDashboards(dashFilter) // Read data
-		assert.Equal(t, len(list), len(boards))       // verify
+		apiClient.UploadDashboards(dashFilter)              // ReLoad data from S3 backup
+		boards = apiClient.ListDashboardsLegacy(dashFilter) // Read data
+		assert.Equal(t, len(list), len(boards))             // verify
 
 		cancel()
 	}
