@@ -45,7 +45,7 @@ func newDashboardCommand() simplecobra.Commander {
 			cmd.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
 			cmd.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
 			cmd.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
-			cmd.PersistentFlags().StringArrayP("tags", "t", []string{}, "Filter by list of comma delimited tags")
+			cmd.PersistentFlags().StringArrayP("tags", "t", []string{}, "Filter by list of comma delimited tags. (Additive behavior dashboard includes: tag1 AND tag2)")
 		},
 		CommandsList: []simplecobra.Commander{
 			newListDashboardsCmd(),
@@ -73,6 +73,12 @@ func newClearDashboardsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			if !skipConfirmAction {
+				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
+					"(or all dashboards if ignore_dashboard_filters is set to true).  Do you wish to "+
+					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
+				), "", true)
+			}
 			deletedDashboards := rootCmd.GrafanaSvc().DeleteAllDashboards(filter)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range deletedDashboards {
@@ -104,26 +110,26 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 
 			if !skipConfirmAction {
 				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
-					"(or all folders if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
+					"(or all dashboards if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
 					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(), ", "),
 				), "", true)
 			}
-			err := rootCmd.GrafanaSvc().UploadDashboards(filter)
+			files, err := rootCmd.GrafanaSvc().UploadDashboards(filter)
 			if err != nil {
 				return err
 			}
 
-			rootCmd.TableObj.AppendHeader(table.Row{"Title", "id", "folder", "UID"})
-			boards := rootCmd.GrafanaSvc().ListDashboards(filter)
+			rootCmd.TableObj.AppendHeader(table.Row{"file"})
+			// boards := rootCmd.GrafanaSvc().ListDashboardsLegacy(filter)
 
-			slog.Info("dashboards have been uploaded", slog.Any("count", len(boards)),
+			slog.Info("dashboards have been uploaded", slog.Any("count", len(files)),
 				slog.String("context", GetContext()),
 				slog.String("Organization", GetOrganizationName()))
-			for _, link := range boards {
-				rootCmd.TableObj.AppendRow(table.Row{link.Title, link.ID, link.FolderTitle, link.UID})
+			for _, link := range files {
+				rootCmd.TableObj.AppendRow(table.Row{link})
 			}
-			if len(boards) > 0 {
-				rootCmd.Render(cd.CobraCommand, boards)
+			if len(files) > 0 {
+				rootCmd.Render(cd.CobraCommand, files)
 			} else {
 				slog.Info("No dashboards found")
 			}
@@ -143,7 +149,7 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filter := service.NewDashboardFilterV2(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadDashboards(filter)
 			slog.Info("Downloading dashboards for context",
 				slog.String("Organization", GetOrganizationName()),
@@ -184,7 +190,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "NestedPath", "UID", "Tags", "URL"})
 
-			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filters := service.NewDashboardFilterV2(parseDashboardGlobalFlags(cd.CobraCommand)...)
 			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
 
 			printCount := func(count int) {

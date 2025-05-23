@@ -34,6 +34,6 @@ type ConnectionPermissionItem struct {
 }
 
 type DashboardAndPermissions struct {
-	Dashboard   *models.Hit
+	Dashboard   *NestedHit
 	Permissions []*models.DashboardACLInfoDTO
 }

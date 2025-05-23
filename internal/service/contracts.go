@@ -52,9 +52,11 @@ type ConnectionPermissions interface {
 
 // DashboardsApi Contract definition
 type DashboardsApi interface {
-	ListDashboards(filter filters.Filter) []*customModels.NestedHit
-	DownloadDashboards(filter filters.Filter) []string
-	UploadDashboards(filter filters.Filter) error
+	ListDashboardsLegacy(filter filters.Filter) []*customModels.NestedHit
+	ListDashboards(filter filters.V2Filter) []*gdgType.NestedHit
+
+	DownloadDashboards(filter filters.V2Filter) []string
+	UploadDashboards(filter filters.Filter) ([]string, error)
 	DeleteAllDashboards(filter filters.Filter) []string
 	LintDashboards(req types.LintRequest) []string
 }

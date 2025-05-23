@@ -10,7 +10,12 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
+
+	"github.com/esnet/gdg/internal/service/filters/v1"
+
+	"github.com/esnet/gdg/internal/tools/encode"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -29,7 +34,7 @@ const (
 )
 
 func NewFolderFilter() filters.Filter {
-	filterObj := filters.NewBaseFilter()
+	filterObj := v1.NewBaseFilter()
 	filterObj.AddValidation(filters.FolderFilter, func(i any) bool {
 		val, ok := i.(map[filters.FilterType]string)
 		if !ok {
@@ -275,16 +280,12 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, %v", err)
 	}
-	nested := s.grafanaConf.GetDashboardSettings().NestedFolders
 	folderItems := s.ListFolders(filter)
 	folderUidMap := getFolderUIDEntityMap(folderItems)
 	// build a mapping of the nested path to UID for all existing folders
 	nestedPathToUidExisting := getFolderMapping(folderItems,
 		func(fld *types.NestedHit) string {
-			if nested {
-				return getNestedFolder(fld.Title, fld.UID, folderUidMap)
-			}
-			return fld.Title
+			return getNestedFolder(fld.Title, fld.UID, folderUidMap)
 		},
 		func(fld *types.NestedHit) *types.NestedHit { return fld },
 	)
@@ -308,94 +309,92 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 
 		parentUid := ""
 		nestedFolder := getNestedFolderFromFile(fileLocation, resourceDir)
-		if nested {
-			requiredFolders := getPathFolderList(nestedFolder)
-			// check if nested folder exists.
-			sb := new(strings.Builder)
-			errorOut := false
-			parentFolder := ""
+		requiredFolders := getPathFolderList(nestedFolder)
+		// check if nested folder exists.
+		sb := new(strings.Builder)
+		errorOut := false
+		parentFolder := ""
 
-			for ndx, fld := range requiredFolders {
-				parentFolder = sb.String()
-				if ndx == 0 {
-					sb.WriteString(fld)
+		for ndx, fld := range requiredFolders {
+			parentFolder = sb.String()
+			if ndx == 0 {
+				sb.WriteString(fld)
+			} else {
+				sb.WriteString(folderPathSeparator + fld)
+			}
+			// parentFolder folder missing, create entity
+			if entity, ok := nestedPathToUidExisting[sb.String()]; !ok {
+				// subfolder does not exist and needs to be created
+				slog.Info("Parent Folder is missing, attempting to create parentFolder folder", slog.Any("parentFolder", sb.String()), slog.Any("folder", nestedFolder))
+				// check if folder definition exists.
+				var (
+					parentAddErr error
+				)
+				if parentFile, parentOk := nestedPathMap[sb.String()]; parentOk {
+					getNewFolder := func() (*models.CreateFolderCommand, error) {
+						if strings.HasSuffix(parentFile, ".json") {
+							if rawFolder, err = s.storage.ReadFile(parentFile); err != nil {
+								slog.Error("failed to read fileOrName", "filename", parentFile, "err", err)
+							}
+						}
+						newFolderCmd := &models.CreateFolderCommand{}
+						if err := json.Unmarshal(rawFolder, &newFolderCmd); err != nil {
+							slog.Warn("failed to unmarshall folder", "err", err)
+							return newFolderCmd, err
+						}
+						r := gjson.Get(string(rawFolder), "folderUid")
+						if r.String() != "" {
+							newFolderCmd.ParentUID = r.String()
+						}
+						return newFolderCmd, nil
+					}
+					parentUid, parentAddErr = addFolder(getNewFolder, folderUidMap)
+					if parentAddErr != nil {
+						slog.Error("Unable to created parentFolder folder", slog.Any("parentFolder", parentFile))
+						errorOut = true
+					}
 				} else {
-					sb.WriteString(folderPathSeparator + fld)
-				}
-				// parentFolder folder missing, create entity
-				if entity, ok := nestedPathToUidExisting[sb.String()]; !ok {
-					// subfolder does not exist and needs to be created
-					slog.Info("Parent Folder is missing, attempting to create parentFolder folder", slog.Any("parentFolder", sb.String()), slog.Any("folder", nestedFolder))
-					// check if folder definition exists.
-					var (
-						parentAddErr error
-					)
-					if parentFile, parentOk := nestedPathMap[sb.String()]; parentOk {
-						getNewFolder := func() (*models.CreateFolderCommand, error) {
-							if strings.HasSuffix(parentFile, ".json") {
-								if rawFolder, err = s.storage.ReadFile(parentFile); err != nil {
-									slog.Error("failed to read fileOrName", "filename", parentFile, "err", err)
-								}
-							}
-							newFolderCmd := &models.CreateFolderCommand{}
-							if err := json.Unmarshal(rawFolder, &newFolderCmd); err != nil {
-								slog.Warn("failed to unmarshall folder", "err", err)
-								return newFolderCmd, err
-							}
-							r := gjson.Get(string(rawFolder), "folderUid")
-							if r.String() != "" {
-								newFolderCmd.ParentUID = r.String()
-							}
-							return newFolderCmd, nil
+					getNewFolder := func() (*models.CreateFolderCommand, error) {
+						newFolderCmd := new(models.CreateFolderCommand)
+						newFolderCmd.Title = sb.String()
+						if val, ok := folderUidMap[parentFolder]; ok {
+							newFolderCmd.ParentUID = val.UID
 						}
-						parentUid, parentAddErr = addFolder(getNewFolder, folderUidMap)
-						if parentAddErr != nil {
-							slog.Error("Unable to created parentFolder folder", slog.Any("parentFolder", parentFile))
-							errorOut = true
-						}
-					} else {
-						getNewFolder := func() (*models.CreateFolderCommand, error) {
-							newFolderCmd := new(models.CreateFolderCommand)
-							newFolderCmd.Title = sb.String()
-							if val, ok := folderUidMap[parentFolder]; ok {
-								newFolderCmd.ParentUID = val.UID
-							}
-							return newFolderCmd, nil
-						}
-						// no matching file, use title
-						parentUid, parentAddErr = addFolder(getNewFolder, folderUidMap)
-						if parentAddErr != nil {
-							slog.Error("Unable to created parentFolder folder", slog.Any("parentFolder", parentFile))
-							errorOut = true
-						}
+						return newFolderCmd, nil
 					}
-					if errorOut {
-						break
-					}
-					processed[filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))] = true
-					newParentFolder, err := s.getFolderByUid(parentUid)
-					if err != nil {
-						slog.Error("unable to get newly created parentFolder folder", slog.Any("parentFolder", sb.String()))
-						break
-					}
-					folderUidMap[parentUid] = newParentFolder
-					nestedPathToUidExisting[sb.String()] = newParentFolder
-
-				} else {
-					parentUid = entity.UID
-					// folder exists, continue
-					slog.Debug("Parent already exists, continuing", slog.Any("ParentFolder", sb.String()))
-					parentResource := filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))
-					if val, ok := processed[parentResource]; !ok || !val {
-						processed[parentResource] = true
+					// no matching file, use title
+					parentUid, parentAddErr = addFolder(getNewFolder, folderUidMap)
+					if parentAddErr != nil {
+						slog.Error("Unable to created parentFolder folder", slog.Any("parentFolder", parentFile))
+						errorOut = true
 					}
 				}
+				if errorOut {
+					break
+				}
+				processed[filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))] = true
+				newParentFolder, err := s.getFolderByUid(parentUid)
+				if err != nil {
+					slog.Error("unable to get newly created parentFolder folder", slog.Any("parentFolder", sb.String()))
+					break
+				}
+				folderUidMap[parentUid] = newParentFolder
+				nestedPathToUidExisting[sb.String()] = newParentFolder
 
+			} else {
+				parentUid = entity.UID
+				// folder exists, continue
+				slog.Debug("Parent already exists, continuing", slog.Any("ParentFolder", sb.String()))
+				parentResource := filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))
+				if val, ok := processed[parentResource]; !ok || !val {
+					processed[parentResource] = true
+				}
 			}
-			if errorOut {
-				slog.Error("unable to add folder", slog.Any("folder", nestedFolder))
-				continue
-			}
+
+		}
+		if errorOut {
+			slog.Error("unable to add folder", slog.Any("folder", nestedFolder))
+			continue
 		}
 		var newFolder models.CreateFolderCommand
 		if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
@@ -423,7 +422,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		}
 		params := folders.NewCreateFolderParams()
 		// patch parentFolder here if nested
-		if nested && newFolder.ParentUID == "" {
+		if newFolder.ParentUID == "" {
 			newFolder.ParentUID = parentUid
 		}
 		params.Body = &newFolder
@@ -434,13 +433,9 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		}
 		processed[fileLocation] = true
 
-		if nested {
-			folderUidMap[f.GetPayload().UID] = s.folderToHit(f.GetPayload())
-			nestedPathToUidExisting[nestedFolder] = s.folderToHit(f.GetPayload())
-			result = append(result, nestedFolder)
-		} else {
-			result = append(result, f.Payload.Title)
-		}
+		folderUidMap[f.GetPayload().UID] = s.folderToHit(f.GetPayload())
+		nestedPathToUidExisting[nestedFolder] = s.folderToHit(f.GetPayload())
+		result = append(result, nestedFolder)
 
 	}
 	return result
@@ -463,12 +458,18 @@ func buildNestedFilePath(files []string) map[string]string {
 func (s *DashNGoImpl) DeleteAllFolders(filter filters.Filter) []string {
 	var result []string
 	folderListing := s.ListFolders(filter)
+	sort.Slice(folderListing, func(i, j int) bool {
+		return strings.Compare(folderListing[i].NestedPath, folderListing[j].NestedPath) > 0
+	})
 	for _, folder := range folderListing {
 		params := folders.NewDeleteFolderParams()
 		params.FolderUID = folder.UID
+
 		_, err := s.GetClient().Folders.DeleteFolder(params)
 		if err == nil {
-			result = append(result, folder.Title)
+			result = append(result, folder.NestedPath)
+		} else {
+			slog.Error("failed to delete folder", "err", err, "folder", folder.Title)
 		}
 	}
 	return result
@@ -544,14 +545,13 @@ func (s *DashNGoImpl) folderToHit(fld *models.Folder) *types.NestedHit {
 	res.Type = models.HitType(SearchTypeFolder)
 	res.URL = fld.URL
 	paths := lo.Map(fld.Parents, func(item *models.Folder, index int) string {
-		return item.Title
+		return encode.Encode(item.Title)
 	})
-	if s.grafanaConf.GetDashboardSettings().NestedFolders {
-		if val := path.Join(paths...); val == "" {
-			res.NestedPath = res.Title
-		} else {
-			res.NestedPath = path.Join(val, res.Title)
-		}
+	if val := path.Join(paths...); val == "" {
+		res.NestedPath = encode.Encode(res.Title)
+	} else {
+		res.NestedPath = path.Join(val, encode.Encode(res.Title))
 	}
+
 	return res
 }

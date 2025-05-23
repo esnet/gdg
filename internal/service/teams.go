@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/internal/service/filters/v1"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 
@@ -24,7 +26,7 @@ const (
 )
 
 func NewTeamFilter(entries ...string) filters.Filter {
-	filterObj := filters.NewBaseFilter()
+	filterObj := v1.NewBaseFilter()
 
 	teamFilter := entries[0]
 
@@ -151,7 +153,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*
 	return exportedTeams
 }
 
-// List all Teams
+// ListTeams List all Teams in a given org
 func (s *DashNGoImpl) ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO, 0)
 	var pageSize int64 = 99999

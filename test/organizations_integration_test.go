@@ -97,7 +97,8 @@ func TestOrganizationProperties(t *testing.T) {
 	config.InitGdgConfig("testing")
 	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
-	assert.NoError(t, apiClient.UploadDashboards(service.NewDashboardFilter("", "", "")))
+	_, err := apiClient.UploadDashboards(service.NewDashboardFilter("", "", ""))
+	assert.NoError(t, err)
 	prefs, err := apiClient.GetOrgPreferences("Main Org.")
 	assert.Nil(t, err)
 	prefs.HomeDashboardUID = "000000003"

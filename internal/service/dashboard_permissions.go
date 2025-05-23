@@ -6,8 +6,10 @@ import (
 	"log"
 	"log/slog"
 	"path/filepath"
-	"slices"
 	"strings"
+
+	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/tidwall/gjson"
 
 	"github.com/esnet/gdg/internal/types"
 
@@ -19,10 +21,10 @@ import (
 
 func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.Filter) ([]types.DashboardAndPermissions, error) {
 	validateDashboardEnterpriseSupport(s)
-	dashboards := s.ListDashboards(filterReq)
+	dashboards := s.ListDashboardsLegacy(filterReq)
 	var result []types.DashboardAndPermissions
 	for _, dashboard := range dashboards {
-		item := types.DashboardAndPermissions{Dashboard: dashboard.Hit}
+		item := types.DashboardAndPermissions{Dashboard: dashboard}
 		perms, err := s.GetClient().DashboardPermissions.GetDashboardPermissionsListByUID(dashboard.UID)
 		if err != nil {
 			slog.Warn("Unable to retrieve permissions for dashboard",
@@ -59,7 +61,7 @@ func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq filters.Filter) ([]
 			continue
 		}
 
-		dsPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.Dashboard.FolderTitle, config.DashboardPermissionsResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(link.Dashboard.Title))
+		dsPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.Dashboard.NestedPath, config.DashboardPermissionsResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(link.Dashboard.Title))
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(link.Dashboard.Title), "error", err.Error())
 		} else {
@@ -90,7 +92,9 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.Filter) ([]st
 	if filterReq == nil {
 		filterReq = NewDashboardFilter("", "", "")
 	}
-	validFolders := filterReq.GetEntity(filters.FolderFilter)
+
+	// validFolders := filterReq.GetEntity(filters.FolderFilter)
+	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter()))
 
 	path := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardPermissionsResource)
 	filesInDir, err := s.storage.FindAllFiles(path, true)
@@ -98,13 +102,18 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.Filter) ([]st
 		log.Fatalf("Failed to read folders permission imports: %s", err.Error())
 	}
 	for _, file := range filesInDir {
-		// TODO: add validation of dashboard
+
 		baseFile := filepath.Base(file)
 		baseFile = strings.ReplaceAll(baseFile, ".json", "")
 		if !strings.HasSuffix(file, ".json") {
 			slog.Warn("Only json files are supported, skipping", "filename", file)
 			continue
 		}
+		if rawFolder, err = s.storage.ReadFile(file); err != nil {
+			slog.Warn("Unable to read file", "filename", file, "err", err)
+			continue
+		}
+
 		// Extract Folder Name based on path
 		folderName, err = getFolderFromResourcePath(file, config.DashboardPermissionsResource, s.storage.GetPrefix())
 		if err != nil {
@@ -113,21 +122,28 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.Filter) ([]st
 		if folderName == "" {
 			folderName = DefaultFolderName
 		}
-		if !slices.Contains(validFolders, folderName) && !config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
-			slog.Debug("Skipping file since it doesn't match any valid folders", "filename", file)
-			continue
-		}
-		validateMap := map[filters.FilterType]string{filters.FolderFilter: folderName, filters.DashFilter: baseFile}
-		// If folder OR slug is filtered, then skip if it doesn't match
-		if !filterReq.ValidateAll(validateMap) {
-			continue
+		// dashUid
+		var tags any = []string{}
+		tagFilter := filterReq.GetFilter(filters.TagsFilter)
+		if tagFilter != "[]" && tagFilter != "" {
+			r := gjson.GetBytes(rawFolder, "#.uid")
+			if r.Exists() && r.IsArray() {
+				data := r.Array()
+				dashUid := data[0].String()
+				dashboard, err := s.getDashboardByUid(dashUid)
+				if err != nil {
+					slog.Warn("Unable to get dashboard tags for UID, ignoring tag filter", "uid", dashUid)
+				} else {
+					if val, ok := dashboard.Dashboard.(map[string]any); ok {
+						tags = val["tags"]
+					}
+				}
+			}
 		}
 
+		folderUidMap, err = s.validateDashUploadEntity(filterReq, folderName, baseFile, ptr.Of(""), folderUidMap, tags)
 		if err != nil {
-			slog.Warn("unable to determine dashboard folder name, falling back on default")
-		}
-		if rawFolder, err = s.storage.ReadFile(file); err != nil {
-			slog.Warn("Unable to read file", "filename", file, "err", err)
+			slog.Warn("validation failed, skipping", "file", file, "err", err)
 			continue
 		}
 

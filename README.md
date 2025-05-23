@@ -14,7 +14,7 @@ The following remote backup locations are supported:
   - AWS S3
   - Google Storage
   - Azure Storage
-  - S3 Compantible Storage (Minio, Ceph, etc)
+  - S3 Compatible Storage (Minio, Ceph, etc)
 
 Please find the generated documentation [here](https://software.es.net/gdg/) and the code for updating the docs is available [here](https://github.com/esnet/gdg/blob/main/documentation/content/docs/usage_guide.md)
 
@@ -30,18 +30,19 @@ New features particularly related to Orgs, ACLs, roles etc are far less likely t
 
 Current Entities supported (See official docs for more details)
 
- - Connections
- - Dashboards
- - Folders (With Permissions)
- - Organizations
- - Teams
- - Users
- - Library Elements
- - Alerting: 
-   - Contact points (master branch only)
 
-Grafana Enterprise Only feature
- - Connection Permissions
+| Resource                 | Status                             | Regex Filtering | Authorization       | Enterprise Only |
+|--------------------------|------------------------------------|-----------------|---------------------|-----------------|
+| Connections              | Supported                          | Available       | Token/Basic         |                 |
+| Dashboards               | Supported                          | Available       | Token/Basic         |                 |
+| Folders                  | Supported                          | Optional        | Token/Basic         |                 |
+| Organization             | Supported                          | N/A             | Basic Grafana Admin |                 |
+| Teams                    | Supported                          | N/A             | Token/Basic         |                 |
+| Users                    | Supported                          | N/A             | Basic               |                 |
+| Library Elements         | Supported                          | Available       | Token/Basic         |                 |
+| Alerting                 | Partial Beta (Contact Points Only) |                 | Token/Basic         |                 |
+| Connections Permissions  | Supported                          |                 | Token/Basic         | X               |
+
 
 ## Release conventions.
 
