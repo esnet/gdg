@@ -191,7 +191,11 @@ func newListDashboardsCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "NestedPath", "UID", "Tags", "URL"})
 
 			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
-			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
+			_ = filters
+			// boards := rootCmd.GrafanaSvc().ListDashboards(filters)
+
+			filtersV2 := service.NewDashboardFilterV2(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			boards := rootCmd.GrafanaSvc().ListDashboardsV2(filtersV2)
 
 			printCount := func(count int) {
 				slog.Info("Listing dashboards for context",

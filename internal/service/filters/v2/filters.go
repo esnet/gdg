@@ -34,26 +34,26 @@ func (b BaseFilter) RegisterDataProcessor(entityType filters.FilterType, entity 
 	return nil
 }
 
-func (b BaseFilter) readInputValue(f filters.FilterType, obj any) (any, error) {
+func (b BaseFilter) readInputValue(filterType filters.FilterType, obj any) (any, error) {
 	t := reflect.TypeOf(obj)
 	if val, ok := b.readerMap[t]; ok {
-		return val(f, obj)
+		return val(filterType, obj)
 	}
 
-	return nil, fmt.Errorf("no reader registered for type %v", f)
+	return nil, fmt.Errorf("no reader registered for type %v", filterType)
 }
 
-func (b BaseFilter) readExpectedValue(f filters.FilterType) (any, error) {
-	if val, ok := b.expectedValueLookup[f]; ok {
+func (b BaseFilter) readExpectedValue(filterType filters.FilterType) (any, error) {
+	if val, ok := b.expectedValueLookup[filterType]; ok {
 		return val, nil
 	}
 
-	return nil, fmt.Errorf("no expected valua available for type %v", f)
+	return nil, fmt.Errorf("no expected valua available for type %v", filterType)
 }
 
-func (b BaseFilter) AddValidation(f filters.FilterType, validation filters.InputValidation, expected any) {
-	b.validationMethods[f] = validation
-	b.expectedValueLookup[f] = expected
+func (b BaseFilter) AddValidation(filterType filters.FilterType, validation filters.InputValidation, expected any) {
+	b.validationMethods[filterType] = validation
+	b.expectedValueLookup[filterType] = expected
 }
 
 func (b BaseFilter) ValidateAll(obj any) bool {
@@ -68,38 +68,83 @@ func (b BaseFilter) ValidateAll(obj any) bool {
 	return true
 }
 
-func (b BaseFilter) Validate(f filters.FilterType, obj any) bool {
-	// get Data
-	val, err := b.readInputValue(f, obj)
-	if err != nil {
-		slog.Warn("unable to read obj value", "err", err, "filter", f)
-		return false
-	}
-	preProcList := b.preProcessMethods[f]
+func (b BaseFilter) applyPreProcessor(filterType filters.FilterType, val any) (any, error) {
+	var allErrors []error
+	var err error
+	preProcList := b.preProcessMethods[filterType]
 	for _, fn := range preProcList {
 		slog.Debug("Running pre-processing function", "name", fn.Name, slog.Any("value", val))
 		val, err = fn.Processor(val)
 		if err != nil {
+			allErrors = append(allErrors, fmt.Errorf("pre-processing method %s failed: %w", fn.Name, err))
 			slog.Error("unable to run pre-processing method on input", "name", fn.Name, slog.Any("value", val))
 		}
 	}
-	expectedVal, err := b.readExpectedValue(f)
+	if len(allErrors) > 0 {
+		return val, fmt.Errorf("pre-processing errors: %v", allErrors)
+	}
+
+	return val, nil
+}
+
+func (b BaseFilter) Validate(filterType filters.FilterType, obj any) bool {
+	// get Data
+	val, err := b.readInputValue(filterType, obj)
 	if err != nil {
-		slog.Warn("unable to filter expected value", "err", err, "filter", f)
+		slog.Warn("unable to read obj value", "err", err, "filter", filterType)
 		return false
 	}
-	return b.validationMethods[f](val, expectedVal) == nil
+	val, err = b.applyPreProcessor(filterType, val)
+	if err != nil {
+		slog.Error("unable to run pre-processing method on input", "err", err)
+		return false
+	}
+
+	expectedVal, err := b.readExpectedValue(filterType)
+	if err != nil {
+		slog.Warn("unable to filter expected value", "err", err, "filter", filterType)
+		return false
+	}
+	if validationMethod, okMethod := b.validationMethods[filterType]; okMethod {
+		return validationMethod(val, expectedVal) == nil
+	}
+	return false
 }
 
 func (b BaseFilter) GetExpectedValue(filterType filters.FilterType) any {
-	return b.expectedValueLookup[filterType]
+	val := b.expectedValueLookup[filterType]
+	if val == nil {
+		return nil
+	}
+	val, err := b.applyPreProcessor(filterType, val)
+	if err != nil {
+		return nil
+	}
+
+	return val
 }
 
-func (b BaseFilter) GetStringValue(filterType filters.FilterType) string {
-	if val, ok := b.expectedValueLookup[filterType]; ok {
-		return fmt.Sprintf("%v", val)
+func (b BaseFilter) GetExpectedString(filterType filters.FilterType) string {
+	val := b.GetExpectedValue(filterType)
+	if val == nil {
+		return ""
 	}
-	return ""
+	return fmt.Sprintf("%v", val)
+}
+
+func (b BaseFilter) GetExpectedStringSlice(filterType filters.FilterType) ([]string, error) {
+	val := b.GetExpectedValue(filterType)
+	if val == nil {
+		return nil, fmt.Errorf("expected value is not found")
+	}
+	switch v := val.(type) {
+	case []string:
+		return v, nil
+	case string:
+		return []string{v}, nil
+	default:
+		return nil, fmt.Errorf("expected value is not a string  slice")
+	}
 }
 
 func NewBaseFilter() filters.V2Filter {

@@ -53,6 +53,8 @@ type ConnectionPermissions interface {
 // DashboardsApi Contract definition
 type DashboardsApi interface {
 	ListDashboards(filter filters.Filter) []*customModels.NestedHit
+	ListDashboardsV2(filter filters.V2Filter) []*customModels.NestedHit
+
 	DownloadDashboards(filter filters.Filter) []string
 	UploadDashboards(filter filters.Filter) ([]string, error)
 	DeleteAllDashboards(filter filters.Filter) []string

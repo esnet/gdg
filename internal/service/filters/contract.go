@@ -50,7 +50,8 @@ type V2Filter interface {
 	ValidateAll(any) bool // ValidateAll if Entry is valid
 	//
 	GetExpectedValue(filterType FilterType) any
-	GetStringValue(filterType FilterType) string
+	GetExpectedString(filterType FilterType) string
+	GetExpectedStringSlice(filterType FilterType) ([]string, error)
 }
 
 type Filter interface {

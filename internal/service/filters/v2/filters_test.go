@@ -129,10 +129,10 @@ func TestFilters(t *testing.T) {
 	assert.True(t, v.Validate(filters.TagsFilter, obj))
 	assert.True(t, v.ValidateAll(obj))
 
-	strVal := v.GetStringValue(filters.TagsFilter)
+	strVal := v.GetExpectedString(filters.TagsFilter)
 	assert.Equal(t, "[netsage Ho]", strVal)
 	// no data
-	strVal = v.GetStringValue(filters.DashFilter)
+	strVal = v.GetExpectedString(filters.DashFilter)
 	assert.Equal(t, "", strVal)
 	//
 	assert.Nil(t, v.GetExpectedValue(filters.DashFilter))
