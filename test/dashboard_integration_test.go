@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 
+	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+
 	customModels "github.com/esnet/gdg/internal/types"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
@@ -18,7 +20,6 @@ import (
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
 
@@ -247,7 +248,7 @@ func TestDashboardTagsFilter(t *testing.T) {
 	config.InitGdgConfig("testing")
 	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 	defer cleanup()
-	emptyFilter := filters.NewBaseFilter()
+	emptyFilter := v1.NewBaseFilter()
 
 	data, err := json.Marshal([]string{"flow", "netsage"})
 	assert.NoError(t, err)

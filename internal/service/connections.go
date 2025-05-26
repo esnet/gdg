@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -17,7 +19,7 @@ import (
 
 // NewConnectionFilter
 func NewConnectionFilter(name string) filters.Filter {
-	filterEntity := filters.NewBaseFilter()
+	filterEntity := v1.NewBaseFilter()
 	filterEntity.AddFilter(filters.Name, name)
 	filterEntity.AddValidation(filters.DefaultFilter, func(i any) bool {
 		val, ok := i.(map[filters.FilterType]string)

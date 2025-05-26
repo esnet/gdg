@@ -10,6 +10,8 @@ import (
 	"sort"
 	"strings"
 
+	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+
 	"github.com/esnet/gdg/internal/tools/ptr"
 
 	"github.com/esnet/gdg/internal/config"
@@ -23,7 +25,7 @@ import (
 )
 
 func NewUserFilter(label string) filters.Filter {
-	filterEntity := filters.NewBaseFilter()
+	filterEntity := v1.NewBaseFilter()
 	if label == "" {
 		return filterEntity
 	}
@@ -207,7 +209,7 @@ func (s *DashNGoImpl) DeleteAllUsers(filter filters.Filter) []string {
 // PromoteUser promote the user to have Admin Access
 func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 	// Get all users
-	userListing := s.ListUsers(filters.NewBaseFilter())
+	userListing := s.ListUsers(v1.NewBaseFilter())
 	var user *models.UserSearchHitDTO
 	for ndx, item := range userListing {
 		if item.Email == userLogin {

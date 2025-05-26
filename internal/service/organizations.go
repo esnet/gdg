@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
@@ -22,7 +24,7 @@ import (
 )
 
 func NewOrganizationFilter(args ...string) filters.Filter {
-	filterObj := filters.NewBaseFilter()
+	filterObj := v1.NewBaseFilter()
 	if len(args) == 0 || args[0] == "" {
 		return filterObj
 	}
