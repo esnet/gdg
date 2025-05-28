@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 
@@ -24,7 +26,7 @@ const (
 )
 
 func NewTeamFilter(entries ...string) filters.Filter {
-	filterObj := filters.NewBaseFilter()
+	filterObj := v1.NewBaseFilter()
 
 	teamFilter := entries[0]
 

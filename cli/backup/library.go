@@ -5,10 +5,11 @@ import (
 	"log"
 	"log/slog"
 
+	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -123,7 +124,7 @@ func newLibraryElementsUploadCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("exporting lib elements")
-			libraryFilter := filters.NewBaseFilter()
+			libraryFilter := v1.NewBaseFilter()
 			elements := rootCmd.GrafanaSvc().UploadLibraryElements(libraryFilter)
 			rootCmd.TableObj.AppendHeader(table.Row{"Name"})
 			if len(elements) > 0 {

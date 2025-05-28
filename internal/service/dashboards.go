@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 
+	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+
 	"github.com/esnet/gdg/internal/tools/encode"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
@@ -46,7 +48,7 @@ func NewDashboardFilter(entries ...string) filters.Filter {
 		tagsFilter = "[]"
 	}
 
-	filterObj := filters.NewBaseFilter()
+	filterObj := v1.NewBaseFilter()
 	filterObj.AddFilter(filters.FolderFilter, folderFilter)
 	filterObj.AddFilter(filters.DashFilter, dashboardFilter)
 	filterObj.AddFilter(filters.TagsFilter, tagsFilter)

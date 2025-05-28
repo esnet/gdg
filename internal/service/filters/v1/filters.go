@@ -1,4 +1,4 @@
-package filters
+package v1
 
 import (
 	"encoding/json"
@@ -6,50 +6,35 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/esnet/gdg/internal/service/filters"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/samber/lo"
 	"golang.org/x/exp/maps"
 )
 
-// FilterType Currently supported filters
-type FilterType string
-
-const (
-	TagsFilter    FilterType = "TagsFilter"
-	DashFilter    FilterType = "DashFilter"
-	FolderFilter  FilterType = "FolderFilter"
-	DefaultFilter FilterType = "default"
-	Name          FilterType = "Name"
-	AuthLabel     FilterType = "AuthLabel"
-	OrgFilter     FilterType = "OrgFilter"
-)
-
-func (s FilterType) String() string {
-	return string(s)
-}
-
 // BaseFilter is designed to be fairly generic, there shouldn't be any reason to extend it, but if you have a specialized
 // use case feel free to do so.
 type BaseFilter struct {
-	filterMap          map[FilterType]string         // Matches given field against a given value
-	validationMethods  map[FilterType]func(any) bool // Invokes a function to validate a certain entity type
-	validationPatterns map[FilterType]*regexp.Regexp
+	filterMap          map[filters.FilterType]string         // Matches given field against a given value
+	validationMethods  map[filters.FilterType]func(any) bool // Invokes a function to validate a certain entity type
+	validationPatterns map[filters.FilterType]*regexp.Regexp
 }
 
-func NewBaseFilter() *BaseFilter {
+func NewBaseFilter() filters.Filter {
 	b := &BaseFilter{}
 	b.Init()
 	return b
 }
 
 // Returns the entity filter
-func (s *BaseFilter) getRegex(name FilterType) *regexp.Regexp {
+func (s *BaseFilter) getRegex(name filters.FilterType) *regexp.Regexp {
 	return s.validationPatterns[name]
 }
 
-func (s *BaseFilter) AddRegex(name FilterType, pattern *regexp.Regexp) {
+func (s *BaseFilter) AddRegex(name filters.FilterType, pattern *regexp.Regexp) {
 	if name == "" {
-		name = DefaultFilter
+		name = filters.DefaultFilter
 	}
 	if pattern == nil {
 		slog.Warn("invalid pattern received, cannot set filter pattern for entity name", "entityName", name)
@@ -58,7 +43,7 @@ func (s *BaseFilter) AddRegex(name FilterType, pattern *regexp.Regexp) {
 	s.validationPatterns[name] = pattern
 }
 
-func (s *BaseFilter) getEntities(name FilterType, defaultVal []string) []string {
+func (s *BaseFilter) getEntities(name filters.FilterType, defaultVal []string) []string {
 	if s.GetFilter(name) == "" {
 		return defaultVal
 	}
@@ -72,36 +57,36 @@ func (s *BaseFilter) getEntities(name FilterType, defaultVal []string) []string 
 	return strings.Split(entityFilter, ",")
 }
 
-func (s *BaseFilter) GetEntity(name FilterType) []string {
+func (s *BaseFilter) GetEntity(name filters.FilterType) []string {
 	var defaultResponse []string
 	if name == "" {
 		return defaultResponse
 	}
 	switch name {
-	case TagsFilter:
+	case filters.TagsFilter:
 		entityFilter := s.GetFilter(name)
 		var result []string
 		err := json.Unmarshal([]byte(entityFilter), &result)
 		if err == nil {
 			return result
 		}
-		return s.getEntities(TagsFilter, []string{})
-	case FolderFilter:
-		return s.getEntities(FolderFilter, config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders())
+		return s.getEntities(filters.TagsFilter, []string{})
+	case filters.FolderFilter:
+		return s.getEntities(filters.FolderFilter, config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders())
 	default:
 		return defaultResponse
 	}
 }
 
-func (s *BaseFilter) AddValidation(name FilterType, f func(any) bool) {
+func (s *BaseFilter) AddValidation(name filters.FilterType, f func(any) bool) {
 	if name == "" {
-		name = DefaultFilter
+		name = filters.DefaultFilter
 	}
 
 	s.validationMethods[name] = f
 }
 
-func (s *BaseFilter) InvokeValidation(name FilterType, i any) bool {
+func (s *BaseFilter) InvokeValidation(name filters.FilterType, i any) bool {
 	if name == "" {
 		name = "default"
 	}
@@ -112,7 +97,7 @@ func (s *BaseFilter) InvokeValidation(name FilterType, i any) bool {
 	return false
 }
 
-// Validate Iterates through all validation checks
+// ValidateAll Iterates through all validation checks
 func (s *BaseFilter) ValidateAll(items any) bool {
 	for _, val := range s.validationMethods {
 		ok := val(items)
@@ -127,14 +112,14 @@ func (s *BaseFilter) ValidateAll(items any) bool {
 // GetTypes returns all the current keys for the configured Filter
 func (s *BaseFilter) GetTypes() []string {
 	keys := maps.Keys(s.filterMap)
-	stringKeys := lo.Map(keys, func(item FilterType, index int) string {
+	stringKeys := lo.Map(keys, func(item filters.FilterType, index int) string {
 		return string(item)
 	})
 	return stringKeys
 }
 
 // GetFilter returns the value of the filter
-func (s *BaseFilter) GetFilter(key FilterType) string {
+func (s *BaseFilter) GetFilter(key filters.FilterType) string {
 	if val, ok := s.filterMap[key]; ok {
 		return val
 	}
@@ -142,12 +127,12 @@ func (s *BaseFilter) GetFilter(key FilterType) string {
 }
 
 // AddFilter adds a filter and the corresponding value
-func (s *BaseFilter) AddFilter(key FilterType, value string) {
+func (s *BaseFilter) AddFilter(key filters.FilterType, value string) {
 	s.filterMap[key] = value
 }
 
 func (s *BaseFilter) Init() {
-	s.filterMap = make(map[FilterType]string)
-	s.validationMethods = make(map[FilterType]func(any) bool)
-	s.validationPatterns = make(map[FilterType]*regexp.Regexp)
+	s.filterMap = make(map[filters.FilterType]string)
+	s.validationMethods = make(map[filters.FilterType]func(any) bool)
+	s.validationPatterns = make(map[filters.FilterType]*regexp.Regexp)
 }
