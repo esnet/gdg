@@ -38,7 +38,26 @@ func getCloudConfigProvider(container testcontainers.Container) config.Provider 
 	}
 }
 
-func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]string) (service.GrafanaService, testcontainers.Container, func() error) {
+type InitContainerResult struct {
+	ApiClient service.GrafanaService
+	Container testcontainers.Container
+	CleanUp   func() error
+	Err       error
+}
+
+func NewInitContainerResult(client service.GrafanaService, container testcontainers.Container, cleanUp func() error) *InitContainerResult {
+	obj := &InitContainerResult{
+		ApiClient: client,
+		Container: container,
+		CleanUp:   cleanUp,
+	}
+	if !obj.Container.IsRunning() {
+		obj.Err = fmt.Errorf("container is not currently running")
+	}
+	return obj
+}
+
+func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]string) *InitContainerResult {
 	var (
 		suffix string
 		err    error
@@ -52,13 +71,13 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 	}
 	localGrafanaContainer, cancel := containers.SetupGrafanaContainer(envProp, "", suffix)
 	apiClient := CreateSimpleClientWithConfig(t, cfgProvider, localGrafanaContainer)
-	noOp := func() error {
+	cleanUp := func() error {
 		cancel()
 		return nil
 	}
 
 	if os.Getenv(EnableTokenTestsEnv) != FeatureEnabled {
-		return apiClient, localGrafanaContainer, noOp
+		return NewInitContainerResult(apiClient, localGrafanaContainer, cleanUp)
 	}
 
 	// Setup Token Auth
@@ -80,13 +99,8 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 	grafana.Password = ""
 	grafana.APIToken = newKey.Key
 
-	cleanUp := func() error {
-		cancel()
-		return nil
-	}
-
 	apiClient = CreateSimpleClientWithConfig(t, cfgProvider, localGrafanaContainer)
-	return apiClient, localGrafanaContainer, cleanUp
+	return NewInitContainerResult(apiClient, localGrafanaContainer, cleanUp)
 }
 
 func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, container testcontainers.Container) service.GrafanaService {

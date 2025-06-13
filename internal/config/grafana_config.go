@@ -1,10 +1,16 @@
 package config
 
-import "strings"
+import (
+	"strings"
+)
 
 type DashboardSettings struct {
-	NestedFolders bool `mapstructure:"nested_folders" yaml:"nested_folders"`
 	IgnoreFilters bool `yaml:"ignore_filters" mapstructure:"ignore_filters" `
+}
+
+type dashFilter struct {
+	Name      string
+	UseFilter bool
 }
 
 // GrafanaConfig model wraps auth and watched list for grafana
@@ -13,6 +19,7 @@ type GrafanaConfig struct {
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
+	filterFolder             *dashFilter           `mapstructure:"-" yaml:"-"`
 	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
 	OrganizationName         string                `mapstructure:"organization_name" yaml:"organization_name"`
 	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
@@ -22,6 +29,35 @@ type GrafanaConfig struct {
 	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
 	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
+}
+
+func (s *GrafanaConfig) getFilter() *dashFilter {
+	if s.filterFolder == nil {
+		s.filterFolder = &dashFilter{}
+	}
+	return s.filterFolder
+}
+
+func (s *GrafanaConfig) SetFilterFolder(folderFilter string) {
+	s.SetUseFilters()
+	filter := s.getFilter()
+	filter.Name = folderFilter
+}
+
+func (s *GrafanaConfig) ClearFilters() {
+	filter := s.getFilter()
+	filter.UseFilter = false
+	filter.Name = ""
+}
+
+func (s *GrafanaConfig) SetUseFilters() {
+	filter := s.getFilter()
+	filter.UseFilter = true
+	s.filterFolder = filter
+}
+
+func (s *GrafanaConfig) IsFilterSet() bool {
+	return s.getFilter().UseFilter
 }
 
 // GetURL returns the URL for Grafana, trimming whitespace and adding a trailing slash if not already present.

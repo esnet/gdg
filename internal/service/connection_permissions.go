@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/esnet/gdg/internal/tools"
 	"github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/client/access_control"
 
@@ -27,15 +26,10 @@ const (
 	connectionResourceType   string         = "datasources"
 )
 
-const connectionPermissionMinVersion = "v10.2.3"
-
 // ListConnectionPermissions lists all connection permission matching the given filter
-func (s *DashNGoImpl) ListConnectionPermissions(filter filters.Filter) []types.ConnectionPermissionItem {
+func (s *DashNGoImpl) ListConnectionPermissions(filter filters.V2Filter) []types.ConnectionPermissionItem {
 	if !s.IsEnterprise() {
 		log.Fatal("Requires Enterprise to be enabled.  Please check your GDG configuration and try again")
-	} else if !tools.ValidateMinimumVersion(connectionPermissionMinVersion, s) {
-		slog.Warn("Permission with connection is broken prior to 10.2.3.  GDG won't support a prior version.  Listing is allowed, but all other operations won't work.",
-			slog.Any("Your Grafana Version", "v"+s.GetServerInfo()["Version"].(string)))
 	}
 	result := make([]types.ConnectionPermissionItem, 0)
 	connections := s.ListConnections(filter)
@@ -61,16 +55,13 @@ func (s *DashNGoImpl) ListConnectionPermissions(filter filters.Filter) []types.C
 }
 
 // DownloadConnectionPermissions download permissions to local file system
-func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.V2Filter) []string {
 	slog.Info("Downloading connection permissions")
 	var (
 		dsPacked  []byte
 		err       error
 		dataFiles []string
 	)
-	if !tools.ValidateMinimumVersion(connectionPermissionMinVersion, s) {
-		log.Fatalf("Permission with connection is broken prior to 10.2.3.  GDG won't support a prior version.  Listing is allowed, but all other operations won't work.  Your Grafana version is: v%s", s.GetServerInfo()["Version"].(string))
-	}
 	currentPermissions := s.ListConnectionPermissions(filter)
 	for _, connection := range currentPermissions {
 		if dsPacked, err = json.MarshalIndent(connection, "", "	"); err != nil {
@@ -88,17 +79,10 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.Filter) []str
 }
 
 // UploadConnectionPermissions upload connection permissions
-func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []string {
-	if !tools.ValidateMinimumVersion(connectionPermissionMinVersion, s) {
-		log.Fatalf("Permission with connection is broken prior to 10.2.3.  GDG won't support a prior version.  Listing is allowed, but all other operations won't work.  Your Grafana version is: v%s", s.GetServerInfo()["Version"].(string))
-	}
+func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.V2Filter) []string {
 	if !s.IsEnterprise() {
 		log.Fatal("Requires Enterprise to be enabled.  Please check your GDG configuration and try again")
 	}
-	//if !tools.ValidateMinimumVersion("11.0.0", s) {
-	//	log.Fatal("Behavior prior to version 11.0.0 is broken. ")
-	//
-	//}
 	var (
 		rawFolder []byte
 		dataFiles []string
@@ -110,17 +94,16 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 	}
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionPermissionResource), file)
-		if !filter.ValidateAll(map[filters.FilterType]string{filters.Name: strings.ReplaceAll(file, ".json", "")}) {
-			slog.Debug("File does not match pattern, skipping file", "filename", file)
-			continue
-		}
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file %s", "filename", fileLocation, "err", err)
 				continue
 			}
 		}
-
+		if !filter.Validate(filters.ConnectionName, rawFolder) {
+			slog.Debug("File does not match pattern, skipping file", "filename", file)
+			continue
+		}
 		newEntries := new(types.ConnectionPermissionItem)
 		err = json.Unmarshal(rawFolder, &newEntries)
 		if err != nil {
@@ -168,10 +151,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.Filter) []strin
 }
 
 // DeleteAllConnectionPermissions clear all non-default permissions from all connections
-func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter filters.Filter) []string {
-	if !tools.ValidateMinimumVersion(connectionPermissionMinVersion, s) {
-		log.Fatalf("Permission with connection is broken prior to 10.2.3.  GDG won't support a prior version.  Listing is allowed, but all other operations won't work.  Your Grafana version is: v%s", s.GetServerInfo()["Version"].(string))
-	}
+func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter filters.V2Filter) []string {
 	dataSources := make([]string, 0)
 	connectionPermissions := s.ListConnectionPermissions(filter)
 	for _, conn := range connectionPermissions {

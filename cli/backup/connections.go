@@ -49,7 +49,7 @@ func newClearConnectionsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Delete connections", slog.String("Organization", GetOrganizationName()))
-			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("datasource")
+			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllConnections(filters)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
@@ -104,7 +104,7 @@ func newDownloadConnectionsCmd() simplecobra.Commander {
 			savedFiles := rootCmd.GrafanaSvc().DownloadConnections(filters)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range savedFiles {
-				rootCmd.TableObj.AppendRow(table.Row{"datasource", file})
+				rootCmd.TableObj.AppendRow(table.Row{"connection", file})
 			}
 			rootCmd.Render(cd.CobraCommand, savedFiles)
 			return nil

@@ -1,0 +1,105 @@
+{
+	"Entity": {
+		"folderId": 3,
+		"folderUid": "beoo025pwghdsc",
+		"id": 6,
+		"kind": 1,
+		"meta": {
+			"created": "2025-06-11T19:55:31.000Z",
+			"createdBy": {
+				"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+				"id": 1,
+				"name": "admin"
+			},
+			"folderName": "n+_=23r",
+			"folderUid": "beoo025pwghdsc",
+			"updated": "2025-06-11T19:55:31.000Z",
+			"updatedBy": {
+				"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+				"id": 1,
+				"name": "admin"
+			}
+		},
+		"model": {
+			"datasource": {
+				"type": "testdata",
+				"uid": "EJHgYyf4z"
+			},
+			"description": "",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"decimals": 1,
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "super-light-purple",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 380
+							}
+						]
+					},
+					"unit": "fahrenheit"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 7,
+				"w": 8,
+				"x": 5,
+				"y": 12
+			},
+			"id": 16,
+			"interval": "",
+			"libraryPanel": {
+				"uid": "VvzpJ5X7z"
+			},
+			"links": [],
+			"options": {
+				"colorMode": "background",
+				"graphMode": "none",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"textMode": "value_and_name"
+			},
+			"pluginVersion": "8.5.5",
+			"targets": [
+				{
+					"datasource": {
+						"type": "testdata",
+						"uid": "EJHgYyf4z"
+					},
+					"max": 377,
+					"min": 373,
+					"refId": "A",
+					"scenarioId": "random_walk",
+					"startValue": 375
+				}
+			],
+			"title": "Mac Oven",
+			"transformations": [],
+			"transparent": true,
+			"type": "stat"
+		},
+		"name": "Extreme Dashboard Makeover - Mac Oven",
+		"orgId": 1,
+		"type": "stat",
+		"uid": "VvzpJ5X7z",
+		"version": 1
+	},
+	"NestedPath": "linux%2Fgnu/Others/n%2B_%3D23r"
+}

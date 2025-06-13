@@ -99,8 +99,8 @@ func (s *GrafanaConfig) GetDashboardSettings() *DashboardSettings {
 	return s.DashboardSettings
 }
 
-// GetDataSourceSettings returns the datasource settings for the connection
-func (s *GrafanaConfig) GetDataSourceSettings() *ConnectionSettings {
+// GetConnectionSettings returns the settings for the connection
+func (s *GrafanaConfig) GetConnectionSettings() *ConnectionSettings {
 	if s.ConnectionSettings == nil {
 		s.ConnectionSettings = &ConnectionSettings{}
 	}
@@ -142,7 +142,10 @@ func (s *GrafanaConfig) GetOrgMonitoredFolders(orgName string) []string {
 }
 
 // GetMonitoredFolders return a list of the monitored folders alternatively returns the "General" folder.
-func (s *GrafanaConfig) GetMonitoredFolders() []string {
+func (s *GrafanaConfig) GetMonitoredFolders(ignoreFilterVal bool) []string {
+	if s.IsFilterSet() && s.getFilter().Name != "" && !ignoreFilterVal {
+		return []string{s.filterFolder.Name}
+	}
 	orgFolders := s.GetOrgMonitoredFolders(s.GetOrganizationName())
 	if len(orgFolders) > 0 {
 		return orgFolders
@@ -165,7 +168,7 @@ func (s *GrafanaConfig) IsGrafanaAdmin() bool {
 
 // GetCredentials return credentials for a given datasource or falls back on default value
 func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceCommand, location string) (*GrafanaConnection, error) {
-	source, err := s.GetDataSourceSettings().GetCredentials(dataSourceName, location)
+	source, err := s.GetConnectionSettings().GetCredentials(dataSourceName, location)
 	if err == nil {
 		return source, nil
 	}

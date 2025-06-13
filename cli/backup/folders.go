@@ -2,7 +2,11 @@ package backup
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
+	"strings"
+
+	"github.com/esnet/gdg/internal/tools"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
@@ -16,7 +20,7 @@ import (
 
 var useFolderFilters bool
 
-func getFolderFilter() filters.Filter {
+func getFolderFilter() filters.V2Filter {
 	if !useFolderFilters {
 		return nil
 	}
@@ -57,6 +61,12 @@ func newFolderClearCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Deleting all Folders for context", "context", config.Config().GetGDGConfig().GetContext())
+			if !skipConfirmAction {
+				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all folders in the monitored folders list: '%s' "+
+					"(or all folders in your grafana instance if ignore_dashboard_filters is set to true).  Do you wish to "+
+					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false), ", "),
+				), "", true)
+			}
 			rootCmd.TableObj.AppendHeader(table.Row{"title"})
 
 			folders := rootCmd.GrafanaSvc().DeleteAllFolders(getFolderFilter())

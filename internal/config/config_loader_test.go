@@ -81,15 +81,15 @@ func TestWatchedFoldersConfig(t *testing.T) {
 		OrganizationName: "Your Org",
 		Folders:          []string{"General", "SpecialFolder"},
 	}}
-	folders := grafanaConf.GetMonitoredFolders()
+	folders := grafanaConf.GetMonitoredFolders(false)
 	assert.True(t, slices.Contains(folders, "SpecialFolder"))
 	grafanaConf.OrganizationName = "DumbDumb"
-	folders = grafanaConf.GetMonitoredFolders()
+	folders = grafanaConf.GetMonitoredFolders(false)
 	assert.False(t, slices.Contains(folders, "SpecialFolder"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
 	grafanaConf.OrganizationName = "Main Org."
 	grafanaConf.MonitoredFoldersOverride = nil
-	folders = grafanaConf.GetMonitoredFolders()
+	folders = grafanaConf.GetMonitoredFolders(false)
 	assert.False(t, slices.Contains(folders, "SpecialFolder"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
 }
@@ -131,7 +131,7 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	assert.Equal(t, "<CHANGEME>", grafana.APIToken)
 	assert.Equal(t, "", grafana.UserName)
 	assert.Equal(t, "", grafana.Password)
-	folders := grafana.GetMonitoredFolders()
+	folders := grafana.GetMonitoredFolders(false)
 	assert.True(t, slices.Contains(folders, "Folder1"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
 	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(config.ConnectionResource))

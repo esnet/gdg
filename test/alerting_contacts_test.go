@@ -2,10 +2,13 @@ package test
 
 import (
 	"bytes"
+	"context"
 	"log/slog"
 	"os"
 	"slices"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
@@ -16,16 +19,24 @@ import (
 )
 
 func TestContactsCrud(t *testing.T) {
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "testing"))
+	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
+
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
 	defer func() {
-		err := cleanup()
+		err := r.CleanUp()
 		if err != nil {
-			slog.Warn("Unable to clean up after alerting contacts crud tests")
+			slog.Warn("Unable to clean up after test", "test", t.Name())
 		}
 	}()
+	apiClient := r.ApiClient
 	contactPoints, err := apiClient.ListContactPoints()
 	assert.NoError(t, err)
 	assert.Equal(t, len(contactPoints), 0, "Validate initial contact list is empty")

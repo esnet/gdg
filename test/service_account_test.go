@@ -1,10 +1,13 @@
 package test
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/esnet/gdg/internal/config"
@@ -14,17 +17,24 @@ import (
 )
 
 func TestServiceAccountCrud(t *testing.T) {
-	config.InitGdgConfig("testing")
+	config.InitGdgConfig(common.DefaultTestConfig)
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
 	defer func() {
-		err := cleanup()
+		err := r.CleanUp()
 		if err != nil {
-			slog.Warn("Unable to clean up after service account testtests")
+			slog.Warn("Unable to clean up after test", "test", t.Name())
 		}
 	}()
+	apiClient := r.ApiClient
 
 	name := gofakeit.Name()
 	account, err := apiClient.CreateServiceAccount(name, "admin", 0)

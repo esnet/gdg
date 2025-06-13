@@ -27,7 +27,7 @@ func newOrganizationsCommand() simplecobra.Commander {
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"org", "orgs"}
-			cmd.PersistentFlags().StringP("org-name", "o", "", "when set to true, bypass confirmation prompts")
+			cmd.PersistentFlags().StringP("org-name", "o", "", "Filter by org name")
 		},
 
 		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {

@@ -4,7 +4,6 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/service/types"
 	customModels "github.com/esnet/gdg/internal/types"
-	gdgType "github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
@@ -35,27 +34,27 @@ type LicenseApi interface {
 
 // ConnectionsApi Contract definition
 type ConnectionsApi interface {
-	ListConnections(filter filters.Filter) []models.DataSourceListItemDTO
-	DownloadConnections(filter filters.Filter) []string
-	UploadConnections(filter filters.Filter) []string
-	DeleteAllConnections(filter filters.Filter) []string
+	ListConnections(filter filters.V2Filter) []models.DataSourceListItemDTO
+	DownloadConnections(filter filters.V2Filter) []string
+	UploadConnections(filter filters.V2Filter) []string
+	DeleteAllConnections(filter filters.V2Filter) []string
 	ConnectionPermissions
 }
 
 type ConnectionPermissions interface {
 	// Permissions Enterprise only
-	ListConnectionPermissions(filter filters.Filter) []customModels.ConnectionPermissionItem
-	DownloadConnectionPermissions(filter filters.Filter) []string
-	UploadConnectionPermissions(filter filters.Filter) []string
-	DeleteAllConnectionPermissions(filter filters.Filter) []string
+	ListConnectionPermissions(filter filters.V2Filter) []customModels.ConnectionPermissionItem
+	DownloadConnectionPermissions(filter filters.V2Filter) []string
+	UploadConnectionPermissions(filter filters.V2Filter) []string
+	DeleteAllConnectionPermissions(filter filters.V2Filter) []string
 }
 
 // DashboardsApi Contract definition
 type DashboardsApi interface {
-	ListDashboards(filter filters.Filter) []*customModels.NestedHit
-	DownloadDashboards(filter filters.Filter) []string
-	UploadDashboards(filter filters.Filter) error
-	DeleteAllDashboards(filter filters.Filter) []string
+	ListDashboards(filter filters.V2Filter) []*customModels.NestedHit
+	DownloadDashboards(filter filters.V2Filter) []string
+	UploadDashboards(filterReq filters.V2Filter) ([]string, error)
+	DeleteAllDashboards(filter filters.V2Filter) []string
 	LintDashboards(req types.LintRequest) []string
 }
 
@@ -67,30 +66,30 @@ type AlertingApi interface {
 }
 
 type DashboardPermissionsApi interface {
-	ListDashboardPermissions(filterReq filters.Filter) ([]gdgType.DashboardAndPermissions, error)
-	DownloadDashboardPermissions(filterReq filters.Filter) ([]string, error)
-	ClearDashboardPermissions(filterReq filters.Filter) error
-	UploadDashboardPermissions(filterReq filters.Filter) ([]string, error)
+	ListDashboardPermissions(filterReq filters.V2Filter) ([]customModels.DashboardAndPermissions, error)
+	DownloadDashboardPermissions(filterReq filters.V2Filter) ([]string, error)
+	ClearDashboardPermissions(filterReq filters.V2Filter) error
+	UploadDashboardPermissions(filterReq filters.V2Filter) ([]string, error)
 }
 
 // FoldersApi Contract definition
 type FoldersApi interface {
-	ListFolders(filter filters.Filter) []*customModels.NestedHit
-	DownloadFolders(filter filters.Filter) []string
-	UploadFolders(filter filters.Filter) []string
-	DeleteAllFolders(filter filters.Filter) []string
+	ListFolders(filter filters.V2Filter) []*customModels.NestedHit
+	DownloadFolders(filter filters.V2Filter) []string
+	UploadFolders(filter filters.V2Filter) []string
+	DeleteAllFolders(filter filters.V2Filter) []string
 	// Permissions
-	ListFolderPermissions(filter filters.Filter) map[*customModels.NestedHit][]*models.DashboardACLInfoDTO
-	DownloadFolderPermissions(filter filters.Filter) []string
-	UploadFolderPermissions(filter filters.Filter) []string
+	ListFolderPermissions(filter filters.V2Filter) map[*customModels.NestedHit][]*models.DashboardACLInfoDTO
+	DownloadFolderPermissions(filter filters.V2Filter) []string
+	UploadFolderPermissions(filter filters.V2Filter) []string
 }
 
 type LibraryElementsApi interface {
-	ListLibraryElements(filter filters.Filter) []*models.LibraryElementDTO
-	ListLibraryElementsConnections(filter filters.Filter, connectionID string) []*models.DashboardFullWithMeta
-	DownloadLibraryElements(filter filters.Filter) []string
-	UploadLibraryElements(filter filters.Filter) []string
-	DeleteAllLibraryElements(filter filters.Filter) []string
+	ListLibraryElements(filter filters.V2Filter) []*customModels.WithNested[models.LibraryElementDTO]
+	ListLibraryElementsConnections(filter filters.V2Filter, connectionID string) []*models.DashboardFullWithMeta
+	DownloadLibraryElements(filter filters.V2Filter) []string
+	UploadLibraryElements(filter filters.V2Filter) []string
+	DeleteAllLibraryElements(filter filters.V2Filter) []string
 }
 
 // AuthenticationApi Contract definition
@@ -107,9 +106,9 @@ type OrgPreferencesApi interface {
 }
 
 type organizationCrudApi interface {
-	ListOrganizations(filter filters.Filter, withPreferences bool) []*gdgType.OrgsDTOWithPreferences
-	DownloadOrganizations(filter filters.Filter) []string
-	UploadOrganizations(filter filters.Filter) []string
+	ListOrganizations(filter filters.V2Filter, withPreferences bool) []*customModels.OrgsDTOWithPreferences
+	DownloadOrganizations(filter filters.V2Filter) []string
+	UploadOrganizations(filter filters.V2Filter) []string
 }
 
 type organizationToolsApi interface {
@@ -139,7 +138,7 @@ type OrganizationsApi interface {
 }
 
 type ServiceAccountApi interface {
-	ListServiceAccounts() []*gdgType.ServiceAccountDTOWithTokens
+	ListServiceAccounts() []*customModels.ServiceAccountDTOWithTokens
 	ListServiceAccountsTokens(id int64) ([]*models.TokenDTO, error)
 	DeleteServiceAccount(accountId int64) error
 	DeleteAllServiceAccounts() []string
@@ -150,19 +149,19 @@ type ServiceAccountApi interface {
 
 type TeamsApi interface {
 	// Team
-	DownloadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
-	UploadTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
-	ListTeams(filter filters.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
-	DeleteTeam(filter filters.Filter) ([]*models.TeamDTO, error)
+	DownloadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
+	UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
+	ListTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO
+	DeleteTeam(filter filters.V2Filter) ([]*models.TeamDTO, error)
 }
 
 // UsersApi Contract definition
 type UsersApi interface {
 	// UserApi
-	ListUsers(filter filters.Filter) []*models.UserSearchHitDTO
-	DownloadUsers(filter filters.Filter) []string
-	UploadUsers(filter filters.Filter) []gdgType.UserProfileWithAuth
-	DeleteAllUsers(filter filters.Filter) []string
+	ListUsers(filter filters.V2Filter) []*models.UserSearchHitDTO
+	DownloadUsers(filter filters.V2Filter) []string
+	UploadUsers(filter filters.V2Filter) []customModels.UserProfileWithAuth
+	DeleteAllUsers(filter filters.V2Filter) []string
 	// Tools
 	PromoteUser(userLogin string) (string, error)
 	GetUserInfo() (*models.UserProfileDTO, error)

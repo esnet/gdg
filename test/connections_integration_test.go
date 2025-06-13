@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/pkg/test_tooling/common"
+
 	"github.com/samber/lo"
 
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -25,7 +27,7 @@ import (
 
 // There's some issues with these tests, temporarily disabling this
 func TestConnectionPermissionsCrud(t *testing.T) {
-	t.Skip()
+	t.Skip() // Buggy test right now, disabled
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
@@ -36,9 +38,21 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, props)
-	defer cleanup()
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
 	// Upload all connections
 	filtersEntity := service.NewConnectionFilter("")
 	connectionsAdded := apiClient.UploadConnections(filtersEntity)
@@ -113,15 +127,21 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 }
 
 func TestConnectionsCRUD(t *testing.T) {
-	t.Skip()
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, containers.DefaultGrafanaEnv())
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
 	defer func() {
-		cleanErr := cleanup()
-		if cleanErr != nil {
-			slog.Error("unable to clean up after test", slog.Any("err", cleanErr))
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
 		}
 	}()
+	apiClient := r.ApiClient
 	filtersEntity := service.NewConnectionFilter("")
 	slog.Info("Exporting all connections")
 	apiClient.UploadConnections(filtersEntity)
@@ -148,17 +168,24 @@ func TestConnectionsCRUD(t *testing.T) {
 // TestConnectionFilter ensures the regex matching and datasource type filters work as expected
 func TestConnectionFilter(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	config.InitGdgConfig("testing")
-	_, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
 	defer func() {
-		cleanErr := cleanup()
-		if cleanErr != nil {
-			slog.Error("unable to clean up after test", slog.Any("err", cleanErr))
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
 		}
 	}()
+	apiClient := r.ApiClient
 
-	testingContext := config.Config().GetGDGConfig().GetContexts()["testing"]
-	testingContext.GetDataSourceSettings().FilterRules = []config.MatchingRule{
+	testingContext := config.Config().GetGDGConfig().GetContexts()[common.TestContextName]
+	testingContext.GetConnectionSettings().FilterRules = []config.MatchingRule{
 		{
 			Field: "name",
 			Regex: "DEV-*|-Dev-*",
@@ -169,11 +196,10 @@ func TestConnectionFilter(t *testing.T) {
 			Regex:     "elasticsearch|globalnoc-tsds-datasource",
 		},
 	}
-	testingContext = config.Config().GetGDGConfig().GetContexts()["testing"]
-	_ = testingContext
+	testingContext = config.Config().GetGDGConfig().GetContexts()[common.TestContextName]
 
 	localEngine := storage.NewLocalStorage(context.Background())
-	apiClient := service.NewTestApiService(localEngine, func() *config.Configuration {
+	apiClient = service.NewTestApiService(localEngine, func() *config.Configuration {
 		return config.Config()
 	})
 

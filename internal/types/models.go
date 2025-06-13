@@ -9,6 +9,11 @@ type ServiceAccountDTOWithTokens struct {
 	Tokens         []*models.TokenDTO
 }
 
+type WithNested[T any] struct {
+	Entity     *T
+	NestedPath string
+}
+
 type NestedHit struct {
 	*models.Hit
 	NestedPath string
@@ -34,6 +39,6 @@ type ConnectionPermissionItem struct {
 }
 
 type DashboardAndPermissions struct {
-	Dashboard   *models.Hit
+	Dashboard   *NestedHit
 	Permissions []*models.DashboardACLInfoDTO
 }

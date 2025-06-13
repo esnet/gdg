@@ -9,10 +9,14 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"regexp"
+	"sort"
 	"strings"
 
-	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+	"github.com/esnet/gdg/internal/service/filters/v2"
+
+	"github.com/esnet/gdg/internal/tools/encode"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -30,38 +34,47 @@ const (
 	folderPathSeparator = string(os.PathSeparator)
 )
 
-func NewFolderFilter() filters.Filter {
-	filterObj := v1.NewBaseFilter()
-	filterObj.AddValidation(filters.FolderFilter, func(i any) bool {
-		val, ok := i.(map[filters.FilterType]string)
+func NewFolderFilter() filters.V2Filter {
+	filterObj := v2.NewBaseFilter()
+	err := filterObj.RegisterReader(reflect.TypeOf(&types.NestedHit{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.(*types.NestedHit)
 		if !ok {
-			return ok
+			return nil, fmt.Errorf("unsupported data type")
 		}
-		// Check folder
-		if folderFilter, ok := val[filters.FolderFilter]; ok {
-			// use regex matching
-			for _, folderPattern := range config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders() {
-				p, err := regexp.Compile(folderPattern)
-				if err != nil {
-					// fallback on string matching
-					if folderPattern == folderFilter {
-						return true
-					}
-				}
-				if p.MatchString(folderFilter) {
-					return true
-				}
-			}
-			return false
-		} else {
-			return true
+		switch filterType {
+		case filters.FolderFilter:
+			return val.NestedPath, nil
+		default:
+			return nil, fmt.Errorf("unsupported data type")
 		}
 	})
+	if err != nil {
+		log.Fatalf("unable to register a valid reader for folder filder")
+	}
+
+	folderArr := config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false)
+	filterObj.AddValidation(filters.FolderFilter, func(value any, expected any) error {
+		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, filters.FolderFilter)
+		if convErr != nil {
+			return convErr
+		}
+		for _, exp := range expressions {
+			r, ReErr := regexp.Compile(exp)
+			if ReErr != nil {
+				return fmt.Errorf("invalid regex: %s", exp)
+			}
+			if r.MatchString(val) {
+				return nil
+			}
+		}
+
+		return fmt.Errorf("invalid folder filter. Expected: %v", expressions)
+	}, folderArr)
 	return filterObj
 }
 
 // DownloadFolderPermissions downloads all the current folder permissions based on filter.
-func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.V2Filter) []string {
 	slog.Info("Downloading folder permissions")
 	var (
 		dsPacked  []byte
@@ -90,7 +103,7 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.Filter) []string 
 
 // UploadFolderPermissions update current folder permissions to match local file system.
 // Note: This expects all the current users and teams to already exist.
-func (s *DashNGoImpl) UploadFolderPermissions(filter filters.Filter) []string {
+func (s *DashNGoImpl) UploadFolderPermissions(filter filters.V2Filter) []string {
 	var (
 		rawFolder []byte
 		dataFiles []string
@@ -132,9 +145,14 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.Filter) []string {
 
 // ListFolderPermissions retrieves all current folder permissions
 // TODO: add concurrency to folder permissions calls
-func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*types.NestedHit][]*models.DashboardACLInfoDTO {
+func (s *DashNGoImpl) ListFolderPermissions(filter filters.V2Filter) map[*types.NestedHit][]*models.DashboardACLInfoDTO {
 	// get list of folders
-	foldersList := s.ListFolders(filter)
+	var foldersList []*types.NestedHit
+	if filter == nil {
+		foldersList = s.ListFolders(nil)
+	} else {
+		foldersList = s.ListFolders(NewFolderFilter())
+	}
 
 	r := make(map[*types.NestedHit][]*models.DashboardACLInfoDTO)
 
@@ -161,9 +179,9 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.Filter) map[*types.Ne
 }
 
 // ListFolders list the current existing folders that match the given filter.
-func (s *DashNGoImpl) ListFolders(filter filters.Filter) []*types.NestedHit {
+func (s *DashNGoImpl) ListFolders(filter filters.V2Filter) []*types.NestedHit {
 	result := make([]*types.NestedHit, 0)
-	if config.Config().GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters {
+	if s.grafanaConf.GetDashboardSettings().IgnoreFilters {
 		filter = nil
 	}
 
@@ -189,7 +207,8 @@ func (s *DashNGoImpl) ListFolders(filter filters.Filter) []*types.NestedHit {
 	}
 	for ndx, val := range folderListing {
 		nestedVal := getNestedFolder(val.Title, val.UID, folderUid)
-		if filter == nil || filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: nestedVal}) {
+		val.NestedPath = nestedVal
+		if filter == nil || filter.Validate(filters.FolderFilter, val) { // filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: nestedVal}) {
 			addFolder(ndx, nestedVal)
 		}
 	}
@@ -198,7 +217,7 @@ func (s *DashNGoImpl) ListFolders(filter filters.Filter) []*types.NestedHit {
 }
 
 // DownloadFolders Download all the given folders matching filter
-func (s *DashNGoImpl) DownloadFolders(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadFolders(filter filters.V2Filter) []string {
 	var (
 		dsPacked  []byte
 		err       error
@@ -225,7 +244,7 @@ func (s *DashNGoImpl) DownloadFolders(filter filters.Filter) []string {
 func getPathFolderList(folder string) []string {
 	elements := strings.Split(folder, folderPathSeparator)
 	elements = lo.Filter(elements, func(item string, index int) bool {
-		return !(item == "" || item == folderPathSeparator)
+		return item != "" && item != folderPathSeparator
 	})
 	if len(elements) == 1 {
 		return nil
@@ -244,7 +263,7 @@ func getNestedFolderFromFile(file string, resourceDir string) string {
 
 // UploadFolders upload all the given folders to grafana
 // TODO: handle setting parent
-func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
+func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 	var (
 		result    []string
 		rawFolder []byte
@@ -277,16 +296,12 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, %v", err)
 	}
-	nested := s.grafanaConf.GetDashboardSettings().NestedFolders
 	folderItems := s.ListFolders(filter)
 	folderUidMap := getFolderUIDEntityMap(folderItems)
 	// build a mapping of the nested path to UID for all existing folders
 	nestedPathToUidExisting := getFolderMapping(folderItems,
 		func(fld *types.NestedHit) string {
-			if nested {
-				return getNestedFolder(fld.Title, fld.UID, folderUidMap)
-			}
-			return fld.Title
+			return getNestedFolder(fld.Title, fld.UID, folderUidMap)
 		},
 		func(fld *types.NestedHit) *types.NestedHit { return fld },
 	)
@@ -310,94 +325,92 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 
 		parentUid := ""
 		nestedFolder := getNestedFolderFromFile(fileLocation, resourceDir)
-		if nested {
-			requiredFolders := getPathFolderList(nestedFolder)
-			// check if nested folder exists.
-			sb := new(strings.Builder)
-			errorOut := false
-			parentFolder := ""
+		requiredFolders := getPathFolderList(nestedFolder)
+		// check if nested folder exists.
+		sb := new(strings.Builder)
+		errorOut := false
+		parentFolder := ""
 
-			for ndx, fld := range requiredFolders {
-				parentFolder = sb.String()
-				if ndx == 0 {
-					sb.WriteString(fld)
+		for ndx, fld := range requiredFolders {
+			parentFolder = sb.String()
+			if ndx == 0 {
+				sb.WriteString(fld)
+			} else {
+				sb.WriteString(folderPathSeparator + fld)
+			}
+			// parentFolder folder missing, create entity
+			if entity, ok := nestedPathToUidExisting[sb.String()]; !ok {
+				// subfolder does not exist and needs to be created
+				slog.Info("Parent Folder is missing, attempting to create parentFolder folder", slog.Any("parentFolder", sb.String()), slog.Any("folder", nestedFolder))
+				// check if folder definition exists.
+				var (
+					parentAddErr error
+				)
+				if parentFile, parentOk := nestedPathMap[sb.String()]; parentOk {
+					getNewFolder := func() (*models.CreateFolderCommand, error) {
+						if strings.HasSuffix(parentFile, ".json") {
+							if rawFolder, err = s.storage.ReadFile(parentFile); err != nil {
+								slog.Error("failed to read fileOrName", "filename", parentFile, "err", err)
+							}
+						}
+						newFolderCmd := &models.CreateFolderCommand{}
+						if err := json.Unmarshal(rawFolder, &newFolderCmd); err != nil {
+							slog.Warn("failed to unmarshall folder", "err", err)
+							return newFolderCmd, err
+						}
+						r := gjson.Get(string(rawFolder), "folderUid")
+						if r.String() != "" {
+							newFolderCmd.ParentUID = r.String()
+						}
+						return newFolderCmd, nil
+					}
+					parentUid, parentAddErr = addFolder(getNewFolder, folderUidMap)
+					if parentAddErr != nil {
+						slog.Error("Unable to created parentFolder folder", slog.Any("parentFolder", parentFile))
+						errorOut = true
+					}
 				} else {
-					sb.WriteString(folderPathSeparator + fld)
-				}
-				// parentFolder folder missing, create entity
-				if entity, ok := nestedPathToUidExisting[sb.String()]; !ok {
-					// subfolder does not exist and needs to be created
-					slog.Info("Parent Folder is missing, attempting to create parentFolder folder", slog.Any("parentFolder", sb.String()), slog.Any("folder", nestedFolder))
-					// check if folder definition exists.
-					var (
-						parentAddErr error
-					)
-					if parentFile, parentOk := nestedPathMap[sb.String()]; parentOk {
-						getNewFolder := func() (*models.CreateFolderCommand, error) {
-							if strings.HasSuffix(parentFile, ".json") {
-								if rawFolder, err = s.storage.ReadFile(parentFile); err != nil {
-									slog.Error("failed to read fileOrName", "filename", parentFile, "err", err)
-								}
-							}
-							newFolderCmd := &models.CreateFolderCommand{}
-							if err := json.Unmarshal(rawFolder, &newFolderCmd); err != nil {
-								slog.Warn("failed to unmarshall folder", "err", err)
-								return newFolderCmd, err
-							}
-							r := gjson.Get(string(rawFolder), "folderUid")
-							if r.String() != "" {
-								newFolderCmd.ParentUID = r.String()
-							}
-							return newFolderCmd, nil
+					getNewFolder := func() (*models.CreateFolderCommand, error) {
+						newFolderCmd := new(models.CreateFolderCommand)
+						newFolderCmd.Title = sb.String()
+						if val, ok := folderUidMap[parentFolder]; ok {
+							newFolderCmd.ParentUID = val.UID
 						}
-						parentUid, parentAddErr = addFolder(getNewFolder, folderUidMap)
-						if parentAddErr != nil {
-							slog.Error("Unable to created parentFolder folder", slog.Any("parentFolder", parentFile))
-							errorOut = true
-						}
-					} else {
-						getNewFolder := func() (*models.CreateFolderCommand, error) {
-							newFolderCmd := new(models.CreateFolderCommand)
-							newFolderCmd.Title = sb.String()
-							if val, ok := folderUidMap[parentFolder]; ok {
-								newFolderCmd.ParentUID = val.UID
-							}
-							return newFolderCmd, nil
-						}
-						// no matching file, use title
-						parentUid, parentAddErr = addFolder(getNewFolder, folderUidMap)
-						if parentAddErr != nil {
-							slog.Error("Unable to created parentFolder folder", slog.Any("parentFolder", parentFile))
-							errorOut = true
-						}
+						return newFolderCmd, nil
 					}
-					if errorOut {
-						break
-					}
-					processed[filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))] = true
-					newParentFolder, err := s.getFolderByUid(parentUid)
-					if err != nil {
-						slog.Error("unable to get newly created parentFolder folder", slog.Any("parentFolder", sb.String()))
-						break
-					}
-					folderUidMap[parentUid] = newParentFolder
-					nestedPathToUidExisting[sb.String()] = newParentFolder
-
-				} else {
-					parentUid = entity.UID
-					// folder exists, continue
-					slog.Debug("Parent already exists, continuing", slog.Any("ParentFolder", sb.String()))
-					parentResource := filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))
-					if val, ok := processed[parentResource]; !ok || !val {
-						processed[parentResource] = true
+					// no matching file, use title
+					parentUid, parentAddErr = addFolder(getNewFolder, folderUidMap)
+					if parentAddErr != nil {
+						slog.Error("Unable to created parentFolder folder", slog.Any("parentFolder", parentFile))
+						errorOut = true
 					}
 				}
+				if errorOut {
+					break
+				}
+				processed[filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))] = true
+				newParentFolder, err := s.getFolderByUid(parentUid)
+				if err != nil {
+					slog.Error("unable to get newly created parentFolder folder", slog.Any("parentFolder", sb.String()))
+					break
+				}
+				folderUidMap[parentUid] = newParentFolder
+				nestedPathToUidExisting[sb.String()] = newParentFolder
 
+			} else {
+				parentUid = entity.UID
+				// folder exists, continue
+				slog.Debug("Parent already exists, continuing", slog.Any("ParentFolder", sb.String()))
+				parentResource := filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))
+				if val, ok := processed[parentResource]; !ok || !val {
+					processed[parentResource] = true
+				}
 			}
-			if errorOut {
-				slog.Error("unable to add folder", slog.Any("folder", nestedFolder))
-				continue
-			}
+
+		}
+		if errorOut {
+			slog.Error("unable to add folder", slog.Any("folder", nestedFolder))
+			continue
 		}
 		var newFolder models.CreateFolderCommand
 		if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
@@ -425,7 +438,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		}
 		params := folders.NewCreateFolderParams()
 		// patch parentFolder here if nested
-		if nested && newFolder.ParentUID == "" {
+		if newFolder.ParentUID == "" {
 			newFolder.ParentUID = parentUid
 		}
 		params.Body = &newFolder
@@ -436,13 +449,9 @@ func (s *DashNGoImpl) UploadFolders(filter filters.Filter) []string {
 		}
 		processed[fileLocation] = true
 
-		if nested {
-			folderUidMap[f.GetPayload().UID] = s.folderToHit(f.GetPayload())
-			nestedPathToUidExisting[nestedFolder] = s.folderToHit(f.GetPayload())
-			result = append(result, nestedFolder)
-		} else {
-			result = append(result, f.Payload.Title)
-		}
+		folderUidMap[f.GetPayload().UID] = s.folderToHit(f.GetPayload())
+		nestedPathToUidExisting[nestedFolder] = s.folderToHit(f.GetPayload())
+		result = append(result, nestedFolder)
 
 	}
 	return result
@@ -462,26 +471,31 @@ func buildNestedFilePath(files []string) map[string]string {
 }
 
 // DeleteAllFolders deletes all the matching folders from grafana
-func (s *DashNGoImpl) DeleteAllFolders(filter filters.Filter) []string {
-	var result []string
-	folderListing := s.ListFolders(filter)
+func (s *DashNGoImpl) DeleteAllFolders(filter filters.V2Filter) []string {
+	var (
+		result        []string
+		folderListing []*types.NestedHit
+	)
+	if filter == nil {
+		folderListing = s.ListFolders(nil)
+	} else {
+		folderListing = s.ListFolders(filter)
+	}
+	sort.Slice(folderListing, func(i, j int) bool {
+		return strings.Compare(folderListing[i].NestedPath, folderListing[j].NestedPath) > 0
+	})
 	for _, folder := range folderListing {
 		params := folders.NewDeleteFolderParams()
 		params.FolderUID = folder.UID
+
 		_, err := s.GetClient().Folders.DeleteFolder(params)
 		if err == nil {
-			result = append(result, folder.Title)
+			result = append(result, folder.NestedPath)
+		} else {
+			slog.Error("failed to delete folder", "err", err, "folder", folder.Title)
 		}
 	}
 	return result
-}
-
-// getFolderNameIDMap helper function to build a mapping for name to folderID
-func getFolderNameIDMap(folders []*types.NestedHit) map[string]int64 {
-	return getFolderMapping(folders,
-		func(fld *types.NestedHit) string { return fld.Title },
-		func(fld *types.NestedHit) int64 { return fld.ID },
-	)
 }
 
 // getFolderMapping returns a mapping of any comparable T to any value based on the folder entity.
@@ -546,14 +560,13 @@ func (s *DashNGoImpl) folderToHit(fld *models.Folder) *types.NestedHit {
 	res.Type = models.HitType(SearchTypeFolder)
 	res.URL = fld.URL
 	paths := lo.Map(fld.Parents, func(item *models.Folder, index int) string {
-		return item.Title
+		return encode.Encode(item.Title)
 	})
-	if s.grafanaConf.GetDashboardSettings().NestedFolders {
-		if val := path.Join(paths...); val == "" {
-			res.NestedPath = res.Title
-		} else {
-			res.NestedPath = path.Join(val, res.Title)
-		}
+	if val := path.Join(paths...); val == "" {
+		res.NestedPath = encode.Encode(res.Title)
+	} else {
+		res.NestedPath = path.Join(val, encode.Encode(res.Title))
 	}
+
 	return res
 }

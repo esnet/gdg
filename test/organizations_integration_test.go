@@ -1,9 +1,13 @@
 package test
 
 import (
+	"context"
+	"log/slog"
 	"os"
 	"sort"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
 
@@ -20,9 +24,21 @@ func TestOrganizationCrud(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	defer cleanup()
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
 	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter(), true)
 	assert.Equal(t, len(orgs), 1)
 	mainOrg := orgs[0]
@@ -43,9 +59,21 @@ func TestOrganizationUserMembership(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	defer cleanup()
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
 	// Create Orgs in case they aren't already present.
 	apiClient.UploadOrganizations(service.NewOrganizationFilter())
 	orgs := apiClient.ListOrganizations(service.NewOrganizationFilter(), true)
@@ -67,7 +95,7 @@ func TestOrganizationUserMembership(t *testing.T) {
 	}
 	assert.NotNil(t, orgUser)
 	// Reset if any state exists.
-	err := apiClient.DeleteUserFromOrg(slug.Make(newOrg.Organization.Name), orgUser.ID)
+	err = apiClient.DeleteUserFromOrg(slug.Make(newOrg.Organization.Name), orgUser.ID)
 	assert.Nil(t, err)
 	// Start CRUD test
 	orgUsers := apiClient.ListOrgUsers(newOrg.Organization.ID)
@@ -94,10 +122,23 @@ func TestOrganizationProperties(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	defer cleanup()
-	assert.NoError(t, apiClient.UploadDashboards(service.NewDashboardFilter("", "", "")))
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
+	_, err = apiClient.UploadDashboards(service.NewDashboardFilter("", "", ""))
+	assert.NoError(t, err)
 	prefs, err := apiClient.GetOrgPreferences("Main Org.")
 	assert.Nil(t, err)
 	prefs.HomeDashboardUID = "000000003"

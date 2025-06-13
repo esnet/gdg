@@ -1,6 +1,7 @@
 package test
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"strconv"
@@ -20,6 +21,7 @@ import (
 const (
 	defaultGrafanaVersion = "11.6.0-ubuntu"
 	basicAuth             = "basicAuth"
+	testDebug             = "TEST_DEBUG"
 	developerEnv          = "DEVELOPER"
 )
 
@@ -59,7 +61,9 @@ func TestMain(m *testing.M) {
 
 	err = godotenv.Load(".env")
 	// set global log level
-	slog.SetLogLoggerLevel(slog.LevelDebug) // Set global log level to Debug
+	if os.Getenv(testDebug) == "1" {
+		slog.SetLogLoggerLevel(slog.LevelDebug) // Set global log level to Debug
+	}
 
 	developer := getEnvDefault(developerEnv, test_tooling.FeatureDisabled)
 	version := getEnvDefault(test_tooling.GrafanaTestVersionEnv, defaultGrafanaVersion)
@@ -101,4 +105,30 @@ func getEnvDefault(key, defaultValue string) string {
 		return defaultValue
 	}
 	return val
+}
+
+func wrapTest(f func()) {
+	os.Setenv(path.TestEnvKey, "1")
+	f()
+	os.Unsetenv(path.TestEnvKey)
+}
+
+type RetryFunc func() error
+
+const DefaultRetryAttempts = 3
+
+func Retry(ctx context.Context, retryAttempts int, f RetryFunc) error {
+	var err error
+	for i := 0; i < retryAttempts; i++ {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			err = f()
+			if err == nil {
+				return nil
+			}
+		}
+	}
+	return err
 }

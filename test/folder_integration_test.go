@@ -1,6 +1,7 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"maps"
@@ -8,6 +9,8 @@ import (
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/service"
 
@@ -24,18 +27,43 @@ import (
 )
 
 func TestFolderCRUD(t *testing.T) {
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	defer cleanup()
+	wrapTest(func() {
+		config.InitGdgConfig(common.DefaultTestConfig)
+	})
+	cfgProvider := func() *config.Configuration {
+		cfg := config.Config()
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = false
+		return cfg
+	}
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, cfgProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
 	slog.Info("Listing all Folders")
 	folders := apiClient.ListFolders(nil)
-	assert.Equal(t, len(folders), 2)
-	firstDsItem := folders[0]
+	assert.Equal(t, len(folders), 4)
+	firstDsItem := lo.FindOrElse(folders, nil, func(item *types.NestedHit) bool {
+		return item.Title == "Ignored"
+	})
 	assert.Equal(t, firstDsItem.Title, "Ignored")
-	secondDsItem := folders[1]
-	assert.Equal(t, secondDsItem.Title, "Other")
+	assert.Equal(t, firstDsItem.FolderTitle, "")
+	secondDsItem := lo.FindOrElse(folders, nil, func(item *types.NestedHit) bool {
+		return item.Title == "Others"
+	})
+	assert.Equal(t, secondDsItem.Title, "Others")
+	assert.Equal(t, secondDsItem.FolderTitle, "linux/gnu")
 	// Import Folders
 	slog.Info("Importing folders")
 	list := apiClient.DownloadFolders(nil)
@@ -48,44 +76,56 @@ func TestFolderCRUD(t *testing.T) {
 	assert.Equal(t, len(folders), 0)
 }
 
-func TestFolderCRUDInvalidChar(t *testing.T) {
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
-		t.Skip("Skipping Token configuration, BasicAuth required to setup org structure")
-	}
-	containerObj, cleanup := test_tooling.InitOrganizations(t)
-	defer cleanup()
-
-	//
-	config.InitGdgConfig("testing")
-	cfg := config.Config()
-	cfg.GetDefaultGrafanaConfig().OrganizationName = "Bad Folder"
-
-	cfgProvider := func() *config.Configuration {
-		return cfg
-	}
-
-	orgClient := test_tooling.CreateSimpleClientWithConfig(t, cfgProvider, containerObj)
-	orgClient.UploadFolders(nil)
-	slog.Info("Listing all Folders")
-	folders := orgClient.ListFolders(nil)
+func TestFolderSanityCheck(t *testing.T) {
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
+	newFolders, err := apiClient.(*service.DashNGoImpl).TestCreatedFolders("linux%2Fgnu/Others")
+	assert.NoError(t, err)
+	assert.Equal(t, len(newFolders), 2)
+	folders := apiClient.ListFolders(nil)
+	assert.Equal(t, len(folders), 2)
+	newFolders, err = apiClient.(*service.DashNGoImpl).TestCreatedFolders("linux%2Fgnu/Others/n%2B_%3D23r")
+	assert.NoError(t, err)
+	assert.Equal(t, len(newFolders), 1)
+	folders = apiClient.ListFolders(nil)
 	assert.Equal(t, len(folders), 3)
-	badFolder := lo.FirstOrEmpty(lo.Filter(folders, func(item *types.NestedHit, index int) bool {
-		return item.Title == "dummy / foobar"
-	}))
-	assert.NotNil(t, badFolder)
-	assert.Equal(t, "dummy+%2F+foobar", badFolder.NestedPath)
 }
 
 // TODO: write a full CRUD validation of folder permissions
 func TestFolderPermissions(t *testing.T) {
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	defer cleanup()
+	config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		return r.Err
+	})
+	assert.NotNil(t, r)
+	assert.NoError(t, err)
+	defer func() {
+		err := r.CleanUp()
+		if err != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
 	slog.Info("Listing all Folders")
 	folders := apiClient.ListFolders(nil)
-	assert.Equal(t, len(folders), 2)
+	assert.Equal(t, len(folders), 4)
 	result := apiClient.ListFolderPermissions(nil)
 	assert.True(t, len(result) > 0)
 	// this behavior is inconsistent across versions, disabled for now
@@ -102,7 +142,7 @@ func TestFolderPermissions(t *testing.T) {
 	*/
 
 	data := apiClient.DownloadFolderPermissions(nil)
-	assert.Equal(t, len(data), 2)
+	assert.Equal(t, len(data), 4)
 	permissionKeys := lo.Map(slices.Collect(maps.Keys(result)), func(item *types.NestedHit, index int) string {
 		return fmt.Sprintf("test/data/org_main-org/folders-permissions/%s.json", slug.Make(item.NestedPath))
 	})

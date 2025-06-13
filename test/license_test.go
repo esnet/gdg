@@ -1,8 +1,11 @@
 package test
 
 import (
+	"context"
 	"log/slog"
 	"testing"
+
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
@@ -13,19 +16,46 @@ import (
 )
 
 func TestLicenseEnterpriseCheck(t *testing.T) {
-	config.InitGdgConfig("testing")
-	apiClient, _, cleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-	defer cleanup()
-	assert.False(t, apiClient.IsEnterprise())
-	props := containers.DefaultGrafanaEnv()
-	err := containers.SetupGrafanaLicense(&props)
-	if err != nil {
-		slog.Error("no valid grafana license found, skipping enterprise tests")
-		t.Skip()
+	tcCases := []struct {
+		name       string
+		disabled   bool
+		enterprise bool
+	}{
+		{
+			name:       "OS Licence test",
+			enterprise: false,
+		},
+		{
+			name:       "Enterprise Licence test",
+			enterprise: true,
+		},
 	}
 
-	config.InitGdgConfig("testing")
-	enterpriseClient, _, enterpriseCleanup := test_tooling.InitTest(t, service.DefaultConfigProvider, props)
-	defer enterpriseCleanup()
-	assert.True(t, enterpriseClient.IsEnterprise())
+	for _, tc := range tcCases {
+		if tc.disabled {
+			t.Log("Skipping test", tc.name)
+		}
+		t.Log("Running test", tc.name)
+		config.InitGdgConfig(common.DefaultTestConfig)
+		var r *test_tooling.InitContainerResult
+		var props map[string]string
+		if tc.enterprise {
+			props = containers.DefaultGrafanaEnv()
+			err := containers.SetupGrafanaLicense(&props)
+			assert.NoError(t, err)
+		}
+		err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+			r = test_tooling.InitTest(t, service.DefaultConfigProvider, props)
+			return r.Err
+		})
+		assert.NotNil(t, r)
+		assert.NoError(t, err)
+		assert.Equal(t, r.ApiClient.IsEnterprise(), tc.enterprise)
+		func() {
+			err := r.CleanUp()
+			if err != nil {
+				slog.Warn("Unable to clean up after test", "test", t.Name())
+			}
+		}()
+	}
 }

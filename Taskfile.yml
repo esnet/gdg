@@ -98,6 +98,11 @@ tasks:
     desc: "TEST Release of GDG, no validation, no publish"
     cmds:
       - go tool {{ .TOOLS_ARG}}  goreleaser release --skip=publish,validate
+  pipeline_test:
+    desc: "Run test as close to the CICD pipiline as possible"
+    cmds:
+      - go tool {{ .TOOLS_ARG}} gotestsum --format testname  -- -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks" | tr '\n' ',' )   ./...
+
 
   test:
     desc: "test check"

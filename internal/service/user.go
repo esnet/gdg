@@ -7,10 +7,14 @@ import (
 	"log"
 	"log/slog"
 	"path/filepath"
+	"reflect"
+	"slices"
 	"sort"
 	"strings"
 
-	v1 "github.com/esnet/gdg/internal/service/filters/v1"
+	"github.com/esnet/gdg/internal/service/filters/v2"
+	"github.com/samber/lo"
+	"github.com/tidwall/gjson"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
 
@@ -24,23 +28,73 @@ import (
 	"github.com/tidwall/pretty"
 )
 
-func NewUserFilter(label string) filters.Filter {
-	filterEntity := v1.NewBaseFilter()
-	if label == "" {
-		return filterEntity
-	}
-	filterEntity.AddFilter(filters.AuthLabel, label)
-	filterEntity.AddValidation(filters.DefaultFilter, func(i any) bool {
-		val, ok := i.(map[filters.FilterType]string)
+func setupUserReaders(filterObj filters.V2Filter) {
+	obj := models.UserSearchHitDTO{}
+	err := filterObj.RegisterReader(reflect.TypeOf(obj), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.(models.UserSearchHitDTO)
 		if !ok {
-			return ok
+			return nil, fmt.Errorf("unsupported data type")
 		}
-		if filterEntity.GetFilter(filters.AuthLabel) == "" {
-			return true
-		}
-		return val[filters.AuthLabel] == filterEntity.GetFilter(filters.AuthLabel)
-	})
+		switch filterType {
+		case filters.AuthLabel:
+			return val.AuthLabels, nil
 
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid User Filter, obj reader failed, aborting.")
+	}
+	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.([]byte)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case filters.AuthLabel:
+			{
+				r := gjson.GetBytes(val, "authLabels")
+				if !r.Exists() || !r.IsArray() {
+					return nil, fmt.Errorf("no valid connection name found")
+				}
+				return lo.Map(r.Array(), func(item gjson.Result, index int) string {
+					return item.String()
+				}), nil
+
+			}
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid User Filter, json reader failed, aborting.")
+	}
+}
+
+func NewUserFilter(label string) filters.V2Filter {
+	filterEntity := v2.NewBaseFilter()
+	setupUserReaders(filterEntity)
+	var labelArray []string
+	if label != "" {
+		labelArray = []string{label}
+	}
+	filterEntity.AddValidation(filters.AuthLabel, func(value any, expected any) error {
+		val, expectedList, convErr := v2.GetParams[[]string](value, expected, filters.FolderFilter)
+		if convErr != nil {
+			return convErr
+		}
+		if len(expectedList) == 0 {
+			return nil
+		}
+		for _, exp := range expectedList {
+			if slices.Contains(val, exp) {
+				return nil
+			}
+		}
+		return fmt.Errorf("failed validation test val:%v  expected: %v", val, expectedList)
+	}, labelArray)
 	return filterEntity
 }
 
@@ -53,7 +107,7 @@ func (s *DashNGoImpl) GetUserInfo() (*models.UserProfileDTO, error) {
 	return nil, err
 }
 
-func (s *DashNGoImpl) DownloadUsers(filter filters.Filter) []string {
+func (s *DashNGoImpl) DownloadUsers(filter filters.V2Filter) []string {
 	var (
 		userData []byte
 		err      error
@@ -88,7 +142,7 @@ func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
 	return id == 1 || name == "admin"
 }
 
-func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []types.UserProfileWithAuth {
+func (s *DashNGoImpl) UploadUsers(filter filters.V2Filter) []types.UserProfileWithAuth {
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), false)
 	if err != nil {
 		slog.Error("failed to list files in directory for userListings", "err", err)
@@ -109,6 +163,10 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []types.UserProfileWith
 		if strings.HasSuffix(file, ".json") {
 			if rawUser, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
+				continue
+			}
+			if !filter.Validate(filters.AuthLabel, rawUser) {
+				slog.Debug("User failed filter on auth label, skipping", "file", fileLocation)
 				continue
 			}
 			if val, ok := currentUsers[filepath.Base(file)]; ok {
@@ -161,7 +219,7 @@ func (s *DashNGoImpl) UploadUsers(filter filters.Filter) []types.UserProfileWith
 }
 
 // ListUsers list all grafana users
-func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDTO {
+func (s *DashNGoImpl) ListUsers(filter filters.V2Filter) []*models.UserSearchHitDTO {
 	if !s.grafanaConf.IsBasicAuth() {
 		log.Fatal("User listing requires basic auth to be configured.  Token based listing is not supported")
 	}
@@ -176,7 +234,7 @@ func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDT
 	for _, entry := range usersList.GetPayload() {
 		if len(entry.AuthLabels) == 0 {
 			filteredUsers = append(filteredUsers, entry)
-		} else if filter.ValidateAll(map[filters.FilterType]string{filters.AuthLabel: entry.AuthLabels[0]}) {
+		} else if filter.ValidateAll(entry) {
 			filteredUsers = append(filteredUsers, entry)
 		}
 	}
@@ -187,7 +245,7 @@ func (s *DashNGoImpl) ListUsers(filter filters.Filter) []*models.UserSearchHitDT
 }
 
 // DeleteAllUsers remove all users excluding admin or anything matching the filter
-func (s *DashNGoImpl) DeleteAllUsers(filter filters.Filter) []string {
+func (s *DashNGoImpl) DeleteAllUsers(filter filters.V2Filter) []string {
 	userListing := s.ListUsers(filter)
 	var deletedUsers []string
 	for _, user := range userListing {
@@ -209,7 +267,7 @@ func (s *DashNGoImpl) DeleteAllUsers(filter filters.Filter) []string {
 // PromoteUser promote the user to have Admin Access
 func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 	// Get all users
-	userListing := s.ListUsers(v1.NewBaseFilter())
+	userListing := s.ListUsers(v2.NewBaseFilter())
 	var user *models.UserSearchHitDTO
 	for ndx, item := range userListing {
 		if item.Email == userLogin {
