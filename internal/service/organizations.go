@@ -11,12 +11,13 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
-	"github.com/esnet/gdg/internal/types"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/orgs"
@@ -225,7 +226,7 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 }
 
 // ListOrganizations List all dashboards
-func (s *DashNGoImpl) ListOrganizations(filter filters.V2Filter, withPreferences bool) []*types.OrgsDTOWithPreferences {
+func (s *DashNGoImpl) ListOrganizations(filter filters.V2Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
@@ -244,18 +245,18 @@ func (s *DashNGoImpl) ListOrganizations(filter filters.V2Filter, withPreferences
 		}
 	}
 
-	var resultsData []*types.OrgsDTOWithPreferences
+	var resultsData []*domain.OrgsDTOWithPreferences
 	for _, org := range orgList.GetPayload() {
 		if filter.ValidateAll(*org) {
 			if !withPreferences {
-				resultsData = append(resultsData, &types.OrgsDTOWithPreferences{Organization: org, Preferences: &models.Preferences{}})
+				resultsData = append(resultsData, &domain.OrgsDTOWithPreferences{Organization: org, Preferences: &models.Preferences{}})
 			} else {
 				preferences, err := s.GetOrgPreferences(org.Name)
 				if err != nil {
 					slog.Warn("unable to retrieve org preferences for org", slog.String("organization", org.Name))
 					preferences = &models.Preferences{}
 				}
-				resultsData = append(resultsData, &types.OrgsDTOWithPreferences{Organization: org, Preferences: preferences})
+				resultsData = append(resultsData, &domain.OrgsDTOWithPreferences{Organization: org, Preferences: preferences})
 			}
 		}
 	}
@@ -320,7 +321,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.V2Filter) []string {
 				continue
 			}
 		}
-		var jsonOrg types.OrgsDTOWithPreferences
+		var jsonOrg domain.OrgsDTOWithPreferences
 		var newOrg models.CreateOrgCommand
 		if err = json.Unmarshal(rawFolder, &jsonOrg); err != nil {
 			slog.Warn("failed to unmarshall folder", "err", err)
@@ -335,7 +336,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.V2Filter) []string {
 			slog.Debug("Skipping org, failing filter check", "file", file)
 			continue
 		}
-		updateProperties := func(org *types.OrgsDTOWithPreferences) error {
+		updateProperties := func(org *domain.OrgsDTOWithPreferences) error {
 			if org.Preferences == nil || org.Organization == nil {
 				slog.Warn("Properties or Organization is nil, ignore update request")
 				return nil

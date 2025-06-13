@@ -8,11 +8,11 @@ import (
 	"strings"
 	"testing"
 
+	customModels "github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
-	customModels "github.com/esnet/gdg/internal/types"
-
 	"github.com/samber/lo"
 
 	"github.com/esnet/gdg/internal/config"

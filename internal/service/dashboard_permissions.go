@@ -7,12 +7,12 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/internal/tools/ptr"
 
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
-
-	"github.com/esnet/gdg/internal/types"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
@@ -20,12 +20,12 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.V2Filter) ([]types.DashboardAndPermissions, error) {
+func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.V2Filter) ([]domain.DashboardAndPermissions, error) {
 	validateDashboardEnterpriseSupport(s)
 	dashboards := s.ListDashboards(filterReq)
-	var result []types.DashboardAndPermissions
+	var result []domain.DashboardAndPermissions
 	for _, dashboard := range dashboards {
-		item := types.DashboardAndPermissions{Dashboard: dashboard}
+		item := domain.DashboardAndPermissions{Dashboard: dashboard}
 		perms, err := s.GetClient().DashboardPermissions.GetDashboardPermissionsListByUID(dashboard.UID)
 		if err != nil {
 			slog.Warn("Unable to retrieve permissions for dashboard",
@@ -91,7 +91,7 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.V2Filter) ([]
 		filterReq = NewDashboardFilter("", "", "")
 	}
 	// Get Current Dashboards
-	dashMap := lo.Associate(s.ListDashboards(filterReq), func(item *types.NestedHit) (string, *types.NestedHit) {
+	dashMap := lo.Associate(s.ListDashboards(filterReq), func(item *domain.NestedHit) (string, *domain.NestedHit) {
 		return item.UID, item
 	})
 	_ = dashMap

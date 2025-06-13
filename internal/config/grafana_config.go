@@ -22,6 +22,7 @@ type GrafanaConfig struct {
 	filterFolder             *dashFilter           `mapstructure:"-" yaml:"-"`
 	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`
 	OrganizationName         string                `mapstructure:"organization_name" yaml:"organization_name"`
+	SecureLocationOverride   string                `mapstructure:"secure_location" yaml:"secure_location"`
 	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
 	Password                 string                `mapstructure:"password" yaml:"password"`
 	Storage                  string                `mapstructure:"storage" yaml:"storage"`

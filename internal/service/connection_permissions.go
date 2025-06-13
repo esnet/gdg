@@ -8,7 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/esnet/gdg/internal/types"
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/grafana/grafana-openapi-client-go/client/access_control"
 
 	"github.com/esnet/gdg/internal/config"
@@ -27,11 +28,11 @@ const (
 )
 
 // ListConnectionPermissions lists all connection permission matching the given filter
-func (s *DashNGoImpl) ListConnectionPermissions(filter filters.V2Filter) []types.ConnectionPermissionItem {
+func (s *DashNGoImpl) ListConnectionPermissions(filter filters.V2Filter) []domain.ConnectionPermissionItem {
 	if !s.IsEnterprise() {
 		log.Fatal("Requires Enterprise to be enabled.  Please check your GDG configuration and try again")
 	}
-	result := make([]types.ConnectionPermissionItem, 0)
+	result := make([]domain.ConnectionPermissionItem, 0)
 	connections := s.ListConnections(filter)
 	for ndx, connection := range connections {
 
@@ -44,7 +45,7 @@ func (s *DashNGoImpl) ListConnectionPermissions(filter filters.V2Filter) []types
 			)
 			continue
 		}
-		entry := types.ConnectionPermissionItem{
+		entry := domain.ConnectionPermissionItem{
 			Connection:  &connections[ndx],
 			Permissions: permission.GetPayload(),
 		}
@@ -104,7 +105,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.V2Filter) []str
 			slog.Debug("File does not match pattern, skipping file", "filename", file)
 			continue
 		}
-		newEntries := new(types.ConnectionPermissionItem)
+		newEntries := new(domain.ConnectionPermissionItem)
 		err = json.Unmarshal(rawFolder, &newEntries)
 		if err != nil {
 			slog.Warn("Failed to Decode payload for file", "filename", fileLocation)

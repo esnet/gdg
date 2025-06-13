@@ -1,4 +1,4 @@
-package types
+package domain
 
 import (
 	"github.com/grafana/grafana-openapi-client-go/models"

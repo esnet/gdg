@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/internal/service/filters/v2"
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
@@ -20,7 +22,6 @@ import (
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/admin_users"
 	"github.com/grafana/grafana-openapi-client-go/client/users"
@@ -142,12 +143,12 @@ func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
 	return id == 1 || name == "admin"
 }
 
-func (s *DashNGoImpl) UploadUsers(filter filters.V2Filter) []types.UserProfileWithAuth {
+func (s *DashNGoImpl) UploadUsers(filter filters.V2Filter) []domain.UserProfileWithAuth {
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), false)
 	if err != nil {
 		slog.Error("failed to list files in directory for userListings", "err", err)
 	}
-	var userListings []types.UserProfileWithAuth
+	var userListings []domain.UserProfileWithAuth
 	var rawUser []byte
 	userList := s.ListUsers(filter)
 	currentUsers := make(map[string]*models.UserSearchHitDTO, 0)
@@ -211,7 +212,7 @@ func (s *DashNGoImpl) UploadUsers(filter filters.V2Filter) []types.UserProfileWi
 				slog.Error("unable to read user back from grafana", "username", newUser.Email, "userID", userCreated.GetPayload().ID)
 				continue
 			}
-			userListings = append(userListings, types.UserProfileWithAuth{UserProfileDTO: *resp.GetPayload(), Password: string(newUser.Password)})
+			userListings = append(userListings, domain.UserProfileWithAuth{UserProfileDTO: *resp.GetPayload(), Password: string(newUser.Password)})
 		}
 	}
 

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"testing"
 
-	customModels "github.com/esnet/gdg/internal/types"
+	customModels "github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
