@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/service"
@@ -17,7 +19,6 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/gosimple/slug"
 
-	"github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
 
@@ -54,12 +55,12 @@ func TestFolderCRUD(t *testing.T) {
 	slog.Info("Listing all Folders")
 	folders := apiClient.ListFolders(nil)
 	assert.Equal(t, len(folders), 4)
-	firstDsItem := lo.FindOrElse(folders, nil, func(item *types.NestedHit) bool {
+	firstDsItem := lo.FindOrElse(folders, nil, func(item *domain.NestedHit) bool {
 		return item.Title == "Ignored"
 	})
 	assert.Equal(t, firstDsItem.Title, "Ignored")
 	assert.Equal(t, firstDsItem.FolderTitle, "")
-	secondDsItem := lo.FindOrElse(folders, nil, func(item *types.NestedHit) bool {
+	secondDsItem := lo.FindOrElse(folders, nil, func(item *domain.NestedHit) bool {
 		return item.Title == "Others"
 	})
 	assert.Equal(t, secondDsItem.Title, "Others")
@@ -143,7 +144,7 @@ func TestFolderPermissions(t *testing.T) {
 
 	data := apiClient.DownloadFolderPermissions(nil)
 	assert.Equal(t, len(data), 4)
-	permissionKeys := lo.Map(slices.Collect(maps.Keys(result)), func(item *types.NestedHit, index int) string {
+	permissionKeys := lo.Map(slices.Collect(maps.Keys(result)), func(item *domain.NestedHit, index int) string {
 		return fmt.Sprintf("test/data/org_main-org/folders-permissions/%s.json", slug.Make(item.NestedPath))
 	})
 	for _, item := range data {
@@ -185,7 +186,7 @@ func TestFolderNestedPermissions(t *testing.T) {
 
 	data := apiClient.DownloadFolderPermissions(nil)
 	assert.Equal(t, len(data), 4)
-	permissionKeys := lo.Map(slices.Collect(maps.Keys(result)), func(item *types.NestedHit, index int) string {
+	permissionKeys := lo.Map(slices.Collect(maps.Keys(result)), func(item *domain.NestedHit, index int) string {
 		return fmt.Sprintf("test/data/org_testing/folders-permissions/%s.json", slug.Make(item.NestedPath))
 	})
 	for _, item := range data {
@@ -215,13 +216,13 @@ func TestFolderNestedCRUD(t *testing.T) {
 	slog.Info("Listing all Folders")
 	folders := apiClient.ListFolders(nil)
 	assert.Equal(t, len(folders), 4)
-	firstDsItem := lo.FirstOrEmpty(lo.Filter(folders, func(item *types.NestedHit, index int) bool {
+	firstDsItem := lo.FirstOrEmpty(lo.Filter(folders, func(item *domain.NestedHit, index int) bool {
 		return item.NestedPath == "Others/dummy"
 	}))
 	assert.Equal(t, firstDsItem.Title, "dummy")
 	assert.Equal(t, firstDsItem.FolderTitle, "Others")
 	assert.Equal(t, firstDsItem.Type, models.HitType("dash-folder"))
-	secondDsItem := lo.FirstOrEmpty(lo.Filter(folders, func(item *types.NestedHit, index int) bool {
+	secondDsItem := lo.FirstOrEmpty(lo.Filter(folders, func(item *domain.NestedHit, index int) bool {
 		return item.NestedPath == "Others"
 	}))
 	assert.Equal(t, secondDsItem.Title, "Others")

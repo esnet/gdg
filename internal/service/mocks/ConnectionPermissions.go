@@ -5,8 +5,8 @@
 package mocks
 
 import (
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -144,19 +144,19 @@ func (_c *ConnectionPermissions_DownloadConnectionPermissions_Call) RunAndReturn
 }
 
 // ListConnectionPermissions provides a mock function for the type ConnectionPermissions
-func (_mock *ConnectionPermissions) ListConnectionPermissions(filter filters.V2Filter) []types.ConnectionPermissionItem {
+func (_mock *ConnectionPermissions) ListConnectionPermissions(filter filters.V2Filter) []domain.ConnectionPermissionItem {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListConnectionPermissions")
 	}
 
-	var r0 []types.ConnectionPermissionItem
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []types.ConnectionPermissionItem); ok {
+	var r0 []domain.ConnectionPermissionItem
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []domain.ConnectionPermissionItem); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]types.ConnectionPermissionItem)
+			r0 = ret.Get(0).([]domain.ConnectionPermissionItem)
 		}
 	}
 	return r0
@@ -186,12 +186,12 @@ func (_c *ConnectionPermissions_ListConnectionPermissions_Call) Run(run func(fil
 	return _c
 }
 
-func (_c *ConnectionPermissions_ListConnectionPermissions_Call) Return(connectionPermissionItems []types.ConnectionPermissionItem) *ConnectionPermissions_ListConnectionPermissions_Call {
+func (_c *ConnectionPermissions_ListConnectionPermissions_Call) Return(connectionPermissionItems []domain.ConnectionPermissionItem) *ConnectionPermissions_ListConnectionPermissions_Call {
 	_c.Call.Return(connectionPermissionItems)
 	return _c
 }
 
-func (_c *ConnectionPermissions_ListConnectionPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) []types.ConnectionPermissionItem) *ConnectionPermissions_ListConnectionPermissions_Call {
+func (_c *ConnectionPermissions_ListConnectionPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) []domain.ConnectionPermissionItem) *ConnectionPermissions_ListConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -5,8 +5,8 @@
 package mocks
 
 import (
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -313,19 +313,19 @@ func (_c *UsersApi_PromoteUser_Call) RunAndReturn(run func(userLogin string) (st
 }
 
 // UploadUsers provides a mock function for the type UsersApi
-func (_mock *UsersApi) UploadUsers(filter filters.V2Filter) []types.UserProfileWithAuth {
+func (_mock *UsersApi) UploadUsers(filter filters.V2Filter) []domain.UserProfileWithAuth {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UploadUsers")
 	}
 
-	var r0 []types.UserProfileWithAuth
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []types.UserProfileWithAuth); ok {
+	var r0 []domain.UserProfileWithAuth
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []domain.UserProfileWithAuth); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]types.UserProfileWithAuth)
+			r0 = ret.Get(0).([]domain.UserProfileWithAuth)
 		}
 	}
 	return r0
@@ -355,12 +355,12 @@ func (_c *UsersApi_UploadUsers_Call) Run(run func(filter filters.V2Filter)) *Use
 	return _c
 }
 
-func (_c *UsersApi_UploadUsers_Call) Return(userProfileWithAuths []types.UserProfileWithAuth) *UsersApi_UploadUsers_Call {
+func (_c *UsersApi_UploadUsers_Call) Return(userProfileWithAuths []domain.UserProfileWithAuth) *UsersApi_UploadUsers_Call {
 	_c.Call.Return(userProfileWithAuths)
 	return _c
 }
 
-func (_c *UsersApi_UploadUsers_Call) RunAndReturn(run func(filter filters.V2Filter) []types.UserProfileWithAuth) *UsersApi_UploadUsers_Call {
+func (_c *UsersApi_UploadUsers_Call) RunAndReturn(run func(filter filters.V2Filter) []domain.UserProfileWithAuth) *UsersApi_UploadUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }

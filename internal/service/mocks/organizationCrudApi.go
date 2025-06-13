@@ -5,8 +5,8 @@
 package mocks
 
 import (
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -91,19 +91,19 @@ func (_c *organizationCrudApi_DownloadOrganizations_Call) RunAndReturn(run func(
 }
 
 // ListOrganizations provides a mock function for the type organizationCrudApi
-func (_mock *organizationCrudApi) ListOrganizations(filter filters.V2Filter, withPreferences bool) []*types.OrgsDTOWithPreferences {
+func (_mock *organizationCrudApi) ListOrganizations(filter filters.V2Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
 	ret := _mock.Called(filter, withPreferences)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListOrganizations")
 	}
 
-	var r0 []*types.OrgsDTOWithPreferences
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter, bool) []*types.OrgsDTOWithPreferences); ok {
+	var r0 []*domain.OrgsDTOWithPreferences
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter, bool) []*domain.OrgsDTOWithPreferences); ok {
 		r0 = returnFunc(filter, withPreferences)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types.OrgsDTOWithPreferences)
+			r0 = ret.Get(0).([]*domain.OrgsDTOWithPreferences)
 		}
 	}
 	return r0
@@ -139,12 +139,12 @@ func (_c *organizationCrudApi_ListOrganizations_Call) Run(run func(filter filter
 	return _c
 }
 
-func (_c *organizationCrudApi_ListOrganizations_Call) Return(orgsDTOWithPreferencess []*types.OrgsDTOWithPreferences) *organizationCrudApi_ListOrganizations_Call {
+func (_c *organizationCrudApi_ListOrganizations_Call) Return(orgsDTOWithPreferencess []*domain.OrgsDTOWithPreferences) *organizationCrudApi_ListOrganizations_Call {
 	_c.Call.Return(orgsDTOWithPreferencess)
 	return _c
 }
 
-func (_c *organizationCrudApi_ListOrganizations_Call) RunAndReturn(run func(filter filters.V2Filter, withPreferences bool) []*types.OrgsDTOWithPreferences) *organizationCrudApi_ListOrganizations_Call {
+func (_c *organizationCrudApi_ListOrganizations_Call) RunAndReturn(run func(filter filters.V2Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences) *organizationCrudApi_ListOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/samber/lo"
@@ -17,7 +19,6 @@ import (
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/types"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -68,7 +69,7 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 	permissionFilters := service.NewConnectionFilter("")
 	currentPerms := apiClient.ListConnectionPermissions(permissionFilters)
 	assert.Equal(t, len(currentPerms), 3)
-	var entry *types.ConnectionPermissionItem
+	var entry *domain.ConnectionPermissionItem
 	for ndx, item := range currentPerms {
 		if item.Connection.Name == "Google Sheets" {
 			entry = &currentPerms[ndx]

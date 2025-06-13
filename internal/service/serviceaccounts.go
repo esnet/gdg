@@ -5,9 +5,9 @@ import (
 	"log"
 	"log/slog"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/esnet/gdg/internal/service/domain"
 
-	"github.com/esnet/gdg/internal/types"
+	"github.com/esnet/gdg/internal/tools/ptr"
 
 	"github.com/grafana/grafana-openapi-client-go/client/service_accounts"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -44,7 +44,7 @@ func (s *DashNGoImpl) CreateServiceAccountToken(serviceAccountId int64, name str
 	return token.GetPayload(), nil
 }
 
-func (s *DashNGoImpl) ListServiceAccounts() []*types.ServiceAccountDTOWithTokens {
+func (s *DashNGoImpl) ListServiceAccounts() []*domain.ServiceAccountDTOWithTokens {
 	p := service_accounts.NewSearchOrgServiceAccountsWithPagingParams()
 	p.Disabled = ptr.Of(false)
 	p.Perpage = ptr.Of(int64(5000))
@@ -54,8 +54,8 @@ func (s *DashNGoImpl) ListServiceAccounts() []*types.ServiceAccountDTOWithTokens
 		log.Fatal("unable to retrieve service accounts")
 	}
 	data := resp.GetPayload()
-	result := lo.Map(data.ServiceAccounts, func(entity *models.ServiceAccountDTO, _ int) *types.ServiceAccountDTOWithTokens {
-		t := types.ServiceAccountDTOWithTokens{
+	result := lo.Map(data.ServiceAccounts, func(entity *models.ServiceAccountDTO, _ int) *domain.ServiceAccountDTOWithTokens {
+		t := domain.ServiceAccountDTOWithTokens{
 			ServiceAccount: entity,
 		}
 		return &t

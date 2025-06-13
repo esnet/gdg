@@ -5,9 +5,9 @@
 package mocks
 
 import (
+	types0 "github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/service/types"
-	types0 "github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
