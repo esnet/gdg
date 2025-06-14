@@ -58,11 +58,39 @@ type DashboardsApi interface {
 	LintDashboards(req types.LintRequest) []string
 }
 
-type AlertingApi interface {
+type AlertContactPoints interface {
 	ListContactPoints() ([]*models.EmbeddedContactPoint, error)
 	DownloadContactPoints() (string, error)
 	ClearContactPoints() ([]string, error)
 	UploadContactPoints() ([]string, error)
+}
+
+type AlertRules interface {
+	DownloadAlertRules() (string, error)
+	ListAlertRules() ([]*models.ProvisionedAlertRule, error)
+	ClearAlertRules() ([]string, error)
+	UploadAlertRules() error
+}
+
+type AlertTemplates interface {
+	DownloadAlertTemplates() (string, error)
+	ListAlertTemplates() ([]*models.NotificationTemplate, error)
+	ClearAlertTemplates() ([]string, error)
+	UploadAlertTemplates() ([]string, error)
+}
+
+type AlertNotifications interface {
+	DownloadAlertNotifications() (string, error)
+	ListAlertNotifications() (*models.Route, error)
+	ClearAlertNotifications() error
+	UploadAlertNotifications() (*models.Route, error)
+}
+
+type AlertingApi interface {
+	AlertContactPoints
+	AlertRules
+	AlertTemplates
+	AlertNotifications
 }
 
 type DashboardPermissionsApi interface {

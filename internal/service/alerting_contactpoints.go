@@ -19,6 +19,7 @@ import (
 
 const (
 	emailReceiver = "email receiver"
+	contactsFile  = "contacts"
 )
 
 func (s *DashNGoImpl) ListContactPoints() ([]*models.EmbeddedContactPoint, error) {
@@ -53,7 +54,7 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 		return item.Name != emailReceiver
 	})
 
-	dsPath := buildResourcePath("contacts", config.AlertingResource, s.isLocal(), s.globalConf.ClearOutput)
+	dsPath := buildResourcePath(contactsFile, config.AlertingResource, s.isLocal(), s.globalConf.ClearOutput)
 	if dsPacked, err = json.MarshalIndent(payload.ContactPoints, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
@@ -84,7 +85,7 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 		m[i.UID] = currentContacts[ndx]
 	}
 
-	fileLocation := buildResourcePath("contacts", config.AlertingResource, s.isLocal(), false)
+	fileLocation := buildResourcePath(contactsFile, config.AlertingResource, s.isLocal(), false)
 	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}

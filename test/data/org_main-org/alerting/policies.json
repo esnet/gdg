@@ -1,0 +1,41 @@
+{
+	"active_time_intervals": null,
+	"group_by": [
+		"grafana_folder",
+		"alertname"
+	],
+	"mute_time_intervals": null,
+	"provenance": "api",
+	"receiver": "grafana-default-email",
+	"routes": [
+		{
+			"active_time_intervals": null,
+			"group_by": null,
+			"mute_time_intervals": null,
+			"object_matchers": [
+				[
+					"foo",
+					"=",
+					"22"
+				]
+			],
+			"receiver": "grafana-default-email",
+			"routes": null
+		},
+		{
+			"active_time_intervals": null,
+			"continue": true,
+			"group_by": null,
+			"mute_time_intervals": null,
+			"object_matchers": [
+				[
+					"moo",
+					"=",
+					"23"
+				]
+			],
+			"receiver": "slack",
+			"routes": null
+		}
+	]
+}

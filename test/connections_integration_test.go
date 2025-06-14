@@ -147,7 +147,7 @@ func TestConnectionsCRUD(t *testing.T) {
 	apiClient.UploadConnections(filtersEntity)
 	slog.Info("Listing all connections")
 	dataSources := apiClient.ListConnections(filtersEntity)
-	assert.Equal(t, len(dataSources), 3)
+	assert.Equal(t, len(dataSources), 4)
 	dsItem := lo.FirstOrEmpty(lo.Filter(dataSources, func(item models.DataSourceListItemDTO, index int) bool {
 		return item.Name == "netsage"
 	}))

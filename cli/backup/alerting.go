@@ -16,16 +16,12 @@ func newAlertingCommand() simplecobra.Commander {
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"alert"}
-			// connections := cmd
-			// connections.PersistentFlags().StringP("connection", "", "", "filter by connection slug")
 		},
 		CommandsList: []simplecobra.Commander{
 			newAlertingContactCommand(),
-			// newClearConnectionsCmd(),
-			// newUploadConnectionsCmd(),
-			// newDownloadConnectionsCmd(),
-			// newListConnectionsCmd(),
-			// newConnectionsPermissionCmd(),
+			newAlertingRulesCommand(),
+			newAlertingTemplatesCommand(),
+			newAlertingNotificationCommand(),
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
