@@ -114,7 +114,7 @@ func newListAlertRulesCmd() simplecobra.Commander {
 				slog.Info("No alert rules found")
 			} else {
 				for _, link := range rules {
-					rootCmd.TableObj.AppendRow(table.Row{link.Title, link.UID, link.FolderUID, ptr.ValOf(link.RuleGroup), ptr.ValOf(link.For)})
+					rootCmd.TableObj.AppendRow(table.Row{ptr.ValOf(link.Title), link.UID, ptr.ValOf(link.FolderUID), ptr.ValOf(link.RuleGroup), ptr.ValOf(link.For)})
 				}
 				rootCmd.Render(cd.CobraCommand, rules)
 			}
