@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/internal/service/mocks"

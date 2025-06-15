@@ -10,7 +10,7 @@ import (
 
 	"github.com/avast/retry-go"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 )
 
 // GetConfiguredOrgId needed to call grafana API in order to configure the Grafana API correctly.  Invoking

@@ -603,8 +603,10 @@ github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR
 github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
-github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250615014847-cc9919940ed6 h1:KjIjvFIG/zRR/mq3EoKkoSHM5HObB54dkCR0G3gbIYI=
-github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250615014847-cc9919940ed6/go.mod h1:AOzHLStinAJHJmcih1eEbIRImxpT6enYUsZLnnOvhbo=
+github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250612080500-134a3bfdbe67 h1:i7Q2DAuobxny8zkC4PwfhLd171ChJDd5H7lhMBm1R0s=
+github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250612080500-134a3bfdbe67/go.mod h1:AOzHLStinAJHJmcih1eEbIRImxpT6enYUsZLnnOvhbo=
+github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250615154904-ccf372a9bf49 h1:rYlHLeEYDDe+J7ZD5ih6vwnbjxMG+s/q7rMTWG8zU7U=
+github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250615154904-ccf372a9bf49/go.mod h1:mVpsyFzbQbPMKDl6jswCRNEDyld7zniMTFC8FOg8eao=
 github.com/sagikazarmark/locafero v0.6.0 h1:ON7AQg37yzcRPU69mt7gwhFEBwxI6P9T4Qu3N51bwOk=
 github.com/sagikazarmark/locafero v0.6.0/go.mod h1:77OmuIc6VTraTXKXIs/uvUxKGUXjE1GbemJYHqdNjX0=
 github.com/sagikazarmark/slog-shim v0.1.0 h1:diDBnUNK9N/354PgrxMywXnAwEr1QZcOr6gto+ugjYE=

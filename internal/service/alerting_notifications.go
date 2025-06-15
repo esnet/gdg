@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/esnet/gdg/internal/config"
-	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/client/provisioning"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 )
 
 const (

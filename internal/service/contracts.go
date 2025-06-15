@@ -4,7 +4,7 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/service/types"
 	customModels "github.com/esnet/gdg/internal/types"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 )
 
 type ServerInfoApi interface {

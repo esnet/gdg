@@ -18,9 +18,9 @@ import (
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/esnet/gdg/internal/types"
 	"github.com/gosimple/slug"
-	"github.com/grafana/grafana-openapi-client-go/client"
-	"github.com/grafana/grafana-openapi-client-go/client/orgs"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/client"
+	"github.com/safaci2000/grafana-openapi-client-go/client/orgs"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
 )
 

@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"

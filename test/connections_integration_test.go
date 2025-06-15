@@ -20,7 +20,7 @@ import (
 	"github.com/esnet/gdg/internal/types"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 
 	"github.com/stretchr/testify/assert"
 )
