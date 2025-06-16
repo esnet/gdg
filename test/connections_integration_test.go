@@ -20,7 +20,7 @@ import (
 	"github.com/esnet/gdg/internal/types"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -147,7 +147,7 @@ func TestConnectionsCRUD(t *testing.T) {
 	apiClient.UploadConnections(filtersEntity)
 	slog.Info("Listing all connections")
 	dataSources := apiClient.ListConnections(filtersEntity)
-	assert.Equal(t, len(dataSources), 3)
+	assert.Equal(t, len(dataSources), 4)
 	dsItem := lo.FirstOrEmpty(lo.Filter(dataSources, func(item models.DataSourceListItemDTO, index int) bool {
 		return item.Name == "netsage"
 	}))

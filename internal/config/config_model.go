@@ -7,7 +7,7 @@ import (
 	"log/slog"
 	"regexp"
 
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
 )
 

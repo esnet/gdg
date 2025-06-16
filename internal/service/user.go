@@ -22,9 +22,9 @@ import (
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/types"
 	"github.com/gosimple/slug"
-	"github.com/grafana/grafana-openapi-client-go/client/admin_users"
-	"github.com/grafana/grafana-openapi-client-go/client/users"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/client/admin_users"
+	"github.com/safaci2000/grafana-openapi-client-go/client/users"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 	"github.com/tidwall/pretty"
 )
 

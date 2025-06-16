@@ -1,0 +1,15 @@
+{
+	"access": "proxy",
+	"basicAuth": true,
+	"id": 4,
+	"jsonData": {
+		"httpMethod": "POST"
+	},
+	"name": "prometheus",
+	"orgId": 1,
+	"type": "prometheus",
+	"typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+	"typeName": "Prometheus",
+	"uid": "eeov1g02ckveoe",
+	"url": "http://prometheus:9090"
+}

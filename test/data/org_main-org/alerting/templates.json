@@ -1,0 +1,12 @@
+[
+	{
+		"name": "test_tpl1",
+		"template": "{{- /* This is a copy of the \"default.message\" template. */ -}}\n{{- /* Edit the template name and template content as needed. */ -}}\n{{ define \"default.message.copy\" }}{{ if gt (len .Alerts.Firing) 0 }}**Firing**\n{{ template \"__text_alert_list.copy\" .Alerts.Firing }}{{ if gt (len .Alerts.Resolved) 0 }}\n\n{{ end }}{{ end }}{{ if gt (len .Alerts.Resolved) 0 }}**Resolved**\n{{ template \"__text_alert_list.copy\" .Alerts.Resolved }}{{ end }}{{ end }}\n\n{{ define \"__text_alert_list.copy\" }}{{ range . }}\nValue: {{ template \"__text_values_list.copy\" . }}\nLabels:\n{{ range .Labels.SortedPairs }} - {{ .Name }} = {{ .Value }}\n{{ end }}Annotations:\n{{ range .Annotations.SortedPairs }} - {{ .Name }} = {{ .Value }}\n{{ end }}{{ if gt (len .GeneratorURL) 0 }}Source: {{ .GeneratorURL }}\n{{ end }}{{ if gt (len .SilenceURL) 0 }}Silence: {{ .SilenceURL }}\n{{ end }}{{ if gt (len .DashboardURL) 0 }}Dashboard: {{ .DashboardURL }}\n{{ end }}{{ if gt (len .PanelURL) 0 }}Panel: {{ .PanelURL }}\n{{ end }}{{ end }}{{ end }}\n\n{{ define \"__text_values_list.copy\" }}{{ if len .Values }}{{ $first := true }}{{ range $refID, $value := .Values -}}\n{{ if $first }}{{ $first = false }}{{ else }}, {{ end }}{{ $refID }}={{ $value }}{{ end -}}\n{{ else }}[no value]{{ end }}{{ end }}",
+		"version": "ea62014659bb56f7"
+	},
+	{
+		"name": "tpl2_test",
+		"template": "{{- /* Example displaying additional information, such as runbook link, DashboardURL and SilenceURL, for each alert in the notification.*/ -}}\n{{- /* Edit the template name and template content as needed. */ -}}\n{{ define \"custom.alert_additional_details\" -}}\n{{ len .Alerts.Resolved }} resolved alert(s)\n{{ range .Alerts.Resolved -}}\n  {{ template \"alert.additional_details\" . -}}\n{{ end }}\n{{ len .Alerts.Firing }} firing alert(s)\n{{ range .Alerts.Firing -}}\n  {{ template \"alert.additional_details\" . -}}\n{{ end -}}\n{{ end -}}\n\n{{ define \"alert.additional_details\" }}\n- Dashboard: {{ .DashboardURL }}\n- Panel: {{ .PanelURL }}\n- AlertGenerator: {{ .GeneratorURL }}\n- Silence: {{ .SilenceURL }}\n- RunbookURL: {{ .Annotations.runbook_url}}\n{{ end -}}",
+		"version": "53e8e4dd5634e38a"
+	}
+]

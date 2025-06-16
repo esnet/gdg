@@ -17,8 +17,8 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
-	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/client/library_elements"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
 	"golang.org/x/exp/maps"
 )

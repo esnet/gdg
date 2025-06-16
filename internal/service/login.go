@@ -10,9 +10,9 @@ import (
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/go-openapi/strfmt"
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 
-	"github.com/grafana/grafana-openapi-client-go/client"
+	"github.com/safaci2000/grafana-openapi-client-go/client"
 )
 
 // Login sets admin flag and provisions the Extended API for calls unsupported by the OpenAPI spec.

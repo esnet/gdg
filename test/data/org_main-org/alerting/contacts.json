@@ -12,5 +12,19 @@
 				"uid": "fdxmqkyb5gl4xb"
 			}
 		]
+	},
+	{
+		"name": "slack",
+		"orgId": 1,
+		"receivers": [
+			{
+				"settings": {
+					"recipient": "testing",
+					"token": "moooo"
+				},
+				"type": "slack",
+				"uid": "aeov0rrgij7r4a"
+			}
+		]
 	}
 ]

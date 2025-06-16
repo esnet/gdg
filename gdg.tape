@@ -60,7 +60,7 @@ Output website/static/quickstart.gif
 Require echo
 
 Set Shell "bash"
-Set FontSize 24
+Set FontSize 20
 Set Width 1200
 Set Height 600
 
@@ -68,7 +68,7 @@ Type "gdg tools context list" Sleep 500ms  Enter
 Type "gdg tools context new demo" Sleep 2000ms  Enter Enter
 Type "dsAdmin" Sleep 200ms  Enter
 Type "dsSecret" Sleep 500ms  Enter
-Type "General,Other" Sleep 500ms  Enter
+Type "General,linux%2Fgnu/*" Sleep 500ms  Enter
 Type "http://localhost:3000" Sleep 500ms  Enter
 Type "test/data" Sleep 500ms  Enter
 Type "admin" Sleep 500ms  Enter
@@ -82,6 +82,7 @@ Type "y" Sleep 500ms  Enter
 Type "gdg backup dash list" Sleep 500ms  Enter
 Type "gdg backup dash download" Sleep 500ms  Enter
 Type "gdg backup dash clear" Sleep 500ms  Enter
+Type "y" Sleep 500ms  Enter
 Type "gdg backup dash list" Sleep 500ms  Enter
 
 

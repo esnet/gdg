@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/safaci2000/grafana-openapi-client-go/models"
 )
 
 func WithNestedToCreateLibraryElement(entry WithNested[*models.LibraryElementDTO]) *models.CreateLibraryElementCommand {
