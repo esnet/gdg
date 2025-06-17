@@ -18,7 +18,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.15.0
 	github.com/grafana/dashboard-linter v0.0.0-20241017155901-a9d6c25b7bd3
-	github.com/grafana/grafana-openapi-client-go v0.0.0-20250612080500-134a3bfdbe67
+	github.com/grafana/grafana-openapi-client-go v0.0.0-20250617151817-c0f8cbb88d5c
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/joho/godotenv v1.5.1
 	github.com/lmittmann/tint v1.0.7
@@ -278,7 +278,3 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-// Pointing to Fork of repo branck gdg to picke up alerting changes: https://github.com/grafana/grafana-openapi-client-go/pull/102
-// will fix this need. (Or a change in grafana proper)
-replace github.com/grafana/grafana-openapi-client-go => github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250615014847-cc9919940ed6
