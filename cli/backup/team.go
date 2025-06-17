@@ -9,8 +9,8 @@ import (
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/config"
 	api "github.com/esnet/gdg/internal/service"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/safaci2000/grafana-openapi-client-go/models"
 	"github.com/spf13/cobra"
 )
 

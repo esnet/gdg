@@ -18,6 +18,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.15.0
 	github.com/grafana/dashboard-linter v0.0.0-20241017155901-a9d6c25b7bd3
+	github.com/grafana/grafana-openapi-client-go v0.0.0-20250612080500-134a3bfdbe67
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/joho/godotenv v1.5.1
 	github.com/lmittmann/tint v1.0.7
@@ -215,7 +216,6 @@ require (
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/prometheus/prometheus v0.54.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250615154904-ccf372a9bf49 // indirect
 	github.com/sagikazarmark/locafero v0.6.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
@@ -279,6 +279,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-// Pointing to Fork of repo branck gdg to picke up alerting changes: https://github.com/safaci2000/grafana-openapi-client-go/pull/102
+// Pointing to Fork of repo branck gdg to picke up alerting changes: https://github.com/grafana/grafana-openapi-client-go/pull/102
 // will fix this need. (Or a change in grafana proper)
-//replace github.com/safaci2000/grafana-openapi-client-go => github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250615014847-cc9919940ed6
+replace github.com/grafana/grafana-openapi-client-go => github.com/safaci2000/grafana-openapi-client-go v0.0.0-20250615014847-cc9919940ed6

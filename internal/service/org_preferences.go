@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/safaci2000/grafana-openapi-client-go/models"
+	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
 // GetOrgPreferences returns the preferences for a given Org
