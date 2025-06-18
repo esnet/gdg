@@ -9,12 +9,12 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/types"
-	"github.com/safaci2000/grafana-openapi-client-go/client/access_control"
+	"github.com/grafana/grafana-openapi-client-go/client/access_control"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
-	"github.com/safaci2000/grafana-openapi-client-go/models"
+	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
 type PermissionType string

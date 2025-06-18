@@ -14,7 +14,7 @@ import (
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/gosimple/slug"
-	"github.com/safaci2000/grafana-openapi-client-go/models"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/slices"
 
 	"github.com/stretchr/testify/assert"

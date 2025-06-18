@@ -8,8 +8,8 @@ import (
 	"github.com/esnet/gdg/internal/tools/ptr"
 
 	"github.com/esnet/gdg/internal/config"
-	"github.com/safaci2000/grafana-openapi-client-go/client/provisioning"
-	"github.com/safaci2000/grafana-openapi-client-go/models"
+	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
+	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
 const (

@@ -17,7 +17,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
-	"github.com/safaci2000/grafana-openapi-client-go/models"
+	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
 func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.V2Filter) ([]types.DashboardAndPermissions, error) {
