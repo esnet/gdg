@@ -7,8 +7,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
@@ -17,10 +18,10 @@ import (
 )
 
 func setupReaders(t *testing.T, v filters.V2Filter) {
-	obj := types.NestedHit{}
+	obj := domain.NestedHit{}
 
 	err := v.RegisterReader(reflect.TypeOf(&obj), func(filterType filters.FilterType, a any) (any, error) {
-		val, ok := a.(*types.NestedHit)
+		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
@@ -104,7 +105,7 @@ func TestFilters(t *testing.T) {
 		return fmt.Errorf("tag was not found")
 	}, []string{"netsage", "Ho"})
 
-	obj := &types.NestedHit{
+	obj := &domain.NestedHit{
 		Hit: &models.Hit{
 			Tags: []string{"Ho  "},
 		},

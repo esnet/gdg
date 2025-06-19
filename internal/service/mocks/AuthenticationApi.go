@@ -5,7 +5,7 @@
 package mocks
 
 import (
-	"github.com/esnet/gdg/internal/types"
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -336,19 +336,19 @@ func (_c *AuthenticationApi_DeleteServiceAccountTokens_Call) RunAndReturn(run fu
 }
 
 // ListServiceAccounts provides a mock function for the type AuthenticationApi
-func (_mock *AuthenticationApi) ListServiceAccounts() []*types.ServiceAccountDTOWithTokens {
+func (_mock *AuthenticationApi) ListServiceAccounts() []*domain.ServiceAccountDTOWithTokens {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListServiceAccounts")
 	}
 
-	var r0 []*types.ServiceAccountDTOWithTokens
-	if returnFunc, ok := ret.Get(0).(func() []*types.ServiceAccountDTOWithTokens); ok {
+	var r0 []*domain.ServiceAccountDTOWithTokens
+	if returnFunc, ok := ret.Get(0).(func() []*domain.ServiceAccountDTOWithTokens); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types.ServiceAccountDTOWithTokens)
+			r0 = ret.Get(0).([]*domain.ServiceAccountDTOWithTokens)
 		}
 	}
 	return r0
@@ -371,12 +371,12 @@ func (_c *AuthenticationApi_ListServiceAccounts_Call) Run(run func()) *Authentic
 	return _c
 }
 
-func (_c *AuthenticationApi_ListServiceAccounts_Call) Return(serviceAccountDTOWithTokenss []*types.ServiceAccountDTOWithTokens) *AuthenticationApi_ListServiceAccounts_Call {
+func (_c *AuthenticationApi_ListServiceAccounts_Call) Return(serviceAccountDTOWithTokenss []*domain.ServiceAccountDTOWithTokens) *AuthenticationApi_ListServiceAccounts_Call {
 	_c.Call.Return(serviceAccountDTOWithTokenss)
 	return _c
 }
 
-func (_c *AuthenticationApi_ListServiceAccounts_Call) RunAndReturn(run func() []*types.ServiceAccountDTOWithTokens) *AuthenticationApi_ListServiceAccounts_Call {
+func (_c *AuthenticationApi_ListServiceAccounts_Call) RunAndReturn(run func() []*domain.ServiceAccountDTOWithTokens) *AuthenticationApi_ListServiceAccounts_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -5,8 +5,8 @@
 package mocks
 
 import (
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -151,23 +151,23 @@ func (_c *DashboardPermissionsApi_DownloadDashboardPermissions_Call) RunAndRetur
 }
 
 // ListDashboardPermissions provides a mock function for the type DashboardPermissionsApi
-func (_mock *DashboardPermissionsApi) ListDashboardPermissions(filterReq filters.V2Filter) ([]types.DashboardAndPermissions, error) {
+func (_mock *DashboardPermissionsApi) ListDashboardPermissions(filterReq filters.V2Filter) ([]domain.DashboardAndPermissions, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListDashboardPermissions")
 	}
 
-	var r0 []types.DashboardAndPermissions
+	var r0 []domain.DashboardAndPermissions
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]types.DashboardAndPermissions, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]domain.DashboardAndPermissions, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []types.DashboardAndPermissions); ok {
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []domain.DashboardAndPermissions); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]types.DashboardAndPermissions)
+			r0 = ret.Get(0).([]domain.DashboardAndPermissions)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
@@ -202,12 +202,12 @@ func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) Run(run func(fi
 	return _c
 }
 
-func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) Return(dashboardAndPermissionss []types.DashboardAndPermissions, err error) *DashboardPermissionsApi_ListDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) Return(dashboardAndPermissionss []domain.DashboardAndPermissions, err error) *DashboardPermissionsApi_ListDashboardPermissions_Call {
 	_c.Call.Return(dashboardAndPermissionss, err)
 	return _c
 }
 
-func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) RunAndReturn(run func(filterReq filters.V2Filter) ([]types.DashboardAndPermissions, error)) *DashboardPermissionsApi_ListDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) RunAndReturn(run func(filterReq filters.V2Filter) ([]domain.DashboardAndPermissions, error)) *DashboardPermissionsApi_ListDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }

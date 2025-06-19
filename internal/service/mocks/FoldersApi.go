@@ -5,8 +5,8 @@
 package mocks
 
 import (
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -198,19 +198,19 @@ func (_c *FoldersApi_DownloadFolders_Call) RunAndReturn(run func(filter filters.
 }
 
 // ListFolderPermissions provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) ListFolderPermissions(filter filters.V2Filter) map[*types.NestedHit][]*models.DashboardACLInfoDTO {
+func (_mock *FoldersApi) ListFolderPermissions(filter filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListFolderPermissions")
 	}
 
-	var r0 map[*types.NestedHit][]*models.DashboardACLInfoDTO
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) map[*types.NestedHit][]*models.DashboardACLInfoDTO); ok {
+	var r0 map[*domain.NestedHit][]*models.DashboardACLInfoDTO
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[*types.NestedHit][]*models.DashboardACLInfoDTO)
+			r0 = ret.Get(0).(map[*domain.NestedHit][]*models.DashboardACLInfoDTO)
 		}
 	}
 	return r0
@@ -240,30 +240,30 @@ func (_c *FoldersApi_ListFolderPermissions_Call) Run(run func(filter filters.V2F
 	return _c
 }
 
-func (_c *FoldersApi_ListFolderPermissions_Call) Return(nestedHitToDashboardACLInfoDTOs map[*types.NestedHit][]*models.DashboardACLInfoDTO) *FoldersApi_ListFolderPermissions_Call {
+func (_c *FoldersApi_ListFolderPermissions_Call) Return(nestedHitToDashboardACLInfoDTOs map[*domain.NestedHit][]*models.DashboardACLInfoDTO) *FoldersApi_ListFolderPermissions_Call {
 	_c.Call.Return(nestedHitToDashboardACLInfoDTOs)
 	return _c
 }
 
-func (_c *FoldersApi_ListFolderPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) map[*types.NestedHit][]*models.DashboardACLInfoDTO) *FoldersApi_ListFolderPermissions_Call {
+func (_c *FoldersApi_ListFolderPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO) *FoldersApi_ListFolderPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListFolders provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) ListFolders(filter filters.V2Filter) []*types.NestedHit {
+func (_mock *FoldersApi) ListFolders(filter filters.V2Filter) []*domain.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListFolders")
 	}
 
-	var r0 []*types.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*types.NestedHit); ok {
+	var r0 []*domain.NestedHit
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types.NestedHit)
+			r0 = ret.Get(0).([]*domain.NestedHit)
 		}
 	}
 	return r0
@@ -293,12 +293,12 @@ func (_c *FoldersApi_ListFolders_Call) Run(run func(filter filters.V2Filter)) *F
 	return _c
 }
 
-func (_c *FoldersApi_ListFolders_Call) Return(nestedHits []*types.NestedHit) *FoldersApi_ListFolders_Call {
+func (_c *FoldersApi_ListFolders_Call) Return(nestedHits []*domain.NestedHit) *FoldersApi_ListFolders_Call {
 	_c.Call.Return(nestedHits)
 	return _c
 }
 
-func (_c *FoldersApi_ListFolders_Call) RunAndReturn(run func(filter filters.V2Filter) []*types.NestedHit) *FoldersApi_ListFolders_Call {
+func (_c *FoldersApi_ListFolders_Call) RunAndReturn(run func(filter filters.V2Filter) []*domain.NestedHit) *FoldersApi_ListFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
