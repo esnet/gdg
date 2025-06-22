@@ -21,12 +21,18 @@ aka. Folder named `/t/'n / r'/booh/k & r` will be stored locally as: `t/n+%2F+r/
 This should allow us to support any folder name but if you have a folder with special characters in its name any regex you
 are using should be updated accordingly.
 
+### Min Recommended Grafana Versions:
+
+While most behavior should be backward compatible gdg v0.8.x is tested with grafana 11 and 12. Anything older use at your own
+risk. Please use grafana +11.
 
 ### Breaking Changes
-
+  - [#374](https://github.com/esnet/gdg/pull/374) Removed Tooling around creating a token, service account has replaced this feature.
+  - [#412](https://github.com/esnet/gdg/issues/412) Updates to library elements introducing a new data model. Previous backups will not be compatible with v0.8
 
 ### Changes
-- [#408](https://github.com/esnet/gdg/issues/408) Nested Folder support added. (Only available in grafana +v11)
+- [#408](https://github.com/esnet/gdg/issues/408) Nested Folder support added as a default behavior
+- [#134](https://github.com/esnet/gdg/issues/134) Adding support for Alerting entities. (rules, contact points, templates, policies)
 
 ### Bug/Security Fixes
 - [#425](https://github.com/esnet/gdg/pull/425) Fixing behavior with missing trailing slash
@@ -35,5 +41,9 @@ are using should be updated accordingly.
 - [#411](https://github.com/esnet/gdg/pull/411) [TechDebt] Removing references to InitTestLegacy (#411)
 - Upgraded to latest grafana openapi client.
 
-
+### Tech Updates
+  - updated to latest grafana-api client.
+  - various golang/npm updates
+  - removed and updated tests to no longer use a deprecated pattern.
+  - gopls modernize tool updates
 

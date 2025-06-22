@@ -34,3 +34,10 @@ Maybe? If there's enough cycles, it could benefit others, and the feature makes 
 ### I need help, where do I go?
 
 There is a "Discussion" area on github where you can start a [conversation](https://github.com/esnet/gdg/discussions) and ask questions.  If you think this is a bug in GDG itself, then please file an issue [here](https://github.com/esnet/gdg/issues).  There is a small slack on channel titled `#gdg` in the grafana slack, you're free to join [here](https://slack.grafana.com/)
+
+### I don't like GDG because of: A, B, C... what else can I use
+
+ - Recently Grafana released an official tool to manage resources: https://github.com/grafana/grafanactl
+ - [Grizzly](https://github.com/grafana/grizzly/) Prior version of GrafanaCTL
+
+Know of any others? Create a PR and add it to the list
