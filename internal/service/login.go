@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/go-openapi/strfmt"
@@ -52,7 +54,7 @@ func GetOrgNameClientOpts(orgName string) NewClientOpts {
 	}
 
 	return func(clientCfg *client.TransportConfig) {
-		clientCfg.OrgID = config.DefaultOrganizationId
+		clientCfg.OrgID = domain.DefaultOrganizationId
 	}
 }
 

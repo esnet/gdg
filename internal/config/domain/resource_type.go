@@ -1,4 +1,4 @@
-package config
+package domain
 
 import (
 	"fmt"
@@ -49,9 +49,9 @@ func (s *ResourceType) String() string {
 }
 
 // GetPath returns the path of the resource type, if Namespaced, will delimit the path by org Id
-func (s *ResourceType) GetPath(basePath string) string {
+func (s *ResourceType) GetPath(basePath string, orgName string) string {
 	if s.isNamespaced() {
-		orgName := slug.Make(Config().GetDefaultGrafanaConfig().GetOrganizationName())
+		orgName = slug.Make(orgName)
 		return path.Join(basePath, fmt.Sprintf("%s_%s", OrganizationMetaResource, orgName), s.String())
 
 	}

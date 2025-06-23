@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -77,7 +79,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 	assert.Equal(t, context, "qa")
 	grafanaConf := config.Config().GetDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
-	grafanaConf.MonitoredFoldersOverride = []config.MonitoredOrgFolders{{
+	grafanaConf.MonitoredFoldersOverride = []domain.MonitoredOrgFolders{{
 		OrganizationName: "Your Org",
 		Folders:          []string{"General", "SpecialFolder"},
 	}}
@@ -126,7 +128,7 @@ func TestConfigEnv(t *testing.T) {
 	assert.Equal(t, url, "grafana.com")
 }
 
-func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
+func validateGrafanaQA(t *testing.T, grafana *domain.GrafanaConfig) {
 	assert.Equal(t, "https://staging.grafana.com", grafana.URL)
 	assert.Equal(t, "<CHANGEME>", grafana.APIToken)
 	assert.Equal(t, "", grafana.UserName)
@@ -134,20 +136,20 @@ func validateGrafanaQA(t *testing.T, grafana *config.GrafanaConfig) {
 	folders := grafana.GetMonitoredFolders(false)
 	assert.True(t, slices.Contains(folders, "Folder1"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
-	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(config.ConnectionResource))
-	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(config.DashboardResource))
+	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(domain.ConnectionResource))
+	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(domain.DashboardResource))
 	dsSettings := grafana.ConnectionSettings
 	request := models.AddDataSourceCommand{}
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)
 	// Last Entry is the default
-	secureLoc := grafana.GetPath(config.SecureSecretsResource)
+	secureLoc := grafana.GetPath(domain.SecureSecretsResource)
 	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(secureLoc)
 	assert.Nil(t, err)
 	assert.Equal(t, "user", defaultSettings.User())
 	assert.Equal(t, "password", defaultSettings.Password())
 
 	request.Name = "Complex Name"
-	securePath := grafana.GetPath(config.SecureSecretsResource)
+	securePath := grafana.GetPath(domain.SecureSecretsResource)
 	defaultSettings, _ = dsSettings.GetCredentials(request, securePath)
 	assert.Equal(t, "test", defaultSettings.User())
 	assert.Equal(t, "secret", defaultSettings.Password())

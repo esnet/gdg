@@ -8,14 +8,16 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/AlecAivazis/survey/v2"
 )
 
 func (s *Configuration) NewContext(name string) {
 	name = strings.ToLower(name) // forces lowercase contexts
-	answers := GrafanaConfig{
-		ConnectionSettings: &ConnectionSettings{
-			MatchingRules: make([]RegexMatchesList, 0),
+	answers := domain.GrafanaConfig{
+		ConnectionSettings: &domain.ConnectionSettings{
+			MatchingRules: make([]domain.RegexMatchesList, 0),
 		},
 	}
 	promptAnswers := struct {
@@ -102,12 +104,12 @@ func (s *Configuration) NewContext(name string) {
 
 	// Set Default Datasource
 	if promptAnswers.DSUser != "" && promptAnswers.DSPassword != "" {
-		ds := GrafanaConnection{
+		ds := domain.GrafanaConnection{
 			"user":              promptAnswers.DSUser,
 			"basicAuthPassword": promptAnswers.DSPassword,
 		}
 
-		location := filepath.Join(answers.OutputPath, string(SecureSecretsResource))
+		location := filepath.Join(answers.OutputPath, string(domain.SecureSecretsResource))
 		err = os.MkdirAll(location, 0o750)
 		if err != nil {
 			log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
@@ -121,9 +123,9 @@ func (s *Configuration) NewContext(name string) {
 		if err != nil {
 			log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
 		}
-		answers.ConnectionSettings.MatchingRules = []RegexMatchesList{
+		answers.ConnectionSettings.MatchingRules = []domain.RegexMatchesList{
 			{
-				Rules: []MatchingRule{
+				Rules: []domain.MatchingRule{
 					{
 						Field: "name",
 						Regex: ".*",

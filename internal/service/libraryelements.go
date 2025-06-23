@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"strings"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
@@ -176,7 +178,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.V2Filter) []string 
 			folderName = val
 		}
 
-		libraryPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderName, config.LibraryElementResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(item.Entity.Name))
+		libraryPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderName, configDomain.LibraryElementResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(item.Entity.Name))
 
 		if err = s.storage.WriteFile(libraryPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err, "library-element", slug.Make(item.Entity.Name))
@@ -197,8 +199,9 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 		folderName        string
 	)
 
-	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource))
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource), true)
+	orgName := s.grafanaConf.GetOrganizationName()
+	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.LibraryElementResource, orgName))
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.LibraryElementResource, orgName), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for library elements", "err", err)
 	}
@@ -224,7 +227,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = getFolderFromResourcePath(file, config.LibraryElementResource, s.storage.GetPrefix())
+		folderName, err = getFolderFromResourcePath(file, configDomain.LibraryElementResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 			folderName = DefaultFolderName

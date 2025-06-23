@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/spf13/viper"
@@ -27,8 +29,8 @@ func (s *Configuration) DefaultConfig() string {
 }
 
 func (s *Configuration) ClearContexts() {
-	newContext := make(map[string]*GrafanaConfig)
-	newContext["example"] = &GrafanaConfig{
+	newContext := make(map[string]*domain.GrafanaConfig)
+	newContext["example"] = &domain.GrafanaConfig{
 		APIToken: "dummy",
 	}
 	appCfg := s.GetGDGConfig()
@@ -43,7 +45,7 @@ func (s *Configuration) ClearContexts() {
 }
 
 // GetDefaultGrafanaConfig returns the default aka. selected grafana config
-func (s *Configuration) GetDefaultGrafanaConfig() *GrafanaConfig {
+func (s *Configuration) GetDefaultGrafanaConfig() *domain.GrafanaConfig {
 	name := s.GetGDGConfig().GetContext()
 
 	val, ok := s.GetGDGConfig().GetContexts()[name]
@@ -163,7 +165,7 @@ func (s *Configuration) GetCloudConfiguration(configName string) (string, map[st
 }
 
 // GetContexts returns map of all contexts
-func (s *Configuration) GetContexts() map[string]*GrafanaConfig {
+func (s *Configuration) GetContexts() map[string]*domain.GrafanaConfig {
 	return s.GetGDGConfig().GetContexts()
 }
 
@@ -193,23 +195,13 @@ func Config() *Configuration {
 }
 
 // GetGDGConfig return instance of gdg app configuration
-func (s *Configuration) GetGDGConfig() *GDGAppConfiguration {
+func (s *Configuration) GetGDGConfig() *domain.GDGAppConfiguration {
 	return s.gdgConfig
 }
 
 // GetTemplateConfig return instance of gdg app configuration
-func (s *Configuration) GetTemplateConfig() *TemplatingConfig {
+func (s *Configuration) GetTemplateConfig() *domain.TemplatingConfig {
 	return s.templatingConfig
-}
-
-func (s *TemplatingConfig) GetTemplate(name string) (*TemplateDashboards, bool) {
-	for ndx, t := range s.Entities.Dashboards {
-		if t.TemplateName == name {
-			return &s.Entities.Dashboards[ndx], true
-		}
-	}
-
-	return nil, false
 }
 
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
@@ -251,9 +243,9 @@ func InitGdgConfig(override string) {
 	}
 	var err error
 	var v *viper.Viper
-	configData.gdgConfig = new(GDGAppConfiguration)
+	configData.gdgConfig = new(domain.GDGAppConfiguration)
 
-	v, err = readViperConfig[GDGAppConfiguration](appName, configDirs, configData.gdgConfig, ext)
+	v, err = readViperConfig[domain.GDGAppConfiguration](appName, configDirs, configData.gdgConfig, ext)
 	if err != nil {
 		log.Fatal("No configuration file has been found or config is invalid.  Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg'].  " +
 			"Try using `gdg default-config > config/importer.yml` go use the default example")
@@ -286,4 +278,23 @@ func readViperConfig[T any](appName string, configDirs []string, object *T, ext 
 	}
 
 	return v, err
+}
+
+func InitTemplateConfig(override string) {
+	if configData == nil {
+		log.Fatal("GDG configuration was not able to be loaded, cannot continue")
+	}
+	var ext, appName string
+	var configDirs []string
+	if override == "" {
+		configDirs, appName, ext = buildConfigSearchPath("config/templates.yml")
+	} else {
+		configDirs, appName, ext = buildConfigSearchPath(override)
+	}
+	configData.templatingConfig = new(domain.TemplatingConfig)
+
+	_, err := readViperConfig[domain.TemplatingConfig](appName, configDirs, configData.templatingConfig, ext)
+	if err != nil {
+		log.Fatal("unable to read templating configuration")
+	}
 }

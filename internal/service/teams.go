@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/service/filters/v2"
 	"github.com/tidwall/gjson"
 
@@ -94,7 +96,7 @@ func NewTeamFilter(entries ...string) filters.V2Filter {
 func (s *DashNGoImpl) DownloadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
-	teamPath := BuildResourceFolder("", config.TeamResource, s.isLocal(), s.globalConf.ClearOutput)
+	teamPath := BuildResourceFolder("", domain.TeamResource, s.isLocal(), s.globalConf.ClearOutput)
 	for ndx, team := range teamListing {
 		// Teams
 		teamFileName := filepath.Join(teamPath, GetSlug(team.Name), "team.json")
@@ -129,7 +131,8 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.V2Filter) map[*models.TeamDTO
 
 // Export Teams
 func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.TeamResource), true)
+	orgName := s.grafanaConf.GetOrganizationName()
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(domain.TeamResource, orgName), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for teams", "err", err)
 	}
@@ -170,7 +173,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
 
-			teamMemberLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.TeamResource), GetSlug(newTeam.Name), "members.json")
+			teamMemberLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(domain.TeamResource, orgName), GetSlug(newTeam.Name), "members.json")
 			if rawMembers, err = s.storage.ReadFile(teamMemberLocation); err != nil {
 				slog.Error("failed to find team members", "filename", fileLocation, "err", err)
 				continue

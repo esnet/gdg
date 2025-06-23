@@ -5,6 +5,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/storage"
 
 	"github.com/esnet/gdg/internal/config"
@@ -51,25 +53,25 @@ func TestSlug(t *testing.T) {
 
 func TestUserPath(t *testing.T) {
 	fixEnvironment(t)
-	userPath := BuildResourceFolder("", config.UserResource, false, false)
+	userPath := BuildResourceFolder("", domain.UserResource, false, false)
 	assert.Equal(t, "test/data/users/", userPath)
 }
 
 func TestBuildDashboardPath(t *testing.T) {
 	fixEnvironment(t)
-	result := BuildResourceFolder("General", config.DashboardResource, false, false)
+	result := BuildResourceFolder("General", domain.DashboardResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/dashboards/General", result)
 }
 
 func TestBuildFolderSourcePath(t *testing.T) {
 	fixEnvironment(t)
-	result := buildResourcePath(slug.Make("Some Folder"), config.FolderResource, false, false)
+	result := buildResourcePath(slug.Make("Some Folder"), domain.FolderResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/folders/some-folder.json", result)
 }
 
 func TestBuildDataSourcePath(t *testing.T) {
 	fixEnvironment(t)
 
-	result := buildResourcePath(slug.Make("My DS"), config.ConnectionResource, false, false)
+	result := buildResourcePath(slug.Make("My DS"), domain.ConnectionResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/connections/my-ds.json", result)
 }

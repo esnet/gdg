@@ -7,6 +7,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/service/types"
@@ -16,7 +18,7 @@ import (
 
 func (s *DashNGoImpl) LintDashboards(req types.LintRequest) []string {
 	var rawBoard []byte
-	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
+	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(domain.DashboardResource, s.grafanaConf.GetOrganizationName())
 	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
 		log.Fatalf("unable to find any files to export from storage engine, err: %v", err)

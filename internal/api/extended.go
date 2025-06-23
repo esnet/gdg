@@ -4,13 +4,15 @@ import (
 	"crypto/tls"
 	"net/http"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/carlmjohnson/requests"
 	"github.com/esnet/gdg/internal/config"
 )
 
 // Most of these methods are here due to limitations in existing libraries being used.
 type ExtendedApi struct {
-	grafanaCfg *config.GrafanaConfig
+	grafanaCfg *domain.GrafanaConfig
 	debug      bool
 }
 

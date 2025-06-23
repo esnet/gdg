@@ -1,4 +1,4 @@
-package config
+package domain
 
 import (
 	"encoding/json"
@@ -108,8 +108,8 @@ func (s *GrafanaConfig) GetConnectionSettings() *ConnectionSettings {
 }
 
 // GetPath returns the path of the resource type
-func (s *GrafanaConfig) GetPath(r ResourceType) string {
-	return r.GetPath(s.OutputPath)
+func (s *GrafanaConfig) GetPath(r ResourceType, orgName string) string {
+	return r.GetPath(s.OutputPath, orgName)
 }
 
 // GetUserSettings returns configured UserSettings

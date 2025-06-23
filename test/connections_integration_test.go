@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -186,7 +188,7 @@ func TestConnectionFilter(t *testing.T) {
 	apiClient := r.ApiClient
 
 	testingContext := config.Config().GetGDGConfig().GetContexts()[common.TestContextName]
-	testingContext.GetConnectionSettings().FilterRules = []config.MatchingRule{
+	testingContext.GetConnectionSettings().FilterRules = []configDomain.MatchingRule{
 		{
 			Field: "name",
 			Regex: "DEV-*|-Dev-*",

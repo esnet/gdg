@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
@@ -117,7 +119,7 @@ func (s *DashNGoImpl) DownloadUsers(filter filters.V2Filter) []string {
 	userListing := s.ListUsers(filter)
 	var importedUsers []string
 
-	userPath := BuildResourceFolder("", config.UserResource, s.isLocal(), s.globalConf.ClearOutput)
+	userPath := BuildResourceFolder("", configDomain.UserResource, s.isLocal(), s.globalConf.ClearOutput)
 	for ndx, user := range userListing {
 		if s.isAdminUser(user.ID, user.Name) {
 			slog.Info("Skipping admin super user")
@@ -144,7 +146,8 @@ func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
 }
 
 func (s *DashNGoImpl) UploadUsers(filter filters.V2Filter) []domain.UserProfileWithAuth {
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), false)
+	orgName := s.grafanaConf.GetOrganizationName()
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.UserResource, orgName), false)
 	if err != nil {
 		slog.Error("failed to list files in directory for userListings", "err", err)
 	}
@@ -160,7 +163,7 @@ func (s *DashNGoImpl) UploadUsers(filter filters.V2Filter) []domain.UserProfileW
 	}
 
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.UserResource), file)
+		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.UserResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawUser, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)

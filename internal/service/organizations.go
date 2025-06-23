@@ -11,6 +11,8 @@ import (
 	"reflect"
 	"strings"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
@@ -282,7 +284,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter filters.V2Filter) []string {
 			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Organization.Name)
 			continue
 		}
-		dsPath := buildResourcePath(slug.Make(organisation.Organization.Name), config.OrganizationResource, s.isLocal(), s.globalConf.ClearOutput)
+		dsPath := buildResourcePath(slug.Make(organisation.Organization.Name), configDomain.OrganizationResource, s.isLocal(), s.globalConf.ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "organization", slug.Make(organisation.Organization.Name))
 		} else {
@@ -303,7 +305,8 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.V2Filter) []string {
 		result    []string
 		rawFolder []byte
 	)
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.OrganizationResource), false)
+	orgName := s.grafanaConf.GetOrganizationName()
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.OrganizationResource, orgName), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, err: %v", err)
 	}
@@ -314,7 +317,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.V2Filter) []string {
 	}
 
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.OrganizationResource), file)
+		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.OrganizationResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
@@ -397,7 +400,7 @@ func (s *DashNGoImpl) SwitchOrganizationByName(orgName string) error {
 	} else {
 		// Fallback on default
 		valid = true
-		orgId = config.DefaultOrganizationId
+		orgId = configDomain.DefaultOrganizationId
 	}
 
 	// We retrieved all the orgs successfully and none of them matched the requested ID

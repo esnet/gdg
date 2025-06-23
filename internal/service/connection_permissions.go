@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/grafana/grafana-openapi-client-go/client/access_control"
@@ -69,7 +71,7 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.V2Filter) []s
 			slog.Error("unable to marshall json ", "err", err.Error(), "connectionName", connection.Connection.Name)
 			continue
 		}
-		dsPath := buildResourcePath(slug.Make(connection.Connection.Name), config.ConnectionPermissionResource, s.isLocal(), s.globalConf.ClearOutput)
+		dsPath := buildResourcePath(slug.Make(connection.Connection.Name), configDomain.ConnectionPermissionResource, s.isLocal(), s.globalConf.ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(connection.Connection.Name), "error", err.Error())
 		} else {
@@ -89,12 +91,13 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.V2Filter) []str
 		dataFiles []string
 	)
 
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionPermissionResource), false)
+	orgName := s.grafanaConf.GetOrganizationName()
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.ConnectionPermissionResource, orgName), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders permission imports: %s", err.Error())
 	}
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.ConnectionPermissionResource), file)
+		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.ConnectionPermissionResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file %s", "filename", fileLocation, "err", err)

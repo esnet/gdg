@@ -13,6 +13,8 @@ import (
 	"sort"
 	"strings"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
@@ -370,7 +372,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.V2Filter) []string {
 		}
 
 		// fileName := buildDashboardFileName(link.NestedPath, metaData.GetPayload().Meta.Slug, folderUidMap, s.isLocal(), s.globalConf.ClearOutput)
-		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.NestedPath, config.DashboardResource, s.isLocal(), s.globalConf.ClearOutput), metaData.GetPayload().Meta.Slug)
+		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.NestedPath, configDomain.DashboardResource, s.isLocal(), s.globalConf.ClearOutput), metaData.GetPayload().Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
@@ -475,7 +477,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.V2Filter) ([]string, er
 		folderUid  string
 		dashFiles  []string
 	)
-	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
+	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.DashboardResource, s.grafanaConf.GetOrganizationName())
 	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find any dashFiles to export from storage engine, err: %w", err)
@@ -516,7 +518,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.V2Filter) ([]string, er
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = getFolderFromResourcePath(file, config.DashboardResource, s.storage.GetPrefix())
+		folderName, err = getFolderFromResourcePath(file, configDomain.DashboardResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 		}

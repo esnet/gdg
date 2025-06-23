@@ -1,8 +1,4 @@
-package config
-
-import (
-	"log"
-)
+package domain
 
 type TemplatingConfig struct {
 	Entities TemplateEntities `mapstructure:"entities"`
@@ -24,21 +20,12 @@ type TemplateDashboardEntity struct {
 	TemplateData     map[string]any `mapstructure:"template_data"`
 }
 
-func InitTemplateConfig(override string) {
-	if configData == nil {
-		log.Fatal("GDG configuration was not able to be loaded, cannot continue")
+func (s *TemplatingConfig) GetTemplate(name string) (*TemplateDashboards, bool) {
+	for ndx, t := range s.Entities.Dashboards {
+		if t.TemplateName == name {
+			return &s.Entities.Dashboards[ndx], true
+		}
 	}
-	var ext, appName string
-	var configDirs []string
-	if override == "" {
-		configDirs, appName, ext = buildConfigSearchPath("config/templates.yml")
-	} else {
-		configDirs, appName, ext = buildConfigSearchPath(override)
-	}
-	configData.templatingConfig = new(TemplatingConfig)
 
-	_, err := readViperConfig[TemplatingConfig](appName, configDirs, configData.templatingConfig, ext)
-	if err != nil {
-		log.Fatal("unable to read templating configuration")
-	}
+	return nil, false
 }
