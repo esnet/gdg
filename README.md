@@ -31,24 +31,24 @@ New features particularly related to Orgs, ACLs, roles etc are far less likely t
 Current Entities supported (See official docs for more details)
 
 
-| Resource                 | Status                             | Regex Filtering | Authorization       | Enterprise Only |
-|--------------------------|------------------------------------|-----------------|---------------------|-----------------|
-| Connections              | Supported                          | Available       | Token/Basic         |                 |
-| Dashboards               | Supported                          | Available       | Token/Basic         |                 |
-| Folders                  | Supported                          | Optional        | Token/Basic         |                 |
-| Organization             | Supported                          | N/A             | Basic Grafana Admin |                 |
-| Teams                    | Supported                          | N/A             | Token/Basic         |                 |
-| Users                    | Supported                          | N/A             | Basic               |                 |
-| Library Elements         | Supported                          | Available       | Token/Basic         |                 |
-| Alerting                 | Partial Beta (Contact Points Only) |                 | Token/Basic         |                 |
-| Connections Permissions  | Supported                          |                 | Token/Basic         | X               |
+| Resource                 | Status    | Regex Filtering | Authorization       | Enterprise Only |
+|--------------------------|-----------|-----------------|---------------------|-----------------|
+| Connections              | Supported | Available       | Token/Basic         |                 |
+| Dashboards               | Supported | Available       | Token/Basic         |                 |
+| Folders                  | Supported | Optional        | Token/Basic         |                 |
+| Organization             | Supported | N/A             | Basic Grafana Admin |                 |
+| Teams                    | Supported | N/A             | Token/Basic         |                 |
+| Users                    | Supported | N/A             | Basic               |                 |
+| Library Elements         | Supported | Available       | Token/Basic         |                 |
+| Alerting                 | Beta      |                 | Token/Basic         |                 |
+| Connections Permissions  | Supported |                 | Token/Basic         | X               |
 
 
 ## Release conventions.
 
 GDG mostly follows the semver conventions with some minor modifications.
 
-For those that are unfamiliar semver referes to X.Y.Z version patterns with
+For those that are unfamiliar semver references to X.Y.Z version patterns with
 
   - X = Major version
   - Y = Minor version

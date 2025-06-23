@@ -8,12 +8,25 @@ Every namespace supporting CRUD operations has the functions: list, download, up
 ### Alerting
 
 Alerting is made up of several type of entities: ContactPoints, Alert Rules, Notification Policy and finally Templates.
-Currently only Contact Points is supported.
+
+Some entities have dependencies on one another.
+
+Example: Alert Rules need the contact points to exist in older to be created. They also need the folders or dashboards that they
+operate on to exist.
+
+{{< callout context="danger" title="Danger" icon="alert-octagon" >}}
+Unlike most other entities that GDG operates on, Alerting will be global to the Grafana organisation.
+
+All alerting entities will ignore folder watch list, and any other filter set.
+
+{{< /callout >}}
 
 #### Contact Points
 
 {{< callout note >}} Grafana has a contact point type named 'grafana-default-email' that has an inconsistent behavior.
-Unless it has been modified, GDG will ignore it on listing, download and upload.  If it has been modified, it will not be able to clear it due to grafana restriction  {{< /callout >}}
+Unless it has been modified, GDG will ignore it on listing, download and upload.
+If it has been modified, it will not be able to clear it due to grafana restriction and show an error for that particular
+entity.{{< /callout >}}
 
 ```sh
 ./bin/gdg backup alerting contactpoints list -- Lists all current contact points
@@ -21,6 +34,83 @@ Unless it has been modified, GDG will ignore it on listing, download and upload.
 ./bin/gdg backup alerting contactpoints upload -- Upload all contact points
 ./bin/gdg backup alerting contactpoints clear -- Clear all contact points
 ```
+{{< details "Example Output:" >}}
+```
+┌────────────────┬─────────┬─────────┬───────────────────────────────────────────────────┐
+│ UID            │ NAME    │ TYPE    │ SETTINGS                                          │
+├────────────────┼─────────┼─────────┼───────────────────────────────────────────────────┤
+│ fdxmqkyb5gl4xb │ discord │ discord │ {"url":"[REDACTED]","use_discord_username":false} │
+│ aeov0rrgij7r4a │ slack   │ slack   │ {"recipient":"testing","token":"[REDACTED]"}      │
+└────────────────┴─────────┴─────────┴───────────────────────────────────────────────────┘
+```
+{{< /details >}}
+
+#### Notifications
+
+```sh
+./bin/gdg backup alerting notifications list -- Lists all current contact points
+./bin/gdg backup alerting notifications download  -- Download all known contact points
+./bin/gdg backup alerting notifications upload -- Upload all contact points
+./bin/gdg backup alerting notifications clear -- Clear all contact points
+```
+{{< details "Example Output:" >}}
+```
+┌───────────────────────┬──────────────┐
+│ UID                   │              │
+│ RECEIVER              │ MATCHERS     │
+├───────────────────────┼──────────────┤
+│ grafana-default-email │ [[foo = 22]] │
+│ slack                 │ [[moo = 23]] │
+└───────────────────────┴──────────────┘
+```
+{{< /details >}}
+
+#### Rules
+
+```sh
+./bin/gdg backup alerting rules list -- Lists all rules
+./bin/gdg backup alerting rules download  -- Download all known rules
+./bin/gdg backup alerting rules upload -- Upload all rules
+./bin/gdg backup alerting rules clear -- Clear all rules
+```
+
+
+{{< details "Example Output:" >}}
+```
+┌──────┬────────────────┬────────────────┬───────────┬───────┐
+│ NAME │ UID            │ FOLDERUID      │ RULEGROUP │   FOR │
+├──────┼────────────────┼────────────────┼───────────┼───────┤
+│ boom │ aeozpk1wn93b4b │ aen349iiivdhcf │ L2        │ 10m0s │
+│ moo  │ ceozp0ovszy80c │ den349iklsbuoc │ L1        │  1m0s │
+└──────┴────────────────┴────────────────┴───────────┴───────┘
+```
+{{< /details >}}
+
+
+
+
+#### Templates
+
+
+```sh
+./bin/gdg backup alerting templates list -- Lists all templates
+./bin/gdg backup alerting templates download  -- Download all templates
+./bin/gdg backup alerting templates upload -- Upload all contact templates
+./bin/gdg backup alerting templates clear -- Clear all templates
+```
+{{< details "Example Output:" >}}
+```
+┌───────────┬────────────┬───────────────────────────────────────────────────────┬──────────────────┐
+│ NAME      │ PROVENANCE │ TEMPLATE SNIPPET                                      │ VERSION          │
+├───────────┼────────────┼───────────────────────────────────────────────────────┼──────────────────┤
+│ test_tpl1 │ api        │ {{- /* This is a copy of the "default.message" tem... │ ea62014659bb56f7 │
+│ tpl2_test │ api        │ {{- /* Example displaying additional information, ... │ 53e8e4dd5634e38a │
+└───────────┴────────────┴───────────────────────────────────────────────────────┴──────────────────┘
+```
+{{< /details >}}
+
+
+
 
 ### Connections
 

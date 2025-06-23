@@ -70,11 +70,11 @@ The default rule is defined below.  This should match every possible condition a
 ```
 ### Dashboard Settings
 
-The entires under `dashboard_settings` define custom behavior for how dashboards are imported.  They can be typically ignored unless you wish to enable a specialized behavior.
+The entries under `dashboard_settings` define custom behavior for how dashboards are imported.  They can be typically ignored unless you wish to enable a specialized behavior.
 
 Valid values are:
 
-- `ignore_filters`: if you wish to download EVERY folder in grafana and disregard watched folders then set this to true.
+- `ignore_filters`: if you wish to download EVERY folder in grafana and disregard watched folders then set this to true. (Excluding CLI params)
 
 ### Monitored Folders
 

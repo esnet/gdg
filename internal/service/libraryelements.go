@@ -123,7 +123,6 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*customMode
 	}
 
 	params := library_elements.NewGetLibraryElementsParams()
-	// params.FolderFilter = &folderList
 	params.Kind = ptr.Of(listLibraryPanels)
 	libraryElements, err := s.GetClient().LibraryElements.GetLibraryElements(params)
 	if err != nil {
