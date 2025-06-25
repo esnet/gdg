@@ -10,17 +10,30 @@ You can configure gdg in a variety of different ways but if you want so use secr
 version: "3.8"
 services:
   app:
-    image: ghcr.io/esnet/gdg:0.7.2
-    command: ["-c", "/run/secrets/config.yml", "tools", "contexts", "show"]
+    image: ghcr.io/esnet/gdg:0.8.0
+    volumes:
+      - ./importer.yml:/app/config/importer.yml:ro
     secrets:
-      - config.yml
+      - staging_auth.json
+      - default.json
 
 secrets:
-  config.yml:
-    file: ./importer.yml
+  staging_auth.json:
+    file: ./staging_auth.json
+  default.json:
+    file: ./default_connection_auth.json
+
 ```
 
-alternatively you can create a bash script that replaces the entrypoint as can be seen below:
+Then update your config file with the following:
+
+`secure_location: /run/secrets/`
+
+For any connection settings, you will have to additionally define all the connection settings accordingly.
+
+### Prior to 0.8
+
+You can create a bash script that replaces the entrypoint as can be seen below:
 
 ```
 #!/bin/sh
@@ -29,8 +42,7 @@ GDG_CONTEXTS__DEV__PASSWORD=`cat "$GF_SECURITY_ADMIN_PASSWORD__FILE"` exec /app/
 
 Note, bash is not in previous containers, it will be added to later versions so you'll have to use sh instead of bash.
 
-
-This assumes that your grafana passwor is in a file called `gf_passwd`
+This assumes that your grafana password is in a file called `gf_passwd`
 
 ```yaml
 services:

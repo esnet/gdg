@@ -28,7 +28,7 @@ In order to add a new feature you will need to:
 0. Create an issue to track this work and explain the feature being added/requested.
 1. Create a new CLI subcommand for playlist. under the backup command.
 2. Extend the service to be able to list/download/upload etc the entities.
-3. Write a unit test for the given entities. If need be add some seed data under test/data/
+3. Write a unit test for the given entities. If needed, add some seed data under test/data/
 4. Update the documentation accordingly to reflect the new changes. All docs live under
    the [website/content](https://github.com/esnet/gdg/tree/main/website/content/docs). All files are in markdown. If
    you wish you can load the website locally by running: `npm install && hugo serve`
@@ -47,8 +47,3 @@ This area is more about managing grafana entities.  The tools would provide way 
 
 Testing such features can be a bit more difficult, but we can see enough data to validate the behavior that's always great and makes for a much more stable feature long term.
 
-### Enterprise features
-
-{{< callout context="caution" title="Caution" icon="alert-triangle" >}}
-There are a few enterprise features that GDG supports, but unfortunately as there is no enterprise version we can access in CICD testing is very limited.
-{{< /callout >}}

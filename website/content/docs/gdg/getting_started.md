@@ -7,7 +7,7 @@ weight: 11
 
 You can create new context configuration using an interactive setup.
 ```
-$ ./bin/gdg tools ctx new mycontext
+$ gdg tools contexts new mycontext
 ```
 
 When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:
@@ -15,6 +15,69 @@ When creating a new context, you will be asked for authorization type, your defa
 1. Default option ("General")
 2. List of folders you wish to manage
 3. Wildcard configuration (all folders)
+
+
+### Authentication Concepts
+
+First let's touch on a few things regrading grafana and authentication. You can connect to the grafana API (which is what GDG is using)
+by either using basic authentication (aka. username/password) or using a service token.
+
+Tokens are bound to a specific org and cannot cross the Org separation no matter what permission they are given.
+Users can be grafana admins, org admins ect. What they can/cannot do will vary on what entities you're trying to access.
+
+Anything do to with Org will require a grafana admin. If you're trying to fetch dashboards a service token will work fine.
+
+
+
+#### 1. Using Config:
+
+The simplest way to set up you auth is to have everything in the importer.yml. It's not a very secure pattern if you're
+deploying this to a remote server as everything is in plaintext, but it will get you started.
+
+This should be perfectly fine if you're only running this locally.
+
+Simply use the new context wizard reference above to set that up or set a value for: `password` and `token` for the given context.
+
+#### 2. Using Environment Variables:
+
+You can also override the value using ENV var that line up to the section you want do override:
+
+Ex:
+```sh
+GDG_CONTEXTS__TESTING__PASSWORD=1234
+GDG_CONTEXTS__TESTING__TOKED=1234
+ ```
+
+will set the token and password value to the one in the ENV.
+
+Keep in mind that the config entry for token and password still need to exist in the config file even if it's set to an empty value.
+
+
+{{< callout context="danger" title="Danger" icon="alert-octagon" >}}
+Be careful with using convenience utility around contexts (ake set, copy, delete, etc.) Anything that write to the config
+file will leak those credentials and persist them to the given config file.
+
+All alerting entities will ignore folder watch list, and any other filter set.
+
+{{< /callout >}}
+
+#### 3. Using a secure auth location:
+
+You can create an auth file in the secure folder with tho following format:
+
+```json
+{
+  "password": "4321",
+  "token": "shhh"
+}
+```
+
+for context named testing, the file would be called testing_auth.json stored is output_path/secure/ or whatever location you've
+configured to store your secure data in.
+
+#### Priority
+
+Secure Auth takes precedence over environment variables, and then config file.
 
 ### Import / Download Dashboards
 
