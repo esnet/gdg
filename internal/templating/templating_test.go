@@ -6,8 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/config/domain"
-
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 
 	"github.com/esnet/gdg/internal/config"
@@ -21,7 +19,7 @@ func TestGenerate(t *testing.T) {
 	// Setup
 	assert.NoError(t, path.FixTestDir("templating", "../.."))
 	config.InitGdgConfig(common.DefaultTestConfig)
-	domain.InitTemplateConfig("templates-example")
+	config.InitTemplateConfig("templates-example")
 	template := NewTemplate()
 	data, err := template.Generate("template_example")
 	assert.Nil(t, err)

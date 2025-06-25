@@ -1,6 +1,11 @@
 package domain
 
 import (
+	"encoding/json"
+	"fmt"
+	"log/slog"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -15,6 +20,8 @@ type dashFilter struct {
 
 // GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
+	contextName              string
+	secureAuth               *SecureModel
 	APIToken                 string                `mapstructure:"token" yaml:"token"`
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
@@ -30,6 +37,61 @@ type GrafanaConfig struct {
 	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
 	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
+}
+
+func (s *GrafanaConfig) getSecureAuth() *SecureModel {
+	if s.secureAuth != nil {
+		return s.secureAuth
+	}
+	securePath := s.SecureLocation()
+	name := fmt.Sprintf("%s_auth.json", s.contextName)
+	authFile := filepath.Join(securePath, name)
+	_, err := os.Stat(authFile)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	data, err := os.ReadFile(authFile)
+	if err != nil {
+		slog.Error("unable to read auth file, falling back on config/env values", "file", authFile, "err", err)
+		return nil
+	}
+	obj := SecureModel{}
+	err = json.Unmarshal(data, &obj)
+	if err != nil {
+		slog.Error("unable to unmarshal auth file", "file", authFile)
+	}
+	s.secureAuth = &obj
+	return s.secureAuth
+}
+
+func (s *GrafanaConfig) GetPassword() string {
+	secureAuth := s.getSecureAuth()
+	if secureAuth == nil || secureAuth.Password == "" {
+		return s.Password
+	}
+	return secureAuth.Password
+}
+
+func (s *GrafanaConfig) GetAPIToken() string {
+	secureAuth := s.getSecureAuth()
+	if secureAuth == nil || secureAuth.Token == "" {
+		return s.APIToken
+	}
+	return secureAuth.Token
+}
+
+func (s *GrafanaConfig) SecureLocation() string {
+	if s.SecureLocationOverride == "" {
+		return s.GetPath(SecureSecretsResource, s.GetOrganizationName())
+	}
+
+	// if path starts with a slash assume it's an absolute path
+	if s.SecureLocationOverride[0] == filepath.Separator {
+		return s.SecureLocationOverride
+	}
+	fullPah := filepath.Join(s.OutputPath, s.SecureLocationOverride)
+	fullPah = filepath.Clean(fullPah)
+	return fullPah
 }
 
 func (s *GrafanaConfig) getFilter() *dashFilter {
@@ -111,7 +173,7 @@ func (s *GrafanaConfig) SetGrafanaAdmin(admin bool) {
 
 // IsBasicAuth returns true if user has basic auth enabled
 func (s *GrafanaConfig) IsBasicAuth() bool {
-	if s.UserName != "" && s.Password != "" {
+	if s.UserName != "" && s.GetPassword() != "" {
 		return true
 	}
 

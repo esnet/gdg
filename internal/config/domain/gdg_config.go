@@ -2,6 +2,8 @@ package domain
 
 import (
 	"strings"
+
+	"github.com/gosimple/slug"
 )
 
 // GDGAppConfiguration is the configuration for the application
@@ -10,6 +12,12 @@ type GDGAppConfiguration struct {
 	StorageEngine map[string]map[string]string `mapstructure:"storage_engine" yaml:"storage_engine"`
 	Contexts      map[string]*GrafanaConfig    `mapstructure:"contexts" yaml:"contexts"`
 	Global        *AppGlobals                  `mapstructure:"global" yaml:"global"`
+}
+
+func (app *GDGAppConfiguration) UpdateContextNames() {
+	for key, cfg := range app.Contexts {
+		cfg.contextName = slug.Make(key)
+	}
 }
 
 func (app *GDGAppConfiguration) GetContext() string {

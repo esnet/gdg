@@ -33,10 +33,10 @@ func (extended *ExtendedApi) getRequestBuilder() *requests.Builder {
 		req = req.Transport(customTransport)
 	}
 
-	if extended.grafanaCfg.APIToken != "" {
-		req.Header("Authorization", "Bearer "+extended.grafanaCfg.APIToken)
+	if extended.grafanaCfg.GetAPIToken() != "" {
+		req.Header("Authorization", "Bearer "+extended.grafanaCfg.GetAPIToken())
 	} else {
-		req.BasicAuth(extended.grafanaCfg.UserName, extended.grafanaCfg.Password)
+		req.BasicAuth(extended.grafanaCfg.UserName, extended.grafanaCfg.GetPassword())
 	}
 
 	return req

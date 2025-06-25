@@ -1,9 +1,11 @@
 package config_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -128,29 +130,57 @@ func TestConfigEnv(t *testing.T) {
 	assert.Equal(t, url, "grafana.com")
 }
 
+func TestConfigSecurePath(t *testing.T) {
+	os.Setenv("GDG_CONTEXT_NAME", "testing")
+	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
+	config.InitGdgConfig(common.DefaultTestConfig)
+	grafanaCfg := config.Config().GetDefaultGrafanaConfig()
+	override := domain.SecureModel{
+		Password: "allyourbasesaremine!",
+		Token:    "1234",
+	}
+	securePath := filepath.Join(grafanaCfg.SecureLocation(), "testing_auth.json")
+	f, err := os.Create(securePath)
+	assert.NoError(t, err)
+	rawData, err := json.MarshalIndent(&override, "", "    ")
+	assert.NoError(t, err)
+	_, err = f.Write(rawData)
+	assert.NoError(t, err)
+	assert.NoError(t, f.Close())
+	defer os.Remove(securePath)
+	assert.Equal(t, grafanaCfg.GetPassword(), override.Password)
+	assert.Equal(t, grafanaCfg.GetAPIToken(), override.Token)
+	// Validate Secure Path behavior
+	grafanaCfg.SecureLocationOverride = "/tmp/foobar"
+	assert.Equal(t, grafanaCfg.SecureLocation(), grafanaCfg.SecureLocationOverride)
+	grafanaCfg.SecureLocationOverride = "../tmp/foobar"
+	location := grafanaCfg.SecureLocation()
+	assert.True(t, strings.Contains(location, "foobar"))
+	assert.True(t, strings.Contains(location, "test"))
+}
+
 func validateGrafanaQA(t *testing.T, grafana *domain.GrafanaConfig) {
 	assert.Equal(t, "https://staging.grafana.com", grafana.URL)
-	assert.Equal(t, "<CHANGEME>", grafana.APIToken)
+	assert.Equal(t, "<CHANGEME>", grafana.GetAPIToken())
 	assert.Equal(t, "", grafana.UserName)
-	assert.Equal(t, "", grafana.Password)
+	assert.Equal(t, "", grafana.GetPassword())
 	folders := grafana.GetMonitoredFolders(false)
 	assert.True(t, slices.Contains(folders, "Folder1"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
-	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(domain.ConnectionResource))
-	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(domain.DashboardResource))
+	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(domain.ConnectionResource, grafana.GetOrganizationName()))
+	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(domain.DashboardResource, grafana.GetOrganizationName()))
 	dsSettings := grafana.ConnectionSettings
 	request := models.AddDataSourceCommand{}
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)
 	// Last Entry is the default
-	secureLoc := grafana.GetPath(domain.SecureSecretsResource)
+	secureLoc := grafana.SecureLocation()
 	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(secureLoc)
 	assert.Nil(t, err)
 	assert.Equal(t, "user", defaultSettings.User())
 	assert.Equal(t, "password", defaultSettings.Password())
 
 	request.Name = "Complex Name"
-	securePath := grafana.GetPath(domain.SecureSecretsResource)
-	defaultSettings, _ = dsSettings.GetCredentials(request, securePath)
+	defaultSettings, _ = dsSettings.GetCredentials(request, secureLoc)
 	assert.Equal(t, "test", defaultSettings.User())
 	assert.Equal(t, "secret", defaultSettings.Password())
 }
