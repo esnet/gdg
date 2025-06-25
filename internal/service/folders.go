@@ -14,13 +14,16 @@ import (
 	"sort"
 	"strings"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
 	"github.com/esnet/gdg/internal/tools/encode"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/folder_permissions"
 	"github.com/grafana/grafana-openapi-client-go/client/folders"
@@ -36,8 +39,8 @@ const (
 
 func NewFolderFilter() filters.V2Filter {
 	filterObj := v2.NewBaseFilter()
-	err := filterObj.RegisterReader(reflect.TypeOf(&types.NestedHit{}), func(filterType filters.FilterType, a any) (any, error) {
-		val, ok := a.(*types.NestedHit)
+	err := filterObj.RegisterReader(reflect.TypeOf(&domain.NestedHit{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
@@ -91,7 +94,7 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.V2Filter) []strin
 		if fileName == "" {
 			fileName = folder.Title
 		}
-		dsPath := buildResourcePath(slug.Make(fileName), config.FolderPermissionResource, s.isLocal(), s.globalConf.ClearOutput)
+		dsPath := buildResourcePath(slug.Make(fileName), configDomain.FolderPermissionResource, s.isLocal(), s.globalConf.ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "filename", slug.Make(folder.Title))
 		} else {
@@ -108,12 +111,13 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.V2Filter) []string 
 		rawFolder []byte
 		dataFiles []string
 	)
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderPermissionResource), false)
+	orgName := s.grafanaConf.GetOrganizationName()
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.FolderPermissionResource, orgName), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders permission imports, %v", err)
 	}
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderPermissionResource), file)
+		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.FolderPermissionResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
@@ -145,16 +149,16 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.V2Filter) []string 
 
 // ListFolderPermissions retrieves all current folder permissions
 // TODO: add concurrency to folder permissions calls
-func (s *DashNGoImpl) ListFolderPermissions(filter filters.V2Filter) map[*types.NestedHit][]*models.DashboardACLInfoDTO {
+func (s *DashNGoImpl) ListFolderPermissions(filter filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
 	// get list of folders
-	var foldersList []*types.NestedHit
+	var foldersList []*domain.NestedHit
 	if filter == nil {
 		foldersList = s.ListFolders(nil)
 	} else {
 		foldersList = s.ListFolders(NewFolderFilter())
 	}
 
-	r := make(map[*types.NestedHit][]*models.DashboardACLInfoDTO)
+	r := make(map[*domain.NestedHit][]*models.DashboardACLInfoDTO)
 
 	for ndx, foldersEntry := range foldersList {
 		results, err := s.GetClient().FolderPermissions.GetFolderPermissionList(foldersEntry.UID)
@@ -179,8 +183,8 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.V2Filter) map[*types.
 }
 
 // ListFolders list the current existing folders that match the given filter.
-func (s *DashNGoImpl) ListFolders(filter filters.V2Filter) []*types.NestedHit {
-	result := make([]*types.NestedHit, 0)
+func (s *DashNGoImpl) ListFolders(filter filters.V2Filter) []*domain.NestedHit {
+	result := make([]*domain.NestedHit, 0)
 	if s.grafanaConf.GetDashboardSettings().IgnoreFilters {
 		filter = nil
 	}
@@ -192,10 +196,10 @@ func (s *DashNGoImpl) ListFolders(filter filters.V2Filter) []*types.NestedHit {
 		log.Fatal("unable to retrieve folder list.")
 	}
 
-	folderListing := make([]*types.NestedHit, 0)
+	folderListing := make([]*domain.NestedHit, 0)
 
 	lo.ForEach(folderRawListing.GetPayload(), func(item *models.Hit, index int) {
-		newItem := &types.NestedHit{Hit: item}
+		newItem := &domain.NestedHit{Hit: item}
 		folderListing = append(folderListing, newItem)
 	})
 	folderUid := getFolderUIDEntityMap(folderListing)
@@ -229,7 +233,7 @@ func (s *DashNGoImpl) DownloadFolders(filter filters.V2Filter) []string {
 			slog.Error("Unable to serialize data to JSON", "err", err, "folderName", folder.Title)
 			continue
 		}
-		dsPath := buildResourcePath(folder.NestedPath, config.FolderResource, s.isLocal(), s.globalConf.ClearOutput)
+		dsPath := buildResourcePath(folder.NestedPath, configDomain.FolderResource, s.isLocal(), s.globalConf.ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file.", "err", err.Error(), "folderName", slug.Make(folder.Title))
 		} else {
@@ -269,7 +273,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 		rawFolder []byte
 	)
 	// addFolder
-	addFolder := func(getCreateCmd func() (*models.CreateFolderCommand, error), existingFolders map[string]*types.NestedHit) (string, error) {
+	addFolder := func(getCreateCmd func() (*models.CreateFolderCommand, error), existingFolders map[string]*domain.NestedHit) (string, error) {
 		const empty = ""
 
 		newFolder, err := getCreateCmd()
@@ -291,7 +295,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 		return f.GetPayload().UID, err
 	}
 
-	resourceDir := s.grafanaConf.GetPath(config.FolderResource)
+	resourceDir := s.grafanaConf.GetPath(configDomain.FolderResource, s.grafanaConf.GetOrganizationName())
 	filesInDir, err := s.storage.FindAllFiles(resourceDir, true)
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, %v", err)
@@ -300,14 +304,14 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 	folderUidMap := getFolderUIDEntityMap(folderItems)
 	// build a mapping of the nested path to UID for all existing folders
 	nestedPathToUidExisting := getFolderMapping(folderItems,
-		func(fld *types.NestedHit) string {
+		func(fld *domain.NestedHit) string {
 			return getNestedFolder(fld.Title, fld.UID, folderUidMap)
 		},
-		func(fld *types.NestedHit) *types.NestedHit { return fld },
+		func(fld *domain.NestedHit) *domain.NestedHit { return fld },
 	)
 
 	// build nested path of local file for all files being processed
-	nestedPathMap := buildNestedFilePath(filesInDir)
+	nestedPathMap := buildNestedFilePath(filesInDir, s.grafanaConf.GetOrganizationName())
 	processed := make(map[string]bool)
 
 	for _, fileLocation := range filesInDir {
@@ -458,8 +462,8 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 }
 
 // buildNestedFilePath returns a dictionary of nestedPaths to a matching file if one exists.
-func buildNestedFilePath(files []string) map[string]string {
-	resourceBaseDir := config.Config().GetDefaultGrafanaConfig().GetPath(config.FolderResource)
+func buildNestedFilePath(files []string, orgName string) map[string]string {
+	resourceBaseDir := config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.FolderResource, orgName)
 	m := make(map[string]string)
 
 	for _, file := range files {
@@ -474,7 +478,7 @@ func buildNestedFilePath(files []string) map[string]string {
 func (s *DashNGoImpl) DeleteAllFolders(filter filters.V2Filter) []string {
 	var (
 		result        []string
-		folderListing []*types.NestedHit
+		folderListing []*domain.NestedHit
 	)
 	if filter == nil {
 		folderListing = s.ListFolders(nil)
@@ -501,7 +505,7 @@ func (s *DashNGoImpl) DeleteAllFolders(filter filters.V2Filter) []string {
 // getFolderMapping returns a mapping of any comparable T to any value based on the folder entity.
 // key is a function that takes the folder type as a parameter and returns the key to use for the resulting map.
 // val is a function that takes the folder type as a parameter and returns the value to set the map value to.
-func getFolderMapping[T comparable, V any](folders []*types.NestedHit, key func(fld *types.NestedHit) T, val func(fld *types.NestedHit) V) map[T]V {
+func getFolderMapping[T comparable, V any](folders []*domain.NestedHit, key func(fld *domain.NestedHit) T, val func(fld *domain.NestedHit) V) map[T]V {
 	m := make(map[T]V)
 	for _, f := range folders {
 		m[key(f)] = val(f)
@@ -510,22 +514,22 @@ func getFolderMapping[T comparable, V any](folders []*types.NestedHit, key func(
 }
 
 // getFolderUIDEntityMap helper function to build a mapping for name to folderID
-func getFolderUIDEntityMap(folders []*types.NestedHit) map[string]*types.NestedHit {
-	return getFolderMapping(folders, func(fld *types.NestedHit) string {
+func getFolderUIDEntityMap(folders []*domain.NestedHit) map[string]*domain.NestedHit {
+	return getFolderMapping(folders, func(fld *domain.NestedHit) string {
 		return fld.UID
 	},
-		func(fld *types.NestedHit) *types.NestedHit {
+		func(fld *domain.NestedHit) *domain.NestedHit {
 			return fld
 		},
 	)
 }
 
 // getFolderNameUIDMap helper function to build a mapping for name to folderID
-func (s *DashNGoImpl) getFolderNameUIDMap(folders []*types.NestedHit) map[string]string {
-	return getFolderMapping(folders, func(fld *types.NestedHit) string {
+func (s *DashNGoImpl) getFolderNameUIDMap(folders []*domain.NestedHit) map[string]string {
+	return getFolderMapping(folders, func(fld *domain.NestedHit) string {
 		return fld.NestedPath
 	},
-		func(fld *types.NestedHit) string {
+		func(fld *domain.NestedHit) string {
 			return fld.UID
 		},
 	)
@@ -542,7 +546,7 @@ func reverseLookUp[T comparable, Y comparable](m map[T]Y) map[Y]T {
 }
 
 // getFolderByUid gets a given folder given a valid Uid
-func (s *DashNGoImpl) getFolderByUid(uid string) (*types.NestedHit, error) {
+func (s *DashNGoImpl) getFolderByUid(uid string) (*domain.NestedHit, error) {
 	res, err := s.GetClient().Folders.GetFolderByUID(uid)
 	if err != nil {
 		return nil, err
@@ -551,8 +555,8 @@ func (s *DashNGoImpl) getFolderByUid(uid string) (*types.NestedHit, error) {
 }
 
 // folderToHit converts a models.Folder struct to a models.Hit struct
-func (s *DashNGoImpl) folderToHit(fld *models.Folder) *types.NestedHit {
-	res := new(types.NestedHit)
+func (s *DashNGoImpl) folderToHit(fld *models.Folder) *domain.NestedHit {
+	res := new(domain.NestedHit)
 	res.Hit = new(models.Hit)
 	res.Title = fld.Title
 	res.UID = fld.UID

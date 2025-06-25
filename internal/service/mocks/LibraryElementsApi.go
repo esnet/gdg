@@ -5,8 +5,8 @@
 package mocks
 
 import (
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -145,19 +145,19 @@ func (_c *LibraryElementsApi_DownloadLibraryElements_Call) RunAndReturn(run func
 }
 
 // ListLibraryElements provides a mock function for the type LibraryElementsApi
-func (_mock *LibraryElementsApi) ListLibraryElements(filter filters.V2Filter) []*types.WithNested[models.LibraryElementDTO] {
+func (_mock *LibraryElementsApi) ListLibraryElements(filter filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO] {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListLibraryElements")
 	}
 
-	var r0 []*types.WithNested[models.LibraryElementDTO]
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*types.WithNested[models.LibraryElementDTO]); ok {
+	var r0 []*domain.WithNested[models.LibraryElementDTO]
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO]); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types.WithNested[models.LibraryElementDTO])
+			r0 = ret.Get(0).([]*domain.WithNested[models.LibraryElementDTO])
 		}
 	}
 	return r0
@@ -187,12 +187,12 @@ func (_c *LibraryElementsApi_ListLibraryElements_Call) Run(run func(filter filte
 	return _c
 }
 
-func (_c *LibraryElementsApi_ListLibraryElements_Call) Return(withNesteds []*types.WithNested[models.LibraryElementDTO]) *LibraryElementsApi_ListLibraryElements_Call {
+func (_c *LibraryElementsApi_ListLibraryElements_Call) Return(withNesteds []*domain.WithNested[models.LibraryElementDTO]) *LibraryElementsApi_ListLibraryElements_Call {
 	_c.Call.Return(withNesteds)
 	return _c
 }
 
-func (_c *LibraryElementsApi_ListLibraryElements_Call) RunAndReturn(run func(filter filters.V2Filter) []*types.WithNested[models.LibraryElementDTO]) *LibraryElementsApi_ListLibraryElements_Call {
+func (_c *LibraryElementsApi_ListLibraryElements_Call) RunAndReturn(run func(filter filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO]) *LibraryElementsApi_ListLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -1,9 +1,13 @@
 package config
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/esnet/gdg/internal/config/domain"
+)
 
 func TestGrafanaConfig(t *testing.T) {
-	config := GrafanaConfig{
+	config := domain.GrafanaConfig{
 		URL: "  http://localhost  ",
 	}
 	expected := "http://localhost/"

@@ -1,4 +1,4 @@
-package config
+package domain
 
 import (
 	"encoding/json"

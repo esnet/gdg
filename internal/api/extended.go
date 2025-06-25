@@ -4,13 +4,15 @@ import (
 	"crypto/tls"
 	"net/http"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/carlmjohnson/requests"
 	"github.com/esnet/gdg/internal/config"
 )
 
 // Most of these methods are here due to limitations in existing libraries being used.
 type ExtendedApi struct {
-	grafanaCfg *config.GrafanaConfig
+	grafanaCfg *domain.GrafanaConfig
 	debug      bool
 }
 
@@ -31,10 +33,10 @@ func (extended *ExtendedApi) getRequestBuilder() *requests.Builder {
 		req = req.Transport(customTransport)
 	}
 
-	if extended.grafanaCfg.APIToken != "" {
-		req.Header("Authorization", "Bearer "+extended.grafanaCfg.APIToken)
+	if extended.grafanaCfg.GetAPIToken() != "" {
+		req.Header("Authorization", "Bearer "+extended.grafanaCfg.GetAPIToken())
 	} else {
-		req.BasicAuth(extended.grafanaCfg.UserName, extended.grafanaCfg.Password)
+		req.BasicAuth(extended.grafanaCfg.UserName, extended.grafanaCfg.GetPassword())
 	}
 
 	return req

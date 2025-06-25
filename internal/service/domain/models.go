@@ -1,4 +1,4 @@
-package types
+package domain
 
 import (
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -18,10 +18,6 @@ type NestedHit struct {
 	*models.Hit
 	NestedPath string
 }
-
-//func (f *NestedHit) Location() string {
-//	return strings.Replace(f.NestedPath, f.Title, "", 1)
-//}
 
 type UserProfileWithAuth struct {
 	models.UserProfileDTO

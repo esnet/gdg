@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/go-openapi/strfmt"
@@ -52,7 +54,7 @@ func GetOrgNameClientOpts(orgName string) NewClientOpts {
 	}
 
 	return func(clientCfg *client.TransportConfig) {
-		clientCfg.OrgID = config.DefaultOrganizationId
+		clientCfg.OrgID = domain.DefaultOrganizationId
 	}
 }
 
@@ -94,9 +96,9 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 
 // GetClient Returns a new defaultClient given token precedence over Basic Auth
 func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
-	if s.grafanaConf.APIToken != "" {
+	if s.grafanaConf.GetAPIToken() != "" {
 		grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
-			clientCfg.APIKey = s.grafanaConf.APIToken
+			clientCfg.APIKey = s.grafanaConf.GetAPIToken()
 			clientCfg.Debug = s.globalConf.ApiDebug
 		})
 		return grafanaClient
@@ -122,7 +124,7 @@ func (s *DashNGoImpl) GetAdminClient() *client.GrafanaHTTPAPI {
 
 func (s *DashNGoImpl) getDefaultBasicOpts() []NewClientOpts {
 	return []NewClientOpts{func(clientCfg *client.TransportConfig) {
-		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.Password)
+		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.GetPassword())
 		clientCfg.Debug = s.globalConf.ApiDebug
 	}}
 }

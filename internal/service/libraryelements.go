@@ -9,8 +9,11 @@ import (
 	"reflect"
 	"strings"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/internal/service/filters/v2"
-	customModels "github.com/esnet/gdg/internal/types"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
 
@@ -29,9 +32,9 @@ const (
 )
 
 func setupLibElementsReaders(filterObj filters.V2Filter) {
-	obj := customModels.WithNested[models.LibraryElementDTO]{}
+	obj := domain.WithNested[models.LibraryElementDTO]{}
 	err := filterObj.RegisterReader(reflect.TypeOf(&obj), func(filterType filters.FilterType, a any) (any, error) {
-		val, ok := a.(*customModels.WithNested[models.LibraryElementDTO])
+		val, ok := a.(*domain.WithNested[models.LibraryElementDTO])
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
@@ -114,7 +117,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.V2Filter, co
 	return results
 }
 
-func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*customModels.WithNested[models.LibraryElementDTO] {
+func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO] {
 	ignoreFilters := s.grafanaConf.GetDashboardSettings().IgnoreFilters
 	if ignoreFilters {
 		filter = nil
@@ -128,7 +131,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*customMode
 	if err != nil {
 		log.Fatalf("Unable to list Library Elements %v", err)
 	}
-	var newData []*customModels.WithNested[models.LibraryElementDTO]
+	var newData []*domain.WithNested[models.LibraryElementDTO]
 	for _, val := range libraryElements.GetPayload().Result.Elements {
 		var nestedPath string
 		if val.FolderUID == "" {
@@ -143,7 +146,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*customMode
 		}
 
 		if ignoreFilters || filter.ValidateAll(map[string]any{NestedDashFolderName: nestedPath}) {
-			newData = append(newData, &customModels.WithNested[models.LibraryElementDTO]{
+			newData = append(newData, &domain.WithNested[models.LibraryElementDTO]{
 				Entity:     val,
 				NestedPath: nestedPath,
 			})
@@ -156,7 +159,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*customMode
 // DownloadLibraryElements downloads all the Library Elements
 func (s *DashNGoImpl) DownloadLibraryElements(filter filters.V2Filter) []string {
 	var (
-		listing   []*customModels.WithNested[models.LibraryElementDTO]
+		listing   []*domain.WithNested[models.LibraryElementDTO]
 		dsPacked  []byte
 		err       error
 		dataFiles []string
@@ -175,7 +178,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.V2Filter) []string 
 			folderName = val
 		}
 
-		libraryPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderName, config.LibraryElementResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(item.Entity.Name))
+		libraryPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderName, configDomain.LibraryElementResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(item.Entity.Name))
 
 		if err = s.storage.WriteFile(libraryPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err, "library-element", slug.Make(item.Entity.Name))
@@ -196,15 +199,16 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 		folderName        string
 	)
 
-	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource))
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(config.LibraryElementResource), true)
+	orgName := s.grafanaConf.GetOrganizationName()
+	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.LibraryElementResource, orgName))
+	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.LibraryElementResource, orgName), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for library elements", "err", err)
 	}
 
 	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(nil))
 	currentLibElements := s.ListLibraryElements(filterReq)
-	libMapping := make(map[string]*customModels.WithNested[models.LibraryElementDTO])
+	libMapping := make(map[string]*domain.WithNested[models.LibraryElementDTO])
 	// Build a mapping by UID
 	for ndx, item := range currentLibElements {
 		libMapping[item.Entity.UID] = currentLibElements[ndx]
@@ -223,7 +227,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = getFolderFromResourcePath(file, config.LibraryElementResource, s.storage.GetPrefix())
+		folderName, err = getFolderFromResourcePath(file, configDomain.LibraryElementResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 			folderName = DefaultFolderName
@@ -275,12 +279,12 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 			}
 		}
 
-		var libraryRequest customModels.WithNested[*models.LibraryElementDTO]
+		var libraryRequest domain.WithNested[*models.LibraryElementDTO]
 		if err = json.Unmarshal(rawLibraryElement, &libraryRequest); err != nil {
 			slog.Error("failed to unmarshall file", "filename", file, "err", err)
 			continue
 		}
-		newLibraryRequest := customModels.WithNestedToCreateLibraryElement(libraryRequest)
+		newLibraryRequest := domain.WithNestedToCreateLibraryElement(libraryRequest)
 		if folderUid != "" {
 			newLibraryRequest.FolderUID = folderUid
 		}

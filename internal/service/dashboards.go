@@ -13,6 +13,10 @@ import (
 	"sort"
 	"strings"
 
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
+	"github.com/esnet/gdg/internal/service/domain"
+
 	"github.com/esnet/gdg/internal/service/filters/v2"
 	"github.com/tidwall/gjson"
 
@@ -24,7 +28,6 @@ import (
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
-	customTypes "github.com/esnet/gdg/internal/types"
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -38,9 +41,9 @@ const (
 )
 
 func setupDashReaders(filterObj filters.V2Filter) {
-	obj := customTypes.NestedHit{}
+	obj := domain.NestedHit{}
 	err := filterObj.RegisterReader(reflect.TypeOf(&obj), func(filterType filters.FilterType, a any) (any, error) {
-		val, ok := a.(*customTypes.NestedHit)
+		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
@@ -235,14 +238,14 @@ func (s *DashNGoImpl) getDashboardByUid(uid string) (*models.DashboardFullWithMe
 
 // ListDashboards List all dashboards optionally filtered by folder name. If folderFilters
 // is blank, defaults to the configured Monitored folders
-func (s *DashNGoImpl) ListDashboards(filterReq filters.V2Filter) []*customTypes.NestedHit {
+func (s *DashNGoImpl) ListDashboards(filterReq filters.V2Filter) []*domain.NestedHit {
 	// Fallback on defaults
 	if filterReq == nil {
 		filterReq = NewDashboardFilter("", "", "")
 	}
 
-	boardLinks := make([]*customTypes.NestedHit, 0)
-	deduplicatedLinks := make(map[int64]*customTypes.NestedHit)
+	boardLinks := make([]*domain.NestedHit, 0)
+	deduplicatedLinks := make(map[int64]*domain.NestedHit)
 
 	var page int64 = 1
 	var limit int64 = 5000 // Upper bound of Grafana API call
@@ -268,8 +271,8 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.V2Filter) []*customTypes.
 				log.Fatal("Failed to retrieve dashboards", err)
 			}
 			boardLinks = append(boardLinks,
-				lo.Map(pageBoardLinks.GetPayload(), func(item *models.Hit, index int) *customTypes.NestedHit {
-					return &customTypes.NestedHit{Hit: item}
+				lo.Map(pageBoardLinks.GetPayload(), func(item *models.Hit, index int) *domain.NestedHit {
+					return &domain.NestedHit{Hit: item}
 				})...)
 			if int64(len(pageBoardLinks.GetPayload())) < limit {
 				break
@@ -342,7 +345,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.V2Filter) []*customTypes.
 // DownloadDashboards saves all dashboards matching query to configured location
 func (s *DashNGoImpl) DownloadDashboards(filter filters.V2Filter) []string {
 	var (
-		boardLinks []*customTypes.NestedHit
+		boardLinks []*domain.NestedHit
 		rawBoard   []byte
 		err        error
 		metaData   *dashboards.GetDashboardByUIDOK
@@ -369,7 +372,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.V2Filter) []string {
 		}
 
 		// fileName := buildDashboardFileName(link.NestedPath, metaData.GetPayload().Meta.Slug, folderUidMap, s.isLocal(), s.globalConf.ClearOutput)
-		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.NestedPath, config.DashboardResource, s.isLocal(), s.globalConf.ClearOutput), metaData.GetPayload().Meta.Slug)
+		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.NestedPath, configDomain.DashboardResource, s.isLocal(), s.globalConf.ClearOutput), metaData.GetPayload().Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
@@ -381,7 +384,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.V2Filter) []string {
 }
 
 // getNestedFolder use this if calling from within the service, returns the nested folder path for a given folder
-func getNestedFolder(folderTitle, folderUID string, folderUidMap map[string]*customTypes.NestedHit) string {
+func getNestedFolder(folderTitle, folderUID string, folderUidMap map[string]*domain.NestedHit) string {
 	folderPath := encode.Encode(folderTitle)
 	currentFolderUid := folderUID
 	for currentFolderUid != "" {
@@ -405,10 +408,10 @@ func (s *DashNGoImpl) TestCreatedFolders(folderName string) (map[string]string, 
 // createFolders Creates a new folder with the given name.  If nested, each sub folder that does not exist is also created
 func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, error) {
 	namedUIDMap := getFolderMapping(s.ListFolders(NewFolderFilter()),
-		func(db *customTypes.NestedHit) string {
+		func(db *domain.NestedHit) string {
 			return db.NestedPath
 		},
-		func(fld *customTypes.NestedHit) *customTypes.NestedHit { return fld },
+		func(fld *domain.NestedHit) *domain.NestedHit { return fld },
 	)
 
 	cratedBaseFolder := func(createFolder string, parent string) (string, error) {
@@ -474,7 +477,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.V2Filter) ([]string, er
 		folderUid  string
 		dashFiles  []string
 	)
-	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(config.DashboardResource)
+	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.DashboardResource, s.grafanaConf.GetOrganizationName())
 	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find any dashFiles to export from storage engine, err: %w", err)
@@ -515,7 +518,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.V2Filter) ([]string, er
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = getFolderFromResourcePath(file, config.DashboardResource, s.storage.GetPrefix())
+		folderName, err = getFolderFromResourcePath(file, configDomain.DashboardResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 		}

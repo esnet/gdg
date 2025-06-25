@@ -25,6 +25,7 @@ contexts:
   testing:
     storage: "any_label"
     output_path: test/data
+    secure_location: /run/secrets
     user:
       random_password: true
       min_length: 8

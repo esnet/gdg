@@ -8,135 +8,152 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AlecAivazis/survey/v2"
+	"github.com/charmbracelet/huh"
+
+	"github.com/esnet/gdg/internal/config/domain"
 )
 
-func (s *Configuration) NewContext(name string) {
-	name = strings.ToLower(name) // forces lowercase contexts
-	answers := GrafanaConfig{
-		ConnectionSettings: &ConnectionSettings{
-			MatchingRules: make([]RegexMatchesList, 0),
-		},
+type formSelection string
+
+const (
+	basicAuthForm formSelection = "basicAuth"
+	tokenAuthForm formSelection = "tokenAuth"
+	bothAuthForm  formSelection = "bothAuth"
+)
+
+func (s formSelection) String() string {
+	return string(s)
+}
+
+func buildFormGroups(authType string, config *domain.GrafanaConfig) []*huh.Group {
+	groups := make([]*huh.Group, 0)
+	basicGrps := huh.NewGroup(
+		huh.NewInput().
+			Value(&config.UserName).
+			Title("Grafana Username").Description("Grafana Username"),
+		huh.NewInput().
+			Value(&config.Password).
+			Title("Grafana Password").
+			Description("Grafana Username").
+			EchoMode(huh.EchoModePassword),
+	)
+	tokenGrps := huh.NewGroup(
+		huh.NewInput().
+			Value(&config.APIToken).
+			Title("Grafana Token").Description("Grafana Token"),
+	).
+		WithShowHelp(false).
+		WithShowErrors(false)
+
+	switch authType {
+	case basicAuthForm.String():
+		groups = append(groups, basicGrps)
+	case tokenAuthForm.String():
+		groups = append(groups, tokenGrps)
+	case bothAuthForm.String():
+		groups = append(groups, []*huh.Group{basicGrps, tokenGrps}...)
 	}
-	promptAnswers := struct {
-		AuthType   string
-		Folders    string
-		DSUser     string
-		DSPassword string
-	}{}
-	// Setup question that drive behavior
-	behaviorQuestions := []*survey.Question{
-		{
-			Name: "AuthType",
-			Prompt: &survey.Select{
-				Message: "Will you be using a Token, BasicAuth, or both?",
-				Options: []string{"token", "basicauth", "both"},
-				Default: "basicauth",
-			},
-		},
-		{
-			Name:   "DSUser",
-			Prompt: &survey.Input{Message: "Please enter your datasource default username"},
-		},
-		{
-			Name:   "DSPassword",
-			Prompt: &survey.Password{Message: "Please enter your datasource default password"},
-		},
-		{
-			Name:   "Folders",
-			Prompt: &survey.Input{Message: "List the folders you wish to manage (example: folder1,folder2)? (Blank for General)?"},
-		},
-	}
-	err := survey.Ask(behaviorQuestions, &promptAnswers)
+	groups = append(groups, huh.NewGroup(
+		huh.NewInput().
+			Description("Destination Folder?").
+			Value(&config.OutputPath),
+		huh.NewInput().
+			Description("What is the Grafana URL include http(s)?").
+			Value(&config.URL),
+	),
+	)
+
+	return groups
+}
+
+func (s *Configuration) FormCode(name string) {
+	var authType string
+	err := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[string]().
+				Options(
+					huh.NewOption("Basic Authentication", basicAuthForm.String()),
+					huh.NewOption("Token/Service Authentication", tokenAuthForm.String()),
+					huh.NewOption("Both", bothAuthForm.String()),
+				).
+				Value(&authType).
+				Title("Choose your Auth Mechanism").
+				Description("This will determine your Authentication type"),
+		),
+	).
+		WithShowHelp(false).
+		WithShowErrors(false).Run()
 	if err != nil {
-		log.Fatal("Failed to get valid answers to generate a new context")
+		log.Fatal("unable to get auth selection from user")
 	}
 
-	// Set Watched Folders
-	foldersList := strings.Split(promptAnswers.Folders, ",")
-	if len(foldersList) > 0 && foldersList[0] != "" {
-		answers.MonitoredFolders = foldersList
+	newConfig := &domain.GrafanaConfig{
+		ConnectionSettings: &domain.ConnectionSettings{
+			MatchingRules: make([]domain.RegexMatchesList, 0),
+		},
+	}
+	newConfig.OrganizationName = "Main Org."
+	err = huh.NewForm(buildFormGroups(authType, newConfig)...).Run()
+	if err != nil {
+		log.Fatalf("Could not set grafana config: %v", err)
+	}
+
+	var (
+		connectionUser     string
+		connectionPassword string
+	)
+	var folders string
+	err = huh.NewForm(huh.NewGroup(
+		huh.NewInput().Description("Grafana Folders to monitor (comma delimited list)").Value(&folders),
+	),
+		huh.NewGroup(
+			huh.NewInput().Description("Grafana Connection Default User").Value(&connectionUser),
+			huh.NewInput().Description("Grafana Connection Default User").EchoMode(huh.EchoModePassword).Value(&connectionPassword),
+		),
+	).Run()
+	if err != nil {
+		log.Fatalf("Unable to get folders and Connection Auth Settings")
+	}
+	defaultDs := domain.GrafanaConnection{
+		"user":              connectionUser,
+		"basicAuthPassword": connectionPassword,
+	}
+	// newConfig.
+	if folders != "" {
+		newConfig.MonitoredFolders = strings.Split(folders, ",")
 	} else {
-		answers.MonitoredFolders = []string{"General"}
+		newConfig.MonitoredFolders = []string{"General"}
 	}
-
-	// Setup grafana required field based on responses
-	questions := []*survey.Question{
-		{
-			Name:   "URL",
-			Prompt: &survey.Input{Message: "What is the Grafana URL include http(s)?"},
-		},
-		{
-			Name:     "OutputPath",
-			Prompt:   &survey.Input{Message: "Destination Folder?"},
-			Validate: survey.Required,
-		},
-	}
-
-	if promptAnswers.AuthType == "both" || promptAnswers.AuthType == "token" {
-		questions = append(questions, &survey.Question{
-			Name:     "APIToken",
-			Prompt:   &survey.Input{Message: "Please enter your API Token"},
-			Validate: survey.Required,
-		})
-	}
-
-	if promptAnswers.AuthType == "both" || promptAnswers.AuthType == "basicauth" {
-		questions = append(questions, &survey.Question{
-			Name:     "UserName",
-			Prompt:   &survey.Input{Message: "Please enter your grafana admin Username"},
-			Validate: survey.Required,
-		})
-		questions = append(questions, &survey.Question{
-			Name:     "Password",
-			Prompt:   &survey.Password{Message: "Please enter your grafana admin Password"},
-			Validate: survey.Required,
-		})
-
-	}
-
-	err = survey.Ask(questions, &answers)
+	securePath := domain.SecureSecretsResource
+	location := filepath.Join(newConfig.OutputPath, string(securePath))
+	err = os.MkdirAll(location, 0o750)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
+	}
+	data, err := json.MarshalIndent(&defaultDs, "", "    ")
+	if err != nil {
+		log.Fatalf("unable to turn map into json representation.  location: %s, %v", location, err)
+	}
+	secretFileLocation := filepath.Join(location, "default.json")
+	err = os.WriteFile(secretFileLocation, data, 0o600)
+	if err != nil {
+		log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
 	}
 
-	// Set Default Datasource
-	if promptAnswers.DSUser != "" && promptAnswers.DSPassword != "" {
-		ds := GrafanaConnection{
-			"user":              promptAnswers.DSUser,
-			"basicAuthPassword": promptAnswers.DSPassword,
-		}
-
-		location := filepath.Join(answers.OutputPath, string(SecureSecretsResource))
-		err = os.MkdirAll(location, 0o750)
-		if err != nil {
-			log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
-		}
-		data, err := json.MarshalIndent(&ds, "", "    ")
-		if err != nil {
-			log.Fatalf("unable to turn map into json representation.  location: %s, %v", location, err)
-		}
-		secretFileLocation := filepath.Join(location, "default.json")
-		err = os.WriteFile(secretFileLocation, data, 0o600)
-		if err != nil {
-			log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
-		}
-		answers.ConnectionSettings.MatchingRules = []RegexMatchesList{
-			{
-				Rules: []MatchingRule{
-					{
-						Field: "name",
-						Regex: ".*",
-					},
+	newConfig.ConnectionSettings.MatchingRules = []domain.RegexMatchesList{
+		{
+			Rules: []domain.MatchingRule{
+				{
+					Field: "name",
+					Regex: ".*",
 				},
-				SecureData: "default.json",
 			},
-		}
-
+			SecureData: "default.json",
+		},
 	}
 
 	contextMap := s.GetGDGConfig().GetContexts()
-	contextMap[name] = &answers
+	contextMap[name] = newConfig
 	s.GetGDGConfig().ContextName = name
 
 	err = s.SaveToDisk(false)
@@ -144,4 +161,8 @@ func (s *Configuration) NewContext(name string) {
 		log.Fatal("could not save configuration.")
 	}
 	slog.Info("New configuration has been created", "newContext", name)
+}
+
+func (s *Configuration) NewContext(name string) {
+	s.FormCode(name)
 }

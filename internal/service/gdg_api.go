@@ -8,6 +8,8 @@ import (
 	"os"
 	"sync"
 
+	"github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/storage"
@@ -20,8 +22,8 @@ var (
 
 type DashNGoImpl struct {
 	extended    *api.ExtendedApi
-	grafanaConf *config.GrafanaConfig
-	globalConf  *config.AppGlobals
+	grafanaConf *domain.GrafanaConfig
+	globalConf  *domain.AppGlobals
 	storage     storage.Storage
 }
 
