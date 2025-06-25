@@ -33,6 +33,7 @@ risk. Please use grafana +11.
 ### Changes
 - [#408](https://github.com/esnet/gdg/issues/408) Nested Folder support added as a default behavior
 - [#134](https://github.com/esnet/gdg/issues/134) Adding support for Alerting entities. (rules, contact points, templates, policies)
+- [#421](https://github.com/esnet/gdg/issues/421) Added support for an auth file as well as secure location override.
 
 ### Bug/Security Fixes
 - [#425](https://github.com/esnet/gdg/pull/425) Fixing behavior with missing trailing slash
@@ -40,6 +41,7 @@ risk. Please use grafana +11.
 ### Developer Changes
 - [#411](https://github.com/esnet/gdg/pull/411) [TechDebt] Removing references to InitTestLegacy (#411)
 - Upgraded to latest grafana openapi client.
+- [#427](https://github.com/esnet/gdg/pull/427) Re-enabling code coverage report uploading to cobertura
 
 ### Tech Updates
   - updated to latest grafana-api client.

@@ -114,7 +114,11 @@ Watched folders under grafana is a white list of folders that are being managed 
 
 {{< /callout >}}
 
+### Secure_Location
 
+If you set a value for `secure_location`, gdg will use the `secure_location` value for all sensitive data instead of its default location (output_path/secure)
+
+If the path start with a / it'll be treated as an absolute path, otherwise it'll be assumed to exist relative to the output_path configured.
 
 ### Storage
 

@@ -37,7 +37,7 @@ There is a "Discussion" area on github where you can start a [conversation](http
 
 ### I don't like GDG because of: A, B, C... what else can I use
 
- - Recently Grafana released an official tool to manage resources: https://github.com/grafana/grafanactl
+ - [Grafanactl](https://github.com/grafana/grafanactl) Recently Grafana released an official tool to manage resources.
  - [Grizzly](https://github.com/grafana/grizzly/) Prior version of GrafanaCTL
 
 Know of any others? Create a PR and add it to the list
