@@ -46,7 +46,7 @@ nfpms:
     description: |-
       GDG is a tool used to manage dashboards, connections, organizations and various entities of the Grafana application.
     license: BSD License
-    builds:
+    ids:
       - gdg
       - gdg-generate
     formats:
@@ -107,7 +107,7 @@ dockers:
     dockerfile: "docker/Dockerfile"
 
 
-brews:
+homebrew_casks:
   - name: gdg
     homepage: https://software.es.net/gdg
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
@@ -132,7 +132,7 @@ archives:
     format_overrides:
       - goos: windows
         formats: [ 'zip' ]
-    builds:
+    ids:
       - gdg
       - gdg-generate
     files:
