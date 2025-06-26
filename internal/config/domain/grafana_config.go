@@ -39,6 +39,23 @@ type GrafanaConfig struct {
 	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
 }
 
+type MonitoredOrgFolders struct {
+	OrganizationName string   `json:"organization_name" yaml:"organization_name" mapstructure:"organization_name"`
+	Folders          []string `json:"folders" yaml:"folders" mapstructure:"folders"`
+}
+
+// ConnectionSettings contains Filters and Matching Rules for Grafana
+type ConnectionSettings struct {
+	FilterRules   []MatchingRule     `mapstructure:"filters" yaml:"filters,omitempty"`
+	MatchingRules []RegexMatchesList `mapstructure:"credential_rules" yaml:"credential_rules,omitempty"`
+}
+
+// RegexMatchesList model wraps regex matches list for grafana
+type RegexMatchesList struct {
+	Rules      []MatchingRule `mapstructure:"rules" yaml:"rules,omitempty"`
+	SecureData string         `mapstructure:"secure_data" yaml:"secure_data,omitempty"`
+}
+
 func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 	if s.secureAuth != nil {
 		return s.secureAuth
@@ -136,23 +153,6 @@ func (s *GrafanaConfig) GetURL() string {
 	}
 
 	return s.URL
-}
-
-type MonitoredOrgFolders struct {
-	OrganizationName string   `json:"organization_name" yaml:"organization_name"`
-	Folders          []string `json:"folders" yaml:"folders"`
-}
-
-// ConnectionSettings contains Filters and Matching Rules for Grafana
-type ConnectionSettings struct {
-	FilterRules   []MatchingRule     `mapstructure:"filters" yaml:"filters,omitempty"`
-	MatchingRules []RegexMatchesList `mapstructure:"credential_rules" yaml:"credential_rules,omitempty"`
-}
-
-// RegexMatchesList model wraps regex matches list for grafana
-type RegexMatchesList struct {
-	Rules      []MatchingRule `mapstructure:"rules" yaml:"rules,omitempty"`
-	SecureData string         `mapstructure:"secure_data" yaml:"secure_data,omitempty"`
 }
 
 // GetOrganizationName returns the id of the organization (defaults to 1 if unset)
