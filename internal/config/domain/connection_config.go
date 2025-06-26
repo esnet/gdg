@@ -16,6 +16,24 @@ const (
 	DefaultOrganizationId   = 1
 )
 
+type CredentialRule struct {
+	RegexMatchesList
+	Auth *GrafanaConnection `mapstructure:"auth" yaml:"auth,omitempty"`
+}
+
+// MatchingRule defines a single matching rule for Grafana Connections
+type MatchingRule struct {
+	Field     string `yaml:"field,omitempty" mapstructure:"field,omitempty"`
+	Regex     string `yaml:"regex,omitempty" mapstructure:"regex,omitempty"`
+	Inclusive bool   `yaml:"inclusive,omitempty" mapstructure:"inclusive,omitempty"`
+}
+
+// ConnectionFilters model wraps connection filters for grafana
+type ConnectionFilters struct {
+	NameExclusions  string   `yaml:"name_exclusions" mapstructure:"name_exclusions"`
+	ConnectionTypes []string `yaml:"valid_types" mapstructure:"valid_types"`
+}
+
 // GrafanaConnection Default connection credentials
 type GrafanaConnection map[string]string
 
@@ -42,23 +60,6 @@ func (r RegexMatchesList) GetConnectionAuth(path string) (*GrafanaConnection, er
 }
 
 // CredentialRule model wraps regex and auth for grafana
-type CredentialRule struct {
-	RegexMatchesList
-	Auth *GrafanaConnection `mapstructure:"auth" yaml:"auth,omitempty"`
-}
-
-// MatchingRule defines a single matching rule for Grafana Connections
-type MatchingRule struct {
-	Field     string `yaml:"field,omitempty" mapstructure:"field,omitempty"`
-	Regex     string `yaml:"regex,omitempty" mapstructure:"regex,omitempty"`
-	Inclusive bool   `yaml:"inclusive,omitempty" mapstructure:"inclusive,omitempty"`
-}
-
-// ConnectionFilters model wraps connection filters for grafana
-type ConnectionFilters struct {
-	NameExclusions  string   `yaml:"name_exclusions" mapstructure:"name_exclusions"`
-	ConnectionTypes []string `yaml:"valid_types" mapstructure:"valid_types"`
-}
 
 func (g GrafanaConnection) User() string {
 	return g["user"]
