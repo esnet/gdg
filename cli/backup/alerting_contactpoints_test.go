@@ -1,4 +1,4 @@
-package backup
+package backup_test
 
 import (
 	"fmt"
@@ -61,7 +61,7 @@ func TestUploadContactPoints(t *testing.T) {
 		if tc.setupMocks != nil {
 			tc.setupMocks(testSvc)
 		}
-		optionMockSvc := getOptionMockSvc(testSvc)
+		optionMockSvc := GetOptionMockSvc(testSvc)
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
@@ -124,7 +124,7 @@ func TestDownloadContactPoints(t *testing.T) {
 		if tc.setupMocks != nil {
 			tc.setupMocks(testSvc)
 		}
-		optionMockSvc := getOptionMockSvc(testSvc)
+		optionMockSvc := GetOptionMockSvc(testSvc)
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
@@ -208,7 +208,7 @@ func TestListContactPoints(t *testing.T) {
 		if tc.setupMocks != nil {
 			tc.setupMocks(testSvc)
 		}
-		optionMockSvc := getOptionMockSvc(testSvc)
+		optionMockSvc := GetOptionMockSvc(testSvc)
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
@@ -283,7 +283,7 @@ func TestClearContactPoints(t *testing.T) {
 			tc.setupMocks(testSvc)
 		}
 
-		optionMockSvc := getOptionMockSvc(testSvc)
+		optionMockSvc := GetOptionMockSvc(testSvc)
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 

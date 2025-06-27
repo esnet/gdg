@@ -1,0 +1,17 @@
+[
+	{
+		"created": "2025-06-30T16:15:01.000Z",
+		"dashboardId": 3,
+		"permission": 4,
+		"permissionName": "Admin",
+		"slug": "firefly-details",
+		"title": "Firefly Details",
+		"uid": "JywX0Qt7k",
+		"updated": "2025-06-30T16:15:01.000Z",
+		"url": "/d/JywX0Qt7k/firefly-details",
+		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+		"userEmail": "admin@localhost",
+		"userId": 1,
+		"userLogin": "admin"
+	}
+]

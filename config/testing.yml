@@ -25,6 +25,7 @@ contexts:
     watched:
       - General
       - linux%2Fgnu/*
+      - ES\+net/LHC\+Data\+Challenge
   production:
     output_path: prod
     connections:

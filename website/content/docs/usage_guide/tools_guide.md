@@ -114,6 +114,24 @@ Some developer helper utilities
 ./bin/gdg tools devel srvinfo -- print grafana server info
 ```
 
+### Helpers
+A few helpers utilities added to make it easier to construct CLI regex patters
+
+```sh
+gdg tools helpers folder encode "ES net/LHC Data Challenge"
+```
+
+output: INF Encoded result output=ES\+net/LHC\+Data\+Challenge
+
+The output is what you should be using for filtering your dashboards in the configuration file.
+
+```sh
+gdg tools helpers folder decode "ES\+net/LHC\+Data\+Challenge"
+```
+
+output: INF Decoded result output="ES net/LHC Data Challenge"
+
+the output is what gdg will match against.
 
 
 ### Organizations

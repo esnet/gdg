@@ -24,8 +24,9 @@ import (
 )
 
 const (
-	DashboardCount       = 16
+	DashboardCount       = 17
 	IgnoreDashboardCount = DashboardCount + 1
+	FolderCount          = 4
 )
 
 func TestDashboardCRUDIgnoreFilters(t *testing.T) {
@@ -50,7 +51,7 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedFiles), DashboardCount)
 	folders := apiClient.ListFolders(service.NewFolderFilter())
-	assert.Equal(t, len(folders), 3)
+	assert.Equal(t, len(folders), FolderCount)
 
 	slog.Info("Listing all dashboards")
 	boards := apiClient.ListDashboards(filtersEntity)
@@ -105,13 +106,14 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 // fix that issue.
 func TestDashboardCleanUpCrud(t *testing.T) {
 	config.InitGdgConfig(common.DefaultTestConfig)
+	ctx := context.Background()
 	cfgProvider := func() *config.Configuration {
 		cfg := config.Config()
 		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = true
 		return cfg
 	}
 	var r *test_tooling.InitContainerResult
-	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+	err := Retry(ctx, DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfgProvider, nil)
 		return r.Err
 	})
