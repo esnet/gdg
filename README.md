@@ -1,3 +1,7 @@
+<div  align="center">
+
+Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager.  The purpose of this project is to provide an easy-to-use CLI to interact with the grafana API allowing you to backup and restore dashboard, connections (formerly datasources), and other entities.
+
 [![Build Status](https://github.com/esnet/gdg/actions/workflows/go.yml/badge.svg)](https://github.com/esnet/gdg/actions/workflows/go.yml)
 [![Build Status](https://github.com/esnet/gdg/actions/workflows/hugo.yml/badge.svg)](https://github.com/esnet/gdg/actions/workflows/hugo.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/esnet/gdg)](https://goreportcard.com/report/github.com/esnet/gdg)
@@ -6,9 +10,11 @@
 [![GitHub release](https://img.shields.io/github/release/esnet/gdg.svg)](https://github.com/esnet/gdg/releases)
 
 
-# Grafana dash-n-grab
+<img src="website/static/logo.png" width="841" height="951">
 
-Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager.  The purpose of this project is to provide an easy-to-use CLI to interact with the grafana API allowing you to backup and restore dashboard, connections (formerly datasources), and other entities.
+</div>
+
+
 
 The following remote backup locations are supported:
   - AWS S3
