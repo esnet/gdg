@@ -30,6 +30,13 @@ func TestEncode(t *testing.T) {
 			},
 			want: "t+%2F+n",
 		},
+		{
+			name: "stardust test",
+			args: args{
+				s: "Stardust perfSONAR",
+			},
+			want: "Stardust+perfSONAR",
+		},
 	}
 	for _, tt := range tests {
 		if tt.skip {

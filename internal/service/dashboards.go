@@ -458,7 +458,7 @@ func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, erro
 			}
 		}
 	} else { // Handles simple case
-		data, err := cratedBaseFolder(folderName, "")
+		data, err := cratedBaseFolder(encode.Decode(folderName), "")
 		if err == nil {
 			newFoldersMap[folderName] = data
 		}
@@ -512,7 +512,10 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.V2Filter) ([]string, er
 			continue
 		}
 		if _, ok := alreadyProcessed[board["uid"]]; ok {
-			return nil, fmt.Errorf("board with same UID was already processed.  Please check your backup folder. This may occur if you pulled the data multiple times with configuration of: nested folder enabled and disabled, uid: %v, title: %v", board["uid"], slug.Make((board["title"]).(string)))
+			slog.Warn(
+				fmt.Sprintf("board with same UID was already processed.  Please check your backup folder. This may occur if you pulled the data multiple times with configuration of: nested folder enabled and disabled, uid: %v, title: %v", board["uid"], slug.Make((board["title"]).(string))),
+				slog.String("file", file))
+			continue
 		} else {
 			alreadyProcessed[board["uid"]] = true
 		}
