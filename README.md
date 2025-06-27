@@ -10,8 +10,9 @@ Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager.  The purpose of this 
 [![GitHub release](https://img.shields.io/github/release/esnet/gdg.svg)](https://github.com/esnet/gdg/releases)
 
 
-<img src="website/static/logo.png" width="841" height="951">
 
+<div style="width:20%; margin: auto;">
+<img src="website/static/logo.png" width="841" height="951">
 </div>
 
 
