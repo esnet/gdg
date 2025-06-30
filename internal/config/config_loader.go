@@ -101,7 +101,7 @@ func (s *Configuration) DeleteContext(name string) {
 	contexts := s.GetGDGConfig().GetContexts()
 	_, ok := contexts[name]
 	if !ok {
-		slog.Info("Context not found, cannot delete context", "context", name)
+		log.Fatalf("Context not found, cannot delete context: %s", name)
 		return
 	}
 	delete(contexts, name)
@@ -119,14 +119,19 @@ func (s *Configuration) DeleteContext(name string) {
 	slog.Info("Deleted context and set new context to", "deletedContext", name, "newActiveContext", s.GetGDGConfig().ContextName)
 }
 
-// ChangeContext changes active context
-func (s *Configuration) ChangeContext(name string) {
+func (s *Configuration) SetContext(name string) {
 	name = strings.ToLower(name)
 	_, ok := s.GetGDGConfig().GetContexts()[name]
 	if !ok {
 		log.Fatalf("context %s was not found", name)
 	}
+
 	s.GetGDGConfig().ContextName = name
+}
+
+// ChangeContext changes active context
+func (s *Configuration) ChangeContext(name string) {
+	s.SetContext(name)
 	err := s.SaveToDisk(false)
 	if err != nil {
 		log.Fatal("Failed to make save changes")

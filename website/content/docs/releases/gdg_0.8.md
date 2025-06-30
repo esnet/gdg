@@ -19,6 +19,7 @@ toc: true
   - [#450](https://github.com/esnet/gdg/issues/450) Update GoReleaser configurations (#453)
       Changes the patterns for brew installs from Formula to Cask: https://goreleaser.com/deprecations/#brews
   - [#454](https://github.com/esnet/gdg/pull/454) Adding a logo GDG logo (#454)
+  - [#445](https://github.com/esnet/gdg/issues/445) Added a global --context to easy switch without needing a config change.
 
 ## Release Notes for v0.8.0
 **Release Date: 06/25/2025**

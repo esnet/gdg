@@ -125,7 +125,7 @@ func newDeleteContext() simplecobra.Commander {
 			}
 			contextEntry := args[0]
 			config.Config().DeleteContext(contextEntry)
-			slog.Info("Successfully deleted context", "context", ctx)
+			slog.Info("Successfully deleted context", "context", contextEntry)
 			return nil
 		},
 		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
