@@ -1,13 +1,13 @@
 [
 	{
-		"created": "2024-09-14T20:51:23.000Z",
-		"dashboardId": 7,
+		"created": "2025-06-30T16:15:01.000Z",
+		"dashboardId": 10,
 		"permission": 4,
 		"permissionName": "Admin",
 		"slug": "science-discipline-patterns",
 		"title": "Science Discipline Patterns",
 		"uid": "ufIS9W7Zk",
-		"updated": "2024-09-14T20:51:23.000Z",
+		"updated": "2025-06-30T16:15:01.000Z",
 		"url": "/d/ufIS9W7Zk/science-discipline-patterns",
 		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
 		"userEmail": "admin@localhost",
@@ -15,27 +15,27 @@
 		"userLogin": "admin"
 	},
 	{
-		"created": "2024-09-14T20:51:23.000Z",
-		"dashboardId": 7,
-		"permission": 1,
-		"permissionName": "View",
-		"role": "Viewer",
-		"slug": "science-discipline-patterns",
-		"title": "Science Discipline Patterns",
-		"uid": "ufIS9W7Zk",
-		"updated": "2024-09-14T20:51:23.000Z",
-		"url": "/d/ufIS9W7Zk/science-discipline-patterns"
-	},
-	{
-		"created": "2024-09-14T20:51:23.000Z",
-		"dashboardId": 7,
+		"created": "2025-06-30T16:15:01.000Z",
+		"dashboardId": 10,
 		"permission": 2,
 		"permissionName": "Edit",
 		"role": "Editor",
 		"slug": "science-discipline-patterns",
 		"title": "Science Discipline Patterns",
 		"uid": "ufIS9W7Zk",
-		"updated": "2024-09-14T20:51:23.000Z",
+		"updated": "2025-06-30T16:15:01.000Z",
+		"url": "/d/ufIS9W7Zk/science-discipline-patterns"
+	},
+	{
+		"created": "2025-06-30T16:15:01.000Z",
+		"dashboardId": 10,
+		"permission": 1,
+		"permissionName": "View",
+		"role": "Viewer",
+		"slug": "science-discipline-patterns",
+		"title": "Science Discipline Patterns",
+		"uid": "ufIS9W7Zk",
+		"updated": "2025-06-30T16:15:01.000Z",
 		"url": "/d/ufIS9W7Zk/science-discipline-patterns"
 	}
 ]

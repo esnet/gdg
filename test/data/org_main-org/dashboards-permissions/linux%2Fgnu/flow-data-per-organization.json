@@ -1,14 +1,13 @@
 [
 	{
-		"created": "2024-09-14T20:51:23.000Z",
-		"dashboardId": 17,
-		"folderId": 11,
+		"created": "2025-06-30T16:15:01.000Z",
+		"dashboardId": 20,
 		"permission": 4,
 		"permissionName": "Admin",
 		"slug": "flow-data-per-organization",
 		"title": "Flow Data per Organization",
 		"uid": "QfzDJKhik",
-		"updated": "2024-09-14T20:51:23.000Z",
+		"updated": "2025-06-30T16:15:01.000Z",
 		"url": "/d/QfzDJKhik/flow-data-per-organization",
 		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
 		"userEmail": "admin@localhost",
