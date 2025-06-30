@@ -1,6 +1,6 @@
 <div  align="center">
 
-Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager.  The purpose of this project is to provide an easy-to-use CLI to interact with the grafana API allowing you to backup and restore dashboard, connections (formerly datasources), and other entities.
+Grafana Dash-n-Grab (GDG) -- Resource Manager.  The purpose of this project is to provide an easy-to-use CLI to interact with the grafana API allowing you to backup and restore dashboard, connections, and other resources.
 
 [![Build Status](https://github.com/esnet/gdg/actions/workflows/go.yml/badge.svg)](https://github.com/esnet/gdg/actions/workflows/go.yml)
 [![Build Status](https://github.com/esnet/gdg/actions/workflows/hugo.yml/badge.svg)](https://github.com/esnet/gdg/actions/workflows/hugo.yml)
@@ -70,3 +70,7 @@ would be 1.X release.  Splitting the GDG binary into a tools and backup cli, or 
 contexts.  i.e.  `gdg diff dashboards prod staging` is a major divergences from the current expectations so it'll be a major version bump.
 
 For more info, please see the release notes and documentation both available [here](https://software.es.net/gdg/)
+
+---
+GDG is powered by the [Grafana OpenAPI Client](https://github.com/grafana/grafana-openapi-client-go). Any feature exposed by the API could
+be added go GDG is desired, feel free to fill out a feature request on our GitHub issue tracker.
