@@ -105,6 +105,7 @@ func (c *RootCommand) Init(cd *simplecobra.Commandeer) error {
 
 	persistentFlags := cmd.PersistentFlags()
 	persistentFlags.StringP("config", "c", "", "Configuration Override")
+	persistentFlags.StringP("context", "", "", "Context Override")
 	persistentFlags.StringP("output", "", "table", "output format: (table, json)")
 	if c.TableObj == nil {
 		c.TableObj = table.NewWriter()
