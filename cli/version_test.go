@@ -1,4 +1,4 @@
-package test
+package cli
 
 import (
 	"io"
@@ -8,7 +8,6 @@ import (
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 
-	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
@@ -17,9 +16,9 @@ import (
 )
 
 func TestDefaultConfigCommand(t *testing.T) {
-	assert.NoError(t, path.FixTestDir("test", "../.."))
+	assert.NoError(t, path.FixTestDir("cli", ".."))
 	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
-		err := cli.Execute([]string{"default-config"}, optionMockSvc())
+		err := Execute([]string{"default-config"}, optionMockSvc())
 		return err
 	}
 	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
@@ -32,9 +31,9 @@ func TestDefaultConfigCommand(t *testing.T) {
 }
 
 func TestVersionCommand(t *testing.T) {
-	assert.NoError(t, path.FixTestDir("test", "../.."))
+	assert.NoError(t, path.FixTestDir("cli", ".."))
 	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
-		err := cli.Execute([]string{"version"}, optionMockSvc())
+		err := Execute([]string{"version"}, optionMockSvc())
 		return err
 	}
 	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
@@ -50,7 +49,7 @@ func TestVersionCommand(t *testing.T) {
 }
 
 func TestVersionErrCommand(t *testing.T) {
-	assert.NoError(t, path.FixTestDir("test", "../.."))
+	assert.NoError(t, path.FixTestDir("cli", ".."))
 	testSvc := new(mocks.GrafanaService)
 	getMockSvc := func() service.GrafanaService {
 		return testSvc
@@ -63,7 +62,7 @@ func TestVersionErrCommand(t *testing.T) {
 	}
 	r, w, cleanup := test_tooling.InterceptStdout()
 	defer cleanup()
-	err := cli.Execute([]string{"dumb", "dumb"}, optionMockSvc())
+	err := Execute([]string{"dumb", "dumb"}, optionMockSvc())
 	assert.NotNil(t, err)
 	assert.NoError(t, w.Close())
 

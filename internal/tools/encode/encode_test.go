@@ -6,6 +6,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestEncodeAndEscapeSpecialChars(t *testing.T) {
+	in := "Stardust perfSONAR"
+	expected := "Stardust\\+perfSONAR"
+	result := EncodeEscapeSpecialChars(in)
+	assert.Equal(t, result, expected)
+	result = DecodeEscapeSpecialChars(result)
+	assert.Equal(t, result, in)
+}
+
 func TestEncode(t *testing.T) {
 	type args struct {
 		s string
@@ -30,6 +39,13 @@ func TestEncode(t *testing.T) {
 			},
 			want: "t+%2F+n",
 		},
+		{
+			name: "stardust test",
+			args: args{
+				s: "Stardust perfSONAR",
+			},
+			want: "Stardust+perfSONAR",
+		},
 	}
 	for _, tt := range tests {
 		if tt.skip {
@@ -45,6 +61,6 @@ func TestEncode(t *testing.T) {
 
 func TestEncodePath(t *testing.T) {
 	in := []string{"t", "n / t", "booh", "k&r"}
-	out := EncodePath(in...)
+	out := EncodePath(nil, in...)
 	assert.Equal(t, "t/n+%2F+t/booh/k%26r", out)
 }

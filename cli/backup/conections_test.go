@@ -1,4 +1,4 @@
-package backup
+package backup_test
 
 import (
 	"io"

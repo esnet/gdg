@@ -1,0 +1,330 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations \u0026 Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 24,
+  "iteration": 1639165599351,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sum values.num_bits"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Traffic"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "alias": "Traffic",
+          "bucketAggs": [
+            {
+              "field": "start",
+              "id": "2",
+              "settings": {
+                "interval": "auto"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "LixEBcHnk"
+          },
+          "metrics": [
+            {
+              "field": "values.num_bits",
+              "id": "1",
+              "settings": {
+                "script": "_value / ($__interval_ms / 1000)"
+              },
+              "type": "sum"
+            }
+          ],
+          "query": "meta.src_ip: $src_ip AND meta.src_port: $src_port AND meta.dst_ip: $dst_ip AND meta.dst_port: $dst_port AND meta.protocol: $protocol AND meta.iface_in.intercloud:true",
+          "refId": "A",
+          "timeField": "start"
+        }
+      ],
+      "title": "Traffic Over Time",
+      "transparent": true,
+      "type": "timeseries"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 33,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "label": "Flow ID",
+        "name": "ff_id",
+        "options": [
+          {
+            "selected": false,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "WZGfAwtnk"
+        },
+        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.src-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Source IP",
+        "multi": false,
+        "name": "src_ip",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"flow-id.src-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "WZGfAwtnk"
+        },
+        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.src-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Source Port",
+        "multi": false,
+        "name": "src_port",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"flow-id.src-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "WZGfAwtnk"
+        },
+        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.dst-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Destination IP",
+        "multi": false,
+        "name": "dst_ip",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"flow-id.dst-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "WZGfAwtnk"
+        },
+        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.dst-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Destination Port",
+        "multi": false,
+        "name": "dst_port",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"flow-id.dst-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "WZGfAwtnk"
+        },
+        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.protocol.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Protocol",
+        "multi": false,
+        "name": "protocol",
+        "options": [],
+        "query": "{\"find\":\"terms\", \"field\":\"flow-id.protocol.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Firefly Details",
+  "uid": "JywX0Qt7k",
+  "version": 1,
+  "weekStart": ""
+}

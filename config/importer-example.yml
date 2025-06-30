@@ -100,8 +100,9 @@ contexts:
     dashboard_settings:
       ignore_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
     watched:
-      - Folder1
-      - Folder2
+      - General
+      - linux%2Fgnu/*    # matches for a folder named linux/gnu
+      - ES\+net/LHC\+Data\+Challenge # matches for dashboards in ES net/LHC Data Challenge
     watched_folders_override:
       - organization_name: "Some Other Org"
         folders:

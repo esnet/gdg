@@ -98,7 +98,7 @@ func NewConnectionFilter(name string) filters.V2Filter {
 	return filterEntity
 }
 
-// ListConnections list all the currently configured datasources
+// ListConnections list all the currently configured connections
 func (s *DashNGoImpl) ListConnections(filter filters.V2Filter) []models.DataSourceListItemDTO {
 	err := s.SwitchOrganizationByName(s.grafanaConf.GetOrganizationName())
 	if err != nil {
@@ -237,7 +237,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.V2Filter) []string {
 			}
 
 			if createStatus, err := s.GetClient().Datasources.AddDataSource(&newDS); err != nil {
-				slog.Error("error on importing datasource", "datasource", newDS.Name, "err", err, "createError", createStatus.Error())
+				slog.Error("error on importing datasource", "datasource", newDS.Name, "err", err, "createStatus", createStatus)
 			} else {
 				exported = append(exported, fileLocation)
 			}

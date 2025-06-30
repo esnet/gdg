@@ -1,4 +1,4 @@
-package tools
+package tools_test
 
 import (
 	"strings"

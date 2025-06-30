@@ -1,14 +1,13 @@
 [
 	{
-		"created": "2024-09-14T20:51:23.000Z",
-		"dashboardId": 12,
-		"folderId": 11,
+		"created": "2025-06-30T16:15:01.000Z",
+		"dashboardId": 17,
 		"permission": 4,
 		"permissionName": "Admin",
 		"slug": "dashboard-makeover-challenge",
 		"title": "Dashboard Makeover Challenge",
 		"uid": "F3eInwQ7z",
-		"updated": "2024-09-14T20:51:23.000Z",
+		"updated": "2025-06-30T16:15:01.000Z",
 		"url": "/d/F3eInwQ7z/dashboard-makeover-challenge",
 		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
 		"userEmail": "admin@localhost",

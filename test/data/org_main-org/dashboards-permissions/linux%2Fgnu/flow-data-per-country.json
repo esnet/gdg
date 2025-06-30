@@ -1,14 +1,13 @@
 [
 	{
-		"created": "2024-09-14T20:51:23.000Z",
-		"dashboardId": 16,
-		"folderId": 11,
+		"created": "2025-06-30T16:15:01.000Z",
+		"dashboardId": 19,
 		"permission": 4,
 		"permissionName": "Admin",
 		"slug": "flow-data-per-country",
 		"title": "Flow Data per Country",
 		"uid": "fgrOzz_mk",
-		"updated": "2024-09-14T20:51:23.000Z",
+		"updated": "2025-06-30T16:15:01.000Z",
 		"url": "/d/fgrOzz_mk/flow-data-per-country",
 		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
 		"userEmail": "admin@localhost",

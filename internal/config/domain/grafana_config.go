@@ -60,6 +60,7 @@ func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 	if s.secureAuth != nil {
 		return s.secureAuth
 	}
+
 	securePath := s.SecureLocation()
 	name := fmt.Sprintf("%s_auth.json", s.contextName)
 	authFile := filepath.Join(securePath, name)
@@ -99,7 +100,7 @@ func (s *GrafanaConfig) GetAPIToken() string {
 
 func (s *GrafanaConfig) SecureLocation() string {
 	if s.SecureLocationOverride == "" {
-		return s.GetPath(SecureSecretsResource, s.GetOrganizationName())
+		return s.GetPath(SecureSecretsResource, "")
 	}
 
 	// if path starts with a slash assume it's an absolute path

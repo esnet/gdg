@@ -1,4 +1,4 @@
-package tools
+package tools_test
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	err := path.FixTestDir("tools", "../../..")
+	err := path.FixTestDir("tools", "../..")
 	if err != nil {
 		log.Fatal(err.Error())
 	}

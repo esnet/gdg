@@ -20,10 +20,18 @@ func validBasicRole(role string) bool {
 func NewToolsCommand() simplecobra.Commander {
 	description := "A collection of tools to manage a grafana instance"
 	return &support.SimpleCommand{
-		NameP:        "tools",
-		Short:        description,
-		Long:         description,
-		CommandsList: []simplecobra.Commander{newContextCmd(), newDevelCmd(), newUserCommand(), newAuthCmd(), newOrgCommand(), newDashboardCmd()},
+		NameP: "tools",
+		Short: description,
+		Long:  description,
+		CommandsList: []simplecobra.Commander{
+			newContextCmd(),
+			newDevelCmd(),
+			newUserCommand(),
+			newAuthCmd(),
+			newOrgCommand(),
+			newDashboardCmd(),
+			newHelpers(),
+		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"t"}
 		},

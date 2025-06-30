@@ -8,8 +8,20 @@ weight: 8
 toc: true
 ---
 
+## Release Notes for v0.8.1
+
+**Release Date: 06/30/2025**
+
+### BugFix:
+  - [#456](https://github.com/esnet/gdg/issues/456) Issued with folders containing spaces
+
+### Changes:
+  - [#450](https://github.com/esnet/gdg/issues/450) Update GoReleaser configurations (#453)
+      Changes the patterns for brew installs from Formula to Cask: https://goreleaser.com/deprecations/#brews
+  - [#454](https://github.com/esnet/gdg/pull/454) Adding a logo GDG logo (#454)
+
 ## Release Notes for v0.8.0
-**Release Date: 05/11/2025**
+**Release Date: 06/25/2025**
 
 Major features in this release are:
 - Dropped the configuration flag for nested folders (`nested_folders`) as it is now the default behavior.

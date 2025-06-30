@@ -1,4 +1,4 @@
-package backup
+package backup_test
 
 import (
 	"log"
@@ -13,7 +13,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	err := path.FixTestDir("backup", "../../..")
+	err := path.FixTestDir("backup", "../..")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func getOptionMockSvc(testSvc *mocks.GrafanaService) func() support.RootOption {
+func GetOptionMockSvc(testSvc *mocks.GrafanaService) func() support.RootOption {
 	return func() support.RootOption {
 		return func(response *support.RootCommand) {
 			response.GrafanaSvc = func() service.GrafanaService {
