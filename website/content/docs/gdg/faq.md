@@ -41,3 +41,14 @@ There is a "Discussion" area on github where you can start a [conversation](http
  - [Grizzly](https://github.com/grafana/grizzly/) Prior version of GrafanaCTL
 
 Know of any others? Create a PR and add it to the list
+
+### I can't upgrade my gdg version using homebrew, how do I fix this?
+
+if you're getting an error about formula being disabled be sure to remove it first.
+
+```sh
+brew uninstall gdg
+brew install --cask gdg
+```
+
+Then simply follow the [install](https://software.es.net/gdg/docs/gdg/installation/#homebrew-installation) instructions.
