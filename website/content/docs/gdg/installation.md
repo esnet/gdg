@@ -27,13 +27,19 @@ dpkg -i ./gdg_0.6.0_amd64.deb
 ```sh
 brew tap esnet/gdg
 brew update
-brew install gdg
+brew install --cask gdg
 ```
 
 If there is a conflict you can try to be explicit.
 
+
+#### Migrating from formula to cask
+
+You might get an error on a simple upgrade after 0.8. Be sure to uninstall the formula first and install the gdg cask.
+
 ```sh
-brew install esnet/gdg/gdg
+brew uninstall gdg
+brew install --cask gdg
 ```
 
 ### Docker usage
