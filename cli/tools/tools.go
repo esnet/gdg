@@ -29,7 +29,6 @@ func NewToolsCommand() simplecobra.Commander {
 			newUserCommand(),
 			newAuthCmd(),
 			newOrgCommand(),
-			newDashboardCmd(),
 			newHelpers(),
 		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
