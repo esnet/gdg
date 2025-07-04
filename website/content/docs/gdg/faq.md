@@ -23,7 +23,7 @@ PS. if you want to list/import etc all dashboards, you can set the following con
 
 ```yaml
     dashboard_settings:
-      ignore_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
+      ignore_filters: true # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
 
 ```
 
