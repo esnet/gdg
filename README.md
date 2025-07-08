@@ -73,4 +73,4 @@ For more info, please see the release notes and documentation both available [he
 
 ---
 GDG is powered by the [Grafana OpenAPI Client](https://github.com/grafana/grafana-openapi-client-go). Any feature exposed by the API could
-be added go GDG is desired, feel free to fill out a feature request on our GitHub issue tracker.
+be added to GDG if desired, feel free to fill out a feature request on our GitHub issue tracker.
