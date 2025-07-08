@@ -3,7 +3,6 @@ package service
 import (
 	customModels "github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/service/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
@@ -55,7 +54,6 @@ type DashboardsApi interface {
 	DownloadDashboards(filter filters.V2Filter) []string
 	UploadDashboards(filterReq filters.V2Filter) ([]string, error)
 	DeleteAllDashboards(filter filters.V2Filter) []string
-	LintDashboards(req types.LintRequest) []string
 }
 
 type AlertContactPoints interface {
