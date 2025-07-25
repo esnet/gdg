@@ -5,13 +5,13 @@ go 1.24.4
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/avast/retry-go v3.0.0+incompatible
-	github.com/aws/aws-sdk-go-v2 v1.36.4
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.69
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.80.2
-	github.com/aws/smithy-go v1.22.3
+	github.com/aws/aws-sdk-go-v2 v1.36.6
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.71
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.84.1
+	github.com/aws/smithy-go v1.22.5
 	github.com/bep/simplecobra v0.6.0
 	github.com/brianvoe/gofakeit/v6 v6.28.0
-	github.com/brianvoe/gofakeit/v7 v7.2.1
+	github.com/brianvoe/gofakeit/v7 v7.3.0
 	github.com/carlmjohnson/requests v0.24.3
 	github.com/charmbracelet/huh v0.7.0
 	github.com/go-openapi/strfmt v0.23.0
@@ -21,20 +21,20 @@ require (
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20250617151817-c0f8cbb88d5c
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/joho/godotenv v1.5.1
-	github.com/lmittmann/tint v1.0.7
+	github.com/lmittmann/tint v1.1.2
 	github.com/mattn/go-isatty v0.0.20
-	github.com/samber/lo v1.49.1
+	github.com/samber/lo v1.51.0
 	github.com/sethvargo/go-password v0.3.1
 	github.com/spf13/cobra v1.9.1
-	github.com/spf13/viper v1.19.0
+	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
-	github.com/testcontainers/testcontainers-go v0.36.0
+	github.com/testcontainers/testcontainers-go v0.38.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/pretty v1.2.1
 	github.com/zeitlinger/conflate v0.0.0-20240927101413-c06be92f798f
-	gocloud.dev v0.40.0
+	gocloud.dev v0.43.0
 	golang.org/x/exp v0.0.0-20250207012021-f9890c6ad9f3
-	golang.org/x/mod v0.25.0
+	golang.org/x/mod v0.26.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
