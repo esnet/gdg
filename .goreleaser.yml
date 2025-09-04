@@ -113,8 +113,6 @@ homebrew_casks:
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
     description: Grafana Dash-n-Grab (GDG) -- Dashboard/DataSource Manager for grafana supporting backup/restore to local filesystem, s3, gcs, azure, and other S3 compatible storage engines.
     directory: Casks
-    conflicts:
-      - formula: gdg
     repository:
       owner: esnet
       name: homebrew-gdg
