@@ -91,21 +91,26 @@ release:
   prerelease: auto
 
 
-dockers:
+dockers_v2:
   - id: gdg
-    #  # You can have multiple Docker images.
-    #  - # ID of the image, needed if you want to filter by it later on (e.g. on custom publishers).
-    goos: linux
-    goarch: amd64
-    #
-    image_templates:
-      - "ghcr.io/esnet/gdg:latest"
-      - "ghcr.io/esnet/gdg:{{ .RawVersion }}"
-      - "ghcr.io/esnet/gdg:{{ .Major }}.{{ .Minor }}"
-
-    skip_push: false
-    dockerfile: "docker/Dockerfile"
-
+    dockerfile: "Dockerfile"
+    images:
+      - "ghcr.io/esnet/gdg"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+      - linux/386
+    tags:
+      - "{{ .Version }}"
+      - "{{ .RawVersion }}"
+      - "{{ if not .IsNightly }}latest{{ end }}"
+    labels:
+      "org.opencontainers.image.description": "Grafana Dash-n-Grab"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
 
 homebrew_casks:
   - name: gdg
