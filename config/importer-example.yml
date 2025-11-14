@@ -113,8 +113,8 @@ global:
   debug: true
   api_debug: false
   clear_output: true
-  ignore_ssl_errors: false ##when set to true will ignore invalid SSL errors
+  ignore_ssl_errors: false ## When set to true will ignore invalid SSL errors
   retry_count: 3 ## Will retry any failed API request up to 3 times.
-  retry_delay: 5s  ## will wait for specified duration before trying again.
-## Keep in mind longer the dealy and higher the count the slower GDG will be in performing certain tasks.
+  retry_delay: 5s  ## Will wait for specified duration before trying again.
+## Keep in mind longer the delay and higher the count the slower GDG will be in performing certain tasks.
 ## A failing endpoint that has 10s * 6 = 60 seconds minimum for each failing endpoint.  Use this carefully
