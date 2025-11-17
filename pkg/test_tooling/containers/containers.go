@@ -20,6 +20,7 @@ const (
 	EnterpriseLicenceKeyEnv  = "ENTERPRISE_LICENSE"
 	DefaultCloudUser         = "test"
 	DefaultCloudPass         = "secretsss"
+	minioCurrentTag          = "RELEASE.2025-09-07T16-13-09Z"
 )
 
 func BootstrapCloudStorage(username, password string) (testcontainers.Container, context.CancelFunc) {
@@ -30,7 +31,8 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 
 	ctx := context.Background()
 	req := testcontainers.ContainerRequest{
-		Image:        "bitnami/minio:latest",
+		Image:        fmt.Sprintf("minio/minio:%s", minioCurrentTag),
+		Cmd:          []string{"server", "start", "--console-address", ":9001"},
 		ExposedPorts: []string{"9000/tcp", "9001/tcp"},
 		Env:          map[string]string{"MINIO_ROOT_USER": username, "MINIO_ROOT_PASSWORD": password},
 		WaitingFor:   wait.ForListeningPort("9000/tcp"),
