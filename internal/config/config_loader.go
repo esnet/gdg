@@ -250,7 +250,7 @@ func InitGdgConfig(override string) {
 	var v *viper.Viper
 	configData.gdgConfig = new(domain.GDGAppConfiguration)
 
-	v, err = readViperConfig[domain.GDGAppConfiguration](appName, configDirs, configData.gdgConfig, ext)
+	v, err = readViperConfig(appName, configDirs, configData.gdgConfig, ext)
 	if err != nil {
 		log.Fatal("No configuration file has been found or config is invalid.  Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg'].  " +
 			"Try using `gdg default-config > config/importer.yml` go use the default example")
@@ -299,7 +299,7 @@ func InitTemplateConfig(override string) {
 	}
 	configData.templatingConfig = new(domain.TemplatingConfig)
 
-	_, err := readViperConfig[domain.TemplatingConfig](appName, configDirs, configData.templatingConfig, ext)
+	_, err := readViperConfig(appName, configDirs, configData.templatingConfig, ext)
 	if err != nil {
 		log.Fatal("unable to read templating configuration")
 	}
