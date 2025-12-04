@@ -212,7 +212,7 @@ func (s *Configuration) GetTemplateConfig() *domain.TemplatingConfig {
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
 func buildConfigSearchPath(configFile string) ([]string, string, string) {
 	ext := filepath.Ext(configFile)
-	appName := filepath.Base(configFile)
+	configName := filepath.Base(configFile)
 
 	var configDirs []string
 	if configFile != "" {
@@ -220,8 +220,8 @@ func buildConfigSearchPath(configFile string) ([]string, string, string) {
 		if configFileDir != "" {
 			configDirs = append([]string{configFileDir}, configSearchPaths...)
 		}
-		appName = filepath.Base(configFile)
-		appName = strings.TrimSuffix(appName, filepath.Ext(appName))
+		configName = filepath.Base(configFile)
+		configName = strings.TrimSuffix(configName, filepath.Ext(configName))
 	} else {
 		configDirs = append(configDirs, configSearchPaths...)
 	}
@@ -231,7 +231,7 @@ func buildConfigSearchPath(configFile string) ([]string, string, string) {
 		ext = ext[1:] // strip leading dot
 	}
 
-	return configDirs, appName, ext
+	return configDirs, configName, ext
 }
 
 func InitGdgConfig(override string) {
@@ -240,17 +240,17 @@ func InitGdgConfig(override string) {
 	}
 	configData = &Configuration{}
 	var configDirs []string
-	var ext, appName string
+	var ext, configName string
 	if override == "" {
-		configDirs, appName, ext = buildConfigSearchPath("config/importer.yml")
+		configDirs, configName, ext = buildConfigSearchPath("config/importer.yml")
 	} else {
-		configDirs, appName, ext = buildConfigSearchPath(override)
+		configDirs, configName, ext = buildConfigSearchPath(override)
 	}
 	var err error
 	var v *viper.Viper
 	configData.gdgConfig = new(domain.GDGAppConfiguration)
 
-	v, err = readViperConfig(appName, configDirs, configData.gdgConfig, ext)
+	v, err = readViperConfig(configName, configDirs, configData.gdgConfig, ext)
 	if err != nil {
 		log.Fatal("No configuration file has been found or config is invalid.  Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg'].  " +
 			"Try using `gdg default-config > config/importer.yml` go use the default example")
@@ -260,12 +260,12 @@ func InitGdgConfig(override string) {
 }
 
 // readViperConfig utilizes the viper library to load the config from the selected paths
-func readViperConfig[T any](appName string, configDirs []string, object *T, ext string) (*viper.Viper, error) {
+func readViperConfig[T any](configName string, configDirs []string, object *T, ext string) (*viper.Viper, error) {
 	v := viper.New()
 	v.SetEnvPrefix("GDG")
 	replacer := strings.NewReplacer(".", "__")
 	v.SetEnvKeyReplacer(replacer)
-	v.SetConfigName(appName)
+	v.SetConfigName(configName)
 	if ext == "" {
 		v.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
 	} else {
@@ -290,16 +290,16 @@ func InitTemplateConfig(override string) {
 	if configData == nil {
 		log.Fatal("GDG configuration was not able to be loaded, cannot continue")
 	}
-	var ext, appName string
+	var ext, configName string
 	var configDirs []string
 	if override == "" {
-		configDirs, appName, ext = buildConfigSearchPath("config/templates.yml")
+		configDirs, configName, ext = buildConfigSearchPath("config/templates.yml")
 	} else {
-		configDirs, appName, ext = buildConfigSearchPath(override)
+		configDirs, configName, ext = buildConfigSearchPath(override)
 	}
 	configData.templatingConfig = new(domain.TemplatingConfig)
 
-	_, err := readViperConfig(appName, configDirs, configData.templatingConfig, ext)
+	_, err := readViperConfig(configName, configDirs, configData.templatingConfig, ext)
 	if err != nil {
 		log.Fatal("unable to read templating configuration")
 	}
