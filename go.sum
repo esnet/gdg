@@ -183,6 +183,8 @@ github.com/brianvoe/gofakeit/v6 v6.28.0 h1:Xib46XXuQfmlLS2EXRuJpqcw8St6qSZz75OUo
 github.com/brianvoe/gofakeit/v6 v6.28.0/go.mod h1:Xj58BMSnFqcn/fAQeSK+/PLtC5kSb7FJIq4JyGa8vEs=
 github.com/brianvoe/gofakeit/v7 v7.3.0 h1:TWStf7/lLpAjKw+bqwzeORo9jvrxToWEwp9b1J2vApQ=
 github.com/brianvoe/gofakeit/v7 v7.3.0/go.mod h1:QXuPeBw164PJCzCUZVmgpgHJ3Llj49jSLVkKPMtxtxA=
+github.com/brianvoe/gofakeit/v7 v7.12.1 h1:df1tiI4SL1dR5Ix4D/r6a3a+nXBJ/OBGU5jEKRBmmqg=
+github.com/brianvoe/gofakeit/v7 v7.12.1/go.mod h1:QXuPeBw164PJCzCUZVmgpgHJ3Llj49jSLVkKPMtxtxA=
 github.com/carlmjohnson/requests v0.24.3 h1:LYcM/jVIVPkioigMjEAnBACXl2vb42TVqiC8EYNoaXQ=
 github.com/carlmjohnson/requests v0.24.3/go.mod h1:duYA/jDnyZ6f3xbcF5PpZ9N8clgopubP2nK5i6MVMhU=
 github.com/carlmjohnson/requests v0.25.1 h1:17zNRLecxtAjhtdEIV+F+wrYfe+AGZUjWJtpndcOUYA=

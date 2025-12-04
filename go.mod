@@ -11,7 +11,7 @@ require (
 	github.com/aws/smithy-go v1.23.0
 	github.com/bep/simplecobra v0.6.1
 	github.com/brianvoe/gofakeit/v6 v6.28.0
-	github.com/brianvoe/gofakeit/v7 v7.3.0
+	github.com/brianvoe/gofakeit/v7 v7.12.1
 	github.com/carlmjohnson/requests v0.25.1
 	github.com/charmbracelet/huh v0.7.0
 	github.com/go-openapi/strfmt v0.23.0
