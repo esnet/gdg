@@ -251,12 +251,12 @@ func (s *DashNGoImpl) ListOrganizations(filter filters.V2Filter, withPreferences
 	for _, org := range orgList.GetPayload() {
 		if filter.ValidateAll(*org) {
 			if !withPreferences {
-				resultsData = append(resultsData, &domain.OrgsDTOWithPreferences{Organization: org, Preferences: &models.Preferences{}})
+				resultsData = append(resultsData, &domain.OrgsDTOWithPreferences{Organization: org, Preferences: &models.PreferencesSpec{}})
 			} else {
 				preferences, err := s.GetOrgPreferences(org.Name)
 				if err != nil {
 					slog.Warn("unable to retrieve org preferences for org", slog.String("organization", org.Name))
-					preferences = &models.Preferences{}
+					preferences = &models.PreferencesSpec{}
 				}
 				resultsData = append(resultsData, &domain.OrgsDTOWithPreferences{Organization: org, Preferences: preferences})
 			}

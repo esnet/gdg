@@ -25,7 +25,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
-	"github.com/grafana/grafana-openapi-client-go/client/folder_permissions"
+	// "github.com/grafana/grafana-openapi-client-go/client/folder_permissions"
 	"github.com/grafana/grafana-openapi-client-go/client/folders"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -136,7 +136,7 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.V2Filter) []string 
 			Items: newEntries,
 		}
 
-		_, err := s.GetClient().FolderPermissions.UpdateFolderPermissions(uid.String(), payload)
+		_, err := s.GetClient().Folders.UpdateFolderPermissions(uid.String(), payload)
 		if err != nil {
 			slog.Error("Failed to update folder permissions")
 		} else {
@@ -161,14 +161,14 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.V2Filter) map[*domain
 	r := make(map[*domain.NestedHit][]*models.DashboardACLInfoDTO)
 
 	for ndx, foldersEntry := range foldersList {
-		results, err := s.GetClient().FolderPermissions.GetFolderPermissionList(foldersEntry.UID)
+		results, err := s.GetClient().Folders.GetFolderPermissionList(foldersEntry.UID)
 		if err != nil {
 			msg := fmt.Sprintf("Unable to get folder permissions for folderUID: %s", foldersEntry.UID)
 
-			var getFolderPermissionListInternalServerError *folder_permissions.GetFolderPermissionListInternalServerError
+			var getFolderPermissionListInternalServerError *folders.GetFolderPermissionListInternalServerError
 			switch {
 			case errors.As(err, &getFolderPermissionListInternalServerError):
-				var castError *folder_permissions.GetFolderPermissionListInternalServerError
+				var castError *folders.GetFolderPermissionListInternalServerError
 				errors.As(err, &castError)
 				slog.Error(msg, "message", *castError.GetPayload().Message, "err", err)
 			default:
@@ -406,7 +406,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 				// folder exists, continue
 				slog.Debug("Parent already exists, continuing", slog.Any("ParentFolder", sb.String()))
 				parentResource := filepath.Join(resourceDir, fmt.Sprintf("%s.json", sb.String()))
-				if val, ok := processed[parentResource]; !ok || !val {
+				if val, entryExists := processed[parentResource]; !entryExists || !val {
 					processed[parentResource] = true
 				}
 			}
@@ -446,9 +446,9 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 			newFolder.ParentUID = parentUid
 		}
 		params.Body = &newFolder
-		f, err := s.GetClient().Folders.CreateFolder(&newFolder)
+		f, createErr := s.GetClient().Folders.CreateFolder(&newFolder)
 		if err != nil {
-			slog.Error("failed to create folder.", "folderName", newFolder.Title, "err", err)
+			slog.Error("failed to create folder.", "folderName", newFolder.Title, "err", createErr)
 			continue
 		}
 		processed[fileLocation] = true

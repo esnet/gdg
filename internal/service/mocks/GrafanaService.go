@@ -5,9 +5,8 @@
 package mocks
 
 import (
-	types0 "github.com/esnet/gdg/internal/service/domain"
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/service/types"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -1849,23 +1848,23 @@ func (_c *GrafanaService_DownloadUsers_Call) RunAndReturn(run func(filter filter
 }
 
 // GetOrgPreferences provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) GetOrgPreferences(orgName string) (*models.Preferences, error) {
+func (_mock *GrafanaService) GetOrgPreferences(orgName string) (*models.PreferencesSpec, error) {
 	ret := _mock.Called(orgName)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetOrgPreferences")
 	}
 
-	var r0 *models.Preferences
+	var r0 *models.PreferencesSpec
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*models.Preferences, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) (*models.PreferencesSpec, error)); ok {
 		return returnFunc(orgName)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) *models.Preferences); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) *models.PreferencesSpec); ok {
 		r0 = returnFunc(orgName)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Preferences)
+			r0 = ret.Get(0).(*models.PreferencesSpec)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
@@ -1900,12 +1899,12 @@ func (_c *GrafanaService_GetOrgPreferences_Call) Run(run func(orgName string)) *
 	return _c
 }
 
-func (_c *GrafanaService_GetOrgPreferences_Call) Return(preferences *models.Preferences, err error) *GrafanaService_GetOrgPreferences_Call {
-	_c.Call.Return(preferences, err)
+func (_c *GrafanaService_GetOrgPreferences_Call) Return(preferencesSpec *models.PreferencesSpec, err error) *GrafanaService_GetOrgPreferences_Call {
+	_c.Call.Return(preferencesSpec, err)
 	return _c
 }
 
-func (_c *GrafanaService_GetOrgPreferences_Call) RunAndReturn(run func(orgName string) (*models.Preferences, error)) *GrafanaService_GetOrgPreferences_Call {
+func (_c *GrafanaService_GetOrgPreferences_Call) RunAndReturn(run func(orgName string) (*models.PreferencesSpec, error)) *GrafanaService_GetOrgPreferences_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2180,59 +2179,6 @@ func (_c *GrafanaService_IsEnterprise_Call) RunAndReturn(run func() bool) *Grafa
 	return _c
 }
 
-// LintDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) LintDashboards(req types.LintRequest) []string {
-	ret := _mock.Called(req)
-
-	if len(ret) == 0 {
-		panic("no return value specified for LintDashboards")
-	}
-
-	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(types.LintRequest) []string); ok {
-		r0 = returnFunc(req)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-	return r0
-}
-
-// GrafanaService_LintDashboards_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'LintDashboards'
-type GrafanaService_LintDashboards_Call struct {
-	*mock.Call
-}
-
-// LintDashboards is a helper method to define mock.On call
-//   - req types.LintRequest
-func (_e *GrafanaService_Expecter) LintDashboards(req interface{}) *GrafanaService_LintDashboards_Call {
-	return &GrafanaService_LintDashboards_Call{Call: _e.mock.On("LintDashboards", req)}
-}
-
-func (_c *GrafanaService_LintDashboards_Call) Run(run func(req types.LintRequest)) *GrafanaService_LintDashboards_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 types.LintRequest
-		if args[0] != nil {
-			arg0 = args[0].(types.LintRequest)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *GrafanaService_LintDashboards_Call) Return(strings []string) *GrafanaService_LintDashboards_Call {
-	_c.Call.Return(strings)
-	return _c
-}
-
-func (_c *GrafanaService_LintDashboards_Call) RunAndReturn(run func(req types.LintRequest) []string) *GrafanaService_LintDashboards_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // ListAlertNotifications provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) ListAlertNotifications() (*models.Route, error) {
 	ret := _mock.Called()
@@ -2399,19 +2345,19 @@ func (_c *GrafanaService_ListAlertTemplates_Call) RunAndReturn(run func() ([]*mo
 }
 
 // ListConnectionPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListConnectionPermissions(filter filters.V2Filter) []types0.ConnectionPermissionItem {
+func (_mock *GrafanaService) ListConnectionPermissions(filter filters.V2Filter) []domain.ConnectionPermissionItem {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListConnectionPermissions")
 	}
 
-	var r0 []types0.ConnectionPermissionItem
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []types0.ConnectionPermissionItem); ok {
+	var r0 []domain.ConnectionPermissionItem
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []domain.ConnectionPermissionItem); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]types0.ConnectionPermissionItem)
+			r0 = ret.Get(0).([]domain.ConnectionPermissionItem)
 		}
 	}
 	return r0
@@ -2441,12 +2387,12 @@ func (_c *GrafanaService_ListConnectionPermissions_Call) Run(run func(filter fil
 	return _c
 }
 
-func (_c *GrafanaService_ListConnectionPermissions_Call) Return(connectionPermissionItems []types0.ConnectionPermissionItem) *GrafanaService_ListConnectionPermissions_Call {
+func (_c *GrafanaService_ListConnectionPermissions_Call) Return(connectionPermissionItems []domain.ConnectionPermissionItem) *GrafanaService_ListConnectionPermissions_Call {
 	_c.Call.Return(connectionPermissionItems)
 	return _c
 }
 
-func (_c *GrafanaService_ListConnectionPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) []types0.ConnectionPermissionItem) *GrafanaService_ListConnectionPermissions_Call {
+func (_c *GrafanaService_ListConnectionPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) []domain.ConnectionPermissionItem) *GrafanaService_ListConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2560,23 +2506,23 @@ func (_c *GrafanaService_ListContactPoints_Call) RunAndReturn(run func() ([]*mod
 }
 
 // ListDashboardPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListDashboardPermissions(filterReq filters.V2Filter) ([]types0.DashboardAndPermissions, error) {
+func (_mock *GrafanaService) ListDashboardPermissions(filterReq filters.V2Filter) ([]domain.DashboardAndPermissions, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListDashboardPermissions")
 	}
 
-	var r0 []types0.DashboardAndPermissions
+	var r0 []domain.DashboardAndPermissions
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]types0.DashboardAndPermissions, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]domain.DashboardAndPermissions, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []types0.DashboardAndPermissions); ok {
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []domain.DashboardAndPermissions); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]types0.DashboardAndPermissions)
+			r0 = ret.Get(0).([]domain.DashboardAndPermissions)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
@@ -2611,30 +2557,30 @@ func (_c *GrafanaService_ListDashboardPermissions_Call) Run(run func(filterReq f
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboardPermissions_Call) Return(dashboardAndPermissionss []types0.DashboardAndPermissions, err error) *GrafanaService_ListDashboardPermissions_Call {
+func (_c *GrafanaService_ListDashboardPermissions_Call) Return(dashboardAndPermissionss []domain.DashboardAndPermissions, err error) *GrafanaService_ListDashboardPermissions_Call {
 	_c.Call.Return(dashboardAndPermissionss, err)
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(filterReq filters.V2Filter) ([]types0.DashboardAndPermissions, error)) *GrafanaService_ListDashboardPermissions_Call {
+func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(filterReq filters.V2Filter) ([]domain.DashboardAndPermissions, error)) *GrafanaService_ListDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListDashboards(filter filters.V2Filter) []*types0.NestedHit {
+func (_mock *GrafanaService) ListDashboards(filter filters.V2Filter) []*domain.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListDashboards")
 	}
 
-	var r0 []*types0.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*types0.NestedHit); ok {
+	var r0 []*domain.NestedHit
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types0.NestedHit)
+			r0 = ret.Get(0).([]*domain.NestedHit)
 		}
 	}
 	return r0
@@ -2664,30 +2610,30 @@ func (_c *GrafanaService_ListDashboards_Call) Run(run func(filter filters.V2Filt
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboards_Call) Return(nestedHits []*types0.NestedHit) *GrafanaService_ListDashboards_Call {
+func (_c *GrafanaService_ListDashboards_Call) Return(nestedHits []*domain.NestedHit) *GrafanaService_ListDashboards_Call {
 	_c.Call.Return(nestedHits)
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filter filters.V2Filter) []*types0.NestedHit) *GrafanaService_ListDashboards_Call {
+func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filter filters.V2Filter) []*domain.NestedHit) *GrafanaService_ListDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListFolderPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListFolderPermissions(filter filters.V2Filter) map[*types0.NestedHit][]*models.DashboardACLInfoDTO {
+func (_mock *GrafanaService) ListFolderPermissions(filter filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListFolderPermissions")
 	}
 
-	var r0 map[*types0.NestedHit][]*models.DashboardACLInfoDTO
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) map[*types0.NestedHit][]*models.DashboardACLInfoDTO); ok {
+	var r0 map[*domain.NestedHit][]*models.DashboardACLInfoDTO
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[*types0.NestedHit][]*models.DashboardACLInfoDTO)
+			r0 = ret.Get(0).(map[*domain.NestedHit][]*models.DashboardACLInfoDTO)
 		}
 	}
 	return r0
@@ -2717,30 +2663,30 @@ func (_c *GrafanaService_ListFolderPermissions_Call) Run(run func(filter filters
 	return _c
 }
 
-func (_c *GrafanaService_ListFolderPermissions_Call) Return(nestedHitToDashboardACLInfoDTOs map[*types0.NestedHit][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
+func (_c *GrafanaService_ListFolderPermissions_Call) Return(nestedHitToDashboardACLInfoDTOs map[*domain.NestedHit][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
 	_c.Call.Return(nestedHitToDashboardACLInfoDTOs)
 	return _c
 }
 
-func (_c *GrafanaService_ListFolderPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) map[*types0.NestedHit][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
+func (_c *GrafanaService_ListFolderPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListFolders provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListFolders(filter filters.V2Filter) []*types0.NestedHit {
+func (_mock *GrafanaService) ListFolders(filter filters.V2Filter) []*domain.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListFolders")
 	}
 
-	var r0 []*types0.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*types0.NestedHit); ok {
+	var r0 []*domain.NestedHit
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types0.NestedHit)
+			r0 = ret.Get(0).([]*domain.NestedHit)
 		}
 	}
 	return r0
@@ -2770,30 +2716,30 @@ func (_c *GrafanaService_ListFolders_Call) Run(run func(filter filters.V2Filter)
 	return _c
 }
 
-func (_c *GrafanaService_ListFolders_Call) Return(nestedHits []*types0.NestedHit) *GrafanaService_ListFolders_Call {
+func (_c *GrafanaService_ListFolders_Call) Return(nestedHits []*domain.NestedHit) *GrafanaService_ListFolders_Call {
 	_c.Call.Return(nestedHits)
 	return _c
 }
 
-func (_c *GrafanaService_ListFolders_Call) RunAndReturn(run func(filter filters.V2Filter) []*types0.NestedHit) *GrafanaService_ListFolders_Call {
+func (_c *GrafanaService_ListFolders_Call) RunAndReturn(run func(filter filters.V2Filter) []*domain.NestedHit) *GrafanaService_ListFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListLibraryElements provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListLibraryElements(filter filters.V2Filter) []*types0.WithNested[models.LibraryElementDTO] {
+func (_mock *GrafanaService) ListLibraryElements(filter filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO] {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListLibraryElements")
 	}
 
-	var r0 []*types0.WithNested[models.LibraryElementDTO]
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*types0.WithNested[models.LibraryElementDTO]); ok {
+	var r0 []*domain.WithNested[models.LibraryElementDTO]
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO]); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types0.WithNested[models.LibraryElementDTO])
+			r0 = ret.Get(0).([]*domain.WithNested[models.LibraryElementDTO])
 		}
 	}
 	return r0
@@ -2823,12 +2769,12 @@ func (_c *GrafanaService_ListLibraryElements_Call) Run(run func(filter filters.V
 	return _c
 }
 
-func (_c *GrafanaService_ListLibraryElements_Call) Return(withNesteds []*types0.WithNested[models.LibraryElementDTO]) *GrafanaService_ListLibraryElements_Call {
+func (_c *GrafanaService_ListLibraryElements_Call) Return(withNesteds []*domain.WithNested[models.LibraryElementDTO]) *GrafanaService_ListLibraryElements_Call {
 	_c.Call.Return(withNesteds)
 	return _c
 }
 
-func (_c *GrafanaService_ListLibraryElements_Call) RunAndReturn(run func(filter filters.V2Filter) []*types0.WithNested[models.LibraryElementDTO]) *GrafanaService_ListLibraryElements_Call {
+func (_c *GrafanaService_ListLibraryElements_Call) RunAndReturn(run func(filter filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO]) *GrafanaService_ListLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2946,19 +2892,19 @@ func (_c *GrafanaService_ListOrgUsers_Call) RunAndReturn(run func(orgId int64) [
 }
 
 // ListOrganizations provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListOrganizations(filter filters.V2Filter, withPreferences bool) []*types0.OrgsDTOWithPreferences {
+func (_mock *GrafanaService) ListOrganizations(filter filters.V2Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
 	ret := _mock.Called(filter, withPreferences)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListOrganizations")
 	}
 
-	var r0 []*types0.OrgsDTOWithPreferences
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter, bool) []*types0.OrgsDTOWithPreferences); ok {
+	var r0 []*domain.OrgsDTOWithPreferences
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter, bool) []*domain.OrgsDTOWithPreferences); ok {
 		r0 = returnFunc(filter, withPreferences)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types0.OrgsDTOWithPreferences)
+			r0 = ret.Get(0).([]*domain.OrgsDTOWithPreferences)
 		}
 	}
 	return r0
@@ -2994,30 +2940,30 @@ func (_c *GrafanaService_ListOrganizations_Call) Run(run func(filter filters.V2F
 	return _c
 }
 
-func (_c *GrafanaService_ListOrganizations_Call) Return(orgsDTOWithPreferencess []*types0.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
+func (_c *GrafanaService_ListOrganizations_Call) Return(orgsDTOWithPreferencess []*domain.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
 	_c.Call.Return(orgsDTOWithPreferencess)
 	return _c
 }
 
-func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filter filters.V2Filter, withPreferences bool) []*types0.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
+func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filter filters.V2Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListServiceAccounts provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListServiceAccounts() []*types0.ServiceAccountDTOWithTokens {
+func (_mock *GrafanaService) ListServiceAccounts() []*domain.ServiceAccountDTOWithTokens {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListServiceAccounts")
 	}
 
-	var r0 []*types0.ServiceAccountDTOWithTokens
-	if returnFunc, ok := ret.Get(0).(func() []*types0.ServiceAccountDTOWithTokens); ok {
+	var r0 []*domain.ServiceAccountDTOWithTokens
+	if returnFunc, ok := ret.Get(0).(func() []*domain.ServiceAccountDTOWithTokens); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types0.ServiceAccountDTOWithTokens)
+			r0 = ret.Get(0).([]*domain.ServiceAccountDTOWithTokens)
 		}
 	}
 	return r0
@@ -3040,12 +2986,12 @@ func (_c *GrafanaService_ListServiceAccounts_Call) Run(run func()) *GrafanaServi
 	return _c
 }
 
-func (_c *GrafanaService_ListServiceAccounts_Call) Return(serviceAccountDTOWithTokenss []*types0.ServiceAccountDTOWithTokens) *GrafanaService_ListServiceAccounts_Call {
+func (_c *GrafanaService_ListServiceAccounts_Call) Return(serviceAccountDTOWithTokenss []*domain.ServiceAccountDTOWithTokens) *GrafanaService_ListServiceAccounts_Call {
 	_c.Call.Return(serviceAccountDTOWithTokenss)
 	return _c
 }
 
-func (_c *GrafanaService_ListServiceAccounts_Call) RunAndReturn(run func() []*types0.ServiceAccountDTOWithTokens) *GrafanaService_ListServiceAccounts_Call {
+func (_c *GrafanaService_ListServiceAccounts_Call) RunAndReturn(run func() []*domain.ServiceAccountDTOWithTokens) *GrafanaService_ListServiceAccounts_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4136,7 +4082,7 @@ func (_c *GrafanaService_UploadLibraryElements_Call) RunAndReturn(run func(filte
 }
 
 // UploadOrgPreferences provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadOrgPreferences(orgName string, pref *models.Preferences) error {
+func (_mock *GrafanaService) UploadOrgPreferences(orgName string, pref *models.PreferencesSpec) error {
 	ret := _mock.Called(orgName, pref)
 
 	if len(ret) == 0 {
@@ -4144,7 +4090,7 @@ func (_mock *GrafanaService) UploadOrgPreferences(orgName string, pref *models.P
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string, *models.Preferences) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, *models.PreferencesSpec) error); ok {
 		r0 = returnFunc(orgName, pref)
 	} else {
 		r0 = ret.Error(0)
@@ -4159,20 +4105,20 @@ type GrafanaService_UploadOrgPreferences_Call struct {
 
 // UploadOrgPreferences is a helper method to define mock.On call
 //   - orgName string
-//   - pref *models.Preferences
+//   - pref *models.PreferencesSpec
 func (_e *GrafanaService_Expecter) UploadOrgPreferences(orgName interface{}, pref interface{}) *GrafanaService_UploadOrgPreferences_Call {
 	return &GrafanaService_UploadOrgPreferences_Call{Call: _e.mock.On("UploadOrgPreferences", orgName, pref)}
 }
 
-func (_c *GrafanaService_UploadOrgPreferences_Call) Run(run func(orgName string, pref *models.Preferences)) *GrafanaService_UploadOrgPreferences_Call {
+func (_c *GrafanaService_UploadOrgPreferences_Call) Run(run func(orgName string, pref *models.PreferencesSpec)) *GrafanaService_UploadOrgPreferences_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
 			arg0 = args[0].(string)
 		}
-		var arg1 *models.Preferences
+		var arg1 *models.PreferencesSpec
 		if args[1] != nil {
-			arg1 = args[1].(*models.Preferences)
+			arg1 = args[1].(*models.PreferencesSpec)
 		}
 		run(
 			arg0,
@@ -4187,7 +4133,7 @@ func (_c *GrafanaService_UploadOrgPreferences_Call) Return(err error) *GrafanaSe
 	return _c
 }
 
-func (_c *GrafanaService_UploadOrgPreferences_Call) RunAndReturn(run func(orgName string, pref *models.Preferences) error) *GrafanaService_UploadOrgPreferences_Call {
+func (_c *GrafanaService_UploadOrgPreferences_Call) RunAndReturn(run func(orgName string, pref *models.PreferencesSpec) error) *GrafanaService_UploadOrgPreferences_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4299,19 +4245,19 @@ func (_c *GrafanaService_UploadTeams_Call) RunAndReturn(run func(filter filters.
 }
 
 // UploadUsers provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadUsers(filter filters.V2Filter) []types0.UserProfileWithAuth {
+func (_mock *GrafanaService) UploadUsers(filter filters.V2Filter) []domain.UserProfileWithAuth {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UploadUsers")
 	}
 
-	var r0 []types0.UserProfileWithAuth
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []types0.UserProfileWithAuth); ok {
+	var r0 []domain.UserProfileWithAuth
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []domain.UserProfileWithAuth); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]types0.UserProfileWithAuth)
+			r0 = ret.Get(0).([]domain.UserProfileWithAuth)
 		}
 	}
 	return r0
@@ -4341,12 +4287,12 @@ func (_c *GrafanaService_UploadUsers_Call) Run(run func(filter filters.V2Filter)
 	return _c
 }
 
-func (_c *GrafanaService_UploadUsers_Call) Return(userProfileWithAuths []types0.UserProfileWithAuth) *GrafanaService_UploadUsers_Call {
+func (_c *GrafanaService_UploadUsers_Call) Return(userProfileWithAuths []domain.UserProfileWithAuth) *GrafanaService_UploadUsers_Call {
 	_c.Call.Return(userProfileWithAuths)
 	return _c
 }
 
-func (_c *GrafanaService_UploadUsers_Call) RunAndReturn(run func(filter filters.V2Filter) []types0.UserProfileWithAuth) *GrafanaService_UploadUsers_Call {
+func (_c *GrafanaService_UploadUsers_Call) RunAndReturn(run func(filter filters.V2Filter) []domain.UserProfileWithAuth) *GrafanaService_UploadUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }

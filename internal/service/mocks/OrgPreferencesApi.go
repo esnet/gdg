@@ -37,23 +37,23 @@ func (_m *OrgPreferencesApi) EXPECT() *OrgPreferencesApi_Expecter {
 }
 
 // GetOrgPreferences provides a mock function for the type OrgPreferencesApi
-func (_mock *OrgPreferencesApi) GetOrgPreferences(orgName string) (*models.Preferences, error) {
+func (_mock *OrgPreferencesApi) GetOrgPreferences(orgName string) (*models.PreferencesSpec, error) {
 	ret := _mock.Called(orgName)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetOrgPreferences")
 	}
 
-	var r0 *models.Preferences
+	var r0 *models.PreferencesSpec
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*models.Preferences, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) (*models.PreferencesSpec, error)); ok {
 		return returnFunc(orgName)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) *models.Preferences); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) *models.PreferencesSpec); ok {
 		r0 = returnFunc(orgName)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Preferences)
+			r0 = ret.Get(0).(*models.PreferencesSpec)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
@@ -88,18 +88,18 @@ func (_c *OrgPreferencesApi_GetOrgPreferences_Call) Run(run func(orgName string)
 	return _c
 }
 
-func (_c *OrgPreferencesApi_GetOrgPreferences_Call) Return(preferences *models.Preferences, err error) *OrgPreferencesApi_GetOrgPreferences_Call {
-	_c.Call.Return(preferences, err)
+func (_c *OrgPreferencesApi_GetOrgPreferences_Call) Return(preferencesSpec *models.PreferencesSpec, err error) *OrgPreferencesApi_GetOrgPreferences_Call {
+	_c.Call.Return(preferencesSpec, err)
 	return _c
 }
 
-func (_c *OrgPreferencesApi_GetOrgPreferences_Call) RunAndReturn(run func(orgName string) (*models.Preferences, error)) *OrgPreferencesApi_GetOrgPreferences_Call {
+func (_c *OrgPreferencesApi_GetOrgPreferences_Call) RunAndReturn(run func(orgName string) (*models.PreferencesSpec, error)) *OrgPreferencesApi_GetOrgPreferences_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadOrgPreferences provides a mock function for the type OrgPreferencesApi
-func (_mock *OrgPreferencesApi) UploadOrgPreferences(orgName string, pref *models.Preferences) error {
+func (_mock *OrgPreferencesApi) UploadOrgPreferences(orgName string, pref *models.PreferencesSpec) error {
 	ret := _mock.Called(orgName, pref)
 
 	if len(ret) == 0 {
@@ -107,7 +107,7 @@ func (_mock *OrgPreferencesApi) UploadOrgPreferences(orgName string, pref *model
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string, *models.Preferences) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, *models.PreferencesSpec) error); ok {
 		r0 = returnFunc(orgName, pref)
 	} else {
 		r0 = ret.Error(0)
@@ -122,20 +122,20 @@ type OrgPreferencesApi_UploadOrgPreferences_Call struct {
 
 // UploadOrgPreferences is a helper method to define mock.On call
 //   - orgName string
-//   - pref *models.Preferences
+//   - pref *models.PreferencesSpec
 func (_e *OrgPreferencesApi_Expecter) UploadOrgPreferences(orgName interface{}, pref interface{}) *OrgPreferencesApi_UploadOrgPreferences_Call {
 	return &OrgPreferencesApi_UploadOrgPreferences_Call{Call: _e.mock.On("UploadOrgPreferences", orgName, pref)}
 }
 
-func (_c *OrgPreferencesApi_UploadOrgPreferences_Call) Run(run func(orgName string, pref *models.Preferences)) *OrgPreferencesApi_UploadOrgPreferences_Call {
+func (_c *OrgPreferencesApi_UploadOrgPreferences_Call) Run(run func(orgName string, pref *models.PreferencesSpec)) *OrgPreferencesApi_UploadOrgPreferences_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
 			arg0 = args[0].(string)
 		}
-		var arg1 *models.Preferences
+		var arg1 *models.PreferencesSpec
 		if args[1] != nil {
-			arg1 = args[1].(*models.Preferences)
+			arg1 = args[1].(*models.PreferencesSpec)
 		}
 		run(
 			arg0,
@@ -150,7 +150,7 @@ func (_c *OrgPreferencesApi_UploadOrgPreferences_Call) Return(err error) *OrgPre
 	return _c
 }
 
-func (_c *OrgPreferencesApi_UploadOrgPreferences_Call) RunAndReturn(run func(orgName string, pref *models.Preferences) error) *OrgPreferencesApi_UploadOrgPreferences_Call {
+func (_c *OrgPreferencesApi_UploadOrgPreferences_Call) RunAndReturn(run func(orgName string, pref *models.PreferencesSpec) error) *OrgPreferencesApi_UploadOrgPreferences_Call {
 	_c.Call.Return(run)
 	return _c
 }

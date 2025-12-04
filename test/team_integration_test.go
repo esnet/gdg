@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/tools/ptr"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
@@ -51,22 +52,26 @@ func TestTeamCRUD(t *testing.T) {
 	var engineerTeam *models.TeamDTO
 	var musicianTeam *models.TeamDTO
 	for ndx, team := range teams {
-		if team.Name == "engineers" {
+		if ptr.ValueOrDefault(team.Name, "") == "engineers" {
 			engineerTeam = teams[ndx]
-		} else if team.Name == "musicians" {
+		} else if ptr.ValueOrDefault(team.Name, "") == "musicians" {
 			musicianTeam = teams[ndx]
 		}
 	}
 	assert.NotNil(t, engineerTeam)
-	assert.Equal(t, engineerTeam.Name, "engineers")
+	assert.Equal(t, ptr.ValueOrDefault(engineerTeam.Name, ""), "engineers")
 	engineers := teamsMap[engineerTeam]
 	assert.Equal(t, len(engineers), 2)
 	assert.Equal(t, engineers[1].Login, "tux")
-	assert.Equal(t, musicianTeam.Name, "musicians")
+	assert.Equal(t, ptr.ValueOrDefault(musicianTeam.Name, ""), "musicians")
 	// Import Teams
 	slog.Info("Importing teams")
 	list := apiClient.DownloadTeams(filter)
 	assert.Equal(t, len(list), len(teams))
+	for _, members := range list {
+		assert.True(t, len(members) > 0)
+	}
+
 	// CleanUp
 	_, err = apiClient.DeleteTeam(filter)
 	assert.Nil(t, err)

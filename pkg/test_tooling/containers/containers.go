@@ -73,15 +73,18 @@ func DefaultGrafanaEnv() map[string]string {
 	}
 }
 
+func GetGrafanaVersion() string {
+	version := os.Getenv(defaultGrafanaVersionEnv)
+	if version == "" {
+		version = defaultGrafanaVersion
+	}
+	return version
+}
+
 func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageSuffix string) (testcontainers.Container, func()) {
 	retry := func() (testcontainers.Container, func(), error) {
 		defaultProps := DefaultGrafanaEnv()
-		if version == "" {
-			version = os.Getenv(defaultGrafanaVersionEnv)
-			if version == "" {
-				version = defaultGrafanaVersion
-			}
-		}
+		version = GetGrafanaVersion()
 		// merge properties
 		maps.Copy(defaultProps, additionalEnvProps)
 		ctx := context.Background()
