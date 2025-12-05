@@ -247,7 +247,8 @@ func InitGdgConfig(override string) {
 
 	v, err = readViperConfig(configName, configDirs, configData.gdgConfig, ext)
 	if err != nil {
-		log.Fatal("No configuration file has been found or config is invalid.  Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg'].  " +
+		log.Fatal("No configuration file has been found or config is invalid. " + 
+			"Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg']. " +
 			"Try using `gdg default-config > config/importer.yml` go use the default example")
 	}
 	configData.gdgConfig.UpdateContextNames()
