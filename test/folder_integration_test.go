@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/internal/service/domain"
+	"github.com/esnet/gdg/pkg/test_tooling/containers"
 
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
@@ -160,10 +161,8 @@ func TestFolderNestedPermissions(t *testing.T) {
 	containerObj, cleanup := test_tooling.InitOrganizations(t)
 
 	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
-	assert.NoError(t, os.Setenv(test_tooling.EnableNestedBehavior, "true"))
 	defer func() {
 		os.Unsetenv(test_tooling.OrgNameOverride)
-		os.Unsetenv(test_tooling.EnableNestedBehavior)
 		cleanup()
 	}()
 
@@ -175,10 +174,17 @@ func TestFolderNestedPermissions(t *testing.T) {
 	assert.Equal(t, len(folders), 4)
 	result := apiClient.ListFolderPermissions(nil)
 	assert.True(t, len(result) > 0)
+	grafanaVersion := getGrafanaVersion(":" + containers.GetGrafanaVersion())
+
 	for key, val := range result {
 		assert.NotNil(t, key)
 		if strings.Contains(key.NestedPath, "/") {
-			assert.Equal(t, 1, len(val))
+			switch grafanaVersion {
+			case 11:
+				assert.Equal(t, 1, len(val))
+			case 12:
+				assert.Equal(t, 0, len(val))
+			}
 		} else {
 			assert.Equal(t, 3, len(val))
 		}
@@ -202,10 +208,8 @@ func TestFolderNestedCRUD(t *testing.T) {
 	containerObj, cleanup := test_tooling.InitOrganizations(t)
 
 	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
-	assert.NoError(t, os.Setenv(test_tooling.EnableNestedBehavior, "true"))
 	defer func() {
 		os.Unsetenv(test_tooling.OrgNameOverride)
-		os.Unsetenv(test_tooling.EnableNestedBehavior)
 		cleanup()
 	}()
 

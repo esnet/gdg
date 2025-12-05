@@ -63,7 +63,7 @@ func TestAlertingRulesCrud(t *testing.T) {
 	})
 	assert.NotNil(t, p)
 	assert.Equal(t, len(p.Data), 2)
-	assert.Equal(t, ptr.ValOf(p.Title), "boom")
+	assert.Equal(t, ptr.ValueOrDefault(p.Title, ""), "boom")
 	data, err := apiClient.DownloadAlertRules()
 	assert.NoError(t, err)
 	assert.Equal(t, "test/data/org_main-org/alerting/rules.json", data)

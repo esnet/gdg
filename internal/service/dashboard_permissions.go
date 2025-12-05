@@ -27,7 +27,7 @@ func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.V2Filter) ([]do
 	var result []domain.DashboardAndPermissions
 	for _, dashboard := range dashboards {
 		item := domain.DashboardAndPermissions{Dashboard: dashboard}
-		perms, err := s.GetClient().DashboardPermissions.GetDashboardPermissionsListByUID(dashboard.UID)
+		perms, err := s.GetClient().Dashboards.GetDashboardPermissionsListByUID(dashboard.UID)
 		if err != nil {
 			slog.Warn("Unable to retrieve permissions for dashboard",
 				slog.String("uid", dashboard.UID),
@@ -154,7 +154,7 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.V2Filter) ([]
 			}
 			request.Items = append(request.Items, item)
 		}
-		_, err = s.GetClient().DashboardPermissions.UpdateDashboardPermissionsByUID(dashboardId, request)
+		_, err = s.GetClient().Dashboards.UpdateDashboardPermissionsByUID(dashboardId, request)
 		if err != nil {
 			slog.Error("Failed to process file", slog.String("filename", file))
 		} else {
@@ -174,7 +174,7 @@ func (s *DashNGoImpl) ClearDashboardPermissions(filterReq filters.V2Filter) erro
 	for _, link := range boardLinks {
 		request := &models.UpdateDashboardACLCommand{}
 		request.Items = make([]*models.DashboardACLUpdateItem, 0)
-		_, err := s.GetClient().DashboardPermissions.UpdateDashboardPermissionsByUID(link.Dashboard.UID, request)
+		_, err := s.GetClient().Dashboards.UpdateDashboardPermissionsByUID(link.Dashboard.UID, request)
 		if err != nil {
 			slog.Error("Failed clear permissions fir dashboard",
 				slog.String("dashboard", fmt.Sprintf("%s%s", link.Dashboard.FolderTitle, link.Dashboard.Title)))

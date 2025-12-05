@@ -8,6 +8,7 @@ import (
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/go-openapi/strfmt"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -114,7 +115,13 @@ func newListAlertRulesCmd() simplecobra.Commander {
 				slog.Info("No alert rules found")
 			} else {
 				for _, link := range rules {
-					rootCmd.TableObj.AppendRow(table.Row{ptr.ValOf(link.Title), link.UID, ptr.ValOf(link.FolderUID), ptr.ValOf(link.RuleGroup), ptr.ValOf(link.For)})
+					rootCmd.TableObj.AppendRow(table.Row{
+						ptr.ValueOrDefault(link.Title, ""),
+						link.UID,
+						ptr.ValueOrDefault(link.FolderUID, ""),
+						ptr.ValueOrDefault(link.RuleGroup, ""),
+						ptr.ValueOrDefault(link.For, strfmt.Duration(0)),
+					})
 				}
 				rootCmd.Render(cd.CobraCommand, rules)
 			}

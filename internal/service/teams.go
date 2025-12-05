@@ -11,6 +11,8 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/samber/lo"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 	"github.com/tidwall/gjson"
@@ -38,7 +40,7 @@ func setupTeamReader(filterObj filters.V2Filter) {
 		}
 		switch filterType {
 		case filters.Name:
-			return val.Name, nil
+			return ptr.ValueOrDefault(val.Name, ""), nil
 
 		default:
 			return nil, fmt.Errorf("unsupported data type")
@@ -99,15 +101,15 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.V2Filter) map[*models.TeamDTO
 	teamPath := BuildResourceFolder("", domain.TeamResource, s.isLocal(), s.globalConf.ClearOutput)
 	for ndx, team := range teamListing {
 		// Teams
-		teamFileName := filepath.Join(teamPath, GetSlug(team.Name), "team.json")
+		teamFileName := filepath.Join(teamPath, GetSlug(ptr.ValueOrDefault(team.Name, "")), "team.json")
 		teamData, err := json.MarshalIndent(&teamListing[ndx], "", "\t")
 		if err != nil {
 			slog.Error("could not serialize team object for team name", "teamName", team.Name)
 			continue
 		}
 		// Members
-		memberFileName := filepath.Join(teamPath, GetSlug(team.Name), "members.json")
-		members, err := s.GetClient().Teams.GetTeamMembers(fmt.Sprintf("%d", team.ID))
+		memberFileName := filepath.Join(teamPath, GetSlug(ptr.ValueOrDefault(team.Name, "")), "members.json")
+		members, err := s.GetClient().Teams.GetTeamMembers(fmt.Sprintf("%d", ptr.ValueOrDefault(team.ID, 0)))
 		if err != nil {
 			slog.Error("could not get team members object for team name", "teamName", team.Name)
 			continue
@@ -129,7 +131,7 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.V2Filter) map[*models.TeamDTO
 	return importedTeams
 }
 
-// Export Teams
+// UploadTeams Export Teams
 func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	orgName := s.grafanaConf.GetOrganizationName()
 	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(domain.TeamResource, orgName), true)
@@ -163,17 +165,17 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 				Name:  newTeam.Name,
 				Email: newTeam.Email,
 			}
-			teamCreated, err := s.GetClient().Teams.CreateTeam(p)
-			if err != nil {
-				slog.Error("failed to create team for file", "filename", fileLocation, "err", err)
+			teamCreated, teamCreatedErr := s.GetClient().Teams.CreateTeam(p)
+			if teamCreatedErr != nil {
+				slog.Error("failed to create team for file", "filename", fileLocation, "err", teamCreatedErr)
 			}
 
-			newTeam.ID = teamCreated.GetPayload().TeamID
+			newTeam.ID = ptr.Of(teamCreated.GetPayload().TeamID)
 			// Export Team Members (if exist)
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
 
-			teamMemberLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(domain.TeamResource, orgName), GetSlug(newTeam.Name), "members.json")
+			teamMemberLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(domain.TeamResource, orgName), GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
 			if rawMembers, err = s.storage.ReadFile(teamMemberLocation); err != nil {
 				slog.Error("failed to find team members", "filename", fileLocation, "err", err)
 				continue
@@ -188,9 +190,9 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 					slog.Warn("skipping admin user, already added when new team is created")
 					continue
 				}
-				_, err := s.addTeamMember(newTeam, member)
-				if err != nil {
-					slog.Error("failed to create team member for team", "teamName", newTeam.Name, "MemberID", member.UserID, "err", err)
+				_, addTeamErr := s.addTeamMember(newTeam, member)
+				if addTeamErr != nil {
+					slog.Error("failed to create team member for team", "teamName", newTeam.Name, "MemberID", member.UserID, "err", addTeamErr)
 				} else {
 					currentMembers = append(currentMembers, member)
 				}
@@ -203,18 +205,17 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 
 // ListTeams List all Teams in a given org
 func (s *DashNGoImpl) ListTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
-	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO, 0)
-	var pageSize int64 = 99999
+	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
 	p := teams.NewSearchTeamsParams()
-	p.Perpage = &pageSize
+	p.Perpage = ptr.Of[int64](99999)
 	data, err := s.GetClient().Teams.SearchTeams(p)
 	if err != nil {
 		log.Fatal("unable to list teams")
 	}
 
 	getTeamMembers := func(team *models.TeamDTO) {
-		if team.MemberCount > 0 {
-			result[team] = s.listTeamMembers(team.ID)
+		if ptr.ValueOrDefault(team.MemberCount, 0) > 0 {
+			result[team] = s.listTeamMembers(ptr.ValueOrDefault(team.ID, 0))
 		} else {
 			result[team] = nil
 		}
@@ -266,38 +267,34 @@ func (s *DashNGoImpl) listTeamMembers(teamID int64) []*models.TeamMemberDTO {
 // Add User to a Team
 func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMemberDTO) (string, error) {
 	if team == nil {
-		log.Fatal(fmt.Errorf("team:  '%s' could not be found", team.Name))
+		log.Fatal(fmt.Errorf("team:  '%s' could not be found", ptr.ValueOrDefault(team.Name, "")))
 	}
 	users := s.ListUsers(NewUserFilter(""))
-	var user *models.UserSearchHitDTO
-	for ndx, item := range users {
-		if item.Login == userDTO.Login {
-			user = users[ndx]
-			break
-		}
-	}
+	user, _ := lo.Find(users, func(item *models.UserSearchHitDTO) bool {
+		return item.Login == userDTO.Login
+	})
 
 	if user == nil {
 		log.Fatal(fmt.Errorf("user:  '%s' could not be found", userDTO.Login))
 	}
-	body := &models.AddTeamMemberCommand{UserID: user.ID}
-	msg, err := s.GetClient().Teams.AddTeamMember(fmt.Sprintf("%d", team.ID), body)
+	body := &models.AddTeamMemberCommand{UserID: ptr.Of(user.ID)}
+	msg, err := s.GetClient().Teams.AddTeamMember(fmt.Sprintf("%d", ptr.ValueOrDefault(team.ID, 0)), body)
 	if err != nil {
 		slog.Info(err.Error())
-		errorMsg := fmt.Sprintf("failed to add member '%s' to team '%s'", userDTO.Login, team.Name)
+		errorMsg := fmt.Sprintf("failed to add member '%s' to team '%s'", userDTO.Login, ptr.ValueOrDefault(team.Name, ""))
 		slog.Error(errorMsg)
 		return "", errors.New(errorMsg)
 	}
 	if userDTO.Permission == AdminUserPermission {
 		adminPatch := teams.NewUpdateTeamMemberParams()
-		adminPatch.TeamID = fmt.Sprintf("%d", team.ID)
+		adminPatch.TeamID = fmt.Sprintf("%d", ptr.ValueOrDefault(team.ID, 0))
 		adminPatch.UserID = user.ID
 		adminPatch.Body = &models.UpdateTeamMemberCommand{Permission: AdminUserPermission}
 		response, updateErr := s.GetClient().Teams.UpdateTeamMember(adminPatch)
 		if updateErr != nil {
 			return "", updateErr
 		}
-		slog.Debug("Updated permissions for user on team ", "username", userDTO.Name, "teamName", team.Name, "message", response.GetPayload().Message)
+		slog.Debug("Updated permissions for user on team ", "username", userDTO.Name, "teamName", ptr.ValueOrDefault(team.Name, ""), "message", response.GetPayload().Message)
 	}
 
 	return msg.GetPayload().Message, nil

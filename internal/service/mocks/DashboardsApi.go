@@ -5,9 +5,8 @@
 package mocks
 
 import (
-	types0 "github.com/esnet/gdg/internal/service/domain"
+	"github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/service/types"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -144,73 +143,20 @@ func (_c *DashboardsApi_DownloadDashboards_Call) RunAndReturn(run func(filter fi
 	return _c
 }
 
-// LintDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) LintDashboards(req types.LintRequest) []string {
-	ret := _mock.Called(req)
-
-	if len(ret) == 0 {
-		panic("no return value specified for LintDashboards")
-	}
-
-	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(types.LintRequest) []string); ok {
-		r0 = returnFunc(req)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-	return r0
-}
-
-// DashboardsApi_LintDashboards_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'LintDashboards'
-type DashboardsApi_LintDashboards_Call struct {
-	*mock.Call
-}
-
-// LintDashboards is a helper method to define mock.On call
-//   - req types.LintRequest
-func (_e *DashboardsApi_Expecter) LintDashboards(req interface{}) *DashboardsApi_LintDashboards_Call {
-	return &DashboardsApi_LintDashboards_Call{Call: _e.mock.On("LintDashboards", req)}
-}
-
-func (_c *DashboardsApi_LintDashboards_Call) Run(run func(req types.LintRequest)) *DashboardsApi_LintDashboards_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 types.LintRequest
-		if args[0] != nil {
-			arg0 = args[0].(types.LintRequest)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *DashboardsApi_LintDashboards_Call) Return(strings []string) *DashboardsApi_LintDashboards_Call {
-	_c.Call.Return(strings)
-	return _c
-}
-
-func (_c *DashboardsApi_LintDashboards_Call) RunAndReturn(run func(req types.LintRequest) []string) *DashboardsApi_LintDashboards_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // ListDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) ListDashboards(filter filters.V2Filter) []*types0.NestedHit {
+func (_mock *DashboardsApi) ListDashboards(filter filters.V2Filter) []*domain.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListDashboards")
 	}
 
-	var r0 []*types0.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*types0.NestedHit); ok {
+	var r0 []*domain.NestedHit
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types0.NestedHit)
+			r0 = ret.Get(0).([]*domain.NestedHit)
 		}
 	}
 	return r0
@@ -240,12 +186,12 @@ func (_c *DashboardsApi_ListDashboards_Call) Run(run func(filter filters.V2Filte
 	return _c
 }
 
-func (_c *DashboardsApi_ListDashboards_Call) Return(nestedHits []*types0.NestedHit) *DashboardsApi_ListDashboards_Call {
+func (_c *DashboardsApi_ListDashboards_Call) Return(nestedHits []*domain.NestedHit) *DashboardsApi_ListDashboards_Call {
 	_c.Call.Return(nestedHits)
 	return _c
 }
 
-func (_c *DashboardsApi_ListDashboards_Call) RunAndReturn(run func(filter filters.V2Filter) []*types0.NestedHit) *DashboardsApi_ListDashboards_Call {
+func (_c *DashboardsApi_ListDashboards_Call) RunAndReturn(run func(filter filters.V2Filter) []*domain.NestedHit) *DashboardsApi_ListDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }

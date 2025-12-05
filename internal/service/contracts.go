@@ -127,8 +127,8 @@ type AuthenticationApi interface {
 
 // OrgPreferencesApi Contract definition
 type OrgPreferencesApi interface {
-	GetOrgPreferences(orgName string) (*models.Preferences, error)
-	UploadOrgPreferences(orgName string, pref *models.Preferences) error
+	GetOrgPreferences(orgName string) (*models.PreferencesSpec, error)
+	UploadOrgPreferences(orgName string, pref *models.PreferencesSpec) error
 }
 
 type organizationCrudApi interface {

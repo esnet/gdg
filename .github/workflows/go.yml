@@ -10,9 +10,9 @@ jobs:
   integration_tests:
     strategy:
       matrix:
-        grafana_version: [ 11.6.0-ubuntu, 12.0.0-ubuntu ]
+        grafana_version: [ 11.6.0-ubuntu, 12.3.0-ubuntu ]
         use_tokens: [ 0, 1 ]
-        go_version: [ 1.25.1]
+        go_version: [ 1.25.5]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,16 +21,16 @@ jobs:
         with:
           go_version: "${{ matrix.go_version }}"
       - name: Run Reporting test
-        if: ${{ matrix.grafana_version == '12.0.0-ubuntu' && matrix.use_tokens == 0 }}
+        if: ${{ matrix.grafana_version == '12.3.0-ubuntu' && matrix.use_tokens == 0 }}
         uses: ./actions/coverage
         with:
           grafana_version: "${{ matrix.grafana_version  }}"
           coverage_token: "${{ secrets.CODECOV_TOKEN }}"
           enterprise_jwt: "${{ secrets.ENTERPRISE_LICENSE }}"
       - name: Run Non Reporting test
-        if: ${{ matrix.grafana_version != '12.0.0-ubuntu' || matrix.use_tokens != 0 }}
+        if: ${{ matrix.grafana_version != '12.3.0-ubuntu' || matrix.use_tokens != 0 }}
         env:
           ENTERPRISE_LICENSE: "${{ secrets.ENTERPRISE_LICENSE }}"
           GRAFANA_TEST_VERSION: "${{ matrix.grafana_version }}"
           TEST_TOKEN_CONFIG: "${{ matrix.use_tokens }}"
-        run:  go tool -modfile tools/go.mod gotestsum --format testname  -- -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks" | tr '\n' ',' )   ./...
+        run:  go tool -modfile tools/go.mod gotestsum --format testname  -- -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks|test_tooling" | tr '\n' ',' )   ./...

@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// newVersionCmd creates a command that prints the application version information.
 func newVersionCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "version",
@@ -26,6 +27,7 @@ func newVersionCmd() simplecobra.Commander {
 	}
 }
 
+// newDefaultConfig returns a command that prints an example configuration.
 func newDefaultConfig() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "default-config",

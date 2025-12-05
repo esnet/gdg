@@ -29,15 +29,6 @@ const (
 
 type ConfigProviderFunc func() *config.Configuration
 
-// TODO: use to construct a testcontainer configuration entity
-func getCloudConfigProvider(container testcontainers.Container) config.Provider {
-	return func() *config.Configuration {
-		config.InitGdgConfig(common.DefaultTestConfig)
-		cfg := config.Config()
-		return cfg
-	}
-}
-
 type InitContainerResult struct {
 	ApiClient service.GrafanaService
 	Container testcontainers.Container
@@ -45,6 +36,8 @@ type InitContainerResult struct {
 	Err       error
 }
 
+// NewInitContainerResult creates an InitContainerResult linking a Grafana API client, container and cleanup function.
+// It sets Err if the container is not running.
 func NewInitContainerResult(client service.GrafanaService, container testcontainers.Container, cleanUp func() error) *InitContainerResult {
 	obj := &InitContainerResult{
 		ApiClient: client,
@@ -57,6 +50,8 @@ func NewInitContainerResult(client service.GrafanaService, container testcontain
 	return obj
 }
 
+// InitTest starts a Grafana test container, creates a client and optionally configures token auth.
+// It returns an InitContainerResult with the client, container, cleanup function and error status.
 func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]string) *InitContainerResult {
 	var (
 		suffix string
@@ -103,6 +98,7 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 	return NewInitContainerResult(apiClient, localGrafanaContainer, cleanUp)
 }
 
+// CreateSimpleClientWithConfig creates a GrafanaService for tests using the provided config provider and testcontainers container.
 func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, container testcontainers.Container) service.GrafanaService {
 	cfg := cfgProvider()
 	if cfg == nil {
@@ -130,6 +126,7 @@ func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, con
 	return client
 }
 
+// CreateSimpleClient initializes a test Grafana client and Viper config for unit tests.
 func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.Container) (service.GrafanaService, *viper.Viper) {
 	if cfgName == nil {
 		cfgName = new(string)

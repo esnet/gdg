@@ -9,11 +9,11 @@ import (
 
 // GetOrgPreferences returns the preferences for a given Org
 // orgName: The name of the organization whose preferences we should retrieve
-func (s *DashNGoImpl) GetOrgPreferences(orgName string) (*models.Preferences, error) {
+func (s *DashNGoImpl) GetOrgPreferences(orgName string) (*models.PreferencesSpec, error) {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		return nil, errors.New("no valid Grafana Admin configured, cannot retrieve Organizations Preferences")
 	}
-	orgPreferences, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(orgName)).OrgPreferences.GetOrgPreferences()
+	orgPreferences, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(orgName)).Org.GetOrgPreferences()
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func (s *DashNGoImpl) GetOrgPreferences(orgName string) (*models.Preferences, er
 }
 
 // UploadOrgPreferences Updates the preferences for a given organization.  Returns error if org is not found.
-func (s *DashNGoImpl) UploadOrgPreferences(orgName string, preferenceRequest *models.Preferences) error {
+func (s *DashNGoImpl) UploadOrgPreferences(orgName string, preferenceRequest *models.PreferencesSpec) error {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		return errors.New("no valid Grafana Admin configured, cannot update Organizations Preferences")
 	}
@@ -37,7 +37,7 @@ func (s *DashNGoImpl) UploadOrgPreferences(orgName string, preferenceRequest *mo
 	update.Theme = preferenceRequest.Theme
 	update.WeekStart = preferenceRequest.WeekStart
 
-	_, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(orgName)).OrgPreferences.UpdateOrgPreferences(update)
+	_, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(orgName)).Org.UpdateOrgPreferences(update)
 	if err != nil {
 		return err
 	}

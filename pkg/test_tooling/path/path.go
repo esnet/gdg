@@ -7,6 +7,7 @@ import (
 
 const TestEnvKey = "TESTING"
 
+// FixTestDir sets TESTING env and changes directory if current path contains packageName.
 func FixTestDir(packageName string, newPath string) error {
 	err := os.Setenv(TestEnvKey, "1")
 	if err != nil {

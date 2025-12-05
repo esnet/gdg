@@ -110,7 +110,7 @@ func (s *DashNGoImpl) ClearAlertRules() ([]string, error) {
 			slog.Error("unable to delete rule", "rule", rule.UID)
 			continue
 		}
-		data = append(data, ptr.ValOf(rule.Title))
+		data = append(data, ptr.ValueOrDefault(rule.Title, ""))
 	}
 
 	return data, nil

@@ -25,8 +25,8 @@ type UserProfileWithAuth struct {
 }
 
 type OrgsDTOWithPreferences struct {
-	Organization *models.OrgDTO      `json:"organization"`
-	Preferences  *models.Preferences `json:"preferences"` // Preferences are preferences associated with a given org.  theme, dashboard, timezone, etc
+	Organization *models.OrgDTO          `json:"organization"`
+	Preferences  *models.PreferencesSpec `json:"preferences"` // Preferences are preferences associated with a given org.  theme, dashboard, timezone, etc
 }
 
 type ConnectionPermissionItem struct {

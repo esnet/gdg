@@ -15,8 +15,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var DefaultConfig string
-
 // RootCommand struct wraps the root command and supporting services needed
 type RootCommand struct {
 	NameP  string
@@ -35,6 +33,7 @@ type RootCommand struct {
 	CommandEntries []simplecobra.Commander
 }
 
+// Render outputs data as JSON if --output=json, otherwise renders a table.
 func (cmd *RootCommand) Render(command *cobra.Command, data any) {
 	output, _ := command.Flags().GetString("output")
 	if output == "json" {

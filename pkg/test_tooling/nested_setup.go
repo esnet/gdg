@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	OrgNameOverride      = "GDG_CONTEXTS__TESTING__ORGANIZATION_NAME"
-	EnableNestedBehavior = "GDG_CONTEXTS__TESTING__DASHBOARD_SETTINGS__NESTED_FOLDERS"
+	OrgNameOverride = "GDG_CONTEXTS__TESTING__ORGANIZATION_NAME"
 )
 
 // InitOrganizations will upload all known organizations and return the grafana container object

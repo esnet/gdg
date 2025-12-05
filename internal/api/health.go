@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Health Check used to get various server info
+// HealthResponse represents the response from the health endpoint, including commit hash, database status and version.
 type HealthResponse struct {
 	Commit   string `json:"commit,omitempty"`
 	Database string `json:"database,omitempty"`

@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPoliesCrud(t *testing.T) {
+func TestPoliciesCrud(t *testing.T) {
 	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
 
 	assert.NoError(t, path.FixTestDir("test", ".."))
@@ -31,8 +31,8 @@ func TestPoliesCrud(t *testing.T) {
 	assert.NotNil(t, r)
 	assert.NoError(t, err)
 	defer func() {
-		err := r.CleanUp()
-		if err != nil {
+		cleanupErr := r.CleanUp()
+		if cleanupErr != nil {
 			slog.Warn("Unable to clean up after test", "test", t.Name())
 		}
 	}()
@@ -67,5 +67,6 @@ func TestPoliesCrud(t *testing.T) {
 	err = apiClient.ClearAlertNotifications()
 	assert.NoError(t, err)
 	policies, err = apiClient.ListAlertNotifications()
+	assert.NoError(t, err)
 	assert.Equal(t, len(policies.Routes), 0)
 }
