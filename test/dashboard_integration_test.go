@@ -33,7 +33,6 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)

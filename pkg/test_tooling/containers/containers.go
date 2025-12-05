@@ -18,6 +18,7 @@ const (
 	defaultGrafanaVersionEnv = "GRAFANA_TEST_VERSION"
 	EnterpriseLicenceKey     = "GF_ENTERPRISE_LICENSE_TEXT"
 	EnterpriseLicenceKeyEnv  = "ENTERPRISE_LICENSE"
+	DisableEnterpriseTest    = "ENTERPRISE_DISABLED"
 	DefaultCloudUser         = "test"
 	DefaultCloudPass         = "secretsss"
 	minioCurrentTag          = "RELEASE.2025-09-07T16-13-09Z"
