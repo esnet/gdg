@@ -8,6 +8,7 @@ import (
 	"sync"
 )
 
+// DeepCopy creates a deep copy of the given value using JSON serialization, returning a pointer and an error.
 func DeepCopy[T any](value T) (*T, error) {
 	origJSON, err := json.Marshal(value)
 	if err != nil {

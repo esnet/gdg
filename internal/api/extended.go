@@ -10,7 +10,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 )
 
-// Most of these methods are here due to limitations in existing libraries being used.
+// ExtendedApi provides API request building for Grafana with optional debug mode.
 type ExtendedApi struct {
 	grafanaCfg *domain.GrafanaConfig
 	debug      bool
@@ -25,6 +25,7 @@ func NewExtendedApi() *ExtendedApi {
 	return &o
 }
 
+// getRequestBuilder returns a requests.Builder preconfigured with Grafana URL, auth, and optional TLS settings.
 func (extended *ExtendedApi) getRequestBuilder() *requests.Builder {
 	req := requests.URL(extended.grafanaCfg.GetURL())
 	if config.Config().IgnoreSSL() {

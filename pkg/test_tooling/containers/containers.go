@@ -23,6 +23,9 @@ const (
 	minioCurrentTag          = "RELEASE.2025-09-07T16-13-09Z"
 )
 
+// BootstrapCloudStorage starts a S3 container for cloud storage testing.
+// It accepts optional username and password; defaults are used if empty.
+// Returns the testcontainers.Container and a cancel function to terminate it.
 func BootstrapCloudStorage(username, password string) (testcontainers.Container, context.CancelFunc) {
 	if username == "" || password == "" {
 		username = DefaultCloudUser
@@ -55,6 +58,8 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 	return minioC, cancel
 }
 
+// SetupGrafanaLicense loads the enterprise license from ENTERPRISE_LICENSE env var,
+// stores it under GF_ENTERPRISE_LICENSE_TEXT in props, and errors if not set.
 func SetupGrafanaLicense(props *map[string]string) error {
 	val := os.Getenv(EnterpriseLicenceKeyEnv)
 	(*props)[EnterpriseLicenceKey] = val
@@ -73,6 +78,8 @@ func DefaultGrafanaEnv() map[string]string {
 	}
 }
 
+// GetGrafanaVersion returns the Grafana version used for tests.
+// It reads GRAFANA_TEST_VERSION env variable; if unset, defaults to "11.1.4-ubuntu".
 func GetGrafanaVersion() string {
 	version := os.Getenv(defaultGrafanaVersionEnv)
 	if version == "" {
@@ -81,6 +88,9 @@ func GetGrafanaVersion() string {
 	return version
 }
 
+// SetupGrafanaContainer starts a Grafana test container with default env vars,
+// merges additionalEnvProps, retries up to 3 times, and returns the container
+// and a cancel function to terminate it.
 func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageSuffix string) (testcontainers.Container, func()) {
 	retry := func() (testcontainers.Container, func(), error) {
 		defaultProps := DefaultGrafanaEnv()

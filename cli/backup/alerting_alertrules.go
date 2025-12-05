@@ -120,7 +120,8 @@ func newListAlertRulesCmd() simplecobra.Commander {
 						link.UID,
 						ptr.ValueOrDefault(link.FolderUID, ""),
 						ptr.ValueOrDefault(link.RuleGroup, ""),
-						ptr.ValueOrDefault(link.For, strfmt.Duration(0))})
+						ptr.ValueOrDefault(link.For, strfmt.Duration(0)),
+					})
 				}
 				rootCmd.Render(cd.CobraCommand, rules)
 			}

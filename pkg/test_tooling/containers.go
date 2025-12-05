@@ -16,24 +16,29 @@ import (
 
 type CloudTestOpt func(m *map[string]string)
 
+// SetBucketName sets the bucket name in the options map for cloud storage.
 func SetBucketName(bucketName string) CloudTestOpt {
 	return func(m *map[string]string) {
 		(*m)[storage.BucketName] = bucketName
 	}
 }
 
+// SetCloudType sets the cloud type value in the map used for test options.
 func SetCloudType(cloudType string) CloudTestOpt {
 	return func(m *map[string]string) {
 		(*m)[storage.CloudType] = cloudType
 	}
 }
 
+// SetPrefix sets the cloud storage prefix key in the options map.
 func SetPrefix(prefix string) CloudTestOpt {
 	return func(m *map[string]string) {
 		(*m)[storage.Prefix] = prefix
 	}
 }
 
+// SetupCloudFunctionOpt starts a S3 container, configures cloud storage for tests,
+// and returns context, cancel func, Grafana service client, and error.
 func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.CancelFunc, service.GrafanaService, error) {
 	errorFunc := func(err error) (context.Context, context.CancelFunc, service.GrafanaService, error) {
 		return nil, nil, nil, err

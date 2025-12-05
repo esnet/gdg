@@ -9,7 +9,8 @@ import (
 	"github.com/esnet/gdg/cli/tools"
 )
 
-// Execute executes a command.
+// Execute runs the root command with given args and optional RootOptions, returning any error.
+// It constructs the root command, executes it via simplecobra, and displays help on failure.
 func Execute(args []string, options ...support.RootOption) error {
 	var err error
 	rootCmd := support.NewRootCmd(getNewRootCmd(), options...)
@@ -30,6 +31,8 @@ func Execute(args []string, options ...support.RootOption) error {
 	return nil
 }
 
+// getNewRootCmd creates the root command with name "gdg" and subcommands for version,
+// default config, tools, and backup utilities.
 func getNewRootCmd() *support.RootCommand {
 	return &support.RootCommand{
 		NameP: "gdg",
