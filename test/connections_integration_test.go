@@ -31,6 +31,9 @@ import (
 // There's some issues with these tests, temporarily disabling this
 func TestConnectionPermissionsCrud(t *testing.T) {
 	t.Skip() // Buggy test right now, disabled
+	if os.Getenv(containers.DisableEnterpriseTest) == "true" {
+		t.Skip("Enterprise tests disabled by environment variable")
+	}
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")

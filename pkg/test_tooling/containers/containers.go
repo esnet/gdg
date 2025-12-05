@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"maps"
 	"os"
+	"time"
 
 	"github.com/docker/go-connections/nat"
 	"github.com/testcontainers/testcontainers-go"
@@ -19,6 +20,7 @@ const (
 	defaultGrafanaVersionEnv = "GRAFANA_TEST_VERSION"
 	EnterpriseLicenceKey     = "GF_ENTERPRISE_LICENSE_TEXT"
 	EnterpriseLicenceKeyEnv  = "ENTERPRISE_LICENSE"
+	DisableEnterpriseTest    = "ENTERPRISE_DISABLED"
 	DefaultCloudUser         = "test"
 	DefaultCloudPass         = "secretsss"
 	s3UserEnv                = "MINIO_ROOT_USER"
@@ -113,7 +115,12 @@ func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageS
 			Image:        fmt.Sprintf("grafana/grafana%s:%s", imageSuffix, version),
 			ExposedPorts: []string{"3000/tcp"},
 			Env:          defaultProps,
-			WaitingFor:   wait.ForListeningPort("3000/tcp"),
+			WaitingFor: wait.ForHTTP("/api/health").
+				WithPort("3000/tcp").
+				WithStatusCodeMatcher(func(status int) bool {
+					return status == 200
+				}).
+				WithStartupTimeout(60 * time.Second),
 		}
 		grafanaC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 			ContainerRequest: req,

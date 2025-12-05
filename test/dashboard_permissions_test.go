@@ -23,7 +23,9 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
-
+	if os.Getenv(containers.DisableEnterpriseTest) == "true" {
+		t.Skip("Enterprise tests disabled by environment variable")
+	}
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	props := containers.DefaultGrafanaEnv()
 	err := containers.SetupGrafanaLicense(&props)
