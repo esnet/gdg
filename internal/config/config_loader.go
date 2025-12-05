@@ -210,28 +210,26 @@ func (s *Configuration) GetTemplateConfig() *domain.TemplatingConfig {
 }
 
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
-func buildConfigSearchPath(configFile string) ([]string, string, string) {
-	ext := filepath.Ext(configFile)
-	configName := filepath.Base(configFile)
+func buildConfigSearchPath(configFilePath string) (configDirs []string, configName, ext string) {
+	if configFilePath != "" {
+		ext = filepath.Ext(configFilePath)
+		configName = strings.TrimSuffix(filepath.Base(configFilePath), ext)
 
-	var configDirs []string
-	if configFile != "" {
-		configFileDir := filepath.Dir(configFile)
-		if configFileDir != "" {
-			configDirs = append([]string{configFileDir}, configSearchPaths...)
+		configFilePathDir := filepath.Dir(configFilePath)
+		if configFilePathDir != "" {
+			configDirs = append([]string{configFilePathDir}, configSearchPaths...)
 		}
-		configName = filepath.Base(configFile)
-		configName = strings.TrimSuffix(configName, filepath.Ext(configName))
+
+		if ext == "" {
+			ext = "yaml"
+		} else {
+			ext = ext[1:] // strip leading dot
+		}
 	} else {
 		configDirs = append(configDirs, configSearchPaths...)
 	}
-	if ext == "" {
-		ext = "yaml"
-	} else {
-		ext = ext[1:] // strip leading dot
-	}
 
-	return configDirs, configName, ext
+	return
 }
 
 func InitGdgConfig(override string) {
@@ -252,7 +250,8 @@ func InitGdgConfig(override string) {
 
 	v, err = readViperConfig(configName, configDirs, configData.gdgConfig, ext)
 	if err != nil {
-		log.Fatal("No configuration file has been found or config is invalid.  Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg'].  " +
+		log.Fatal("No configuration file has been found or config is invalid. " + 
+			"Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg']. " +
 			"Try using `gdg default-config > config/importer.yml` go use the default example")
 	}
 	configData.gdgConfig.UpdateContextNames()
