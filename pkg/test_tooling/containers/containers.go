@@ -20,7 +20,10 @@ const (
 	EnterpriseLicenceKeyEnv  = "ENTERPRISE_LICENSE"
 	DefaultCloudUser         = "test"
 	DefaultCloudPass         = "secretsss"
-	minioCurrentTag          = "RELEASE.2025-09-07T16-13-09Z"
+	s3UserEnv                = "RUSTFS_ACCESS_KEY"
+	s3PassKeyEnv             = "RUSTFS_SECRET_KEY" // #nosec G101
+	s3ImageTag               = "1.0.0-alpha.72"
+	s3Image                  = "rustfs/rustfs"
 )
 
 // BootstrapCloudStorage starts a S3 container for cloud storage testing.
@@ -34,13 +37,15 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 
 	ctx := context.Background()
 	req := testcontainers.ContainerRequest{
-		Image:        fmt.Sprintf("minio/minio:%s", minioCurrentTag),
-		Cmd:          []string{"server", "start", "--console-address", ":9001"},
+		Image:        fmt.Sprintf("%s:%s", s3Image, s3ImageTag),
 		ExposedPorts: []string{"9000/tcp", "9001/tcp"},
-		Env:          map[string]string{"MINIO_ROOT_USER": username, "MINIO_ROOT_PASSWORD": password},
-		WaitingFor:   wait.ForListeningPort("9000/tcp"),
+		Env: map[string]string{
+			s3UserEnv:    username,
+			s3PassKeyEnv: password,
+		},
+		WaitingFor: wait.ForListeningPort("9000/tcp"),
 	}
-	minioC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+	s3Container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
 		Started:          true,
 	})
@@ -49,13 +54,13 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 	}
 
 	cancel := func() {
-		if err := minioC.Terminate(ctx); err != nil {
+		if err := s3Container.Terminate(ctx); err != nil {
 			panic(err)
 		} else {
 			slog.Info("Minio container has been terminated")
 		}
 	}
-	return minioC, cancel
+	return s3Container, cancel
 }
 
 // SetupGrafanaLicense loads the enterprise license from ENTERPRISE_LICENSE env var,

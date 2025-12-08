@@ -45,7 +45,7 @@ You can also override the value using ENV var that line up to the section you wa
 Ex:
 ```sh
 GDG_CONTEXTS__TESTING__PASSWORD=1234
-GDG_CONTEXTS__TESTING__TOKED=1234
+GDG_CONTEXTS__TESTING___TOKEN=1234
  ```
 
 will set the token and password value to the one in the ENV.

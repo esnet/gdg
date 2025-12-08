@@ -1,12 +1,12 @@
 services:
-    minio:
-        image: bitnami/minio:latest
+    s3:
+        image: rustfs/rustfs:1.0.0-alpha.72
         ports:
             - 9000:9000
             - 9001:9001
         environment:
-            - MINIO_ROOT_USER=test
-            - MINIO_ROOT_PASSWORD=secretsss
+            - RUSTFS_ACCESS_KEY=test
+            - RUSTFS_SECRET_KEY=secretsss
     prometheus:
       image: prom/prometheus
       container_name: prometheus

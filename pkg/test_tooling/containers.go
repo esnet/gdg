@@ -53,7 +53,7 @@ func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.Cance
 	if err != nil {
 		return errorFunc(err)
 	}
-	minioHost := fmt.Sprintf("http://%s", actualPort)
+	s3Host := fmt.Sprintf("http://%s", actualPort)
 	slog.Info("Minio container is up and running", slog.Any("hostname", fmt.Sprintf("http://%s", wwwPort)))
 	m := map[string]string{
 		storage.InitBucket: "true",
@@ -62,7 +62,7 @@ func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.Cance
 		storage.AccessId:   "test",
 		storage.SecretKey:  "secretsss",
 		storage.BucketName: "testing",
-		storage.Endpoint:   minioHost,
+		storage.Endpoint:   s3Host,
 	}
 	for _, opt := range opts {
 		opt(&m)
