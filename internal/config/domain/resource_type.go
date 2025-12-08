@@ -24,6 +24,7 @@ const (
 	TemplatesResource            ResourceType = "templates"
 	SecureSecretsResource        ResourceType = "secure"
 	AlertingResource             ResourceType = "alerting"
+	AlertingRulesResource        ResourceType = "alerting-rules"
 )
 
 var orgNamespacedResource = map[ResourceType]bool{
@@ -36,6 +37,7 @@ var orgNamespacedResource = map[ResourceType]bool{
 	LibraryElementResource:       true,
 	TeamResource:                 true,
 	AlertingResource:             true,
+	AlertingRulesResource:        true,
 }
 
 // isNamespaced returns true if the resource type is namespaced

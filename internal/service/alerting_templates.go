@@ -6,6 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/tools/ptr"
 
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -90,6 +91,7 @@ func (s *DashNGoImpl) UploadAlertTemplates() ([]string, error) {
 	for _, tpl := range data {
 		p := provisioning.NewPutTemplateParams()
 		p.Name = tpl.Name
+		p.XDisableProvenance = ptr.Of("true")
 		p.Body = &models.NotificationTemplateContent{Template: tpl.Template}
 		if val, ok := m[p.Name]; ok {
 			p.Body.Version = val.Version

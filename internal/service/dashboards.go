@@ -290,7 +290,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.V2Filter) []*domain.Neste
 		}
 	}
 
-	folderUidMap := getFolderUIDEntityMap(s.ListFolders(nil))
+	folderUidMap := s.getFolderUIDEntityMap(nil)
 	var validFolder bool
 	var validUid bool
 	for ndx, link := range boardLinks {
@@ -371,7 +371,6 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.V2Filter) []string {
 			continue
 		}
 
-		// fileName := buildDashboardFileName(link.NestedPath, metaData.GetPayload().Meta.Slug, folderUidMap, s.isLocal(), s.globalConf.ClearOutput)
 		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.NestedPath, configDomain.DashboardResource, s.isLocal(), s.globalConf.ClearOutput), metaData.GetPayload().Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
@@ -477,7 +476,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.V2Filter) ([]string, er
 		folderUid  string
 		dashFiles  []string
 	)
-	dashboardPath := config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.DashboardResource, s.grafanaConf.GetOrganizationName())
+	dashboardPath := s.grafanaConf.GetPath(configDomain.DashboardResource, s.grafanaConf.GetOrganizationName())
 	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find any dashFiles to export from storage engine, err: %w", err)

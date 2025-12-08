@@ -63,20 +63,20 @@ func getFolderFromResourcePath(filePath string, resourceType domain.ResourceType
 }
 
 func BuildResourceFolder(folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
-	if resourceType == domain.DashboardResource && folderName == "" {
+	if (resourceType == domain.DashboardResource || resourceType == domain.AlertingRulesResource) && folderName == "" {
 		folderName = DefaultFolderName
 	}
 	cfg := config.Config().GetDefaultGrafanaConfig()
-	v := fmt.Sprintf("%s/%s", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType, cfg.GetOrganizationName()), folderName)
+	v := fmt.Sprintf("%s/%s", cfg.GetPath(resourceType, cfg.GetOrganizationName()), folderName)
 	if createDestination {
-		tools.CreateDestinationPath(config.Config().GetDefaultGrafanaConfig().GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, v)
+		tools.CreateDestinationPath(cfg.GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, v)
 	}
 	return v
 }
 
 func buildResourcePath(folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
 	cfg := config.Config().GetDefaultGrafanaConfig()
-	v := fmt.Sprintf("%s%s%s.json", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType, cfg.GetOrganizationName()), pathSeparator, folderName)
+	v := fmt.Sprintf("%s%s%s.json", cfg.GetPath(resourceType, cfg.GetOrganizationName()), pathSeparator, folderName)
 	if createDestination {
 		tools.CreateDestinationPath(config.Config().GetDefaultGrafanaConfig().GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, filepath.Dir(v))
 	}

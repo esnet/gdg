@@ -7,11 +7,22 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools/ptr"
 	"github.com/go-openapi/strfmt"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
+
+var ignoreAlertRuleFilters bool
+
+func getAlertRulesFilter() filters.V2Filter {
+	if ignoreAlertRuleFilters {
+		return nil
+	}
+	return service.NewAlertRuleFilter()
+}
 
 func newAlertingRulesCommand() simplecobra.Commander {
 	description := "Manage Alerting Rules"
@@ -21,6 +32,7 @@ func newAlertingRulesCommand() simplecobra.Commander {
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
 			cmd.Aliases = []string{"rule", "alert-rules", "alert-rule"}
+			cmd.PersistentFlags().BoolVar(&ignoreAlertRuleFilters, "no-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
 		},
 		CommandsList: []simplecobra.Commander{
 			newListAlertRulesCmd(),
@@ -49,7 +61,7 @@ func newUploadAlertRulesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
 
-			err := rootCmd.GrafanaSvc().UploadAlertRules()
+			err := rootCmd.GrafanaSvc().UploadAlertRules(getAlertRulesFilter())
 			if err != nil {
 				log.Fatal("unable to upload Orgs rule alerts", slog.Any("err", err))
 			}
@@ -73,7 +85,7 @@ func newClearAlertRulesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
 
-			files, err := rootCmd.GrafanaSvc().ClearAlertRules()
+			files, err := rootCmd.GrafanaSvc().ClearAlertRules(getAlertRulesFilter())
 			if err != nil {
 				log.Fatal("unable to deleting Orgs rule alerts", slog.Any("err", err))
 			}
@@ -102,12 +114,12 @@ func newListAlertRulesCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			rootCmd.TableObj.AppendHeader(table.Row{"name", "uid", "folderUid", "ruleGroup", "For"})
+			rootCmd.TableObj.AppendHeader(table.Row{"name", "uid", "folder", "ruleGroup", "For"})
 			slog.Info("Listing alert rules for context",
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
 
-			rules, err := rootCmd.GrafanaSvc().ListAlertRules()
+			rules, err := rootCmd.GrafanaSvc().ListAlertRules(getAlertRulesFilter())
 			if err != nil {
 				log.Fatal("unable to retrieve Orgs rule alerts", slog.Any("err", err))
 			}
@@ -118,7 +130,7 @@ func newListAlertRulesCmd() simplecobra.Commander {
 					rootCmd.TableObj.AppendRow(table.Row{
 						ptr.ValueOrDefault(link.Title, ""),
 						link.UID,
-						ptr.ValueOrDefault(link.FolderUID, ""),
+						link.NestedPath,
 						ptr.ValueOrDefault(link.RuleGroup, ""),
 						ptr.ValueOrDefault(link.For, strfmt.Duration(0)),
 					})
@@ -140,19 +152,22 @@ func newDownloadAlertRulesCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			rootCmd.TableObj.AppendHeader(table.Row{"uid", "folderUid", "ruleGroup", "Title", "provenance", "data"})
+			rootCmd.TableObj.AppendHeader(table.Row{"alert-rule"})
 			slog.Info("Downloading alert rules for context",
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
 
-			file, err := rootCmd.GrafanaSvc().DownloadAlertRules()
+			files, err := rootCmd.GrafanaSvc().DownloadAlertRules(getAlertRulesFilter())
 			if err != nil {
 				log.Fatal("unable to retrieve Orgs rule alerts", slog.Any("err", err))
 			}
 			if err != nil {
 				slog.Error("unable to download alert rules")
 			} else {
-				slog.Info("alert rules successfully downloaded", slog.Any("file", file))
+				for _, link := range files {
+					rootCmd.TableObj.AppendRow(table.Row{link})
+				}
+				rootCmd.Render(cd.CobraCommand, files)
 			}
 			return nil
 		},

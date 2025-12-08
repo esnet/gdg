@@ -146,8 +146,8 @@ func (_c *GrafanaService_ClearAlertNotifications_Call) RunAndReturn(run func() e
 }
 
 // ClearAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ClearAlertRules() ([]string, error) {
-	ret := _mock.Called()
+func (_mock *GrafanaService) ClearAlertRules(filter filters.V2Filter) ([]string, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ClearAlertRules")
@@ -155,18 +155,18 @@ func (_mock *GrafanaService) ClearAlertRules() ([]string, error) {
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]string, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -179,13 +179,20 @@ type GrafanaService_ClearAlertRules_Call struct {
 }
 
 // ClearAlertRules is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) ClearAlertRules() *GrafanaService_ClearAlertRules_Call {
-	return &GrafanaService_ClearAlertRules_Call{Call: _e.mock.On("ClearAlertRules")}
+//   - filter filters.V2Filter
+func (_e *GrafanaService_Expecter) ClearAlertRules(filter interface{}) *GrafanaService_ClearAlertRules_Call {
+	return &GrafanaService_ClearAlertRules_Call{Call: _e.mock.On("ClearAlertRules", filter)}
 }
 
-func (_c *GrafanaService_ClearAlertRules_Call) Run(run func()) *GrafanaService_ClearAlertRules_Call {
+func (_c *GrafanaService_ClearAlertRules_Call) Run(run func(filter filters.V2Filter)) *GrafanaService_ClearAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 filters.V2Filter
+		if args[0] != nil {
+			arg0 = args[0].(filters.V2Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -195,7 +202,7 @@ func (_c *GrafanaService_ClearAlertRules_Call) Return(strings []string, err erro
 	return _c
 }
 
-func (_c *GrafanaService_ClearAlertRules_Call) RunAndReturn(run func() ([]string, error)) *GrafanaService_ClearAlertRules_Call {
+func (_c *GrafanaService_ClearAlertRules_Call) RunAndReturn(run func(filter filters.V2Filter) ([]string, error)) *GrafanaService_ClearAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1150,25 +1157,27 @@ func (_c *GrafanaService_DownloadAlertNotifications_Call) RunAndReturn(run func(
 }
 
 // DownloadAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadAlertRules() (string, error) {
-	ret := _mock.Called()
+func (_mock *GrafanaService) DownloadAlertRules(filter filters.V2Filter) ([]string, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DownloadAlertRules")
 	}
 
-	var r0 string
+	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]string, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+		r0 = returnFunc(filter)
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1181,23 +1190,30 @@ type GrafanaService_DownloadAlertRules_Call struct {
 }
 
 // DownloadAlertRules is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) DownloadAlertRules() *GrafanaService_DownloadAlertRules_Call {
-	return &GrafanaService_DownloadAlertRules_Call{Call: _e.mock.On("DownloadAlertRules")}
+//   - filter filters.V2Filter
+func (_e *GrafanaService_Expecter) DownloadAlertRules(filter interface{}) *GrafanaService_DownloadAlertRules_Call {
+	return &GrafanaService_DownloadAlertRules_Call{Call: _e.mock.On("DownloadAlertRules", filter)}
 }
 
-func (_c *GrafanaService_DownloadAlertRules_Call) Run(run func()) *GrafanaService_DownloadAlertRules_Call {
+func (_c *GrafanaService_DownloadAlertRules_Call) Run(run func(filter filters.V2Filter)) *GrafanaService_DownloadAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 filters.V2Filter
+		if args[0] != nil {
+			arg0 = args[0].(filters.V2Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
 
-func (_c *GrafanaService_DownloadAlertRules_Call) Return(s string, err error) *GrafanaService_DownloadAlertRules_Call {
-	_c.Call.Return(s, err)
+func (_c *GrafanaService_DownloadAlertRules_Call) Return(strings []string, err error) *GrafanaService_DownloadAlertRules_Call {
+	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *GrafanaService_DownloadAlertRules_Call) RunAndReturn(run func() (string, error)) *GrafanaService_DownloadAlertRules_Call {
+func (_c *GrafanaService_DownloadAlertRules_Call) RunAndReturn(run func(filter filters.V2Filter) ([]string, error)) *GrafanaService_DownloadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2235,27 +2251,27 @@ func (_c *GrafanaService_ListAlertNotifications_Call) RunAndReturn(run func() (*
 }
 
 // ListAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListAlertRules() ([]*models.ProvisionedAlertRule, error) {
-	ret := _mock.Called()
+func (_mock *GrafanaService) ListAlertRules(filter filters.V2Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListAlertRules")
 	}
 
-	var r0 []*models.ProvisionedAlertRule
+	var r0 []*domain.AlertRuleWithNestedFolder
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*models.ProvisionedAlertRule, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*models.ProvisionedAlertRule); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.AlertRuleWithNestedFolder); ok {
+		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.ProvisionedAlertRule)
+			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -2268,23 +2284,30 @@ type GrafanaService_ListAlertRules_Call struct {
 }
 
 // ListAlertRules is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) ListAlertRules() *GrafanaService_ListAlertRules_Call {
-	return &GrafanaService_ListAlertRules_Call{Call: _e.mock.On("ListAlertRules")}
+//   - filter filters.V2Filter
+func (_e *GrafanaService_Expecter) ListAlertRules(filter interface{}) *GrafanaService_ListAlertRules_Call {
+	return &GrafanaService_ListAlertRules_Call{Call: _e.mock.On("ListAlertRules", filter)}
 }
 
-func (_c *GrafanaService_ListAlertRules_Call) Run(run func()) *GrafanaService_ListAlertRules_Call {
+func (_c *GrafanaService_ListAlertRules_Call) Run(run func(filter filters.V2Filter)) *GrafanaService_ListAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 filters.V2Filter
+		if args[0] != nil {
+			arg0 = args[0].(filters.V2Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
 
-func (_c *GrafanaService_ListAlertRules_Call) Return(provisionedAlertRules []*models.ProvisionedAlertRule, err error) *GrafanaService_ListAlertRules_Call {
-	_c.Call.Return(provisionedAlertRules, err)
+func (_c *GrafanaService_ListAlertRules_Call) Return(alertRuleWithNestedFolders []*domain.AlertRuleWithNestedFolder, err error) *GrafanaService_ListAlertRules_Call {
+	_c.Call.Return(alertRuleWithNestedFolders, err)
 	return _c
 }
 
-func (_c *GrafanaService_ListAlertRules_Call) RunAndReturn(run func() ([]*models.ProvisionedAlertRule, error)) *GrafanaService_ListAlertRules_Call {
+func (_c *GrafanaService_ListAlertRules_Call) RunAndReturn(run func(filter filters.V2Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *GrafanaService_ListAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3539,16 +3562,16 @@ func (_c *GrafanaService_UploadAlertNotifications_Call) RunAndReturn(run func() 
 }
 
 // UploadAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadAlertRules() error {
-	ret := _mock.Called()
+func (_mock *GrafanaService) UploadAlertRules(filter filters.V2Filter) error {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UploadAlertRules")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func() error); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) error); ok {
+		r0 = returnFunc(filter)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -3561,13 +3584,20 @@ type GrafanaService_UploadAlertRules_Call struct {
 }
 
 // UploadAlertRules is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) UploadAlertRules() *GrafanaService_UploadAlertRules_Call {
-	return &GrafanaService_UploadAlertRules_Call{Call: _e.mock.On("UploadAlertRules")}
+//   - filter filters.V2Filter
+func (_e *GrafanaService_Expecter) UploadAlertRules(filter interface{}) *GrafanaService_UploadAlertRules_Call {
+	return &GrafanaService_UploadAlertRules_Call{Call: _e.mock.On("UploadAlertRules", filter)}
 }
 
-func (_c *GrafanaService_UploadAlertRules_Call) Run(run func()) *GrafanaService_UploadAlertRules_Call {
+func (_c *GrafanaService_UploadAlertRules_Call) Run(run func(filter filters.V2Filter)) *GrafanaService_UploadAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 filters.V2Filter
+		if args[0] != nil {
+			arg0 = args[0].(filters.V2Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -3577,7 +3607,7 @@ func (_c *GrafanaService_UploadAlertRules_Call) Return(err error) *GrafanaServic
 	return _c
 }
 
-func (_c *GrafanaService_UploadAlertRules_Call) RunAndReturn(run func() error) *GrafanaService_UploadAlertRules_Call {
+func (_c *GrafanaService_UploadAlertRules_Call) RunAndReturn(run func(filter filters.V2Filter) error) *GrafanaService_UploadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }

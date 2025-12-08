@@ -6,6 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/tools/ptr"
 
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -69,6 +70,7 @@ func (s *DashNGoImpl) UploadAlertNotifications() (*models.Route, error) {
 		return nil, fmt.Errorf("failed to unmarshall file, file:%s, err: %w", fileLocation, err)
 	}
 	p := provisioning.NewPutPolicyTreeParams()
+	p.XDisableProvenance = ptr.Of("true")
 	p.Body = data
 	_, err = s.GetClient().Provisioning.PutPolicyTree(p)
 	if err != nil {

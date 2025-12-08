@@ -52,7 +52,7 @@ func NewFolderFilter() filters.V2Filter {
 		}
 	})
 	if err != nil {
-		log.Fatalf("unable to register a valid reader for folder filder")
+		log.Fatalf("unable to register a valid reader for folder filter")
 	}
 
 	folderArr := config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false)
@@ -202,7 +202,7 @@ func (s *DashNGoImpl) ListFolders(filter filters.V2Filter) []*domain.NestedHit {
 		newItem := &domain.NestedHit{Hit: item}
 		folderListing = append(folderListing, newItem)
 	})
-	folderUid := getFolderUIDEntityMap(folderListing)
+	folderUid := getFolderUIDEntityMapByList(folderListing)
 
 	addFolder := func(ndx int, nestedVal string) {
 		item := folderListing[ndx]
@@ -301,7 +301,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 		log.Fatalf("Failed to read folders imports, %v", err)
 	}
 	folderItems := s.ListFolders(filter)
-	folderUidMap := getFolderUIDEntityMap(folderItems)
+	folderUidMap := getFolderUIDEntityMapByList(folderItems)
 	// build a mapping of the nested path to UID for all existing folders
 	nestedPathToUidExisting := getFolderMapping(folderItems,
 		func(fld *domain.NestedHit) string {
@@ -513,8 +513,13 @@ func getFolderMapping[T comparable, V any](folders []*domain.NestedHit, key func
 	return m
 }
 
-// getFolderUIDEntityMap helper function to build a mapping for name to folderID
-func getFolderUIDEntityMap(folders []*domain.NestedHit) map[string]*domain.NestedHit {
+// getFolderUIDEntityMap builds a map from folder UID to NestedHit using ListFolders.
+func (s *DashNGoImpl) getFolderUIDEntityMap(filter filters.V2Filter) map[string]*domain.NestedHit {
+	return getFolderUIDEntityMapByList(s.ListFolders(filter))
+}
+
+// getFolderUIDEntityMapByList helper function to build a mapping for name to folderID
+func getFolderUIDEntityMapByList(folders []*domain.NestedHit) map[string]*domain.NestedHit {
 	return getFolderMapping(folders, func(fld *domain.NestedHit) string {
 		return fld.UID
 	},

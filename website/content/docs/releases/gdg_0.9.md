@@ -24,7 +24,9 @@ toc: true
         instead.
       - Behavioral change. AWS_ACCESS_KEY and AWS_SECRET_KEY will now override config values. This is now consistent with
         how the rest of the GDG config handled env overrides.
-  -
+  - [#504](https://github.com/esnet/gdg/pull/504) Changing behavior of alert rules. Since they are tied to a given folder, the
+     rules will be saved in the given folder. Additionally, folder filtering has been added to allow a user to only
+     include rules they are interested in.
 
 
 ### Changes

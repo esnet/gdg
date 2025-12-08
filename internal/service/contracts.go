@@ -64,10 +64,10 @@ type AlertContactPoints interface {
 }
 
 type AlertRules interface {
-	DownloadAlertRules() (string, error)
-	ListAlertRules() ([]*models.ProvisionedAlertRule, error)
-	ClearAlertRules() ([]string, error)
-	UploadAlertRules() error
+	DownloadAlertRules(filter filters.V2Filter) ([]string, error)
+	ListAlertRules(filter filters.V2Filter) ([]*customModels.AlertRuleWithNestedFolder, error)
+	ClearAlertRules(filter filters.V2Filter) ([]string, error)
+	UploadAlertRules(filter filters.V2Filter) error
 }
 
 type AlertTemplates interface {
