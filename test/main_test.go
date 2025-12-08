@@ -107,12 +107,6 @@ func getEnvDefault(key, defaultValue string) string {
 	return val
 }
 
-func wrapTest(f func()) {
-	os.Setenv(path.TestEnvKey, "1")
-	f()
-	os.Unsetenv(path.TestEnvKey)
-}
-
 type RetryFunc func() error
 
 const DefaultRetryAttempts = 3

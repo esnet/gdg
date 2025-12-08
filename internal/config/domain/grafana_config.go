@@ -1,12 +1,14 @@
 package domain
 
 import (
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/esnet/gdg/pkg/test_tooling/path"
+	"github.com/spf13/viper"
 )
 
 type DashboardSettings struct {
@@ -20,9 +22,9 @@ type dashFilter struct {
 
 // GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
-	contextName              string
-	secureAuth               *SecureModel
-	APIToken                 string                `mapstructure:"token" yaml:"token"`
+	contextName string
+	secureAuth  *SecureModel
+	// APIToken                 string                `mapstructure:"token" yaml:"token"`
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
@@ -31,12 +33,20 @@ type GrafanaConfig struct {
 	OrganizationName         string                `mapstructure:"organization_name" yaml:"organization_name"`
 	SecureLocationOverride   string                `mapstructure:"secure_location" yaml:"secure_location"`
 	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
-	Password                 string                `mapstructure:"password" yaml:"password"`
 	Storage                  string                `mapstructure:"storage" yaml:"storage"`
 	URL                      string                `mapstructure:"url" yaml:"url"`
-	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
 	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
+	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
+}
+
+// Only exposed for testing
+func (s *GrafanaConfig) TestGetSecureAuth() *SecureModel {
+	if os.Getenv(path.TestEnvKey) != "1" {
+		return nil
+	}
+	d := *s.secureAuth
+	return &d
 }
 
 type MonitoredOrgFolders struct {
@@ -61,41 +71,77 @@ func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 		return s.secureAuth
 	}
 
-	securePath := s.SecureLocation()
-	name := fmt.Sprintf("%s_auth.json", s.contextName)
-	authFile := filepath.Join(securePath, name)
-	_, err := os.Stat(authFile)
-	if os.IsNotExist(err) {
-		return nil
-	}
-	data, err := os.ReadFile(authFile)
-	if err != nil {
-		slog.Error("unable to read auth file, falling back on config/env values", "file", authFile, "err", err)
-		return nil
-	}
+	authFile := s.GetAuthLocation()
 	obj := SecureModel{}
-	err = json.Unmarshal(data, &obj)
-	if err != nil {
-		slog.Error("unable to unmarshal auth file", "file", authFile)
+	v := viper.New()
+	v.SetConfigFile(authFile)
+	formats := []string{".yaml", ".yml", ".json"}
+	for _, ext := range formats {
+		filename := authFile + ext
+		if _, err := os.Stat(filename); err == nil {
+			// File exists
+			v.SetConfigFile(filename)
+			if err := v.ReadInConfig(); err != nil {
+				continue // Try next extension
+			}
+			marshErr := v.Unmarshal(&obj)
+			if marshErr != nil {
+				slog.Error("unable to unmarshal auth file", "file", authFile, "error", marshErr)
+			}
+			s.secureAuth = &obj
+			break
+		}
 	}
-	s.secureAuth = &obj
+
 	return s.secureAuth
 }
 
 func (s *GrafanaConfig) GetPassword() string {
 	secureAuth := s.getSecureAuth()
-	if secureAuth == nil || secureAuth.Password == "" {
-		return s.Password
+	if secureAuth == nil {
+		return ""
 	}
+	// Backward compatibility to allow Env Override
+	// Get Env Value
+	envKey := fmt.Sprintf("GDG_CONTEXTS__%s__PASSWORD", strings.ToUpper(s.contextName))
+	val := os.Getenv(envKey)
+	if val != "" {
+		return val
+	}
+
 	return secureAuth.Password
 }
 
 func (s *GrafanaConfig) GetAPIToken() string {
 	secureAuth := s.getSecureAuth()
-	if secureAuth == nil || secureAuth.Token == "" {
-		return s.APIToken
+	if secureAuth == nil {
+		return ""
 	}
+	// Backward compatibility to allow Env Override
+	// Get Env Value
+	envKey := fmt.Sprintf("GDG_CONTEXTS__%s__TOKEN", strings.ToUpper(s.contextName))
+	val := os.Getenv(envKey)
+	if val != "" {
+		return val
+	}
+
 	return secureAuth.Token
+}
+
+func (s *GrafanaConfig) GetAuthLocation() string {
+	securePath := s.SecureLocation()
+	name := fmt.Sprintf("%s_auth", s.contextName)
+	authFile := filepath.Join(securePath, name)
+	return authFile
+}
+
+// TestSetSecureAuth sets the secure authentication model for testing purposes.
+func (s *GrafanaConfig) TestSetSecureAuth(auth SecureModel) error {
+	if os.Getenv(path.TestEnvKey) != "1" {
+		return nil
+	}
+	s.secureAuth = &auth
+	return nil
 }
 
 func (s *GrafanaConfig) SecureLocation() string {
@@ -179,4 +225,11 @@ func (s *GrafanaConfig) IsBasicAuth() bool {
 	}
 
 	return false
+}
+
+func NewGrafanaConfig(contextName string) *GrafanaConfig {
+	s := &GrafanaConfig{
+		contextName: contextName,
+	}
+	return s
 }

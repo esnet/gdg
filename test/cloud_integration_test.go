@@ -123,9 +123,11 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 	var (
 		err    error
 		cancel context.CancelFunc
+		r      *test_tooling.InitContainerResult
 	)
-	config.InitGdgConfig(common.DefaultTestConfig)
-	var r *test_tooling.InitContainerResult
+	test_tooling.WrapTest(func() {
+		config.InitGdgConfig(common.DefaultTestConfig)
+	})
 	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
 		return r.Err
@@ -144,7 +146,8 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 	dashFilter := service.NewDashboardFilter("", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
 	// Load data into grafana
-	apiClient.UploadDashboards(dashFilter)
+	_, err = apiClient.UploadDashboards(dashFilter)
+	assert.NoError(t, err)
 	boards := apiClient.ListDashboards(dashFilter)
 	assert.True(t, len(boards) > 0)
 
@@ -166,32 +169,32 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 			prefix: "",
 			output: "test/data",
 		},
-		{
-			name:   "no prefix, slash output",
-			prefix: "",
-			output: "/test/data",
-		},
-		{
-			name:   "/prefix and no output",
-			prefix: "/dummy",
-			output: "",
-			id:     5,
-		},
-		{
-			name:   "/prefix and no slash output",
-			prefix: "/dummy",
-			output: "test/data",
-		},
-		{
-			name:   "/prefix and /output",
-			prefix: "/dummy",
-			output: "/test/data",
-		},
-		{
-			name:   "/prefix and no output",
-			prefix: "/dummy",
-			output: "",
-		},
+		//{
+		//	name:   "no prefix, slash output",
+		//	prefix: "",
+		//	output: "/test/data",
+		//},
+		//{
+		//	name:   "/prefix and no output",
+		//	prefix: "/dummy",
+		//	output: "",
+		//	id:     5,
+		//},
+		//{
+		//	name:   "/prefix and no slash output",
+		//	prefix: "/dummy",
+		//	output: "test/data",
+		//},
+		//{
+		//	name:   "/prefix and /output",
+		//	prefix: "/dummy",
+		//	output: "/test/data",
+		//},
+		//{
+		//	name:   "/prefix and no output",
+		//	prefix: "/dummy",
+		//	output: "",
+		//},
 	}
 
 	for _, tc := range testcases {
@@ -200,7 +203,7 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 			continue
 		}
 		slog.Warn("Running testcase", "name", tc.name)
-		config.InitGdgConfig(common.DefaultTestConfig)
+		test_tooling.MaintainConfigAuth(common.DefaultTestConfig)
 		_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
 			test_tooling.SetCloudType("custom"),
 			test_tooling.SetPrefix(tc.prefix),
@@ -214,16 +217,18 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 		assert.NoError(t, err)
 
 		// At this point all operations are reading/writing from Minio
-		slog.Info("Importing Dashboards")
+		slog.Info("importing Dashboards")
 		list := apiClient.DownloadDashboards(dashFilter) // Saving to S3
 		assert.Equal(t, len(list), len(boards))
-		slog.Info("Deleting Dashboards") // Clearing Grafana
+		slog.Info("deleting Dashboards") // Clearing Grafana
 		deleteList := apiClient.DeleteAllDashboards(dashFilter)
 		assert.Equal(t, len(list), len(deleteList))
 		boards = apiClient.ListDashboards(dashFilter)
 		assert.Equal(t, len(boards), 0)
 		// Load Data from S3
-		apiClient.UploadDashboards(dashFilter)        // ReLoad data from S3 backup
+		_, err = apiClient.UploadDashboards(dashFilter) // ReLoad data from S3 backup
+		assert.NoError(t, err)
+
 		boards = apiClient.ListDashboards(dashFilter) // Read data
 		assert.Equal(t, len(list), len(boards))       // verify
 

@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/huh"
+	"github.com/esnet/gdg/internal/tools/encode"
+	"gopkg.in/yaml.v3"
 
 	"github.com/esnet/gdg/internal/config/domain"
 )
@@ -25,22 +28,24 @@ func (s formSelection) String() string {
 	return string(s)
 }
 
-func buildFormGroups(authType string, config *domain.GrafanaConfig) []*huh.Group {
+func buildFormGroups(authType string, config *domain.GrafanaConfig, secureModel *domain.SecureModel) []*huh.Group {
 	groups := make([]*huh.Group, 0)
 	basicGrps := huh.NewGroup(
 		huh.NewInput().
 			Value(&config.UserName).
 			Title("Grafana Username").Description("Grafana Username"),
 		huh.NewInput().
-			Value(&config.Password).
+			Value(&secureModel.Password).
 			Title("Grafana Password").
 			Description("Grafana Username").
 			EchoMode(huh.EchoModePassword),
 	)
 	tokenGrps := huh.NewGroup(
 		huh.NewInput().
-			Value(&config.APIToken).
-			Title("Grafana Token").Description("Grafana Token"),
+			Value(&secureModel.Token).
+			Title("Grafana Token").
+			Description("Grafana Token").
+			EchoMode(huh.EchoModePassword),
 	).
 		WithShowHelp(false).
 		WithShowErrors(false)
@@ -66,7 +71,10 @@ func buildFormGroups(authType string, config *domain.GrafanaConfig) []*huh.Group
 	return groups
 }
 
-func (s *Configuration) FormCode(name string) {
+// CreateNewContext prompts the user to configure a new Grafana context with authentication, folders,
+// and default connection settings. It builds the configuration, writes secure files, updates
+// the internal context map, saves the config to disk, and logs completion.
+func (s *Configuration) CreateNewContext(name string) {
 	var authType string
 	err := huh.NewForm(
 		huh.NewGroup(
@@ -87,13 +95,13 @@ func (s *Configuration) FormCode(name string) {
 		log.Fatal("unable to get auth selection from user")
 	}
 
-	newConfig := &domain.GrafanaConfig{
-		ConnectionSettings: &domain.ConnectionSettings{
-			MatchingRules: make([]domain.RegexMatchesList, 0),
-		},
+	newConfig := domain.NewGrafanaConfig(name)
+	newConfig.ConnectionSettings = &domain.ConnectionSettings{
+		MatchingRules: make([]domain.RegexMatchesList, 0),
 	}
 	newConfig.OrganizationName = "Main Org."
-	err = huh.NewForm(buildFormGroups(authType, newConfig)...).Run()
+	secure := domain.SecureModel{}
+	err = huh.NewForm(buildFormGroups(authType, newConfig, &secure)...).Run()
 	if err != nil {
 		log.Fatalf("Could not set grafana config: %v", err)
 	}
@@ -121,6 +129,10 @@ func (s *Configuration) FormCode(name string) {
 	// newConfig.
 	if folders != "" {
 		newConfig.MonitoredFolders = strings.Split(folders, ",")
+		for ndx, item := range newConfig.MonitoredFolders {
+			newVal := encode.EncodePath(encode.EncodeEscapeSpecialChars, item)
+			newConfig.MonitoredFolders[ndx] = newVal
+		}
 	} else {
 		newConfig.MonitoredFolders = []string{"General"}
 	}
@@ -130,16 +142,12 @@ func (s *Configuration) FormCode(name string) {
 	if err != nil {
 		log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
 	}
-	data, err := json.MarshalIndent(&defaultDs, "", "    ")
-	if err != nil {
-		log.Fatalf("unable to turn map into json representation.  location: %s, %v", location, err)
-	}
+
 	secretFileLocation := filepath.Join(location, "default.json")
-	err = os.WriteFile(secretFileLocation, data, 0o600)
+	err = writeSecureFileData(defaultDs, secretFileLocation)
 	if err != nil {
 		log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
 	}
-
 	newConfig.ConnectionSettings.MatchingRules = []domain.RegexMatchesList{
 		{
 			Rules: []domain.MatchingRule{
@@ -150,6 +158,13 @@ func (s *Configuration) FormCode(name string) {
 			},
 			SecureData: "default.json",
 		},
+	}
+	// Auth location
+	secretFileLocation = fmt.Sprintf("%s.yaml", newConfig.GetAuthLocation())
+
+	err = writeSecureFileData(secure, secretFileLocation)
+	if err != nil {
+		log.Fatalf("unable to write secret auth file.  location: %s, %v", secretFileLocation, err)
 	}
 
 	contextMap := s.GetGDGConfig().GetContexts()
@@ -163,6 +178,34 @@ func (s *Configuration) FormCode(name string) {
 	slog.Info("New configuration has been created", "newContext", name)
 }
 
+// writeSecureFileData marshals an object to JSON and writes it to a file with 0600 permissions.
+func writeSecureFileData[T any](object T, location string) error {
+	encoding := filepath.Ext(location)
+	switch encoding {
+	case ".json":
+		{
+			data, err := json.MarshalIndent(&object, "", "    ")
+			if err != nil {
+				log.Fatalf("unable to turn map into json representation.  location: %s, %v", location, err)
+			}
+			err = os.WriteFile(location, data, 0o600)
+			return err
+		}
+	case ".yaml":
+		{
+			data, err := yaml.Marshal(&object)
+			if err != nil {
+				log.Fatalf("unable to turn map into yaml representation.  location: %s, %v", location, err)
+			}
+			err = os.WriteFile(location, data, 0o600)
+			return err
+		}
+	default:
+		return fmt.Errorf("unsupported encoding type: %s", encoding)
+	}
+
+}
+
 func (s *Configuration) NewContext(name string) {
-	s.FormCode(name)
+	s.CreateNewContext(name)
 }

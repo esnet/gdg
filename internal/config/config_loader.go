@@ -8,9 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/esnet/gdg/internal/config/domain"
-
 	assets "github.com/esnet/gdg/config"
+	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -30,9 +29,7 @@ func (s *Configuration) DefaultConfig() string {
 
 func (s *Configuration) ClearContexts() {
 	newContext := make(map[string]*domain.GrafanaConfig)
-	newContext["example"] = &domain.GrafanaConfig{
-		APIToken: "dummy",
-	}
+	newContext["example"] = &domain.GrafanaConfig{}
 	appCfg := s.GetGDGConfig()
 	appCfg.Contexts = newContext
 	appCfg.ContextName = "example"

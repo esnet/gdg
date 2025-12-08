@@ -9,6 +9,7 @@ import (
 	"maps"
 	"os"
 
+	"github.com/docker/go-connections/nat"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
@@ -20,7 +21,13 @@ const (
 	EnterpriseLicenceKeyEnv  = "ENTERPRISE_LICENSE"
 	DefaultCloudUser         = "test"
 	DefaultCloudPass         = "secretsss"
-	minioCurrentTag          = "RELEASE.2025-09-07T16-13-09Z"
+	s3UserEnv                = "MINIO_ROOT_USER"
+	s3PassKeyEnv             = "MINIO_ROOT_PASSWORD" // #nosec G101
+	s3ImageTag               = "RELEASE.2025-09-07T16-13-09Z"
+	s3Image                  = "minio/minio"
+	S3UiPort                 = "9001"
+	s3ApiPort                = "9000"
+	s3TcpPortFormatString    = "%s/tcp"
 )
 
 // BootstrapCloudStorage starts a S3 container for cloud storage testing.
@@ -34,11 +41,14 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 
 	ctx := context.Background()
 	req := testcontainers.ContainerRequest{
-		Image:        fmt.Sprintf("minio/minio:%s", minioCurrentTag),
-		Cmd:          []string{"server", "start", "--console-address", ":9001"},
-		ExposedPorts: []string{"9000/tcp", "9001/tcp"},
-		Env:          map[string]string{"MINIO_ROOT_USER": username, "MINIO_ROOT_PASSWORD": password},
-		WaitingFor:   wait.ForListeningPort("9000/tcp"),
+		Image:        fmt.Sprintf("%s:%s", s3Image, s3ImageTag),
+		Cmd:          []string{"server", "start", "--console-address", ":" + S3UiPort},
+		ExposedPorts: []string{fmt.Sprintf(s3TcpPortFormatString, s3ApiPort), fmt.Sprintf(s3TcpPortFormatString, S3UiPort)},
+		Env: map[string]string{
+			s3UserEnv:    username,
+			s3PassKeyEnv: password,
+		},
+		WaitingFor: wait.ForListeningPort(nat.Port(fmt.Sprintf(s3TcpPortFormatString, s3ApiPort))),
 	}
 	minioC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
@@ -52,7 +62,7 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 		if err := minioC.Terminate(ctx); err != nil {
 			panic(err)
 		} else {
-			slog.Info("Minio container has been terminated")
+			slog.Info("S3 container has been terminated")
 		}
 	}
 	return minioC, cancel

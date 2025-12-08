@@ -25,7 +25,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
 
-	wrapTest(func() {
+	test_tooling.WrapTest(func() {
 		config.InitGdgConfig(common.DefaultTestConfig)
 	})
 	props := containers.DefaultGrafanaEnv()

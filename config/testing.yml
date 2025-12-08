@@ -19,7 +19,6 @@ contexts:
     url: http://localhost:3000
     user_name: admin
     organization_name: Main Org.
-    password: admin
     dashboard_settings:
       ignore_filters: false
     watched:
@@ -42,7 +41,6 @@ contexts:
 
     url: https://grafana.com
     user_name: admin
-    password: admin
     dashboard_settings:
       nested_folders: false
     organization_name: Your Org

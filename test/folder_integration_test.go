@@ -29,7 +29,7 @@ import (
 )
 
 func TestFolderCRUD(t *testing.T) {
-	wrapTest(func() {
+	test_tooling.WrapTest(func() {
 		config.InitGdgConfig(common.DefaultTestConfig)
 	})
 	cfgProvider := func() *config.Configuration {
