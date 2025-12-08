@@ -2235,23 +2235,23 @@ func (_c *GrafanaService_ListAlertNotifications_Call) RunAndReturn(run func() (*
 }
 
 // ListAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListAlertRules() ([]*models.ProvisionedAlertRule, error) {
+func (_mock *GrafanaService) ListAlertRules() ([]*domain.AlertRuleWithNestedFolder, error) {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListAlertRules")
 	}
 
-	var r0 []*models.ProvisionedAlertRule
+	var r0 []*domain.AlertRuleWithNestedFolder
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*models.ProvisionedAlertRule, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func() ([]*domain.AlertRuleWithNestedFolder, error)); ok {
 		return returnFunc()
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*models.ProvisionedAlertRule); ok {
+	if returnFunc, ok := ret.Get(0).(func() []*domain.AlertRuleWithNestedFolder); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.ProvisionedAlertRule)
+			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func() error); ok {
@@ -2279,12 +2279,12 @@ func (_c *GrafanaService_ListAlertRules_Call) Run(run func()) *GrafanaService_Li
 	return _c
 }
 
-func (_c *GrafanaService_ListAlertRules_Call) Return(provisionedAlertRules []*models.ProvisionedAlertRule, err error) *GrafanaService_ListAlertRules_Call {
-	_c.Call.Return(provisionedAlertRules, err)
+func (_c *GrafanaService_ListAlertRules_Call) Return(alertRuleWithNestedFolders []*domain.AlertRuleWithNestedFolder, err error) *GrafanaService_ListAlertRules_Call {
+	_c.Call.Return(alertRuleWithNestedFolders, err)
 	return _c
 }
 
-func (_c *GrafanaService_ListAlertRules_Call) RunAndReturn(run func() ([]*models.ProvisionedAlertRule, error)) *GrafanaService_ListAlertRules_Call {
+func (_c *GrafanaService_ListAlertRules_Call) RunAndReturn(run func() ([]*domain.AlertRuleWithNestedFolder, error)) *GrafanaService_ListAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }

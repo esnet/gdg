@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
+	customModels "github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/tools/ptr"
-	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
 
 	"github.com/esnet/gdg/internal/config"
@@ -58,12 +58,12 @@ func TestAlertingRulesCrud(t *testing.T) {
 	templates, err = apiClient.ListAlertRules()
 	assert.NoError(t, err)
 	assert.Equal(t, len(templates), 2)
-	p := lo.FindOrElse(templates, nil, func(item *models.ProvisionedAlertRule) bool {
+	p := lo.FindOrElse(templates, nil, func(item *customModels.AlertRuleWithNestedFolder) bool {
 		return item.UID == "aeozpk1wn93b4b"
 	})
 	assert.NotNil(t, p)
-	assert.Equal(t, len(p.Data), 2)
-	assert.Equal(t, ptr.ValueOrDefault(p.Title, ""), "boom")
+	assert.Equal(t, len(p.ProvisionedAlertRule.Data), 2)
+	assert.Equal(t, ptr.ValueOrDefault(p.ProvisionedAlertRule.Title, ""), "boom")
 	data, err := apiClient.DownloadAlertRules()
 	assert.NoError(t, err)
 	assert.Equal(t, "test/data/org_main-org/alerting/rules.json", data)

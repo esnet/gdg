@@ -45,3 +45,8 @@ type DashboardAndPermissions struct {
 	Dashboard   *NestedHit
 	Permissions []*models.DashboardACLInfoDTO
 }
+
+type AlertRuleWithNestedFolder struct {
+	*models.ProvisionedAlertRule
+	NestedPath string
+}

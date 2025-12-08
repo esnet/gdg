@@ -65,7 +65,7 @@ type AlertContactPoints interface {
 
 type AlertRules interface {
 	DownloadAlertRules() (string, error)
-	ListAlertRules() ([]*models.ProvisionedAlertRule, error)
+	ListAlertRules() ([]*customModels.AlertRuleWithNestedFolder, error)
 	ClearAlertRules() ([]string, error)
 	UploadAlertRules() error
 }

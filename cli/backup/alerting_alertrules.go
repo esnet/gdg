@@ -102,7 +102,7 @@ func newListAlertRulesCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			rootCmd.TableObj.AppendHeader(table.Row{"name", "uid", "folderUid", "ruleGroup", "For"})
+			rootCmd.TableObj.AppendHeader(table.Row{"name", "uid", "folder", "ruleGroup", "For"})
 			slog.Info("Listing alert rules for context",
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
@@ -116,11 +116,11 @@ func newListAlertRulesCmd() simplecobra.Commander {
 			} else {
 				for _, link := range rules {
 					rootCmd.TableObj.AppendRow(table.Row{
-						ptr.ValueOrDefault(link.Title, ""),
-						link.UID,
-						ptr.ValueOrDefault(link.FolderUID, ""),
-						ptr.ValueOrDefault(link.RuleGroup, ""),
-						ptr.ValueOrDefault(link.For, strfmt.Duration(0)),
+						ptr.ValueOrDefault(link.ProvisionedAlertRule.Title, ""),
+						link.ProvisionedAlertRule.UID,
+						link.NestedPath,
+						ptr.ValueOrDefault(link.ProvisionedAlertRule.RuleGroup, ""),
+						ptr.ValueOrDefault(link.ProvisionedAlertRule.For, strfmt.Duration(0)),
 					})
 				}
 				rootCmd.Render(cd.CobraCommand, rules)
