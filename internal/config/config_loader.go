@@ -226,7 +226,7 @@ func buildConfigSearchPath(configFilePath string) (configDirs []string, configNa
 		configDirs = append(configDirs, configSearchPaths...)
 	}
 
-	return
+	return configDirs, configName, ext
 }
 
 func InitGdgConfig(override string) {
