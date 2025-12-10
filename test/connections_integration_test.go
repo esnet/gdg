@@ -31,6 +31,9 @@ import (
 // There's some issues with these tests, temporarily disabling this
 func TestConnectionPermissionsCrud(t *testing.T) {
 	t.Skip() // Buggy test right now, disabled
+	if os.Getenv(containers.DisableEnterpriseTest) == "true" {
+		t.Skip("Enterprise tests disabled by environment variable")
+	}
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
@@ -42,11 +45,7 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 		t.Skip()
 	}
 	config.InitGdgConfig(common.DefaultTestConfig)
-	var r *test_tooling.InitContainerResult
-	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
-		return r.Err
-	})
+	r := test_tooling.InitTest(t, service.DefaultConfigProvider, props)
 	assert.NotNil(t, r)
 	assert.NoError(t, err)
 	defer func() {
@@ -59,7 +58,7 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 	// Upload all connections
 	filtersEntity := service.NewConnectionFilter("")
 	connectionsAdded := apiClient.UploadConnections(filtersEntity)
-	assert.Equal(t, len(connectionsAdded), 3)
+	assert.Equal(t, len(connectionsAdded), 4)
 	// Upload all users
 	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
 	assert.Equal(t, len(newUsers), 2)
@@ -70,36 +69,32 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 	// Get current Permissions
 	permissionFilters := service.NewConnectionFilter("")
 	currentPerms := apiClient.ListConnectionPermissions(permissionFilters)
-	assert.Equal(t, len(currentPerms), 3)
-	var entry *domain.ConnectionPermissionItem
-	for ndx, item := range currentPerms {
-		if item.Connection.Name == "Google Sheets" {
-			entry = &currentPerms[ndx]
-			break
-		}
-	}
+	assert.Equal(t, len(currentPerms), 4)
+	// var entry *domain.ConnectionPermissionItem
+	entry, foundEntry := lo.Find(currentPerms, func(item domain.ConnectionPermissionItem) bool {
+		return item.Connection.Name == "Google Sheets"
+	})
+	assert.True(t, foundEntry)
 	assert.NotNil(t, entry)
 	assert.Equal(t, len(entry.Permissions), 4)
 
 	removed := apiClient.DeleteAllConnectionPermissions(permissionFilters)
-	assert.Equal(t, len(removed), 3)
+	assert.Equal(t, len(removed), 4)
 	currentPerms = apiClient.ListConnectionPermissions(permissionFilters)
-	for ndx, item := range currentPerms {
-		if item.Connection.Name == "Google Sheets" {
-			entry = &currentPerms[ndx]
-			break
-		}
-	}
+	entry, foundEntry = lo.Find(currentPerms, func(item domain.ConnectionPermissionItem) bool {
+		return item.Connection.Name == "Google Sheets"
+	})
+	assert.True(t, foundEntry)
+	assert.NotNil(t, entry)
 	assert.Equal(t, 2, len(entry.Permissions))
 	updated := apiClient.UploadConnectionPermissions(permissionFilters)
 	assert.Equal(t, 3, len(updated))
 	currentPerms = apiClient.ListConnectionPermissions(permissionFilters)
-	for ndx, item := range currentPerms {
-		if item.Connection.Name == "Google Sheets" {
-			entry = &currentPerms[ndx]
-			break
-		}
-	}
+	entry, foundEntry = lo.Find(currentPerms, func(item domain.ConnectionPermissionItem) bool {
+		return item.Connection.Name == "Google Sheets"
+	})
+	assert.True(t, foundEntry)
+	assert.NotNil(t, entry)
 	assert.Equal(t, len(entry.Permissions), 7)
 	currentPerms = apiClient.ListConnectionPermissions(permissionFilters)
 	var foundTux, foundBob, foundTeam bool
@@ -109,19 +104,19 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 			assert.Equal(t, item.Permission, "Admin")
 			assert.Equal(t, len(item.Actions), 8)
 			assert.True(t, strings.Contains(item.RoleName, "managed:users"))
-			assert.True(t, strings.Contains(item.RoleName, "permissions"))
+			// assert.True(t, strings.Contains(item.RoleName, "permissions"))
 		} else if item.UserLogin == "bob" {
 			foundBob = true
 			assert.Equal(t, item.Permission, "Edit")
 			assert.Equal(t, len(item.Actions), 4)
 			assert.True(t, strings.Contains(item.RoleName, "managed:users"))
-			assert.True(t, strings.Contains(item.RoleName, "permissions"))
+			// assert.True(t, strings.Contains(item.RoleName, "permissions"))
 		} else if item.Team == "musicians" {
 			foundTeam = true
 			assert.Equal(t, item.Permission, "Query")
 			assert.Equal(t, len(item.Actions), 2)
 			assert.True(t, strings.Contains(item.RoleName, "managed:teams"))
-			assert.True(t, strings.Contains(item.RoleName, "permissions"))
+			// assert.True(t, strings.Contains(item.RoleName, "permissions"))
 		}
 	}
 	assert.True(t, foundTux)

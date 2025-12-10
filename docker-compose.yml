@@ -16,7 +16,7 @@ services:
         - 9090:9090
       restart: unless-stopped
     grafana:
-        image: grafana/grafana-enterprise:12.0.0-ubuntu
+        image: grafana/grafana-enterprise:12.3.0-ubuntu
         ports:
             - 3000:3000
         environment:

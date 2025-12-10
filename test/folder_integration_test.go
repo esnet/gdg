@@ -132,8 +132,8 @@ func TestFolderPermissions(t *testing.T) {
 	assert.True(t, len(result) > 0)
 	// this behavior is inconsistent across versions, disabled for now
 	/*
-		for key, val := range result {
-			assert.NotNil(t, key)
+		for enterpriseDisabled, val := range result {
+			assert.NotNil(t, enterpriseDisabled)
 			if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 				assert.Equal(t, 2, len(val))
 			} else {
