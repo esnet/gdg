@@ -22,9 +22,8 @@ type dashFilter struct {
 
 // GrafanaConfig model wraps auth and watched list for grafana
 type GrafanaConfig struct {
-	contextName string
-	secureAuth  *SecureModel
-	// APIToken                 string                `mapstructure:"token" yaml:"token"`
+	contextName              string
+	secureAuth               *SecureModel
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
@@ -38,15 +37,6 @@ type GrafanaConfig struct {
 	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
 	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
-}
-
-// Only exposed for testing
-func (s *GrafanaConfig) TestGetSecureAuth() *SecureModel {
-	if os.Getenv(path.TestEnvKey) != "1" {
-		return nil
-	}
-	d := *s.secureAuth
-	return &d
 }
 
 type MonitoredOrgFolders struct {
@@ -66,6 +56,31 @@ type RegexMatchesList struct {
 	SecureData string         `mapstructure:"secure_data" yaml:"secure_data,omitempty"`
 }
 
+// Testing Functions
+
+// TestGetSecureAuth returns a copy of the secure auth model if test env is enabled.
+func (s *GrafanaConfig) TestGetSecureAuth() *SecureModel {
+	if os.Getenv(path.TestEnvKey) != "1" {
+		return nil
+	}
+	d := *s.secureAuth
+	return &d
+}
+
+// TestSetSecureAuth sets the secure authentication model for testing purposes.
+func (s *GrafanaConfig) TestSetSecureAuth(auth SecureModel) error {
+	if os.Getenv(path.TestEnvKey) != "1" {
+		return nil
+	}
+	s.secureAuth = &auth
+	return nil
+}
+
+// End Testing Functions
+
+// getSecureAuth returns the parsed secure authentication model,
+// loading from YAML, YML or JSON files in order of precedence.
+// It caches the result for subsequent calls.
 func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 	if s.secureAuth != nil {
 		return s.secureAuth
@@ -96,6 +111,7 @@ func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 	return s.secureAuth
 }
 
+// GetPassword returns the password, respecting environment variable override if set.
 func (s *GrafanaConfig) GetPassword() string {
 	secureAuth := s.getSecureAuth()
 	if secureAuth == nil {
@@ -112,6 +128,7 @@ func (s *GrafanaConfig) GetPassword() string {
 	return secureAuth.Password
 }
 
+// GetAPIToken returns the API token, checking for an environment variable override before falling back to stored credentials.
 func (s *GrafanaConfig) GetAPIToken() string {
 	secureAuth := s.getSecureAuth()
 	if secureAuth == nil {
@@ -128,6 +145,8 @@ func (s *GrafanaConfig) GetAPIToken() string {
 	return secureAuth.Token
 }
 
+// GetAuthLocation returns the file path for the authentication token based on the
+// secure location and context name.
 func (s *GrafanaConfig) GetAuthLocation() string {
 	securePath := s.SecureLocation()
 	name := fmt.Sprintf("%s_auth", s.contextName)
@@ -135,15 +154,7 @@ func (s *GrafanaConfig) GetAuthLocation() string {
 	return authFile
 }
 
-// TestSetSecureAuth sets the secure authentication model for testing purposes.
-func (s *GrafanaConfig) TestSetSecureAuth(auth SecureModel) error {
-	if os.Getenv(path.TestEnvKey) != "1" {
-		return nil
-	}
-	s.secureAuth = &auth
-	return nil
-}
-
+// SecureLocation returns the resolved path for secure resources, using override or default.
 func (s *GrafanaConfig) SecureLocation() string {
 	if s.SecureLocationOverride == "" {
 		return s.GetPath(SecureSecretsResource, "")
@@ -158,6 +169,8 @@ func (s *GrafanaConfig) SecureLocation() string {
 	return fullPah
 }
 
+// getFilter returns the dashFilter associated with this GrafanaConfig,
+// creating it if necessary.
 func (s *GrafanaConfig) getFilter() *dashFilter {
 	if s.filterFolder == nil {
 		s.filterFolder = &dashFilter{}
@@ -165,29 +178,34 @@ func (s *GrafanaConfig) getFilter() *dashFilter {
 	return s.filterFolder
 }
 
+// SetFilterFolder sets the name filter for folder queries in GrafanaConfig.
 func (s *GrafanaConfig) SetFilterFolder(folderFilter string) {
 	s.SetUseFilters()
 	filter := s.getFilter()
 	filter.Name = folderFilter
 }
 
+// ClearFilters disables any filter that may have been set on the GrafanaConfig,
+// resetting UseFilter to false and clearing the Name field.
 func (s *GrafanaConfig) ClearFilters() {
 	filter := s.getFilter()
 	filter.UseFilter = false
 	filter.Name = ""
 }
 
+// SetUseFilters enables filter usage by setting UseFilter to true in GrafanaConfig.
 func (s *GrafanaConfig) SetUseFilters() {
 	filter := s.getFilter()
 	filter.UseFilter = true
 	s.filterFolder = filter
 }
 
+// IsFilterSet reports whether a filter is set for the configuration.
 func (s *GrafanaConfig) IsFilterSet() bool {
 	return s.getFilter().UseFilter
 }
 
-// GetURL returns the URL for Grafana, trimming whitespace and adding a trailing slash if not already present.
+// GetURL returns the Grafana URL, trimmed of whitespace and guaranteed to end with a slash.
 func (s *GrafanaConfig) GetURL() string {
 	if len(s.URL) == 0 {
 		return s.URL

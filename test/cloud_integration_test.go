@@ -169,32 +169,32 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 			prefix: "",
 			output: "test/data",
 		},
-		//{
-		//	name:   "no prefix, slash output",
-		//	prefix: "",
-		//	output: "/test/data",
-		//},
-		//{
-		//	name:   "/prefix and no output",
-		//	prefix: "/dummy",
-		//	output: "",
-		//	id:     5,
-		//},
-		//{
-		//	name:   "/prefix and no slash output",
-		//	prefix: "/dummy",
-		//	output: "test/data",
-		//},
-		//{
-		//	name:   "/prefix and /output",
-		//	prefix: "/dummy",
-		//	output: "/test/data",
-		//},
-		//{
-		//	name:   "/prefix and no output",
-		//	prefix: "/dummy",
-		//	output: "",
-		//},
+		{
+			name:   "no prefix, slash output",
+			prefix: "",
+			output: "/test/data",
+		},
+		{
+			name:   "/prefix and no output",
+			prefix: "/dummy",
+			output: "",
+			id:     5,
+		},
+		{
+			name:   "/prefix and no slash output",
+			prefix: "/dummy",
+			output: "test/data",
+		},
+		{
+			name:   "/prefix and /output",
+			prefix: "/dummy",
+			output: "/test/data",
+		},
+		{
+			name:   "/prefix and no output",
+			prefix: "/dummy",
+			output: "",
+		},
 	}
 
 	for _, tc := range testcases {

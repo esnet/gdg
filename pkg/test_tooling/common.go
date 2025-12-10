@@ -192,7 +192,7 @@ func MaintainConfigAuth(configVal string) {
 }
 
 func WrapTest(f func()) {
-	os.Setenv(path.TestEnvKey, "1")
+	os.Setenv(path.TestEnvKey, "1") // #nosec G104
 	f()
 	os.Unsetenv(path.TestEnvKey)
 }

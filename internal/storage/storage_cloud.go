@@ -11,7 +11,6 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -46,7 +45,6 @@ var (
 	stringEmpty = func(key string) bool {
 		return key == ""
 	}
-	initBucketOnce sync.Once
 )
 
 func (s *CloudStorage) GetPrefix() string {
@@ -190,14 +188,6 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 			}
 
 			createBucket()
-			//if os.Getenv(testPath.TestEnvKey) != "1" {
-			//	initBucketOnce.Do(func() {
-			//		createBucket()
-			//	})
-			//} else {
-			//	createBucket()
-			//}
-
 		}
 
 	} else {

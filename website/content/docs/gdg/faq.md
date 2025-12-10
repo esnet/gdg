@@ -27,6 +27,12 @@ PS. if you want to list/import etc all dashboards, you can set the following con
 
 ```
 
+### My auth is not working anymore?
+
+Starting with v0.9.0, login credentials are no longer supported in the config. All secrets live in the "secure" folder
+relative to your export path. You may also configure a secure_path location by setting `secure_location` to the location
+of your secrets.
+
 ### I need feature X, can you please add that in?
 
 Maybe? If there's enough cycles, it could benefit others, and the feature makes sense I'd be happy to.  It is also an OSS project, so contributions are always appreciated and welcome. See [contributing](https://software.es.net/gdg/docs/developer/contributing/) for more info.
