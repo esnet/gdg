@@ -7,6 +7,11 @@ Contexts define a connection to grafana and how to interact with it, authenticat
 
 ### API Token
 
+{{< callout context="danger" title="Danger" icon="alert-octagon" >}}
+Token has been deprecated as of v0.9.0, see https://software.es.net/gdg/docs/gdg/getting-started/ on setting up your auth using
+a secure location or ENV vars.
+{{< /callout >}}
+
 The `token` key is used to authenticate against grafana.  Please be aware that there are certain limits to the token.
 
 1.  They are scoped to a single organization.  They cannot be used across multiple orgs.
@@ -105,6 +110,12 @@ The `organization_name` key is the name of your organization.  The default Org i
 The `output_path` key is the path relative to the current working directory where all the backups are stored.  If using a cloud provider the output path will be relative to the base prefix.  aka.  if the prefix is 'production' and output_path is 'backups' the backup location will be: `s3://bucketName/backups/production/dashboards/...`
 
 ### Password
+
+{{< callout context="danger" title="Danger" icon="alert-octagon" >}}
+Password has been deprecated as of v0.9.0, see https://software.es.net/gdg/docs/gdg/getting-started/ on setting up your auth using
+a secure location or ENV vars.
+{{< /callout >}}
+
 
 If using Basic auth the `password` field defines the password used to authenticate against grafana.  Both Username and password need to be defined.
 

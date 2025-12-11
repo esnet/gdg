@@ -45,7 +45,7 @@ func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.Cance
 	}
 	_ = os.Setenv(storage.InitBucket, "true")
 	container, cancel := containers.BootstrapCloudStorage("", "")
-	wwwPort, err := container.PortEndpoint(context.Background(), "9001", "")
+	wwwPort, err := container.PortEndpoint(context.Background(), containers.S3UiPort, "")
 	if err != nil {
 		return errorFunc(err)
 	}
@@ -54,7 +54,7 @@ func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.Cance
 		return errorFunc(err)
 	}
 	minioHost := fmt.Sprintf("http://%s", actualPort)
-	slog.Info("Minio container is up and running", slog.Any("hostname", fmt.Sprintf("http://%s", wwwPort)))
+	slog.Info("S3 container is up and running", slog.Any("hostname", fmt.Sprintf("http://%s", wwwPort)))
 	m := map[string]string{
 		storage.InitBucket: "true",
 		storage.CloudType:  "cloud",

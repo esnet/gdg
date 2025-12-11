@@ -11,7 +11,6 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -46,7 +45,6 @@ var (
 	stringEmpty = func(key string) bool {
 		return key == ""
 	}
-	initBucketOnce sync.Once
 )
 
 func (s *CloudStorage) GetPrefix() string {
@@ -159,7 +157,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		}
 		session := s3.NewFromConfig(*cloudCfg,
 			func(o *s3.Options) {
-				o.UsePathStyle = true //  <---- here
+				o.UsePathStyle = true
 			},
 			func(o *s3.Options) {
 				endpointURL, _ := url.Parse(host) // or where ever you ran minio
@@ -189,14 +187,7 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 				}
 			}
 
-			if os.Getenv("TESTING") != "1" {
-				initBucketOnce.Do(func() {
-					createBucket()
-				})
-			} else {
-				createBucket()
-			}
-
+			createBucket()
 		}
 
 	} else {

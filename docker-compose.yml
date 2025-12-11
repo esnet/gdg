@@ -1,6 +1,11 @@
 services:
-    minio:
-        image: bitnami/minio:latest
+    s3:
+        image: minio/minio:latest
+        command:
+         - "server"
+         - "start"
+         - "--console-address"
+         - ":9001"
         ports:
             - 9000:9000
             - 9001:9001

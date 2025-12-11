@@ -1,17 +1,14 @@
 package config_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/config/domain"
-
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -139,15 +136,7 @@ func TestConfigSecurePath(t *testing.T) {
 		Password: "allyourbasesaremine!",
 		Token:    "1234",
 	}
-	securePath := filepath.Join(grafanaCfg.SecureLocation(), "testing_auth.json")
-	f, err := os.Create(securePath)
-	assert.NoError(t, err)
-	rawData, err := json.MarshalIndent(&override, "", "    ")
-	assert.NoError(t, err)
-	_, err = f.Write(rawData)
-	assert.NoError(t, err)
-	assert.NoError(t, f.Close())
-	defer os.Remove(securePath)
+	assert.NoError(t, grafanaCfg.TestSetSecureAuth(override))
 	assert.Equal(t, grafanaCfg.GetPassword(), override.Password)
 	assert.Equal(t, grafanaCfg.GetAPIToken(), override.Token)
 	// Validate Secure Path behavior

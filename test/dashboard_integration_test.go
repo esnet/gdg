@@ -179,7 +179,7 @@ func TestDashListFilters(t *testing.T) {
 		if tc.disabled {
 			continue
 		}
-		wrapTest(func() {
+		test_tooling.WrapTest(func() {
 			config.InitGdgConfig(common.DefaultTestConfig)
 		})
 		cfgProvider := func() *config.Configuration {
@@ -282,7 +282,7 @@ func TestUploadDashboardsBehavior(t *testing.T) {
 	assert.Equal(t, len(uploadedFiles), 4)
 	cleanupDash(len(uploadedFiles))
 	//
-	wrapTest(func() {
+	test_tooling.WrapTest(func() {
 		config.InitGdgConfig(common.DefaultTestConfig)
 	})
 	cfgProvider = func() *config.Configuration {
@@ -373,7 +373,9 @@ func TestDashboardCRUDTags(t *testing.T) {
 }
 
 func TestDashboardTagsFilter(t *testing.T) {
-	config.InitGdgConfig(common.DefaultTestConfig)
+	test_tooling.WrapTest(func() {
+		config.InitGdgConfig(common.DefaultTestConfig)
+	})
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)

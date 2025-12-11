@@ -31,6 +31,12 @@ Anything do to with Org will require a grafana admin. If you're trying to fetch 
 
 #### 1. Using Config:
 
+{{< callout context="caution" title="Caution" icon="alert-triangle" >}}
+Starting with v0.9.0 auth in the importer.yml has been removed.  You will need to use the secure pattern (#3) or Env Overrides (#2) explained further down.
+{{< /callout >}}
+
+
+
 The simplest way to set up you auth is to have everything in the importer.yml. It's not a very secure pattern if you're
 deploying this to a remote server as everything is in plaintext, but it will get you started.
 
@@ -45,7 +51,7 @@ You can also override the value using ENV var that line up to the section you wa
 Ex:
 ```sh
 GDG_CONTEXTS__TESTING__PASSWORD=1234
-GDG_CONTEXTS__TESTING__TOKED=1234
+GDG_CONTEXTS__TESTING__TOKEN=1234
  ```
 
 will set the token and password value to the one in the ENV.
@@ -63,13 +69,13 @@ All alerting entities will ignore folder watch list, and any other filter set.
 
 #### 3. Using a secure auth location:
 
-You can create an auth file in the secure folder with tho following format:
+You can create an auth file in the secure folder with the format below. yaml and json are both supported:
 
-```json
-{
-  "password": "4321",
-  "token": "shhh"
-}
+if multiple exist, yaml gets precedence over json.
+
+```yaml
+password: 4321
+token: shhh
 ```
 
 for context named testing, the file would be called testing_auth.json stored is output_path/secure/ or whatever location you've

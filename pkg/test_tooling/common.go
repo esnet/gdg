@@ -10,9 +10,11 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -91,8 +93,13 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 	cfg := cfgProvider()
 	grafana := cfg.GetDefaultGrafanaConfig()
 	grafana.UserName = ""
-	grafana.Password = ""
-	grafana.APIToken = newKey.Key
+	secureSettings := domain.SecureModel{
+		Password: "",
+		Token:    newKey.Key,
+	}
+	WrapTest(func() {
+		assert.NoError(t, cfg.GetDefaultGrafanaConfig().TestSetSecureAuth(secureSettings))
+	})
 
 	apiClient = CreateSimpleClientWithConfig(t, cfgProvider, localGrafanaContainer)
 	return NewInitContainerResult(apiClient, localGrafanaContainer, cleanUp)
@@ -116,8 +123,8 @@ func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, con
 	storageEngine, err := service.ConfigureStorage(cfgProvider)
 	assert.NoError(t, err)
 	client := service.NewTestApiService(storageEngine, cfgProvider)
-	path, _ := os.Getwd()
-	if strings.Contains(path, "test") {
+	currentPath, _ := os.Getwd()
+	if strings.Contains(currentPath, "test") {
 		err := os.Chdir("..")
 		if err != nil {
 			slog.Warn("unable to set directory to parent")
@@ -154,12 +161,38 @@ func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.
 	})
 	assert.NoError(t, err)
 	client := service.NewTestApiService(storageEngine, nil)
-	path, _ := os.Getwd()
-	if strings.Contains(path, "test") {
+	currentPath, _ := os.Getwd()
+	if strings.Contains(currentPath, "test") {
 		err := os.Chdir("..")
 		if err != nil {
 			slog.Warn("unable to set directory to parent")
 		}
 	}
 	return client, conf
+}
+
+// MaintainConfigAuth updates Grafana config auth, preserving existing secure data during init.
+func MaintainConfigAuth(configVal string) {
+	cfg := config.Config().GetDefaultGrafanaConfig()
+	var auth *domain.SecureModel
+	WrapTest(func() {
+		auth = cfg.TestGetSecureAuth()
+	})
+	WrapTest(func() {
+		config.InitGdgConfig(configVal)
+	})
+	cfg = config.Config().GetDefaultGrafanaConfig()
+	if auth != nil {
+		WrapTest(func() {
+			if err := cfg.TestSetSecureAuth(*auth); err != nil {
+				slog.Warn("unable to set grafana auth")
+			}
+		})
+	}
+}
+
+func WrapTest(f func()) {
+	os.Setenv(path.TestEnvKey, "1") // #nosec G104
+	f()
+	os.Unsetenv(path.TestEnvKey)
 }

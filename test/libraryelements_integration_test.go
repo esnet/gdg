@@ -46,7 +46,7 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		t.Log("Running test", tc.name)
 		var apiClient service.GrafanaService
 		var cleanup func() error
-		wrapTest(func() {
+		test_tooling.WrapTest(func() {
 			config.InitGdgConfig(common.DefaultTestConfig)
 		})
 		cfgProvider := func() *config.Configuration {

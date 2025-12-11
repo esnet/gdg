@@ -102,9 +102,9 @@ func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
 			clientCfg.Debug = s.globalConf.ApiDebug
 		})
 		return grafanaClient
-	} else {
-		return s.GetBasicAuthClient()
 	}
+
+	return s.GetBasicAuthClient()
 }
 
 func (s *DashNGoImpl) GetBasicClientWithOpts(opts ...NewClientOpts) *client.GrafanaHTTPAPI {
