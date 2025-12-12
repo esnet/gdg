@@ -5,7 +5,7 @@
 package mocks
 
 import (
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/esnet/gdg/internal/service/domain"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -145,23 +145,23 @@ func (_c *AlertRules_DownloadAlertRules_Call) RunAndReturn(run func() (string, e
 }
 
 // ListAlertRules provides a mock function for the type AlertRules
-func (_mock *AlertRules) ListAlertRules() ([]*models.ProvisionedAlertRule, error) {
+func (_mock *AlertRules) ListAlertRules() ([]*domain.AlertRuleWithNestedFolder, error) {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListAlertRules")
 	}
 
-	var r0 []*models.ProvisionedAlertRule
+	var r0 []*domain.AlertRuleWithNestedFolder
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*models.ProvisionedAlertRule, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func() ([]*domain.AlertRuleWithNestedFolder, error)); ok {
 		return returnFunc()
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*models.ProvisionedAlertRule); ok {
+	if returnFunc, ok := ret.Get(0).(func() []*domain.AlertRuleWithNestedFolder); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.ProvisionedAlertRule)
+			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func() error); ok {
@@ -189,12 +189,12 @@ func (_c *AlertRules_ListAlertRules_Call) Run(run func()) *AlertRules_ListAlertR
 	return _c
 }
 
-func (_c *AlertRules_ListAlertRules_Call) Return(provisionedAlertRules []*models.ProvisionedAlertRule, err error) *AlertRules_ListAlertRules_Call {
-	_c.Call.Return(provisionedAlertRules, err)
+func (_c *AlertRules_ListAlertRules_Call) Return(alertRuleWithNestedFolders []*domain.AlertRuleWithNestedFolder, err error) *AlertRules_ListAlertRules_Call {
+	_c.Call.Return(alertRuleWithNestedFolders, err)
 	return _c
 }
 
-func (_c *AlertRules_ListAlertRules_Call) RunAndReturn(run func() ([]*models.ProvisionedAlertRule, error)) *AlertRules_ListAlertRules_Call {
+func (_c *AlertRules_ListAlertRules_Call) RunAndReturn(run func() ([]*domain.AlertRuleWithNestedFolder, error)) *AlertRules_ListAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }

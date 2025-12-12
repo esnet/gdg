@@ -2,9 +2,9 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"log/slog"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
