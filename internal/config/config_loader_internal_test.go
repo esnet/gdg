@@ -6,13 +6,28 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfigSearchPath(t *testing.T) {
+func TestConfigSearchPathBuilding(t *testing.T) {
 	assert := assert.New(t)
-	t.Run("with config file path", func(t *testing.T) {
+	t.Run("with config file path and yml extension", func(t *testing.T) {
 		configDirs, configName, ext := buildConfigSearchPath("/something/config/importer.yml")
-		exptectedConfigDirs := append([]string{"/something/config"}, configSearchPaths...)
-		assert.Equal(exptectedConfigDirs, configDirs)
+		expectedConfigDirs := append(configSearchPaths, "/something/config")
+		assert.Equal(expectedConfigDirs, configDirs)
 		assert.Equal("importer", configName)
+		assert.Equal("yml", ext)
+	})
+
+	t.Run("with config file path and json extension", func(t *testing.T) {
+		configDirs, configName, ext := buildConfigSearchPath("/internal/config/templates.json")
+		expectedConfigDirs := append(configSearchPaths, "/internal/config")
+		assert.Equal(expectedConfigDirs, configDirs)
+		assert.Equal("templates", configName)
+		assert.Equal("json", ext)
+	})
+
+	t.Run("with config file without directory path", func(t *testing.T) {
+		configDirs, configName, ext := buildConfigSearchPath("config.yml")
+		assert.Equal(configSearchPaths, configDirs)
+		assert.Equal("config", configName)
 		assert.Equal("yml", ext)
 	})
 	
@@ -20,6 +35,14 @@ func TestConfigSearchPath(t *testing.T) {
 		configDirs, configName, ext := buildConfigSearchPath("")
 		assert.Equal(configSearchPaths, configDirs)
 		assert.Equal("", configName)
+		assert.Equal("", ext)
+	})
+
+	t.Run("with config file path without extension", func(t *testing.T) {
+		configDirs, configName, ext := buildConfigSearchPath("/testing/config/importer")
+		expectedConfigDirs := append(configSearchPaths, "/testing/config")
+		assert.Equal(expectedConfigDirs, configDirs)
+		assert.Equal("importer", configName)
 		assert.Equal("", ext)
 	})
 }
