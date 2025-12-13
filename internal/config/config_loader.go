@@ -208,22 +208,20 @@ func (s *Configuration) GetTemplateConfig() *domain.TemplatingConfig {
 
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
 func buildConfigSearchPath(configFilePath string) (configDirs []string, configName, ext string) {
+	configDirs = configSearchPaths
+	
 	if configFilePath != "" {
 		ext = filepath.Ext(configFilePath)
 		configName = strings.TrimSuffix(filepath.Base(configFilePath), ext)
 
 		configFilePathDir := filepath.Dir(configFilePath)
-		if configFilePathDir != "" {
-			configDirs = append([]string{configFilePathDir}, configSearchPaths...)
+		if configFilePathDir != "." {
+			configDirs = append(configDirs, configFilePathDir)
 		}
 
-		if ext == "" {
-			ext = "yaml"
-		} else {
+		if len(ext) > 0 {
 			ext = ext[1:] // strip leading dot
 		}
-	} else {
-		configDirs = append(configDirs, configSearchPaths...)
 	}
 
 	return configDirs, configName, ext
