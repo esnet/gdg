@@ -20,7 +20,7 @@ func (s *Configuration) GetViperConfig() *viper.Viper {
 }
 
 func (s *Configuration) DefaultConfig() string {
-	cfg, err := assets.GetFile("importer-example.yml")
+	cfg, err := assets.GetFile("gdg-example.yml")
 	if err != nil {
 		slog.Warn("unable to find load default configuration", "err", err)
 	}
@@ -59,11 +59,11 @@ func (s *Configuration) CopyContext(src, dest string) {
 	// Validate context
 	contexts := s.GetGDGConfig().GetContexts()
 	if len(contexts) == 0 {
-		log.Fatal("Cannot set context.  No valid configuration found in importer.yml")
+		log.Fatal("Cannot set context.  No valid configuration found in gdg.yml")
 	}
 	cfg, ok := contexts[src]
 	if !ok {
-		log.Fatalf("Cannot find context to: '%s'.  No valid configuration found in importer.yml", src)
+		log.Fatalf("Cannot find context to: '%s'.  No valid configuration found in gdg.yml", src)
 	}
 	newCopy, err := tools.DeepCopy(*cfg)
 	if err != nil {
@@ -209,7 +209,7 @@ func (s *Configuration) GetTemplateConfig() *domain.TemplatingConfig {
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
 func buildConfigSearchPath(configFilePath string) (configDirs []string, configName, ext string) {
 	configDirs = configSearchPaths
-	
+
 	if configFilePath != "" {
 		ext = filepath.Ext(configFilePath)
 		configName = strings.TrimSuffix(filepath.Base(configFilePath), ext)
@@ -227,28 +227,51 @@ func buildConfigSearchPath(configFilePath string) (configDirs []string, configNa
 	return configDirs, configName, ext
 }
 
+// InitGdgConfig initializes the global configuration from a file or defaults.
+// It loads gdg.yml (or importer.yml) using Viper, updates context names,
+// and stores the configuration in a global variable for later use.
 func InitGdgConfig(override string) {
+	var (
+		configDirs      []string
+		ext, configName string
+		overrides       []string
+		defaultConfig   bool
+	)
+
 	if override == "" && configData != nil {
 		return
 	}
+
 	configData = &Configuration{}
-	var configDirs []string
-	var ext, configName string
-	if override == "" {
-		configDirs, configName, ext = buildConfigSearchPath("config/importer.yml")
+
+	if override != "" {
+		overrides = append(overrides, override)
 	} else {
-		configDirs, configName, ext = buildConfigSearchPath(override)
+		defaultConfig = true
+		//Try gdg.yml and then fallback on importer.yml
+		overrides = append(overrides, []string{"config/gdg.yml", "config/importer.yml"}...)
 	}
+
 	var err error
 	var v *viper.Viper
 	configData.gdgConfig = new(domain.GDGAppConfiguration)
+	for _, configOverride := range overrides {
+		configDirs, configName, ext = buildConfigSearchPath(configOverride)
 
-	v, err = readViperConfig(configName, configDirs, configData.gdgConfig, ext)
-	if err != nil {
-		log.Fatal("No configuration file has been found or config is invalid. " + 
-			"Expected a file named 'importer.yml' in one of the following folders: ['.', 'config', '/etc/gdg']. " +
-			"Try using `gdg default-config > config/importer.yml` go use the default example")
+		v, err = readViperConfig(configName, configDirs, configData.gdgConfig, ext)
+		if err == nil {
+			if defaultConfig && strings.Contains("importer", configName) {
+				slog.Warn("importer.yml as default config is deprecated. Please use gdg.yml moving forward.")
+			}
+			break
+		}
 	}
+	if err != nil {
+		log.Fatal("No configuration file has been found or config is invalid. " +
+			"Expected a file named 'gdg.yml' in one of the following folders: ['.', 'config', '/etc/gdg']. " +
+			"Try using `gdg default-config > config/gdg.yml` go use the default example")
+	}
+
 	configData.gdgConfig.UpdateContextNames()
 	configData.gdgViperConfig = v
 }

@@ -158,7 +158,7 @@ none are specified.  If -t is not provided, all templates will be processed
  {{< /callout >}}
 
 ```sh
-gdg-generate --config config/importer.yml --template-config config/template.yaml template generate  -t template_example
+gdg-generate --config config/gdg.yml --template-config config/template.yaml template generate  -t template_example
 ```
 
 Example output:

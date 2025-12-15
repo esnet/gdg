@@ -12,7 +12,7 @@ services:
   app:
     image: ghcr.io/esnet/gdg:0.8.0
     volumes:
-      - ./importer.yml:/app/config/importer.yml:ro
+      - ./gdg.yml:/app/config/gdg.yml:ro
     secrets:
       - staging_auth.json
       - default.json

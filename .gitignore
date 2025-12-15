@@ -2,6 +2,7 @@ bin
 vendor
 .history
 importer.yml
+gdg.yml
 dist/
 prod/
 public

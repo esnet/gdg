@@ -68,8 +68,8 @@ nfpms:
     # GoReleaser will automatically add the binaries.
     contents:
       # Simple config file
-      - src: config/importer-example.yml
-        dst: /etc/gdg/importer.yml
+      - src: config/gdg-example.yml
+        dst: /etc/gdg/gdg.yml
         type: config
       # Simple config file
       - src: config/templates-example.yml
@@ -148,7 +148,7 @@ archives:
       - gdg-generate
     files:
       - README*
-      - config/importer-example.yml
+      - config/gdg-example.yml
       - config/templates-example.yml
 
 checksum:

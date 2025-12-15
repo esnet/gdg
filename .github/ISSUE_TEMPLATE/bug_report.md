@@ -10,7 +10,7 @@ assignees: safaci2000
 
 - Look at the [FAQ](https://software.es.net/gdg/docs/gdg/frequently-asked-questions/)
 - Configuration Documentation found [here](https://software.es.net/gdg/docs/gdg/configuration/)
-- Did you look at the [example](https://github.com/esnet/gdg/blob/main/config/importer-example.yml) config?
+- Did you look at the [example](https://github.com/esnet/gdg/blob/main/config/gdg-example.yml) config?
 
 
 **Describe the bug**

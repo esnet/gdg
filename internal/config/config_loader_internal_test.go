@@ -9,10 +9,10 @@ import (
 func TestConfigSearchPathBuilding(t *testing.T) {
 	assert := assert.New(t)
 	t.Run("with config file path and yml extension", func(t *testing.T) {
-		configDirs, configName, ext := buildConfigSearchPath("/something/config/importer.yml")
+		configDirs, configName, ext := buildConfigSearchPath("/something/config/gdg.yml")
 		expectedConfigDirs := append(configSearchPaths, "/something/config")
 		assert.Equal(expectedConfigDirs, configDirs)
-		assert.Equal("importer", configName)
+		assert.Equal("gdg", configName)
 		assert.Equal("yml", ext)
 	})
 
@@ -39,10 +39,10 @@ func TestConfigSearchPathBuilding(t *testing.T) {
 	})
 
 	t.Run("with config file path without extension", func(t *testing.T) {
-		configDirs, configName, ext := buildConfigSearchPath("/testing/config/importer")
+		configDirs, configName, ext := buildConfigSearchPath("/testing/config/gdg")
 		expectedConfigDirs := append(configSearchPaths, "/testing/config")
 		assert.Equal(expectedConfigDirs, configDirs)
-		assert.Equal("importer", configName)
+		assert.Equal("gdg", configName)
 		assert.Equal("", ext)
 	})
 }
