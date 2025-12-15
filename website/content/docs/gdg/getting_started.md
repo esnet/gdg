@@ -32,12 +32,12 @@ Anything do to with Org will require a grafana admin. If you're trying to fetch 
 #### 1. Using Config:
 
 {{< callout context="caution" title="Caution" icon="alert-triangle" >}}
-Starting with v0.9.0 auth in the importer.yml has been removed.  You will need to use the secure pattern (#3) or Env Overrides (#2) explained further down.
+Starting with v0.9.0 auth in the gdg.yml has been removed.  You will need to use the secure pattern (#3) or Env Overrides (#2) explained further down.
 {{< /callout >}}
 
 
 
-The simplest way to set up you auth is to have everything in the importer.yml. It's not a very secure pattern if you're
+The simplest way to set up you auth is to have everything in the gdg.yml. It's not a very secure pattern if you're
 deploying this to a remote server as everything is in plaintext, but it will get you started.
 
 This should be perfectly fine if you're only running this locally.
@@ -87,7 +87,7 @@ Secure Auth takes precedence over environment variables, and then config file.
 
 ### Import / Download Dashboards
 
-Minimal configuration (eg. the `importer.yml` file) that you need to download your dashboards from your Grafana endpoint:
+Minimal configuration (eg. the `gdg.yml` file) that you need to download your dashboards from your Grafana endpoint:
 
 ```yaml
 context_name: all
@@ -137,7 +137,7 @@ After executing `./bin/gdg dash import` you can find the dashboards of the `Infr
 
 ### Export / Upload Dashboards
 
-Minimal configuration (eg. the `importer.yml` file) that you need to upload your dashboards from your Grafana endpoint:
+Minimal configuration (eg. the `gdg.yml` file) that you need to upload your dashboards from your Grafana endpoint:
 ```yaml
 context_name: all
 

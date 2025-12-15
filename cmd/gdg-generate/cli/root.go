@@ -28,7 +28,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 
-	rootCmd.PersistentFlags().StringP("config", "c", "", "config file (default: config/importer.yml)")
+	rootCmd.PersistentFlags().StringP("config", "c", "", "config file (default: config/gdg.yml)")
 	rootCmd.PersistentFlags().StringP("template-config", "", "", "GDG Template configuration file override. (default: config/templates.yml)")
 }
 

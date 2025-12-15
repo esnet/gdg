@@ -22,7 +22,7 @@ Any code submitted to enhance this project is great appreciated, but here's a ch
 
 1. Make sure the code works, compiles and so on.  
 2. We have a docker-compose file that will bring up an instance of grafana.  A variety of integration tests exists under the `integration_tests` folder.  Ideally each new entity we introduce should have tests that go with it.  Please make sure you have a test for you code submission.
-3. Configuration Changes: Please update the conf/importer-example.yml if you are introducing any new configs 
+3. Configuration Changes: Please update the conf/gdg-example.yml if you are introducing any new configs 
 4. Document the code, not every line needs docs, but explaining what the function does is helpful for those that follow.
 5. The generated docs live under `documentation/content/en/docs/` Please update the md files to reflect your changes to let others know how to use the tool.  `usage_guide.md` is likely the only file you'll need to update.
     - documentation/content/en/docs/releases contains a list of changes, if you are adding a new feature, please add a short description of the upcoming new feature.

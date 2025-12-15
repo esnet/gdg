@@ -5,7 +5,7 @@ weight: 100
 
 GDG Configuration is based on a YAML configuration.  It also has the option to override configuration values via environmental variables.
 
-The default config file is importer.yml which should exist in $CWD/config, $CWD or /etc/gdg.  If no valid file can be found, the application will fail.  An example config file can be found in [github](https://github.com/esnet/gdg/blob/main/config/importer-example.yml) under the config folder.
+The default config file is gdg.yml which should exist in $CWD/config, $CWD or /etc/gdg.  If no valid file can be found, the application will fail.  An example config file can be found in [github](https://github.com/esnet/gdg/blob/main/config/gdg-example.yml) under the config folder.
 
 The configuration has a few sections of note:
 1. context_name: the selected context
