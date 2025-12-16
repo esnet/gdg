@@ -29,7 +29,7 @@ func (s *Configuration) DefaultConfig() string {
 
 func (s *Configuration) ClearContexts() {
 	newContext := make(map[string]*domain.GrafanaConfig)
-	newContext["example"] = &domain.GrafanaConfig{}
+	newContext["example"] = domain.NewGrafanaConfig("example")
 	appCfg := s.GetGDGConfig()
 	appCfg.Contexts = newContext
 	appCfg.ContextName = "example"
@@ -209,7 +209,7 @@ func (s *Configuration) GetTemplateConfig() *domain.TemplatingConfig {
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
 func buildConfigSearchPath(configFilePath string) (configDirs []string, configName, ext string) {
 	configDirs = configSearchPaths
-
+	
 	if configFilePath != "" {
 		ext = filepath.Ext(configFilePath)
 		configName = strings.TrimSuffix(filepath.Base(configFilePath), ext)

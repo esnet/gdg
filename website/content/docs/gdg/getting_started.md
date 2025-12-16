@@ -69,17 +69,23 @@ All alerting entities will ignore folder watch list, and any other filter set.
 
 #### 3. Using a secure auth location:
 
-You can create an auth file in the secure folder with the format below. yaml and json are both supported:
+The context name, in this example `testing` specifies that authentication details should be stored in a file named
+`auth_testing.yaml`. This file should be placed in your secure location, which by default is `output_path/secure/`,
+or the path you have explicitly configured for your secure storage.
 
-if multiple exist, yaml gets precedence over json.
+For example, if your secure location is set to /home/user/secure, then the file should be located at: `/home/user/secure/auth_testing.yaml`
 
+The file can contain your authentication credentials in either YAML or JSON format.
+If multiple conflicting files exist, the YAML version takes precedence over the JSON version.
+
+Here’s how you might structure the auth_testing.yaml file:
 ```yaml
 password: 4321
 token: shhh
 ```
 
-for context named testing, the file would be called testing_auth.json stored is output_path/secure/ or whatever location you've
-configured to store your secure data in.
+Please ensure that the `secure_location` in your configuration matches the directory where you've placed this file.
+If not set, it defaults to . `output_path/secure/`
 
 #### Priority
 

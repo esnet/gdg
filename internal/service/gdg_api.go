@@ -36,9 +36,9 @@ func setupConfigData(cfg *config.Configuration, obj *DashNGoImpl) {
 	obj.globalConf = cfg.GetGDGConfig().GetAppGlobals()
 }
 
-func newInstance() *DashNGoImpl {
+func newInstance(cfg *config.Configuration) *DashNGoImpl {
 	obj := &DashNGoImpl{}
-	setupConfigData(config.Config(), obj)
+	setupConfigData(cfg, obj)
 
 	if obj.globalConf.ApiDebug {
 		err := os.Setenv("DEBUG", "1")
@@ -96,18 +96,18 @@ func ConfigureStorage(provider config.Provider) (storage.Storage, error) {
 }
 
 func NewTestApiService(storageEngine storage.Storage, cfgProvider config.Provider) GrafanaService {
-	ins := newInstance()
-	ins.SetStorage(storageEngine)
 	if cfgProvider == nil {
 		cfgProvider = DefaultConfigProvider
 	}
+	ins := newInstance(cfgProvider())
+	ins.SetStorage(storageEngine)
 	setupConfigData(cfgProvider(), ins)
 	return ins
 }
 
 func NewDashNGoImpl() *DashNGoImpl {
 	initServiceOnce.Do(func() {
-		instance = newInstance()
+		instance = newInstance(config.Config())
 	})
 	return instance
 }

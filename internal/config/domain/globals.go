@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+const (
+	AuthPrefix = "auth"
+)
+
 // AppGlobals is the global configuration for the application
 type AppGlobals struct {
 	Debug           bool           `mapstructure:"debug" yaml:"debug"`

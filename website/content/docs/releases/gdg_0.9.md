@@ -16,7 +16,9 @@ toc: true
  - Grafana 11+
 
 ### Breaking Changes
-  - [#480](https://github.com/esnet/gdg/pull/480) Password and Tokens in config file has been deprecated.
+  - [#502](https://github.com/esnet/gdg/pull/502) Password and Tokens in config file has been deprecated.
+  - [#510](https://github.com/esnet/gdg/pull/510) Renamed default config to gdg.(yaml|yml)
+
 
 ### Changes
 
@@ -27,4 +29,11 @@ toc: true
 -
 
 ### Tech Updates
+ - [#497](https://github.com/esnet/gdg/pull/497) Refactoring of buildConfigSeachPath
+ - [#503](https://github.com/esnet/gdg/pull/503) Ensuring only one CI job run for a PR
+ - [#509](https://github.com/esnet/gdg/pull/509) Switching to use OpenAPI endpoint for HeathEndpoint
+ - [#512](https://github.com/esnet/gdg/pull/512) Changing naming convention to auth_context
 
+#### Contributors:
+  - [PavelsDenisovs](https://github.com/PavelsDenisovs)
+  - [safaci2000](https://github.com/safaci2000)
