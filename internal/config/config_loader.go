@@ -10,6 +10,7 @@ import (
 
 	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/storage"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -89,6 +90,8 @@ func (s *Configuration) PrintContext(name string) {
 	if err != nil {
 		log.Fatal("failed to serialize context", "err", err)
 	}
+
+	fmt.Printf("config file: %s\n", s.GetViperConfig().ConfigFileUsed())
 	fmt.Printf("---%s:\n%s\n\n", name, string(d))
 }
 
@@ -159,9 +162,23 @@ var (
 // GetCloudConfiguration Returns storage type and configuration
 func (s *Configuration) GetCloudConfiguration(configName string) (string, map[string]string) {
 	appData := s.GetGDGConfig().StorageEngine[configName]
+	if appData == nil {
+		appData = make(map[string]string)
+	}
+
 	storageType := "local"
 	if len(appData) != 0 {
 		storageType = "cloud"
+		if appData[storage.CloudType] == storage.Custom {
+			grafanaCfg := s.GetDefaultGrafanaConfig()
+			m := grafanaCfg.GetCloudAuth()
+			// Clear out hard coded values
+			appData[storage.AccessId] = m[storage.AccessId]
+			appData[storage.SecretKey] = m[storage.SecretKey]
+		} else {
+			delete(appData, storage.AccessId)
+			delete(appData, storage.SecretKey)
+		}
 	}
 	return storageType, appData
 }
@@ -209,7 +226,7 @@ func (s *Configuration) GetTemplateConfig() *domain.TemplatingConfig {
 // buildConfigSearchPath common pattern used when loading configuration for both CLI tools.
 func buildConfigSearchPath(configFilePath string) (configDirs []string, configName, ext string) {
 	configDirs = configSearchPaths
-	
+
 	if configFilePath != "" {
 		ext = filepath.Ext(configFilePath)
 		configName = strings.TrimSuffix(filepath.Base(configFilePath), ext)
@@ -248,7 +265,7 @@ func InitGdgConfig(override string) {
 		overrides = append(overrides, override)
 	} else {
 		defaultConfig = true
-		//Try gdg.yml and then fallback on importer.yml
+		// Try gdg.yml and then fallback on importer.yml
 		overrides = append(overrides, []string{"config/gdg.yml", "config/importer.yml"}...)
 	}
 

@@ -18,6 +18,13 @@ toc: true
 ### Breaking Changes
   - [#502](https://github.com/esnet/gdg/pull/502) Password and Tokens in config file has been deprecated.
   - [#510](https://github.com/esnet/gdg/pull/510) Renamed default config to gdg.(yaml|yml)
+  - [#513](https://github.com/esnet/gdg/pull/513) Changed location of S3 secure auth.
+    - Additionally:
+      - `custom`: `true` flag has been removed. It was deprecated 0.8.x. Please use `cloud_type`: `custom`
+        instead.
+      - Behavioral change. AWS_ACCESS_KEY and AWS_SECRET_KEY will now override config values. This is now consistent with
+        how the rest of the GDG config handled env overrides.
+  -
 
 
 ### Changes

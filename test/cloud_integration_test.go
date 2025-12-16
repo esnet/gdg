@@ -30,8 +30,8 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	assert.NotNil(t, r)
 	assert.NoError(t, err)
 	defer func() {
-		err := r.CleanUp()
-		if err != nil {
+		errCleanup := r.CleanUp()
+		if errCleanup != nil {
 			slog.Warn("Unable to clean up after test", "test", t.Name())
 		}
 	}()
