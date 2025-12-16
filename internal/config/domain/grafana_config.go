@@ -149,7 +149,7 @@ func (s *GrafanaConfig) GetAPIToken() string {
 // secure location and context name.
 func (s *GrafanaConfig) GetAuthLocation() string {
 	securePath := s.SecureLocation()
-	name := fmt.Sprintf("%s_auth", s.contextName)
+	name := fmt.Sprintf("%s_%s", AuthPrefix, s.contextName)
 	authFile := filepath.Join(securePath, name)
 	return authFile
 }

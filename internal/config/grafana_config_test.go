@@ -7,9 +7,9 @@ import (
 )
 
 func TestGrafanaConfig(t *testing.T) {
-	config := domain.GrafanaConfig{
-		URL: "  http://localhost  ",
-	}
+	config := domain.NewGrafanaConfig("testing")
+	config.URL = "  http://localhost  "
+
 	expected := "http://localhost/"
 
 	if expected != config.GetURL() {

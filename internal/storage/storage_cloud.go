@@ -41,11 +41,9 @@ type CloudStorage struct {
 	StorageName string
 }
 
-var (
-	stringEmpty = func(key string) bool {
-		return key == ""
-	}
-)
+var stringEmpty = func(key string) bool {
+	return key == ""
+}
 
 func (s *CloudStorage) GetPrefix() string {
 	return s.Prefix

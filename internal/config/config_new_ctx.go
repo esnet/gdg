@@ -203,7 +203,6 @@ func writeSecureFileData[T any](object T, location string) error {
 	default:
 		return fmt.Errorf("unsupported encoding type: %s", encoding)
 	}
-
 }
 
 func (s *Configuration) NewContext(name string) {

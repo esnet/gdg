@@ -30,7 +30,7 @@ func TestConfigSearchPathBuilding(t *testing.T) {
 		assert.Equal("config", configName)
 		assert.Equal("yml", ext)
 	})
-	
+
 	t.Run("empty input", func(t *testing.T) {
 		configDirs, configName, ext := buildConfigSearchPath("")
 		assert.Equal(configSearchPaths, configDirs)
