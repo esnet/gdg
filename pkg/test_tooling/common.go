@@ -125,8 +125,8 @@ func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, con
 	client := service.NewTestApiService(storageEngine, cfgProvider)
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {
-		err := os.Chdir("..")
-		if err != nil {
+		pathErr := os.Chdir("..")
+		if pathErr != nil {
 			slog.Warn("unable to set directory to parent")
 		}
 	}

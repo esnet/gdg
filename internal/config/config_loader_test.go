@@ -155,11 +155,11 @@ func TestConfigSecureCloud(t *testing.T) {
 		grafanaCfg.Storage = "test"
 		storageType, appData := cfg.GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
 		assert.Equal(storageType, "cloud")
-		//Set values in config
+		// Set values in config
 		appData[storage.CloudType] = storage.Custom
 		appData[storage.AccessId] = "moo"
 		appData[storage.SecretKey] = "foo"
-		//Ensures they get overridden by the secure values
+		// Ensures they get overridden by the secure values
 		storageType, appData = cfg.GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
 		assert.Equal(appData[storage.AccessId], "test")
 		assert.Equal(appData[storage.SecretKey], "secretsss")

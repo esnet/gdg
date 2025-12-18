@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/storage"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
@@ -43,9 +44,10 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	apiClient.UploadConnections(dsFilter)
 	dsList := apiClient.ListConnections(dsFilter)
 	assert.True(t, len(dsList) > 0)
-	_, cancel, apiClient, err := test_tooling.SetupCloudFunctionOpt(
+	_, cancel, apiClient, s, err := test_tooling.SetupCloudFunctionOpt(
 		test_tooling.SetCloudType("custom"),
 		test_tooling.SetBucketName(common.TestBucketName))
+	apiClient.(*service.DashNGoImpl).SetStorage(s)
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -69,7 +71,10 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 func TestDashboardCloudCRUD(t *testing.T) {
 	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	var err error
+	var (
+		err error
+		s   storage.Storage
+	)
 	config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
@@ -95,10 +100,11 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	assert.True(t, len(boards) > 0)
 	var cancel context.CancelFunc
 
-	_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
+	_, cancel, apiClient, s, err = test_tooling.SetupCloudFunctionOpt(
 		test_tooling.SetCloudType("custom"),
 		test_tooling.SetBucketName(common.TestBucketName))
 	assert.NoError(t, err)
+	apiClient.(*service.DashNGoImpl).SetStorage(s)
 	defer cancel()
 
 	// At this point all operations are reading/writing from Minio
@@ -111,7 +117,8 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	boards = apiClient.ListDashboards(dashFilter)
 	assert.Equal(t, len(boards), 0)
 	// Load Data from S3
-	apiClient.UploadDashboards(dashFilter)        // ReLoad data from S3 backup
+	_, err = apiClient.UploadDashboards(dashFilter) // ReLoad data from S3 backup
+	assert.NoError(t, err)
 	boards = apiClient.ListDashboards(dashFilter) // Read data
 	assert.Equal(t, len(list), len(boards))       // verify
 	apiClient.DeleteAllDashboards(dashFilter)
@@ -123,7 +130,8 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 	var (
 		err    error
 		cancel context.CancelFunc
-		r      *test_tooling.InitContainerResult
+
+		r *test_tooling.InitContainerResult
 	)
 	test_tooling.WrapTest(func() {
 		config.InitGdgConfig(common.DefaultTestConfig)
@@ -202,18 +210,23 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 			slog.Info("Skipping test, disabled", "name", tc.name)
 			continue
 		}
+		var s storage.Storage
+		assert.NoError(t, path.FixTestDir("test", ".."))
 		slog.Warn("Running testcase", "name", tc.name)
 		test_tooling.MaintainConfigAuth(common.DefaultTestConfig)
-		_, cancel, apiClient, err = test_tooling.SetupCloudFunctionOpt(
+		_, cancel, apiClient, s, err = test_tooling.SetupCloudFunctionOpt(
 			test_tooling.SetCloudType("custom"),
 			test_tooling.SetPrefix(tc.prefix),
 			test_tooling.SetBucketName(common.TestBucketName))
 
 		apiClient = test_tooling.CreateSimpleClientWithConfig(t, func() *config.Configuration {
 			cfg := config.Config()
-			cfg.GetDefaultGrafanaConfig().OutputPath = tc.output
+			grafanaConfig := cfg.GetDefaultGrafanaConfig()
+			grafanaConfig.OutputPath = tc.output
+			// grafanaConfig
 			return cfg
 		}, r.Container)
+		apiClient.(*service.DashNGoImpl).SetStorage(s) // Override storage
 		assert.NoError(t, err)
 
 		// At this point all operations are reading/writing from Minio

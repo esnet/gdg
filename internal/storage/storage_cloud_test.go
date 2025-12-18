@@ -34,7 +34,6 @@ func TestGetMapValue(t *testing.T) {
 		if result != "default" {
 			t.Errorf("Expected 'default', got '%s'", result)
 		}
-
 	})
 
 	t.Run("Using integer type", func(t *testing.T) {
@@ -46,7 +45,6 @@ func TestGetMapValue(t *testing.T) {
 		if resultInt != 10 {
 			t.Errorf("Expected 10, got %d", resultInt)
 		}
-
 	})
 
 	t.Run(" Key does not exist in integer map, should return default", func(t *testing.T) {
@@ -59,7 +57,6 @@ func TestGetMapValue(t *testing.T) {
 			t.Errorf("Expected 0, got %d", resultInt)
 		}
 	})
-
 }
 
 func TestGetMapValueOrEnvOverride(t *testing.T) {

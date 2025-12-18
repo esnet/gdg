@@ -84,6 +84,7 @@ func DefaultGrafanaEnv() map[string]string {
 		"GF_INSTALL_PLUGINS":         "grafana-googlesheets-datasource",
 		"GF_AUTH_ANONYMOUS_ENABLED":  "true",
 		"GF_SECURITY_ADMIN_PASSWORD": "admin", // This is a no-op right now, but we should trickle this up to
+		//"GF_SERVER_HTTP_ADDR":        "::",
 		// allow setting grafana admin credentials.
 	}
 }
