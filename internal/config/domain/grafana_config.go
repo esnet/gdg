@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/internal/storage"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/spf13/viper"
 )
@@ -78,6 +79,51 @@ func (s *GrafanaConfig) TestSetSecureAuth(auth SecureModel) error {
 
 // End Testing Functions
 
+// loadAuthData
+func loadData[T any](securePath string, obj *T) (*T, error) {
+	v := viper.New()
+	v.SetConfigFile(securePath)
+	formats := []string{".yaml", ".yml", ".json"}
+	var outerErr error
+	for _, ext := range formats {
+		filename := securePath + ext
+		if _, err := os.Stat(filename); err == nil {
+			// File exists
+			v.SetConfigFile(filename)
+			if readError := v.ReadInConfig(); readError != nil {
+				continue // Try next extension
+			}
+			marshErr := v.Unmarshal(&obj)
+			if marshErr != nil {
+				outerErr = fmt.Errorf("unable to unmarshal secure file %s, readError: %w", securePath, marshErr)
+				continue
+			}
+			return obj, nil
+
+		}
+	}
+	if outerErr != nil {
+		return nil, fmt.Errorf("unable to find secure file %s, err: %w", securePath, outerErr)
+	}
+	return nil, fmt.Errorf("unable to find secure file %s", securePath)
+}
+
+// GetCloudAuth returns a map of cloud authentication credentials loaded from the configured file.
+func (s *GrafanaConfig) GetCloudAuth() map[string]string {
+	authFile := s.GetCloudAuthLocation()
+	m := make(map[string]string)
+	if authFile == "" {
+		return m
+	}
+	_, err := loadData(authFile, &m)
+	if err != nil {
+		slog.Warn(fmt.Sprintf("%v, falling back on Env settings. Please set '%s' and '%s' if you haven't done so already",
+			err, storage.CloudKey, storage.CloudSecret))
+	}
+
+	return m
+}
+
 // getSecureAuth returns the parsed secure authentication model,
 // loading from YAML, YML or JSON files in order of precedence.
 // It caches the result for subsequent calls.
@@ -87,27 +133,13 @@ func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 	}
 
 	authFile := s.GetAuthLocation()
-	obj := SecureModel{}
-	v := viper.New()
-	v.SetConfigFile(authFile)
-	formats := []string{".yaml", ".yml", ".json"}
-	for _, ext := range formats {
-		filename := authFile + ext
-		if _, err := os.Stat(filename); err == nil {
-			// File exists
-			v.SetConfigFile(filename)
-			if err := v.ReadInConfig(); err != nil {
-				continue // Try next extension
-			}
-			marshErr := v.Unmarshal(&obj)
-			if marshErr != nil {
-				slog.Error("unable to unmarshal auth file", "file", authFile, "error", marshErr)
-			}
-			s.secureAuth = &obj
-			break
-		}
+	obj, err := loadData(authFile, new(SecureModel))
+	if err != nil {
+		slog.Error(err.Error())
+		return s.secureAuth
 	}
 
+	s.secureAuth = obj
 	return s.secureAuth
 }
 
@@ -143,6 +175,17 @@ func (s *GrafanaConfig) GetAPIToken() string {
 	}
 
 	return secureAuth.Token
+}
+
+// GetCloudAuthLocation returns the file path to the cloud auth credentials for this config.
+func (s *GrafanaConfig) GetCloudAuthLocation() string {
+	securePath := s.SecureLocation()
+	if s.Storage == "" {
+		return ""
+	}
+	name := fmt.Sprintf("%s_%s", CloudAuthPrefix, s.Storage)
+	authFile := filepath.Join(securePath, name)
+	return authFile
 }
 
 // GetAuthLocation returns the file path for the authentication token based on the

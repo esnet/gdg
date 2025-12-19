@@ -5,9 +5,9 @@ weight: 102
 
 This is only needed if you intend to use a cloud provider to store your backups.  If you are downloading your backups to your local file system you can skip this section.
 
-GDG should work with most S3 compatible providers.  It leverages the [go-cloud](https://github.com/google/go-cloud) framework to provide this functionality. The standard providers should 'just work' out of the box relying on the authentication mechanism that each provider supports.  ie.  AWS looks for ~/.aws/credentials, google will look for its respective config and so on. GDG also supports custom providers that allows for S3 compatible self hosted solutions such as Minio, Ceph, etc.
+GDG should work with most S3 compatible providers.  It leverages the [go-cloud](https://github.com/google/go-cloud) framework to provide this functionality. The standard providers should 'just work' out of the box relying on the authentication mechanism that each provider supports.  ie.  AWS looks for ~/.aws/credentials, google will look for its respective config and so on. GDG also supports custom providers that allows for S3 compatible self-hosted solutions such as Minio, Ceph, etc.
 
-All configuration below fall under the `storage_engine` section, where a new label is introduced for each provider you would like to define.  The value doesn't matter but you'll need to reference it in the `context` section.
+All configuration below fall under the `storage_engine` section, where a new label is introduced for each provider you would like to define.  The value doesn't matter, but you'll need to reference it in the `context` section.
 
 ## Simple Cloud Storage
 
@@ -54,7 +54,7 @@ If you would like to configure a prefix, you can set a value that will be append
 storage_engine:
   any_label:
     kind: cloud
-    cloud_type: [s3, gs,  azblob]
+    cloud_type: [s3, gs,  azblob, custom]
     bucket_name: ""
     prefix: "dummy"
 ```
@@ -64,7 +64,20 @@ storage_engine:
 
 The rest of these properties listed below are ignore by any of the standard providers and are intended only to be used by the custom type.  Note you can configure any provider as 'custom' but you'll need to set far more properties as well as store your credentials in the config.  It's likely both a better pattern and more secure to rely on the cloud provider auth mechanism.
 
+### Authentication
 
+The auth as of v0.9.0+, will only look for auth in the secure location defined in your context. gdg will look for a file name that follows this naming pattern: s3_`storage_name`. So if you are configuring a storage backend, and you named it super_cloud, then your config name will be called `s3_super_cloud.yml`.  Same as the authentication mechanism for grafana s3 support JSON and YAML data format. I'd recommend using yaml but if you prefer json feel free to use it. If the same file name is found with both yaml and json, then the yaml file will be used.
+
+Additionally, if you prefer to set these values via ENV, and they will be used instead of the configuration values defined.
+
+
+```sh
+AWS_ACCESS_KEY=test
+AWS_SECRET_KEY=password
+```
+
+
+{{< details "Deprecated Auth Behavior " >}}
 ### Access Id
 
 `access_id` is the access id used to authenticate.  This can be a username, or a key depending on the provider.  It's not typically seen a secret.
@@ -72,6 +85,8 @@ The rest of these properties listed below are ignore by any of the standard prov
 ### Secret Key
 
 `secret_key` is the secret used to valid access.  This is a sensitive credential and should not be shared.
+
+{{< /details >}}
 
 ### Init Bucket
 
@@ -96,8 +111,6 @@ storage_engine:
     cloud_type: s3
     prefix: dummy
     bucket_name: "mybucket"
-    access_id: ""  ## this value can also be read from: AWS_ACCESS_KEY. config file is given precedence
-    secret_key: ""  ## same as above, can be read from: AWS_SECRET_KEY with config file is given precedence.
     init_bucket: "true" ## Only supported for custom workflows. Will attempt to create a bucket if one does not exist.
     endpoint: "http://localhost:9000"
     region: us-east-1

@@ -9,6 +9,7 @@ import (
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/storage"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -125,6 +126,44 @@ func TestConfigEnv(t *testing.T) {
 	conf = config.Config().GetViperConfig()
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")
+}
+
+func TestConfigSecureCloud(t *testing.T) {
+	assert := assert.New(t)
+	os.Setenv("GDG_CONTEXT_NAME", "testing")
+	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
+	config.InitGdgConfig(common.DefaultTestConfig)
+	grafanaCfg := config.Config().GetDefaultGrafanaConfig()
+
+	t.Run("Base Test", func(t *testing.T) {
+		grafanaCfg.Storage = "test"
+		m := grafanaCfg.GetCloudAuth()
+		assert.Equal(len(m), 2)
+		assert.Equal(m[storage.AccessId], "test")
+		assert.Equal(m[storage.SecretKey], "secretsss")
+	})
+
+	t.Run("No Storage Test", func(t *testing.T) {
+		grafanaCfg.Storage = ""
+		m := grafanaCfg.GetCloudAuth()
+		assert.Equal(len(m), 0)
+	})
+
+	t.Run("Override Config Value Test", func(t *testing.T) {
+		cfg := config.Config()
+		grafanaCfg = cfg.GetDefaultGrafanaConfig()
+		grafanaCfg.Storage = "test"
+		storageType, appData := cfg.GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
+		assert.Equal(storageType, "cloud")
+		// Set values in config
+		appData[storage.CloudType] = storage.Custom
+		appData[storage.AccessId] = "moo"
+		appData[storage.SecretKey] = "foo"
+		// Ensures they get overridden by the secure values
+		storageType, appData = cfg.GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
+		assert.Equal(appData[storage.AccessId], "test")
+		assert.Equal(appData[storage.SecretKey], "secretsss")
+	})
 }
 
 func TestConfigSecurePath(t *testing.T) {

@@ -121,6 +121,9 @@ func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 	return fileList, nil
 }
 
+// NewCloudStorage creates a CloudStorage instance using context‑provided config.
+// It validates context, parses app data, supports custom S3 endpoints or native cloud URLs,
+// initializes the bucket (creating it if requested), and returns a configured Storage.
 func NewCloudStorage(c context.Context) (Storage, error) {
 	var (
 		err       error
@@ -137,16 +140,12 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 		return nil, errors.New("cannot convert appData to string map")
 	}
 
-	// Pattern specifically for Self hosted S3 compatible instances Minio / Ceph
-	if boolStrCheck(getMapValue(Custom, "false", stringEmpty, appData)) {
-		slog.Warn("The 'custom' flag is deprecated, please set the 'cloud_type' value to 'custom' instead")
-		appData[CloudType] = Custom
-	}
-
 	if getMapValue(CloudType, "s3", stringEmpty, appData) == Custom {
 		creds := credentials.NewStaticCredentialsProvider(
-			getMapValue(AccessId, os.Getenv("AWS_ACCESS_KEY"), stringEmpty, appData),
-			getMapValue(SecretKey, os.Getenv("AWS_SECRET_KEY"), stringEmpty, appData), "")
+			getMapValueOrEnvOverride(AccessId, CloudKey, appData),
+			getMapValueOrEnvOverride(SecretKey, CloudSecret, appData),
+			"",
+		)
 		host := getMapValue(Endpoint, "http://localhost:9000", stringEmpty, appData)
 		cloudCfg := &aws.Config{
 			Credentials:  creds,
@@ -226,4 +225,13 @@ func getMapValue[T comparable](key, defaultValue T, emptyTest func(key T) bool, 
 		return val
 	}
 	return defaultValue
+}
+
+// getMapValueOrEnvOverride returns the environment variable value if set, otherwise falls back to data[key].
+func getMapValueOrEnvOverride(key, envKey string, data map[string]string) string {
+	envVal := os.Getenv(envKey)
+	if envVal != "" {
+		return envVal
+	}
+	return data[key]
 }

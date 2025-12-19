@@ -39,9 +39,9 @@ func SetPrefix(prefix string) CloudTestOpt {
 
 // SetupCloudFunctionOpt starts a S3 container, configures cloud storage for tests,
 // and returns context, cancel func, Grafana service client, and error.
-func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.CancelFunc, service.GrafanaService, error) {
-	errorFunc := func(err error) (context.Context, context.CancelFunc, service.GrafanaService, error) {
-		return nil, nil, nil, err
+func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.CancelFunc, service.GrafanaService, storage.Storage, error) {
+	errorFunc := func(err error) (context.Context, context.CancelFunc, service.GrafanaService, storage.Storage, error) {
+		return nil, nil, nil, nil, err
 	}
 	_ = os.Setenv(storage.InitBucket, "true")
 	container, cancel := containers.BootstrapCloudStorage("", "")
@@ -53,7 +53,7 @@ func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.Cance
 	if err != nil {
 		return errorFunc(err)
 	}
-	minioHost := fmt.Sprintf("http://%s", actualPort)
+	s3Host := fmt.Sprintf("http://%s", actualPort)
 	slog.Info("S3 container is up and running", slog.Any("hostname", fmt.Sprintf("http://%s", wwwPort)))
 	m := map[string]string{
 		storage.InitBucket: "true",
@@ -62,7 +62,7 @@ func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.Cance
 		storage.AccessId:   "test",
 		storage.SecretKey:  "secretsss",
 		storage.BucketName: "testing",
-		storage.Endpoint:   minioHost,
+		storage.Endpoint:   s3Host,
 	}
 	for _, opt := range opts {
 		opt(&m)
@@ -85,5 +85,5 @@ func SetupCloudFunctionOpt(opts ...CloudTestOpt) (context.Context, context.Cance
 		return config.Config()
 	})
 
-	return ctx, cancel, apiClient, nil
+	return ctx, cancel, apiClient, s, nil
 }

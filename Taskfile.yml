@@ -23,7 +23,7 @@ tasks:
   security:
     desc: "Run security scan"
     cmds:
-      - go tool {{ .TOOLS_ARG}} gosec --exclude=G402,G304  ./...
+      - go tool {{ .TOOLS_ARG}} gosec   ./...
   format:
     desc: reformat the code to match stricter conventions
     cmds:

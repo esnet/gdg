@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	AuthPrefix = "auth"
+	AuthPrefix      = "auth"
+	CloudAuthPrefix = "s3"
 )
 
 // AppGlobals is the global configuration for the application

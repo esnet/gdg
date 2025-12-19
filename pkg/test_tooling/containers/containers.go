@@ -50,7 +50,7 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 		},
 		WaitingFor: wait.ForListeningPort(nat.Port(fmt.Sprintf(s3TcpPortFormatString, s3ApiPort))),
 	}
-	minioC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+	s3C, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
 		Started:          true,
 	})
@@ -59,13 +59,13 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 	}
 
 	cancel := func() {
-		if err := minioC.Terminate(ctx); err != nil {
+		if err := s3C.Terminate(ctx); err != nil {
 			panic(err)
 		} else {
 			slog.Info("S3 container has been terminated")
 		}
 	}
-	return minioC, cancel
+	return s3C, cancel
 }
 
 // SetupGrafanaLicense loads the enterprise license from ENTERPRISE_LICENSE env var,
@@ -84,6 +84,7 @@ func DefaultGrafanaEnv() map[string]string {
 		"GF_INSTALL_PLUGINS":         "grafana-googlesheets-datasource",
 		"GF_AUTH_ANONYMOUS_ENABLED":  "true",
 		"GF_SECURITY_ADMIN_PASSWORD": "admin", // This is a no-op right now, but we should trickle this up to
+		//"GF_SERVER_HTTP_ADDR":        "::",
 		// allow setting grafana admin credentials.
 	}
 }
