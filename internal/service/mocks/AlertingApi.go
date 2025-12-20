@@ -199,6 +199,50 @@ func (_c *AlertingApi_ClearAlertTemplates_Call) RunAndReturn(run func() ([]strin
 	return _c
 }
 
+// ClearAlertTimings provides a mock function for the type AlertingApi
+func (_mock *AlertingApi) ClearAlertTimings() error {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ClearAlertTimings")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func() error); ok {
+		r0 = returnFunc()
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// AlertingApi_ClearAlertTimings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ClearAlertTimings'
+type AlertingApi_ClearAlertTimings_Call struct {
+	*mock.Call
+}
+
+// ClearAlertTimings is a helper method to define mock.On call
+func (_e *AlertingApi_Expecter) ClearAlertTimings() *AlertingApi_ClearAlertTimings_Call {
+	return &AlertingApi_ClearAlertTimings_Call{Call: _e.mock.On("ClearAlertTimings")}
+}
+
+func (_c *AlertingApi_ClearAlertTimings_Call) Run(run func()) *AlertingApi_ClearAlertTimings_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *AlertingApi_ClearAlertTimings_Call) Return(err error) *AlertingApi_ClearAlertTimings_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *AlertingApi_ClearAlertTimings_Call) RunAndReturn(run func() error) *AlertingApi_ClearAlertTimings_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ClearContactPoints provides a mock function for the type AlertingApi
 func (_mock *AlertingApi) ClearContactPoints() ([]string, error) {
 	ret := _mock.Called()
@@ -418,6 +462,59 @@ func (_c *AlertingApi_DownloadAlertTemplates_Call) Return(s string, err error) *
 }
 
 func (_c *AlertingApi_DownloadAlertTemplates_Call) RunAndReturn(run func() (string, error)) *AlertingApi_DownloadAlertTemplates_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DownloadAlertTimings provides a mock function for the type AlertingApi
+func (_mock *AlertingApi) DownloadAlertTimings() (string, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for DownloadAlertTimings")
+	}
+
+	var r0 string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() (string, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() string); ok {
+		r0 = returnFunc()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// AlertingApi_DownloadAlertTimings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DownloadAlertTimings'
+type AlertingApi_DownloadAlertTimings_Call struct {
+	*mock.Call
+}
+
+// DownloadAlertTimings is a helper method to define mock.On call
+func (_e *AlertingApi_Expecter) DownloadAlertTimings() *AlertingApi_DownloadAlertTimings_Call {
+	return &AlertingApi_DownloadAlertTimings_Call{Call: _e.mock.On("DownloadAlertTimings")}
+}
+
+func (_c *AlertingApi_DownloadAlertTimings_Call) Run(run func()) *AlertingApi_DownloadAlertTimings_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *AlertingApi_DownloadAlertTimings_Call) Return(s string, err error) *AlertingApi_DownloadAlertTimings_Call {
+	_c.Call.Return(s, err)
+	return _c
+}
+
+func (_c *AlertingApi_DownloadAlertTimings_Call) RunAndReturn(run func() (string, error)) *AlertingApi_DownloadAlertTimings_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -647,6 +744,61 @@ func (_c *AlertingApi_ListAlertTemplates_Call) RunAndReturn(run func() ([]*model
 	return _c
 }
 
+// ListAlertTimings provides a mock function for the type AlertingApi
+func (_mock *AlertingApi) ListAlertTimings() ([]*models.MuteTimeInterval, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListAlertTimings")
+	}
+
+	var r0 []*models.MuteTimeInterval
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]*models.MuteTimeInterval, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []*models.MuteTimeInterval); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*models.MuteTimeInterval)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// AlertingApi_ListAlertTimings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListAlertTimings'
+type AlertingApi_ListAlertTimings_Call struct {
+	*mock.Call
+}
+
+// ListAlertTimings is a helper method to define mock.On call
+func (_e *AlertingApi_Expecter) ListAlertTimings() *AlertingApi_ListAlertTimings_Call {
+	return &AlertingApi_ListAlertTimings_Call{Call: _e.mock.On("ListAlertTimings")}
+}
+
+func (_c *AlertingApi_ListAlertTimings_Call) Run(run func()) *AlertingApi_ListAlertTimings_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *AlertingApi_ListAlertTimings_Call) Return(muteTimeIntervals []*models.MuteTimeInterval, err error) *AlertingApi_ListAlertTimings_Call {
+	_c.Call.Return(muteTimeIntervals, err)
+	return _c
+}
+
+func (_c *AlertingApi_ListAlertTimings_Call) RunAndReturn(run func() ([]*models.MuteTimeInterval, error)) *AlertingApi_ListAlertTimings_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListContactPoints provides a mock function for the type AlertingApi
 func (_mock *AlertingApi) ListContactPoints() ([]*models.EmbeddedContactPoint, error) {
 	ret := _mock.Called()
@@ -859,6 +1011,61 @@ func (_c *AlertingApi_UploadAlertTemplates_Call) Return(strings []string, err er
 }
 
 func (_c *AlertingApi_UploadAlertTemplates_Call) RunAndReturn(run func() ([]string, error)) *AlertingApi_UploadAlertTemplates_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UploadAlertTimings provides a mock function for the type AlertingApi
+func (_mock *AlertingApi) UploadAlertTimings() ([]string, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for UploadAlertTimings")
+	}
+
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []string); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// AlertingApi_UploadAlertTimings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadAlertTimings'
+type AlertingApi_UploadAlertTimings_Call struct {
+	*mock.Call
+}
+
+// UploadAlertTimings is a helper method to define mock.On call
+func (_e *AlertingApi_Expecter) UploadAlertTimings() *AlertingApi_UploadAlertTimings_Call {
+	return &AlertingApi_UploadAlertTimings_Call{Call: _e.mock.On("UploadAlertTimings")}
+}
+
+func (_c *AlertingApi_UploadAlertTimings_Call) Run(run func()) *AlertingApi_UploadAlertTimings_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *AlertingApi_UploadAlertTimings_Call) Return(strings []string, err error) *AlertingApi_UploadAlertTimings_Call {
+	_c.Call.Return(strings, err)
+	return _c
+}
+
+func (_c *AlertingApi_UploadAlertTimings_Call) RunAndReturn(run func() ([]string, error)) *AlertingApi_UploadAlertTimings_Call {
 	_c.Call.Return(run)
 	return _c
 }

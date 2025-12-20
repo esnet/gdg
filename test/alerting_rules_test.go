@@ -103,7 +103,7 @@ func TestAlertingRulesNoFilterCrud(t *testing.T) {
 	folders := apiClient.UploadFolders(nil)
 	assert.True(t, len(folders) > 0)
 	//
-	slog.Info("Uploading Connections")
+	slog.Info("Uploading Contact Points")
 	_, err = apiClient.UploadContactPoints()
 	assert.NoError(t, err)
 
