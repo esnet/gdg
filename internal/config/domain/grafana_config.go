@@ -35,9 +35,9 @@ type GrafanaConfig struct {
 	OutputPath               string                `mapstructure:"output_path" yaml:"output_path"`
 	Storage                  string                `mapstructure:"storage" yaml:"storage"`
 	URL                      string                `mapstructure:"url" yaml:"url"`
+	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
 	UserSettings             *UserSettings         `mapstructure:"user" yaml:"user"`
 	grafanaAdminEnabled      bool                  `mapstructure:"-" yaml:"-"`
-	UserName                 string                `mapstructure:"user_name" yaml:"user_name"`
 }
 
 type MonitoredOrgFolders struct {

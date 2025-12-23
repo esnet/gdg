@@ -5,7 +5,8 @@
 package mocks
 
 import (
-	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/esnet/gdg/internal/service/domain"
+	"github.com/esnet/gdg/internal/service/filters"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -37,8 +38,8 @@ func (_m *AlertRules) EXPECT() *AlertRules_Expecter {
 }
 
 // ClearAlertRules provides a mock function for the type AlertRules
-func (_mock *AlertRules) ClearAlertRules() ([]string, error) {
-	ret := _mock.Called()
+func (_mock *AlertRules) ClearAlertRules(filter filters.V2Filter) ([]string, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ClearAlertRules")
@@ -46,18 +47,18 @@ func (_mock *AlertRules) ClearAlertRules() ([]string, error) {
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]string, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -70,13 +71,20 @@ type AlertRules_ClearAlertRules_Call struct {
 }
 
 // ClearAlertRules is a helper method to define mock.On call
-func (_e *AlertRules_Expecter) ClearAlertRules() *AlertRules_ClearAlertRules_Call {
-	return &AlertRules_ClearAlertRules_Call{Call: _e.mock.On("ClearAlertRules")}
+//   - filter filters.V2Filter
+func (_e *AlertRules_Expecter) ClearAlertRules(filter interface{}) *AlertRules_ClearAlertRules_Call {
+	return &AlertRules_ClearAlertRules_Call{Call: _e.mock.On("ClearAlertRules", filter)}
 }
 
-func (_c *AlertRules_ClearAlertRules_Call) Run(run func()) *AlertRules_ClearAlertRules_Call {
+func (_c *AlertRules_ClearAlertRules_Call) Run(run func(filter filters.V2Filter)) *AlertRules_ClearAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 filters.V2Filter
+		if args[0] != nil {
+			arg0 = args[0].(filters.V2Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -86,31 +94,33 @@ func (_c *AlertRules_ClearAlertRules_Call) Return(strings []string, err error) *
 	return _c
 }
 
-func (_c *AlertRules_ClearAlertRules_Call) RunAndReturn(run func() ([]string, error)) *AlertRules_ClearAlertRules_Call {
+func (_c *AlertRules_ClearAlertRules_Call) RunAndReturn(run func(filter filters.V2Filter) ([]string, error)) *AlertRules_ClearAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadAlertRules provides a mock function for the type AlertRules
-func (_mock *AlertRules) DownloadAlertRules() (string, error) {
-	ret := _mock.Called()
+func (_mock *AlertRules) DownloadAlertRules(filter filters.V2Filter) ([]string, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DownloadAlertRules")
 	}
 
-	var r0 string
+	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]string, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+		r0 = returnFunc(filter)
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -123,49 +133,56 @@ type AlertRules_DownloadAlertRules_Call struct {
 }
 
 // DownloadAlertRules is a helper method to define mock.On call
-func (_e *AlertRules_Expecter) DownloadAlertRules() *AlertRules_DownloadAlertRules_Call {
-	return &AlertRules_DownloadAlertRules_Call{Call: _e.mock.On("DownloadAlertRules")}
+//   - filter filters.V2Filter
+func (_e *AlertRules_Expecter) DownloadAlertRules(filter interface{}) *AlertRules_DownloadAlertRules_Call {
+	return &AlertRules_DownloadAlertRules_Call{Call: _e.mock.On("DownloadAlertRules", filter)}
 }
 
-func (_c *AlertRules_DownloadAlertRules_Call) Run(run func()) *AlertRules_DownloadAlertRules_Call {
+func (_c *AlertRules_DownloadAlertRules_Call) Run(run func(filter filters.V2Filter)) *AlertRules_DownloadAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 filters.V2Filter
+		if args[0] != nil {
+			arg0 = args[0].(filters.V2Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
 
-func (_c *AlertRules_DownloadAlertRules_Call) Return(s string, err error) *AlertRules_DownloadAlertRules_Call {
-	_c.Call.Return(s, err)
+func (_c *AlertRules_DownloadAlertRules_Call) Return(strings []string, err error) *AlertRules_DownloadAlertRules_Call {
+	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *AlertRules_DownloadAlertRules_Call) RunAndReturn(run func() (string, error)) *AlertRules_DownloadAlertRules_Call {
+func (_c *AlertRules_DownloadAlertRules_Call) RunAndReturn(run func(filter filters.V2Filter) ([]string, error)) *AlertRules_DownloadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListAlertRules provides a mock function for the type AlertRules
-func (_mock *AlertRules) ListAlertRules() ([]*models.ProvisionedAlertRule, error) {
-	ret := _mock.Called()
+func (_mock *AlertRules) ListAlertRules(filter filters.V2Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListAlertRules")
 	}
 
-	var r0 []*models.ProvisionedAlertRule
+	var r0 []*domain.AlertRuleWithNestedFolder
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*models.ProvisionedAlertRule, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*models.ProvisionedAlertRule); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.AlertRuleWithNestedFolder); ok {
+		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.ProvisionedAlertRule)
+			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -178,38 +195,45 @@ type AlertRules_ListAlertRules_Call struct {
 }
 
 // ListAlertRules is a helper method to define mock.On call
-func (_e *AlertRules_Expecter) ListAlertRules() *AlertRules_ListAlertRules_Call {
-	return &AlertRules_ListAlertRules_Call{Call: _e.mock.On("ListAlertRules")}
+//   - filter filters.V2Filter
+func (_e *AlertRules_Expecter) ListAlertRules(filter interface{}) *AlertRules_ListAlertRules_Call {
+	return &AlertRules_ListAlertRules_Call{Call: _e.mock.On("ListAlertRules", filter)}
 }
 
-func (_c *AlertRules_ListAlertRules_Call) Run(run func()) *AlertRules_ListAlertRules_Call {
+func (_c *AlertRules_ListAlertRules_Call) Run(run func(filter filters.V2Filter)) *AlertRules_ListAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 filters.V2Filter
+		if args[0] != nil {
+			arg0 = args[0].(filters.V2Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
 
-func (_c *AlertRules_ListAlertRules_Call) Return(provisionedAlertRules []*models.ProvisionedAlertRule, err error) *AlertRules_ListAlertRules_Call {
-	_c.Call.Return(provisionedAlertRules, err)
+func (_c *AlertRules_ListAlertRules_Call) Return(alertRuleWithNestedFolders []*domain.AlertRuleWithNestedFolder, err error) *AlertRules_ListAlertRules_Call {
+	_c.Call.Return(alertRuleWithNestedFolders, err)
 	return _c
 }
 
-func (_c *AlertRules_ListAlertRules_Call) RunAndReturn(run func() ([]*models.ProvisionedAlertRule, error)) *AlertRules_ListAlertRules_Call {
+func (_c *AlertRules_ListAlertRules_Call) RunAndReturn(run func(filter filters.V2Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *AlertRules_ListAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadAlertRules provides a mock function for the type AlertRules
-func (_mock *AlertRules) UploadAlertRules() error {
-	ret := _mock.Called()
+func (_mock *AlertRules) UploadAlertRules(filter filters.V2Filter) error {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UploadAlertRules")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func() error); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) error); ok {
+		r0 = returnFunc(filter)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -222,13 +246,20 @@ type AlertRules_UploadAlertRules_Call struct {
 }
 
 // UploadAlertRules is a helper method to define mock.On call
-func (_e *AlertRules_Expecter) UploadAlertRules() *AlertRules_UploadAlertRules_Call {
-	return &AlertRules_UploadAlertRules_Call{Call: _e.mock.On("UploadAlertRules")}
+//   - filter filters.V2Filter
+func (_e *AlertRules_Expecter) UploadAlertRules(filter interface{}) *AlertRules_UploadAlertRules_Call {
+	return &AlertRules_UploadAlertRules_Call{Call: _e.mock.On("UploadAlertRules", filter)}
 }
 
-func (_c *AlertRules_UploadAlertRules_Call) Run(run func()) *AlertRules_UploadAlertRules_Call {
+func (_c *AlertRules_UploadAlertRules_Call) Run(run func(filter filters.V2Filter)) *AlertRules_UploadAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 filters.V2Filter
+		if args[0] != nil {
+			arg0 = args[0].(filters.V2Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -238,7 +269,7 @@ func (_c *AlertRules_UploadAlertRules_Call) Return(err error) *AlertRules_Upload
 	return _c
 }
 
-func (_c *AlertRules_UploadAlertRules_Call) RunAndReturn(run func() error) *AlertRules_UploadAlertRules_Call {
+func (_c *AlertRules_UploadAlertRules_Call) RunAndReturn(run func(filter filters.V2Filter) error) *AlertRules_UploadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -106,7 +106,7 @@ func newListAlertNotificationCmd() simplecobra.Commander {
 				log.Fatal("unable to retrieve Orgs notification alerts", slog.Any("err", err))
 			}
 			if len(data.Routes) == 0 {
-				slog.Info("No alert rules found")
+				slog.Info("No alert notifications found")
 			} else {
 				for _, link := range data.Routes {
 					rootCmd.TableObj.AppendRow(table.Row{link.Receiver, link.ObjectMatchers})

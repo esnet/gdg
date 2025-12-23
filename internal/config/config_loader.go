@@ -253,6 +253,8 @@ func InitGdgConfig(override string) {
 		ext, configName string
 		overrides       []string
 		defaultConfig   bool
+		err             error
+		v               *viper.Viper
 	)
 
 	if override == "" && configData != nil {
@@ -269,12 +271,9 @@ func InitGdgConfig(override string) {
 		overrides = append(overrides, []string{"config/gdg.yml", "config/importer.yml"}...)
 	}
 
-	var err error
-	var v *viper.Viper
 	configData.gdgConfig = new(domain.GDGAppConfiguration)
 	for _, configOverride := range overrides {
 		configDirs, configName, ext = buildConfigSearchPath(configOverride)
-
 		v, err = readViperConfig(configName, configDirs, configData.gdgConfig, ext)
 		if err == nil {
 			if defaultConfig && strings.Contains("importer", configName) {

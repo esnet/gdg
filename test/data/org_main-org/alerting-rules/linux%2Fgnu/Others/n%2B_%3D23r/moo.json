@@ -1,0 +1,89 @@
+{
+	"condition": "C",
+	"data": [
+		{
+			"datasourceUid": "eeov1g02ckveoe",
+			"model": {
+				"datasource": {
+					"type": "prometheus",
+					"uid": "eeov1g02ckveoe"
+				},
+				"disableTextWrap": false,
+				"editorMode": "builder",
+				"expr": "go_gc_duration_seconds",
+				"fullMetaSearch": false,
+				"hide": false,
+				"includeNullMetadata": true,
+				"instant": true,
+				"intervalMs": 1000,
+				"legendFormat": "__auto",
+				"maxDataPoints": 43200,
+				"range": false,
+				"refId": "A",
+				"useBackend": false
+			},
+			"refId": "A",
+			"relativeTimeRange": {
+				"from": 600
+			}
+		},
+		{
+			"datasourceUid": "__expr__",
+			"model": {
+				"conditions": [
+					{
+						"evaluator": {
+							"params": [
+								5
+							],
+							"type": "gt"
+						},
+						"operator": {
+							"type": "and"
+						},
+						"query": {
+							"params": [
+								"C"
+							]
+						},
+						"reducer": {
+							"params": [],
+							"type": "last"
+						},
+						"type": "query"
+					}
+				],
+				"datasource": {
+					"type": "__expr__",
+					"uid": "__expr__"
+				},
+				"expression": "A",
+				"intervalMs": 1000,
+				"maxDataPoints": 43200,
+				"refId": "C",
+				"type": "threshold"
+			},
+			"refId": "C",
+			"relativeTimeRange": {}
+		}
+	],
+	"execErrState": "Error",
+	"folderUID": "den349iklsbuoc",
+	"for": "1m0s",
+	"id": 1,
+	"keep_firing_for": "4m0s",
+	"noDataState": "NoData",
+	"notification_settings": {
+		"active_time_intervals": null,
+		"group_by": null,
+		"mute_time_intervals": null,
+		"receiver": "discord"
+	},
+	"orgID": 1,
+	"provenance": "api",
+	"ruleGroup": "L1",
+	"title": "moo",
+	"uid": "ceozp0ovszy80c",
+	"updated": "2025-12-19T18:35:01.000Z",
+	"NestedPath": "linux%2Fgnu/Others/n%2B_%3D23r"
+}

@@ -6,13 +6,14 @@ import (
 )
 
 const (
-	TagsFilter     FilterType = "TagsFilter"
-	DashFilter     FilterType = "DashFilter"
-	FolderFilter   FilterType = "FolderFilter"
-	Name           FilterType = "Name"
-	ConnectionName FilterType = "ConnectionName" // used for Connection name
-	AuthLabel      FilterType = "AuthLabel"
-	OrgFilter      FilterType = "OrgFilter"
+	TagsFilter          FilterType = "TagsFilter"
+	DashFilter          FilterType = "DashFilter"
+	FolderFilter        FilterType = "FolderFilter"
+	AlertRuleFilterType            = "AlertRuleFilter"
+	Name                FilterType = "Name"
+	ConnectionName      FilterType = "ConnectionName" // used for Connection name
+	AuthLabel           FilterType = "AuthLabel"
+	OrgFilter           FilterType = "OrgFilter"
 )
 
 type (

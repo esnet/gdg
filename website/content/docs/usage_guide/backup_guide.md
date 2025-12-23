@@ -14,12 +14,12 @@ Some entities have dependencies on one another.
 Example: Alert Rules need the contact points to exist in older to be created. They also need the folders or dashboards that they
 operate on to exist.
 
-{{< callout context="danger" title="Danger" icon="alert-octagon" >}}
-Unlike most other entities that GDG operates on, Alerting will be global to the Grafana organisation.
-
-All alerting entities will ignore folder watch list, and any other filter set.
+{{< callout context="caution" title="Caution" icon="alert-triangle" >}}
+Unlike most other entities that GDG operates on, Alerting will be global to the Grafana organization. They will also ignore folder watch list, and any other filter set.
 
 {{< /callout >}}
+
+**Alerting Rules is the exception that is tied to a folder and respect filters.**
 
 #### Contact Points
 
@@ -66,6 +66,10 @@ entity.{{< /callout >}}
 {{< /details >}}
 
 #### Rules
+
+Rules will use watched folders to list act on. If you want to look at all filter across all orgs use: `--no-filters`
+
+**Note:**  This cli option is temporary, it will likely go away on the next release. More robust filtering will be added.
 
 ```sh
 ./bin/gdg backup alerting rules list -- Lists all rules

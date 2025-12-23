@@ -103,6 +103,7 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 				// do update
 				p := provisioning.NewPutContactpointParams()
 				p.UID = r.UID
+				p.XDisableProvenance = ptr.Of("true")
 				p.Body = &models.EmbeddedContactPoint{
 					DisableResolveMessage: false,
 					Name:                  i.Name,
@@ -120,6 +121,7 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 
 			} else {
 				p := provisioning.NewPostContactpointsParams()
+				p.XDisableProvenance = ptr.Of("true")
 				p.Body = &models.EmbeddedContactPoint{
 					DisableResolveMessage: false,
 					Name:                  i.Name,
