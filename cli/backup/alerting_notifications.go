@@ -44,8 +44,8 @@ func newUploadAlertNotificationCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid"})
 			slog.Info("Uploading all alert notification policies for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			files, err := rootCmd.GrafanaSvc().UploadAlertNotifications()
 			if err != nil {
@@ -72,8 +72,8 @@ func newClearAlertNotificationCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Deleting all alert notification policies for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			err := rootCmd.GrafanaSvc().ClearAlertNotifications()
 			if err != nil {
@@ -98,8 +98,8 @@ func newListAlertNotificationCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"Receiver", "ObjectMatchers"})
 			slog.Info("Listing alert notification policies for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			data, err := rootCmd.GrafanaSvc().ListAlertNotifications()
 			if err != nil {
@@ -130,8 +130,8 @@ func newDownloadAlertNotificationCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "folderUid", "ruleGroup", "Title", "provenance", "data"})
 			slog.Info("Downloading alert notification policies for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			file, err := rootCmd.GrafanaSvc().DownloadAlertNotifications()
 			if err != nil {

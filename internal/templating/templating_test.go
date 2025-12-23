@@ -17,16 +17,17 @@ import (
 
 func TestGenerate(t *testing.T) {
 	// Setup
-	assert.NoError(t, path.FixTestDir("templating", "../.."))
-	config.InitGdgConfig(common.DefaultTestConfig)
-	config.InitTemplateConfig("templates-example")
-	template := NewTemplate()
+	assert := assert.New(t)
+	assert.NoError(path.FixTestDir("templating", "../.."))
+	gdgCfg := config.InitGdgConfig(common.DefaultTestConfig)
+	tplCfg := config.InitTemplateConfig(common.DefaultTemplateConfig)
+	template := NewTemplate(tplCfg, gdgCfg.GetDefaultGrafanaConfig())
 	data, err := template.Generate("template_example")
-	assert.Nil(t, err)
-	assert.Equal(t, len(data), 1)
+	assert.Nil(err)
+	assert.Equal(len(data), 1)
 	generatedFiles := data["template_example"]
-	assert.True(t, slices.Contains(generatedFiles, "test/data/org_main-org/dashboards/General/testing-foobar.json"))
-	assert.True(t, slices.Contains(generatedFiles, "test/data/org_some-other-org/dashboards/Testing/template_example.json"))
+	assert.True(slices.Contains(generatedFiles, "test/data/org_main-org/dashboards/General/testing-foobar.json"))
+	assert.True(slices.Contains(generatedFiles, "test/data/org_some-other-org/dashboards/Testing/template_example.json"))
 	// Remove output to avoid conflicting with other tests
 	defer func() {
 		os.Remove(generatedFiles[0])
@@ -34,24 +35,24 @@ func TestGenerate(t *testing.T) {
 	}()
 
 	// Obtain first Config and validate output.
-	cfg := config.Config().GetTemplateConfig()
+	cfg := config.InitTemplateConfig(common.DefaultTemplateConfig)
 	templateCfg := cfg.Entities.Dashboards[0].DashboardEntities[0]
 	rawData, err := os.ReadFile("test/data/org_main-org/dashboards/General/testing-foobar.json")
-	assert.Nil(t, err)
+	assert.Nil(err)
 	parser := gjson.ParseBytes(rawData)
 	val := parser.Get("annotations.list.0.hashKey")
-	assert.True(t, val.Exists())
+	assert.True(val.Exists())
 	expected := service.GetSlug(templateCfg.TemplateData["title"].(string))
 	val = parser.Get("annotations.list.0.datasource")
 	expected = "elasticsearch"
-	assert.Equal(t, val.String(), expected)
+	assert.Equal(val.String(), expected)
 	expected = service.GetSlug(templateCfg.TemplateData["title"].(string))
 	valArray := parser.Get("panels.0.link_text").Array()
 	val = parser.Get("panels.0.link_url.0")
 	lightsources := templateCfg.TemplateData["lightsources"].([]any)
 	for ndx, entry := range valArray {
-		assert.Equal(t, entry.String(), lightsources[ndx].(string))
-		assert.True(t, strings.Contains(val.String(), entry.String()))
+		assert.Equal(entry.String(), lightsources[ndx].(string))
+		assert.True(strings.Contains(val.String(), entry.String()))
 
 	}
 }

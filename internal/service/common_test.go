@@ -5,7 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/esnet/gdg/internal/config/domain"
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/storage"
 
@@ -53,25 +54,39 @@ func TestSlug(t *testing.T) {
 
 func TestUserPath(t *testing.T) {
 	fixEnvironment(t)
-	userPath := BuildResourceFolder("", domain.UserResource, false, false)
+	cfg := &configDomain.GrafanaConfig{
+		OutputPath: "test/data",
+	}
+	userPath := BuildResourceFolder(cfg, "", domain.UserResource, false, false)
 	assert.Equal(t, "test/data/users/", userPath)
 }
 
 func TestBuildDashboardPath(t *testing.T) {
 	fixEnvironment(t)
-	result := BuildResourceFolder("General", domain.DashboardResource, false, false)
+	cfg := &configDomain.GrafanaConfig{
+		OutputPath:       "test/data",
+		OrganizationName: "Your Org",
+	}
+	result := BuildResourceFolder(cfg, "General", domain.DashboardResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/dashboards/General", result)
 }
 
 func TestBuildFolderSourcePath(t *testing.T) {
 	fixEnvironment(t)
-	result := buildResourcePath(slug.Make("Some Folder"), domain.FolderResource, false, false)
+	cfg := &configDomain.GrafanaConfig{
+		OutputPath:       "test/data",
+		OrganizationName: "Your Org",
+	}
+	result := buildResourcePath(cfg, slug.Make("Some Folder"), domain.FolderResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/folders/some-folder.json", result)
 }
 
 func TestBuildDataSourcePath(t *testing.T) {
 	fixEnvironment(t)
-
-	result := buildResourcePath(slug.Make("My DS"), domain.ConnectionResource, false, false)
+	cfg := &configDomain.GrafanaConfig{
+		OutputPath:       "test/data",
+		OrganizationName: "Your Org",
+	}
+	result := buildResourcePath(cfg, slug.Make("My DS"), domain.ConnectionResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/connections/my-ds.json", result)
 }

@@ -19,7 +19,6 @@ import (
 )
 
 func TestLibraryElementsCRUD(t *testing.T) {
-	config.InitGdgConfig(common.DefaultTestConfig)
 	testCase := []struct {
 		name          string
 		ignore        bool
@@ -46,26 +45,19 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		t.Log("Running test", tc.name)
 		var apiClient service.GrafanaService
 		var cleanup func() error
-		test_tooling.WrapTest(func() {
-			config.InitGdgConfig(common.DefaultTestConfig)
-		})
-		cfgProvider := func() *config.Configuration {
-			// Needed to unset filters
-			cfg := config.Config()
-			cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = tc.ignore
-			return cfg
-		}
+		cfg := config.InitGdgConfig(common.DefaultTestConfig)
+		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = tc.ignore
 		var r *test_tooling.InitContainerResult
 		err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-			r = test_tooling.InitTest(t, cfgProvider, nil)
+			r = test_tooling.InitTest(t, cfg, nil)
 			return r.Err
 		})
 		assert.NotNil(t, r)
 		assert.NoError(t, err)
 		apiClient = r.ApiClient
 		cleanup = r.CleanUp
-		filtersEntity := service.NewLibraryElementFilter()
-		dashFilter := service.NewDashboardFilter("", "", "")
+		filtersEntity := service.NewLibraryElementFilter(cfg)
+		dashFilter := service.NewDashboardFilter(cfg, "", "", "")
 		slog.Info("Exporting all Library Elements")
 		uploadCount := apiClient.UploadLibraryElements(filtersEntity)
 		assert.Equal(t, len(uploadCount), tc.expectedCount)

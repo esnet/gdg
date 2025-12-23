@@ -10,7 +10,6 @@ import (
 	"github.com/esnet/gdg/internal/config/domain"
 
 	"github.com/esnet/gdg/internal/api"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/go-openapi/strfmt"
 	"github.com/grafana/grafana-openapi-client-go/models"
 
@@ -30,7 +29,7 @@ func (s *DashNGoImpl) Login() {
 		}
 	}
 
-	s.extended = api.NewExtendedApi()
+	s.extended = api.NewExtendedApi(s.gdgConfig)
 }
 
 func ignoreSSL(transportConfig *client.TransportConfig) {
@@ -40,10 +39,11 @@ func ignoreSSL(transportConfig *client.TransportConfig) {
 
 type NewClientOpts func(transportConfig *client.TransportConfig)
 
-func GetOrgNameClientOpts(orgName string) NewClientOpts {
+func GetOrgNameClientOpts(cfg *domain.GDGAppConfiguration) NewClientOpts {
+	orgName := cfg.GetDefaultGrafanaConfig().OrganizationName
 	if orgName != "" {
 		return func(transportConfig *client.TransportConfig) {
-			orgId, err := api.NewExtendedApi().GetConfiguredOrgId(orgName)
+			orgId, err := api.NewExtendedApi(cfg).GetConfiguredOrgId(orgName)
 			if err != nil {
 				slog.Error("unable to determine org ID, falling back", slog.Any("err", err))
 				orgId = 1
@@ -73,21 +73,21 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		Host:         u.Host,
 		BasePath:     path,
 		Schemes:      []string{u.Scheme},
-		NumRetries:   config.Config().GetGDGConfig().GetAppGlobals().RetryCount,
-		RetryTimeout: config.Config().GetGDGConfig().GetAppGlobals().GetRetryTimeout(),
-		Debug:        s.globalConf.ApiDebug,
+		NumRetries:   s.gdgConfig.GetAppGlobals().RetryCount,
+		RetryTimeout: s.gdgConfig.GetAppGlobals().GetRetryTimeout(),
+		Debug:        s.GetGlobals().ApiDebug,
 	}
 
 	// If more than one opts is passed, depend on the caller to setup his required configuration
 	if s.grafanaConf.IsBasicAuth() && len(opts) == 1 {
-		opts = append(opts, GetOrgNameClientOpts(s.grafanaConf.OrganizationName))
+		opts = append(opts, GetOrgNameClientOpts(s.gdgConfig))
 	}
 	for _, opt := range opts {
 		if opt != nil {
 			opt(httpConfig)
 		}
 	}
-	if config.Config().IgnoreSSL() {
+	if s.gdgConfig.IgnoreSSL() {
 		ignoreSSL(httpConfig)
 	}
 
@@ -99,7 +99,7 @@ func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
 	if s.grafanaConf.GetAPIToken() != "" {
 		grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
 			clientCfg.APIKey = s.grafanaConf.GetAPIToken()
-			clientCfg.Debug = s.globalConf.ApiDebug
+			clientCfg.Debug = s.GetGlobals().ApiDebug
 		})
 		return grafanaClient
 	}
@@ -125,7 +125,7 @@ func (s *DashNGoImpl) GetAdminClient() *client.GrafanaHTTPAPI {
 func (s *DashNGoImpl) getDefaultBasicOpts() []NewClientOpts {
 	return []NewClientOpts{func(clientCfg *client.TransportConfig) {
 		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.GetPassword())
-		clientCfg.Debug = s.globalConf.ApiDebug
+		clientCfg.Debug = s.GetGlobals().ApiDebug
 	}}
 }
 

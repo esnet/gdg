@@ -25,9 +25,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
 
-	test_tooling.WrapTest(func() {
-		config.InitGdgConfig(common.DefaultTestConfig)
-	})
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	props := containers.DefaultGrafanaEnv()
 	err := containers.SetupGrafanaLicense(&props)
 	if err != nil {
@@ -36,20 +34,20 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	}
 	var r *test_tooling.InitContainerResult
 	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, props)
+		r = test_tooling.InitTest(t, cfg, props)
 		return r.Err
 	})
 	assert.NotNil(t, r)
 	assert.NoError(t, err)
 	defer func() {
-		err := r.CleanUp()
-		if err != nil {
+		cleanUpErr := r.CleanUp()
+		if cleanUpErr != nil {
 			slog.Warn("Unable to clean up after test", "test", t.Name())
 		}
 	}()
 	apiClient := r.ApiClient
 	// Upload all dashboards
-	_, err = apiClient.UploadDashboards(service.NewDashboardFilter("", "", ""))
+	_, err = apiClient.UploadDashboards(service.NewDashboardFilter(cfg, "", "", ""))
 	assert.NoError(t, err)
 	// Upload all users
 	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
@@ -59,7 +57,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	teams := apiClient.UploadTeams(filter)
 	assert.Equal(t, len(teams), 2)
 	// Get current Permissions
-	dashFilter := service.NewDashboardFilter("", "", "")
+	dashFilter := service.NewDashboardFilter(cfg, "", "", "")
 	currentPerms, err := apiClient.ListDashboardPermissions(dashFilter)
 	assert.Equal(t, len(currentPerms), DashboardCount)
 	entry := ptr.Of(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item domain.DashboardAndPermissions, index int) bool {

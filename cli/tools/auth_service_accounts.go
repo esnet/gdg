@@ -12,7 +12,6 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"github.com/spf13/cobra"
@@ -98,7 +97,7 @@ func newDeleteServiceAccountsCmd() simplecobra.Commander {
 				log.Fatalf("unable to parse %s as a valid numeric value", idStr)
 			}
 
-			slog.Info("Deleting Service Accounts for context", "context", config.Config().GetGDGConfig().GetContext(),
+			slog.Info("Deleting Service Accounts for context", "context", rootCmd.ConfigSvc().GetContext(),
 				"serviceAccountId", id)
 			err = rootCmd.GrafanaSvc().DeleteServiceAccount(id)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
@@ -121,7 +120,7 @@ func newClearServiceAccountsCmd() simplecobra.Commander {
 		CommandsList: []simplecobra.Commander{},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllServiceAccounts()
-			slog.Info("Delete Service Accounts for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Delete Service Accounts for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			if len(savedFiles) == 0 {
 				slog.Info("No Service Accounts found")

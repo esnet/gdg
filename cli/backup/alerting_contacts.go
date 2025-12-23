@@ -51,8 +51,8 @@ func newListContactPointsCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "name", "type", "settings"})
 			contactPoints, err := rootCmd.GrafanaSvc().ListContactPoints()
 			slog.Info("Listing contact points for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			logWarning()
 			if err != nil {
@@ -90,8 +90,8 @@ func newDownloadContactPointsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Download contact points for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 			logWarning()
 			file, err := rootCmd.GrafanaSvc().DownloadContactPoints()
 			if err != nil {
@@ -115,8 +115,8 @@ func newUploadContactPointsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Upload contact points for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 			newItems, err := rootCmd.GrafanaSvc().UploadContactPoints()
 			logWarning()
 			if err != nil {
@@ -146,8 +146,8 @@ func newClearContactPointsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Clear contact points for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 			removedItems, err := rootCmd.GrafanaSvc().ClearContactPoints()
 			logWarning()
 			if err != nil {

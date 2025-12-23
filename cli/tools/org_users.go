@@ -11,7 +11,6 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -44,7 +43,7 @@ func newGetUserOrgCmd() simplecobra.Commander {
 		Short: description,
 		Long:  description,
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Listing organizations for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing organizations for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name"})
 			org := rootCmd.GrafanaSvc().GetUserOrganization()
 			if org == nil {
@@ -75,7 +74,7 @@ func newListUsers() simplecobra.Commander {
 			if err != nil {
 				log.Fatal("unable to parse orgId to numeric value")
 			}
-			slog.Info("Listing org users for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing org users for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "login", "orgId", "name", "email", "role"})
 			users := rootCmd.GrafanaSvc().ListOrgUsers(orgId)
 			if len(users) == 0 {
@@ -110,7 +109,7 @@ func newUpdateUserRoleCmd() simplecobra.Commander {
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
-			slog.Info("Updating User role for context", slog.Any("context", config.Config().GetGDGConfig().GetContext()))
+			slog.Info("Updating User role for context", slog.Any("context", rootCmd.ConfigSvc().GetContext()))
 			rootCmd.TableObj.AppendHeader(table.Row{"login", "orgId", "name", "email", "role"})
 			err = rootCmd.GrafanaSvc().UpdateUserInOrg(roleName, orgSlug, userId)
 			if err != nil {
@@ -145,8 +144,8 @@ func newAddUserRoleCmd() simplecobra.Commander {
 			slog.Info("Add user to org for context",
 				slog.Any("userId", userId),
 				slog.Any("orgSlug", orgSlug),
-				slog.Any("context", config.Config().GetGDGConfig().GetContext()),
-				slog.Any("organization", config.Config().GetDefaultGrafanaConfig().OrganizationName),
+				slog.Any("context", rootCmd.ConfigSvc().GetContext()),
+				slog.Any("organization", rootCmd.ConfigSvc().GetDefaultGrafanaConfig().OrganizationName),
 			)
 			if !validBasicRole(role) {
 				log.Fatalf("Invalid role specified, '%s'.  Valid roles are:[%s]", role, strings.Join(getBasicRoles(), ", "))
@@ -181,7 +180,7 @@ func newDeleteUserRoleCmd() simplecobra.Commander {
 			if err != nil {
 				log.Fatal("unable to parse userId to numeric value")
 			}
-			slog.Info("Update org for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Update org for context", "context", rootCmd.ConfigSvc().GetContext())
 			err = rootCmd.GrafanaSvc().DeleteUserFromOrg(orgSlug, userId)
 			if err != nil {
 				slog.Error("Unable to remove user from Org", slog.Any("err", err.Error()))

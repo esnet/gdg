@@ -6,9 +6,9 @@ import (
 	"log"
 	"log/slog"
 	"os"
-	"sync"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/api"
 	"github.com/esnet/gdg/internal/config"
@@ -16,31 +16,39 @@ import (
 )
 
 var (
-	instance        *DashNGoImpl
-	initServiceOnce sync.Once
+	instance *DashNGoImpl
 )
 
 type DashNGoImpl struct {
 	extended    *api.ExtendedApi
+	gdgConfig   *domain.GDGAppConfiguration
 	grafanaConf *domain.GrafanaConfig
-	globalConf  *domain.AppGlobals
 	storage     storage.Storage
 }
 
-var DefaultConfigProvider config.Provider = func() *config.Configuration {
-	return config.Config()
+func (s *DashNGoImpl) GetGlobals() *domain.AppGlobals {
+	if s.gdgConfig.Global == nil {
+		s.gdgConfig.Global = &domain.AppGlobals{}
+	}
+	return s.gdgConfig.Global
 }
 
-func setupConfigData(cfg *config.Configuration, obj *DashNGoImpl) {
+func (s *DashNGoImpl) GetGdgConfig() *domain.GDGAppConfiguration {
+	return s.gdgConfig
+}
+
+func setupConfigData(cfg *domain.GDGAppConfiguration, obj *DashNGoImpl) {
 	obj.grafanaConf = cfg.GetDefaultGrafanaConfig()
-	obj.globalConf = cfg.GetGDGConfig().GetAppGlobals()
+	obj.gdgConfig = cfg
 }
 
-func newInstance(cfg *config.Configuration) *DashNGoImpl {
-	obj := &DashNGoImpl{}
+func newInstance(cfg *domain.GDGAppConfiguration) *DashNGoImpl {
+	obj := &DashNGoImpl{
+		gdgConfig: cfg,
+	}
 	setupConfigData(cfg, obj)
 
-	if obj.globalConf.ApiDebug {
+	if obj.GetGlobals().ApiDebug {
 		err := os.Setenv("DEBUG", "1")
 		if err != nil {
 			slog.Debug("unable to set debug env value", slog.Any("err", err))
@@ -52,7 +60,7 @@ func newInstance(cfg *config.Configuration) *DashNGoImpl {
 		}
 	}
 	obj.Login()
-	storageEngine, err := ConfigureStorage(DefaultConfigProvider)
+	storageEngine, err := ConfigureStorage(cfg)
 	if err != nil {
 		log.Fatal("Unable to configure a valid storage engine, %w", err)
 	}
@@ -65,19 +73,14 @@ func (s *DashNGoImpl) SetStorage(v storage.Storage) {
 	s.storage = v
 }
 
-func ConfigureStorage(provider config.Provider) (storage.Storage, error) {
+func ConfigureStorage(cfg *domain.GDGAppConfiguration) (storage.Storage, error) {
 	var (
 		storageEngine storage.Storage
 		err           error
-		cfg           *config.Configuration
 	)
-	if provider != nil {
-		cfg = provider()
-	} else {
-		cfg = config.Config()
-	}
+
 	// config
-	storageType, appData := cfg.GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
+	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, storage.Context, appData)
@@ -95,19 +98,19 @@ func ConfigureStorage(provider config.Provider) (storage.Storage, error) {
 	return storageEngine, nil
 }
 
-func NewTestApiService(storageEngine storage.Storage, cfgProvider config.Provider) GrafanaService {
-	if cfgProvider == nil {
-		cfgProvider = DefaultConfigProvider
+func NewTestApiService(storageEngine storage.Storage, cfg *domain.GDGAppConfiguration) GrafanaService {
+	if cfg == nil {
+		cfg = config.InitGdgConfig(common.DefaultTestConfig)
 	}
-	ins := newInstance(cfgProvider())
+	ins := newInstance(cfg)
 	ins.SetStorage(storageEngine)
-	setupConfigData(cfgProvider(), ins)
+	setupConfigData(cfg, ins)
 	return ins
 }
 
-func NewDashNGoImpl() *DashNGoImpl {
-	initServiceOnce.Do(func() {
-		instance = newInstance(config.Config())
-	})
+func NewDashNGoImpl(cfg *domain.GDGAppConfiguration) *DashNGoImpl {
+	if instance == nil {
+		instance = newInstance(cfg)
+	}
 	return instance
 }

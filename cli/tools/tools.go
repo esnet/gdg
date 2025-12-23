@@ -35,7 +35,7 @@ func NewToolsCommand() simplecobra.Commander {
 			cmd.Aliases = []string{"t"}
 		},
 		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
-			support.InitConfiguration(cd.CobraCommand)
+			r.InitConfiguration(cd.CobraCommand)
 			return nil
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {

@@ -7,7 +7,6 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/gosimple/slug"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -66,7 +65,7 @@ func newOrganizationsListCmd() simplecobra.Commander {
 			listOrganizations := rootCmd.GrafanaSvc().ListOrganizations(filter, includePreferences)
 			slog.Info("Listing organizations for context",
 				slog.Any("count", len(listOrganizations)),
-				slog.Any("context", config.Config().GetGDGConfig().GetContext()))
+				slog.Any("context", rootCmd.ConfigSvc().GetContext()))
 			sort.Slice(listOrganizations, func(a, b int) bool {
 				return listOrganizations[a].Organization.ID < listOrganizations[b].Organization.ID
 			})
@@ -106,7 +105,7 @@ func newOrganizationsDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Downloading organizations for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Downloading organizations for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			filter := service.NewOrganizationFilter(parseOrganizationGlobalFlags(cd.CobraCommand)...)
 			listOrganizations := rootCmd.GrafanaSvc().DownloadOrganizations(filter)
@@ -133,7 +132,7 @@ func newOrganizationsUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Uploading Folders for context: ", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Uploading Folders for context: ", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			filter := service.NewOrganizationFilter(parseOrganizationGlobalFlags(cd.CobraCommand)...)
 			organizations := rootCmd.GrafanaSvc().UploadOrganizations(filter)

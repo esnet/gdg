@@ -47,8 +47,8 @@ func newListTimingsCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"name", "interval count", "settings"})
 			slog.Info("Listing all alert timings",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			timingsList, err := rootCmd.GrafanaSvc().ListAlertTimings()
 			if err != nil {
@@ -97,10 +97,11 @@ func printAlertTimings(timedIntervals []*models.MuteTimeInterval) {
 					return "[]"
 				}
 				return string(raw)
-
 			}
-			twConfigs.AppendRow(table.Row{f(timeInterval.DaysOfMonth), timeInterval.Location,
-				f(timeInterval.Months), f(timeInterval.Times), f(timeInterval.Weekdays), f(timeInterval.Years)})
+			twConfigs.AppendRow(table.Row{
+				f(timeInterval.DaysOfMonth), timeInterval.Location,
+				f(timeInterval.Months), f(timeInterval.Times), f(timeInterval.Weekdays), f(timeInterval.Years),
+			})
 		}
 		if success {
 			twConfigs.Render()
@@ -120,8 +121,8 @@ func newDownloadTimingsCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"name", "interval count", "settings"})
 			slog.Info("Download all alert timings",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			file, err := rootCmd.GrafanaSvc().DownloadAlertTimings()
 			if err != nil {
@@ -146,8 +147,8 @@ func newUploadTimingsCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"name"})
 			slog.Info("Uploading all alert timings for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			files, err := rootCmd.GrafanaSvc().UploadAlertTimings()
 			if err != nil {

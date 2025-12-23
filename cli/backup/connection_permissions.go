@@ -8,7 +8,6 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -58,7 +57,7 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)
-			slog.Info("Listing Connection Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing Connection Permissions for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 			connections := rootCmd.GrafanaSvc().ListConnectionPermissions(filters)
 
@@ -67,7 +66,7 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 			} else {
 				for _, item := range connections {
 					writer := getConnPermTblWriter()
-					writer.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, service.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID)})
+					writer.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, service.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID, rootCmd.ConfigSvc())})
 					writer.Render()
 					if item.Permissions != nil {
 						twConfigs := table.NewWriter()
@@ -112,7 +111,7 @@ func newConnectionsPermissionClearCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Clear all connections permissions")
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all connections on: '%s' "+
-				"(Or all permission matching yoru --connection filter).  Do you wish to continue (y/n) ", config.Config().GetGDGConfig().ContextName,
+				"(Or all permission matching your --connection filter).  Do you wish to continue (y/n) ", rootCmd.ConfigSvc().ContextName,
 			), "", true)
 			rootCmd.TableObj.AppendHeader(table.Row{"cleared connection permissions"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
@@ -144,7 +143,7 @@ func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Download Connections for context",
-				"context", config.Config().GetGDGConfig().GetContext())
+				"context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(connectionFilter)
