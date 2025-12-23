@@ -21,7 +21,7 @@ func (s *Configuration) GetViperConfig() *viper.Viper {
 }
 
 func (s *Configuration) DefaultConfig() string {
-	cfg, err := assets.GetFile("gdg-example.yml")
+	cfg, err := assets.GetFile(defaultConfigName)
 	if err != nil {
 		slog.Warn("unable to find load default configuration", "err", err)
 	}
@@ -119,6 +119,7 @@ func (s *Configuration) DeleteContext(name string) {
 	slog.Info("Deleted context and set new context to", "deletedContext", name, "newActiveContext", s.GetGDGConfig().ContextName)
 }
 
+// SetContext sets the active context by name after validating its existence.
 func (s *Configuration) SetContext(name string) {
 	name = strings.ToLower(name)
 	_, ok := s.GetGDGConfig().GetContexts()[name]

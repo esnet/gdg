@@ -16,6 +16,8 @@ const (
 	policiesFile = "policies"
 )
 
+// DownloadAlertNotifications retrieves alert notifications, serializes them to JSON,
+// writes the file to disk/s3, and returns the file path or an error.
 func (s *DashNGoImpl) DownloadAlertNotifications() (string, error) {
 	var (
 		dsPacked []byte
@@ -37,6 +39,7 @@ func (s *DashNGoImpl) DownloadAlertNotifications() (string, error) {
 	return dsPath, nil
 }
 
+// ListAlertNotifications retrieves the current alert notification policy tree.
 func (s *DashNGoImpl) ListAlertNotifications() (*models.Route, error) {
 	res, err := s.GetClient().Provisioning.GetPolicyTree()
 	if err != nil {
@@ -45,6 +48,7 @@ func (s *DashNGoImpl) ListAlertNotifications() (*models.Route, error) {
 	return res.GetPayload(), nil
 }
 
+// ClearAlertNotifications resets the policy tree to clear alert notifications.
 func (s *DashNGoImpl) ClearAlertNotifications() error {
 	_, err := s.GetClient().Provisioning.ResetPolicyTree()
 	if err != nil {
@@ -55,6 +59,7 @@ func (s *DashNGoImpl) ClearAlertNotifications() error {
 	return nil
 }
 
+// UploadAlertNotifications uploads alert notification policies from file to Grafana and returns updated list.
 func (s *DashNGoImpl) UploadAlertNotifications() (*models.Route, error) {
 	var (
 		err   error

@@ -30,6 +30,7 @@ toc: true
 
 
 ### Changes
+  - [#515](https://github.com/esnet/gdg/pull/515) Add support for Alerting Timings
 
 ### Bug/Security Fixes
 -

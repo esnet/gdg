@@ -77,18 +77,26 @@ type AlertTemplates interface {
 	UploadAlertTemplates() ([]string, error)
 }
 
-type AlertNotifications interface {
+type AlertPolicies interface {
 	DownloadAlertNotifications() (string, error)
 	ListAlertNotifications() (*models.Route, error)
 	ClearAlertNotifications() error
 	UploadAlertNotifications() (*models.Route, error)
 }
 
+type AlertTimings interface {
+	DownloadAlertTimings() (string, error)
+	ListAlertTimings() ([]*models.MuteTimeInterval, error)
+	ClearAlertTimings() error
+	UploadAlertTimings() ([]string, error)
+}
+
 type AlertingApi interface {
 	AlertContactPoints
 	AlertRules
 	AlertTemplates
-	AlertNotifications
+	AlertPolicies
+	AlertTimings
 }
 
 type DashboardPermissionsApi interface {

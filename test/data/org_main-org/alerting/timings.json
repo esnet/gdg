@@ -1,0 +1,59 @@
+[
+	{
+		"name": "after-hours",
+		"time_intervals": [
+			{
+				"days_of_month": [
+					"7:31"
+				],
+				"location": "America/New_York",
+				"months": [
+					"1:11"
+				],
+				"times": [
+					{
+						"end_time": "23:59",
+						"start_time": "17:00"
+					},
+					{
+						"end_time": "09:00",
+						"start_time": "01:00"
+					}
+				],
+				"weekdays": [
+					"monday",
+					"tuesday",
+					"wednesday",
+					"thursday",
+					"friday"
+				],
+				"years": [
+					"2021:2031"
+				]
+			},
+			{
+				"days_of_month": [
+					"15:31"
+				],
+				"location": "Antarctica/South_Pole",
+				"months": [
+					"11:12"
+				],
+				"times": [
+					{
+						"end_time": "10:00",
+						"start_time": "08:00"
+					}
+				],
+				"weekdays": [
+					"friday",
+					"thursday",
+					"wednesday"
+				],
+				"years": [
+					"1900:2700"
+				]
+			}
+		]
+	}
+]

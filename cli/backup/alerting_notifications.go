@@ -12,13 +12,13 @@ import (
 )
 
 func newAlertingNotificationCommand() simplecobra.Commander {
-	description := "Manage Alerting Notification"
+	description := "Manage Alerting Notification Policies"
 	return &support.SimpleCommand{
-		NameP: "notifications",
+		NameP: "policy",
 		Short: description,
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
-			cmd.Aliases = []string{"notification", "notify", "n"}
+			cmd.Aliases = []string{"policies", "notifications", "notification", "notify", "n"}
 		},
 		CommandsList: []simplecobra.Commander{
 			newListAlertNotificationCmd(),
@@ -33,7 +33,7 @@ func newAlertingNotificationCommand() simplecobra.Commander {
 }
 
 func newUploadAlertNotificationCmd() simplecobra.Commander {
-	description := "Upload all alert notification for the given Organization"
+	description := "Upload all alert notification policies for the given Organization"
 	return &support.SimpleCommand{
 		NameP: "upload",
 		Short: description,
@@ -43,13 +43,13 @@ func newUploadAlertNotificationCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid"})
-			slog.Info("Uploading all alert notification for context",
+			slog.Info("Uploading all alert notification policies for context",
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
 
 			files, err := rootCmd.GrafanaSvc().UploadAlertNotifications()
 			if err != nil {
-				log.Fatal("unable to upload Orgs notification alerts", slog.Any("err", err))
+				log.Fatal("unable to upload Orgs notification policies alerts", slog.Any("err", err))
 			}
 			rootCmd.TableObj.AppendHeader(table.Row{"receiver", "matchers"})
 			for _, link := range files.Routes {
@@ -62,7 +62,7 @@ func newUploadAlertNotificationCmd() simplecobra.Commander {
 }
 
 func newClearAlertNotificationCmd() simplecobra.Commander {
-	description := "Clear all alert notification for the given Organization"
+	description := "Clear all alert notification policies for the given Organization"
 	return &support.SimpleCommand{
 		NameP: "clear",
 		Short: description,
@@ -71,23 +71,23 @@ func newClearAlertNotificationCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Deleting all alert notification for context",
+			slog.Info("Deleting all alert notification policies for context",
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
 
 			err := rootCmd.GrafanaSvc().ClearAlertNotifications()
 			if err != nil {
-				log.Fatal("unable to deleting Orgs notification alerts", slog.Any("err", err))
+				log.Fatal("unable to deleting Orgs notification policies alerts", slog.Any("err", err))
 			}
 
-			slog.Info("All notifications alerts have been cleared")
+			slog.Info("All notifications policies have been cleared")
 			return nil
 		},
 	}
 }
 
 func newListAlertNotificationCmd() simplecobra.Commander {
-	description := "List all alert notification for the given Organization"
+	description := "List all alert notification policies for the given Organization"
 	return &support.SimpleCommand{
 		NameP: "list",
 		Short: description,
@@ -97,16 +97,16 @@ func newListAlertNotificationCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"Receiver", "ObjectMatchers"})
-			slog.Info("Listing alert notification for context",
+			slog.Info("Listing alert notification policies for context",
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
 
 			data, err := rootCmd.GrafanaSvc().ListAlertNotifications()
 			if err != nil {
-				log.Fatal("unable to retrieve Orgs notification alerts", slog.Any("err", err))
+				log.Fatal("unable to retrieve Orgs notification policies", slog.Any("err", err))
 			}
 			if len(data.Routes) == 0 {
-				slog.Info("No alert notifications found")
+				slog.Info("No alert notifications policies found")
 			} else {
 				for _, link := range data.Routes {
 					rootCmd.TableObj.AppendRow(table.Row{link.Receiver, link.ObjectMatchers})
@@ -119,7 +119,7 @@ func newListAlertNotificationCmd() simplecobra.Commander {
 }
 
 func newDownloadAlertNotificationCmd() simplecobra.Commander {
-	description := "Download all alert notification for the given Organization"
+	description := "Download all alert notification policies for the given Organization"
 	return &support.SimpleCommand{
 		NameP: "download",
 		Short: description,
@@ -129,18 +129,15 @@ func newDownloadAlertNotificationCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "folderUid", "ruleGroup", "Title", "provenance", "data"})
-			slog.Info("Downloading alert notification for context",
+			slog.Info("Downloading alert notification policies for context",
 				slog.String("Organization", GetOrganizationName()),
 				slog.String("context", GetContext()))
 
 			file, err := rootCmd.GrafanaSvc().DownloadAlertNotifications()
 			if err != nil {
-				log.Fatal("unable to retrieve Orgs notification alerts", slog.Any("err", err))
-			}
-			if err != nil {
-				slog.Error("unable to download alert templates")
+				slog.Error("unable to download alert policies")
 			} else {
-				slog.Info("alert templates successfully downloaded", slog.Any("file", file))
+				slog.Info("alert policies successfully downloaded", slog.Any("file", file))
 			}
 			return nil
 		},

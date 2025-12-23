@@ -29,10 +29,10 @@ If it has been modified, it will not be able to clear it due to grafana restrict
 entity.{{< /callout >}}
 
 ```sh
-./bin/gdg backup alerting contactpoints list -- Lists all current contact points
-./bin/gdg backup alerting contactpoints download  -- Download all known contact points
-./bin/gdg backup alerting contactpoints upload -- Upload all contact points
-./bin/gdg backup alerting contactpoints clear -- Clear all contact points
+gdg backup alerting contactpoints list -- Lists all current contact points
+gdg backup alerting contactpoints download  -- Download all known contact points
+gdg backup alerting contactpoints upload -- Upload all contact points
+gdg backup alerting contactpoints clear -- Clear all contact points
 ```
 {{< details "Example Output:" >}}
 ```
@@ -48,10 +48,10 @@ entity.{{< /callout >}}
 #### Notifications
 
 ```sh
-./bin/gdg backup alerting notifications list -- Lists all current contact points
-./bin/gdg backup alerting notifications download  -- Download all known contact points
-./bin/gdg backup alerting notifications upload -- Upload all contact points
-./bin/gdg backup alerting notifications clear -- Clear all contact points
+gdg backup alerting notifications list -- Lists all current contact points
+gdg backup alerting notifications download  -- Download all known contact points
+gdg backup alerting notifications upload -- Upload all contact points
+gdg backup alerting notifications clear -- Clear all contact points
 ```
 {{< details "Example Output:" >}}
 ```
@@ -72,10 +72,10 @@ Rules will use watched folders to list act on. If you want to look at all filter
 **Note:**  This cli option is temporary, it will likely go away on the next release. More robust filtering will be added.
 
 ```sh
-./bin/gdg backup alerting rules list -- Lists all rules
-./bin/gdg backup alerting rules download  -- Download all known rules
-./bin/gdg backup alerting rules upload -- Upload all rules
-./bin/gdg backup alerting rules clear -- Clear all rules
+gdg backup alerting rules list -- Lists all rules
+gdg backup alerting rules download  -- Download all known rules
+gdg backup alerting rules upload -- Upload all rules
+gdg backup alerting rules clear -- Clear all rules
 ```
 
 
@@ -90,6 +90,47 @@ Rules will use watched folders to list act on. If you want to look at all filter
 ```
 {{< /details >}}
 
+#### Timed Intervals
+
+Timed intervals are time window that can be used in conjunction with notification policies.
+
+```sh
+gdg backup alerting mute-timings clear       Delete all alert timings for the given Organization
+gdg backup alerting mute-timings download    Download all alert timings for the given Organization
+gdg backup alerting mute-timings list        List all alert timings for the given Organization
+gdg backup alerting mute-timings upload      Upload all alert timings for the given Organization
+```
+
+{{< details "Example Output:" >}}
+```
+┌─────────────┬────────────────┐
+│ NAME        │ INTERVAL COUNT │
+├─────────────┼────────────────┤
+│ after-hours │              2 │
+└─────────────┴────────────────┘
+╔═══════════╦═══════════════════════╦═══════════╦═══════════════════════════╦════════════════╦═══════════════╗
+║ DAYS      ║ LOCATION              ║ MONTHS    ║ TIMES                     ║ WEEKDAYS       ║ YEARS         ║
+╠═══════════╬═══════════════════════╬═══════════╬═══════════════════════════╬════════════════╬═══════════════╣
+║ [         ║ America/New_York      ║ [         ║ [                         ║ [              ║ [             ║
+║   "7:31"  ║                       ║   "1:11"  ║   {                       ║   "monday",    ║   "2021:2031" ║
+║ ]         ║                       ║ ]         ║     "end_time": "23:59",  ║   "tuesday",   ║ ]             ║
+║           ║                       ║           ║     "start_time": "17:00" ║   "wednesday", ║               ║
+║           ║                       ║           ║   },                      ║   "thursday",  ║               ║
+║           ║                       ║           ║   {                       ║   "friday"     ║               ║
+║           ║                       ║           ║     "end_time": "09:00",  ║ ]              ║               ║
+║           ║                       ║           ║     "start_time": "01:00" ║                ║               ║
+║           ║                       ║           ║   }                       ║                ║               ║
+║           ║                       ║           ║ ]                         ║                ║               ║
+║ [         ║ Antarctica/South_Pole ║ [         ║ [                         ║ [              ║ [             ║
+║   "15:31" ║                       ║   "11:12" ║   {                       ║   "friday",    ║   "1900:2700" ║
+║ ]         ║                       ║ ]         ║     "end_time": "10:00",  ║   "thursday",  ║ ]             ║
+║           ║                       ║           ║     "start_time": "08:00" ║   "wednesday"  ║               ║
+║           ║                       ║           ║   }                       ║ ]              ║               ║
+║           ║                       ║           ║ ]                         ║                ║               ║
+╚═══════════╩═══════════════════════╩═══════════╩═══════════════════════════╩════════════════╩═══════════════╝
+```
+{{< /details >}}
+
 
 
 
@@ -97,10 +138,10 @@ Rules will use watched folders to list act on. If you want to look at all filter
 
 
 ```sh
-./bin/gdg backup alerting templates list -- Lists all templates
-./bin/gdg backup alerting templates download  -- Download all templates
-./bin/gdg backup alerting templates upload -- Upload all contact templates
-./bin/gdg backup alerting templates clear -- Clear all templates
+gdg backup alerting templates list -- Lists all templates
+gdg backup alerting templates download  -- Download all templates
+gdg backup alerting templates upload -- Upload all contact templates
+gdg backup alerting templates clear -- Clear all templates
 ```
 {{< details "Example Output:" >}}
 ```
@@ -127,10 +168,10 @@ Datasources are imported or exported from _organization_ specified in configurat
 All commands can use `connection` or `c` to manage datasources.
 
 ```sh
-./bin/gdg backup c list -- Lists all current connections
-./bin/gdg backup c download -- Import all connections from grafana to local file system
-./bin/gdg backup c upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
-./bin/gdg backup c clear -- Deletes all connections
+gdg backup c list -- Lists all current connections
+gdg backup c download -- Import all connections from grafana to local file system
+gdg backup c upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
+gdg backup c clear -- Deletes all connections
 ```
 
 
@@ -141,18 +182,18 @@ Dashboards are imported or exported from _organization_ specified in configurati
 All commands can use `dashboards` or `dash` to manage dashboards
 
 ```sh
-./bin/gdg backup dash list -- Lists all current dashboards
-./bin/gdg backup dash download -- Import all dashboards from grafana to local file system
-./bin/gdg backup dash upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
-./bin/gdg backup dash clear -- Deletes all dashboards
+gdg backup dash list -- Lists all current dashboards
+gdg backup dash download -- Import all dashboards from grafana to local file system
+gdg backup dash upload -- Exports all dashboard from local filesystem (matching folder filter) to Grafana
+gdg backup dash clear -- Deletes all dashboards
 ```
 
 You can also use filtering options to list or import your dashboard by folder or by tags.
 
 ```sh
-./bin/gdg backup dash download -f myFolder
-./bin/gdg backup dash download -t myTag
-./bin/gdg backup dash download -t tagA -t tagB  -t complex,tagC
+gdg backup dash download -f myFolder
+gdg backup dash download -t myTag
+gdg backup dash download -t tagA -t tagB  -t complex,tagC
 ```
 The command above will return any dashboard that is tagged with `tagA` or `tagB` or `complex,tagC`
 
@@ -164,10 +205,10 @@ The command above will return any dashboard that is tagged with `tagA` or `tagB`
 Mostly optional as Dashboards will create/delete these are needed but if there is additional metadata you wish to persist you can use this to manage them.
 
 ```sh
-./bin/gdg backup folders list -- Lists all current folders
-./bin/gdg backup folders download -- Import all folders from grafana to local file system
-./bin/gdg backup folders upload -- Exports all folders from local filesystem
-./bin/gdg backup folders clear -- Deletes all folders
+gdg backup folders list -- Lists all current folders
+gdg backup folders download -- Import all folders from grafana to local file system
+gdg backup folders upload -- Exports all folders from local filesystem
+gdg backup folders clear -- Deletes all folders
 ```
 
 ### Folder Permissions
@@ -186,9 +227,9 @@ this tool and more error checking when entities that don't exist are being refer
 clearing permissions from all folders seems too destructive to really be a useful function.
 
 ```sh
-./bin/gdg backup folders list -- Lists all current folder permissions
-./bin/gdg backup folders download -- Retrieve all folders permissions from Grafana
-./bin/gdg backup folders upload -- Exports all folders from local filesystem
+gdg backup folders list -- Lists all current folder permissions
+gdg backup folders download -- Retrieve all folders permissions from Grafana
+gdg backup folders upload -- Exports all folders from local filesystem
 ```
 
 ```
@@ -218,11 +259,11 @@ Library elements are components that can be shared among multiple dashboards.  F
 All commands can use `libraryelements` aliased to `library` and `lib` for laziness purposes.  A more extensive tutorial is available [here](https://software.es.net/gdg/docs/tutorials/library_elements/)
 
 ```sh
-./bin/gdg backup lib list -- Lists all library components
-./bin/gdg backup lib download -- Import all library components from grafana to local file system
-./bin/gdg backup lib upload -- Exports all library components from local filesystem (matching folder filter) to Grafana
-./bin/gdg backup lib clear -- Deletes all library components
-./bin/gdg backup lib  list-connections <Lib Element UID> -- Will list all of the dashboards connected to the Lib Element (Coming in v0.4.2)
+gdg backup lib list -- Lists all library components
+gdg backup lib download -- Import all library components from grafana to local file system
+gdg backup lib upload -- Exports all library components from local filesystem (matching folder filter) to Grafana
+gdg backup lib clear -- Deletes all library components
+gdg backup lib  list-connections <Lib Element UID> -- Will list all of the dashboards connected to the Lib Element (Coming in v0.4.2)
 ```
 
 
@@ -241,9 +282,9 @@ Command can use `organizations` or `org` to manage organizations.
 
 
 ```sh
-./bin/gdg backup org list -- Lists all organizations
-./bin/gdg backup org upload -- Upload Orgs to grafana
-./bin/gdg backup org download -- Download Orgs to grafana
+gdg backup org list -- Lists all organizations
+gdg backup org upload -- Upload Orgs to grafana
+gdg backup org download -- Download Orgs to grafana
 ```
 
 A tutorial on working with [organizations](https://software.es.net/gdg/docs/tutorials/organization-and-authentication/) is available.
@@ -256,10 +297,10 @@ Users need to be created before team export can succeed
 
 
 ```sh
-./bin/gdg backup team list  -- Lists all known team members
-./bin/gdg backup team download -- download all known team members
-./bin/gdg backup team upload -- upload all known team members
-./bin/gdg backup team clear -- Delete all known team except admin
+gdg backup team list  -- Lists all known team members
+gdg backup team download -- download all known team members
+gdg backup team upload -- upload all known team members
+gdg backup team clear -- Delete all known team except admin
 ```
 
 {{< details "Team Listing" >}}
@@ -286,9 +327,9 @@ Only supported with basic auth.  Users is the only one where basic auth is given
 NOTE: admin user is always ignored.
 
 ```sh
-./bin/gdg backup users list -- Lists all known users
-./bin/gdg backup users download -- Lists all known users
-./bin/gdg backup users upload -- Export all users (Not yet supported)
-./bin/gdg backup users clear -- Delete all known users except admin
+gdg backup users list -- Lists all known users
+gdg backup users download -- Lists all known users
+gdg backup users upload -- Export all users (Not yet supported)
+gdg backup users clear -- Delete all known users except admin
 ```
 

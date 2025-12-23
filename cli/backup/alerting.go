@@ -22,6 +22,7 @@ func newAlertingCommand() simplecobra.Commander {
 			newAlertingRulesCommand(),
 			newAlertingTemplatesCommand(),
 			newAlertingNotificationCommand(),
+			newAlertingTimingsCommand(),
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()

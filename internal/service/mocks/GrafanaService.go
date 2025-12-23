@@ -262,6 +262,50 @@ func (_c *GrafanaService_ClearAlertTemplates_Call) RunAndReturn(run func() ([]st
 	return _c
 }
 
+// ClearAlertTimings provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) ClearAlertTimings() error {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ClearAlertTimings")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func() error); ok {
+		r0 = returnFunc()
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// GrafanaService_ClearAlertTimings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ClearAlertTimings'
+type GrafanaService_ClearAlertTimings_Call struct {
+	*mock.Call
+}
+
+// ClearAlertTimings is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) ClearAlertTimings() *GrafanaService_ClearAlertTimings_Call {
+	return &GrafanaService_ClearAlertTimings_Call{Call: _e.mock.On("ClearAlertTimings")}
+}
+
+func (_c *GrafanaService_ClearAlertTimings_Call) Run(run func()) *GrafanaService_ClearAlertTimings_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ClearAlertTimings_Call) Return(err error) *GrafanaService_ClearAlertTimings_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *GrafanaService_ClearAlertTimings_Call) RunAndReturn(run func() error) *GrafanaService_ClearAlertTimings_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ClearContactPoints provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) ClearContactPoints() ([]string, error) {
 	ret := _mock.Called()
@@ -1267,6 +1311,59 @@ func (_c *GrafanaService_DownloadAlertTemplates_Call) Return(s string, err error
 }
 
 func (_c *GrafanaService_DownloadAlertTemplates_Call) RunAndReturn(run func() (string, error)) *GrafanaService_DownloadAlertTemplates_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DownloadAlertTimings provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) DownloadAlertTimings() (string, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for DownloadAlertTimings")
+	}
+
+	var r0 string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() (string, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() string); ok {
+		r0 = returnFunc()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// GrafanaService_DownloadAlertTimings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DownloadAlertTimings'
+type GrafanaService_DownloadAlertTimings_Call struct {
+	*mock.Call
+}
+
+// DownloadAlertTimings is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) DownloadAlertTimings() *GrafanaService_DownloadAlertTimings_Call {
+	return &GrafanaService_DownloadAlertTimings_Call{Call: _e.mock.On("DownloadAlertTimings")}
+}
+
+func (_c *GrafanaService_DownloadAlertTimings_Call) Run(run func()) *GrafanaService_DownloadAlertTimings_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_DownloadAlertTimings_Call) Return(s string, err error) *GrafanaService_DownloadAlertTimings_Call {
+	_c.Call.Return(s, err)
+	return _c
+}
+
+func (_c *GrafanaService_DownloadAlertTimings_Call) RunAndReturn(run func() (string, error)) *GrafanaService_DownloadAlertTimings_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2363,6 +2460,61 @@ func (_c *GrafanaService_ListAlertTemplates_Call) Return(notificationTemplates [
 }
 
 func (_c *GrafanaService_ListAlertTemplates_Call) RunAndReturn(run func() ([]*models.NotificationTemplate, error)) *GrafanaService_ListAlertTemplates_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListAlertTimings provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) ListAlertTimings() ([]*models.MuteTimeInterval, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListAlertTimings")
+	}
+
+	var r0 []*models.MuteTimeInterval
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]*models.MuteTimeInterval, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []*models.MuteTimeInterval); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*models.MuteTimeInterval)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// GrafanaService_ListAlertTimings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListAlertTimings'
+type GrafanaService_ListAlertTimings_Call struct {
+	*mock.Call
+}
+
+// ListAlertTimings is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) ListAlertTimings() *GrafanaService_ListAlertTimings_Call {
+	return &GrafanaService_ListAlertTimings_Call{Call: _e.mock.On("ListAlertTimings")}
+}
+
+func (_c *GrafanaService_ListAlertTimings_Call) Run(run func()) *GrafanaService_ListAlertTimings_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ListAlertTimings_Call) Return(muteTimeIntervals []*models.MuteTimeInterval, err error) *GrafanaService_ListAlertTimings_Call {
+	_c.Call.Return(muteTimeIntervals, err)
+	return _c
+}
+
+func (_c *GrafanaService_ListAlertTimings_Call) RunAndReturn(run func() ([]*models.MuteTimeInterval, error)) *GrafanaService_ListAlertTimings_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3663,6 +3815,61 @@ func (_c *GrafanaService_UploadAlertTemplates_Call) Return(strings []string, err
 }
 
 func (_c *GrafanaService_UploadAlertTemplates_Call) RunAndReturn(run func() ([]string, error)) *GrafanaService_UploadAlertTemplates_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UploadAlertTimings provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) UploadAlertTimings() ([]string, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for UploadAlertTimings")
+	}
+
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []string); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// GrafanaService_UploadAlertTimings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadAlertTimings'
+type GrafanaService_UploadAlertTimings_Call struct {
+	*mock.Call
+}
+
+// UploadAlertTimings is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) UploadAlertTimings() *GrafanaService_UploadAlertTimings_Call {
+	return &GrafanaService_UploadAlertTimings_Call{Call: _e.mock.On("UploadAlertTimings")}
+}
+
+func (_c *GrafanaService_UploadAlertTimings_Call) Run(run func()) *GrafanaService_UploadAlertTimings_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_UploadAlertTimings_Call) Return(strings []string, err error) *GrafanaService_UploadAlertTimings_Call {
+	_c.Call.Return(strings, err)
+	return _c
+}
+
+func (_c *GrafanaService_UploadAlertTimings_Call) RunAndReturn(run func() ([]string, error)) *GrafanaService_UploadAlertTimings_Call {
 	_c.Call.Return(run)
 	return _c
 }
