@@ -1,7 +1,8 @@
 package common
 
 const (
-	DefaultTestConfig = "testing.yml"
-	TestBucketName    = "testing"
-	TestContextName   = TestBucketName
+	DefaultTestConfig     = "testing.yml"
+	DefaultTemplateConfig = "templates-example.yml"
+	TestBucketName        = "testing"
+	TestContextName       = TestBucketName
 )

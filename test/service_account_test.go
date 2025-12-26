@@ -11,19 +11,18 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestServiceAccountCrud(t *testing.T) {
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)

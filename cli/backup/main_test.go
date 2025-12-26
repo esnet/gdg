@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/mocks"
 
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -24,9 +23,7 @@ func TestMain(m *testing.M) {
 func GetOptionMockSvc(testSvc *mocks.GrafanaService) func() support.RootOption {
 	return func() support.RootOption {
 		return func(response *support.RootCommand) {
-			response.GrafanaSvc = func() service.GrafanaService {
-				return testSvc
-			}
+			response.SetUpTest(testSvc)
 		}
 	}
 }

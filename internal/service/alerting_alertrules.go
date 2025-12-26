@@ -9,11 +9,11 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/config/domain"
+	configDomain "github.com/esnet/gdg/internal/config/domain"
 	modelsDomain "github.com/esnet/gdg/internal/service/domain"
 	"github.com/esnet/gdg/internal/service/filters"
-	v2 "github.com/esnet/gdg/internal/service/filters/v2"
+	"github.com/esnet/gdg/internal/service/filters/v2"
+	"github.com/esnet/gdg/pkg/config/domain"
 	"github.com/gosimple/slug"
 
 	"github.com/samber/lo"
@@ -23,7 +23,7 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 )
 
-func NewAlertRuleFilter() filters.V2Filter {
+func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
 	filterObj := v2.NewBaseFilter()
 	err := filterObj.RegisterReader(reflect.TypeOf(&modelsDomain.AlertRuleWithNestedFolder{}), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(*modelsDomain.AlertRuleWithNestedFolder)
@@ -41,7 +41,7 @@ func NewAlertRuleFilter() filters.V2Filter {
 		log.Fatalf("unable to register a valid reader for folder filter")
 	}
 
-	folderArr := config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false)
+	folderArr := cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
 	filterObj.AddValidation(filters.AlertRuleFilterType, func(value any, expected any) error {
 		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, filters.AlertRuleFilterType)
 		if convErr != nil {
@@ -154,7 +154,7 @@ func (s *DashNGoImpl) DownloadAlertRules(filter filters.V2Filter) ([]string, err
 	}
 	var savedFiles []string
 	for _, link := range data {
-		base := BuildResourceFolder(link.NestedPath, domain.AlertingRulesResource, s.isLocal(), s.globalConf.ClearOutput)
+		base := BuildResourceFolder(s.grafanaConf, link.NestedPath, domain.AlertingRulesResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		fileName := fmt.Sprintf("%s/%s.json", base, slug.Make(ptr.ValueOrDefault(link.Title, "no-name")))
 		if dsPacked, err = json.MarshalIndent(link, "", "	"); err != nil {
 			return nil, fmt.Errorf("unable to serialize data to JSON. %w", err)

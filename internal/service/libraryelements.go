@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	configDomain "github.com/esnet/gdg/internal/config/domain"
+	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/service/domain"
 
@@ -17,7 +18,6 @@ import (
 
 	"github.com/esnet/gdg/internal/tools/ptr"
 
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
@@ -91,10 +91,10 @@ func setupLibElementsReaders(filterObj filters.V2Filter) {
 	}
 }
 
-func NewLibraryElementFilter() filters.V2Filter {
+func NewLibraryElementFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
 	filterObj := v2.NewBaseFilter()
 	setupLibElementsReaders(filterObj)
-	addFolderFilter(filterObj, "")
+	addFolderFilter(cfg, filterObj, "")
 
 	return filterObj
 }
@@ -122,7 +122,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*domain.Wit
 	if ignoreFilters {
 		filter = nil
 	} else if filter == nil {
-		filter = NewLibraryElementFilter()
+		filter = NewLibraryElementFilter(s.gdgConfig)
 	}
 
 	params := library_elements.NewGetLibraryElementsParams()
@@ -178,7 +178,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.V2Filter) []string 
 			folderName = val
 		}
 
-		libraryPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(folderName, configDomain.LibraryElementResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(item.Entity.Name))
+		libraryPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(s.grafanaConf, folderName, resourceTypes.LibraryElementResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(item.Entity.Name))
 
 		if err = s.storage.WriteFile(libraryPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err, "library-element", slug.Make(item.Entity.Name))
@@ -200,8 +200,8 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 	)
 
 	orgName := s.grafanaConf.GetOrganizationName()
-	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.LibraryElementResource, orgName))
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.LibraryElementResource, orgName), true)
+	slog.Info("Reading files from folder", "folder", s.grafanaConf.GetPath(resourceTypes.LibraryElementResource, orgName))
+	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(resourceTypes.LibraryElementResource, orgName), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for library elements", "err", err)
 	}
@@ -227,7 +227,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = getFolderFromResourcePath(file, configDomain.LibraryElementResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		folderName, err = getFolderFromResourcePath(s.grafanaConf, file, resourceTypes.LibraryElementResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 			folderName = DefaultFolderName

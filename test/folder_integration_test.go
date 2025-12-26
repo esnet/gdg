@@ -29,17 +29,11 @@ import (
 )
 
 func TestFolderCRUD(t *testing.T) {
-	test_tooling.WrapTest(func() {
-		config.InitGdgConfig(common.DefaultTestConfig)
-	})
-	cfgProvider := func() *config.Configuration {
-		cfg := config.Config()
-		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = false
-		return cfg
-	}
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = false
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, cfgProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -79,10 +73,10 @@ func TestFolderCRUD(t *testing.T) {
 }
 
 func TestFolderSanityCheck(t *testing.T) {
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -108,10 +102,10 @@ func TestFolderSanityCheck(t *testing.T) {
 
 // TODO: write a full CRUD validation of folder permissions
 func TestFolderPermissions(t *testing.T) {
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -158,7 +152,8 @@ func TestFolderNestedPermissions(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("skipping token based tests")
 	}
-	containerObj, cleanup := test_tooling.InitOrganizations(t)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	containerObj, cleanup := test_tooling.InitOrganizations(t, cfg)
 
 	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
 	defer func() {
@@ -166,7 +161,7 @@ func TestFolderNestedPermissions(t *testing.T) {
 		cleanup()
 	}()
 
-	apiClient, _ := test_tooling.CreateSimpleClient(t, nil, containerObj)
+	apiClient, _ := test_tooling.CreateSimpleClient(t, cfg, nil, containerObj)
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)
 	slog.Info("Listing all Folders")
@@ -204,8 +199,9 @@ func TestFolderNestedCRUD(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("skipping token based tests")
 	}
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 
-	containerObj, cleanup := test_tooling.InitOrganizations(t)
+	containerObj, cleanup := test_tooling.InitOrganizations(t, cfg)
 
 	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
 	defer func() {
@@ -213,7 +209,7 @@ func TestFolderNestedCRUD(t *testing.T) {
 		cleanup()
 	}()
 
-	apiClient, _ := test_tooling.CreateSimpleClient(t, nil, containerObj)
+	apiClient, _ := test_tooling.CreateSimpleClient(t, cfg, nil, containerObj)
 
 	slog.Info("Exporting all folders")
 	apiClient.UploadFolders(nil)

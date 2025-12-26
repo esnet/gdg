@@ -32,8 +32,7 @@ func newDefaultConfig() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "default-config",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
-			o := config.Configuration{}
-			fmt.Print(o.DefaultConfig())
+			fmt.Print(config.DefaultConfig())
 			return nil
 		},
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {

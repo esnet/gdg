@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/tools"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -20,11 +20,11 @@ import (
 
 var useFolderFilters bool
 
-func getFolderFilter() filters.V2Filter {
+func getFolderFilter(cfg *domain.GDGAppConfiguration) filters.V2Filter {
 	if !useFolderFilters {
 		return nil
 	}
-	return service.NewFolderFilter()
+	return service.NewFolderFilter(cfg)
 }
 
 func newFolderCommand() simplecobra.Commander {
@@ -60,16 +60,16 @@ func newFolderClearCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c", "delete"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Deleting all Folders for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Deleting all Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			if !skipConfirmAction {
 				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all folders in the monitored folders list: '%s' "+
 					"(or all folders in your grafana instance if ignore_dashboard_filters is set to true).  Do you wish to "+
-					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false), ", "),
+					"continue (y/n) ", strings.Join(rootCmd.ConfigSvc().GetDefaultGrafanaConfig().GetMonitoredFolders(false), ", "),
 				), "", true)
 			}
 			rootCmd.TableObj.AppendHeader(table.Row{"title"})
 
-			folders := rootCmd.GrafanaSvc().DeleteAllFolders(getFolderFilter())
+			folders := rootCmd.GrafanaSvc().DeleteAllFolders(getFolderFilter(rootCmd.ConfigSvc()))
 			if len(folders) == 0 {
 				slog.Info("No Folders found")
 			} else {
@@ -93,9 +93,9 @@ func newFolderListCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "title", "nestedPath"})
-			folders := rootCmd.GrafanaSvc().ListFolders(getFolderFilter())
+			folders := rootCmd.GrafanaSvc().ListFolders(getFolderFilter(rootCmd.ConfigSvc()))
 
 			if len(folders) == 0 {
 				slog.Info("No folders found")
@@ -121,9 +121,9 @@ func newFolderDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
-			folders := rootCmd.GrafanaSvc().DownloadFolders(getFolderFilter())
+			folders := rootCmd.GrafanaSvc().DownloadFolders(getFolderFilter(rootCmd.ConfigSvc()))
 			if len(folders) == 0 {
 				slog.Info("No folders found")
 			} else {
@@ -147,9 +147,9 @@ func newFolderUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Uploading Folders for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Uploading Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
-			folders := rootCmd.GrafanaSvc().UploadFolders(getFolderFilter())
+			folders := rootCmd.GrafanaSvc().UploadFolders(getFolderFilter(rootCmd.ConfigSvc()))
 			if len(folders) == 0 {
 				slog.Info("No folders found")
 			} else {

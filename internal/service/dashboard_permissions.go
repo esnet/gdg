@@ -7,7 +7,7 @@ import (
 	"log/slog"
 	"strings"
 
-	configDomain "github.com/esnet/gdg/internal/config/domain"
+	configDomain "github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/service/domain"
 
@@ -63,7 +63,7 @@ func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq filters.V2Filter) (
 			continue
 		}
 
-		dsPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.Dashboard.NestedPath, configDomain.DashboardPermissionsResource, s.isLocal(), s.globalConf.ClearOutput), slug.Make(link.Dashboard.Title))
+		dsPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(s.grafanaConf, link.Dashboard.NestedPath, configDomain.DashboardPermissionsResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(link.Dashboard.Title))
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(link.Dashboard.Title), "error", err.Error())
 		} else {
@@ -89,11 +89,11 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.V2Filter) ([]
 	)
 	// Fallback on defaults
 	if filterReq == nil {
-		filterReq = NewDashboardFilter("", "", "")
+		filterReq = NewDashboardFilter(s.gdgConfig, "", "", "")
 	}
 
 	orgName := s.grafanaConf.GetOrganizationName()
-	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter()))
+	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter(s.gdgConfig)))
 	path := s.grafanaConf.GetPath(configDomain.DashboardPermissionsResource, orgName)
 	filesInDir, err := s.storage.FindAllFiles(path, true)
 	if err != nil {
@@ -124,7 +124,7 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.V2Filter) ([]
 		}
 
 		// Extract Folder Name based on path
-		folderName, foldErr := getFolderFromResourcePath(file, configDomain.DashboardPermissionsResource, s.storage.GetPrefix(), orgName)
+		folderName, foldErr := getFolderFromResourcePath(s.grafanaConf, file, configDomain.DashboardPermissionsResource, s.storage.GetPrefix(), orgName)
 		if foldErr != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default", "err", foldErr)
 			folderName = DefaultFolderName

@@ -10,14 +10,13 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/esnet/gdg/pkg/config/domain"
 	"github.com/samber/lo"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 	"github.com/tidwall/gjson"
 
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
@@ -98,7 +97,7 @@ func NewTeamFilter(entries ...string) filters.V2Filter {
 func (s *DashNGoImpl) DownloadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
-	teamPath := BuildResourceFolder("", domain.TeamResource, s.isLocal(), s.globalConf.ClearOutput)
+	teamPath := BuildResourceFolder(s.grafanaConf, "", domain.TeamResource, s.isLocal(), s.GetGlobals().ClearOutput)
 	for ndx, team := range teamListing {
 		// Teams
 		teamFileName := filepath.Join(teamPath, GetSlug(ptr.ValueOrDefault(team.Name, "")), "team.json")
@@ -134,7 +133,7 @@ func (s *DashNGoImpl) DownloadTeams(filter filters.V2Filter) map[*models.TeamDTO
 // UploadTeams Export Teams
 func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(domain.TeamResource, orgName), true)
+	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.TeamResource, orgName), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for teams", "err", err)
 	}
@@ -168,6 +167,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 			teamCreated, teamCreatedErr := s.GetClient().Teams.CreateTeam(p)
 			if teamCreatedErr != nil {
 				slog.Error("failed to create team for file", "filename", fileLocation, "err", teamCreatedErr)
+				continue
 			}
 
 			newTeam.ID = ptr.Of(teamCreated.GetPayload().TeamID)
@@ -175,7 +175,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
 
-			teamMemberLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(domain.TeamResource, orgName), GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
+			teamMemberLocation := filepath.Join(s.grafanaConf.GetPath(domain.TeamResource, orgName), GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
 			if rawMembers, err = s.storage.ReadFile(teamMemberLocation); err != nil {
 				slog.Error("failed to find team members", "filename", fileLocation, "err", err)
 				continue
@@ -239,12 +239,13 @@ func (s *DashNGoImpl) DeleteTeam(filter filters.V2Filter) ([]*models.TeamDTO, er
 	teamListing := maps.Keys(s.ListTeams(filter))
 	var result []*models.TeamDTO
 	for _, team := range teamListing {
-		if !filter.ValidateAll(*team) {
+		if !filter.ValidateAll(*team) || team.ID == nil {
+			slog.Error("Team failed basic validation, could not delete entry")
 			continue
 		}
-		_, err := s.GetClient().Teams.DeleteTeamByID(fmt.Sprintf("%d", team.ID))
+		_, err := s.GetClient().Teams.DeleteTeamByID(fmt.Sprintf("%d", *team.ID))
 		if err != nil {
-			slog.Error("failed to delete team", "teamName", team.Name)
+			slog.Error("failed to delete team", "teamName", *team.Name)
 			continue
 		}
 		result = append(result, team)

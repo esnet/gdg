@@ -24,10 +24,10 @@ func TestOrganizationCrud(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -59,10 +59,10 @@ func TestOrganizationUserMembership(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -122,10 +122,10 @@ func TestOrganizationProperties(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -137,7 +137,7 @@ func TestOrganizationProperties(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
-	_, err = apiClient.UploadDashboards(service.NewDashboardFilter("", "", ""))
+	_, err = apiClient.UploadDashboards(service.NewDashboardFilter(cfg, "", "", ""))
 	assert.NoError(t, err)
 	prefs, err := apiClient.GetOrgPreferences("Main Org.")
 	assert.Nil(t, err)
@@ -152,5 +152,5 @@ func TestOrganizationProperties(t *testing.T) {
 	assert.Equal(t, prefs.Theme, "dark")
 	assert.Equal(t, prefs.WeekStart, "Saturday")
 	assert.Equal(t, prefs.HomeDashboardUID, "000000003")
-	apiClient.DeleteAllDashboards(service.NewDashboardFilter("", "", ""))
+	apiClient.DeleteAllDashboards(service.NewDashboardFilter(cfg, "", "", ""))
 }

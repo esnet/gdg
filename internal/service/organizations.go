@@ -12,12 +12,12 @@ import (
 	"strings"
 
 	configDomain "github.com/esnet/gdg/internal/config/domain"
+	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
@@ -224,7 +224,7 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 		}
 	}
 
-	return config.Config().SaveToDisk(false)
+	return s.gdgConfig.SaveToDisk(false)
 }
 
 // ListOrganizations List all dashboards
@@ -284,7 +284,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter filters.V2Filter) []string {
 			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Organization.Name)
 			continue
 		}
-		dsPath := buildResourcePath(slug.Make(organisation.Organization.Name), configDomain.OrganizationResource, s.isLocal(), s.globalConf.ClearOutput)
+		dsPath := buildResourcePath(s.grafanaConf, slug.Make(organisation.Organization.Name), resourceTypes.OrganizationResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "organization", slug.Make(organisation.Organization.Name))
 		} else {
@@ -306,7 +306,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.V2Filter) []string {
 		rawFolder []byte
 	)
 	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.OrganizationResource, orgName), false)
+	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(resourceTypes.OrganizationResource, orgName), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, err: %v", err)
 	}
@@ -317,7 +317,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter filters.V2Filter) []string {
 	}
 
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.OrganizationResource, orgName), file)
+		fileLocation := filepath.Join(s.grafanaConf.GetPath(resourceTypes.OrganizationResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)

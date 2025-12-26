@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"regexp"
 
+	domain2 "github.com/esnet/gdg/pkg/config/domain"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
 )
@@ -108,7 +109,7 @@ func (s *GrafanaConfig) GetConnectionSettings() *ConnectionSettings {
 }
 
 // GetPath returns the path of the resource type
-func (s *GrafanaConfig) GetPath(r ResourceType, orgName string) string {
+func (s *GrafanaConfig) GetPath(r domain2.ResourceType, orgName string) string {
 	return r.GetPath(s.OutputPath, orgName)
 }
 

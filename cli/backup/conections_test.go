@@ -36,7 +36,7 @@ func TestConnectionCommand(t *testing.T) {
 
 	optionMockSvc := func() support.RootOption {
 		return func(response *support.RootCommand) {
-			response.GrafanaSvc = getMockSvc
+			response.SetUpTest(getMockSvc())
 		}
 	}
 	r, w, cleanup := test_tooling.InterceptStdout()

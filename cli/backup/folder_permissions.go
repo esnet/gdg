@@ -7,7 +7,6 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -53,9 +52,9 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
 
-			slog.Info("Listing Folders for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"folderUid", "folder ID", "folder Name", "UserID", "Team Name", "Role", "Permission Name"}, rowConfigAutoMerge)
-			folders := rootCmd.GrafanaSvc().ListFolderPermissions(getFolderFilter())
+			folders := rootCmd.GrafanaSvc().ListFolderPermissions(getFolderFilter(rootCmd.ConfigSvc()))
 
 			if len(folders) == 0 {
 				slog.Info("No folders found")
@@ -91,9 +90,9 @@ func newFolderPermissionDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Downloading Folder Permissions for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Downloading Folder Permissions for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
-			folders := rootCmd.GrafanaSvc().DownloadFolderPermissions(getFolderFilter())
+			folders := rootCmd.GrafanaSvc().DownloadFolderPermissions(getFolderFilter(rootCmd.ConfigSvc()))
 			slog.Info("Downloading folder permissions")
 
 			if len(folders) == 0 {
@@ -121,7 +120,7 @@ func newFolderPermissionUploadCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Uploading folder permissions")
 			rootCmd.TableObj.AppendHeader(table.Row{"file name"})
-			folders := rootCmd.GrafanaSvc().UploadFolderPermissions(getFolderFilter())
+			folders := rootCmd.GrafanaSvc().UploadFolderPermissions(getFolderFilter(rootCmd.ConfigSvc()))
 
 			if len(folders) == 0 {
 				slog.Info("No folders found")

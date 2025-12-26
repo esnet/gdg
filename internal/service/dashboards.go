@@ -13,7 +13,7 @@ import (
 	"sort"
 	"strings"
 
-	configDomain "github.com/esnet/gdg/internal/config/domain"
+	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/service/domain"
 
@@ -26,7 +26,8 @@ import (
 
 	"github.com/esnet/gdg/internal/tools/ptr"
 
-	"github.com/esnet/gdg/internal/config"
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
@@ -115,14 +116,14 @@ func setupDashReaders(filterObj filters.V2Filter) {
 	}
 }
 
-func addFolderFilter(filterReq filters.V2Filter, folderFilter string) {
+func addFolderFilter(cfg *configDomain.GDGAppConfiguration, filterReq filters.V2Filter, folderFilter string) {
 	var folderArr []string
 	if folderFilter != "" {
-		config.Config().GetDefaultGrafanaConfig().SetFilterFolder(folderFilter)
+		cfg.GetDefaultGrafanaConfig().SetFilterFolder(folderFilter)
 		folderArr = []string{folderFilter}
 	} else {
-		config.Config().GetDefaultGrafanaConfig().ClearFilters()
-		folderArr = config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false)
+		cfg.GetDefaultGrafanaConfig().ClearFilters()
+		folderArr = cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
 	}
 	filterReq.AddValidation(filters.FolderFilter, func(value any, expected any) error {
 		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, filters.FolderFilter)
@@ -143,7 +144,7 @@ func addFolderFilter(filterReq filters.V2Filter, folderFilter string) {
 	}, folderArr)
 }
 
-func NewDashboardFilter(entries ...string) filters.V2Filter {
+func NewDashboardFilter(cfg *configDomain.GDGAppConfiguration, entries ...string) filters.V2Filter {
 	if len(entries) != 3 {
 		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
 	}
@@ -156,8 +157,6 @@ func NewDashboardFilter(entries ...string) filters.V2Filter {
 		if err != nil {
 			log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
 		}
-		// tagsFilter = "[]"
-
 	}
 	filterObj := v2.NewBaseFilter()
 	setupDashReaders(filterObj)
@@ -187,7 +186,7 @@ func NewDashboardFilter(entries ...string) filters.V2Filter {
 		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
 	}
 
-	addFolderFilter(filterObj, folderFilter)
+	addFolderFilter(cfg, filterObj, folderFilter)
 
 	filterObj.AddValidation(filters.DashFilter, func(value any, expected any) error {
 		val, exp, convErr := v2.GetParams[string](value, expected, filters.DashFilter)
@@ -241,7 +240,7 @@ func (s *DashNGoImpl) getDashboardByUid(uid string) (*models.DashboardFullWithMe
 func (s *DashNGoImpl) ListDashboards(filterReq filters.V2Filter) []*domain.NestedHit {
 	// Fallback on defaults
 	if filterReq == nil {
-		filterReq = NewDashboardFilter("", "", "")
+		filterReq = NewDashboardFilter(s.gdgConfig, "", "", "")
 	}
 
 	boardLinks := make([]*domain.NestedHit, 0)
@@ -371,7 +370,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter filters.V2Filter) []string {
 			continue
 		}
 
-		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(link.NestedPath, configDomain.DashboardResource, s.isLocal(), s.globalConf.ClearOutput), metaData.GetPayload().Meta.Slug)
+		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(s.grafanaConf, link.NestedPath, resourceTypes.DashboardResource, s.isLocal(), s.GetGlobals().ClearOutput), metaData.GetPayload().Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
@@ -406,7 +405,7 @@ func (s *DashNGoImpl) TestCreatedFolders(folderName string) (map[string]string, 
 
 // createFolders Creates a new folder with the given name.  If nested, each sub folder that does not exist is also created
 func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, error) {
-	namedUIDMap := getFolderMapping(s.ListFolders(NewFolderFilter()),
+	namedUIDMap := getFolderMapping(s.ListFolders(NewFolderFilter(s.gdgConfig)),
 		func(db *domain.NestedHit) string {
 			return db.NestedPath
 		},
@@ -476,21 +475,21 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.V2Filter) ([]string, er
 		folderUid  string
 		dashFiles  []string
 	)
-	dashboardPath := s.grafanaConf.GetPath(configDomain.DashboardResource, s.grafanaConf.GetOrganizationName())
+	dashboardPath := s.grafanaConf.GetPath(resourceTypes.DashboardResource, s.grafanaConf.GetOrganizationName())
 	filesInDir, err := s.storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find any dashFiles to export from storage engine, err: %w", err)
 	}
 	if filterReq == nil {
-		filterReq = NewDashboardFilter("", "", "")
+		filterReq = NewDashboardFilter(s.gdgConfig, "", "", "")
 	}
 	// Fallback on defaults
 	if filterReq == nil {
-		filterReq = NewDashboardFilter("", "", "")
+		filterReq = NewDashboardFilter(s.gdgConfig, "", "", "")
 	}
 	currentDashboards := s.ListDashboards(filterReq)
 
-	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter()))
+	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(NewFolderFilter(s.gdgConfig)))
 
 	alreadyProcessed := make(map[any]bool)
 
@@ -520,7 +519,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq filters.V2Filter) ([]string, er
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = getFolderFromResourcePath(file, configDomain.DashboardResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		folderName, err = getFolderFromResourcePath(s.grafanaConf, file, resourceTypes.DashboardResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 		}

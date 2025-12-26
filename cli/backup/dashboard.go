@@ -8,11 +8,11 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/grafana/grafana-openapi-client-go/models"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -75,10 +75,10 @@ func newClearDashboardsCmd() simplecobra.Commander {
 			if !skipConfirmAction {
 				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
 					"(or all dashboards if ignore_dashboard_filters is set to true).  Do you wish to "+
-					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false), ", "),
+					"continue (y/n) ", strings.Join(rootCmd.ConfigSvc().GetDefaultGrafanaConfig().GetMonitoredFolders(false), ", "),
 				), "", true)
 			}
-			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filter := service.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 
 			deletedDashboards := rootCmd.GrafanaSvc().DeleteAllDashboards(filter)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
@@ -110,10 +110,10 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 			if !skipConfirmAction {
 				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
 					"(or all dashboards if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
-					"continue (y/n) ", strings.Join(config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false), ", "),
+					"continue (y/n) ", strings.Join(rootCmd.ConfigSvc().GetDefaultGrafanaConfig().GetMonitoredFolders(false), ", "),
 				), "", true)
 			}
-			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filter := service.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 
 			files, err := rootCmd.GrafanaSvc().UploadDashboards(filter)
 			if err != nil {
@@ -123,8 +123,8 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 
 			slog.Info("dashboards have been uploaded", slog.Any("count", len(files)),
-				slog.String("context", GetContext()),
-				slog.String("Organization", GetOrganizationName()))
+				slog.String("context", rootCmd.ConfigSvc().GetContext()),
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())))
 			for _, link := range files {
 				rootCmd.TableObj.AppendRow(table.Row{link})
 			}
@@ -149,11 +149,11 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			filter := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filter := service.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadDashboards(filter)
 			slog.Info("Downloading dashboards for context",
-				slog.String("Organization", GetOrganizationName()),
-				"context", GetContext())
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				"context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range savedFiles {
 				rootCmd.TableObj.AppendRow(table.Row{"dashboard", file})
@@ -164,8 +164,8 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 	}
 }
 
-func getDashboardUrl(link *models.Hit) string {
-	base, err := url.Parse(config.Config().GetDefaultGrafanaConfig().GetURL())
+func getDashboardUrl(link *models.Hit, cfg *domain.GDGAppConfiguration) string {
+	base, err := url.Parse(cfg.GetDefaultGrafanaConfig().GetURL())
 	var baseHost string
 	if err != nil {
 		baseHost = "http://unknown/"
@@ -190,19 +190,19 @@ func newListDashboardsCmd() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "NestedPath", "UID", "Tags", "URL"})
 
-			filters := service.NewDashboardFilter(parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filters := service.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
 
 			printCount := func(count int) {
 				slog.Info("Listing dashboards for context",
-					slog.String("context", GetContext()),
-					slog.String("orgName", GetOrganizationName()),
+					slog.String("context", rootCmd.ConfigSvc().GetContext()),
+					slog.String("orgName", GetOrganizationName(rootCmd.ConfigSvc())),
 					slog.Any("count", count))
 			}
 			count := 0
 
 			for _, link := range boards {
-				urlValue := getDashboardUrl(link.Hit)
+				urlValue := getDashboardUrl(link.Hit, rootCmd.ConfigSvc())
 				count++
 				var tagVal string
 				if len(link.Tags) > 0 {

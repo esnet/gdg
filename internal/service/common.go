@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/esnet/gdg/internal/config/domain"
+	configDomain "github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/pkg/config/domain"
 
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
 )
@@ -38,8 +38,8 @@ func updateSlug(board string) string {
 
 // getFolderFromResourcePath if a use encodes a path separator in path, we can't determine the folder name.  This strips away
 // all the known components of a resource type leaving only the folder name.
-func getFolderFromResourcePath(filePath string, resourceType domain.ResourceType, prefix string, orgName string) (string, error) {
-	basePath := fmt.Sprintf("%s/", config.Config().GetDefaultGrafanaConfig().GetPath(resourceType, orgName))
+func getFolderFromResourcePath(cfg *configDomain.GrafanaConfig, filePath string, resourceType domain.ResourceType, prefix string, orgName string) (string, error) {
+	basePath := fmt.Sprintf("%s/", cfg.GetPath(resourceType, orgName))
 	if prefix != "" {
 		if prefix[0] != filePath[0] && prefix[0] == '/' {
 			prefix = prefix[1:]
@@ -62,11 +62,10 @@ func getFolderFromResourcePath(filePath string, resourceType domain.ResourceType
 	return "", errors.New("unable to parse resource to retrieve folder name")
 }
 
-func BuildResourceFolder(folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
+func BuildResourceFolder(cfg *configDomain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
 	if (resourceType == domain.DashboardResource || resourceType == domain.AlertingRulesResource) && folderName == "" {
 		folderName = DefaultFolderName
 	}
-	cfg := config.Config().GetDefaultGrafanaConfig()
 	v := fmt.Sprintf("%s/%s", cfg.GetPath(resourceType, cfg.GetOrganizationName()), folderName)
 	if createDestination {
 		tools.CreateDestinationPath(cfg.GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, v)
@@ -74,11 +73,10 @@ func BuildResourceFolder(folderName string, resourceType domain.ResourceType, cr
 	return v
 }
 
-func buildResourcePath(folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
-	cfg := config.Config().GetDefaultGrafanaConfig()
+func buildResourcePath(cfg *configDomain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
 	v := fmt.Sprintf("%s%s%s.json", cfg.GetPath(resourceType, cfg.GetOrganizationName()), pathSeparator, folderName)
 	if createDestination {
-		tools.CreateDestinationPath(config.Config().GetDefaultGrafanaConfig().GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, filepath.Dir(v))
+		tools.CreateDestinationPath(cfg.GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, filepath.Dir(v))
 	}
 	return v
 }

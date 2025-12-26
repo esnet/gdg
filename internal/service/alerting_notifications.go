@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -28,7 +28,7 @@ func (s *DashNGoImpl) DownloadAlertNotifications() (string, error) {
 		return "", err
 	}
 
-	dsPath := buildResourcePath(policiesFile, domain.AlertingResource, s.isLocal(), false)
+	dsPath := buildResourcePath(s.grafanaConf, policiesFile, domain.AlertingResource, s.isLocal(), false)
 	if dsPacked, err = json.MarshalIndent(tpls, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
@@ -67,7 +67,7 @@ func (s *DashNGoImpl) UploadAlertNotifications() (*models.Route, error) {
 		data  *models.Route
 	)
 
-	fileLocation := buildResourcePath(policiesFile, domain.AlertingResource, s.isLocal(), false)
+	fileLocation := buildResourcePath(s.grafanaConf, policiesFile, domain.AlertingResource, s.isLocal(), false)
 	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}

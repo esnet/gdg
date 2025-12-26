@@ -22,10 +22,10 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	t.Log("Running Cloud Tests")
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -45,6 +45,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	dsList := apiClient.ListConnections(dsFilter)
 	assert.True(t, len(dsList) > 0)
 	_, cancel, apiClient, s, err := test_tooling.SetupCloudFunctionOpt(
+		cfg,
 		test_tooling.SetCloudType("custom"),
 		test_tooling.SetBucketName(common.TestBucketName))
 	apiClient.(*service.DashNGoImpl).SetStorage(s)
@@ -75,10 +76,10 @@ func TestDashboardCloudCRUD(t *testing.T) {
 		err error
 		s   storage.Storage
 	)
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -92,7 +93,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	apiClient := r.ApiClient
 	// defer cleanup, "Failed to cleanup test containers for %s", t.Name())
 	// Wipe all data from grafana
-	dashFilter := service.NewDashboardFilter("", "", "")
+	dashFilter := service.NewDashboardFilter(cfg, "", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
 	// Load data into grafana
 	apiClient.UploadDashboards(dashFilter)
@@ -101,6 +102,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	var cancel context.CancelFunc
 
 	_, cancel, apiClient, s, err = test_tooling.SetupCloudFunctionOpt(
+		cfg,
 		test_tooling.SetCloudType("custom"),
 		test_tooling.SetBucketName(common.TestBucketName))
 	assert.NoError(t, err)
@@ -133,11 +135,9 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 
 		r *test_tooling.InitContainerResult
 	)
-	test_tooling.WrapTest(func() {
-		config.InitGdgConfig(common.DefaultTestConfig)
-	})
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -151,7 +151,7 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 	apiClient := r.ApiClient
 	// defer cleanup, "Failed to clean up test containers for %s", t.Name())
 	// Wipe all data from grafana
-	dashFilter := service.NewDashboardFilter("", "", "")
+	dashFilter := service.NewDashboardFilter(cfg, "", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
 	// Load data into grafana
 	_, err = apiClient.UploadDashboards(dashFilter)
@@ -213,19 +213,15 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 		var s storage.Storage
 		assert.NoError(t, path.FixTestDir("test", ".."))
 		slog.Warn("Running testcase", "name", tc.name)
-		test_tooling.MaintainConfigAuth(common.DefaultTestConfig)
+		test_tooling.MaintainConfigAuth(cfg, common.DefaultTestConfig)
 		_, cancel, apiClient, s, err = test_tooling.SetupCloudFunctionOpt(
+			cfg,
 			test_tooling.SetCloudType("custom"),
 			test_tooling.SetPrefix(tc.prefix),
 			test_tooling.SetBucketName(common.TestBucketName))
-
-		apiClient = test_tooling.CreateSimpleClientWithConfig(t, func() *config.Configuration {
-			cfg := config.Config()
-			grafanaConfig := cfg.GetDefaultGrafanaConfig()
-			grafanaConfig.OutputPath = tc.output
-			// grafanaConfig
-			return cfg
-		}, r.Container)
+		grafanaConfig := cfg.GetDefaultGrafanaConfig()
+		grafanaConfig.OutputPath = tc.output
+		apiClient = test_tooling.CreateSimpleClientWithConfig(t, cfg, r.Container)
 		apiClient.(*service.DashNGoImpl).SetStorage(s) // Override storage
 		assert.NoError(t, err)
 

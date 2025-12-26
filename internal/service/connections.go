@@ -9,12 +9,11 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 	"github.com/tidwall/gjson"
 
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/grafana/grafana-openapi-client-go/models"
 
@@ -141,7 +140,7 @@ func (s *DashNGoImpl) DownloadConnections(filter filters.V2Filter) []string {
 			continue
 		}
 
-		dsPath := buildResourcePath(slug.Make(ds.Name), domain.ConnectionResource, s.isLocal(), s.globalConf.ClearOutput)
+		dsPath := buildResourcePath(s.grafanaConf, slug.Make(ds.Name), domain.ConnectionResource, s.isLocal(), s.GetGlobals().ClearOutput)
 
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "filename", slug.Make(ds.Name), "err", err)
@@ -174,8 +173,8 @@ func (s *DashNGoImpl) UploadConnections(filter filters.V2Filter) []string {
 	var exported []string
 
 	orgName := s.grafanaConf.GetOrganizationName()
-	slog.Info("Reading files from folder", "folder", config.Config().GetDefaultGrafanaConfig().GetPath(domain.ConnectionResource, orgName))
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(domain.ConnectionResource, orgName), false)
+	slog.Info("Reading files from folder", "folder", s.grafanaConf.GetPath(domain.ConnectionResource, orgName))
+	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.ConnectionResource, orgName), false)
 	if err != nil {
 		slog.Error("failed to list files in directory for datasources", "err", err)
 	}
@@ -185,7 +184,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.V2Filter) []string {
 
 	dsSettings := s.grafanaConf.GetConnectionSettings()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(domain.ConnectionResource, orgName), file)
+		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain.ConnectionResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
