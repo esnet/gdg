@@ -13,7 +13,7 @@ func (s *DashNGoImpl) GetOrgPreferences(orgName string) (*models.PreferencesSpec
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		return nil, errors.New("no valid Grafana Admin configured, cannot retrieve Organizations Preferences")
 	}
-	orgPreferences, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(orgName)).Org.GetOrgPreferences()
+	orgPreferences, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(s.gdgConfig)).Org.GetOrgPreferences()
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func (s *DashNGoImpl) UploadOrgPreferences(orgName string, preferenceRequest *mo
 	update.Theme = preferenceRequest.Theme
 	update.WeekStart = preferenceRequest.WeekStart
 
-	_, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(orgName)).Org.UpdateOrgPreferences(update)
+	_, err := s.GetBasicClientWithOpts(GetOrgNameClientOpts(s.gdgConfig)).Org.UpdateOrgPreferences(update)
 	if err != nil {
 		return err
 	}

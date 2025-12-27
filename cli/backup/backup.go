@@ -5,7 +5,7 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +23,7 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 			return cd.CobraCommand.Help()
 		},
 		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
-			support.InitConfiguration(cd.CobraCommand)
+			r.InitConfiguration(cd.CobraCommand)
 			r.GrafanaSvc().InitOrganizations()
 			return nil
 		},
@@ -41,11 +41,6 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 }
 
 // GetOrganizationName wrapper for verbose version below.
-func GetOrganizationName() string {
-	return config.Config().GetDefaultGrafanaConfig().GetOrganizationName()
-}
-
-// GetContext wrapper for verbose version below.
-func GetContext() string {
-	return config.Config().GetGDGConfig().GetContext()
+func GetOrganizationName(cfg *domain.GDGAppConfiguration) string {
+	return cfg.GetDefaultGrafanaConfig().GetOrganizationName()
 }

@@ -29,8 +29,6 @@ const (
 	FeatureDisabled     = "0"
 )
 
-type ConfigProviderFunc func() *config.Configuration
-
 type InitContainerResult struct {
 	ApiClient service.GrafanaService
 	Container testcontainers.Container
@@ -54,7 +52,7 @@ func NewInitContainerResult(client service.GrafanaService, container testcontain
 
 // InitTest starts a Grafana test container, creates a client and optionally configures token auth.
 // It returns an InitContainerResult with the client, container, cleanup function and error status.
-func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]string) *InitContainerResult {
+func InitTest(t *testing.T, cfg *domain.GDGAppConfiguration, envProp map[string]string) *InitContainerResult {
 	var (
 		suffix string
 		err    error
@@ -67,7 +65,7 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 		suffix = "-enterprise"
 	}
 	localGrafanaContainer, cancel := containers.SetupGrafanaContainer(envProp, "", suffix)
-	apiClient := CreateSimpleClientWithConfig(t, cfgProvider, localGrafanaContainer)
+	apiClient := CreateSimpleClientWithConfig(t, cfg, localGrafanaContainer)
 	cleanUp := func() error {
 		cancel()
 		return nil
@@ -90,7 +88,6 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 	if err != nil {
 		log.Fatalf("unable to start grafana container for test: %s", t.Name())
 	}
-	cfg := cfgProvider()
 	grafana := cfg.GetDefaultGrafanaConfig()
 	grafana.UserName = ""
 	secureSettings := domain.SecureModel{
@@ -101,13 +98,12 @@ func InitTest(t *testing.T, cfgProvider config.Provider, envProp map[string]stri
 		assert.NoError(t, cfg.GetDefaultGrafanaConfig().TestSetSecureAuth(secureSettings))
 	})
 
-	apiClient = CreateSimpleClientWithConfig(t, cfgProvider, localGrafanaContainer)
+	apiClient = CreateSimpleClientWithConfig(t, cfg, localGrafanaContainer)
 	return NewInitContainerResult(apiClient, localGrafanaContainer, cleanUp)
 }
 
 // CreateSimpleClientWithConfig creates a GrafanaService for tests using the provided config provider and testcontainers container.
-func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, container testcontainers.Container) service.GrafanaService {
-	cfg := cfgProvider()
+func CreateSimpleClientWithConfig(t *testing.T, cfg *domain.GDGAppConfiguration, container testcontainers.Container) service.GrafanaService {
 	if cfg == nil {
 		t.Fatal("No valid configuration returned from config provider")
 	}
@@ -120,9 +116,9 @@ func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, con
 		slog.Info("Grafana Test container running", slog.String("host", grafanaHost+"/login"), slog.String("imageVersion", dockerContainer.Image))
 	}
 
-	storageEngine, err := service.ConfigureStorage(cfgProvider)
+	storageEngine, err := service.ConfigureStorage(cfg)
 	assert.NoError(t, err)
-	client := service.NewTestApiService(storageEngine, cfgProvider)
+	client := service.NewTestApiService(storageEngine, cfg)
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {
 		pathErr := os.Chdir("..")
@@ -134,7 +130,7 @@ func CreateSimpleClientWithConfig(t *testing.T, cfgProvider config.Provider, con
 }
 
 // CreateSimpleClient initializes a test Grafana client and Viper config for unit tests.
-func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.Container) (service.GrafanaService, *viper.Viper) {
+func CreateSimpleClient(t *testing.T, cfg *domain.GDGAppConfiguration, cfgName *string, container testcontainers.Container) (service.GrafanaService, *viper.Viper) {
 	if cfgName == nil {
 		cfgName = new(string)
 		*cfgName = common.DefaultTestConfig
@@ -150,15 +146,13 @@ func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.
 	}
 
 	config.InitGdgConfig(*cfgName)
-	conf := config.Config().GetViperConfig()
+	conf := cfg.GetViperConfig()
 	assert.NotNil(t, conf)
 	// Hack for Local testing
 	contextName := conf.GetString("context_name")
 	conf.Set(fmt.Sprintf("context.%s.url", contextName), grafanaHost)
 	assert.Equal(t, contextName, "testing")
-	storageEngine, err := service.ConfigureStorage(func() *config.Configuration {
-		return config.Config()
-	})
+	storageEngine, err := service.ConfigureStorage(cfg)
 	assert.NoError(t, err)
 	client := service.NewTestApiService(storageEngine, nil)
 	currentPath, _ := os.Getwd()
@@ -172,22 +166,14 @@ func CreateSimpleClient(t *testing.T, cfgName *string, container testcontainers.
 }
 
 // MaintainConfigAuth updates Grafana config auth, preserving existing secure data during init.
-func MaintainConfigAuth(configVal string) {
-	cfg := config.Config().GetDefaultGrafanaConfig()
+func MaintainConfigAuth(cfg *domain.GDGAppConfiguration, configVal string) {
 	var auth *domain.SecureModel
-	WrapTest(func() {
-		auth = cfg.TestGetSecureAuth()
-	})
-	WrapTest(func() {
-		config.InitGdgConfig(configVal)
-	})
-	cfg = config.Config().GetDefaultGrafanaConfig()
+	auth = cfg.GetDefaultGrafanaConfig().TestGetSecureAuth()
+	cfg = config.InitGdgConfig(configVal)
 	if auth != nil {
-		WrapTest(func() {
-			if err := cfg.TestSetSecureAuth(*auth); err != nil {
-				slog.Warn("unable to set grafana auth")
-			}
-		})
+		if err := cfg.GetDefaultGrafanaConfig().TestSetSecureAuth(*auth); err != nil {
+			slog.Warn("unable to set grafana auth")
+		}
 	}
 }
 

@@ -9,7 +9,6 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -52,7 +51,7 @@ func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
 
 			slog.Info("Deleting Service Accounts Tokens for context",
 				"serviceAccountId", id,
-				"context", config.Config().GetGDGConfig().GetContext())
+				"context", rootCmd.ConfigSvc().GetContext())
 			savedFiles := rootCmd.GrafanaSvc().DeleteServiceAccountTokens(id)
 			rootCmd.TableObj.AppendHeader(table.Row{"serviceID", "type", "token_name"})
 			if len(savedFiles) == 0 {

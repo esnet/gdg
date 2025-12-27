@@ -41,10 +41,10 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -130,10 +130,10 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 }
 
 func TestConnectionsCRUD(t *testing.T) {
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -171,10 +171,10 @@ func TestConnectionsCRUD(t *testing.T) {
 // TestConnectionFilter ensures the regex matching and datasource type filters work as expected
 func TestConnectionFilter(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NotNil(t, r)
@@ -187,7 +187,7 @@ func TestConnectionFilter(t *testing.T) {
 	}()
 	apiClient := r.ApiClient
 
-	testingContext := config.Config().GetGDGConfig().GetContexts()[common.TestContextName]
+	testingContext := cfg.GetContexts()[common.TestContextName]
 	testingContext.GetConnectionSettings().FilterRules = []configDomain.MatchingRule{
 		{
 			Field: "name",
@@ -199,12 +199,10 @@ func TestConnectionFilter(t *testing.T) {
 			Regex:     "elasticsearch|globalnoc-tsds-datasource",
 		},
 	}
-	testingContext = config.Config().GetGDGConfig().GetContexts()[common.TestContextName]
+	testingContext = cfg.GetContexts()[common.TestContextName]
 
 	localEngine := storage.NewLocalStorage(context.Background())
-	apiClient = service.NewTestApiService(localEngine, func() *config.Configuration {
-		return config.Config()
-	})
+	apiClient = service.NewTestApiService(localEngine, cfg)
 
 	filtersEntity := service.NewConnectionFilter("")
 	slog.Info("Exporting all connections")

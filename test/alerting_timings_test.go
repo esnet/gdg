@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -21,10 +20,10 @@ func TestAlertingTimingsCrud(t *testing.T) {
 	assert.NoError(os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
 
 	assert.NoError(path.FixTestDir("test", ".."))
-	config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, service.DefaultConfigProvider, nil)
+		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
 	assert.NoError(err)
@@ -85,8 +84,8 @@ func TestAlertingTimingsCrud(t *testing.T) {
 	timingsList, err = apiClient.ListAlertTimings()
 	assert.NoError(err)
 	assert.Equal(len(timingsList), 0)
-	//validate download dataset
-	_, err = apiClient.UploadAlertTimings() //upload the downloaded version
+	// validate download dataset
+	_, err = apiClient.UploadAlertTimings() // upload the downloaded version
 	assert.NoError(err)
 	timingsList, err = apiClient.ListAlertTimings()
 	assert.NoError(err)

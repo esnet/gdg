@@ -1,4 +1,4 @@
-package config
+package domain
 
 import (
 	"encoding/json"
@@ -11,9 +11,8 @@ import (
 
 	"github.com/charmbracelet/huh"
 	"github.com/esnet/gdg/internal/tools/encode"
+	domain2 "github.com/esnet/gdg/pkg/config/domain"
 	"gopkg.in/yaml.v3"
-
-	"github.com/esnet/gdg/internal/config/domain"
 )
 
 type formSelection string
@@ -28,7 +27,7 @@ func (s formSelection) String() string {
 	return string(s)
 }
 
-func buildFormGroups(authType string, config *domain.GrafanaConfig, secureModel *domain.SecureModel) []*huh.Group {
+func buildFormGroups(authType string, config *GrafanaConfig, secureModel *SecureModel) []*huh.Group {
 	groups := make([]*huh.Group, 0)
 	basicGrps := huh.NewGroup(
 		huh.NewInput().
@@ -74,7 +73,7 @@ func buildFormGroups(authType string, config *domain.GrafanaConfig, secureModel 
 // CreateNewContext prompts the user to configure a new Grafana context with authentication, folders,
 // and default connection settings. It builds the configuration, writes secure files, updates
 // the internal context map, saves the config to disk, and logs completion.
-func (s *Configuration) CreateNewContext(name string) {
+func (app *GDGAppConfiguration) CreateNewContext(name string) {
 	var authType string
 	err := huh.NewForm(
 		huh.NewGroup(
@@ -95,12 +94,12 @@ func (s *Configuration) CreateNewContext(name string) {
 		log.Fatal("unable to get auth selection from user")
 	}
 
-	newConfig := domain.NewGrafanaConfig(name)
-	newConfig.ConnectionSettings = &domain.ConnectionSettings{
-		MatchingRules: make([]domain.RegexMatchesList, 0),
+	newConfig := NewGrafanaConfig(name)
+	newConfig.ConnectionSettings = &ConnectionSettings{
+		MatchingRules: make([]RegexMatchesList, 0),
 	}
 	newConfig.OrganizationName = "Main Org."
-	secure := domain.SecureModel{}
+	secure := SecureModel{}
 	err = huh.NewForm(buildFormGroups(authType, newConfig, &secure)...).Run()
 	if err != nil {
 		log.Fatalf("Could not set grafana config: %v", err)
@@ -122,7 +121,7 @@ func (s *Configuration) CreateNewContext(name string) {
 	if err != nil {
 		log.Fatalf("Unable to get folders and Connection Auth Settings")
 	}
-	defaultDs := domain.GrafanaConnection{
+	defaultDs := GrafanaConnection{
 		"user":              connectionUser,
 		"basicAuthPassword": connectionPassword,
 	}
@@ -136,7 +135,7 @@ func (s *Configuration) CreateNewContext(name string) {
 	} else {
 		newConfig.MonitoredFolders = []string{"General"}
 	}
-	securePath := domain.SecureSecretsResource
+	securePath := domain2.SecureSecretsResource
 	location := filepath.Join(newConfig.OutputPath, string(securePath))
 	err = os.MkdirAll(location, 0o750)
 	if err != nil {
@@ -148,9 +147,9 @@ func (s *Configuration) CreateNewContext(name string) {
 	if err != nil {
 		log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
 	}
-	newConfig.ConnectionSettings.MatchingRules = []domain.RegexMatchesList{
+	newConfig.ConnectionSettings.MatchingRules = []RegexMatchesList{
 		{
-			Rules: []domain.MatchingRule{
+			Rules: []MatchingRule{
 				{
 					Field: "name",
 					Regex: ".*",
@@ -167,11 +166,11 @@ func (s *Configuration) CreateNewContext(name string) {
 		log.Fatalf("unable to write secret auth file.  location: %s, %v", secretFileLocation, err)
 	}
 
-	contextMap := s.GetGDGConfig().GetContexts()
+	contextMap := app.GetContexts()
 	contextMap[name] = newConfig
-	s.GetGDGConfig().ContextName = name
+	app.ContextName = name
 
-	err = s.SaveToDisk(false)
+	err = app.SaveToDisk(false)
 	if err != nil {
 		log.Fatal("could not save configuration.")
 	}
@@ -203,8 +202,4 @@ func writeSecureFileData[T any](object T, location string) error {
 	default:
 		return fmt.Errorf("unsupported encoding type: %s", encoding)
 	}
-}
-
-func (s *Configuration) NewContext(name string) {
-	s.CreateNewContext(name)
 }

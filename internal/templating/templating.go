@@ -9,11 +9,11 @@ import (
 	"text/template"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/tools"
 
 	"github.com/Masterminds/sprig/v3"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/service"
 )
 
@@ -22,10 +22,16 @@ type Templating interface {
 	ListTemplates() []string
 }
 
-type templateImpl struct{}
+type templateImpl struct {
+	cfg    *domain.TemplatingConfig
+	gdgCfg *domain.GrafanaConfig
+}
 
-func NewTemplate() Templating {
-	return &templateImpl{}
+func NewTemplate(cfg *domain.TemplatingConfig, gdgCfg *domain.GrafanaConfig) Templating {
+	return &templateImpl{
+		cfg:    cfg,
+		gdgCfg: gdgCfg,
+	}
 }
 
 var fns = template.FuncMap{
@@ -45,9 +51,8 @@ var fns = template.FuncMap{
 }
 
 func (t *templateImpl) ListTemplates() []string {
-	cfg := config.Config()
 	var result []string
-	entities := cfg.GetTemplateConfig().Entities.Dashboards
+	entities := t.cfg.Entities.Dashboards
 	for _, entry := range entities {
 		result = append(result, entry.TemplateName)
 	}
@@ -58,19 +63,18 @@ func (t *templateImpl) ListTemplates() []string {
 func (t *templateImpl) Generate(templateName string) (map[string][]string, error) {
 	result := make(map[string][]string)
 	// Remove extension if included
-	cfg := config.Config()
 	var entities []domain.TemplateDashboards
 	templateName = strings.ReplaceAll(templateName, ".go.tmpl", "")
-	templateEntity, ok := cfg.GetTemplateConfig().GetTemplate(templateName)
+	templateEntity, ok := t.cfg.GetTemplate(templateName)
 	if ok {
 		entities = append(entities, *templateEntity)
 	} else {
-		entities = cfg.GetTemplateConfig().Entities.Dashboards
+		entities = t.cfg.Entities.Dashboards
 	}
 	for _, entity := range entities {
 		result[entity.TemplateName] = make([]string, 0)
 		slog.Info("Processing template:", slog.String("template", entity.TemplateName))
-		tmplPath := cfg.GetDefaultGrafanaConfig().GetPath(domain.TemplatesResource, cfg.GetDefaultGrafanaConfig().GetOrganizationName())
+		tmplPath := t.gdgCfg.GetPath(resourceTypes.TemplatesResource, t.gdgCfg.GetOrganizationName())
 		fileLocation := fmt.Sprintf("%s/%s.go.tmpl", tmplPath, entity.TemplateName)
 		_, err := os.Stat(fileLocation)
 		if err != nil {
@@ -85,14 +89,14 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 			continue
 		}
 		for _, outputEntity := range entity.DashboardEntities {
-			grafana := cfg.GetDefaultGrafanaConfig()
+			grafana := t.gdgCfg
 			slog.Debug("Creating a new template",
 				slog.String("folder", outputEntity.Folder),
 				slog.String("orgName", outputEntity.OrganizationName),
 				slog.Any("data", outputEntity.TemplateData),
 			)
 			grafana.OrganizationName = outputEntity.OrganizationName
-			outputPath := service.BuildResourceFolder(outputEntity.Folder, domain.DashboardResource, true, false)
+			outputPath := service.BuildResourceFolder(t.gdgCfg, outputEntity.Folder, resourceTypes.DashboardResource, true, false)
 			// Merge two maps.
 			tmpl, tmplErr := template.New("").Funcs(fns).Parse(string(templateData))
 			if tmplErr != nil {

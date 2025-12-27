@@ -5,7 +5,6 @@ import (
 	"log"
 	"log/slog"
 
-	"github.com/esnet/gdg/internal/config"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -16,7 +15,7 @@ var showConfigCmd = &cobra.Command{
 	Long:    `Show current templates configuration`,
 	Aliases: []string{"cfg"},
 	Run: func(cmd *cobra.Command, args []string) {
-		data, err := yaml.Marshal(config.Config().GetTemplateConfig())
+		data, err := yaml.Marshal(templateConfig)
 		if err != nil {
 			log.Fatalf("unable to load template configuration: %v", err)
 		}

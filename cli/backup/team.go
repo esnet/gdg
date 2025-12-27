@@ -7,8 +7,8 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
 	api "github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/tools/ptr"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
@@ -60,7 +60,11 @@ func getTeamTableWriter() table.Writer {
 func printTeamListing(teams map[*models.TeamDTO][]*models.TeamMemberDTO) {
 	for team, members := range teams {
 		writer := getTeamTableWriter()
-		writer.AppendRow(table.Row{team.ID, team.Name, team.OrgID, team.MemberCount})
+		writer.AppendRow(table.Row{
+			ptr.ValueOrDefault(team.ID, int64(0)),
+			ptr.ValueOrDefault(team.Name, ""),
+			ptr.ValueOrDefault(team.OrgID, int64(0)),
+			ptr.ValueOrDefault(team.MemberCount, int64(0))})
 		writer.Render()
 		var success bool
 		twConfigs := table.NewWriter()
@@ -72,7 +76,12 @@ func printTeamListing(teams map[*models.TeamDTO][]*models.TeamMemberDTO) {
 				continue
 			}
 			success = true
-			twConfigs.AppendRow(table.Row{team.Name, member.UserID, member.Login, getTeamPermission(member.Permission)})
+			twConfigs.AppendRow(table.Row{
+				ptr.ValueOrDefault(team.Name, ""),
+				member.UserID,
+				member.Login,
+				getTeamPermission(member.Permission),
+			})
 		}
 		if success {
 			twConfigs.Render()
@@ -90,7 +99,7 @@ func newTeamsListCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Listing teams for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Listing teams for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "memberID", "member Permission"})
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			teams := rootCmd.GrafanaSvc().ListTeams(filter)
@@ -114,7 +123,7 @@ func newTeamsDownloadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"d"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Downloading Teams and Member data for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Downloading Teams and Member data for context", "context", rootCmd.ConfigSvc().GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadTeams(filter)
 			if len(savedFiles) == 0 {
@@ -137,7 +146,7 @@ func newTeamsUploadCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Exporting Teams for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Exporting Teams for context", "context", rootCmd.ConfigSvc().GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().UploadTeams(filter)
 			if len(savedFiles) == 0 {
@@ -160,17 +169,21 @@ func newTeamsClearCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Deleting teams for context", "context", config.Config().GetGDGConfig().GetContext())
+			slog.Info("Deleting teams for context", "context", rootCmd.ConfigSvc().GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "team ID", "team Name"})
 			teams, err := rootCmd.GrafanaSvc().DeleteTeam(filter)
 			if err != nil {
 				slog.Error(err.Error())
-			} else {
+				return err
+			}
+			if len(teams) != 0 {
 				for _, team := range teams {
-					rootCmd.TableObj.AppendRow(table.Row{"team", team.ID, team.Name})
+					rootCmd.TableObj.AppendRow(table.Row{"team", *team.ID, *team.Name})
 				}
 				rootCmd.Render(cd.CobraCommand, teams)
+			} else {
+				slog.Info("No teams were deleted")
 			}
 			return nil
 		},

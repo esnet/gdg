@@ -8,8 +8,6 @@ import (
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service"
-
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/stretchr/testify/assert"
@@ -36,7 +34,7 @@ func TestLicenseEnterpriseCheck(t *testing.T) {
 			t.Log("Skipping test", tc.name)
 		}
 		t.Log("Running test", tc.name)
-		config.InitGdgConfig(common.DefaultTestConfig)
+		cfg := config.InitGdgConfig(common.DefaultTestConfig)
 		var r *test_tooling.InitContainerResult
 		var props map[string]string
 		if tc.enterprise {
@@ -45,7 +43,7 @@ func TestLicenseEnterpriseCheck(t *testing.T) {
 			assert.NoError(t, err)
 		}
 		err := Retry(context.Background(), DefaultRetryAttempts, func() error {
-			r = test_tooling.InitTest(t, service.DefaultConfigProvider, props)
+			r = test_tooling.InitTest(t, cfg, props)
 			return r.Err
 		})
 		assert.NotNil(t, r)

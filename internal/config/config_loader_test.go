@@ -10,6 +10,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/storage"
+	domain2 "github.com/esnet/gdg/pkg/config/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -45,16 +46,15 @@ func TestSetup(t *testing.T) {
 	}
 
 	os.Setenv("GDG_CONTEXT_NAME", "qa")
-	config.InitGdgConfig(common.DefaultTestConfig)
-	conf := config.Config().GetViperConfig()
+	confobj := config.InitGdgConfig(common.DefaultTestConfig)
+	conf := confobj.GetViperConfig()
 	slog.Info(conf.ConfigFileUsed())
 
-	confobj := config.Config().GetGDGConfig()
 	slog.Info(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "qa")
-	grafanaConf := config.Config().GetDefaultGrafanaConfig()
+	grafanaConf := confobj.GetDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
 	validateGrafanaQA(t, grafanaConf)
 }
@@ -68,16 +68,15 @@ func TestWatchedFoldersConfig(t *testing.T) {
 	}
 
 	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "qa"))
-	config.InitGdgConfig(common.DefaultTestConfig)
-	conf := config.Config().GetViperConfig()
+	confobj := config.InitGdgConfig(common.DefaultTestConfig)
+	conf := confobj.GetViperConfig()
 	slog.Info(conf.ConfigFileUsed())
 
-	confobj := config.Config().GetGDGConfig()
 	slog.Info(confobj.ContextName)
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "qa")
-	grafanaConf := config.Config().GetDefaultGrafanaConfig()
+	grafanaConf := confobj.GetDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
 	grafanaConf.MonitoredFoldersOverride = []domain.MonitoredOrgFolders{{
 		OrganizationName: "Your Org",
@@ -99,12 +98,12 @@ func TestWatchedFoldersConfig(t *testing.T) {
 // Ensures that if the config is on a completely different path, the searchPath is updated accordingly
 func TestSetupDifferentPath(t *testing.T) {
 	cfgFile := DuplicateConfig(t)
-	config.InitGdgConfig(cfgFile)
-	conf := config.Config().GetViperConfig()
+	cfg := config.InitGdgConfig(cfgFile)
+	conf := cfg.GetViperConfig()
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "production")
-	grafanaConf := config.Config().GetDefaultGrafanaConfig()
+	grafanaConf := cfg.GetDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
 	assert.Equal(t, grafanaConf.OutputPath, "prod")
 }
@@ -112,18 +111,18 @@ func TestSetupDifferentPath(t *testing.T) {
 func TestConfigEnv(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
-	config.InitGdgConfig(common.DefaultTestConfig)
-	conf := config.Config().GetViperConfig()
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	conf := cfg.GetViperConfig()
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "testing")
 	url := conf.GetString("contexts.testing.url")
 	assert.Equal(t, url, "www.google.com")
-	grafanaConfig := config.Config().GetDefaultGrafanaConfig()
+	grafanaConfig := cfg.GetDefaultGrafanaConfig()
 	assert.Equal(t, grafanaConfig.URL, url)
 	os.Setenv("GDG_CONTEXT_NAME", "production")
 	os.Setenv("GDG_CONTEXTS__PRODUCTION__URL", "grafana.com")
-	config.InitGdgConfig(common.DefaultTestConfig)
-	conf = config.Config().GetViperConfig()
+	cfg = config.InitGdgConfig(common.DefaultTestConfig)
+	conf = cfg.GetViperConfig()
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")
 }
@@ -132,8 +131,8 @@ func TestConfigSecureCloud(t *testing.T) {
 	assert := assert.New(t)
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
-	config.InitGdgConfig(common.DefaultTestConfig)
-	grafanaCfg := config.Config().GetDefaultGrafanaConfig()
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	grafanaCfg := cfg.GetDefaultGrafanaConfig()
 
 	t.Run("Base Test", func(t *testing.T) {
 		grafanaCfg.Storage = "test"
@@ -150,17 +149,16 @@ func TestConfigSecureCloud(t *testing.T) {
 	})
 
 	t.Run("Override Config Value Test", func(t *testing.T) {
-		cfg := config.Config()
 		grafanaCfg = cfg.GetDefaultGrafanaConfig()
 		grafanaCfg.Storage = "test"
-		storageType, appData := cfg.GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
+		storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
 		assert.Equal(storageType, "cloud")
 		// Set values in config
 		appData[storage.CloudType] = storage.Custom
 		appData[storage.AccessId] = "moo"
 		appData[storage.SecretKey] = "foo"
 		// Ensures they get overridden by the secure values
-		storageType, appData = cfg.GetCloudConfiguration(config.Config().GetDefaultGrafanaConfig().Storage)
+		storageType, appData = cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
 		assert.Equal(appData[storage.AccessId], "test")
 		assert.Equal(appData[storage.SecretKey], "secretsss")
 	})
@@ -169,8 +167,8 @@ func TestConfigSecureCloud(t *testing.T) {
 func TestConfigSecurePath(t *testing.T) {
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
-	config.InitGdgConfig(common.DefaultTestConfig)
-	grafanaCfg := config.Config().GetDefaultGrafanaConfig()
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	grafanaCfg := cfg.GetDefaultGrafanaConfig()
 	override := domain.SecureModel{
 		Password: "allyourbasesaremine!",
 		Token:    "1234",
@@ -195,8 +193,8 @@ func validateGrafanaQA(t *testing.T, grafana *domain.GrafanaConfig) {
 	folders := grafana.GetMonitoredFolders(false)
 	assert.True(t, slices.Contains(folders, "Folder1"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
-	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(domain.ConnectionResource, grafana.GetOrganizationName()))
-	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(domain.DashboardResource, grafana.GetOrganizationName()))
+	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(domain2.ConnectionResource, grafana.GetOrganizationName()))
+	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(domain2.DashboardResource, grafana.GetOrganizationName()))
 	dsSettings := grafana.ConnectionSettings
 	request := models.AddDataSourceCommand{}
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)

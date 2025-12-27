@@ -7,7 +7,7 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 
@@ -48,7 +48,7 @@ func newClearConnectionsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"c"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Delete connections", slog.String("Organization", GetOrganizationName()))
+			slog.Info("Delete connections", slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())))
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllConnections(filters)
@@ -72,7 +72,7 @@ func newUploadConnectionsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"u"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			slog.Info("Uploading connections", slog.String("Organization", GetOrganizationName()))
+			slog.Info("Uploading connections", slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())))
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			exportedList := rootCmd.GrafanaSvc().UploadConnections(filters)
@@ -97,8 +97,8 @@ func newDownloadConnectionsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			slog.Info("Importing connections for context",
-				slog.String("Organization", GetOrganizationName()),
-				"context", config.Config().GetGDGConfig().GetContext())
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				"context", rootCmd.ConfigSvc().GetContext())
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := service.NewConnectionFilter(dashboardFilter)
 			savedFiles := rootCmd.GrafanaSvc().DownloadConnections(filters)
@@ -127,13 +127,13 @@ func newListConnectionsCmd() simplecobra.Commander {
 			filters := service.NewConnectionFilter(dashboardFilter)
 			dsListing := rootCmd.GrafanaSvc().ListConnections(filters)
 			slog.Info("Listing connections for context",
-				slog.String("Organization", GetOrganizationName()),
-				slog.String("context", GetContext()))
+				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
+				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 			if len(dsListing) == 0 {
 				slog.Info("No connections found")
 			} else {
 				for _, link := range dsListing {
-					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, getConnectionURL(link.UID)})
+					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, service.GetSlug(link.Name), link.Type, link.IsDefault, getConnectionURL(link.UID, rootCmd.ConfigSvc())})
 				}
 				rootCmd.Render(cd.CobraCommand, dsListing)
 			}
@@ -142,7 +142,7 @@ func newListConnectionsCmd() simplecobra.Commander {
 	}
 }
 
-func getConnectionURL(uid string) string {
-	url := config.Config().GetDefaultGrafanaConfig().GetURL()
+func getConnectionURL(uid string, cfg *domain.GDGAppConfiguration) string {
+	url := cfg.GetDefaultGrafanaConfig().GetURL()
 	return fmt.Sprintf("%s/connections/datasources/edit/%s", url, uid)
 }

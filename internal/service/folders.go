@@ -14,7 +14,7 @@ import (
 	"sort"
 	"strings"
 
-	configDomain "github.com/esnet/gdg/internal/config/domain"
+	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/service/domain"
 
@@ -22,7 +22,7 @@ import (
 
 	"github.com/esnet/gdg/internal/tools/encode"
 
-	"github.com/esnet/gdg/internal/config"
+	configDomain "github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	// "github.com/grafana/grafana-openapi-client-go/client/folder_permissions"
@@ -37,7 +37,7 @@ const (
 	folderPathSeparator = string(os.PathSeparator)
 )
 
-func NewFolderFilter() filters.V2Filter {
+func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
 	filterObj := v2.NewBaseFilter()
 	err := filterObj.RegisterReader(reflect.TypeOf(&domain.NestedHit{}), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
@@ -55,7 +55,7 @@ func NewFolderFilter() filters.V2Filter {
 		log.Fatalf("unable to register a valid reader for folder filter")
 	}
 
-	folderArr := config.Config().GetDefaultGrafanaConfig().GetMonitoredFolders(false)
+	folderArr := cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
 	filterObj.AddValidation(filters.FolderFilter, func(value any, expected any) error {
 		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, filters.FolderFilter)
 		if convErr != nil {
@@ -94,7 +94,7 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.V2Filter) []strin
 		if fileName == "" {
 			fileName = folder.Title
 		}
-		dsPath := buildResourcePath(slug.Make(fileName), configDomain.FolderPermissionResource, s.isLocal(), s.globalConf.ClearOutput)
+		dsPath := buildResourcePath(s.grafanaConf, slug.Make(fileName), resourceTypes.FolderPermissionResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "filename", slug.Make(folder.Title))
 		} else {
@@ -112,12 +112,12 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.V2Filter) []string 
 		dataFiles []string
 	)
 	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.FolderPermissionResource, orgName), false)
+	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(resourceTypes.FolderPermissionResource, orgName), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders permission imports, %v", err)
 	}
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.FolderPermissionResource, orgName), file)
+		fileLocation := filepath.Join(s.grafanaConf.GetPath(resourceTypes.FolderPermissionResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
 			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
@@ -155,7 +155,7 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.V2Filter) map[*domain
 	if filter == nil {
 		foldersList = s.ListFolders(nil)
 	} else {
-		foldersList = s.ListFolders(NewFolderFilter())
+		foldersList = s.ListFolders(NewFolderFilter(s.gdgConfig))
 	}
 
 	r := make(map[*domain.NestedHit][]*models.DashboardACLInfoDTO)
@@ -233,7 +233,7 @@ func (s *DashNGoImpl) DownloadFolders(filter filters.V2Filter) []string {
 			slog.Error("Unable to serialize data to JSON", "err", err, "folderName", folder.Title)
 			continue
 		}
-		dsPath := buildResourcePath(folder.NestedPath, configDomain.FolderResource, s.isLocal(), s.globalConf.ClearOutput)
+		dsPath := buildResourcePath(s.grafanaConf, folder.NestedPath, resourceTypes.FolderResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file.", "err", err.Error(), "folderName", slug.Make(folder.Title))
 		} else {
@@ -295,7 +295,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 		return f.GetPayload().UID, err
 	}
 
-	resourceDir := s.grafanaConf.GetPath(configDomain.FolderResource, s.grafanaConf.GetOrganizationName())
+	resourceDir := s.grafanaConf.GetPath(resourceTypes.FolderResource, s.grafanaConf.GetOrganizationName())
 	filesInDir, err := s.storage.FindAllFiles(resourceDir, true)
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, %v", err)
@@ -311,7 +311,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 	)
 
 	// build nested path of local file for all files being processed
-	nestedPathMap := buildNestedFilePath(filesInDir, s.grafanaConf.GetOrganizationName())
+	nestedPathMap := s.buildNestedFilePath(filesInDir)
 	processed := make(map[string]bool)
 
 	for _, fileLocation := range filesInDir {
@@ -462,8 +462,9 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 }
 
 // buildNestedFilePath returns a dictionary of nestedPaths to a matching file if one exists.
-func buildNestedFilePath(files []string, orgName string) map[string]string {
-	resourceBaseDir := config.Config().GetDefaultGrafanaConfig().GetPath(configDomain.FolderResource, orgName)
+func (s *DashNGoImpl) buildNestedFilePath(files []string) map[string]string {
+	orgName := s.grafanaConf.GetOrganizationName()
+	resourceBaseDir := s.grafanaConf.GetPath(resourceTypes.FolderResource, orgName)
 	m := make(map[string]string)
 
 	for _, file := range files {

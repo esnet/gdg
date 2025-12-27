@@ -1,17 +1,167 @@
 package domain
 
 import (
+	"fmt"
+	"log"
+	"log/slog"
+	"os"
 	"strings"
 
+	"github.com/esnet/gdg/internal/storage"
+	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
+	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
 
 // GDGAppConfiguration is the configuration for the application
 type GDGAppConfiguration struct {
+	ViperConfig   *viper.Viper                 `mapstructure:"-" yaml:"-"`
 	ContextName   string                       `mapstructure:"context_name" yaml:"context_name"`
 	StorageEngine map[string]map[string]string `mapstructure:"storage_engine" yaml:"storage_engine"`
 	Contexts      map[string]*GrafanaConfig    `mapstructure:"contexts" yaml:"contexts"`
 	Global        *AppGlobals                  `mapstructure:"global" yaml:"global"`
+}
+
+// IgnoreSSL returns true if SSL errors should be ignored
+func (app *GDGAppConfiguration) IgnoreSSL() bool {
+	return app.GetViperConfig().GetBool("global.ignore_ssl_errors")
+}
+
+// IsDebug returns true if debug mode is enabled
+func (app *GDGAppConfiguration) IsDebug() bool {
+	if val := app.GetViperConfig(); val != nil {
+		return val.GetBool("global.debug")
+	}
+	return false
+}
+
+// IsApiDebug returns true if debug mode is enabled for APIs
+func (app *GDGAppConfiguration) IsApiDebug() bool {
+	if val := app.GetViperConfig(); val != nil {
+		return val.GetBool("global.api_debug")
+	}
+	return false
+}
+
+// GetCloudConfiguration Returns storage type and configuration
+func (app *GDGAppConfiguration) GetCloudConfiguration(configName string) (string, map[string]string) {
+	appData := app.StorageEngine[configName]
+	if appData == nil {
+		appData = make(map[string]string)
+	}
+
+	storageType := "local"
+	if len(appData) != 0 {
+		storageType = "cloud"
+		if appData[storage.CloudType] == storage.Custom {
+			grafanaCfg := app.GetDefaultGrafanaConfig()
+			m := grafanaCfg.GetCloudAuth()
+			// Clear out hard coded values
+			appData[storage.AccessId] = m[storage.AccessId]
+			appData[storage.SecretKey] = m[storage.SecretKey]
+		} else {
+			delete(appData, storage.AccessId)
+			delete(appData, storage.SecretKey)
+		}
+	}
+	return storageType, appData
+}
+
+func (app *GDGAppConfiguration) GetViperConfig() *viper.Viper {
+	return app.ViperConfig
+}
+
+// CopyContext Makes a copy of the specified context and write to disk
+func (app *GDGAppConfiguration) CopyContext(src, dest string) {
+	// Validate context
+	contexts := app.GetContexts()
+	if len(contexts) == 0 {
+		log.Fatal("Cannot set context.  No valid configuration found in gdg.yml")
+	}
+	cfg, ok := contexts[src]
+	if !ok {
+		log.Fatalf("Cannot find context to: '%s'.  No valid configuration found in gdg.yml", src)
+	}
+	newCopy, err := tools.DeepCopy(*cfg)
+	if err != nil {
+		log.Fatal("unable to make a copy of contexts")
+	}
+	contexts[dest] = newCopy
+	app.ContextName = dest
+	err = app.SaveToDisk(false)
+	if err != nil {
+		log.Fatal("Failed to make save changes")
+	}
+	slog.Info("Copied context to destination, please check your config to confirm", "sourceContext", src, "destinationContext", dest)
+}
+
+// DeleteContext remove a given context
+func (app *GDGAppConfiguration) DeleteContext(name string) {
+	name = strings.ToLower(name) // ensure name is lower case
+	contexts := app.GetContexts()
+	_, ok := contexts[name]
+	if !ok {
+		log.Fatalf("Context not found, cannot delete context: %s", name)
+		return
+	}
+	delete(contexts, name)
+	if len(contexts) != 0 {
+		for key := range contexts {
+			app.ContextName = key
+			break
+		}
+	}
+
+	err := app.SaveToDisk(false)
+	if err != nil {
+		log.Fatal("Failed to make save changes")
+	}
+	slog.Info("Deleted context and set new context to", "deletedContext", name, "newActiveContext", app.ContextName)
+}
+
+// PrintContext outputs the YAML representation of the named context and the config file used.
+func (app *GDGAppConfiguration) PrintContext(name string) {
+	name = strings.ToLower(name)
+	grafana, ok := app.GetContexts()[name]
+	if !ok {
+		slog.Error("context was not found", "context", name)
+		return
+	}
+	d, err := yaml.Marshal(grafana)
+	if err != nil {
+		log.Fatal("failed to serialize context", "err", err)
+	}
+
+	fmt.Printf("config file: %s\n", app.GetViperConfig().ConfigFileUsed())
+	fmt.Printf("---context: %s\n%s\n", name, string(d))
+}
+
+// ClearContexts resets all contexts to a single default example context and saves the config.```
+func (app *GDGAppConfiguration) ClearContexts() {
+	newContext := make(map[string]*GrafanaConfig)
+	newContext["example"] = NewGrafanaConfig("example")
+	app.Contexts = newContext
+	app.ContextName = "example"
+	err := app.SaveToDisk(false)
+	if err != nil {
+		log.Fatal("Failed to make save changes")
+	}
+
+	slog.Info("All contexts were cleared")
+}
+
+// GetDefaultGrafanaConfig returns the default aka. selected grafana config
+func (app *GDGAppConfiguration) GetDefaultGrafanaConfig() *GrafanaConfig {
+	name := app.GetContext()
+
+	val, ok := app.GetContexts()[name]
+	if ok {
+		return val
+	} else {
+		log.Fatalf("Context: '%s' is not found.  Please check your config", name)
+	}
+	return nil
 }
 
 // UpdateContextNames sets each context's internal name to a slugified version of its key.
@@ -29,6 +179,42 @@ func (app *GDGAppConfiguration) GetContext() string {
 // GetContexts returns the map of context names to their GrafanaConfig.
 func (app *GDGAppConfiguration) GetContexts() map[string]*GrafanaConfig {
 	return app.Contexts
+}
+
+// ChangeContext changes active context
+func (app *GDGAppConfiguration) ChangeContext(name string) {
+	app.SetContext(name)
+	err := app.SaveToDisk(false)
+	if err != nil {
+		log.Fatal("Failed to make save changes")
+	}
+	slog.Info("Changed context", "context", name)
+}
+
+// SaveToDisk Persists current configuration to disk
+func (app *GDGAppConfiguration) SaveToDisk(useViper bool) error {
+	if useViper {
+		return app.GetViperConfig().WriteConfig()
+	}
+
+	file := app.GetViperConfig().ConfigFileUsed()
+	data, err := yaml.Marshal(app)
+	if err == nil {
+		err = os.WriteFile(file, data, 0o600)
+	}
+
+	return err
+}
+
+// SetContext sets the active context by name after validating its existence.
+func (app *GDGAppConfiguration) SetContext(name string) {
+	name = strings.ToLower(name)
+	_, ok := app.GetContexts()[name]
+	if !ok {
+		log.Fatalf("context %s was not found", name)
+	}
+
+	app.ContextName = name
 }
 
 // GetAppGlobals returns the global configuration, initializing it if nil.

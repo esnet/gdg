@@ -1,7 +1,10 @@
 package domain
 
+import "github.com/spf13/viper"
+
 type TemplatingConfig struct {
-	Entities TemplateEntities `mapstructure:"entities"`
+	ViperConfig *viper.Viper     `mapstructure:"-" yaml:"-"`
+	Entities    TemplateEntities `mapstructure:"entities"`
 }
 
 type TemplateEntities struct {

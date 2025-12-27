@@ -9,6 +9,8 @@ import (
 	"os"
 
 	"github.com/bep/simplecobra"
+	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/config/domain"
 	appconfig "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -20,7 +22,8 @@ type RootCommand struct {
 	NameP  string
 	isInit bool
 
-	GrafanaSvc func() service.GrafanaService
+	configObj *domain.GDGAppConfiguration
+	app       service.GrafanaService
 
 	ctx                  context.Context
 	initThis             *simplecobra.Commandeer
@@ -33,8 +36,33 @@ type RootCommand struct {
 	CommandEntries []simplecobra.Commander
 }
 
+// SetUpTest initializes the RootCommand for testing by setting a mock GrafanaService and loading test configuration.
+// It only runs when the TESTING environment variable is set to "1".
+func (c *RootCommand) SetUpTest(app service.GrafanaService) {
+	if os.Getenv("TESTING") != "1" {
+		return
+	}
+
+	c.app = app
+	c.configObj = config.InitGdgConfig("testing")
+
+}
+
+// GrafanaSvc returns the configured GrafanaService instance, initializing it if nil.
+func (c *RootCommand) GrafanaSvc() service.GrafanaService {
+	if c.app == nil {
+		c.app = service.NewDashNGoImpl(c.configObj)
+	}
+	return c.app
+}
+
+// ConfigSvc returns the root command's configuration object.
+func (c *RootCommand) ConfigSvc() *domain.GDGAppConfiguration {
+	return c.configObj
+}
+
 // Render outputs data as JSON if --output=json, otherwise renders a table.
-func (cmd *RootCommand) Render(command *cobra.Command, data any) {
+func (c *RootCommand) Render(command *cobra.Command, data any) {
 	output, _ := command.Flags().GetString("output")
 	if output == "json" {
 		data, err := json.MarshalIndent(data, "", "    ")
@@ -44,7 +72,7 @@ func (cmd *RootCommand) Render(command *cobra.Command, data any) {
 		fmt.Print(string(data))
 
 	} else {
-		cmd.TableObj.Render()
+		c.TableObj.Render()
 	}
 }
 
@@ -72,13 +100,8 @@ func (c *RootCommand) PreRun(this, runner *simplecobra.Commandeer) error {
 	c.isInit = true
 	c.initThis = this
 	c.initRunner = runner
-	c.initConfiguration()
-	return nil
-}
-
-// initConfiguration Loads configuration, and setups fail over case
-func (c *RootCommand) initConfiguration() {
 	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, false)
+	return nil
 }
 
 // Name returns the cli command name

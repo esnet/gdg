@@ -25,7 +25,7 @@ func SetupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.Grafa
 
 	optionMockSvc := func() support.RootOption {
 		return func(response *support.RootCommand) {
-			response.GrafanaSvc = getMockSvc
+			response.SetUpTest(getMockSvc())
 		}
 	}
 

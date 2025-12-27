@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/avast/retry-go"
-	"github.com/esnet/gdg/internal/config"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
@@ -37,11 +36,11 @@ func (extended *ExtendedApi) GetConfiguredOrgId(orgName string) (int64, error) {
 	delay := time.Second * 5
 	var count uint = 5
 	// Giving user configured value preference over defaults
-	if config.Config().GetGDGConfig().GetAppGlobals().RetryCount != 0 {
-		count = uint(config.Config().GetGDGConfig().GetAppGlobals().RetryCount) // #nosec G115
+	if extended.appCfg.GetAppGlobals().RetryCount != 0 {
+		count = uint(extended.appCfg.GetAppGlobals().RetryCount) // #nosec G115
 	}
-	if config.Config().GetGDGConfig().GetAppGlobals().GetRetryTimeout() != time.Millisecond*100 {
-		delay = config.Config().GetGDGConfig().GetAppGlobals().GetRetryTimeout()
+	if extended.appCfg.GetAppGlobals().GetRetryTimeout() != time.Millisecond*100 {
+		delay = extended.appCfg.GetAppGlobals().GetRetryTimeout()
 	}
 	err := retry.Do(fetch,
 		retry.Attempts(count),
