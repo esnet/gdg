@@ -64,7 +64,8 @@ func printTeamListing(teams map[*models.TeamDTO][]*models.TeamMemberDTO) {
 			ptr.ValueOrDefault(team.ID, int64(0)),
 			ptr.ValueOrDefault(team.Name, ""),
 			ptr.ValueOrDefault(team.OrgID, int64(0)),
-			ptr.ValueOrDefault(team.MemberCount, int64(0))})
+			ptr.ValueOrDefault(team.MemberCount, int64(0)),
+		})
 		writer.Render()
 		var success bool
 		twConfigs := table.NewWriter()

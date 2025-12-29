@@ -10,9 +10,8 @@ import (
 	"strings"
 
 	configDomain "github.com/esnet/gdg/internal/config/domain"
-	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
-
 	"github.com/esnet/gdg/internal/service/domain"
+	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
@@ -118,6 +117,11 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.V2Filter, co
 }
 
 func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO] {
+	const limit int64 = 100
+	var (
+		page        int64 = 1
+		allElements []*models.LibraryElementDTO
+	)
 	ignoreFilters := s.grafanaConf.GetDashboardSettings().IgnoreFilters
 	if ignoreFilters {
 		filter = nil
@@ -125,14 +129,26 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*domain.Wit
 		filter = NewLibraryElementFilter(s.gdgConfig)
 	}
 
-	params := library_elements.NewGetLibraryElementsParams()
-	params.Kind = ptr.Of(listLibraryPanels)
-	libraryElements, err := s.GetClient().LibraryElements.GetLibraryElements(params)
-	if err != nil {
-		log.Fatalf("Unable to list Library Elements %v", err)
+	// Fetch all lib elements
+	for {
+		params := library_elements.NewGetLibraryElementsParams()
+		params.Kind = ptr.Of(listLibraryPanels)
+		params.Page = &page
+		params.PerPage = ptr.Of(limit)
+
+		libraryElements, err := s.GetClient().LibraryElements.GetLibraryElements(params)
+		if err != nil {
+			log.Fatalf("Unable to list Library Elements %v", err)
+		}
+		allElements = append(allElements, libraryElements.GetPayload().Result.Elements...)
+		if int64(len(libraryElements.GetPayload().Result.Elements)) < limit {
+			break
+		}
+		page += 1
 	}
+
 	var newData []*domain.WithNested[models.LibraryElementDTO]
-	for _, val := range libraryElements.GetPayload().Result.Elements {
+	for _, val := range allElements {
 		var nestedPath string
 		if val.FolderUID == "" {
 			nestedPath = DefaultFolderName

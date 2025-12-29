@@ -45,7 +45,6 @@ func (c *RootCommand) SetUpTest(app service.GrafanaService) {
 
 	c.app = app
 	c.configObj = config.InitGdgConfig("testing")
-
 }
 
 // GrafanaSvc returns the configured GrafanaService instance, initializing it if nil.

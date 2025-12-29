@@ -15,9 +15,7 @@ import (
 	"github.com/esnet/gdg/internal/storage"
 )
 
-var (
-	instance *DashNGoImpl
-)
+var instance *DashNGoImpl
 
 type DashNGoImpl struct {
 	extended    *api.ExtendedApi

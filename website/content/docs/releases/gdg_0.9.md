@@ -31,6 +31,7 @@ toc: true
 
 ### Changes
   - [#515](https://github.com/esnet/gdg/pull/515) Add support for Alerting Timings
+  - [#519](https://github.com/esnet/gdg/pull/519) Add support for library elements pagination (more than 100 elements)
 
 ### Bug/Security Fixes
 -
