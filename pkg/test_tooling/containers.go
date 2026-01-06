@@ -9,6 +9,7 @@ import (
 
 	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/storage"
+	"github.com/esnet/gdg/pkg/plugins/secure"
 
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
@@ -75,7 +76,7 @@ func SetupCloudFunctionOpt(cfgObj *domain.GDGAppConfiguration, opts ...CloudTest
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, storage.Context, m)
 
-	s, err := storage.NewCloudStorage(ctx)
+	s, err := storage.NewCloudStorage(ctx, secure.NoOpEncoder{})
 	if err != nil {
 		log.Fatalf("Could not instantiate cloud storage for type: %s", m[storage.CloudType])
 	}

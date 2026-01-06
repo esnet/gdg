@@ -50,7 +50,7 @@ func (c *RootCommand) SetUpTest(app service.GrafanaService) {
 // GrafanaSvc returns the configured GrafanaService instance, initializing it if nil.
 func (c *RootCommand) GrafanaSvc() service.GrafanaService {
 	if c.app == nil {
-		c.app = service.NewDashNGoImpl(c.configObj)
+		c.app = service.NewDashNGo(c.configObj)
 	}
 	return c.app
 }

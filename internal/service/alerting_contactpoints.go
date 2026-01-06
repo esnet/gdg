@@ -55,9 +55,16 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 		return item.Name != emailReceiver
 	})
 
-	dsPath := buildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), s.GetGlobals().ClearOutput)
+	dsPath := buildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
 	if dsPacked, err = json.MarshalIndent(payload.ContactPoints, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
+	}
+	if !s.gdgConfig.PluginConfig.Disabled && s.gdgConfig.PluginConfig.CipherPlugin != nil {
+		newData, encodeErr := s.encoder.Encode(domain.AlertingResource, dsPacked)
+		if encodeErr != nil {
+			slog.Error("unable to encode sensitive data using cipher plugin. All data was saved in plaintext.", "err", encodeErr)
+		}
+		dsPacked = newData
 	}
 	if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 		return "", fmt.Errorf("unable to write file. %w", err)
@@ -89,6 +96,13 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 	fileLocation := buildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
 	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
+	}
+	if !s.gdgConfig.PluginConfig.Disabled && s.gdgConfig.PluginConfig.CipherPlugin != nil {
+		newData, encodeErr := s.encoder.Decode(domain.AlertingResource, rawDS)
+		if encodeErr != nil {
+			slog.Error("unable to encode sensitive data using cipher plugin. All data was saved in plaintext. ", "err", encodeErr)
+		}
+		rawDS = newData
 	}
 	if err = json.Unmarshal(rawDS, &data); err != nil {
 		return nil, fmt.Errorf("failed to unmarshall file, file:%s, err: %w", fileLocation, err)

@@ -10,8 +10,6 @@ import (
 )
 
 const (
-	ViperGdgConfig          = "gdg"
-	ViperTemplateConfig     = "template"
 	DefaultOrganizationName = "Main Org."
 	DefaultOrganizationId   = 1
 )

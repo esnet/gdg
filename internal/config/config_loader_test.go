@@ -129,6 +129,7 @@ func TestConfigEnv(t *testing.T) {
 
 func TestConfigSecureCloud(t *testing.T) {
 	assert := assert.New(t)
+	path.FixTestDir("config", "../..")
 	os.Setenv("GDG_CONTEXT_NAME", "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)

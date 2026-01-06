@@ -9,6 +9,7 @@ import (
 	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -68,6 +69,11 @@ func InitGdgConfig(override string) *domain.GDGAppConfiguration {
 	}
 
 	gdgConfig := new(domain.GDGAppConfiguration)
+	parseErr := loadDefaultSecureConfig(gdgConfig)
+	if parseErr != nil {
+		slog.Warn("unable to find default secure.yml", "err", parseErr)
+	}
+
 	for _, configOverride := range overrides {
 		configDirs, configName, ext = buildConfigSearchPath(configOverride)
 		v, err = readViperConfig(configName, configDirs, gdgConfig, ext)
@@ -86,6 +92,20 @@ func InitGdgConfig(override string) *domain.GDGAppConfiguration {
 	gdgConfig.UpdateContextNames()
 	gdgConfig.ViperConfig = v
 	return gdgConfig
+}
+
+func loadDefaultSecureConfig(gdgConfig *domain.GDGAppConfiguration) error {
+	// PreLoad Secure Defaults
+	secureFile, err := assets.GetFile("secure.yml")
+	if err != nil {
+		return err
+	}
+	raw := []byte(secureFile)
+	err = yaml.Unmarshal(raw, gdgConfig)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // readViperConfig utilizes the viper library to load the config from the selected paths

@@ -97,8 +97,15 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 // GetClient Returns a new defaultClient given token precedence over Basic Auth
 func (s *DashNGoImpl) GetClient() *client.GrafanaHTTPAPI {
 	if s.grafanaConf.GetAPIToken() != "" {
+		token := s.grafanaConf.GetAPIToken()
+		newToken, err := s.encoder.DecodeValue(token)
+		if err != nil {
+			slog.Warn("unable to decode token", slog.Any("err", err))
+		} else {
+			token = newToken
+		}
 		grafanaClient, _ := s.getNewClient(func(clientCfg *client.TransportConfig) {
-			clientCfg.APIKey = s.grafanaConf.GetAPIToken()
+			clientCfg.APIKey = token
 			clientCfg.Debug = s.GetGlobals().ApiDebug
 		})
 		return grafanaClient
@@ -123,8 +130,16 @@ func (s *DashNGoImpl) GetAdminClient() *client.GrafanaHTTPAPI {
 }
 
 func (s *DashNGoImpl) getDefaultBasicOpts() []NewClientOpts {
+	pass := s.grafanaConf.GetPassword()
+	newPass, err := s.encoder.DecodeValue(pass)
+	if err != nil {
+		slog.Warn("Unable to decode password, falling back on string value", slog.String("password", pass))
+	} else {
+		pass = newPass
+	}
+
 	return []NewClientOpts{func(clientCfg *client.TransportConfig) {
-		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, s.grafanaConf.GetPassword())
+		clientCfg.BasicAuth = url.UserPassword(s.grafanaConf.UserName, pass)
 		clientCfg.Debug = s.GetGlobals().ApiDebug
 	}}
 }

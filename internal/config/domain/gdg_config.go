@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"maps"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/esnet/gdg/internal/storage"
@@ -21,6 +23,73 @@ type GDGAppConfiguration struct {
 	StorageEngine map[string]map[string]string `mapstructure:"storage_engine" yaml:"storage_engine"`
 	Contexts      map[string]*GrafanaConfig    `mapstructure:"contexts" yaml:"contexts"`
 	Global        *AppGlobals                  `mapstructure:"global" yaml:"global"`
+	SecureConfig  map[string][]string          `mapstructure:"secure_config" yaml:"secure_config"`
+	PluginConfig  PluginConfig                 `mapstructure:"plugins" yaml:"plugins"`
+}
+
+type PluginConfig struct {
+	Disabled     bool          `mapstructure:"disabled" yaml:"disabled"`
+	CipherPlugin *PluginEntity `mapstructure:"cipher" yaml:"cipher"`
+}
+
+type PluginEntity struct {
+	Url          string            `mapstructure:"url" yaml:"url"`
+	FilePath     string            `mapstructure:"file_path" yaml:"file_path"`
+	PluginConfig map[string]string `mapstructure:"config" yaml:"config"`
+	processed    bool
+}
+
+func (pe *PluginEntity) GetPluginConfig() map[string]string {
+	if pe.processed {
+		return pe.PluginConfig
+	}
+	m := make(map[string]string)
+	for k, v := range pe.PluginConfig {
+		if strings.Contains(v, "env:") {
+			val := os.Getenv(strings.TrimPrefix(v, "env:"))
+			if val != "" {
+				m[k] = val
+				continue
+			}
+		} else if strings.HasPrefix(v, "file:") {
+			loc := strings.TrimPrefix(v, "file:")
+			expandedFile := os.ExpandEnv(loc)
+			raw, err := os.ReadFile(expandedFile) // #nosec G304
+			if err == nil {
+				m[k] = string(raw)
+				continue
+			}
+			slog.Warn(fmt.Sprintf("unable to read file from variable `%s`, using it value as string", expandedFile))
+		}
+		m[k] = v
+	}
+	pe.processed = true
+	pe.PluginConfig = m
+	return pe.PluginConfig
+}
+
+// GetSecureEntities returns the SecureModelConfig, initializing it if nil.
+func (app *GDGAppConfiguration) GetSecureEntities() map[string][]string {
+	if app.SecureConfig == nil {
+		app.SecureConfig = make(map[string][]string)
+	}
+	return app.SecureConfig
+}
+
+// SecureModelConfig defines the field and path of sensitive data tha should be encrypted
+type SecureModelConfig struct {
+	SecureEntities map[string]SecureEntity `mapstructure:"secure_fields" yaml:"secure_fields"`
+}
+
+// SecureFieldNames returns a slice of names for all secure entities.
+func (s *SecureModelConfig) SecureFieldNames() []string {
+	res := slices.Collect(maps.Keys(s.SecureEntities))
+	slices.Sort(res)
+	return res
+}
+
+type SecureEntity struct {
+	Patterns []string `mapstructure:"patterns" yaml:"patterns"`
 }
 
 // IgnoreSSL returns true if SSL errors should be ignored
@@ -58,8 +127,8 @@ func (app *GDGAppConfiguration) GetCloudConfiguration(configName string) (string
 			grafanaCfg := app.GetDefaultGrafanaConfig()
 			m := grafanaCfg.GetCloudAuth()
 			// Clear out hard coded values
-			appData[storage.AccessId] = m[storage.AccessId]
 			appData[storage.SecretKey] = m[storage.SecretKey]
+			appData[storage.AccessId] = m[storage.AccessId]
 		} else {
 			delete(appData, storage.AccessId)
 			delete(appData, storage.SecretKey)

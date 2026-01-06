@@ -1,10 +1,38 @@
 package config
 
 import (
+	"maps"
+	"slices"
 	"testing"
 
+	assets "github.com/esnet/gdg/config"
+	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
+
+func TestSecureUnmarshall(t *testing.T) {
+	assert := assert.New(t)
+	raw, err := assets.GetFile("secure.yml")
+	assert.NoError(err)
+	assert.NotEmpty(raw)
+	cfg := new(domain.GDGAppConfiguration)
+	err = yaml.Unmarshal([]byte(raw), cfg)
+	// plugins
+	assert.True(cfg.PluginConfig.Disabled)
+	assert.NotNil(cfg.PluginConfig.CipherPlugin)
+	assert.Equal(cfg.PluginConfig.CipherPlugin.Url, "https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugins/cipher_aes256_gcm.wasm")
+	assert.Equal(cfg.PluginConfig.CipherPlugin.FilePath, "")
+	assert.Equal(len(cfg.PluginConfig.CipherPlugin.PluginConfig), 1)
+	assert.Equal(cfg.PluginConfig.CipherPlugin.PluginConfig["passphrase"], "hello_world")
+	assert.NoError(err)
+	// Secure
+	assert.Equal(len(cfg.SecureConfig), 1)
+	keys := slices.Collect(maps.Keys(cfg.SecureConfig))
+	const alerting = "alerting"
+	assert.True(slices.Contains(keys, alerting))
+	assert.True(cfg.SecureConfig[alerting] != nil)
+}
 
 func TestConfigSearchPathBuilding(t *testing.T) {
 	assert := assert.New(t)

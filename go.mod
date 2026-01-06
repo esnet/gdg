@@ -14,6 +14,7 @@ require (
 	github.com/carlmjohnson/requests v0.25.1
 	github.com/charmbracelet/huh v0.8.0
 	github.com/docker/go-connections v0.6.0
+	github.com/extism/go-sdk v1.7.1
 	github.com/go-openapi/strfmt v0.25.0
 	github.com/google/go-cmp v0.7.0
 	github.com/google/uuid v1.6.0
@@ -31,6 +32,7 @@ require (
 	github.com/testcontainers/testcontainers-go v0.40.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/pretty v1.2.1
+	github.com/tidwall/sjson v1.2.5
 	gocloud.dev v0.44.0
 	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39
 	golang.org/x/mod v0.30.0
@@ -109,7 +111,6 @@ require (
 	github.com/envoyproxy/go-control-plane/envoy v1.36.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.3.0 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
-	github.com/extism/go-sdk v1.7.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.3 // indirect

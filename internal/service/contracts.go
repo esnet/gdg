@@ -131,6 +131,8 @@ type AuthenticationApi interface {
 	// TokenApi
 	ServiceAccountApi
 	Login()
+	EncodeValue(in string) string
+	DecodeValue(in string) string
 }
 
 // OrgPreferencesApi Contract definition

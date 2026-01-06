@@ -1,0 +1,24 @@
+secure_config:
+  alerting:
+    - '#.receivers.#.settings.url'
+    - '#.receivers.#.settings.password'
+    - '#.receivers.#.settings.token'
+
+
+plugins:
+  ## plugins are disabled by default
+  disabled: true
+  cipher:
+## AES-256 config
+    url: https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugins/cipher_aes256_gcm.wasm
+#    file_path: ./foobar/moo Only enable either filepath Or URL not both.
+    config: ## map passed to plugin.
+            #  If any field starts with env: then it will instead load the env value
+            # if any field start with file: then it will load the file data and use its value to be passed to the config
+      passphrase: hello_world
+## Ansible Vault
+#    url: https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugins/cipher_ansible.wasm
+#    config:   ## map passed to plugin.
+#      #  If any field starts with env: then it will instead load the env value
+#      # if any field start with file: then it will load the file data and use its value to be passed to the config
+#      vault_password: file:$HOME/.ansible/vaultSecret

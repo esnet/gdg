@@ -560,6 +560,57 @@ func (_c *GrafanaService_CreateServiceAccountToken_Call) RunAndReturn(run func(s
 	return _c
 }
 
+// DecodeValue provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) DecodeValue(in string) string {
+	ret := _mock.Called(in)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DecodeValue")
+	}
+
+	var r0 string
+	if returnFunc, ok := ret.Get(0).(func(string) string); ok {
+		r0 = returnFunc(in)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+	return r0
+}
+
+// GrafanaService_DecodeValue_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DecodeValue'
+type GrafanaService_DecodeValue_Call struct {
+	*mock.Call
+}
+
+// DecodeValue is a helper method to define mock.On call
+//   - in string
+func (_e *GrafanaService_Expecter) DecodeValue(in interface{}) *GrafanaService_DecodeValue_Call {
+	return &GrafanaService_DecodeValue_Call{Call: _e.mock.On("DecodeValue", in)}
+}
+
+func (_c *GrafanaService_DecodeValue_Call) Run(run func(in string)) *GrafanaService_DecodeValue_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *GrafanaService_DecodeValue_Call) Return(s string) *GrafanaService_DecodeValue_Call {
+	_c.Call.Return(s)
+	return _c
+}
+
+func (_c *GrafanaService_DecodeValue_Call) RunAndReturn(run func(in string) string) *GrafanaService_DecodeValue_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // DeleteAllConnectionPermissions provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) DeleteAllConnectionPermissions(filter filters.V2Filter) []string {
 	ret := _mock.Called(filter)
@@ -1956,6 +2007,57 @@ func (_c *GrafanaService_DownloadUsers_Call) Return(strings []string) *GrafanaSe
 }
 
 func (_c *GrafanaService_DownloadUsers_Call) RunAndReturn(run func(filter filters.V2Filter) []string) *GrafanaService_DownloadUsers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// EncodeValue provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) EncodeValue(in string) string {
+	ret := _mock.Called(in)
+
+	if len(ret) == 0 {
+		panic("no return value specified for EncodeValue")
+	}
+
+	var r0 string
+	if returnFunc, ok := ret.Get(0).(func(string) string); ok {
+		r0 = returnFunc(in)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+	return r0
+}
+
+// GrafanaService_EncodeValue_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'EncodeValue'
+type GrafanaService_EncodeValue_Call struct {
+	*mock.Call
+}
+
+// EncodeValue is a helper method to define mock.On call
+//   - in string
+func (_e *GrafanaService_Expecter) EncodeValue(in interface{}) *GrafanaService_EncodeValue_Call {
+	return &GrafanaService_EncodeValue_Call{Call: _e.mock.On("EncodeValue", in)}
+}
+
+func (_c *GrafanaService_EncodeValue_Call) Run(run func(in string)) *GrafanaService_EncodeValue_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *GrafanaService_EncodeValue_Call) Return(s string) *GrafanaService_EncodeValue_Call {
+	_c.Call.Return(s)
+	return _c
+}
+
+func (_c *GrafanaService_EncodeValue_Call) RunAndReturn(run func(in string) string) *GrafanaService_EncodeValue_Call {
 	_c.Call.Return(run)
 	return _c
 }

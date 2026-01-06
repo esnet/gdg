@@ -16,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	transport "github.com/aws/smithy-go/endpoints"
+	"github.com/esnet/gdg/pkg/plugins/secure/contract"
 
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/s3blob"
@@ -124,7 +125,7 @@ func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 // NewCloudStorage creates a CloudStorage instance using context‑provided config.
 // It validates context, parses app data, supports custom S3 endpoints or native cloud URLs,
 // initializes the bucket (creating it if requested), and returns a configured Storage.
-func NewCloudStorage(c context.Context) (Storage, error) {
+func NewCloudStorage(c context.Context, encoder contract.CipherEncoder) (Storage, error) {
 	var (
 		err       error
 		bucketObj *blob.Bucket
@@ -138,6 +139,14 @@ func NewCloudStorage(c context.Context) (Storage, error) {
 	appData, ok := contextVal.(map[string]string)
 	if !ok {
 		return nil, errors.New("cannot convert appData to string map")
+	}
+
+	secretKeyVal := appData[SecretKey]
+	newSecretKey, err := encoder.DecodeValue(secretKeyVal)
+	if err != nil {
+		slog.Warn("unable to decode secret key using cipher plugin, using string value")
+	} else {
+		appData[SecretKey] = newSecretKey
 	}
 
 	if getMapValue(CloudType, "s3", stringEmpty, appData) == Custom {

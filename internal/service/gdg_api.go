@@ -8,6 +8,8 @@ import (
 	"os"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/pkg/plugins/secure"
+	"github.com/esnet/gdg/pkg/plugins/secure/contract"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/api"
@@ -22,6 +24,7 @@ type DashNGoImpl struct {
 	gdgConfig   *domain.GDGAppConfiguration
 	grafanaConf *domain.GrafanaConfig
 	storage     storage.Storage
+	encoder     contract.CipherEncoder
 }
 
 func (s *DashNGoImpl) GetGlobals() *domain.AppGlobals {
@@ -45,6 +48,11 @@ func newInstance(cfg *domain.GDGAppConfiguration) *DashNGoImpl {
 		gdgConfig: cfg,
 	}
 	setupConfigData(cfg, obj)
+	if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
+		obj.encoder = secure.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+	} else {
+		obj.encoder = secure.NoOpEncoder{}
+	}
 
 	if obj.GetGlobals().ApiDebug {
 		err := os.Setenv("DEBUG", "1")
@@ -85,7 +93,11 @@ func ConfigureStorage(cfg *domain.GDGAppConfiguration) (storage.Storage, error) 
 	switch storageType {
 	case "cloud":
 		{
-			storageEngine, err = storage.NewCloudStorage(ctx)
+			var encoder contract.CipherEncoder
+			if !cfg.PluginConfig.Disabled || cfg.PluginConfig.CipherPlugin != nil {
+				encoder = secure.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+			}
+			storageEngine, err = storage.NewCloudStorage(ctx, encoder)
 			if err != nil {
 				return nil, fmt.Errorf("unable to configure CloudStorage Engine:	%w", err)
 			}
@@ -106,7 +118,7 @@ func NewTestApiService(storageEngine storage.Storage, cfg *domain.GDGAppConfigur
 	return ins
 }
 
-func NewDashNGoImpl(cfg *domain.GDGAppConfiguration) *DashNGoImpl {
+func NewDashNGo(cfg *domain.GDGAppConfiguration) *DashNGoImpl {
 	if instance == nil {
 		instance = newInstance(cfg)
 	}
