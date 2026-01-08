@@ -1,0 +1,32 @@
+name: 'Run Release Setup'
+description: 'Run Release Setup'
+inputs:
+  go_version:
+    description: 'Golang version'
+    required: true
+    default: '1.25.5'
+  docker_user:
+    description: 'Docker username'
+    required: true
+    default: 'user'
+  docker_password:
+    description: 'Docker Password'
+    required: true
+    default: 'pass'
+
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: "${{ inputs.go_version }}"
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: "${{ inputs.docker_user }}"
+        password: "${{ inputs.docker_password }}"
+        registry: ghcr.io
