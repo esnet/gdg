@@ -1,10 +1,10 @@
 ---
-title: "version v0.8"
+title: "Version 0.8"
 description: "Release Notes for v0.8"
 date: 2025-05-15T00:00:00
 draft: false
 images: [ ]
-weight: 2
+weight: 3
 toc: true
 ---
 

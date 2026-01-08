@@ -1,16 +1,16 @@
 ---
-title: "version v0.9"
+title: "Version 0.9"
 description: "Release Notes for v0.9"
-date: 2026-01-11T00:00:00
+date: 2026-01-07T00:00:00
 draft: false
 images: [ ]
-weight: 1
+weight: 2
 toc: true
 ---
 
 ## Release Notes for v0.9.0
 
-**Release Date: 01/09/2026**
+**Release Date: 01/08/2026**
 
 ### Min Recommended Grafana Versions:
  - Grafana 11+

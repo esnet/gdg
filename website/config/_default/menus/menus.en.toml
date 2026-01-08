@@ -47,7 +47,7 @@
 
 [[main]]
   name = "Release Notes"
-  url = "/docs/releases/version-v0.9/"
+  url = "/docs/releases/version-0.9/"
   weight = 10
 
 
