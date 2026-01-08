@@ -1,6 +1,6 @@
 ---
 title: "Debugging"
-weight: 104
+weight: 106
 ---
 ## Debugging / Trouble shooting
 

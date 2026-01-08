@@ -139,9 +139,17 @@ func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 		slog.Error(err.Error())
 		return s.secureAuth
 	}
-
 	s.secureAuth = obj
 	return s.secureAuth
+}
+
+// UpdateSecureModel updates the secure model using the supplied function, if secure auth is present.
+func (s *GrafanaConfig) UpdateSecureModel(fn func(string) (string, error)) {
+	secureAuth := s.getSecureAuth()
+	if secureAuth == nil {
+		return
+	}
+	secureAuth.UpdateSecureModel(fn)
 }
 
 // GetPassword returns the password, respecting environment variable override if set.
@@ -152,6 +160,7 @@ func (s *GrafanaConfig) GetPassword() string {
 	}
 	// Backward compatibility to allow Env Override
 	// Get Env Value
+
 	envKey := fmt.Sprintf("GDG_CONTEXTS__%s__PASSWORD", strings.ToUpper(s.contextName))
 	val := os.Getenv(envKey)
 	if val != "" {

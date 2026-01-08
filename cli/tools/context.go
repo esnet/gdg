@@ -9,6 +9,7 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"github.com/spf13/cobra"
@@ -42,7 +43,7 @@ func newContextClearCmd() simplecobra.Commander {
 	return &support.SimpleCommand{
 		NameP: "clear",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *support.RootCommand, args []string) error {
-			r.ConfigSvc().ClearContexts()
+			config.ClearContexts(r.ConfigSvc())
 			slog.Info("Successfully deleted all configured contexts")
 			return nil
 		},
@@ -82,7 +83,7 @@ func newContextCopy() simplecobra.Commander {
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
 			src := args[0]
 			dest := args[1]
-			rootCmd.ConfigSvc().CopyContext(src, dest)
+			config.CopyContext(rootCmd.ConfigSvc(), src, dest)
 			return nil
 		},
 		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
@@ -128,7 +129,7 @@ func newDeleteContext() simplecobra.Commander {
 				return errors.New("requires a context argument")
 			}
 			contextEntry := args[0]
-			rootCmd.ConfigSvc().DeleteContext(contextEntry)
+			config.DeleteContext(rootCmd.ConfigSvc(), contextEntry)
 			slog.Info("Successfully deleted context", "context", contextEntry)
 			return nil
 		},
@@ -149,7 +150,7 @@ func newContext() simplecobra.Commander {
 				return errors.New("requires a context NameP")
 			}
 			contextEntry := args[0]
-			rootCmd.ConfigSvc().CreateNewContext(contextEntry)
+			config.CreateNewContext(rootCmd.ConfigSvc(), contextEntry)
 			return nil
 		},
 	}

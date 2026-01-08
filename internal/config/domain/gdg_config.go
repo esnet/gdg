@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/storage"
-	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -141,54 +140,6 @@ func (app *GDGAppConfiguration) GetViperConfig() *viper.Viper {
 	return app.ViperConfig
 }
 
-// CopyContext Makes a copy of the specified context and write to disk
-func (app *GDGAppConfiguration) CopyContext(src, dest string) {
-	// Validate context
-	contexts := app.GetContexts()
-	if len(contexts) == 0 {
-		log.Fatal("Cannot set context.  No valid configuration found in gdg.yml")
-	}
-	cfg, ok := contexts[src]
-	if !ok {
-		log.Fatalf("Cannot find context to: '%s'.  No valid configuration found in gdg.yml", src)
-	}
-	newCopy, err := tools.DeepCopy(*cfg)
-	if err != nil {
-		log.Fatal("unable to make a copy of contexts")
-	}
-	contexts[dest] = newCopy
-	app.ContextName = dest
-	err = app.SaveToDisk(false)
-	if err != nil {
-		log.Fatal("Failed to make save changes")
-	}
-	slog.Info("Copied context to destination, please check your config to confirm", "sourceContext", src, "destinationContext", dest)
-}
-
-// DeleteContext remove a given context
-func (app *GDGAppConfiguration) DeleteContext(name string) {
-	name = strings.ToLower(name) // ensure name is lower case
-	contexts := app.GetContexts()
-	_, ok := contexts[name]
-	if !ok {
-		log.Fatalf("Context not found, cannot delete context: %s", name)
-		return
-	}
-	delete(contexts, name)
-	if len(contexts) != 0 {
-		for key := range contexts {
-			app.ContextName = key
-			break
-		}
-	}
-
-	err := app.SaveToDisk(false)
-	if err != nil {
-		log.Fatal("Failed to make save changes")
-	}
-	slog.Info("Deleted context and set new context to", "deletedContext", name, "newActiveContext", app.ContextName)
-}
-
 // PrintContext outputs the YAML representation of the named context and the config file used.
 func (app *GDGAppConfiguration) PrintContext(name string) {
 	name = strings.ToLower(name)
@@ -204,20 +155,6 @@ func (app *GDGAppConfiguration) PrintContext(name string) {
 
 	fmt.Printf("config file: %s\n", app.GetViperConfig().ConfigFileUsed())
 	fmt.Printf("---context: %s\n%s\n", name, string(d))
-}
-
-// ClearContexts resets all contexts to a single default example context and saves the config.```
-func (app *GDGAppConfiguration) ClearContexts() {
-	newContext := make(map[string]*GrafanaConfig)
-	newContext["example"] = NewGrafanaConfig("example")
-	app.Contexts = newContext
-	app.ContextName = "example"
-	err := app.SaveToDisk(false)
-	if err != nil {
-		log.Fatal("Failed to make save changes")
-	}
-
-	slog.Info("All contexts were cleared")
 }
 
 // GetDefaultGrafanaConfig returns the default aka. selected grafana config

@@ -4,7 +4,7 @@ description: "Release Notes for v0.6"
 date: 2023-09-01T00:00:00
 draft: false
 images: [ ]
-weight: 6
+weight: 4
 toc: true
 ---
 

@@ -86,7 +86,7 @@ func TestUpdateJson(t *testing.T) {
 	assert.False(strings.Contains(strResult, "hello"))
 	assert.False(strings.Contains(strResult, "world"))
 	assert.False(strings.Contains(strResult, "woot"))
-	//Revert the changes
+	// Revert the changes
 	result = encoder.updateJson(domain.AlertingResource, result, decoderFn)
 	strResult = string(result)
 	assert.True(strings.Contains(strResult, "www.discord.com"))
@@ -97,5 +97,4 @@ func TestUpdateJson(t *testing.T) {
 	result = encoder.updateJson(domain.DashboardResource, []byte(inputJson), encoderFn)
 	strResult = string(result)
 	assert.Equal(strResult, inputJson)
-
 }

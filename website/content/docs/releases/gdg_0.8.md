@@ -4,7 +4,7 @@ description: "Release Notes for v0.8"
 date: 2025-05-15T00:00:00
 draft: false
 images: [ ]
-weight: 8
+weight: 2
 toc: true
 ---
 
