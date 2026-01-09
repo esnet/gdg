@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/storage"
-	domain2 "github.com/esnet/gdg/pkg/config/domain"
+	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/spf13/viper"
 )
@@ -210,7 +210,7 @@ func (s *GrafanaConfig) GetAuthLocation() string {
 // SecureLocation returns the resolved path for secure resources, using override or default.
 func (s *GrafanaConfig) SecureLocation() string {
 	if s.SecureLocationOverride == "" {
-		return s.GetPath(domain2.SecureSecretsResource, "")
+		return s.GetPath(resourceTypes.SecureSecretsResource, "")
 	}
 
 	// if path starts with a slash assume it's an absolute path

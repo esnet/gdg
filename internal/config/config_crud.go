@@ -223,11 +223,13 @@ func buildFormGroups(authType string, config *domain.GrafanaConfig, secureModel 
 func DeleteContext(app *domain.GDGAppConfiguration, name string) {
 	name = strings.ToLower(name) // ensure name is lower case
 	contexts := app.GetContexts()
-	_, ok := contexts[name]
+	ctx, ok := contexts[name]
 	if !ok {
 		log.Fatalf("Context not found, cannot delete context: %s", name)
 		return
 	}
+	secureLoc := ctx.SecureLocation()
+	fileName := filepath.Join(secureLoc, fmt.Sprintf("auth_%s.yaml", name))
 	delete(contexts, name)
 	if len(contexts) != 0 {
 		for key := range contexts {
@@ -240,6 +242,15 @@ func DeleteContext(app *domain.GDGAppConfiguration, name string) {
 	if err != nil {
 		log.Fatal("Failed to make save changes")
 	}
+	if _, statErr := os.Stat(fileName); statErr != nil {
+		slog.Warn("auth file does not exists")
+	} else {
+		errRemove := os.Remove(fileName)
+		if errRemove != nil {
+			slog.Warn("failed to remove auth file", "file", fileName)
+		}
+	}
+
 	slog.Info("Deleted context and set new context to", "deletedContext", name, "newActiveContext", app.ContextName)
 }
 

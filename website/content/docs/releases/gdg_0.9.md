@@ -8,10 +8,11 @@ weight: 2
 toc: true
 ---
 
+## Release Notes for v0.9.2
 
-## Release Notes for v0.9.0
 
-CICD Build failures, skipping versions. Skipping to next version.
+### Tech Updates
+ - [#530](https://github.com/esnet/gdg/pull/530) Fixing video demo and context deletion logic
 
 ## Release Notes for v0.9.1
 
@@ -85,3 +86,8 @@ address this. issued [#524](https://github.com/esnet/gdg/issues/524), will addre
 #### Contributors:
   - [PavelsDenisovs](https://github.com/PavelsDenisovs)
   - [safaci2000](https://github.com/safaci2000)
+
+
+## Release Notes for v0.9.0
+
+CICD Build failures, skipping versions. Skipping to next version.

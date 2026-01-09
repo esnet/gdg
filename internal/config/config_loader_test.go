@@ -10,7 +10,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/storage"
-	domain2 "github.com/esnet/gdg/pkg/config/domain"
+	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -194,8 +194,8 @@ func validateGrafanaQA(t *testing.T, grafana *domain.GrafanaConfig) {
 	folders := grafana.GetMonitoredFolders(false)
 	assert.True(t, slices.Contains(folders, "Folder1"))
 	assert.True(t, slices.Contains(folders, "Folder2"))
-	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(domain2.ConnectionResource, grafana.GetOrganizationName()))
-	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(domain2.DashboardResource, grafana.GetOrganizationName()))
+	assert.Equal(t, "test/data/org_your-org/connections", grafana.GetPath(resourceTypes.ConnectionResource, grafana.GetOrganizationName()))
+	assert.Equal(t, "test/data/org_your-org/dashboards", grafana.GetPath(resourceTypes.DashboardResource, grafana.GetOrganizationName()))
 	dsSettings := grafana.ConnectionSettings
 	request := models.AddDataSourceCommand{}
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)
