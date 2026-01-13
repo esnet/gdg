@@ -346,9 +346,7 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 				// subfolder does not exist and needs to be created
 				slog.Info("Parent Folder is missing, attempting to create parentFolder folder", slog.Any("parentFolder", sb.String()), slog.Any("folder", nestedFolder))
 				// check if folder definition exists.
-				var (
-					parentAddErr error
-				)
+				var parentAddErr error
 				if parentFile, parentOk := nestedPathMap[sb.String()]; parentOk {
 					getNewFolder := func() (*models.CreateFolderCommand, error) {
 						if strings.HasSuffix(parentFile, ".json") {
@@ -375,8 +373,8 @@ func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
 				} else {
 					getNewFolder := func() (*models.CreateFolderCommand, error) {
 						newFolderCmd := new(models.CreateFolderCommand)
-						newFolderCmd.Title = sb.String()
-						if val, ok := folderUidMap[parentFolder]; ok {
+						newFolderCmd.Title = encode.Decode(fld)
+						if val, ok := nestedPathToUidExisting[parentFolder]; ok {
 							newFolderCmd.ParentUID = val.UID
 						}
 						return newFolderCmd, nil

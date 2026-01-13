@@ -61,7 +61,7 @@ func TestFolderCRUD(t *testing.T) {
 	assert.Equal(t, secondDsItem.Title, "Others")
 	assert.Equal(t, secondDsItem.FolderTitle, "linux/gnu")
 	// Import Folders
-	slog.Info("Importing folders")
+	slog.Info("importing folders")
 	list := apiClient.DownloadFolders(nil)
 	assert.Equal(t, len(list), len(folders))
 	slog.Info("Deleting Folders")
