@@ -119,14 +119,14 @@ func newCipherEncode() simplecobra.Commander {
 				slog.Info("Encoded result:")
 				fmt.Println(result)
 			} else {
-				data, err := os.ReadFile(fileName)
+				data, err := os.ReadFile(fileName) // #nosec G304
 				if err != nil {
 					log.Fatal("Error reading file", "file", fileName, "err", err)
 				}
 
 				result := rootCmd.GrafanaSvc().EncodeValue(string(data))
 				if result != "" {
-					err = os.WriteFile(fileName, []byte(result), 0o644)
+					err = os.WriteFile(fileName, []byte(result), 0o600)
 					if err != nil {
 						log.Fatal("Error writing file", "file", fileName, "err", err)
 					} else {
@@ -156,14 +156,14 @@ func newCipherDecode() simplecobra.Commander {
 				slog.Info("Decoded result")
 				fmt.Println(result)
 			} else {
-				data, err := os.ReadFile(fileName)
+				data, err := os.ReadFile(fileName) // #nosec G304
 				if err != nil {
 					log.Fatal("Error reading file", "file", fileName, "err", err)
 				}
 
 				result := rootCmd.GrafanaSvc().DecodeValue(string(data))
 				if result != "" {
-					err = os.WriteFile(fileName, []byte(result), 0o644)
+					err = os.WriteFile(fileName, []byte(result), 0o600)
 					if err != nil {
 						log.Fatal("Error writing file", "file", fileName, "err", err)
 					} else {

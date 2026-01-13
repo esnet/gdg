@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"log/slog"
@@ -88,9 +87,11 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 	if err != nil {
 		log.Fatalf("Unable to get folders and Connection Auth Settings")
 	}
+
+	const passKey = "basicAuthPassword"
 	defaultDs := domain.GrafanaConnection{
-		"user":              connectionUser,
-		"basicAuthPassword": connectionPassword,
+		"user":  connectionUser,
+		passKey: connectionPassword,
 	}
 	// newConfig.
 	if folders != "" {
@@ -109,7 +110,14 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 		log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
 	}
 
-	secretFileLocation := filepath.Join(location, "default.json")
+	secretFileLocation := filepath.Join(location, "default.yaml")
+	if encoder != nil {
+		newVal, encodeErr := encoder.EncodeValue(defaultDs.Password())
+		if encodeErr == nil {
+			defaultDs[passKey] = newVal
+		}
+	}
+
 	err = writeSecureFileData(defaultDs, secretFileLocation)
 	if err != nil {
 		log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
@@ -122,7 +130,7 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 					Regex: ".*",
 				},
 			},
-			SecureData: "default.json",
+			SecureData: "default.yaml",
 		},
 	}
 
@@ -148,29 +156,13 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 
 // writeSecureFileData marshals an object to JSON and writes it to a file with 0600 permissions.
 func writeSecureFileData[T any](object T, location string) error {
-	encoding := filepath.Ext(location)
-	switch encoding {
-	case ".json":
-		{
-			data, err := json.MarshalIndent(&object, "", "    ")
-			if err != nil {
-				log.Fatalf("unable to turn map into json representation.  location: %s, %v", location, err)
-			}
-			err = os.WriteFile(location, data, 0o600)
-			return err
-		}
-	case ".yaml":
-		{
-			data, err := yaml.Marshal(&object)
-			if err != nil {
-				log.Fatalf("unable to turn map into yaml representation.  location: %s, %v", location, err)
-			}
-			err = os.WriteFile(location, data, 0o600)
-			return err
-		}
-	default:
-		return fmt.Errorf("unsupported encoding type: %s", encoding)
+	data, err := yaml.Marshal(&object)
+	if err != nil {
+		log.Fatalf("unable to turn map into yaml representation.  location: %s, %v", location, err)
 	}
+	err = os.WriteFile(location, data, 0o600)
+	return err
+
 }
 
 // buildFormGroups creates form groups for Grafana authentication and configuration.

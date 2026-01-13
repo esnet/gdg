@@ -43,16 +43,16 @@ contexts:
               regex: "misc"
             - field: "url"
               value: ".*esproxy2*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
         - rules:
             - field: "url"
               regex: ".*esproxy2*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
         - rules:
             # Default
             - field: "name"
               regex: ".*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
     url: http://grafana:3000
     user_name: admin
     dashboard_settings:
@@ -68,12 +68,12 @@ contexts:
         - rules:
             - field: "name"
               regex: "(?i)complex name"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
         # Default
         - rules:
             - field: "name"
               regex: ".*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
     url: https://grafana.com
     user_name: admin
     dashboard_settings:
@@ -88,12 +88,12 @@ contexts:
         - rules:
             - field: "name"
               regex: "(?i)complex name"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
         - rules:
             # Default
             - field: "name"
               regex: ".*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
     url: https://staging.grafana.com
     dashboard_settings:
       ignore_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
@@ -116,3 +116,11 @@ global:
   retry_delay: 5s  ## Will wait for specified duration before trying again.
 ## Keep in mind longer the delay and higher the count the slower GDG will be in performing certain tasks.
 ## A failing endpoint that has 10s * 6 = 60 seconds minimum for each failing endpoint.  Use this carefully
+
+## Keep this off if you don't need encryption or plugins
+#plugins:
+#  disabled: false
+#  cipher:
+#    url: https://github.com/esnet/gdg-plugins/raw/refs/tags/0.1.0/plugins/cipher_aes256_gcm.wasm
+#    config:
+#      passphrase: hello_world

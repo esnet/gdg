@@ -37,7 +37,7 @@ context_name:
       - rules:
           - field: name
             regex: .*
-        secure_data: "default.json"
+        secure_data: "default.yaml"
   dashboard_settings:
     ignore_filters: false
   output_path: test/data

@@ -16,8 +16,8 @@ func TestPlugCfg(t *testing.T) {
 		PluginConfig: map[string]string{
 			"passphrase":    "env:PLUGIN_URL",
 			"missing_env":   "env:someblahenvNotSet",
-			"file_path":     "file:test/data/secure/complex.json",
-			"file_path_env": "file:$cwd/test/data/secure/complex.json",
+			"file_path":     "file:test/data/secure/complex.yaml",
+			"file_path_env": "file:$cwd/test/data/secure/complex.yaml",
 			"file_path_bad": "file:test/data/Dummy",
 		},
 	}

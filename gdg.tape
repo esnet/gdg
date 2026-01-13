@@ -21,9 +21,10 @@ Type "General,linux%2Fgnu/*" Sleep 500ms  Enter
 Type "ds_admin" Sleep 500ms  Enter
 Type "ds_pass" Sleep 500ms  Enter
 Type "gdg tools context show demo" Sleep 500ms  Enter
-Type "cat test/data/secure/default.json" Sleep 500ms Enter
 Type "echo encrypted auth using plugin" Sleep 500ms Enter
 Type "cat test/data/secure/auth_demo.yaml" Sleep 500ms Enter
+Type "echo encrypted connection settings using plugin" Sleep 500ms Enter
+Type "cat test/data/secure/default.yaml" Sleep 500ms Enter
 Type "clear" Sleep 5000ms  Enter
 Type "gdg backup dash list" Sleep 500ms  Enter
 Type "gdg backup dash upload" Sleep 500ms  Enter

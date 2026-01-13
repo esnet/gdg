@@ -21,7 +21,7 @@ func TestSecureUnmarshall(t *testing.T) {
 	// plugins
 	assert.True(cfg.PluginConfig.Disabled)
 	assert.NotNil(cfg.PluginConfig.CipherPlugin)
-	assert.Equal(cfg.PluginConfig.CipherPlugin.Url, "https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugins/cipher_aes256_gcm.wasm")
+	assert.Equal(cfg.PluginConfig.CipherPlugin.Url, "https://github.com/esnet/gdg-plugins/raw/refs/tags/0.1.0/plugins/cipher_aes256_gcm.wasm")
 	assert.Equal(cfg.PluginConfig.CipherPlugin.FilePath, "")
 	assert.Equal(len(cfg.PluginConfig.CipherPlugin.PluginConfig), 1)
 	assert.Equal(cfg.PluginConfig.CipherPlugin.PluginConfig["passphrase"], "hello_world")

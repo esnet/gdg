@@ -11,11 +11,11 @@ contexts:
               regex: "misc"
             - field: "url"
               regex: ".*esproxy2*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
         - rules:
             - field: "name"
               regex: ".*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
     url: http://localhost:3000
     user_name: admin
     organization_name: Main Org.
@@ -32,12 +32,12 @@ contexts:
         - rules:
             - field: "name"
               regex: "(?i)complex name"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
         - rules:
             - match:
                 - field: "name"
                   regex: ".*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
 
     url: https://grafana.com
     user_name: admin
@@ -54,16 +54,16 @@ contexts:
         - rules:
             - field: "name"
               regex: "(?i)complex name"
-          secure_data: "complex.json"
+          secure_data: "complex.yaml"
         - rules:
             - field: "name"
               regex: "ds_name"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
         # Default
         - rules:
             - field: "name"
               regex: ".*"
-          secure_data: "default.json"
+          secure_data: "default.yaml"
     url: https://staging.grafana.com
     organization_name: Your Org
     dashboard_settings:

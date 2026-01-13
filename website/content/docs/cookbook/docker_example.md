@@ -14,14 +14,14 @@ services:
     volumes:
       - ./gdg.yml:/app/config/gdg.yml:ro
     secrets:
-      - staging_auth.json
-      - default.json
+      - auth_staging.yaml
+      - default.yaml
 
 secrets:
-  staging_auth.json:
-    file: ./staging_auth.json
-  default.json:
-    file: ./default_connection_auth.json
+  auth_staging.yaml:
+    file: ./auth_staging.yaml
+  default.yaml:
+    file: ./default_connection_auth.yaml
 
 ```
 

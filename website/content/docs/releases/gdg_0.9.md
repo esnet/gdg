@@ -10,11 +10,14 @@ toc: true
 
 ## Release Notes for v0.9.2
 
+This is a quick bug fix release to address the behavior of alert rules. The other changes are enabling encryption for
+connection settings as well. This should cover all sensitive data that GDG manages.
+
 ### Changes
-  - Feature: [#538](https://github.com/esnet/gdg/pull/538) Adding encryption support to connections secure data.
   - Bug: [#535](https://github.com/esnet/gdg/issues/535) Fixing behavior with context override
   - Bug: [#537](https://github.com/esnet/gdg/pull/537) Fixing issues with Alert Rules filtering and folder Crud.
- - chore: [#530](https://github.com/esnet/gdg/pull/530) Fixing video demo and context deletion logic
+  - Feature: [#538](https://github.com/esnet/gdg/pull/538) Adding encryption support to connections secure data.
+  - chore: [#530](https://github.com/esnet/gdg/pull/530) Fixing video demo and context deletion logic
 
 ## Release Notes for v0.9.1
 
