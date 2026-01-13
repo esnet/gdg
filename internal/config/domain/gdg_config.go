@@ -164,9 +164,8 @@ func (app *GDGAppConfiguration) GetDefaultGrafanaConfig() *GrafanaConfig {
 	val, ok := app.GetContexts()[name]
 	if ok {
 		return val
-	} else {
-		log.Fatalf("Context: '%s' is not found.  Please check your config", name)
 	}
+	log.Fatalf("Context: '%s' is not found.  Please check your config", name)
 	return nil
 }
 

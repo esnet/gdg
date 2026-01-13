@@ -23,7 +23,7 @@ func (c *RootCommand) InitConfiguration(cmd *cobra.Command) {
 			log.Fatalf("context %s was not found", contextOverride)
 		}
 
-		c.configObj.ChangeContext(contextOverride)
+		c.configObj.SetContext(contextOverride)
 	}
 
 	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, c.configObj.IsDebug())
