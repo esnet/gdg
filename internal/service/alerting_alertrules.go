@@ -15,6 +15,7 @@ import (
 	"github.com/esnet/gdg/internal/service/filters/v2"
 	"github.com/esnet/gdg/pkg/config/domain"
 	"github.com/gosimple/slug"
+	"github.com/tidwall/gjson"
 
 	"github.com/samber/lo"
 
@@ -23,7 +24,7 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 )
 
-func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
+func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc GrafanaService) filters.V2Filter {
 	filterObj := v2.NewBaseFilter()
 	err := filterObj.RegisterReader(reflect.TypeOf(&modelsDomain.AlertRuleWithNestedFolder{}), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(*modelsDomain.AlertRuleWithNestedFolder)
@@ -38,9 +39,36 @@ func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter 
 		}
 	})
 	if err != nil {
-		log.Fatalf("unable to register a valid reader for folder filter")
+		log.Fatalf("unable to register a valid object reader for alert rules filter")
 	}
+	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+		val, ok := a.([]byte)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case filters.AlertRuleFilterType:
+			{
+				r := gjson.GetBytes(val, "folderUID")
+				if !r.Exists() || r.IsArray() {
+					return DefaultFolderName, nil
+				}
+				folderUid := r.String()
+				folderObj, err := grafanaSvc.(*DashNGoImpl).getFolderByUid(folderUid)
+				if err != nil {
+					return nil, err
+				}
+				return folderObj.NestedPath, nil
 
+			}
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("unable to register a valid byte reader for alert rules filter")
+	}
 	folderArr := cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
 	filterObj.AddValidation(filters.AlertRuleFilterType, func(value any, expected any) error {
 		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, filters.AlertRuleFilterType)
@@ -101,11 +129,11 @@ func (s *DashNGoImpl) UploadAlertRules(filter filters.V2Filter) error {
 	if err != nil {
 		return fmt.Errorf("unable to find any rules to export from storage engine, err: %w", err)
 	}
-	currentContacts, err := s.ListAlertRules(filter)
+	currentRules, err := s.ListAlertRules(filter)
 	if err != nil {
 		return err
 	}
-	m := lo.Associate(currentContacts, func(item *modelsDomain.AlertRuleWithNestedFolder) (string, *modelsDomain.AlertRuleWithNestedFolder) {
+	m := lo.Associate(currentRules, func(item *modelsDomain.AlertRuleWithNestedFolder) (string, *modelsDomain.AlertRuleWithNestedFolder) {
 		return item.UID, item
 	})
 
@@ -116,6 +144,10 @@ func (s *DashNGoImpl) UploadAlertRules(filter filters.V2Filter) error {
 		}
 		if rawEntity, err = s.storage.ReadFile(file); err != nil {
 			slog.Warn("Unable to read file", "filename", file, "err", err)
+			continue
+		}
+		if filter != nil && !filter.ValidateAll(rawEntity) {
+			slog.Debug("Skipping file, failed Team filter", "file", file)
 			continue
 		}
 		entity := new(modelsDomain.AlertRuleWithNestedFolder)

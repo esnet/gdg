@@ -50,7 +50,7 @@ func TestAlertingRulesCrud(t *testing.T) {
 	_, err = apiClient.UploadContactPoints()
 	assert.NoError(t, err)
 
-	alertFilters := service.NewAlertRuleFilter(cfg)
+	alertFilters := service.NewAlertRuleFilter(cfg, apiClient)
 	rulesList, err := apiClient.ListAlertRules(alertFilters)
 	assert.NoError(t, err)
 	assert.Equal(t, len(rulesList), 0, "Validate initial rules list is empty")

@@ -18,11 +18,11 @@ import (
 
 var ignoreAlertRuleFilters bool
 
-func getAlertRulesFilter(cfg *domain.GDGAppConfiguration) filters.V2Filter {
+func getAlertRulesFilter(cfg *domain.GDGAppConfiguration, grafanaService service.GrafanaService) filters.V2Filter {
 	if ignoreAlertRuleFilters {
 		return nil
 	}
-	return service.NewAlertRuleFilter(cfg)
+	return service.NewAlertRuleFilter(cfg, grafanaService)
 }
 
 func newAlertingRulesCommand() simplecobra.Commander {
@@ -62,7 +62,7 @@ func newUploadAlertRulesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			err := rootCmd.GrafanaSvc().UploadAlertRules(getAlertRulesFilter(rootCmd.ConfigSvc()))
+			err := rootCmd.GrafanaSvc().UploadAlertRules(getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc()))
 			if err != nil {
 				log.Fatal("unable to upload Orgs rule alerts", slog.Any("err", err))
 			}
@@ -86,7 +86,7 @@ func newClearAlertRulesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			files, err := rootCmd.GrafanaSvc().ClearAlertRules(getAlertRulesFilter(rootCmd.ConfigSvc()))
+			files, err := rootCmd.GrafanaSvc().ClearAlertRules(getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc()))
 			if err != nil {
 				log.Fatal("unable to deleting Orgs rule alerts", slog.Any("err", err))
 			}
@@ -120,7 +120,7 @@ func newListAlertRulesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			rules, err := rootCmd.GrafanaSvc().ListAlertRules(getAlertRulesFilter(rootCmd.ConfigSvc()))
+			rules, err := rootCmd.GrafanaSvc().ListAlertRules(getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc()))
 			if err != nil {
 				log.Fatal("unable to retrieve Orgs rule alerts", slog.Any("err", err))
 			}
@@ -158,7 +158,7 @@ func newDownloadAlertRulesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			files, err := rootCmd.GrafanaSvc().DownloadAlertRules(getAlertRulesFilter(rootCmd.ConfigSvc()))
+			files, err := rootCmd.GrafanaSvc().DownloadAlertRules(getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc()))
 			if err != nil {
 				log.Fatal("unable to retrieve Orgs rule alerts", slog.Any("err", err))
 			}
