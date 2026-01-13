@@ -203,7 +203,7 @@ func (s *DashNGoImpl) UploadConnections(filter filters.V2Filter) []string {
 			dsConfig := s.grafanaConf
 
 			secureLocation := s.grafanaConf.SecureLocation()
-			credentials, err := dsConfig.GetCredentials(newDS, secureLocation)
+			credentials, err := dsConfig.GetCredentials(newDS, secureLocation, s.encoder)
 			if err != nil { // Attempt to get Credentials by URL regex
 				slog.Warn("DataSource has no secureData configured.  Please check your configuration.")
 			}

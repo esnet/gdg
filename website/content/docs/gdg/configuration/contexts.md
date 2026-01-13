@@ -40,16 +40,16 @@ The rules are defined under `credential_rules` key.  The credentials used will b
 Each Credential rule has 2 components.
 
 1. A set of Rules that need to match.  These are always additive, ie every single rule needs to match in order to 'pass'
-2. `secure_data` is the location of the JSON used to map the credentials.  If you use the context wizard it will create a simple one file for you.
+2. `secure_data` is the location of the auth data used to map the credentials.  If you use the context wizard it will create a simple file for you.
 
-```json
-{
-    "basicAuthPassword": "password",
-    "user": "user"
-}
+```yaml
+basicAuthPassword: password
+user: user
 ```
+The auth file either be `json` or `yaml` but only a flat structure is supported. No nested values.
+(yaml is recommended, it's generally more readable and json will likely get dropped in future versions)
 
-Some credentials use a different set of keys that it would expect, simply adjust the json to match your needs.
+Some credentials use a different set of keys that is required, simply adjust the auth file to match your needs.
 
 The Rules format for connections settings are the same as the filters. An example configuration can be seen below.
 
@@ -59,7 +59,7 @@ The Rules format for connections settings are the same as the filters. An exampl
               regex: "misc"
             - field: "url"
               value: ".*esproxy2*"
-          secure_data: "custom.json"
+          secure_data: "custom.yaml"
 ```
 
 In the example above if the connection name is misc and the url matches esproxy2 then the connection credentials from custom.json will be used.
@@ -71,7 +71,7 @@ The default rule is defined below.  This should match every possible condition a
       # Default
       - field: "name"
         regex: ".*"
-    secure_data: "default.json"
+    secure_data: "default.yaml"
 ```
 ### Dashboard Settings
 

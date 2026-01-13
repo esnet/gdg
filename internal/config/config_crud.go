@@ -63,7 +63,7 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 
 	newConfig := domain.NewGrafanaConfig(name)
 	newConfig.ConnectionSettings = &domain.ConnectionSettings{
-		MatchingRules: make([]domain.RegexMatchesList, 0),
+		MatchingRules: make([]*domain.RegexMatchesList, 0),
 	}
 	newConfig.OrganizationName = "Main Org."
 	secure := domain.SecureModel{}
@@ -114,7 +114,7 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 	if err != nil {
 		log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
 	}
-	newConfig.ConnectionSettings.MatchingRules = []domain.RegexMatchesList{
+	newConfig.ConnectionSettings.MatchingRules = []*domain.RegexMatchesList{
 		{
 			Rules: []domain.MatchingRule{
 				{

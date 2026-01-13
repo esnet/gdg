@@ -3,7 +3,9 @@ package tools
 import (
 	"context"
 	"fmt"
+	"log"
 	"log/slog"
+	"os"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
@@ -35,7 +37,9 @@ func newCipherHelper() simplecobra.Commander {
 		Short: "Cipher Helpers",
 		Long:  "Cipher Helpers",
 		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
-			cmd.Aliases = []string{"f", "folders"}
+			cmd.Aliases = []string{"c", "ciphers"}
+			cmd.PersistentFlags().StringP("file", "f", "", "file to encode/decode")
+			cmd.PersistentFlags().StringP("value", "", "", "value to encode/decode")
 		},
 		CommandsList: []simplecobra.Commander{
 			newCipherEncode(),
@@ -92,7 +96,6 @@ func newFolderDecode() simplecobra.Commander {
 				return fmt.Errorf("requires the following parameters to be specified: \"Folder Name\"")
 			}
 			folderName := args[0]
-			// result := encode.DecodeEscapeSpecialChars(folderName)
 			result := encode.EncodePath(encode.DecodeEscapeSpecialChars, folderName)
 			slog.Info("Decoded result", "output", result)
 			return nil
@@ -106,13 +109,32 @@ func newCipherEncode() simplecobra.Commander {
 		Short: "apply cipher to string",
 		Long:  "apply cipher to string",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			if len(args) < 1 {
-				return fmt.Errorf("requires the following parameters to be specified: \"Folder Name\"")
+			fileName, _ := cd.CobraCommand.Flags().GetString("file")
+			value, _ := cd.CobraCommand.Flags().GetString("value")
+			if fileName != "" && value != "" {
+				log.Fatal("either a value or a file must be specified, not both")
 			}
-			inputValue := args[0]
-			result := rootCmd.GrafanaSvc().EncodeValue(inputValue)
-			slog.Info("Encoded result:")
-			fmt.Println(result)
+			if value != "" {
+				result := rootCmd.GrafanaSvc().EncodeValue(value)
+				slog.Info("Encoded result:")
+				fmt.Println(result)
+			} else {
+				data, err := os.ReadFile(fileName)
+				if err != nil {
+					log.Fatal("Error reading file", "file", fileName, "err", err)
+				}
+
+				result := rootCmd.GrafanaSvc().EncodeValue(string(data))
+				if result != "" {
+					err = os.WriteFile(fileName, []byte(result), 0o644)
+					if err != nil {
+						log.Fatal("Error writing file", "file", fileName, "err", err)
+					} else {
+						slog.Info("File has been encrypted", "file", fileName)
+					}
+				}
+			}
+
 			return nil
 		},
 	}
@@ -124,13 +146,31 @@ func newCipherDecode() simplecobra.Commander {
 		Short: "decode string using cipher plugin",
 		Long:  "decode string using cipher plugin",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
-			if len(args) < 1 {
-				return fmt.Errorf("requires the following parameters to be specified: \"Folder Name\"")
+			fileName, _ := cd.CobraCommand.Flags().GetString("file")
+			value, _ := cd.CobraCommand.Flags().GetString("value")
+			if fileName != "" && value != "" {
+				log.Fatal("either a value or a file must be specified, not both")
 			}
-			inputValue := args[0]
-			result := rootCmd.GrafanaSvc().DecodeValue(inputValue)
-			slog.Info("Decoded result")
-			fmt.Println(result)
+			if value != "" {
+				result := rootCmd.GrafanaSvc().DecodeValue(value)
+				slog.Info("Decoded result")
+				fmt.Println(result)
+			} else {
+				data, err := os.ReadFile(fileName)
+				if err != nil {
+					log.Fatal("Error reading file", "file", fileName, "err", err)
+				}
+
+				result := rootCmd.GrafanaSvc().DecodeValue(string(data))
+				if result != "" {
+					err = os.WriteFile(fileName, []byte(result), 0o644)
+					if err != nil {
+						log.Fatal("Error writing file", "file", fileName, "err", err)
+					} else {
+						slog.Info("File has been decrypted", "file", fileName)
+					}
+				}
+			}
 			return nil
 		},
 	}

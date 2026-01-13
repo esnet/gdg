@@ -48,14 +48,15 @@ type MonitoredOrgFolders struct {
 
 // ConnectionSettings contains Filters and Matching Rules for Grafana
 type ConnectionSettings struct {
-	FilterRules   []MatchingRule     `mapstructure:"filters" yaml:"filters,omitempty"`
-	MatchingRules []RegexMatchesList `mapstructure:"credential_rules" yaml:"credential_rules,omitempty"`
+	FilterRules   []MatchingRule      `mapstructure:"filters" yaml:"filters,omitempty"`
+	MatchingRules []*RegexMatchesList `mapstructure:"credential_rules" yaml:"credential_rules,omitempty"`
 }
 
 // RegexMatchesList model wraps regex matches list for grafana
 type RegexMatchesList struct {
-	Rules      []MatchingRule `mapstructure:"rules" yaml:"rules,omitempty"`
-	SecureData string         `mapstructure:"secure_data" yaml:"secure_data,omitempty"`
+	Rules      []MatchingRule     `mapstructure:"rules" yaml:"rules,omitempty"`
+	SecureData string             `mapstructure:"secure_data" yaml:"secure_data,omitempty"`
+	result     *GrafanaConnection // decoded structured map
 }
 
 // Testing Functions
@@ -80,8 +81,9 @@ func (s *GrafanaConfig) TestSetSecureAuth(auth SecureModel) error {
 
 // End Testing Functions
 
-// loadAuthData
-func loadData[T any](securePath string, obj *T) (*T, error) {
+// loadSecureData reads a config file with .yaml, .yml, or .json extension from securePath,
+// unmarshal its contents into obj, and returns the populated object or an error.
+func loadSecureData[T any](securePath string, obj *T) (*T, error) {
 	v := viper.New()
 	v.SetConfigFile(securePath)
 	formats := []string{".yaml", ".yml", ".json"}
@@ -116,7 +118,7 @@ func (s *GrafanaConfig) GetCloudAuth() map[string]string {
 	if authFile == "" {
 		return m
 	}
-	_, err := loadData(authFile, &m)
+	_, err := loadSecureData(authFile, &m)
 	if err != nil {
 		slog.Warn(fmt.Sprintf("%v, falling back on Env settings. Please set '%s' and '%s' if you haven't done so already",
 			err, storage.CloudKey, storage.CloudSecret))
@@ -134,7 +136,7 @@ func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 	}
 
 	authFile := s.GetAuthLocation()
-	obj, err := loadData(authFile, new(SecureModel))
+	obj, err := loadSecureData(authFile, new(SecureModel))
 	if err != nil {
 		slog.Error(err.Error())
 		return s.secureAuth

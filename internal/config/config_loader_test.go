@@ -11,6 +11,7 @@ import (
 	"github.com/esnet/gdg/internal/config/domain"
 	"github.com/esnet/gdg/internal/storage"
 	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
+	"github.com/esnet/gdg/pkg/plugins/secure"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -201,13 +202,13 @@ func validateGrafanaQA(t *testing.T, grafana *domain.GrafanaConfig) {
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)
 	// Last Entry is the default
 	secureLoc := grafana.SecureLocation()
-	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(secureLoc)
+	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(secureLoc, secure.NoOpEncoder{})
 	assert.Nil(t, err)
 	assert.Equal(t, "user", defaultSettings.User())
 	assert.Equal(t, "password", defaultSettings.Password())
 
 	request.Name = "Complex Name"
-	defaultSettings, _ = dsSettings.GetCredentials(request, secureLoc)
+	defaultSettings, _ = dsSettings.GetCredentials(request, secureLoc, secure.NoOpEncoder{})
 	assert.Equal(t, "test", defaultSettings.User())
 	assert.Equal(t, "secret", defaultSettings.Password())
 }
