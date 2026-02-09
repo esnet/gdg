@@ -156,17 +156,16 @@ func (s *GrafanaConfig) UpdateSecureModel(fn func(string) (string, error)) {
 
 // GetPassword returns the password, respecting environment variable override if set.
 func (s *GrafanaConfig) GetPassword() string {
-	secureAuth := s.getSecureAuth()
-	if secureAuth == nil {
-		return ""
-	}
-	// Backward compatibility to allow Env Override
-	// Get Env Value
-
+	// Check Env Override first, so it works even without a secure auth file
 	envKey := fmt.Sprintf("GDG_CONTEXTS__%s__PASSWORD", strings.ToUpper(s.contextName))
 	val := os.Getenv(envKey)
 	if val != "" {
 		return val
+	}
+
+	secureAuth := s.getSecureAuth()
+	if secureAuth == nil {
+		return ""
 	}
 
 	return secureAuth.Password
@@ -174,16 +173,16 @@ func (s *GrafanaConfig) GetPassword() string {
 
 // GetAPIToken returns the API token, checking for an environment variable override before falling back to stored credentials.
 func (s *GrafanaConfig) GetAPIToken() string {
-	secureAuth := s.getSecureAuth()
-	if secureAuth == nil {
-		return ""
-	}
-	// Backward compatibility to allow Env Override
-	// Get Env Value
+	// Check Env Override first, so it works even without a secure auth file
 	envKey := fmt.Sprintf("GDG_CONTEXTS__%s__TOKEN", strings.ToUpper(s.contextName))
 	val := os.Getenv(envKey)
 	if val != "" {
 		return val
+	}
+
+	secureAuth := s.getSecureAuth()
+	if secureAuth == nil {
+		return ""
 	}
 
 	return secureAuth.Token
