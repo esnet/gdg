@@ -8,6 +8,8 @@ import (
 const (
 	AuthPrefix      = "auth"
 	CloudAuthPrefix = "s3"
+	tokenFormat     = "GDG_CONTEXTS__%s__TOKEN"    // #nosec G101
+	passwordFormat  = "GDG_CONTEXTS__%s__PASSWORD" // #nosec G101
 )
 
 // AppGlobals is the global configuration for the application

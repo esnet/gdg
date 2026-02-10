@@ -162,7 +162,6 @@ func writeSecureFileData[T any](object T, location string) error {
 	}
 	err = os.WriteFile(location, data, 0o600)
 	return err
-
 }
 
 // buildFormGroups creates form groups for Grafana authentication and configuration.
