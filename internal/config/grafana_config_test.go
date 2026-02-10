@@ -12,6 +12,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestEnvOverrideWithoutSecureFile verifies that environment variable overrides
+// for TOKEN and PASSWORD work even when no secure auth file exists.
+func TestEnvOverrideWithoutSecureFile(t *testing.T) {
+	// Create a config with a context name that has no corresponding secure auth file
+	config := domain.NewGrafanaConfig("nosuchcontext")
+	config.OutputPath = t.TempDir()
+
+	// Set env vars for this context
+	t.Setenv("GDG_CONTEXTS__NOSUCHCONTEXT__TOKEN", "my-token-from-env")
+	t.Setenv("GDG_CONTEXTS__NOSUCHCONTEXT__PASSWORD", "my-password-from-env")
+
+	assert.Equal(t, "my-token-from-env", config.GetAPIToken())
+	assert.Equal(t, "my-password-from-env", config.GetPassword())
+}
+
 func TestGrafanaConfig(t *testing.T) {
 	config := domain.NewGrafanaConfig("testing")
 	config.URL = "  http://localhost  "

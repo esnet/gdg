@@ -8,6 +8,10 @@ type SecureModel struct {
 	Token    string `mapstructure:"token"  json:"token" yaml:"token"`
 }
 
+func (sm *SecureModel) Empty() bool {
+	return sm == nil || (sm.Password == "" && sm.Token == "")
+}
+
 // UpdateSecureModel updates Token and Password by applying fn; logs errors on failure.
 func (sm *SecureModel) UpdateSecureModel(fn func(string) (string, error)) {
 	if sm.Token != "" {

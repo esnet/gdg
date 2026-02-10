@@ -127,6 +127,17 @@ func (s *GrafanaConfig) GetCloudAuth() map[string]string {
 	return m
 }
 
+func (s *GrafanaConfig) getEnvSecureAuth() *SecureModel {
+	tokenKey := fmt.Sprintf(tokenFormat, strings.ToUpper(s.contextName))
+	passKey := fmt.Sprintf(passwordFormat, strings.ToUpper(s.contextName))
+	out := &SecureModel{
+		Password: os.Getenv(passKey),
+		Token:    os.Getenv(tokenKey),
+	}
+
+	return out
+}
+
 // getSecureAuth returns the parsed secure authentication model,
 // loading from YAML, YML or JSON files in order of precedence.
 // It caches the result for subsequent calls.
@@ -134,23 +145,32 @@ func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 	if s.secureAuth != nil {
 		return s.secureAuth
 	}
-
 	authFile := s.GetAuthLocation()
 	obj, err := loadSecureData(authFile, new(SecureModel))
 	if err != nil {
-		slog.Error(err.Error())
-		return s.secureAuth
+		slog.Warn("no secure auth found, falling back on env", "err", err.Error())
+		// falling back on env values
+		obj = s.getEnvSecureAuth()
 	}
+
 	s.secureAuth = obj
+	if obj.Empty() {
+		slog.Warn("no secure auth found or env overrides found. Assuming annonymous access is enabled.")
+	}
 	return s.secureAuth
 }
 
 // UpdateSecureModel updates the secure model using the supplied function, if secure auth is present.
 func (s *GrafanaConfig) UpdateSecureModel(fn func(string) (string, error)) {
 	secureAuth := s.getSecureAuth()
-	if secureAuth == nil {
+	if secureAuth == nil || secureAuth.Empty() {
 		return
 	}
+
+	if !s.getEnvSecureAuth().Empty() {
+		slog.Warn("You have plugins and a cipher plugin configured. The Env value is assumed to be encrypted. If that is not the case, make sure you remove the cipher plugins.")
+	}
+
 	secureAuth.UpdateSecureModel(fn)
 }
 
@@ -159,14 +179,6 @@ func (s *GrafanaConfig) GetPassword() string {
 	secureAuth := s.getSecureAuth()
 	if secureAuth == nil {
 		return ""
-	}
-	// Backward compatibility to allow Env Override
-	// Get Env Value
-
-	envKey := fmt.Sprintf("GDG_CONTEXTS__%s__PASSWORD", strings.ToUpper(s.contextName))
-	val := os.Getenv(envKey)
-	if val != "" {
-		return val
 	}
 
 	return secureAuth.Password
@@ -177,13 +189,6 @@ func (s *GrafanaConfig) GetAPIToken() string {
 	secureAuth := s.getSecureAuth()
 	if secureAuth == nil {
 		return ""
-	}
-	// Backward compatibility to allow Env Override
-	// Get Env Value
-	envKey := fmt.Sprintf("GDG_CONTEXTS__%s__TOKEN", strings.ToUpper(s.contextName))
-	val := os.Getenv(envKey)
-	if val != "" {
-		return val
 	}
 
 	return secureAuth.Token

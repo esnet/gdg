@@ -46,7 +46,7 @@ Simply use the new context wizard reference above to set that up or set a value 
 
 #### 2. Using Environment Variables:
 
-You can also override the value using ENV var that line up to the section you want do override:
+You can also override the value using ENV var that line up to the section you want to override:
 
 Ex:
 ```sh
@@ -60,7 +60,8 @@ Keep in mind that the config entry for token and password still need to exist in
 
 
 {{< callout context="danger" title="Danger" icon="alert-octagon" >}}
-Be careful with using convenience utility around contexts (ake set, copy, delete, etc.) Anything that write to the config
+**Prior to 0.9.2**:
+Be careful with using convenience utility around contexts (aka set, copy, delete, etc.) Anything that write to the config
 file will leak those credentials and persist them to the given config file.
 
 All alerting entities will ignore folder watch list, and any other filter set.
