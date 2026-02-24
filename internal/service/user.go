@@ -20,8 +20,6 @@ import (
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
-
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/admin_users"
@@ -31,8 +29,7 @@ import (
 )
 
 func setupUserReaders(filterObj filters.V2Filter) {
-	obj := models.UserSearchHitDTO{}
-	err := filterObj.RegisterReader(reflect.TypeOf(obj), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.UserSearchHitDTO](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(models.UserSearchHitDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -48,7 +45,7 @@ func setupUserReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid User Filter, obj reader failed, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -228,8 +225,8 @@ func (s *DashNGoImpl) ListUsers(filter filters.V2Filter) []*models.UserSearchHit
 	}
 	var filteredUsers []*models.UserSearchHitDTO
 	params := users.NewSearchUsersParams()
-	params.Page = ptr.Of(int64(1))
-	params.Perpage = ptr.Of(int64(5000))
+	params.Page = new(int64(1))
+	params.Perpage = new(int64(5000))
 	usersList, err := s.GetClient().Users.SearchUsers(params)
 	if err != nil {
 		log.Fatal(err.Error())

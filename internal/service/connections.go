@@ -21,8 +21,7 @@ import (
 )
 
 func setupConnectionReaders(filterObj filters.V2Filter) {
-	obj := models.DataSourceListItemDTO{}
-	err := filterObj.RegisterReader(reflect.TypeOf(obj), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.DataSourceListItemDTO](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(models.DataSourceListItemDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -38,7 +37,7 @@ func setupConnectionReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Connection Filter, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")

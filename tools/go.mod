@@ -1,6 +1,6 @@
 module github.com/esnet/gdg/tools
 
-go 1.25.5
+go 1.26.0
 
 tool (
 	github.com/client9/misspell/cmd/misspell

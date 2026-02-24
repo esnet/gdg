@@ -9,8 +9,10 @@ package ptr
 //	p := ptr.Of(5)
 //
 // will return a pointer to the value 5.
+//
+//go:fix inline
 func Of[T any](value T) *T {
-	return &value
+	return new(value)
 }
 
 //func ValOf[T any](value *T) T {

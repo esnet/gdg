@@ -16,7 +16,7 @@ jobs:
       matrix:
         grafana_version: [ 11.6.0-ubuntu, 12.3.0-ubuntu ]
         use_tokens: [ 0, 1 ]
-        go_version: [ 1.25.5]
+        go_version: [ 1.26.0]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

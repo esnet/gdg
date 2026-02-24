@@ -28,8 +28,7 @@ import (
 )
 
 func setupOrgReaders(filterObj filters.V2Filter) {
-	obj := models.OrgDTO{}
-	err := filterObj.RegisterReader(reflect.TypeOf(obj), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.OrgDTO](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(models.OrgDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -45,7 +44,7 @@ func setupOrgReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Org Filter, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")

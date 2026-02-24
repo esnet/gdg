@@ -50,8 +50,8 @@ func (pe *PluginEntity) GetPluginConfig() map[string]string {
 				m[k] = val
 				continue
 			}
-		} else if strings.HasPrefix(v, "file:") {
-			loc := strings.TrimPrefix(v, "file:")
+		} else if after, ok := strings.CutPrefix(v, "file:"); ok {
+			loc := after
 			expandedFile := os.ExpandEnv(loc)
 			raw, err := os.ReadFile(expandedFile) // #nosec G304
 			if err == nil {

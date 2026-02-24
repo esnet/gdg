@@ -37,16 +37,16 @@ func NewTemplate(cfg *domain.TemplatingConfig, gdgCfg *domain.GrafanaConfig) Tem
 var fns = template.FuncMap{
 	"ToSlug": service.GetSlug,
 	"QuotedStringJoin": func(arr []any) string {
-		result := ""
+		var result strings.Builder
 		for ndx, item := range arr {
 			if len(arr)-1 == ndx {
-				result += fmt.Sprintf("\"%v\"", item)
+				result.WriteString(fmt.Sprintf("\"%v\"", item))
 			} else {
-				result += fmt.Sprintf("\"%v\",", item)
+				result.WriteString(fmt.Sprintf("\"%v\",", item))
 			}
 		}
 
-		return result
+		return result.String()
 	},
 }
 

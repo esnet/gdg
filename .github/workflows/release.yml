@@ -18,7 +18,7 @@ jobs:
       - name: Setup Release
         uses: ./actions/release
         with:
-          go_version: '1.25.5'
+          go_version: '1.26.0'
           docker_user: ${{ secrets.DOCKER_USERNAME }}
           docker_password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run GoReleaser

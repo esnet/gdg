@@ -12,8 +12,6 @@ import (
 
 	"github.com/samber/lo"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
-
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
@@ -42,9 +40,9 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 		err      error
 	)
 	p := provisioning.NewGetContactpointsExportParams()
-	p.Download = ptr.Of(true)
-	p.Decrypt = ptr.Of(true)
-	p.Format = ptr.Of("json")
+	p.Download = new(true)
+	p.Decrypt = new(true)
+	p.Format = new("json")
 	data, err := s.GetClient().Provisioning.GetContactpointsExport(p)
 	if err != nil {
 		log.Fatalf("unable to retrieve Contact Points, err: %s", err.Error())
@@ -117,13 +115,13 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 				// do update
 				p := provisioning.NewPutContactpointParams()
 				p.UID = r.UID
-				p.XDisableProvenance = ptr.Of("true")
+				p.XDisableProvenance = new("true")
 				p.Body = &models.EmbeddedContactPoint{
 					DisableResolveMessage: false,
 					Name:                  i.Name,
 					Provenance:            "",
 					Settings:              r.Settings,
-					Type:                  ptr.Of(r.Type),
+					Type:                  new(r.Type),
 					UID:                   r.UID,
 				}
 				_, err := s.GetClient().Provisioning.PutContactpoint(p)
@@ -135,14 +133,14 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 
 			} else {
 				p := provisioning.NewPostContactpointsParams()
-				p.XDisableProvenance = ptr.Of("true")
+				p.XDisableProvenance = new("true")
 				p.Body = &models.EmbeddedContactPoint{
 					DisableResolveMessage: false,
 					Name:                  i.Name,
 					UID:                   r.UID,
 					Provenance:            "",
 					Settings:              r.Settings,
-					Type:                  ptr.Of(r.Type),
+					Type:                  new(r.Type),
 				}
 				_, err = s.GetClient().Provisioning.PostContactpoints(p)
 				if err != nil {
