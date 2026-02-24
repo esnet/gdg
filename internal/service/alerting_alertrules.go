@@ -26,7 +26,7 @@ import (
 
 func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc GrafanaService) filters.V2Filter {
 	filterObj := v2.NewBaseFilter()
-	err := filterObj.RegisterReader(reflect.TypeOf(&modelsDomain.AlertRuleWithNestedFolder{}), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[*modelsDomain.AlertRuleWithNestedFolder](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(*modelsDomain.AlertRuleWithNestedFolder)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -41,7 +41,7 @@ func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc Grafan
 	if err != nil {
 		log.Fatalf("unable to register a valid object reader for alert rules filter")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -159,12 +159,12 @@ func (s *DashNGoImpl) UploadAlertRules(filter filters.V2Filter) error {
 			p := provisioning.NewPutAlertRuleParams()
 			p.Body = entity.ProvisionedAlertRule
 			p.UID = entity.UID
-			p.XDisableProvenance = ptr.Of("true")
+			p.XDisableProvenance = new("true")
 			_, err = s.GetClient().Provisioning.PutAlertRule(p)
 		} else {
 			p := provisioning.NewPostAlertRuleParams()
 			p.Body = entity.ProvisionedAlertRule
-			p.XDisableProvenance = ptr.Of("true")
+			p.XDisableProvenance = new("true")
 			_, err = s.GetClient().Provisioning.PostAlertRule(p)
 		}
 		if err != nil {

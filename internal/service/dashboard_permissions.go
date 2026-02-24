@@ -11,8 +11,6 @@ import (
 
 	"github.com/esnet/gdg/internal/service/domain"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
-
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
 
@@ -131,7 +129,7 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.V2Filter) ([]
 		} else if folderName == "" {
 			folderName = DefaultFolderName
 		}
-		folderUidMap, err = s.baseFolderValidation(filterReq, folderName, ptr.Of(""), folderUidMap, rawFile)
+		folderUidMap, err = s.baseFolderValidation(filterReq, folderName, new(""), folderUidMap, rawFile)
 		if err != nil {
 			slog.Warn("validation failed, skipping", "file", file, "err", err)
 			continue

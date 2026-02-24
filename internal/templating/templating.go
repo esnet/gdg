@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"maps"
 	"os"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -37,16 +38,11 @@ func NewTemplate(cfg *domain.TemplatingConfig, gdgCfg *domain.GrafanaConfig) Tem
 var fns = template.FuncMap{
 	"ToSlug": service.GetSlug,
 	"QuotedStringJoin": func(arr []any) string {
-		result := ""
-		for ndx, item := range arr {
-			if len(arr)-1 == ndx {
-				result += fmt.Sprintf("\"%v\"", item)
-			} else {
-				result += fmt.Sprintf("\"%v\",", item)
-			}
+		parts := make([]string, len(arr))
+		for i, item := range arr {
+			parts[i] = fmt.Sprintf("%q", item)
 		}
-
-		return result
+		return strings.Join(parts, ",")
 	},
 }
 
@@ -116,12 +112,12 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 				result[entity.TemplateName] = append(result[entity.TemplateName], err.Error())
 				continue
 			}
-			slog.Debug("Writing data to destination", "output", f.Name())
+			slog.Debug("Writing data to destination", "output", strconv.Quote(f.Name())) // #nosec G706: output is sanitized via strconv.Quote
 			result[entity.TemplateName] = append(result[entity.TemplateName], f.Name())
 			defer func() {
 				err = f.Close()
 				if err != nil {
-					slog.Warn("failed to close template file", "filename", f.Name())
+					slog.Warn("failed to close template file", "filename", strconv.Quote(f.Name())) // #nosec G706: output is sanitized via strconv.Quote
 				}
 			}()
 

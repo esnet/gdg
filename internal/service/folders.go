@@ -38,7 +38,7 @@ const (
 
 func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
 	filterObj := v2.NewBaseFilter()
-	err := filterObj.RegisterReader(reflect.TypeOf(&domain.NestedHit{}), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")

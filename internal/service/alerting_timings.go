@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
 	"github.com/esnet/gdg/pkg/config/domain"
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -94,12 +93,12 @@ func (s *DashNGoImpl) UploadAlertTimings() ([]string, error) {
 		if _, ok := m[entry.Name]; ok {
 			p := provisioning.NewPutMuteTimingParams()
 			p.Body = entry
-			p.XDisableProvenance = ptr.Of("true")
+			p.XDisableProvenance = new("true")
 			_, err = s.GetClient().Provisioning.PutMuteTiming(p)
 		} else {
 			p := provisioning.NewPostMuteTimingParams()
 			p.Body = entry
-			p.XDisableProvenance = ptr.Of("true")
+			p.XDisableProvenance = new("true")
 			_, err = s.GetClient().Provisioning.PostMuteTiming(p)
 		}
 		if err != nil {

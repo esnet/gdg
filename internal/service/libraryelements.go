@@ -15,8 +15,6 @@ import (
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
-
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
@@ -31,8 +29,7 @@ const (
 )
 
 func setupLibElementsReaders(filterObj filters.V2Filter) {
-	obj := domain.WithNested[models.LibraryElementDTO]{}
-	err := filterObj.RegisterReader(reflect.TypeOf(&obj), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[*domain.WithNested[models.LibraryElementDTO]](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.WithNested[models.LibraryElementDTO])
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -48,7 +45,7 @@ func setupLibElementsReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Library Elements Filter, obj entity filter failure, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -71,7 +68,7 @@ func setupLibElementsReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Library Elements Filter, json filter failure, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf(map[string]any{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[map[string]any](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(map[string]any)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -132,9 +129,9 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*domain.Wit
 	// Fetch all lib elements
 	for {
 		params := library_elements.NewGetLibraryElementsParams()
-		params.Kind = ptr.Of(listLibraryPanels)
+		params.Kind = new(listLibraryPanels)
 		params.Page = &page
-		params.PerPage = ptr.Of(limit)
+		params.PerPage = new(limit)
 
 		libraryElements, err := s.GetClient().LibraryElements.GetLibraryElements(params)
 		if err != nil {

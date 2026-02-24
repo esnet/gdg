@@ -12,7 +12,6 @@ import (
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools/ptr"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -60,7 +59,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	dashFilter := service.NewDashboardFilter(cfg, "", "", "")
 	currentPerms, err := apiClient.ListDashboardPermissions(dashFilter)
 	assert.Equal(t, len(currentPerms), DashboardCount)
-	entry := ptr.Of(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item domain.DashboardAndPermissions, index int) bool {
+	entry := new(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item domain.DashboardAndPermissions, index int) bool {
 		return item.Dashboard.Title == "Bandwidth Dashboard"
 	})))
 	assert.NotNil(t, entry)
@@ -76,7 +75,7 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	assert.Equal(t, len(addPerms), DashboardCount)
 	currentPerms, err = apiClient.ListDashboardPermissions(dashFilter)
 	entry = nil
-	entry = ptr.Of(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item domain.DashboardAndPermissions, index int) bool {
+	entry = new(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item domain.DashboardAndPermissions, index int) bool {
 		return item.Dashboard.Title == "Bandwidth Dashboard"
 	})))
 	assert.NotNil(t, entry)

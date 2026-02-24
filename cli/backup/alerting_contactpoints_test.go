@@ -7,7 +7,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
 	"github.com/grafana/grafana-openapi-client-go/models"
 
 	"github.com/esnet/gdg/cli"
@@ -183,13 +182,13 @@ func TestListContactPoints(t *testing.T) {
 					{
 						UID:      "discordUid",
 						Name:     "Discord",
-						Type:     ptr.Of("discordType"),
+						Type:     new("discordType"),
 						Settings: map[string]any{"token": "secret", "someValue": "result"},
 					},
 					{
 						UID:      "slackUid",
 						Name:     "Slack",
-						Type:     ptr.Of("slackType"),
+						Type:     new("slackType"),
 						Settings: map[string]any{"token": "secret", "slack": "rocks"},
 					},
 				}

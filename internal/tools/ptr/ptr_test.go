@@ -7,9 +7,9 @@ import (
 )
 
 func TestPtrTo(t *testing.T) {
-	v := Of(false)
+	v := new(false)
 	assert.False(t, *v)
-	v = Of(true)
+	v = new(true)
 	assert.True(t, *v)
 }
 

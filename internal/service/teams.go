@@ -31,8 +31,7 @@ const (
 )
 
 func setupTeamReader(filterObj filters.V2Filter) {
-	obj := models.TeamDTO{}
-	err := filterObj.RegisterReader(reflect.TypeOf(obj), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.TeamDTO](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(models.TeamDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -48,7 +47,7 @@ func setupTeamReader(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Team Filter, obj entity reader failed, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -170,7 +169,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 				continue
 			}
 
-			newTeam.ID = ptr.Of(teamCreated.GetPayload().TeamID)
+			newTeam.ID = new(teamCreated.GetPayload().TeamID)
 			// Export Team Members (if exist)
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
@@ -207,7 +206,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 func (s *DashNGoImpl) ListTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
 	p := teams.NewSearchTeamsParams()
-	p.Perpage = ptr.Of[int64](99999)
+	p.Perpage = new(int64(99999))
 	data, err := s.GetClient().Teams.SearchTeams(p)
 	if err != nil {
 		log.Fatal("unable to list teams")
@@ -278,7 +277,7 @@ func (s *DashNGoImpl) addTeamMember(team *models.TeamDTO, userDTO *models.TeamMe
 	if user == nil {
 		log.Fatal(fmt.Errorf("user:  '%s' could not be found", userDTO.Login))
 	}
-	body := &models.AddTeamMemberCommand{UserID: ptr.Of(user.ID)}
+	body := &models.AddTeamMemberCommand{UserID: new(user.ID)}
 	msg, err := s.GetClient().Teams.AddTeamMember(fmt.Sprintf("%d", ptr.ValueOrDefault(team.ID, 0)), body)
 	if err != nil {
 		slog.Info(err.Error())

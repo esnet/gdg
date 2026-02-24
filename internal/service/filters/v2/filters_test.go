@@ -18,9 +18,7 @@ import (
 )
 
 func setupReaders(t *testing.T, v filters.V2Filter) {
-	obj := domain.NestedHit{}
-
-	err := v.RegisterReader(reflect.TypeOf(&obj), func(filterType filters.FilterType, a any) (any, error) {
+	err := v.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -39,7 +37,7 @@ func setupReaders(t *testing.T, v filters.V2Filter) {
 	})
 	assert.NoError(t, err)
 
-	err = v.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = v.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")

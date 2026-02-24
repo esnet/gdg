@@ -131,7 +131,7 @@ type RetryFunc func() error
 // It stops early if ctx is cancelled and returns ctx.Err().
 func Retry(ctx context.Context, retryAttempts int, f RetryFunc) error {
 	var err error
-	for i := 0; i < retryAttempts; i++ {
+	for range retryAttempts {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()

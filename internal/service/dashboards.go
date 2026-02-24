@@ -24,8 +24,6 @@ import (
 
 	"github.com/esnet/gdg/internal/tools/encode"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
-
 	configDomain "github.com/esnet/gdg/internal/config/domain"
 
 	"github.com/esnet/gdg/internal/service/filters"
@@ -42,8 +40,7 @@ const (
 )
 
 func setupDashReaders(filterObj filters.V2Filter) {
-	obj := domain.NestedHit{}
-	err := filterObj.RegisterReader(reflect.TypeOf(&obj), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -63,7 +60,7 @@ func setupDashReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Dashboard Filter, object reader could not be created, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf([]byte{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -97,7 +94,7 @@ func setupDashReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Dashboard Filter, json reader could not be created, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeOf(map[string]any{}), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[map[string]any](), func(filterType filters.FilterType, a any) (any, error) {
 		val, ok := a.(map[string]any)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -261,9 +258,9 @@ func (s *DashNGoImpl) ListDashboards(filterReq filters.V2Filter) []*domain.Neste
 			if tag != "" {
 				searchParams.Tag = []string{tag}
 			}
-			searchParams.Limit = ptr.Of(limit)
-			searchParams.Page = ptr.Of(page)
-			searchParams.Type = ptr.Of(searchTypeDashboard)
+			searchParams.Limit = new(limit)
+			searchParams.Page = new(page)
+			searchParams.Type = new(searchTypeDashboard)
 
 			pageBoardLinks, err := s.GetClient().Search.Search(searchParams)
 			if err != nil {
@@ -438,7 +435,7 @@ func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, erro
 			if ndx == 0 {
 				cnt, pathErr = folderPath.WriteString(folder)
 			} else {
-				cnt, pathErr = folderPath.WriteString(fmt.Sprintf("%s%s", pathSeparator, folder))
+				cnt, pathErr = fmt.Fprintf(&folderPath, "%s%s", pathSeparator, folder)
 			}
 
 			if pathErr != nil || cnt <= 0 {
