@@ -206,7 +206,7 @@ func (s *DashNGoImpl) UploadTeams(filter filters.V2Filter) map[*models.TeamDTO][
 func (s *DashNGoImpl) ListTeams(filter filters.V2Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
 	p := teams.NewSearchTeamsParams()
-	p.Perpage = ptr.Of[int64](99999)
+	p.Perpage = new(int64(99999))
 	data, err := s.GetClient().Teams.SearchTeams(p)
 	if err != nil {
 		log.Fatal("unable to list teams")

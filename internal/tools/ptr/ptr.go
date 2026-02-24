@@ -1,20 +1,5 @@
 package ptr
 
-// Of returns a pointer to the given value.
-//
-// This is a convenience function to create a pointer from a value.
-//
-// Example:
-//
-//	p := ptr.Of(5)
-//
-// will return a pointer to the value 5.
-//
-//go:fix inline
-func Of[T any](value T) *T {
-	return new(value)
-}
-
 //func ValOf[T any](value *T) T {
 //	return ValueOrDefault(t, )
 //	if value == nil {

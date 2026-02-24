@@ -15,8 +15,6 @@ import (
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
-
 	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
@@ -133,7 +131,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*domain.Wit
 		params := library_elements.NewGetLibraryElementsParams()
 		params.Kind = new(listLibraryPanels)
 		params.Page = &page
-		params.PerPage = ptr.Of(limit)
+		params.PerPage = new(limit)
 
 		libraryElements, err := s.GetClient().LibraryElements.GetLibraryElements(params)
 		if err != nil {

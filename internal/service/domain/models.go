@@ -25,7 +25,7 @@ type NestedHit struct {
 // UserProfileWithAuth embeds UserProfileDTO and adds a Password field for authentication.
 type UserProfileWithAuth struct {
 	models.UserProfileDTO
-	Password string
+	Password string // #nosec G117 is the user's temporary generated password
 }
 
 // OrgsDTOWithPreferences represents an organization and its preferences.

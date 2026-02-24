@@ -435,7 +435,7 @@ func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, erro
 			if ndx == 0 {
 				cnt, pathErr = folderPath.WriteString(folder)
 			} else {
-				cnt, pathErr = folderPath.WriteString(fmt.Sprintf("%s%s", pathSeparator, folder))
+				cnt, pathErr = fmt.Fprintf(&folderPath, "%s%s", pathSeparator, folder)
 			}
 
 			if pathErr != nil || cnt <= 0 {
