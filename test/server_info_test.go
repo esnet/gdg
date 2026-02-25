@@ -15,7 +15,8 @@ import (
 )
 
 func TestServerInfo(t *testing.T) {
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
+	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
+	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
 
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)

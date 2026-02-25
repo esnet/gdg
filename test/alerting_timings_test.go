@@ -17,7 +17,8 @@ import (
 
 func TestAlertingTimingsCrud(t *testing.T) {
 	assert := assert.New(t)
-	assert.NoError(os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
+	assert.NoError(os.Setenv(common.ContextNameEnv, common.TestContextName))
+	assert.NoError(os.Unsetenv(common.ContextNameEnv))
 
 	assert.NoError(path.FixTestDir("test", ".."))
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)

@@ -184,63 +184,65 @@ func (s *DashNGoImpl) UploadConnections(filter filters.V2Filter) []string {
 	dsSettings := s.grafanaConf.GetConnectionSettings()
 	for _, file := range filesInDir {
 		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain.ConnectionResource, orgName), file)
-		if strings.HasSuffix(file, ".json") {
-			if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
-				slog.Error("failed to read file", "filename", fileLocation, "err", err)
-				continue
-			}
-			if !filter.Validate(filters.Name, rawDS) {
-				continue
-			}
-
-			var newDS models.AddDataSourceCommand
-			if err = json.Unmarshal(rawDS, &newDS); err != nil {
-				slog.Error("failed to unmarshall file", "filename", fileLocation, "err", err)
-				continue
-			}
-
-			dsConfig := s.grafanaConf
-
-			secureLocation := s.grafanaConf.SecureLocation()
-			credentials, err := dsConfig.GetCredentials(newDS, secureLocation, s.encoder)
-			if err != nil { // Attempt to get Credentials by URL regex
-				slog.Warn("DataSource has no secureData configured.  Please check your configuration.")
-			}
-
-			if dsSettings.FiltersEnabled() && dsSettings.IsExcluded(newDS) {
-				slog.Debug("Skipping local JSON file since source fails datatype filter checks", "datasource", newDS.Name, "datatype", newDS.Type)
-				continue
-			}
-
-			if credentials != nil {
-				// Sets basic auth if secureData contains it
-				if credentials.User() != "" && (*credentials)["basicAuthPassword"] != "" {
-					newDS.BasicAuthUser = credentials.User()
-					newDS.BasicAuth = true
-				}
-				// Pass any secure data that GDG is configured to use
-				newDS.SecureJSONData = *credentials
-			} else {
-				// if credentials are nil, then basicAuth has to be false
-				newDS.BasicAuth = false
-			}
-
-			for _, existingDS := range dsListing {
-				if existingDS.Name == newDS.Name {
-					if _, err := s.GetClient().Datasources.DeleteDataSourceByID(fmt.Sprintf("%d", existingDS.ID)); err != nil {
-						slog.Error("error on deleting datasource", "datasource", newDS.Name, "err", err)
-					}
-					break
-				}
-			}
-
-			if createStatus, err := s.GetClient().Datasources.AddDataSource(&newDS); err != nil {
-				slog.Error("error on importing datasource", "datasource", newDS.Name, "err", err, "createStatus", createStatus)
-			} else {
-				exported = append(exported, fileLocation)
-			}
-
+		if !strings.HasSuffix(fileLocation, ".json") {
+			slog.Debug("Ignoring file", "fileLocation", fileLocation)
+			continue
 		}
+		if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
+			slog.Error("failed to read file", "filename", fileLocation, "credentialsErr", err)
+			continue
+		}
+		if !filter.Validate(filters.Name, rawDS) {
+			continue
+		}
+
+		var newDS models.AddDataSourceCommand
+		if err = json.Unmarshal(rawDS, &newDS); err != nil {
+			slog.Error("failed to unmarshall file", "filename", fileLocation, "credentialsErr", err)
+			continue
+		}
+
+		dsConfig := s.grafanaConf
+
+		secureLocation := s.grafanaConf.SecureLocation()
+		credentials, credentialsErr := dsConfig.GetCredentials(newDS, secureLocation, s.encoder)
+		if credentialsErr != nil { // Attempt to get Credentials by URL regex
+			slog.Warn("DataSource has no secureData configured.  Please check your configuration.")
+		}
+
+		if dsSettings.FiltersEnabled() && dsSettings.IsExcluded(newDS) {
+			slog.Debug("Skipping local JSON file since source fails datatype filter checks", "datasource", newDS.Name, "datatype", newDS.Type)
+			continue
+		}
+
+		if credentials != nil {
+			// Sets basic auth if secureData contains it
+			if credentials.User() != "" && credentials.Password() != "" {
+				newDS.BasicAuthUser = credentials.User()
+				newDS.BasicAuth = true
+			}
+			// Pass any secure data that GDG is configured to use
+			newDS.SecureJSONData = *credentials
+		} else {
+			// if credentials are nil, then basicAuth has to be false
+			newDS.BasicAuth = false
+		}
+
+		for _, existingDS := range dsListing {
+			if existingDS.Name == newDS.Name {
+				if _, err := s.GetClient().Datasources.DeleteDataSourceByID(fmt.Sprintf("%d", existingDS.ID)); err != nil {
+					slog.Error("error on deleting datasource", "datasource", newDS.Name, "credentialsErr", err)
+				}
+				break
+			}
+		}
+
+		if createStatus, err := s.GetClient().Datasources.AddDataSource(&newDS); err != nil {
+			slog.Error("error on importing datasource", "datasource", newDS.Name, "credentialsErr", err, "createStatus", createStatus)
+		} else {
+			exported = append(exported, fileLocation)
+		}
+
 	}
 	return exported
 }

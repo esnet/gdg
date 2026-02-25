@@ -5,4 +5,5 @@ const (
 	DefaultTemplateConfig = "templates-example.yml"
 	TestBucketName        = "testing"
 	TestContextName       = TestBucketName
+	ContextNameEnv        = "GDG_CONTEXT_NAME"
 )

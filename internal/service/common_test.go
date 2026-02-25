@@ -19,7 +19,7 @@ import (
 
 func fixEnvironment(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("service", "../.."))
-	err := os.Setenv("GDG_CONTEXT_NAME", "qa")
+	err := os.Setenv(common.ContextNameEnv, "qa")
 	assert.Nil(t, err)
 	config.InitGdgConfig(common.DefaultTestConfig)
 }
@@ -28,6 +28,7 @@ func TestRelativePathLogin(t *testing.T) {
 	envKey := "GDG_CONTEXTS__QA__URL"
 	assert.NoError(t, os.Setenv(envKey, "http://localhost:3000/grafana/"))
 	fixEnvironment(t)
+	defer os.Unsetenv(common.ContextNameEnv)
 	config.InitGdgConfig(common.DefaultTestConfig)
 	defer func() {
 		assert.NoError(t, os.Unsetenv(envKey))
@@ -45,6 +46,7 @@ func TestRelativePathLogin(t *testing.T) {
 // code used to create folders and generate paths.
 func TestSlug(t *testing.T) {
 	fixEnvironment(t)
+	defer os.Unsetenv(common.ContextNameEnv)
 	result := GetSlug("thisTestMoo")
 	assert.Equal(t, "thistestmoo", result)
 	// This
@@ -54,6 +56,7 @@ func TestSlug(t *testing.T) {
 
 func TestUserPath(t *testing.T) {
 	fixEnvironment(t)
+	defer os.Unsetenv(common.ContextNameEnv)
 	cfg := &configDomain.GrafanaConfig{
 		OutputPath: "test/data",
 	}
@@ -63,6 +66,7 @@ func TestUserPath(t *testing.T) {
 
 func TestBuildDashboardPath(t *testing.T) {
 	fixEnvironment(t)
+	defer os.Unsetenv(common.ContextNameEnv)
 	cfg := &configDomain.GrafanaConfig{
 		OutputPath:       "test/data",
 		OrganizationName: "Your Org",
@@ -73,6 +77,7 @@ func TestBuildDashboardPath(t *testing.T) {
 
 func TestBuildFolderSourcePath(t *testing.T) {
 	fixEnvironment(t)
+	defer os.Unsetenv(common.ContextNameEnv)
 	cfg := &configDomain.GrafanaConfig{
 		OutputPath:       "test/data",
 		OrganizationName: "Your Org",
@@ -83,6 +88,7 @@ func TestBuildFolderSourcePath(t *testing.T) {
 
 func TestBuildDataSourcePath(t *testing.T) {
 	fixEnvironment(t)
+	defer os.Unsetenv(common.ContextNameEnv)
 	cfg := &configDomain.GrafanaConfig{
 		OutputPath:       "test/data",
 		OrganizationName: "Your Org",

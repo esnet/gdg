@@ -1,0 +1,31 @@
+context_name: testing_plug
+contexts:
+    testing_plug:
+        connections:
+            credential_rules:
+                - rules:
+                    - field: name
+                      regex: misc
+                    - field: url
+                      regex: .*esproxy2*
+                  secure_data: default_secure.yml
+                - rules:
+                    - field: name
+                      regex: .*
+                  secure_data: default_secure.yml
+        dashboard_settings:
+            ignore_filters: false
+        organization_name: Main Org.
+        output_path: test/data
+        url: http://localhost:3000
+        user_name: admin
+        watched:
+            - General
+            - linux%2Fgnu/*
+            - ES\+net/LHC\+Data\+Challenge
+global:
+    api_debug: false
+    debug: true
+    ignore_ssl_errors: false
+    retry_count: 1
+    retry_delay: 1s

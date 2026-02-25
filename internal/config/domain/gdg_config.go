@@ -38,6 +38,19 @@ type PluginEntity struct {
 	processed    bool
 }
 
+// SetPluginConfig sets the plugin configuration to the provided map and marks the entity as unprocessed,
+// so that subsequent calls to GetPluginConfig will re-evaluate any environment variable or file references.
+func (pe *PluginEntity) SetPluginConfig(config map[string]string) {
+	pe.PluginConfig = config
+	pe.processed = false
+}
+
+// GetPluginConfig returns the plugin configuration map after resolving any dynamic value references.
+// Values prefixed with "env:" are resolved from environment variables. Values prefixed with "file:" are
+// resolved by reading the referenced file, with environment variable expansion applied to the file path.
+// If an environment variable is not set, the original string value is retained. If a file cannot be read,
+// the original string value is used and a warning is logged. Results are cached so subsequent calls return
+// the previously resolved configuration without reprocessing.
 func (pe *PluginEntity) GetPluginConfig() map[string]string {
 	if pe.processed {
 		return pe.PluginConfig

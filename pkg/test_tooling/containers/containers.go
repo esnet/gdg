@@ -139,9 +139,9 @@ func SetupGrafanaContainer(additionalEnvProps map[string]string, version, imageS
 		container, cancelFn, err := retry()
 		if err == nil {
 			return container, cancelFn
-		} else {
-			slog.Error(err.Error())
 		}
+
+		slog.Error(err.Error())
 	}
 
 	log.Fatal("Unable to start container")
