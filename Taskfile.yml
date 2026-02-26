@@ -19,7 +19,7 @@ tasks:
   install_tools:
     desc: "Install required Dev tools by GDG"
     cmds:
-      - go tool {{ .TOOLS_ARG}} lefthook install
+      - go tool {{ .TOOLS_ARG}} github.com/evilmartians/lefthook/v2 install
   security:
     desc: "Run security scan"
     cmds:
