@@ -23,7 +23,7 @@
   target = "assets"
 
 [[mounts]]
-  source = "node_modules/@tabler/icons/icons"
+  source = "node_modules/@tabler/icons/icons/outline"
   target = "assets/svgs/tabler-icons"
 
 [[mounts]]

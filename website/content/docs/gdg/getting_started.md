@@ -3,7 +3,7 @@ title: "Getting Started"
 weight: 11
 ---
 
-### Setup new configuration
+## Setup new configuration
 
 You can create new context configuration using an interactive setup.
 ```
@@ -17,15 +17,15 @@ When creating a new context, you will be asked for authorization type, your defa
 3. Wildcard configuration (all folders)
 
 
-### Authentication Concepts
+## Authentication Concepts
 
-First let's touch on a few things regrading grafana and authentication. You can connect to the grafana API (which is what GDG is using)
+First let's touch on a few things regrading Grafana and authentication. You can connect to the Grafana API (which is what GDG is using)
 by either using basic authentication (aka. username/password) or using a service token.
 
 Tokens are bound to a specific org and cannot cross the Org separation no matter what permission they are given.
-Users can be grafana admins, org admins ect. What they can/cannot do will vary on what entities you're trying to access.
+Users can be Grafana admins, org admins ect. What they can/cannot do will vary on what entities you're trying to access.
 
-Anything do to with Org will require a grafana admin. If you're trying to fetch dashboards a service token will work fine.
+Anything to do with Org will require a Grafana admin. If you're trying to fetch dashboards a service token will work fine.
 
 
 
@@ -90,9 +90,17 @@ If not set, it defaults to . `output_path/secure/`
 
 #### Priority
 
-Secure Auth takes precedence over environment variables, and then config file.
+{{< callout context="note" title="Note" icon="info-circle" >}}
+Secure Auth takes precedence over environment variables and if supported config plaintext values are evaluated last.
 
-### Import / Download Dashboards
+i.e.:
+
+1. Secure location is checked first
+2. Env is looked up for any matching values
+3. Config auth is checked last (No longer supported in +0.9.0)
+{{< /callout >}}
+
+## Download Dashboards
 
 Minimal configuration (eg. the `gdg.yml` file) that you need to download your dashboards from your Grafana endpoint:
 
@@ -102,13 +110,17 @@ context_name: all
 contexts:
   all:
     url: https://grafana.example.org
-    token: "<<Grafana API Token>>"
-    # user_name: admin
-    # password: admin
+    user_name: admin # Omit if using tokens
     output_path: exports
     watched:
       - Example
       - Infrastructure
+      - MyFolder/.*
+      - Some+Folder+With+Spaces/subfolder
+    # Either use dashboard_settings.ignore_filters=true or watched folders.
+    ## The setting below will ignore all watched folders fetch everything.
+    dashboard_settings:
+      ignore_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
 
 global:
   debug: true
@@ -116,12 +128,15 @@ global:
 ```
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
-- API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
-- Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list. The dashboards are downloaded as JSON files in the `$OUTPUT_PATH/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$OUTPUT_PATH` is the path defined in the `dashboard_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder from which the dashboards were downloaded.
+- Set the user_name to the value you want to use.
+- You need to either set a ENV value or create an auth_<context_name> with the correct values for your token or password.
+- API Key OR Username / Password for Admin user. See [authentication](#authentication-concepts) section above if you need more information.
+- Downloaded Folders: The `watched` field defines folders which will be considered for manipulation. You can see these folders in your Grafana Web UI, under Dashboards > Management. From there, you can simply define the folders you want to be downloaded in the `watched` list. The dashboards are downloaded as JSON files in the `$OUTPUT_PATH/org_name/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$OUTPUT_PATH` is the path defined in the `output_path` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder from which the dashboards were downloaded.
+- The default org_name is "Main Org." which is the default for Grafana, if you renamed your org, please set its name with the property: `organization_name`
 
 
 {{< callout context="note" title="Note" icon="info-circle" >}}
-Starting with verions 0.7.0 regex patterns for folders are now supported, ex: Other|General, folder/*
+Starting with version 0.7.0 regex patterns for folders are now supported, ex: Other|General, folder/*
 {{< /callout >}}
 
 After you are done, and you can execute `./bin/gdg dash list` successfully, eg.:
@@ -140,11 +155,11 @@ time="2021-08-22T11:11:28+02:00" level=info msg="Listing dashboards for context:
 │ 17 │ Cluster Autoscaling               │ cluster-autoscaling               │ Example        │ iHUYtABMk  │ https://grafana.example.org/d/iHUYtABMk/cluster-autoscaling                │
 └────┴───────────────────────────────────┴───────────────────────────────────┴────────────────┴────────────┴────────────────────────────────────────────────────────────────────────────┘
 ```
-After executing `./bin/gdg dash import` you can find the dashboards of the `Infrastructure` folder in the local directory `dashboards/dashboards/Infrastructure` and the dashboards of the `Example` directory in the local directory `dashboards/dashboards/Example`.
+After executing `./bin/gdg backup dash download` you can find the dashboards of the `Infrastructure` folder in the local directory `org_main-org/dashboards/Infrastructure` and the dashboards of the `Example` directory in the local directory `org_main-org/dashboards/Example`.
 
-### Export / Upload Dashboards
+## Upload Dashboards
 
-Minimal configuration (eg. the `gdg.yml` file) that you need to upload your dashboards from your Grafana endpoint:
+Minimal configuration (i.e. the `gdg.yml` file) that you need to upload your dashboards from your Grafana endpoint:
 ```yaml
 context_name: all
 
@@ -153,7 +168,6 @@ contexts:
     url: https://grafana.example.org
     token: "<<Grafana API Token>>"
     # user_name: admin
-    # password: admin
     output_path: exports
     watched:
       - Example
@@ -165,8 +179,8 @@ global:
 ```
 You need to adjust three parts in the configuration in order to function:
 - Grafana URL: This is just a URL where your Grafana is available.
-- API Key OR Username / Passoword for Admin user. See [authentication](configuration.md) section if you need more information.
-- Uploaded Folders: The `watched` field defines folders which will be considered for manipulation. The dashboards should be stored as JSON files in the `$OUTPUT_PATH/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$OUTPUT_PATH` is the path defined in the `dashboard_output` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder to which the dashboards will be uploaded. In case of the above configuration file, the dashboards should be stored locally in the `dashboards/dashboards/Example` and `dashboards/dashboards/Infrastructure/` directories.
+- API Key OR Username / Password for Admin user. See [authentication](configuration.md) section if you need more information.
+- Uploaded Folders: The `watched` field defines folders which will be considered for manipulation. The dashboards should be stored as JSON files in the `$OUTPUT_PATH/$ORG_NAME/dashboards/$GRAFANA_FOLDER_NAME` directory. Where `$OUTPUT_PATH` is the path defined in the `output_path` configuration property and `$GRAFANA_FOLDER_NAME` the name of the folder to which the dashboards will be uploaded. In case of the above configuration file, the dashboards should be stored locally in the `exports/org_main-org/dashboards/Example` and `exports/org_main-org/dashboards/Infrastructure/` directories.
 
 ```sh
 ├── bin
@@ -179,4 +193,4 @@ You need to adjust three parts in the configuration in order to function:
         |       └─ Infrastructure
         |          └── aws-ecs.json
 ```
-You can execute `./bin/gdg backup dash export` to upload the local dashboards to your Grafana. Afterwards, you can try running `./bin/gdg dash list` in order to confirm that your dashboards were uploaded successfully.
+You can execute `./bin/gdg backup dash upload` to upload the local dashboards to your Grafana. Afterwards, you can try running `./bin/gdg dash list` in order to confirm that your dashboards were uploaded successfully.

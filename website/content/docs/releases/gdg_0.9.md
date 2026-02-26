@@ -8,6 +8,20 @@ weight: 2
 toc: true
 ---
 
+## Release Notes for v0.9.3
+
+### Changes
+
+### BugFixes
+  - [#543](https://github.com/esnet/gdg/issues/543) Env vars not working due to a conflict with the secure_location pattern that was previously introduced. Env will work if secure location not used. Next major release (0.10.x) will fix this to allow for Env to take precedence over any config values.
+
+## TechDebt
+ - Bug [#501](https://github.com/esnet/gdg/issues/501) Fixing issues with test failures due to containers not being available.
+ - [#539](https://github.com/esnet/gdg/issues/539) Added test to cover to plugin code path.
+ - [#488](https://github.com/esnet/gdg/issues/488) Added an Env to disable enterprise tests. Allow contributors to not be blocked without a license.
+ - [#531](https://github.com/esnet/gdg/issues/531) Fixing documentation issues with the Getting Started guide and css/icons rendering behavior.
+ - General dependency and tooling update, upgrade to go 1.26.0, npm updates
+
 ## Release Notes for v0.9.2
 
 This is a quick bug fix release to address the behavior of alert rules. The other changes are enabling encryption for
