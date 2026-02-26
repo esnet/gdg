@@ -15,6 +15,8 @@ import (
 const (
 	DefaultOrganizationName = "Main Org."
 	DefaultOrganizationId   = 1
+	connectionUser          = "user"
+	connectionPassword      = "basicAuthPassword"
 )
 
 type CredentialRule struct {
@@ -95,9 +97,9 @@ func (r *RegexMatchesList) GetConnectionAuth(path string, encoder contract.Ciphe
 // CredentialRule model wraps regex and auth for grafana
 
 func (g GrafanaConnection) User() string {
-	return g["user"]
+	return g[connectionUser]
 }
 
 func (g GrafanaConnection) Password() string {
-	return g["basicAuthPassword"]
+	return g[connectionPassword]
 }

@@ -23,6 +23,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.7.8
 	github.com/joho/godotenv v1.5.1
 	github.com/lmittmann/tint v1.1.3
+	github.com/matryer/is v1.4.1
 	github.com/mattn/go-isatty v0.0.20
 	github.com/samber/lo v1.52.0
 	github.com/sethvargo/go-password v0.3.1

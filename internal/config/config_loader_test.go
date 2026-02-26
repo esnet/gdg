@@ -22,7 +22,7 @@ import (
 
 func DuplicateConfig(t *testing.T) string {
 	assert.NoError(t, path.FixTestDir("config", "../.."))
-	err := os.Setenv("GDG_CONTEXT_NAME", "production")
+	err := os.Setenv(common.ContextNameEnv, "production")
 	assert.Nil(t, err, "Failed to set override GDG context name via ENV")
 	data, err := os.ReadFile("config/" + common.DefaultTestConfig)
 	assert.Nil(t, err, "Failed to read test configuration file")
@@ -46,7 +46,8 @@ func TestSetup(t *testing.T) {
 		os.Chdir("../../")
 	}
 
-	os.Setenv("GDG_CONTEXT_NAME", "qa")
+	os.Setenv(common.ContextNameEnv, "qa")
+	defer os.Unsetenv(common.ContextNameEnv)
 	confobj := config.InitGdgConfig(common.DefaultTestConfig)
 	conf := confobj.GetViperConfig()
 	slog.Info(conf.ConfigFileUsed())
@@ -68,7 +69,8 @@ func TestWatchedFoldersConfig(t *testing.T) {
 		}
 	}
 
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", "qa"))
+	assert.NoError(t, os.Setenv(common.ContextNameEnv, "qa"))
+	defer os.Unsetenv(common.ContextNameEnv)
 	confobj := config.InitGdgConfig(common.DefaultTestConfig)
 	conf := confobj.GetViperConfig()
 	slog.Info(conf.ConfigFileUsed())
@@ -99,6 +101,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 // Ensures that if the config is on a completely different path, the searchPath is updated accordingly
 func TestSetupDifferentPath(t *testing.T) {
 	cfgFile := DuplicateConfig(t)
+	defer os.Unsetenv(common.ContextNameEnv)
 	cfg := config.InitGdgConfig(cfgFile)
 	conf := cfg.GetViperConfig()
 	assert.NotNil(t, conf)
@@ -110,7 +113,7 @@ func TestSetupDifferentPath(t *testing.T) {
 }
 
 func TestConfigEnv(t *testing.T) {
-	os.Setenv("GDG_CONTEXT_NAME", "testing")
+	os.Setenv(common.ContextNameEnv, "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	conf := cfg.GetViperConfig()
@@ -120,18 +123,19 @@ func TestConfigEnv(t *testing.T) {
 	assert.Equal(t, url, "www.google.com")
 	grafanaConfig := cfg.GetDefaultGrafanaConfig()
 	assert.Equal(t, grafanaConfig.URL, url)
-	os.Setenv("GDG_CONTEXT_NAME", "production")
+	os.Setenv(common.ContextNameEnv, "production")
 	os.Setenv("GDG_CONTEXTS__PRODUCTION__URL", "grafana.com")
 	cfg = config.InitGdgConfig(common.DefaultTestConfig)
 	conf = cfg.GetViperConfig()
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")
+	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
 }
 
 func TestConfigSecureCloud(t *testing.T) {
 	assert := assert.New(t)
 	path.FixTestDir("config", "../..")
-	os.Setenv("GDG_CONTEXT_NAME", "testing")
+	os.Setenv(common.ContextNameEnv, "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	grafanaCfg := cfg.GetDefaultGrafanaConfig()
@@ -164,10 +168,13 @@ func TestConfigSecureCloud(t *testing.T) {
 		assert.Equal(appData[storage.AccessId], "test")
 		assert.Equal(appData[storage.SecretKey], "secretsss")
 	})
+
+	assert.NoError(os.Unsetenv(common.ContextNameEnv))
 }
 
 func TestConfigSecurePath(t *testing.T) {
-	os.Setenv("GDG_CONTEXT_NAME", "testing")
+	os.Setenv(common.ContextNameEnv, "testing")
+	defer os.Unsetenv(common.ContextNameEnv)
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	grafanaCfg := cfg.GetDefaultGrafanaConfig()

@@ -21,7 +21,9 @@ import (
 func TestCloudDataSourceCRUD(t *testing.T) {
 	t.Log("Running Cloud Tests")
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
+	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
+	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
+
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
@@ -70,7 +72,8 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 // TestDashboardCloudCrud will load testing_data to Grafana from local context.  Switch to CLoud,
 // Save all data to Cloud, wipe grafana and reload data back into grafana and validate
 func TestDashboardCloudCRUD(t *testing.T) {
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
+	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
+	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	var (
 		err error
@@ -127,7 +130,8 @@ func TestDashboardCloudCRUD(t *testing.T) {
 }
 
 func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
-	assert.NoError(t, os.Setenv("GDG_CONTEXT_NAME", common.TestContextName))
+	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
+	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	var (
 		err    error
