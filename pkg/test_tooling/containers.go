@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/internal/storage"
 	"github.com/esnet/gdg/pkg/plugins/secure"
 
@@ -40,8 +41,8 @@ func SetPrefix(prefix string) CloudTestOpt {
 
 // SetupCloudFunctionOpt starts a S3 container, configures cloud storage for tests,
 // and returns context, cancel func, Grafana service client, and error.
-func SetupCloudFunctionOpt(cfgObj *domain.GDGAppConfiguration, opts ...CloudTestOpt) (context.Context, context.CancelFunc, service.GrafanaService, storage.Storage, error) {
-	errorFunc := func(err error) (context.Context, context.CancelFunc, service.GrafanaService, storage.Storage, error) {
+func SetupCloudFunctionOpt(cfgObj *domain.GDGAppConfiguration, opts ...CloudTestOpt) (context.Context, context.CancelFunc, ports.GrafanaService, storage.Storage, error) {
+	errorFunc := func(err error) (context.Context, context.CancelFunc, ports.GrafanaService, storage.Storage, error) {
 		return nil, nil, nil, nil, err
 	}
 	_ = os.Setenv(storage.InitBucket, "true")

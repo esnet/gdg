@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/service/domain"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 
 	"github.com/esnet/gdg/pkg/test_tooling/common"

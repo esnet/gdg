@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"testing"
 
-	customModels "github.com/esnet/gdg/internal/service/domain"
-
+	customModels "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
@@ -43,7 +43,7 @@ func TestLibraryElementsCRUD(t *testing.T) {
 			continue
 		}
 		t.Log("Running test", tc.name)
-		var apiClient service.GrafanaService
+		var apiClient ports.GrafanaService
 		var cleanup func() error
 		cfg := config.InitGdgConfig(common.DefaultTestConfig)
 		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = tc.ignore

@@ -9,13 +9,14 @@ import (
 	"reflect"
 	"strings"
 
+	grafana2 "github.com/esnet/gdg/internal/adapter/grafana"
 	configDomain "github.com/esnet/gdg/internal/config/domain"
-	"github.com/esnet/gdg/internal/service/domain"
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -28,15 +29,15 @@ const (
 	listLibraryVars   int64 = 2
 )
 
-func setupLibElementsReaders(filterObj filters.V2Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.WithNested[models.LibraryElementDTO]](), func(filterType filters.FilterType, a any) (any, error) {
+func setupLibElementsReaders(filterObj ports.V2Filter) {
+	err := filterObj.RegisterReader(reflect.TypeFor[*domain.WithNested[models.LibraryElementDTO]](), func(filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.WithNested[models.LibraryElementDTO])
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		_ = val
 		switch filterType {
-		case filters.FolderFilter:
+		case domain.FolderFilter:
 			return val.NestedPath, nil
 		default:
 			return nil, fmt.Errorf("unsupported data type")
@@ -45,13 +46,13 @@ func setupLibElementsReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Library Elements Filter, obj entity filter failure, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.FolderFilter:
+		case domain.FolderFilter:
 			{
 				foo := string(val)
 				_ = foo
@@ -68,13 +69,13 @@ func setupLibElementsReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Library Elements Filter, json filter failure, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[map[string]any](), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[map[string]any](), func(filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(map[string]any)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.FolderFilter:
+		case domain.FolderFilter:
 			{
 				return val[NestedDashFolderName], nil
 			}
@@ -87,7 +88,7 @@ func setupLibElementsReaders(filterObj filters.V2Filter) {
 	}
 }
 
-func NewLibraryElementFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
+func NewLibraryElementFilter(cfg *configDomain.GDGAppConfiguration) ports.V2Filter {
 	filterObj := v2.NewBaseFilter()
 	setupLibElementsReaders(filterObj)
 	addFolderFilter(cfg, filterObj, "")
@@ -95,7 +96,7 @@ func NewLibraryElementFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Fi
 	return filterObj
 }
 
-func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.V2Filter, connectionID string) []*models.DashboardFullWithMeta {
+func (s *DashNGoImpl) ListLibraryElementsConnections(filter ports.V2Filter, connectionID string) []*models.DashboardFullWithMeta {
 	payload, err := s.GetClient().LibraryElements.GetLibraryElementConnections(connectionID)
 	if err != nil {
 		log.Fatalf("unable to retrieve a valid connection for %s", connectionID)
@@ -113,7 +114,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter filters.V2Filter, co
 	return results
 }
 
-func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*domain.WithNested[models.LibraryElementDTO] {
+func (s *DashNGoImpl) ListLibraryElements(filter ports.V2Filter) []*domain.WithNested[models.LibraryElementDTO] {
 	const limit int64 = 100
 	var (
 		page        int64 = 1
@@ -170,7 +171,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter filters.V2Filter) []*domain.Wit
 }
 
 // DownloadLibraryElements downloads all the Library Elements
-func (s *DashNGoImpl) DownloadLibraryElements(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) DownloadLibraryElements(filter ports.V2Filter) []string {
 	var (
 		listing   []*domain.WithNested[models.LibraryElementDTO]
 		dsPacked  []byte
@@ -203,7 +204,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter filters.V2Filter) []string 
 }
 
 // UploadLibraryElements uploads all the Library Elements
-func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string {
+func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.V2Filter) []string {
 	var (
 		exported          = make([]string, 0)
 		rawLibraryElement []byte
@@ -245,7 +246,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 			folderName = DefaultFolderName
 		}
-		if !ignoreFilters && !filterReq.Validate(filters.FolderFilter, map[string]any{NestedDashFolderName: folderName}) {
+		if !ignoreFilters && !filterReq.Validate(domain.FolderFilter, map[string]any{NestedDashFolderName: folderName}) {
 			slog.Warn("Skipping since requested file is not in a folder gdg is configured to manage", "folder", folderName, "file", file)
 			continue
 		}
@@ -297,7 +298,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 			slog.Error("failed to unmarshall file", "filename", file, "err", err)
 			continue
 		}
-		newLibraryRequest := domain.WithNestedToCreateLibraryElement(libraryRequest)
+		newLibraryRequest := grafana2.WithNestedToCreateLibraryElement(libraryRequest)
 		if folderUid != "" {
 			newLibraryRequest.FolderUID = folderUid
 		}
@@ -313,7 +314,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq filters.V2Filter) []string
 }
 
 // DeleteAllLibraryElements deletes all the Library Elements
-func (s *DashNGoImpl) DeleteAllLibraryElements(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) DeleteAllLibraryElements(filter ports.V2Filter) []string {
 	var entries []string
 	libraryElements := s.ListLibraryElements(filter)
 	for _, element := range libraryElements {

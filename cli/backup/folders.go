@@ -7,12 +7,12 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/internal/tools"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"github.com/spf13/cobra"
@@ -20,7 +20,7 @@ import (
 
 var useFolderFilters bool
 
-func getFolderFilter(cfg *domain.GDGAppConfiguration) filters.V2Filter {
+func getFolderFilter(cfg *domain.GDGAppConfiguration) ports.V2Filter {
 	if !useFolderFilters {
 		return nil
 	}

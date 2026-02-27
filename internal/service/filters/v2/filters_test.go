@@ -7,9 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/service/domain"
-
-	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
@@ -17,18 +16,18 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func setupReaders(t *testing.T, v filters.V2Filter) {
-	err := v.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType filters.FilterType, a any) (any, error) {
+func setupReaders(t *testing.T, v ports.V2Filter) {
+	err := v.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.FolderFilter:
+		case domain.FolderFilter:
 			return val.FolderTitle, nil
-		case filters.TagsFilter:
+		case domain.TagsFilter:
 			return val.Tags, nil
-		case filters.DashFilter:
+		case domain.DashFilter:
 			return slug.Make(val.Title), nil
 
 		default:
@@ -37,13 +36,13 @@ func setupReaders(t *testing.T, v filters.V2Filter) {
 	})
 	assert.NoError(t, err)
 
-	err = v.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
+	err = v.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.FolderFilter:
+		case domain.FolderFilter:
 			{
 				r := gjson.GetBytes(val, "folderTitle")
 				if !r.Exists() {
@@ -51,7 +50,7 @@ func setupReaders(t *testing.T, v filters.V2Filter) {
 				}
 				return r.String(), nil
 			}
-		case filters.TagsFilter:
+		case domain.TagsFilter:
 			{
 				r := gjson.GetBytes(val, "tags")
 				if !r.Exists() || !r.IsArray() {
@@ -65,7 +64,7 @@ func setupReaders(t *testing.T, v filters.V2Filter) {
 
 			}
 			// return val.Tags, nil
-		case filters.DashFilter:
+		case domain.DashFilter:
 			{
 				r := gjson.GetBytes(val, "title")
 				if !r.Exists() || r.String() == "" {
@@ -82,10 +81,10 @@ func setupReaders(t *testing.T, v filters.V2Filter) {
 }
 
 func TestFilters(t *testing.T) {
-	var v filters.V2Filter = NewBaseFilter()
+	var v ports.V2Filter = NewBaseFilter()
 	setupReaders(t, v)
 
-	v.AddValidation(filters.TagsFilter, func(item any, expected any) error {
+	v.AddValidation(domain.TagsFilter, func(item any, expected any) error {
 		itemObj, itemOk := item.([]string)
 		if !itemOk {
 			return fmt.Errorf("item was not a slice")
@@ -109,7 +108,7 @@ func TestFilters(t *testing.T) {
 		},
 	}
 
-	err := v.RegisterDataProcessor(filters.TagsFilter, filters.ProcessorEntity{
+	err := v.RegisterDataProcessor(domain.TagsFilter, domain.ProcessorEntity{
 		Name: "Space Remover",
 		Processor: func(item any) (any, error) {
 			val, ok := item.([]string)
@@ -125,17 +124,17 @@ func TestFilters(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	assert.True(t, v.Validate(filters.TagsFilter, obj))
+	assert.True(t, v.Validate(domain.TagsFilter, obj))
 	assert.True(t, v.ValidateAll(obj))
 
-	strVal := v.GetExpectedString(filters.TagsFilter)
+	strVal := v.GetExpectedString(domain.TagsFilter)
 	assert.Equal(t, "[netsage Ho]", strVal)
 	// no data
-	strVal = v.GetExpectedString(filters.DashFilter)
+	strVal = v.GetExpectedString(domain.DashFilter)
 	assert.Equal(t, "", strVal)
 	//
-	assert.Nil(t, v.GetExpectedValue(filters.DashFilter))
-	anyVal := v.GetExpectedValue(filters.TagsFilter)
+	assert.Nil(t, v.GetExpectedValue(domain.DashFilter))
+	anyVal := v.GetExpectedValue(domain.TagsFilter)
 	anyArr, ok := anyVal.([]string)
 	assert.True(t, ok)
 	assert.Equal(t, []string{"netsage", "Ho"}, anyArr)

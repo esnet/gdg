@@ -10,56 +10,73 @@ import (
 	"strings"
 
 	configDomain "github.com/esnet/gdg/internal/config/domain"
-	modelsDomain "github.com/esnet/gdg/internal/service/domain"
-	"github.com/esnet/gdg/internal/service/filters"
+	domain2 "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/internal/service/filters/v2"
 	"github.com/esnet/gdg/pkg/config/domain"
 	"github.com/gosimple/slug"
-	"github.com/tidwall/gjson"
-
 	"github.com/samber/lo"
+	"github.com/tidwall/gjson"
 
 	"github.com/esnet/gdg/internal/tools/ptr"
 
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 )
 
-func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc GrafanaService) filters.V2Filter {
-	filterObj := v2.NewBaseFilter()
-	err := filterObj.RegisterReader(reflect.TypeFor[*modelsDomain.AlertRuleWithNestedFolder](), func(filterType filters.FilterType, a any) (any, error) {
-		val, ok := a.(*modelsDomain.AlertRuleWithNestedFolder)
+func setupAlertRulesReaders(filterObj ports.V2Filter, grafanaSvc ports.GrafanaService) {
+	// Object Reader
+	err := filterObj.RegisterReader(reflect.TypeFor[*domain2.AlertRuleWithNestedFolder](), func(filterType domain2.FilterType, a any) (any, error) {
+		val, ok := a.(*domain2.AlertRuleWithNestedFolder)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.AlertRuleFilterType:
+		case domain2.FolderFilter:
 			return val.NestedPath, nil
+		case domain2.TagsFilter:
+			return val.Labels, nil
 		default:
 			return nil, fmt.Errorf("unsupported data type")
 		}
 	})
 	if err != nil {
-		log.Fatalf("unable to register a valid object reader for alert rules filter")
+		log.Fatalf("unable to register a valid Alert Rule for alert rules filter. %v", err)
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
+
+	// Raw Reader
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain2.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.AlertRuleFilterType:
+		case domain2.FolderFilter:
 			{
 				r := gjson.GetBytes(val, "folderUID")
 				if !r.Exists() || r.IsArray() {
 					return DefaultFolderName, nil
 				}
 				folderUid := r.String()
-				folderObj, err := grafanaSvc.(*DashNGoImpl).getFolderByUid(folderUid)
-				if err != nil {
-					return nil, err
+				folderObj, folderErr := grafanaSvc.(*DashNGoImpl).getFolderByUid(folderUid)
+				if folderErr != nil {
+					return nil, folderErr
 				}
 				return folderObj.NestedPath, nil
-
+			}
+		case domain2.TagsFilter:
+			{
+				slog.Info("Trying to read labels filter")
+				r := gjson.GetBytes(val, "labels")
+				data := make(map[string]string)
+				if !r.Exists() || r.IsArray() {
+					slog.Debug("unable to read rules labels")
+					return data, nil
+				}
+				ar := r.Map()
+				for k, v := range ar {
+					data[k] = v.String()
+				}
+				return data, nil
 			}
 
 		default:
@@ -69,9 +86,61 @@ func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc Grafan
 	if err != nil {
 		log.Fatalf("unable to register a valid byte reader for alert rules filter")
 	}
-	folderArr := cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
-	filterObj.AddValidation(filters.AlertRuleFilterType, func(value any, expected any) error {
-		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, filters.AlertRuleFilterType)
+}
+
+// NewAlertRuleFilter creates and configures a new V2Filter for alert rules. It registers readers and validations
+// for both typed alert rule objects and raw byte data, supporting folder-based and label-based filtering.
+// Folder filtering uses regex matching against monitored folders from configuration or an explicit folder override.
+// Label filtering expects labels in "key=value" format. The function terminates the process if reader registration fails.
+func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc ports.GrafanaService, filterEntities domain2.AlertRuleFilterParams) ports.V2Filter {
+	filterObj := v2.NewBaseFilter()
+	// Define how we read data
+	setupAlertRulesReaders(filterObj, grafanaSvc)
+	err := filterObj.RegisterDataProcessor(domain2.FolderFilter, domain2.ProcessorEntity{
+		Name: "folderQuoteRegEx",
+		Processor: func(item any) (any, error) {
+			switch w := item.(type) {
+			case string:
+				slog.Debug("folder quote filter applied to string")
+				quoteRegex, _ := regexp.Compile("['\"]+")
+				w = quoteRegex.ReplaceAllString(w, "")
+				return w, nil
+			case []string:
+				slog.Debug("folder quote filter applied to []string")
+				return lo.Map(w, func(i string, index int) string {
+					quoteRegex, _ := regexp.Compile("['\"]+")
+					i = quoteRegex.ReplaceAllString(i, "")
+					return i
+				}), nil
+			}
+			return item, nil
+		},
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
+	}
+
+	// Define the rules we enforce
+	// Folder Behavior
+	var folderArr []string
+	if filterEntities.IgnoreWatchedFolders {
+		if filterEntities.Folder != "" {
+			folderArr = []string{filterEntities.Folder}
+		} else {
+			folderArr = []string{".*"}
+		}
+	} else {
+		folderArr = cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
+		if filterEntities.Folder != "" {
+			folderArr = []string{filterEntities.Folder}
+		}
+	}
+
+	filterObj.AddValidation(domain2.FolderFilter, func(value any, expected any) error {
+		//if filterEntities.IgnoreWatchedFolders && filterEntities.Folder == "" {
+		//	return nil
+		//}
+		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, domain2.FolderFilter)
 		if convErr != nil {
 			return convErr
 		}
@@ -87,37 +156,63 @@ func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc Grafan
 
 		return fmt.Errorf("invalid folder filter. Expected: %v", expressions)
 	}, folderArr)
+
+	// Tags
+	filterObj.AddValidation(domain2.TagsFilter, func(value any, expected any) error {
+		val, exp, convErr := v2.GetMismatchParams[map[string]string, []string](value, expected, domain2.TagsFilter)
+
+		if convErr != nil {
+			return convErr
+		}
+		// no filter active, returning nil
+		if len(exp) == 0 {
+			return nil
+		}
+		for _, labelFilterVal := range exp {
+			elements := strings.Split(labelFilterVal, "=")
+			if len(elements) != 2 {
+				return fmt.Errorf("invalid label format, key=value expected")
+			}
+			entryKey := strings.TrimSpace(elements[0])
+			entryValue := strings.TrimSpace(elements[1])
+
+			if val[entryKey] == entryValue {
+				return nil
+			}
+		}
+
+		return fmt.Errorf("failed validation test val:%s  expected: %s", val, exp)
+	}, filterEntities.Label)
+
 	return filterObj
 }
 
-func (s *DashNGoImpl) ListAlertRules(filter filters.V2Filter) ([]*modelsDomain.AlertRuleWithNestedFolder, error) {
+func (s *DashNGoImpl) ListAlertRules(filter ports.V2Filter) ([]*domain2.AlertRuleWithNestedFolder, error) {
 	data, err := s.GetClient().Provisioning.GetAlertRules()
 	if err != nil {
 		return nil, err
 	}
 
 	folderUidMap := s.getFolderUIDEntityMap(nil)
-	var results []*modelsDomain.AlertRuleWithNestedFolder
+	var results []*domain2.AlertRuleWithNestedFolder
 
 	for _, item := range data.GetPayload() {
-		entry := &modelsDomain.AlertRuleWithNestedFolder{
+		entry := &domain2.AlertRuleWithNestedFolder{
 			ProvisionedAlertRule: item,
 		}
 
 		if folder, ok := folderUidMap[ptr.ValueOrDefault(item.FolderUID, "")]; ok {
 			entry.NestedPath = folder.NestedPath
 		}
-
-		if filter == nil || filter.Validate(filters.AlertRuleFilterType, entry) {
+		if filter == nil || filter.ValidateAll(entry) {
 			results = append(results, entry)
 		}
-
 	}
 
 	return results, nil
 }
 
-func (s *DashNGoImpl) UploadAlertRules(filter filters.V2Filter) error {
+func (s *DashNGoImpl) UploadAlertRules(filter ports.V2Filter) error {
 	// TODO: once filtering in enabled we should delete any rules that we're not tracking in the folders that gdg manages
 	var (
 		err       error
@@ -133,13 +228,13 @@ func (s *DashNGoImpl) UploadAlertRules(filter filters.V2Filter) error {
 	if err != nil {
 		return err
 	}
-	m := lo.Associate(currentRules, func(item *modelsDomain.AlertRuleWithNestedFolder) (string, *modelsDomain.AlertRuleWithNestedFolder) {
+	m := lo.Associate(currentRules, func(item *domain2.AlertRuleWithNestedFolder) (string, *domain2.AlertRuleWithNestedFolder) {
 		return item.UID, item
 	})
 
 	for _, file := range filesInDir {
 		if !strings.HasSuffix(file, ".json") {
-			slog.Warn("Only json files are supported, skipping", "filename", file)
+			slog.Debug("Only json files are supported, skipping", "filename", file)
 			continue
 		}
 		if rawEntity, err = s.storage.ReadFile(file); err != nil {
@@ -147,10 +242,10 @@ func (s *DashNGoImpl) UploadAlertRules(filter filters.V2Filter) error {
 			continue
 		}
 		if filter != nil && !filter.ValidateAll(rawEntity) {
-			slog.Debug("Skipping file, failed Team filter", "file", file)
+			slog.Debug("Skipping file, failed alert rule filter", "file", file)
 			continue
 		}
-		entity := new(modelsDomain.AlertRuleWithNestedFolder)
+		entity := new(domain2.AlertRuleWithNestedFolder)
 		if err = json.Unmarshal(rawEntity, &entity); err != nil {
 			return fmt.Errorf("failed to unmarshall file, file:%s, err: %w", file, err)
 		}
@@ -175,7 +270,7 @@ func (s *DashNGoImpl) UploadAlertRules(filter filters.V2Filter) error {
 	return nil
 }
 
-func (s *DashNGoImpl) DownloadAlertRules(filter filters.V2Filter) ([]string, error) {
+func (s *DashNGoImpl) DownloadAlertRules(filter ports.V2Filter) ([]string, error) {
 	var (
 		dsPacked []byte
 		err      error
@@ -200,7 +295,7 @@ func (s *DashNGoImpl) DownloadAlertRules(filter filters.V2Filter) ([]string, err
 	return savedFiles, nil
 }
 
-func (s *DashNGoImpl) ClearAlertRules(filter filters.V2Filter) ([]string, error) {
+func (s *DashNGoImpl) ClearAlertRules(filter ports.V2Filter) ([]string, error) {
 	rules, err := s.ListAlertRules(filter)
 	if err != nil {
 		return nil, err

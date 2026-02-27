@@ -2,36 +2,38 @@ package test
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
+	"slices"
 	"testing"
 
-	customModels "github.com/esnet/gdg/internal/service/domain"
-	"github.com/esnet/gdg/internal/service/filters"
-	"github.com/esnet/gdg/internal/tools/ptr"
-	"github.com/samber/lo"
-
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/tools/ptr"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
-	"github.com/stretchr/testify/assert"
+	"github.com/matryer/is"
+	"github.com/samber/lo"
 )
 
 func TestAlertingRulesCrud(t *testing.T) {
-	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
-	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
+	is := is.New(t)
+	is.NoErr(os.Setenv(common.ContextNameEnv, common.TestContextName))
+	is.NoErr(os.Unsetenv(common.ContextNameEnv))
 
-	assert.NoError(t, path.FixTestDir("test", ".."))
+	is.NoErr(path.FixTestDir("test", ".."))
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
-	assert.NotNil(t, r)
-	assert.NoError(t, err)
+	is.True(r != nil)
+	is.NoErr(err)
 	defer func() {
 		cleanupErr := r.CleanUp()
 		if cleanupErr != nil {
@@ -39,57 +41,172 @@ func TestAlertingRulesCrud(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
-	slog.Info("Uploading Connections")
-	conn := apiClient.UploadConnections(service.NewConnectionFilter(""))
-	assert.True(t, len(conn) > 0)
-	//
-	slog.Info("Creating Folders")
-	folders := apiClient.UploadFolders(nil)
-	assert.True(t, len(folders) > 0)
-	//
-	slog.Info("Uploading Connections")
-	_, err = apiClient.UploadContactPoints()
-	assert.NoError(t, err)
+	setupAlertingEnvironment(t, apiClient)
 
-	alertFilters := service.NewAlertRuleFilter(cfg, apiClient)
+	f := domain.AlertRuleFilterParams{IgnoreWatchedFolders: false}
+	alertFilters := service.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err := apiClient.ListAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(rulesList), 0, "Validate initial rules list is empty")
+	is.NoErr(err)
+	is.Equal(len(rulesList), 0)
 	err = apiClient.UploadAlertRules(alertFilters)
-	assert.NoError(t, err)
+	is.NoErr(err)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(rulesList), 1)
-	p := lo.FindOrElse(rulesList, nil, func(item *customModels.AlertRuleWithNestedFolder) bool {
-		return item.UID == "ceozp0ovszy80c"
-	})
-	assert.NotNil(t, p)
-	assert.Equal(t, len(p.ProvisionedAlertRule.Data), 2)
-	assert.Equal(t, ptr.ValueOrDefault(p.ProvisionedAlertRule.Title, ""), "moo")
+	is.NoErr(err)
+	is.Equal(len(rulesList), 2)
+	validateMooEntity(is, rulesList, "ceozp0ovszy80c")
 	data, err := apiClient.DownloadAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(data), 1)
+	is.NoErr(err)
+	is.Equal(len(data), 2)
 	uploadedTemplates, err := apiClient.ClearAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(uploadedTemplates), 1)
+	is.NoErr(err)
+	is.Equal(len(uploadedTemplates), 2)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(rulesList), 0)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 0)
+}
+
+func TestAlertingRulesFilterTest(t *testing.T) {
+	is := is.New(t)
+	is.NoErr(os.Setenv(common.ContextNameEnv, common.TestContextName))
+	is.NoErr(os.Unsetenv(common.ContextNameEnv))
+
+	is.NoErr(path.FixTestDir("test", ".."))
+	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	var r *test_tooling.InitContainerResult
+	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
+		r = test_tooling.InitTest(t, cfg, nil)
+		return r.Err
+	})
+	is.True(r != nil)
+	is.NoErr(err)
+	defer func() {
+		cleanupErr := r.CleanUp()
+		if cleanupErr != nil {
+			slog.Warn("Unable to clean up after test", "test", t.Name())
+		}
+	}()
+	apiClient := r.ApiClient
+	setupAlertingEnvironment(t, apiClient)
+
+	f := domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: true,
+	}
+	alertFilters := service.NewAlertRuleFilter(cfg, apiClient, f)
+	// Upload everything
+	err = apiClient.UploadAlertRules(alertFilters)
+	is.NoErr(err)
+	// Ignore Watched filters
+	rulesList, err := apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 4)
+	// Filter by folder
+	f.Folder = "Ignored"
+	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.Equal(len(rulesList), 2)
+	is.NoErr(err)
+	matchingList := lo.Uniq(
+		lo.Map(rulesList, func(item *domain.AlertRuleWithNestedFolder, index int) string {
+			return item.NestedPath
+		}),
+	)
+	is.Equal(len(matchingList), 1)
+	is.Equal(matchingList[0], "Ignored")
+	//Filter by Tags
+	//
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: true,
+		Label:                []string{"environment=alpha"},
+	}
+	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 3)
+	matchingList = lo.Uniq(
+		lo.Map(rulesList, func(item *domain.AlertRuleWithNestedFolder, index int) string {
+			for key, val := range item.Labels {
+				matchingKey := fmt.Sprintf("%s=%s", key, val)
+				if slices.Contains(f.Label, matchingKey) {
+					return matchingKey
+				}
+			}
+			return item.NestedPath
+		}),
+	)
+	is.Equal(len(matchingList), 1)
+	is.Equal(matchingList[0], "environment=alpha")
+	// Ignore + dual filter
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: true,
+		Folder:               "Ignored",
+		Label:                []string{"environment=alpha"},
+	}
+	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 1)
+	is.Equal(rulesList[0].NestedPath, "Ignored")
+	is.Equal(rulesList[0].Labels["environment"], "alpha")
+	// Now same filters but with IgnoreWatchedFolders being false
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: false,
+	}
+	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 2)
+	matchingList = lo.Uniq(
+		lo.Map(rulesList, func(item *domain.AlertRuleWithNestedFolder, index int) string {
+			return item.NestedPath
+		}),
+	)
+	is.Equal(len(matchingList), 2)
+	is.True(slices.Contains(matchingList, "linux%2Fgnu/Others/n%2B_%3D23r"))
+	is.True(slices.Contains(matchingList, "linux%2Fgnu/Others"))
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: false,
+		Label:                []string{"deployed=true"},
+	}
+	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 1)
+	is.Equal(rulesList[0].NestedPath, "linux%2Fgnu/Others")
+	is.Equal(rulesList[0].Labels["deployed"], "true")
+	// Folder Filter
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: false,
+		Folder:               "linux%2Fgnu/*",
+	}
+	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 2)
+	// Both Filters using Ignore Watch Additive behavior on labels
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: false,
+		Folder:               "linux%2Fgnu/Others*",
+		Label:                []string{"deployed=true", "environment=alpha"},
+	}
+	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 2)
 }
 
 func TestAlertingRulesNoFilterCrud(t *testing.T) {
-	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
-	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
-
-	assert.NoError(t, path.FixTestDir("test", ".."))
+	is := is.New(t)
+	is.NoErr(os.Setenv(common.ContextNameEnv, common.TestContextName))
+	is.NoErr(os.Unsetenv(common.ContextNameEnv))
+	is.NoErr(path.FixTestDir("test", ".."))
 	cfg := config.InitGdgConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
 		return r.Err
 	})
-	assert.NotNil(t, r)
-	assert.NoError(t, err)
+	is.True(r != nil)
+	is.NoErr(err)
 	defer func() {
 		cleanupErr := r.CleanUp()
 		if cleanupErr != nil {
@@ -97,40 +214,53 @@ func TestAlertingRulesNoFilterCrud(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
+
+	setupAlertingEnvironment(t, apiClient)
+
+	f := domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: true,
+	}
+	alertFilters := service.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err := apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 0)
+	err = apiClient.UploadAlertRules(alertFilters)
+	is.NoErr(err)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 4)
+	validateMooEntity(is, rulesList, "ceozp0ovszy80c")
+	data, err := apiClient.DownloadAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(data), 4)
+	uploadedTemplates, err := apiClient.ClearAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(uploadedTemplates), 4)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.NoErr(err)
+	is.Equal(len(rulesList), 0)
+}
+
+func setupAlertingEnvironment(t *testing.T, apiClient ports.GrafanaService) {
+	is := is.New(t)
 	slog.Info("Uploading Connections")
 	conn := apiClient.UploadConnections(service.NewConnectionFilter(""))
-	assert.True(t, len(conn) > 0)
+	is.True(len(conn) > 0)
 	//
 	slog.Info("Creating Folders")
 	folders := apiClient.UploadFolders(nil)
-	assert.True(t, len(folders) > 0)
+	is.True(len(folders) > 0)
 	//
-	slog.Info("Uploading Contact Points")
-	_, err = apiClient.UploadContactPoints()
-	assert.NoError(t, err)
+	slog.Info("Uploading Connections")
+	_, err := apiClient.UploadContactPoints()
+	is.NoErr(err)
+}
 
-	var alertFilters filters.V2Filter = nil
-	rulesList, err := apiClient.ListAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(rulesList), 0, "Validate initial rules list is empty")
-	err = apiClient.UploadAlertRules(alertFilters)
-	assert.NoError(t, err)
-	rulesList, err = apiClient.ListAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(rulesList), 2)
-	p := lo.FindOrElse(rulesList, nil, func(item *customModels.AlertRuleWithNestedFolder) bool {
-		return item.UID == "ceozp0ovszy80c"
+func validateMooEntity(is *is.I, rulesList []*domain.AlertRuleWithNestedFolder, id string) {
+	p := lo.FindOrElse(rulesList, nil, func(item *domain.AlertRuleWithNestedFolder) bool {
+		return item.UID == id
 	})
-	assert.NotNil(t, p)
-	assert.Equal(t, len(p.ProvisionedAlertRule.Data), 2)
-	assert.Equal(t, ptr.ValueOrDefault(p.ProvisionedAlertRule.Title, ""), "moo")
-	data, err := apiClient.DownloadAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(data), 2)
-	uploadedTemplates, err := apiClient.ClearAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(uploadedTemplates), 2)
-	rulesList, err = apiClient.ListAlertRules(alertFilters)
-	assert.NoError(t, err)
-	assert.Equal(t, len(rulesList), 0)
+	is.True(p != nil)
+	is.Equal(len(p.ProvisionedAlertRule.Data), 2)
+	is.Equal(ptr.ValueOrDefault(p.ProvisionedAlertRule.Title, ""), "moo")
 }

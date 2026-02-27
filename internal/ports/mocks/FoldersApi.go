@@ -5,8 +5,8 @@
 package mocks
 
 import (
-	"github.com/esnet/gdg/internal/service/domain"
-	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -39,7 +39,7 @@ func (_m *FoldersApi) EXPECT() *FoldersApi_Expecter {
 }
 
 // DeleteAllFolders provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) DeleteAllFolders(filter filters.V2Filter) []string {
+func (_mock *FoldersApi) DeleteAllFolders(filter ports.V2Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -47,7 +47,7 @@ func (_mock *FoldersApi) DeleteAllFolders(filter filters.V2Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -63,16 +63,16 @@ type FoldersApi_DeleteAllFolders_Call struct {
 }
 
 // DeleteAllFolders is a helper method to define mock.On call
-//   - filter filters.V2Filter
+//   - filter ports.V2Filter
 func (_e *FoldersApi_Expecter) DeleteAllFolders(filter interface{}) *FoldersApi_DeleteAllFolders_Call {
 	return &FoldersApi_DeleteAllFolders_Call{Call: _e.mock.On("DeleteAllFolders", filter)}
 }
 
-func (_c *FoldersApi_DeleteAllFolders_Call) Run(run func(filter filters.V2Filter)) *FoldersApi_DeleteAllFolders_Call {
+func (_c *FoldersApi_DeleteAllFolders_Call) Run(run func(filter ports.V2Filter)) *FoldersApi_DeleteAllFolders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -86,13 +86,13 @@ func (_c *FoldersApi_DeleteAllFolders_Call) Return(strings []string) *FoldersApi
 	return _c
 }
 
-func (_c *FoldersApi_DeleteAllFolders_Call) RunAndReturn(run func(filter filters.V2Filter) []string) *FoldersApi_DeleteAllFolders_Call {
+func (_c *FoldersApi_DeleteAllFolders_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *FoldersApi_DeleteAllFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadFolderPermissions provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) DownloadFolderPermissions(filter filters.V2Filter) []string {
+func (_mock *FoldersApi) DownloadFolderPermissions(filter ports.V2Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -100,7 +100,7 @@ func (_mock *FoldersApi) DownloadFolderPermissions(filter filters.V2Filter) []st
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -116,16 +116,16 @@ type FoldersApi_DownloadFolderPermissions_Call struct {
 }
 
 // DownloadFolderPermissions is a helper method to define mock.On call
-//   - filter filters.V2Filter
+//   - filter ports.V2Filter
 func (_e *FoldersApi_Expecter) DownloadFolderPermissions(filter interface{}) *FoldersApi_DownloadFolderPermissions_Call {
 	return &FoldersApi_DownloadFolderPermissions_Call{Call: _e.mock.On("DownloadFolderPermissions", filter)}
 }
 
-func (_c *FoldersApi_DownloadFolderPermissions_Call) Run(run func(filter filters.V2Filter)) *FoldersApi_DownloadFolderPermissions_Call {
+func (_c *FoldersApi_DownloadFolderPermissions_Call) Run(run func(filter ports.V2Filter)) *FoldersApi_DownloadFolderPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -139,13 +139,13 @@ func (_c *FoldersApi_DownloadFolderPermissions_Call) Return(strings []string) *F
 	return _c
 }
 
-func (_c *FoldersApi_DownloadFolderPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) []string) *FoldersApi_DownloadFolderPermissions_Call {
+func (_c *FoldersApi_DownloadFolderPermissions_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *FoldersApi_DownloadFolderPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadFolders provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) DownloadFolders(filter filters.V2Filter) []string {
+func (_mock *FoldersApi) DownloadFolders(filter ports.V2Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -153,7 +153,7 @@ func (_mock *FoldersApi) DownloadFolders(filter filters.V2Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -169,16 +169,16 @@ type FoldersApi_DownloadFolders_Call struct {
 }
 
 // DownloadFolders is a helper method to define mock.On call
-//   - filter filters.V2Filter
+//   - filter ports.V2Filter
 func (_e *FoldersApi_Expecter) DownloadFolders(filter interface{}) *FoldersApi_DownloadFolders_Call {
 	return &FoldersApi_DownloadFolders_Call{Call: _e.mock.On("DownloadFolders", filter)}
 }
 
-func (_c *FoldersApi_DownloadFolders_Call) Run(run func(filter filters.V2Filter)) *FoldersApi_DownloadFolders_Call {
+func (_c *FoldersApi_DownloadFolders_Call) Run(run func(filter ports.V2Filter)) *FoldersApi_DownloadFolders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -192,13 +192,13 @@ func (_c *FoldersApi_DownloadFolders_Call) Return(strings []string) *FoldersApi_
 	return _c
 }
 
-func (_c *FoldersApi_DownloadFolders_Call) RunAndReturn(run func(filter filters.V2Filter) []string) *FoldersApi_DownloadFolders_Call {
+func (_c *FoldersApi_DownloadFolders_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *FoldersApi_DownloadFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListFolderPermissions provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) ListFolderPermissions(filter filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
+func (_mock *FoldersApi) ListFolderPermissions(filter ports.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -206,7 +206,7 @@ func (_mock *FoldersApi) ListFolderPermissions(filter filters.V2Filter) map[*dom
 	}
 
 	var r0 map[*domain.NestedHit][]*models.DashboardACLInfoDTO
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -222,16 +222,16 @@ type FoldersApi_ListFolderPermissions_Call struct {
 }
 
 // ListFolderPermissions is a helper method to define mock.On call
-//   - filter filters.V2Filter
+//   - filter ports.V2Filter
 func (_e *FoldersApi_Expecter) ListFolderPermissions(filter interface{}) *FoldersApi_ListFolderPermissions_Call {
 	return &FoldersApi_ListFolderPermissions_Call{Call: _e.mock.On("ListFolderPermissions", filter)}
 }
 
-func (_c *FoldersApi_ListFolderPermissions_Call) Run(run func(filter filters.V2Filter)) *FoldersApi_ListFolderPermissions_Call {
+func (_c *FoldersApi_ListFolderPermissions_Call) Run(run func(filter ports.V2Filter)) *FoldersApi_ListFolderPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -245,13 +245,13 @@ func (_c *FoldersApi_ListFolderPermissions_Call) Return(nestedHitToDashboardACLI
 	return _c
 }
 
-func (_c *FoldersApi_ListFolderPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO) *FoldersApi_ListFolderPermissions_Call {
+func (_c *FoldersApi_ListFolderPermissions_Call) RunAndReturn(run func(filter ports.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO) *FoldersApi_ListFolderPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListFolders provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) ListFolders(filter filters.V2Filter) []*domain.NestedHit {
+func (_mock *FoldersApi) ListFolders(filter ports.V2Filter) []*domain.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -259,7 +259,7 @@ func (_mock *FoldersApi) ListFolders(filter filters.V2Filter) []*domain.NestedHi
 	}
 
 	var r0 []*domain.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []*domain.NestedHit); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []*domain.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -275,16 +275,16 @@ type FoldersApi_ListFolders_Call struct {
 }
 
 // ListFolders is a helper method to define mock.On call
-//   - filter filters.V2Filter
+//   - filter ports.V2Filter
 func (_e *FoldersApi_Expecter) ListFolders(filter interface{}) *FoldersApi_ListFolders_Call {
 	return &FoldersApi_ListFolders_Call{Call: _e.mock.On("ListFolders", filter)}
 }
 
-func (_c *FoldersApi_ListFolders_Call) Run(run func(filter filters.V2Filter)) *FoldersApi_ListFolders_Call {
+func (_c *FoldersApi_ListFolders_Call) Run(run func(filter ports.V2Filter)) *FoldersApi_ListFolders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -298,13 +298,13 @@ func (_c *FoldersApi_ListFolders_Call) Return(nestedHits []*domain.NestedHit) *F
 	return _c
 }
 
-func (_c *FoldersApi_ListFolders_Call) RunAndReturn(run func(filter filters.V2Filter) []*domain.NestedHit) *FoldersApi_ListFolders_Call {
+func (_c *FoldersApi_ListFolders_Call) RunAndReturn(run func(filter ports.V2Filter) []*domain.NestedHit) *FoldersApi_ListFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadFolderPermissions provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) UploadFolderPermissions(filter filters.V2Filter) []string {
+func (_mock *FoldersApi) UploadFolderPermissions(filter ports.V2Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -312,7 +312,7 @@ func (_mock *FoldersApi) UploadFolderPermissions(filter filters.V2Filter) []stri
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -328,16 +328,16 @@ type FoldersApi_UploadFolderPermissions_Call struct {
 }
 
 // UploadFolderPermissions is a helper method to define mock.On call
-//   - filter filters.V2Filter
+//   - filter ports.V2Filter
 func (_e *FoldersApi_Expecter) UploadFolderPermissions(filter interface{}) *FoldersApi_UploadFolderPermissions_Call {
 	return &FoldersApi_UploadFolderPermissions_Call{Call: _e.mock.On("UploadFolderPermissions", filter)}
 }
 
-func (_c *FoldersApi_UploadFolderPermissions_Call) Run(run func(filter filters.V2Filter)) *FoldersApi_UploadFolderPermissions_Call {
+func (_c *FoldersApi_UploadFolderPermissions_Call) Run(run func(filter ports.V2Filter)) *FoldersApi_UploadFolderPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -351,13 +351,13 @@ func (_c *FoldersApi_UploadFolderPermissions_Call) Return(strings []string) *Fol
 	return _c
 }
 
-func (_c *FoldersApi_UploadFolderPermissions_Call) RunAndReturn(run func(filter filters.V2Filter) []string) *FoldersApi_UploadFolderPermissions_Call {
+func (_c *FoldersApi_UploadFolderPermissions_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *FoldersApi_UploadFolderPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadFolders provides a mock function for the type FoldersApi
-func (_mock *FoldersApi) UploadFolders(filter filters.V2Filter) []string {
+func (_mock *FoldersApi) UploadFolders(filter ports.V2Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -365,7 +365,7 @@ func (_mock *FoldersApi) UploadFolders(filter filters.V2Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -381,16 +381,16 @@ type FoldersApi_UploadFolders_Call struct {
 }
 
 // UploadFolders is a helper method to define mock.On call
-//   - filter filters.V2Filter
+//   - filter ports.V2Filter
 func (_e *FoldersApi_Expecter) UploadFolders(filter interface{}) *FoldersApi_UploadFolders_Call {
 	return &FoldersApi_UploadFolders_Call{Call: _e.mock.On("UploadFolders", filter)}
 }
 
-func (_c *FoldersApi_UploadFolders_Call) Run(run func(filter filters.V2Filter)) *FoldersApi_UploadFolders_Call {
+func (_c *FoldersApi_UploadFolders_Call) Run(run func(filter ports.V2Filter)) *FoldersApi_UploadFolders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -404,7 +404,7 @@ func (_c *FoldersApi_UploadFolders_Call) Return(strings []string) *FoldersApi_Up
 	return _c
 }
 
-func (_c *FoldersApi_UploadFolders_Call) RunAndReturn(run func(filter filters.V2Filter) []string) *FoldersApi_UploadFolders_Call {
+func (_c *FoldersApi_UploadFolders_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *FoldersApi_UploadFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }

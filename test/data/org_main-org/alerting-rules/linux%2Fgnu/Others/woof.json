@@ -1,5 +1,5 @@
 {
-	"condition": "C",
+	"condition": "A",
 	"data": [
 		{
 			"datasourceUid": "eeov1g02ckveoe",
@@ -8,19 +8,18 @@
 					"type": "prometheus",
 					"uid": "eeov1g02ckveoe"
 				},
-				"disableTextWrap": false,
 				"editorMode": "builder",
-				"expr": "go_goroutines{app=\"prometheus\"}",
-				"fullMetaSearch": false,
-				"includeNullMetadata": true,
+				"expr": "go_gc_cycles_forced_gc_cycles_total{job=\"prometheus\"}",
+				"expression": "",
 				"instant": true,
 				"intervalMs": 1000,
 				"legendFormat": "__auto",
 				"maxDataPoints": 43200,
+				"queryType": "alerting",
 				"range": false,
-				"refId": "A",
-				"useBackend": false
+				"refId": "A"
 			},
+			"queryType": "alerting",
 			"refId": "A",
 			"relativeTimeRange": {
 				"from": 600
@@ -33,46 +32,47 @@
 					{
 						"evaluator": {
 							"params": [
+								0,
 								0
 							],
-							"type": "lt"
+							"type": "gt"
 						},
 						"operator": {
 							"type": "and"
 						},
 						"query": {
-							"params": [
-								"C"
-							]
+							"params": []
 						},
 						"reducer": {
 							"params": [],
-							"type": "last"
+							"type": "avg"
 						},
 						"type": "query"
 					}
 				],
 				"datasource": {
+					"name": "Expression",
 					"type": "__expr__",
 					"uid": "__expr__"
 				},
 				"expression": "A",
 				"intervalMs": 1000,
 				"maxDataPoints": 43200,
-				"refId": "C",
+				"refId": "B",
 				"type": "threshold"
 			},
-			"refId": "C",
+			"refId": "B",
 			"relativeTimeRange": {}
 		}
 	],
 	"execErrState": "Error",
-	"folderUID": "feok0f3x1doc",
-	"for": "10m0s",
-	"id": 2,
-	"keep_firing_for": "40m0s",
+	"folderUID": "aen349iiivdhcf",
+	"for": "1m0s",
+	"id": 4,
+	"keep_firing_for": "4m0s",
 	"labels": {
-		"environment": "staging",
+		"deployed": "true",
+		"environment": "alpha",
 		"slack": "warning"
 	},
 	"noDataState": "NoData",
@@ -83,9 +83,9 @@
 		"receiver": "discord"
 	},
 	"orgID": 1,
-	"ruleGroup": "L2",
-	"title": "boom",
-	"uid": "aeozpk1wn93b4b",
-	"updated": "2026-02-28T02:25:01.000Z",
-	"NestedPath": "Ignored"
+	"ruleGroup": "dummy",
+	"title": "woof",
+	"uid": "afejt30qxdk3kb",
+	"updated": "2026-02-28T03:37:09.000Z",
+	"NestedPath": "linux%2Fgnu/Others"
 }

@@ -8,7 +8,7 @@ import (
 
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/service/mocks"
+	"github.com/esnet/gdg/internal/ports/mocks"
 	"github.com/stretchr/testify/assert"
 )
 

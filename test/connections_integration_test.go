@@ -8,9 +8,7 @@ import (
 	"testing"
 
 	configDomain "github.com/esnet/gdg/internal/config/domain"
-
-	"github.com/esnet/gdg/internal/service/domain"
-
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/samber/lo"

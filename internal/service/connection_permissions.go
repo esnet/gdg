@@ -8,13 +8,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	configDomain "github.com/esnet/gdg/pkg/config/domain"
-
-	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/grafana/grafana-openapi-client-go/client/access_control"
 
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
@@ -29,7 +28,7 @@ const (
 )
 
 // ListConnectionPermissions lists all connection permission matching the given filter
-func (s *DashNGoImpl) ListConnectionPermissions(filter filters.V2Filter) []domain.ConnectionPermissionItem {
+func (s *DashNGoImpl) ListConnectionPermissions(filter ports.V2Filter) []domain.ConnectionPermissionItem {
 	if !s.IsEnterprise() {
 		log.Fatal("Requires Enterprise to be enabled.  Please check your GDG configuration and try again")
 	}
@@ -57,7 +56,7 @@ func (s *DashNGoImpl) ListConnectionPermissions(filter filters.V2Filter) []domai
 }
 
 // DownloadConnectionPermissions download permissions to local file system
-func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) DownloadConnectionPermissions(filter ports.V2Filter) []string {
 	slog.Info("Downloading connection permissions")
 	var (
 		dsPacked  []byte
@@ -81,7 +80,7 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter filters.V2Filter) []s
 }
 
 // UploadConnectionPermissions upload connection permissions
-func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) UploadConnectionPermissions(filter ports.V2Filter) []string {
 	if !s.IsEnterprise() {
 		log.Fatal("Requires Enterprise to be enabled.  Please check your GDG configuration and try again")
 	}
@@ -103,7 +102,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.V2Filter) []str
 				continue
 			}
 		}
-		if !filter.Validate(filters.ConnectionName, rawFolder) {
+		if !filter.Validate(domain.ConnectionName, rawFolder) {
 			slog.Debug("File does not match pattern, skipping file", "filename", file)
 			continue
 		}
@@ -154,7 +153,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter filters.V2Filter) []str
 }
 
 // DeleteAllConnectionPermissions clear all non-default permissions from all connections
-func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter ports.V2Filter) []string {
 	dataSources := make([]string, 0)
 	connectionPermissions := s.ListConnectionPermissions(filter)
 	for _, conn := range connectionPermissions {
