@@ -72,6 +72,10 @@
 	"for": "1m0s",
 	"id": 1,
 	"keep_firing_for": "4m0s",
+	"labels": {
+		"environment": "alpha",
+		"slack": "warning"
+	},
 	"noDataState": "NoData",
 	"notification_settings": {
 		"active_time_intervals": null,
@@ -80,10 +84,9 @@
 		"receiver": "discord"
 	},
 	"orgID": 1,
-	"provenance": "api",
 	"ruleGroup": "L1",
 	"title": "moo",
 	"uid": "ceozp0ovszy80c",
-	"updated": "2025-12-19T18:35:01.000Z",
+	"updated": "2026-02-28T03:37:09.000Z",
 	"NestedPath": "linux%2Fgnu/Others/n%2B_%3D23r"
 }

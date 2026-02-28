@@ -12,13 +12,12 @@ import (
 	"strings"
 
 	configDomain "github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
-
-	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/esnet/gdg/internal/tools"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client"
@@ -27,14 +26,14 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func setupOrgReaders(filterObj filters.V2Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.OrgDTO](), func(filterType filters.FilterType, a any) (any, error) {
+func setupOrgReaders(filterObj ports.V2Filter) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.OrgDTO](), func(filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.OrgDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.OrgFilter:
+		case domain.OrgFilter:
 			return val.Name, nil
 
 		default:
@@ -44,13 +43,13 @@ func setupOrgReaders(filterObj filters.V2Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Org Filter, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType filters.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.OrgFilter:
+		case domain.OrgFilter:
 			{
 				r := gjson.GetBytes(val, "organization.name")
 				if !r.Exists() || r.IsArray() {
@@ -69,15 +68,15 @@ func setupOrgReaders(filterObj filters.V2Filter) {
 	}
 }
 
-func NewOrganizationFilter(args ...string) filters.V2Filter {
+func NewOrganizationFilter(args ...string) ports.V2Filter {
 	filterObj := v2.NewBaseFilter()
 	setupOrgReaders(filterObj)
 	if len(args) == 0 || args[0] == "" {
 		return filterObj
 	}
 
-	filterObj.AddValidation(filters.OrgFilter, func(value any, expected any) error {
-		val, expectedValue, convErr := v2.GetParams[string](value, expected, filters.OrgFilter)
+	filterObj.AddValidation(domain.OrgFilter, func(value any, expected any) error {
+		val, expectedValue, convErr := v2.GetParams[string](value, expected, domain.OrgFilter)
 		if convErr != nil {
 			return convErr
 		}
@@ -227,7 +226,7 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 }
 
 // ListOrganizations List all dashboards
-func (s *DashNGoImpl) ListOrganizations(filter filters.V2Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
+func (s *DashNGoImpl) ListOrganizations(filter ports.V2Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
@@ -266,7 +265,7 @@ func (s *DashNGoImpl) ListOrganizations(filter filters.V2Filter, withPreferences
 }
 
 // DownloadOrganizations Download organizations
-func (s *DashNGoImpl) DownloadOrganizations(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) DownloadOrganizations(filter ports.V2Filter) []string {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations")
 		return nil
@@ -295,7 +294,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter filters.V2Filter) []string {
 }
 
 // UploadOrganizations Upload organizations to Grafana
-func (s *DashNGoImpl) UploadOrganizations(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) UploadOrganizations(filter ports.V2Filter) []string {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot upload Organizations")
 		return nil

@@ -7,19 +7,18 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	configDomain "github.com/esnet/gdg/pkg/config/domain"
-
-	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
 
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.V2Filter) ([]domain.DashboardAndPermissions, error) {
+func (s *DashNGoImpl) ListDashboardPermissions(filterReq ports.V2Filter) ([]domain.DashboardAndPermissions, error) {
 	validateDashboardEnterpriseSupport(s)
 	dashboards := s.ListDashboards(filterReq)
 	var result []domain.DashboardAndPermissions
@@ -40,7 +39,7 @@ func (s *DashNGoImpl) ListDashboardPermissions(filterReq filters.V2Filter) ([]do
 	return result, nil
 }
 
-func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq filters.V2Filter) ([]string, error) {
+func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq ports.V2Filter) ([]string, error) {
 	var (
 		dsPacked  []byte
 		err       error
@@ -78,7 +77,7 @@ func validateDashboardEnterpriseSupport(s *DashNGoImpl) {
 	}
 }
 
-func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.V2Filter) ([]string, error) {
+func (s *DashNGoImpl) UploadDashboardPermissions(filterReq ports.V2Filter) ([]string, error) {
 	validateDashboardEnterpriseSupport(s)
 	var (
 		rawFile   []byte
@@ -162,7 +161,7 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq filters.V2Filter) ([]
 	return dataFiles, nil
 }
 
-func (s *DashNGoImpl) ClearDashboardPermissions(filterReq filters.V2Filter) error {
+func (s *DashNGoImpl) ClearDashboardPermissions(filterReq ports.V2Filter) error {
 	validateDashboardEnterpriseSupport(s)
 	boardLinks, err := s.ListDashboardPermissions(filterReq)
 	if err != nil {

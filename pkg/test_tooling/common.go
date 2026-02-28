@@ -11,6 +11,7 @@ import (
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
@@ -30,7 +31,7 @@ const (
 )
 
 type InitContainerResult struct {
-	ApiClient service.GrafanaService
+	ApiClient ports.GrafanaService
 	Container testcontainers.Container
 	CleanUp   func() error
 	Err       error
@@ -38,7 +39,7 @@ type InitContainerResult struct {
 
 // NewInitContainerResult creates an InitContainerResult linking a Grafana API client, container and cleanup function.
 // It sets Err if the container is not running.
-func NewInitContainerResult(client service.GrafanaService, container testcontainers.Container, cleanUp func() error) *InitContainerResult {
+func NewInitContainerResult(client ports.GrafanaService, container testcontainers.Container, cleanUp func() error) *InitContainerResult {
 	obj := &InitContainerResult{
 		ApiClient: client,
 		Container: container,
@@ -103,7 +104,7 @@ func InitTest(t *testing.T, cfg *domain.GDGAppConfiguration, envProp map[string]
 }
 
 // CreateSimpleClientWithConfig creates a GrafanaService for tests using the provided config provider and testcontainers container.
-func CreateSimpleClientWithConfig(t *testing.T, cfg *domain.GDGAppConfiguration, container testcontainers.Container) service.GrafanaService {
+func CreateSimpleClientWithConfig(t *testing.T, cfg *domain.GDGAppConfiguration, container testcontainers.Container) ports.GrafanaService {
 	if cfg == nil {
 		t.Fatal("No valid configuration returned from config provider")
 	}
@@ -130,7 +131,7 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *domain.GDGAppConfiguration,
 }
 
 // CreateSimpleClient initializes a test Grafana client and Viper config for unit tests.
-func CreateSimpleClient(t *testing.T, cfg *domain.GDGAppConfiguration, cfgName *string, container testcontainers.Container) (service.GrafanaService, *viper.Viper) {
+func CreateSimpleClient(t *testing.T, cfg *domain.GDGAppConfiguration, cfgName *string, container testcontainers.Container) (ports.GrafanaService, *viper.Viper) {
 	if cfgName == nil {
 		cfgName = new(string)
 		*cfgName = common.DefaultTestConfig

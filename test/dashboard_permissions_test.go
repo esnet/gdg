@@ -6,9 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/esnet/gdg/internal/service/domain"
-
 	"github.com/esnet/gdg/internal/config"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/service"

@@ -1,10 +1,11 @@
-package domain
+package grafana
 
 import (
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-func WithNestedToCreateLibraryElement(entry WithNested[*models.LibraryElementDTO]) *models.CreateLibraryElementCommand {
+func WithNestedToCreateLibraryElement(entry domain.WithNested[*models.LibraryElementDTO]) *models.CreateLibraryElementCommand {
 	data := *entry.Entity
 	obj := &models.CreateLibraryElementCommand{
 		FolderUID: data.FolderUID,

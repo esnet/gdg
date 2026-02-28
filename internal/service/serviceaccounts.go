@@ -5,8 +5,7 @@ import (
 	"log"
 	"log/slog"
 
-	"github.com/esnet/gdg/internal/service/domain"
-
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/grafana/grafana-openapi-client-go/client/service_accounts"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"

@@ -1,8 +1,7 @@
-package filters
+package domain
 
 import (
 	"fmt"
-	"reflect"
 )
 
 const (
@@ -37,17 +36,6 @@ func (p ProcessorEntity) Validate() error {
 }
 
 type FilterReader func(FilterType, any) (any, error)
-
-type V2Filter interface {
-	RegisterReader(entityType reflect.Type, fn FilterReader) error
-	RegisterDataProcessor(entityType FilterType, entity ProcessorEntity) error
-	AddValidation(f FilterType, validation InputValidation, expected any)
-	Validate(FilterType, any) bool
-	ValidateAll(any) bool // ValidateAll if Entry is valid
-	GetExpectedValue(filterType FilterType) any
-	GetExpectedString(filterType FilterType) string
-	GetExpectedStringSlice(filterType FilterType) ([]string, error)
-}
 
 // FilterType Currently supported filters
 type FilterType string

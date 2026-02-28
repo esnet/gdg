@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/plugins/secure"
 	"github.com/esnet/gdg/pkg/plugins/secure/contract"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -108,7 +109,7 @@ func ConfigureStorage(cfg *domain.GDGAppConfiguration) (storage.Storage, error) 
 	return storageEngine, nil
 }
 
-func NewTestApiService(storageEngine storage.Storage, cfg *domain.GDGAppConfiguration) GrafanaService {
+func NewTestApiService(storageEngine storage.Storage, cfg *domain.GDGAppConfiguration) ports.GrafanaService {
 	if cfg == nil {
 		cfg = config.InitGdgConfig(common.DefaultTestConfig)
 	}

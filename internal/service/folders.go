@@ -14,16 +14,15 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
-
-	"github.com/esnet/gdg/internal/service/domain"
 
 	"github.com/esnet/gdg/internal/service/filters/v2"
 
 	"github.com/esnet/gdg/internal/tools/encode"
 
 	configDomain "github.com/esnet/gdg/internal/config/domain"
-	"github.com/esnet/gdg/internal/service/filters"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/folders"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
@@ -36,15 +35,15 @@ const (
 	folderPathSeparator = string(os.PathSeparator)
 )
 
-func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
+func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) ports.V2Filter {
 	filterObj := v2.NewBaseFilter()
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType filters.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case filters.FolderFilter:
+		case domain.FolderFilter:
 			return val.NestedPath, nil
 		default:
 			return nil, fmt.Errorf("unsupported data type")
@@ -55,8 +54,8 @@ func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
 	}
 
 	folderArr := cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
-	filterObj.AddValidation(filters.FolderFilter, func(value any, expected any) error {
-		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, filters.FolderFilter)
+	filterObj.AddValidation(domain.FolderFilter, func(value any, expected any) error {
+		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, domain.FolderFilter)
 		if convErr != nil {
 			return convErr
 		}
@@ -76,7 +75,7 @@ func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) filters.V2Filter {
 }
 
 // DownloadFolderPermissions downloads all the current folder permissions based on filter.
-func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) DownloadFolderPermissions(filter ports.V2Filter) []string {
 	slog.Info("Downloading folder permissions")
 	var (
 		dsPacked  []byte
@@ -105,7 +104,7 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter filters.V2Filter) []strin
 
 // UploadFolderPermissions update current folder permissions to match local file system.
 // Note: This expects all the current users and teams to already exist.
-func (s *DashNGoImpl) UploadFolderPermissions(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) UploadFolderPermissions(filter ports.V2Filter) []string {
 	var (
 		rawFolder []byte
 		dataFiles []string
@@ -148,7 +147,7 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter filters.V2Filter) []string 
 
 // ListFolderPermissions retrieves all current folder permissions
 // TODO: add concurrency to folder permissions calls
-func (s *DashNGoImpl) ListFolderPermissions(filter filters.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
+func (s *DashNGoImpl) ListFolderPermissions(filter ports.V2Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
 	// get list of folders
 	var foldersList []*domain.NestedHit
 	if filter == nil {
@@ -182,7 +181,7 @@ func (s *DashNGoImpl) ListFolderPermissions(filter filters.V2Filter) map[*domain
 }
 
 // ListFolders list the current existing folders that match the given filter.
-func (s *DashNGoImpl) ListFolders(filter filters.V2Filter) []*domain.NestedHit {
+func (s *DashNGoImpl) ListFolders(filter ports.V2Filter) []*domain.NestedHit {
 	result := make([]*domain.NestedHit, 0)
 	if s.grafanaConf.GetDashboardSettings().IgnoreFilters {
 		filter = nil
@@ -211,7 +210,7 @@ func (s *DashNGoImpl) ListFolders(filter filters.V2Filter) []*domain.NestedHit {
 	for ndx, val := range folderListing {
 		nestedVal := getNestedFolder(val.Title, val.UID, folderUid)
 		val.NestedPath = nestedVal
-		if filter == nil || filter.Validate(filters.FolderFilter, val) { // filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: nestedVal}) {
+		if filter == nil || filter.Validate(domain.FolderFilter, val) { // filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: nestedVal}) {
 			addFolder(ndx, nestedVal)
 		}
 	}
@@ -220,7 +219,7 @@ func (s *DashNGoImpl) ListFolders(filter filters.V2Filter) []*domain.NestedHit {
 }
 
 // DownloadFolders Download all the given folders matching filter
-func (s *DashNGoImpl) DownloadFolders(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) DownloadFolders(filter ports.V2Filter) []string {
 	var (
 		dsPacked  []byte
 		err       error
@@ -266,7 +265,7 @@ func getNestedFolderFromFile(file string, resourceDir string) string {
 
 // UploadFolders upload all the given folders to grafana
 // TODO: handle setting parent
-func (s *DashNGoImpl) UploadFolders(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) UploadFolders(filter ports.V2Filter) []string {
 	var (
 		result    []string
 		rawFolder []byte
@@ -473,7 +472,7 @@ func (s *DashNGoImpl) buildNestedFilePath(files []string) map[string]string {
 }
 
 // DeleteAllFolders deletes all the matching folders from grafana
-func (s *DashNGoImpl) DeleteAllFolders(filter filters.V2Filter) []string {
+func (s *DashNGoImpl) DeleteAllFolders(filter ports.V2Filter) []string {
 	var (
 		result        []string
 		folderListing []*domain.NestedHit
@@ -512,7 +511,7 @@ func getFolderMapping[T comparable, V any](folders []*domain.NestedHit, key func
 }
 
 // getFolderUIDEntityMap builds a map from folder UID to NestedHit using ListFolders.
-func (s *DashNGoImpl) getFolderUIDEntityMap(filter filters.V2Filter) map[string]*domain.NestedHit {
+func (s *DashNGoImpl) getFolderUIDEntityMap(filter ports.V2Filter) map[string]*domain.NestedHit {
 	return getFolderUIDEntityMapByList(s.ListFolders(filter))
 }
 

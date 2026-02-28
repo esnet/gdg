@@ -12,6 +12,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/domain"
 	appconfig "github.com/esnet/gdg/internal/log"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
@@ -23,7 +24,7 @@ type RootCommand struct {
 	isInit bool
 
 	configObj *domain.GDGAppConfiguration
-	app       service.GrafanaService
+	app       ports.GrafanaService
 
 	ctx                  context.Context
 	initThis             *simplecobra.Commandeer
@@ -38,7 +39,7 @@ type RootCommand struct {
 
 // SetUpTest initializes the RootCommand for testing by setting a mock GrafanaService and loading test configuration.
 // It only runs when the TESTING environment variable is set to "1".
-func (c *RootCommand) SetUpTest(app service.GrafanaService) {
+func (c *RootCommand) SetUpTest(app ports.GrafanaService) {
 	if os.Getenv("TESTING") != "1" {
 		return
 	}
@@ -48,7 +49,7 @@ func (c *RootCommand) SetUpTest(app service.GrafanaService) {
 }
 
 // GrafanaSvc returns the configured GrafanaService instance, initializing it if nil.
-func (c *RootCommand) GrafanaSvc() service.GrafanaService {
+func (c *RootCommand) GrafanaSvc() ports.GrafanaService {
 	if c.app == nil {
 		c.app = service.NewDashNGo(c.configObj)
 	}

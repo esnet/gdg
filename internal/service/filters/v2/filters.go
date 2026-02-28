@@ -5,28 +5,29 @@ import (
 	"log/slog"
 	"reflect"
 
-	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 )
 
 type BaseFilter struct {
-	readerMap           map[reflect.Type]filters.FilterReader
-	validationMethods   map[filters.FilterType]filters.InputValidation   // Invokes a function to validate a certain entity type
-	preProcessMethods   map[filters.FilterType][]filters.ProcessorEntity // Invokes a function to validate a certain entity type
-	expectedValueLookup map[filters.FilterType]any
+	readerMap           map[reflect.Type]domain.FilterReader
+	validationMethods   map[domain.FilterType]domain.InputValidation   // Invokes a function to validate a certain entity type
+	preProcessMethods   map[domain.FilterType][]domain.ProcessorEntity // Invokes a function to validate a certain entity type
+	expectedValueLookup map[domain.FilterType]any
 }
 
-func (b BaseFilter) RegisterReader(entityType reflect.Type, fn filters.FilterReader) error {
+func (b BaseFilter) RegisterReader(entityType reflect.Type, fn domain.FilterReader) error {
 	b.readerMap[entityType] = fn
 	return nil
 }
 
-func (b BaseFilter) RegisterDataProcessor(entityType filters.FilterType, entity filters.ProcessorEntity) error {
+func (b BaseFilter) RegisterDataProcessor(entityType domain.FilterType, entity domain.ProcessorEntity) error {
 	if err := entity.Validate(); err != nil {
 		return err
 	}
 	val, ok := b.preProcessMethods[entityType]
 	if !ok {
-		val = make([]filters.ProcessorEntity, 0)
+		val = make([]domain.ProcessorEntity, 0)
 	}
 	val = append(val, entity)
 
@@ -34,7 +35,7 @@ func (b BaseFilter) RegisterDataProcessor(entityType filters.FilterType, entity 
 	return nil
 }
 
-func (b BaseFilter) readInputValue(filterType filters.FilterType, obj any) (any, error) {
+func (b BaseFilter) readInputValue(filterType domain.FilterType, obj any) (any, error) {
 	t := reflect.TypeOf(obj)
 	if val, ok := b.readerMap[t]; ok {
 		return val(filterType, obj)
@@ -43,7 +44,7 @@ func (b BaseFilter) readInputValue(filterType filters.FilterType, obj any) (any,
 	return nil, fmt.Errorf("no reader registered for type %v", filterType)
 }
 
-func (b BaseFilter) readExpectedValue(filterType filters.FilterType) (any, error) {
+func (b BaseFilter) readExpectedValue(filterType domain.FilterType) (any, error) {
 	if val, ok := b.expectedValueLookup[filterType]; ok {
 		return val, nil
 	}
@@ -51,7 +52,7 @@ func (b BaseFilter) readExpectedValue(filterType filters.FilterType) (any, error
 	return nil, fmt.Errorf("no expected valua available for type %v", filterType)
 }
 
-func (b BaseFilter) AddValidation(filterType filters.FilterType, validation filters.InputValidation, expected any) {
+func (b BaseFilter) AddValidation(filterType domain.FilterType, validation domain.InputValidation, expected any) {
 	b.validationMethods[filterType] = validation
 	b.expectedValueLookup[filterType] = expected
 }
@@ -68,7 +69,7 @@ func (b BaseFilter) ValidateAll(obj any) bool {
 	return valid
 }
 
-func (b BaseFilter) applyPreProcessor(filterType filters.FilterType, val any) (any, error) {
+func (b BaseFilter) applyPreProcessor(filterType domain.FilterType, val any) (any, error) {
 	var allErrors []error
 	var err error
 	preProcList := b.preProcessMethods[filterType]
@@ -87,7 +88,7 @@ func (b BaseFilter) applyPreProcessor(filterType filters.FilterType, val any) (a
 	return val, nil
 }
 
-func (b BaseFilter) Validate(filterType filters.FilterType, obj any) bool {
+func (b BaseFilter) Validate(filterType domain.FilterType, obj any) bool {
 	// get Data
 	val, err := b.readInputValue(filterType, obj)
 	if err != nil {
@@ -111,7 +112,7 @@ func (b BaseFilter) Validate(filterType filters.FilterType, obj any) bool {
 	return false
 }
 
-func (b BaseFilter) GetExpectedValue(filterType filters.FilterType) any {
+func (b BaseFilter) GetExpectedValue(filterType domain.FilterType) any {
 	val := b.expectedValueLookup[filterType]
 	if val == nil {
 		return nil
@@ -124,7 +125,7 @@ func (b BaseFilter) GetExpectedValue(filterType filters.FilterType) any {
 	return val
 }
 
-func (b BaseFilter) GetExpectedString(filterType filters.FilterType) string {
+func (b BaseFilter) GetExpectedString(filterType domain.FilterType) string {
 	val := b.GetExpectedValue(filterType)
 	if val == nil {
 		return ""
@@ -132,7 +133,7 @@ func (b BaseFilter) GetExpectedString(filterType filters.FilterType) string {
 	return fmt.Sprintf("%v", val)
 }
 
-func (b BaseFilter) GetExpectedStringSlice(filterType filters.FilterType) ([]string, error) {
+func (b BaseFilter) GetExpectedStringSlice(filterType domain.FilterType) ([]string, error) {
 	val := b.GetExpectedValue(filterType)
 	if val == nil {
 		return nil, fmt.Errorf("expected value is not found")
@@ -147,11 +148,11 @@ func (b BaseFilter) GetExpectedStringSlice(filterType filters.FilterType) ([]str
 	}
 }
 
-func NewBaseFilter() filters.V2Filter {
+func NewBaseFilter() ports.V2Filter {
 	return &BaseFilter{
-		readerMap:           make(map[reflect.Type]filters.FilterReader),
-		validationMethods:   make(map[filters.FilterType]filters.InputValidation),
-		expectedValueLookup: make(map[filters.FilterType]any),
-		preProcessMethods:   make(map[filters.FilterType][]filters.ProcessorEntity),
+		readerMap:           make(map[reflect.Type]domain.FilterReader),
+		validationMethods:   make(map[domain.FilterType]domain.InputValidation),
+		expectedValueLookup: make(map[domain.FilterType]any),
+		preProcessMethods:   make(map[domain.FilterType][]domain.ProcessorEntity),
 	}
 }

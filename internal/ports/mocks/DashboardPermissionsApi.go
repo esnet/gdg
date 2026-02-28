@@ -5,8 +5,8 @@
 package mocks
 
 import (
-	"github.com/esnet/gdg/internal/service/domain"
-	"github.com/esnet/gdg/internal/service/filters"
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -38,7 +38,7 @@ func (_m *DashboardPermissionsApi) EXPECT() *DashboardPermissionsApi_Expecter {
 }
 
 // ClearDashboardPermissions provides a mock function for the type DashboardPermissionsApi
-func (_mock *DashboardPermissionsApi) ClearDashboardPermissions(filterReq filters.V2Filter) error {
+func (_mock *DashboardPermissionsApi) ClearDashboardPermissions(filterReq ports.V2Filter) error {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -46,7 +46,7 @@ func (_mock *DashboardPermissionsApi) ClearDashboardPermissions(filterReq filter
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) error); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		r0 = ret.Error(0)
@@ -60,16 +60,16 @@ type DashboardPermissionsApi_ClearDashboardPermissions_Call struct {
 }
 
 // ClearDashboardPermissions is a helper method to define mock.On call
-//   - filterReq filters.V2Filter
+//   - filterReq ports.V2Filter
 func (_e *DashboardPermissionsApi_Expecter) ClearDashboardPermissions(filterReq interface{}) *DashboardPermissionsApi_ClearDashboardPermissions_Call {
 	return &DashboardPermissionsApi_ClearDashboardPermissions_Call{Call: _e.mock.On("ClearDashboardPermissions", filterReq)}
 }
 
-func (_c *DashboardPermissionsApi_ClearDashboardPermissions_Call) Run(run func(filterReq filters.V2Filter)) *DashboardPermissionsApi_ClearDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_ClearDashboardPermissions_Call) Run(run func(filterReq ports.V2Filter)) *DashboardPermissionsApi_ClearDashboardPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -83,13 +83,13 @@ func (_c *DashboardPermissionsApi_ClearDashboardPermissions_Call) Return(err err
 	return _c
 }
 
-func (_c *DashboardPermissionsApi_ClearDashboardPermissions_Call) RunAndReturn(run func(filterReq filters.V2Filter) error) *DashboardPermissionsApi_ClearDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_ClearDashboardPermissions_Call) RunAndReturn(run func(filterReq ports.V2Filter) error) *DashboardPermissionsApi_ClearDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadDashboardPermissions provides a mock function for the type DashboardPermissionsApi
-func (_mock *DashboardPermissionsApi) DownloadDashboardPermissions(filterReq filters.V2Filter) ([]string, error) {
+func (_mock *DashboardPermissionsApi) DownloadDashboardPermissions(filterReq ports.V2Filter) ([]string, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -98,17 +98,17 @@ func (_mock *DashboardPermissionsApi) DownloadDashboardPermissions(filterReq fil
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) ([]string, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(ports.V2Filter) error); ok {
 		r1 = returnFunc(filterReq)
 	} else {
 		r1 = ret.Error(1)
@@ -122,16 +122,16 @@ type DashboardPermissionsApi_DownloadDashboardPermissions_Call struct {
 }
 
 // DownloadDashboardPermissions is a helper method to define mock.On call
-//   - filterReq filters.V2Filter
+//   - filterReq ports.V2Filter
 func (_e *DashboardPermissionsApi_Expecter) DownloadDashboardPermissions(filterReq interface{}) *DashboardPermissionsApi_DownloadDashboardPermissions_Call {
 	return &DashboardPermissionsApi_DownloadDashboardPermissions_Call{Call: _e.mock.On("DownloadDashboardPermissions", filterReq)}
 }
 
-func (_c *DashboardPermissionsApi_DownloadDashboardPermissions_Call) Run(run func(filterReq filters.V2Filter)) *DashboardPermissionsApi_DownloadDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_DownloadDashboardPermissions_Call) Run(run func(filterReq ports.V2Filter)) *DashboardPermissionsApi_DownloadDashboardPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -145,13 +145,13 @@ func (_c *DashboardPermissionsApi_DownloadDashboardPermissions_Call) Return(stri
 	return _c
 }
 
-func (_c *DashboardPermissionsApi_DownloadDashboardPermissions_Call) RunAndReturn(run func(filterReq filters.V2Filter) ([]string, error)) *DashboardPermissionsApi_DownloadDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_DownloadDashboardPermissions_Call) RunAndReturn(run func(filterReq ports.V2Filter) ([]string, error)) *DashboardPermissionsApi_DownloadDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListDashboardPermissions provides a mock function for the type DashboardPermissionsApi
-func (_mock *DashboardPermissionsApi) ListDashboardPermissions(filterReq filters.V2Filter) ([]domain.DashboardAndPermissions, error) {
+func (_mock *DashboardPermissionsApi) ListDashboardPermissions(filterReq ports.V2Filter) ([]domain.DashboardAndPermissions, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -160,17 +160,17 @@ func (_mock *DashboardPermissionsApi) ListDashboardPermissions(filterReq filters
 
 	var r0 []domain.DashboardAndPermissions
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]domain.DashboardAndPermissions, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) ([]domain.DashboardAndPermissions, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []domain.DashboardAndPermissions); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []domain.DashboardAndPermissions); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.DashboardAndPermissions)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(ports.V2Filter) error); ok {
 		r1 = returnFunc(filterReq)
 	} else {
 		r1 = ret.Error(1)
@@ -184,16 +184,16 @@ type DashboardPermissionsApi_ListDashboardPermissions_Call struct {
 }
 
 // ListDashboardPermissions is a helper method to define mock.On call
-//   - filterReq filters.V2Filter
+//   - filterReq ports.V2Filter
 func (_e *DashboardPermissionsApi_Expecter) ListDashboardPermissions(filterReq interface{}) *DashboardPermissionsApi_ListDashboardPermissions_Call {
 	return &DashboardPermissionsApi_ListDashboardPermissions_Call{Call: _e.mock.On("ListDashboardPermissions", filterReq)}
 }
 
-func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) Run(run func(filterReq filters.V2Filter)) *DashboardPermissionsApi_ListDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) Run(run func(filterReq ports.V2Filter)) *DashboardPermissionsApi_ListDashboardPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -207,13 +207,13 @@ func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) Return(dashboar
 	return _c
 }
 
-func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) RunAndReturn(run func(filterReq filters.V2Filter) ([]domain.DashboardAndPermissions, error)) *DashboardPermissionsApi_ListDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_ListDashboardPermissions_Call) RunAndReturn(run func(filterReq ports.V2Filter) ([]domain.DashboardAndPermissions, error)) *DashboardPermissionsApi_ListDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadDashboardPermissions provides a mock function for the type DashboardPermissionsApi
-func (_mock *DashboardPermissionsApi) UploadDashboardPermissions(filterReq filters.V2Filter) ([]string, error) {
+func (_mock *DashboardPermissionsApi) UploadDashboardPermissions(filterReq ports.V2Filter) ([]string, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -222,17 +222,17 @@ func (_mock *DashboardPermissionsApi) UploadDashboardPermissions(filterReq filte
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) ([]string, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(filters.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(filters.V2Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(ports.V2Filter) error); ok {
 		r1 = returnFunc(filterReq)
 	} else {
 		r1 = ret.Error(1)
@@ -246,16 +246,16 @@ type DashboardPermissionsApi_UploadDashboardPermissions_Call struct {
 }
 
 // UploadDashboardPermissions is a helper method to define mock.On call
-//   - filterReq filters.V2Filter
+//   - filterReq ports.V2Filter
 func (_e *DashboardPermissionsApi_Expecter) UploadDashboardPermissions(filterReq interface{}) *DashboardPermissionsApi_UploadDashboardPermissions_Call {
 	return &DashboardPermissionsApi_UploadDashboardPermissions_Call{Call: _e.mock.On("UploadDashboardPermissions", filterReq)}
 }
 
-func (_c *DashboardPermissionsApi_UploadDashboardPermissions_Call) Run(run func(filterReq filters.V2Filter)) *DashboardPermissionsApi_UploadDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_UploadDashboardPermissions_Call) Run(run func(filterReq ports.V2Filter)) *DashboardPermissionsApi_UploadDashboardPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 filters.V2Filter
+		var arg0 ports.V2Filter
 		if args[0] != nil {
-			arg0 = args[0].(filters.V2Filter)
+			arg0 = args[0].(ports.V2Filter)
 		}
 		run(
 			arg0,
@@ -269,7 +269,7 @@ func (_c *DashboardPermissionsApi_UploadDashboardPermissions_Call) Return(string
 	return _c
 }
 
-func (_c *DashboardPermissionsApi_UploadDashboardPermissions_Call) RunAndReturn(run func(filterReq filters.V2Filter) ([]string, error)) *DashboardPermissionsApi_UploadDashboardPermissions_Call {
+func (_c *DashboardPermissionsApi_UploadDashboardPermissions_Call) RunAndReturn(run func(filterReq ports.V2Filter) ([]string, error)) *DashboardPermissionsApi_UploadDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
