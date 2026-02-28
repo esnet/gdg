@@ -9,12 +9,13 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/huh"
-	"github.com/esnet/gdg/internal/config/domain"
-	"github.com/esnet/gdg/internal/tools"
-	"github.com/esnet/gdg/internal/tools/encode"
-	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
-	"github.com/esnet/gdg/pkg/plugins/secure"
-	"github.com/esnet/gdg/pkg/plugins/secure/contract"
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
+	"github.com/esnet/gdg/internal/config/config_domain"
+	resourceTypes "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/pkg/encode"
+	"github.com/esnet/gdg/pkg/tools"
 	"gopkg.in/yaml.v3"
 )
 
@@ -33,12 +34,12 @@ const (
 // CreateNewContext prompts the user to configure a new Grafana context with authentication, folders,
 // and default connection settings. It builds the configuration, writes secure files, updates
 // the internal context map, saves the config to disk, and logs completion.
-func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
-	var encoder contract.CipherEncoder
+func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
+	var encoder ports.CipherEncoder
 	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
-		encoder = secure.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
+		encoder = cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
 	} else {
-		encoder = secure.NoOpEncoder{}
+		encoder = noop.NoOpEncoder{}
 	}
 	var authType string
 	err := huh.NewForm(
@@ -60,12 +61,12 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 		log.Fatal("unable to get auth selection from user")
 	}
 
-	newConfig := domain.NewGrafanaConfig(name)
-	newConfig.ConnectionSettings = &domain.ConnectionSettings{
-		MatchingRules: make([]*domain.RegexMatchesList, 0),
+	newConfig := config_domain.NewGrafanaConfig(config_domain.WithContextName(name))
+	newConfig.ConnectionSettings = &config_domain.ConnectionSettings{
+		MatchingRules: make([]*config_domain.RegexMatchesList, 0),
 	}
 	newConfig.OrganizationName = "Main Org."
-	secure := domain.SecureModel{}
+	secure := config_domain.SecureModel{}
 	err = huh.NewForm(buildFormGroups(authType, newConfig, &secure)...).Run()
 	if err != nil {
 		log.Fatalf("Could not set grafana config: %v", err)
@@ -89,7 +90,7 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 	}
 
 	const passKey = "basicAuthPassword"
-	defaultDs := domain.GrafanaConnection{
+	defaultDs := config_domain.GrafanaConnection{
 		"user":  connectionUser,
 		passKey: connectionPassword,
 	}
@@ -122,9 +123,9 @@ func CreateNewContext(app *domain.GDGAppConfiguration, name string) {
 	if err != nil {
 		log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
 	}
-	newConfig.ConnectionSettings.MatchingRules = []*domain.RegexMatchesList{
+	newConfig.ConnectionSettings.MatchingRules = []*config_domain.RegexMatchesList{
 		{
-			Rules: []domain.MatchingRule{
+			Rules: []config_domain.MatchingRule{
 				{
 					Field: "name",
 					Regex: ".*",
@@ -167,7 +168,7 @@ func writeSecureFileData[T any](object T, location string) error {
 // buildFormGroups creates form groups for Grafana authentication and configuration.
 // It returns a slice of *huh.Group based on authType, including username/password,
 // token, output path, and URL inputs.
-func buildFormGroups(authType string, config *domain.GrafanaConfig, secureModel *domain.SecureModel) []*huh.Group {
+func buildFormGroups(authType string, config *config_domain.GrafanaConfig, secureModel *config_domain.SecureModel) []*huh.Group {
 	groups := make([]*huh.Group, 0)
 	basicGrps := huh.NewGroup(
 		huh.NewInput().
@@ -211,7 +212,7 @@ func buildFormGroups(authType string, config *domain.GrafanaConfig, secureModel 
 }
 
 // DeleteContext remove a given context
-func DeleteContext(app *domain.GDGAppConfiguration, name string) {
+func DeleteContext(app *config_domain.GDGAppConfiguration, name string) {
 	name = strings.ToLower(name) // ensure name is lower case
 	contexts := app.GetContexts()
 	ctx, ok := contexts[name]
@@ -246,7 +247,7 @@ func DeleteContext(app *domain.GDGAppConfiguration, name string) {
 }
 
 // CopyContext Makes a copy of the specified context and write to disk
-func CopyContext(app *domain.GDGAppConfiguration, src, dest string) {
+func CopyContext(app *config_domain.GDGAppConfiguration, src, dest string) {
 	// Validate context
 	contexts := app.GetContexts()
 	if len(contexts) == 0 {
@@ -270,9 +271,9 @@ func CopyContext(app *domain.GDGAppConfiguration, src, dest string) {
 }
 
 // ClearContexts resets all contexts to a single default example context and saves the config.```
-func ClearContexts(app *domain.GDGAppConfiguration) {
-	newContext := make(map[string]*domain.GrafanaConfig)
-	newContext["example"] = domain.NewGrafanaConfig("example")
+func ClearContexts(app *config_domain.GDGAppConfiguration) {
+	newContext := make(map[string]*config_domain.GrafanaConfig)
+	newContext["example"] = config_domain.NewGrafanaConfig(config_domain.WithContextName("example"))
 	app.Contexts = newContext
 	app.ContextName = "example"
 	err := app.SaveToDisk(false)

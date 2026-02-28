@@ -6,12 +6,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/esnet/gdg/internal/storage"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
+	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
 
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +26,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
 	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
 
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -40,7 +42,7 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	}()
 	apiClient := r.ApiClient
 	// Wipe all data from grafana
-	dsFilter := service.NewConnectionFilter("")
+	dsFilter := api.NewConnectionFilter("")
 	apiClient.DeleteAllConnections(dsFilter)
 
 	apiClient.UploadConnections(dsFilter)
@@ -48,9 +50,10 @@ func TestCloudDataSourceCRUD(t *testing.T) {
 	assert.True(t, len(dsList) > 0)
 	_, cancel, apiClient, s, err := test_tooling.SetupCloudFunctionOpt(
 		cfg,
+		noop.NoOpEncoder{},
 		test_tooling.SetCloudType("custom"),
 		test_tooling.SetBucketName(common.TestBucketName))
-	apiClient.(*service.DashNGoImpl).SetStorage(s)
+	apiClient.(*api.DashNGoImpl).SetStorage(s)
 	assert.NoError(t, err)
 	defer cancel()
 
@@ -77,9 +80,9 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	var (
 		err error
-		s   storage.Storage
+		s   ports.Storage
 	)
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -96,7 +99,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	apiClient := r.ApiClient
 	// defer cleanup, "Failed to cleanup test containers for %s", t.Name())
 	// Wipe all data from grafana
-	dashFilter := service.NewDashboardFilter(cfg, "", "", "")
+	dashFilter := api.NewDashboardFilter(cfg, "", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
 	// Load data into grafana
 	apiClient.UploadDashboards(dashFilter)
@@ -106,10 +109,11 @@ func TestDashboardCloudCRUD(t *testing.T) {
 
 	_, cancel, apiClient, s, err = test_tooling.SetupCloudFunctionOpt(
 		cfg,
+		noop.NoOpEncoder{},
 		test_tooling.SetCloudType("custom"),
 		test_tooling.SetBucketName(common.TestBucketName))
 	assert.NoError(t, err)
-	apiClient.(*service.DashNGoImpl).SetStorage(s)
+	apiClient.(*api.DashNGoImpl).SetStorage(s)
 	defer cancel()
 
 	// At this point all operations are reading/writing from Minio
@@ -130,20 +134,17 @@ func TestDashboardCloudCRUD(t *testing.T) {
 }
 
 func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
-	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
-	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
-	assert.NoError(t, path.FixTestDir("test", ".."))
 	var (
 		err    error
 		cancel context.CancelFunc
-
-		r *test_tooling.InitContainerResult
+		r      *test_tooling.InitContainerResult
 	)
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
-	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, cfg, nil)
-		return r.Err
-	})
+	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
+	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
+	assert.NoError(t, path.FixTestDir("test", ".."))
+
+	cfg := config.NewConfig(common.DefaultTestConfig)
+	r = test_tooling.InitTest(t, cfg, nil)
 	assert.NotNil(t, r)
 	assert.NoError(t, err)
 	defer func() {
@@ -155,7 +156,7 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 	apiClient := r.ApiClient
 	// defer cleanup, "Failed to clean up test containers for %s", t.Name())
 	// Wipe all data from grafana
-	dashFilter := service.NewDashboardFilter(cfg, "", "", "")
+	dashFilter := api.NewDashboardFilter(cfg, "", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
 	// Load data into grafana
 	_, err = apiClient.UploadDashboards(dashFilter)
@@ -169,7 +170,7 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 		name     string
 		prefix   string
 		output   string
-		id       int
+		useEnv   bool
 	}{
 		{
 			name:   "base default test",
@@ -182,58 +183,65 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 			output: "test/data",
 		},
 		{
+			name:   "/prefix and no slash output",
+			prefix: "/dummy",
+			output: "test/data",
+		},
+		// The use case below will not be able to use secure auth location since the output path will be invalid.
+		// The path need to be a location that can be found on the file system. The fallback is to rely on ENV settings
+		// to configure the auth.
+		{
+			useEnv: true,
 			name:   "no prefix, slash output",
 			prefix: "",
 			output: "/test/data",
 		},
 		{
+			useEnv: true,
 			name:   "/prefix and no output",
 			prefix: "/dummy",
 			output: "",
-			id:     5,
 		},
 		{
-			name:   "/prefix and no slash output",
-			prefix: "/dummy",
-			output: "test/data",
-		},
-		{
+			useEnv: true,
 			name:   "/prefix and /output",
 			prefix: "/dummy",
 			output: "/test/data",
-		},
-		{
-			name:   "/prefix and no output",
-			prefix: "/dummy",
-			output: "",
 		},
 	}
 
 	for _, tc := range testcases {
 		if tc.disabled {
-			slog.Info("Skipping test, disabled", "name", tc.name)
+			t.Log("Skipping disabled test case", tc.name)
 			continue
 		}
-		var s storage.Storage
-		assert.NoError(t, path.FixTestDir("test", ".."))
+		t.Log("Running test", tc.name)
+		var storageSvc ports.Storage
 		slog.Warn("Running testcase", "name", tc.name)
-		test_tooling.MaintainConfigAuth(cfg, common.DefaultTestConfig)
-		_, cancel, apiClient, s, err = test_tooling.SetupCloudFunctionOpt(
+		if tc.useEnv {
+			os.Setenv("AWS_ACCESS_KEY", "test")
+			os.Setenv("AWS_SECRET_KEY", "secretsss")
+		}
+		_, cancel, apiClient, storageSvc, err = test_tooling.SetupCloudFunctionOpt(
 			cfg,
+			noop.NoOpEncoder{},
 			test_tooling.SetCloudType("custom"),
 			test_tooling.SetPrefix(tc.prefix),
+			test_tooling.SetAccessKey("test"),
+			test_tooling.SetSecretKey("secretsss"),
 			test_tooling.SetBucketName(common.TestBucketName))
+
 		grafanaConfig := cfg.GetDefaultGrafanaConfig()
 		grafanaConfig.OutputPath = tc.output
 		apiClient = test_tooling.CreateSimpleClientWithConfig(t, cfg, r.Container)
-		apiClient.(*service.DashNGoImpl).SetStorage(s) // Override storage
+		apiClient.(*api.DashNGoImpl).SetStorage(storageSvc) // Override storage
 		assert.NoError(t, err)
 
 		// At this point all operations are reading/writing from Minio
-		slog.Info("importing Dashboards")
+		slog.Info("Downloading Dashboards")
 		list := apiClient.DownloadDashboards(dashFilter) // Saving to S3
 		assert.Equal(t, len(list), len(boards))
-		slog.Info("deleting Dashboards") // Clearing Grafana
+		slog.Info("Deleting Dashboards") // Clearing Grafana
 		deleteList := apiClient.DeleteAllDashboards(dashFilter)
 		assert.Equal(t, len(list), len(deleteList))
 		boards = apiClient.ListDashboards(dashFilter)
@@ -246,5 +254,16 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 		assert.Equal(t, len(list), len(boards))       // verify
 
 		cancel()
+	}
+}
+
+// MaintainConfigAuth updates Grafana config auth, preserving existing secure data during init.
+func MaintainConfigAuth(cfg *config_domain.GDGAppConfiguration, configVal string) {
+	cfg.GetDefaultGrafanaConfig().Apply()
+	var auth *config_domain.SecureModel
+	auth = cfg.GetDefaultGrafanaConfig().TestGetSecureAuth()
+	cfg = config.NewConfig(configVal)
+	if auth != nil {
+		cfg.GetDefaultGrafanaConfig().Apply(config_domain.WithSecureAuth(*auth))
 	}
 }

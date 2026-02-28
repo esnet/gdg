@@ -7,20 +7,20 @@ import (
 	"log/slog"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 func newOrgCommand() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "organizations",
 		Short: "Manage organizations",
 		Long:  "Manage organizations",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"org", "orgs"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -35,15 +35,15 @@ func newOrgCommand() simplecobra.Commander {
 }
 
 func newSetOrgCmd() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "set",
 		Short: "Set --orgSlugName --orgName to set user Org",
 		Long:  "Set --orgSlugName --orgName to set user Org",
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.PersistentFlags().StringP("orgName", "o", "", "Set user Org by Name (not slug)")
 			cmd.PersistentFlags().StringP("orgSlugName", "", "", "Set user Org by slug name")
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			orgName, _ := cd.CobraCommand.Flags().GetString("orgName")
 			slugName, _ := cd.CobraCommand.Flags().GetString("orgSlugName")
 			if orgName == "" && slugName == "" {
@@ -72,11 +72,11 @@ func newSetOrgCmd() simplecobra.Commander {
 
 func newGetTokenOrgCmd() simplecobra.Commander {
 	description := "display org associated with token"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "tokenOrg",
 		Short: description,
 		Long:  description,
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Display token organization for context'", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name"})
 			org := rootCmd.GrafanaSvc().GetTokenOrganization()

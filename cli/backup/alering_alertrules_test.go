@@ -31,6 +31,7 @@ func TestListAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, "No alert rules found"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().ListAlertRules(mock.Anything).Return(nil, nil)
 			},
@@ -47,6 +48,7 @@ func TestListAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, "my-group"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				rules := []*customModels.AlertRuleWithNestedFolder{
 					{
@@ -69,6 +71,7 @@ func TestListAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, `ERR unable to retrieve Orgs rule alerts err="failed to list alert rules"`))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().ListAlertRules(mock.Anything).Return(nil, fmt.Errorf("failed to list alert rules"))
 			},
@@ -89,7 +92,8 @@ func TestListAlertRules(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(listCmd, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -120,6 +124,7 @@ func TestDownloadAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, `ERR unable to retrieve Org's rule alerts err="failed to download alert rules"`))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().DownloadAlertRules(mock.Anything).Return(nil, fmt.Errorf("failed to download alert rules"))
 			},
@@ -133,6 +138,7 @@ func TestDownloadAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, "rules/my-other-rule.json"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().DownloadAlertRules(mock.Anything).Return([]string{
 					"rules/my-alert-rule.json",
@@ -156,7 +162,8 @@ func TestDownloadAlertRules(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(listCmd, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -187,6 +194,7 @@ func TestUploadAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, `ERR unable to upload Org's rule alerts err="upload failed"`))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().UploadAlertRules(mock.Anything).Return(fmt.Errorf("upload failed"))
 			},
@@ -197,6 +205,7 @@ func TestUploadAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, "Rules have been successfully uploaded to grafana"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().UploadAlertRules(mock.Anything).Return(nil)
 			},
@@ -217,7 +226,8 @@ func TestUploadAlertRules(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(listCmd, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -248,6 +258,7 @@ func TestClearAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, `ERR unable to deleting Org's rule alerts err="clear failed"`))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().ClearAlertRules(mock.Anything).Return(nil, fmt.Errorf("clear failed"))
 			},
@@ -258,6 +269,7 @@ func TestClearAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, "No Alerting rules were found"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().ClearAlertRules(mock.Anything).Return(nil, nil)
 			},
@@ -270,6 +282,7 @@ func TestClearAlertRules(t *testing.T) {
 				assert.True(t, strings.Contains(output, "my-other-rule"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().ClearAlertRules(mock.Anything).Return([]string{
 					"my-alert-rule",
@@ -293,7 +306,8 @@ func TestClearAlertRules(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(clearCmd, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, clearCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {

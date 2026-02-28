@@ -6,18 +6,18 @@ import (
 	"log/slog"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 func newAlertingNotificationCommand() simplecobra.Commander {
 	description := "Manage Alerting Notification Policies"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "policy",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"policies", "notifications", "notification", "notify", "n"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -26,7 +26,7 @@ func newAlertingNotificationCommand() simplecobra.Commander {
 			newClearAlertNotificationCmd(),
 			newUploadAlertNotificationCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -34,14 +34,14 @@ func newAlertingNotificationCommand() simplecobra.Commander {
 
 func newUploadAlertNotificationCmd() simplecobra.Commander {
 	description := "Upload all alert notification policies for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid"})
 			slog.Info("Uploading all alert notification policies for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
@@ -63,14 +63,14 @@ func newUploadAlertNotificationCmd() simplecobra.Commander {
 
 func newClearAlertNotificationCmd() simplecobra.Commander {
 	description := "Clear all alert notification policies for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Deleting all alert notification policies for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
@@ -88,14 +88,14 @@ func newClearAlertNotificationCmd() simplecobra.Commander {
 
 func newListAlertNotificationCmd() simplecobra.Commander {
 	description := "List all alert notification policies for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"Receiver", "ObjectMatchers"})
 			slog.Info("Listing alert notification policies for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
@@ -120,14 +120,14 @@ func newListAlertNotificationCmd() simplecobra.Commander {
 
 func newDownloadAlertNotificationCmd() simplecobra.Commander {
 	description := "Download all alert notification policies for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "folderUid", "ruleGroup", "Title", "provenance", "data"})
 			slog.Info("Downloading alert notification policies for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),

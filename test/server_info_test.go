@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -19,7 +19,7 @@ func TestServerInfo(t *testing.T) {
 	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
 
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -37,12 +37,12 @@ func TestServerInfo(t *testing.T) {
 	assert := assert.New(t)
 	res := apiClient.GetServerInfo()
 	assert.NotNil(res)
-	assert.NotEmpty(res[service.SrvInfoDBKey])
-	assert.NotEmpty(res[service.SrvInfoVersionKey])
-	assert.NotEmpty(res[service.SrvInfoCommitKey])
+	assert.NotEmpty(res[api.SrvInfoDBKey])
+	assert.NotEmpty(res[api.SrvInfoVersionKey])
+	assert.NotEmpty(res[api.SrvInfoCommitKey])
 	if apiClient.IsEnterprise() {
-		assert.NotEmpty(res[service.SrvInfoEnterpriseCommitKey])
+		assert.NotEmpty(res[api.SrvInfoEnterpriseCommitKey])
 	} else {
-		assert.Empty(res[service.SrvInfoEnterpriseCommitKey])
+		assert.Empty(res[api.SrvInfoEnterpriseCommitKey])
 	}
 }

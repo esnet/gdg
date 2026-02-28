@@ -2,12 +2,12 @@ version: "3"
 
 vars:
   BIN_NAME: gdg
-  VERSION: { sh: grep "const Version " internal/version/version.go | sed -E 's/.*"(.+)"$$/\1/' }
+  VERSION: { sh: grep "const Version " pkg/version/version.go | sed -E 's/.*"(.+)"$$/\1/' }
   GIT_COMMIT: { sh: git rev-parse HEAD }
   GIT_DIRTY: { sh: test -n "`git status --porcelain`" && echo "+CHANGES" || true }
   BUILD_DATE: { sh: date '+%Y-%m-%d-%H:%M:%S' }
   IMAGE_NAME: "esnet/gdg"
-  LD_FLAGS: "-s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/internal/version.BuildDate={{ .BUILD_DATE }} "
+  LD_FLAGS: "-s -w -X github.com/esnet/gdg/pkg/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/pkg/version.BuildDate={{ .BUILD_DATE }} "
   TOOLS_ARG: "-modfile tools/go.mod"
 
 dotenv: [ '.env' ]

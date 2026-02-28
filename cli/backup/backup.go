@@ -4,26 +4,29 @@ import (
 	"context"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config/domain"
+	domain2 "github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/spf13/cobra"
 )
 
 func NewBackupCommand() simplecobra.Commander {
 	description := "Manage entities that are backup up and updated via api"
-	return &support.SimpleCommand{
+	return &domain2.SimpleCommand{
 		NameP: "backup",
 		Short: description,
 		Long: `Manage entities that are backup up and updated via api.  These utilities are mostly
 limited to clear/delete, list, download and upload.  Any other functionality will be found under the tools.`,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
 			cmd.Aliases = []string{"b"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
-		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
-			r.InitConfiguration(cd.CobraCommand)
+		InitCFunc: func(cd *simplecobra.Commandeer, r *domain2.RootCommand) error {
+			configOverride, _ := cd.CobraCommand.Flags().GetString("config")
+			contextOverride, _ := cd.CobraCommand.Flags().GetString("context")
+			r.LoadConfig(configOverride, contextOverride)
+			r.GrafanaSvc().Login()
 			r.GrafanaSvc().InitOrganizations()
 			return nil
 		},
@@ -41,6 +44,6 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 }
 
 // GetOrganizationName wrapper for verbose version below.
-func GetOrganizationName(cfg *domain.GDGAppConfiguration) string {
+func GetOrganizationName(cfg *config_domain.GDGAppConfiguration) string {
 	return cfg.GetDefaultGrafanaConfig().GetOrganizationName()
 }

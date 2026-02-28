@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools"
+	"github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/pkg/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"github.com/spf13/cobra"
@@ -18,11 +18,11 @@ import (
 
 func newDashboardPermissionCmd() simplecobra.Commander {
 	description := "Dashboard Permission"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "permission",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"p", "permissions"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -31,7 +31,7 @@ func newDashboardPermissionCmd() simplecobra.Commander {
 			newDashboardPermissionUploadCmd(),
 			newDashboardPermissionClearCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -48,16 +48,16 @@ func getDashboardPermTblWriter() table.Writer {
 
 func newDashboardPermissionListCmd() simplecobra.Commander {
 	description := "List Dashboard Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Listing Dashboard Permissions for context", "context", rootCmd.ConfigSvc().GetContext())
-			filters := service.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filters := api.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			permissions, err := rootCmd.GrafanaSvc().ListDashboardPermissions(filters)
 			if err != nil {
 				slog.Error("Failed to retrieve Dashboard Permissions", "error", err)
@@ -105,20 +105,20 @@ func newDashboardPermissionListCmd() simplecobra.Commander {
 
 func newDashboardPermissionClearCmd() simplecobra.Commander {
 	description := "Clear Connection Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Clear all Dashboard permissions")
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all Dashboards on: '%s' "+
 				"(Or all permission matching your filters).  Do you wish to continue (y/n) ", rootCmd.ConfigSvc().ContextName,
 			), "", true)
 			rootCmd.TableObj.AppendHeader(table.Row{"cleared Dashboard permissions"})
-			filters := service.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filters := api.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			err := rootCmd.GrafanaSvc().ClearDashboardPermissions(filters)
 			if err != nil {
 				slog.Error("Failed to retrieve Dashboard Permissions", "error", err)
@@ -132,18 +132,18 @@ func newDashboardPermissionClearCmd() simplecobra.Commander {
 
 func newDashboardPermissionDownloadCmd() simplecobra.Commander {
 	description := "Download Connection Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Download Connections for context",
 				"context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
-			filters := service.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filters := api.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			permissions, err := rootCmd.GrafanaSvc().DownloadDashboardPermissions(filters)
 			if err != nil {
 				slog.Error("Failed to retrieve Dashboard Permissions", "error", err)
@@ -166,17 +166,17 @@ func newDashboardPermissionDownloadCmd() simplecobra.Commander {
 
 func newDashboardPermissionUploadCmd() simplecobra.Commander {
 	description := "Upload Connection Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Uploading dashboard permissions")
 			rootCmd.TableObj.AppendHeader(table.Row{"dashboard permission"})
-			filters := service.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
+			filters := api.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			permissions, err := rootCmd.GrafanaSvc().UploadDashboardPermissions(filters)
 			if err != nil {
 				slog.Error("Failed to retrieve Dashboard Permissions", "error", err)

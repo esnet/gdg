@@ -6,26 +6,26 @@ import (
 	"log/slog"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/config/domain"
+	domain3 "github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	domain2 "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
-	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/go-openapi/strfmt"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 // getAlertRulesFilter constructs alert rule filters from command-line flags and returns both the parsed
-// AlertRuleFilterParams and a corresponding V2Filter for use in alert rule operations.
-func getAlertRulesFilter(cfg *domain.GDGAppConfiguration, grafanaService ports.GrafanaService, command *cobra.Command) (domain2.AlertRuleFilterParams, ports.V2Filter) {
+// AlertRuleFilterParams and a corresponding Filter for use in alert rule operations.
+func getAlertRulesFilter(cfg *config_domain.GDGAppConfiguration, grafanaService ports.GrafanaService, command *cobra.Command) (domain2.AlertRuleFilterParams, ports.Filter) {
 	f := domain2.AlertRuleFilterParams{}
 	f.Folder, _ = command.Flags().GetString("folder")
 	f.Label, _ = command.Flags().GetStringArray("label")
 	f.IgnoreWatchedFolders, _ = command.Flags().GetBool("ignore-watched-folders")
 
-	return f, service.NewAlertRuleFilter(cfg, grafanaService, f)
+	return f, api.NewAlertRuleFilter(cfg, grafanaService, f)
 }
 
 // newAlertingRulesCommand creates and returns a Commander that manages Alerting Rules. It supports subcommands for
@@ -33,11 +33,11 @@ func getAlertRulesFilter(cfg *domain.GDGAppConfiguration, grafanaService ports.G
 // watched folders and labels.
 func newAlertingRulesCommand() simplecobra.Commander {
 	description := "Manage Alerting Rules"
-	return &support.SimpleCommand{
+	return &domain3.SimpleCommand{
 		NameP: "rules",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain3.RootCommand) {
 			cmd.Aliases = []string{"rule", "alert-rules", "alert-rule"}
 			cmd.PersistentFlags().Bool("ignore-watched-folders", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
 			cmd.PersistentFlags().String("folder", "", "Add a folder filter")
@@ -49,7 +49,7 @@ func newAlertingRulesCommand() simplecobra.Commander {
 			newClearAlertRulesCmd(),
 			newUploadAlertRulesCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain3.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -59,14 +59,14 @@ func newAlertingRulesCommand() simplecobra.Commander {
 // It supports folder and label filtering and is aliased as "u".
 func newUploadAlertRulesCmd() simplecobra.Commander {
 	description := "Upload all alert rules for the given Organization"
-	return &support.SimpleCommand{
+	return &domain3.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain3.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain3.RootCommand, args []string) error {
 			filtersList, rulesFilter := getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc(), cd.CobraCommand)
 			rootCmd.TableObj.AppendHeader(table.Row{"uid"})
 			slog.Info("Uploading all alert rules for context",
@@ -91,14 +91,14 @@ func newUploadAlertRulesCmd() simplecobra.Commander {
 // The command is aliased as "c".
 func newClearAlertRulesCmd() simplecobra.Commander {
 	description := "Clear all alert rules for the given Organization"
-	return &support.SimpleCommand{
+	return &domain3.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain3.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain3.RootCommand, args []string) error {
 			filtersList, rulesFilter := getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc(), cd.CobraCommand)
 			slog.Info("Deleting all alert rules for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
@@ -131,14 +131,14 @@ func newClearAlertRulesCmd() simplecobra.Commander {
 // The command is aliased as "l".
 func newListAlertRulesCmd() simplecobra.Commander {
 	description := "List all alert rules for the given Organization"
-	return &support.SimpleCommand{
+	return &domain3.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain3.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain3.RootCommand, args []string) error {
 			filtersList, rulesFilter := getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc(), cd.CobraCommand)
 			rootCmd.TableObj.AppendHeader(table.Row{"name", "uid", "folder", "ruleGroup", "Labels", "For"})
 			slog.Info("Listing alert rules for context",
@@ -185,14 +185,14 @@ func newListAlertRulesCmd() simplecobra.Commander {
 // It applies any configured filters (folder, label) and renders the resulting list of downloaded rule files.
 func newDownloadAlertRulesCmd() simplecobra.Commander {
 	description := "Download all alert rules for the given Organization"
-	return &support.SimpleCommand{
+	return &domain3.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain3.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain3.RootCommand, args []string) error {
 			filtersList, rulesFilter := getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc(), cd.CobraCommand)
 			rootCmd.TableObj.AppendHeader(table.Row{"alert-rule"})
 			slog.Info("Downloading alert rules for context",

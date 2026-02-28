@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools"
+	"github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/pkg/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"github.com/spf13/cobra"
@@ -17,11 +17,11 @@ import (
 
 func newConnectionsPermissionCmd() simplecobra.Commander {
 	description := "Connections Permission"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "permission",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"p", "permissions"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -30,7 +30,7 @@ func newConnectionsPermissionCmd() simplecobra.Commander {
 			newConnectionsPermissionUploadCmd(),
 			newConnectionsPermissionClearCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -47,16 +47,16 @@ func getConnPermTblWriter() table.Writer {
 
 func newConnectionsPermissionListCmd() simplecobra.Commander {
 	description := "List Connection Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
-			filters := service.NewConnectionFilter(connectionFilter)
+			filters := api.NewConnectionFilter(connectionFilter)
 			slog.Info("Listing Connection Permissions for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 			connections := rootCmd.GrafanaSvc().ListConnectionPermissions(filters)
@@ -66,7 +66,7 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 			} else {
 				for _, item := range connections {
 					writer := getConnPermTblWriter()
-					writer.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, service.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID, rootCmd.ConfigSvc())})
+					writer.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, api.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID, rootCmd.ConfigSvc())})
 					writer.Render()
 					if item.Permissions != nil {
 						twConfigs := table.NewWriter()
@@ -101,21 +101,21 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 
 func newConnectionsPermissionClearCmd() simplecobra.Commander {
 	description := "Clear Connection Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Clear all connections permissions")
 			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all connections on: '%s' "+
 				"(Or all permission matching your --connection filter).  Do you wish to continue (y/n) ", rootCmd.ConfigSvc().ContextName,
 			), "", true)
 			rootCmd.TableObj.AppendHeader(table.Row{"cleared connection permissions"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
-			filters := service.NewConnectionFilter(connectionFilter)
+			filters := api.NewConnectionFilter(connectionFilter)
 			connections := rootCmd.GrafanaSvc().DeleteAllConnectionPermissions(filters)
 
 			if len(connections) == 0 {
@@ -134,19 +134,19 @@ func newConnectionsPermissionClearCmd() simplecobra.Commander {
 
 func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 	description := "Download Connection Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Download Connections for context",
 				"context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
-			filters := service.NewConnectionFilter(connectionFilter)
+			filters := api.NewConnectionFilter(connectionFilter)
 			connections := rootCmd.GrafanaSvc().DownloadConnectionPermissions(filters)
 			slog.Info("Downloading connections permissions")
 
@@ -165,18 +165,18 @@ func newConnectionsPermissionDownloadCmd() simplecobra.Commander {
 
 func newConnectionsPermissionUploadCmd() simplecobra.Commander {
 	description := "Upload Connection Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Uploading connections permissions")
 			rootCmd.TableObj.AppendHeader(table.Row{"connection permission applied"})
 			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
-			filters := service.NewConnectionFilter(connectionFilter)
+			filters := api.NewConnectionFilter(connectionFilter)
 			connections := rootCmd.GrafanaSvc().UploadConnectionPermissions(filters)
 
 			if len(connections) == 0 {

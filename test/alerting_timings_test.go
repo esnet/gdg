@@ -21,7 +21,7 @@ func TestAlertingTimingsCrud(t *testing.T) {
 	assert.NoError(os.Unsetenv(common.ContextNameEnv))
 
 	assert.NoError(path.FixTestDir("test", ".."))
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)

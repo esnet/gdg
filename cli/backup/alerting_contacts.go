@@ -7,18 +7,18 @@ import (
 	"log/slog"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 func newAlertingContactCommand() simplecobra.Commander {
 	description := "Manage Alerting ContactPoints "
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "contactpoint",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"contact", "contacts", "contactpoints"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -27,7 +27,7 @@ func newAlertingContactCommand() simplecobra.Commander {
 			newUploadContactPointsCmd(),
 			newDownloadContactPointsCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -40,14 +40,14 @@ func logWarning() {
 
 func newListContactPointsCmd() simplecobra.Commander {
 	description := "List all contact points for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "name", "type", "settings"})
 			contactPoints, err := rootCmd.GrafanaSvc().ListContactPoints()
 			slog.Info("Listing contact points for context",
@@ -81,14 +81,14 @@ func newListContactPointsCmd() simplecobra.Commander {
 
 func newDownloadContactPointsCmd() simplecobra.Commander {
 	description := "Download all contact points for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Download contact points for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
@@ -106,14 +106,14 @@ func newDownloadContactPointsCmd() simplecobra.Commander {
 
 func newUploadContactPointsCmd() simplecobra.Commander {
 	description := "Upload all contact points for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Upload contact points for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
@@ -137,14 +137,14 @@ func newUploadContactPointsCmd() simplecobra.Commander {
 
 func newClearContactPointsCmd() simplecobra.Commander {
 	description := "Clear all contact points for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Clear contact points for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))

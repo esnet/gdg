@@ -12,7 +12,7 @@ builds:
     env:
       - CGO_ENABLED=0
     binary: gdg
-    ldflags: -s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/internal/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/internal/version.Version={{ .Tag }}
+    ldflags: -s -w -X github.com/esnet/gdg/pkg/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/pkg/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/pkg/version.Version={{ .Tag }}
     main: ./cmd/gdg
     goos:
       - linux
@@ -26,7 +26,7 @@ builds:
     env:
       - CGO_ENABLED=0
     binary: gdg-generate
-    ldflags: -s -w -X github.com/esnet/gdg/internal/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/internal/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/internal/version.Version={{ .Tag }}
+    ldflags: -s -w -X github.com/esnet/gdg/pkg/version.GitCommit={{ .Commit }} -X github.com/esnet/gdg/pkg/version.BuildDate={{ .Date }}  -X github.com/esnet/gdg/pkg/version.Version={{ .Tag }}
     main: ./cmd/gdg-generate
     goos:
       - linux

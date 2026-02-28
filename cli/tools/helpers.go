@@ -8,35 +8,35 @@ import (
 	"os"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/tools/encode"
+	"github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/pkg/encode"
 	"github.com/spf13/cobra"
 )
 
 func newHelpers() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "helpers",
 		Short: "Config Helpers",
 		Long:  "Config Helpers",
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"h"}
 		},
 		CommandsList: []simplecobra.Commander{
 			newFolderHelper(),
 			newCipherHelper(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
 }
 
 func newCipherHelper() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "cipher",
 		Short: "Cipher Helpers",
 		Long:  "Cipher Helpers",
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"c", "ciphers"}
 			cmd.PersistentFlags().StringP("file", "f", "", "file to encode/decode")
 			cmd.PersistentFlags().StringP("value", "", "", "value to encode/decode")
@@ -45,36 +45,36 @@ func newCipherHelper() simplecobra.Commander {
 			newCipherEncode(),
 			newCipherDecode(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
 }
 
 func newFolderHelper() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "folder",
 		Short: "Config Helpers",
 		Long:  "Config Helpers",
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"f", "folders"}
 		},
 		CommandsList: []simplecobra.Commander{
 			newFolderEncode(),
 			newFolderDecode(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
 }
 
 func newFolderEncode() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "encode",
 		Short: "encode folder name as regex",
 		Long:  "encode folder name as regex",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 1 {
 				return fmt.Errorf("requires the following parameters to be specified: \"Folder Name\"")
 			}
@@ -87,11 +87,11 @@ func newFolderEncode() simplecobra.Commander {
 }
 
 func newFolderDecode() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "decode",
 		Short: "decode folder name from regex",
 		Long:  "decode folder name from regex",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 1 {
 				return fmt.Errorf("requires the following parameters to be specified: \"Folder Name\"")
 			}
@@ -104,11 +104,11 @@ func newFolderDecode() simplecobra.Commander {
 }
 
 func newCipherEncode() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "encode",
 		Short: "apply cipher to string",
 		Long:  "apply cipher to string",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			fileName, _ := cd.CobraCommand.Flags().GetString("file")
 			value, _ := cd.CobraCommand.Flags().GetString("value")
 			if fileName != "" && value != "" {
@@ -141,11 +141,11 @@ func newCipherEncode() simplecobra.Commander {
 }
 
 func newCipherDecode() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "decode",
 		Short: "decode string using cipher plugin",
 		Long:  "decode string using cipher plugin",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			fileName, _ := cd.CobraCommand.Flags().GetString("file")
 			value, _ := cd.CobraCommand.Flags().GetString("value")
 			if fileName != "" && value != "" {

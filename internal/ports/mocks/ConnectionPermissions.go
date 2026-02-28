@@ -38,7 +38,7 @@ func (_m *ConnectionPermissions) EXPECT() *ConnectionPermissions_Expecter {
 }
 
 // DeleteAllConnectionPermissions provides a mock function for the type ConnectionPermissions
-func (_mock *ConnectionPermissions) DeleteAllConnectionPermissions(filter ports.V2Filter) []string {
+func (_mock *ConnectionPermissions) DeleteAllConnectionPermissions(filter ports.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -46,7 +46,7 @@ func (_mock *ConnectionPermissions) DeleteAllConnectionPermissions(filter ports.
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -62,16 +62,16 @@ type ConnectionPermissions_DeleteAllConnectionPermissions_Call struct {
 }
 
 // DeleteAllConnectionPermissions is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *ConnectionPermissions_Expecter) DeleteAllConnectionPermissions(filter interface{}) *ConnectionPermissions_DeleteAllConnectionPermissions_Call {
 	return &ConnectionPermissions_DeleteAllConnectionPermissions_Call{Call: _e.mock.On("DeleteAllConnectionPermissions", filter)}
 }
 
-func (_c *ConnectionPermissions_DeleteAllConnectionPermissions_Call) Run(run func(filter ports.V2Filter)) *ConnectionPermissions_DeleteAllConnectionPermissions_Call {
+func (_c *ConnectionPermissions_DeleteAllConnectionPermissions_Call) Run(run func(filter ports.Filter)) *ConnectionPermissions_DeleteAllConnectionPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -85,13 +85,13 @@ func (_c *ConnectionPermissions_DeleteAllConnectionPermissions_Call) Return(stri
 	return _c
 }
 
-func (_c *ConnectionPermissions_DeleteAllConnectionPermissions_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *ConnectionPermissions_DeleteAllConnectionPermissions_Call {
+func (_c *ConnectionPermissions_DeleteAllConnectionPermissions_Call) RunAndReturn(run func(filter ports.Filter) []string) *ConnectionPermissions_DeleteAllConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadConnectionPermissions provides a mock function for the type ConnectionPermissions
-func (_mock *ConnectionPermissions) DownloadConnectionPermissions(filter ports.V2Filter) []string {
+func (_mock *ConnectionPermissions) DownloadConnectionPermissions(filter ports.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -99,7 +99,7 @@ func (_mock *ConnectionPermissions) DownloadConnectionPermissions(filter ports.V
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -115,16 +115,16 @@ type ConnectionPermissions_DownloadConnectionPermissions_Call struct {
 }
 
 // DownloadConnectionPermissions is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *ConnectionPermissions_Expecter) DownloadConnectionPermissions(filter interface{}) *ConnectionPermissions_DownloadConnectionPermissions_Call {
 	return &ConnectionPermissions_DownloadConnectionPermissions_Call{Call: _e.mock.On("DownloadConnectionPermissions", filter)}
 }
 
-func (_c *ConnectionPermissions_DownloadConnectionPermissions_Call) Run(run func(filter ports.V2Filter)) *ConnectionPermissions_DownloadConnectionPermissions_Call {
+func (_c *ConnectionPermissions_DownloadConnectionPermissions_Call) Run(run func(filter ports.Filter)) *ConnectionPermissions_DownloadConnectionPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -138,13 +138,13 @@ func (_c *ConnectionPermissions_DownloadConnectionPermissions_Call) Return(strin
 	return _c
 }
 
-func (_c *ConnectionPermissions_DownloadConnectionPermissions_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *ConnectionPermissions_DownloadConnectionPermissions_Call {
+func (_c *ConnectionPermissions_DownloadConnectionPermissions_Call) RunAndReturn(run func(filter ports.Filter) []string) *ConnectionPermissions_DownloadConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListConnectionPermissions provides a mock function for the type ConnectionPermissions
-func (_mock *ConnectionPermissions) ListConnectionPermissions(filter ports.V2Filter) []domain.ConnectionPermissionItem {
+func (_mock *ConnectionPermissions) ListConnectionPermissions(filter ports.Filter) []domain.ConnectionPermissionItem {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -152,7 +152,7 @@ func (_mock *ConnectionPermissions) ListConnectionPermissions(filter ports.V2Fil
 	}
 
 	var r0 []domain.ConnectionPermissionItem
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []domain.ConnectionPermissionItem); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []domain.ConnectionPermissionItem); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -168,16 +168,16 @@ type ConnectionPermissions_ListConnectionPermissions_Call struct {
 }
 
 // ListConnectionPermissions is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *ConnectionPermissions_Expecter) ListConnectionPermissions(filter interface{}) *ConnectionPermissions_ListConnectionPermissions_Call {
 	return &ConnectionPermissions_ListConnectionPermissions_Call{Call: _e.mock.On("ListConnectionPermissions", filter)}
 }
 
-func (_c *ConnectionPermissions_ListConnectionPermissions_Call) Run(run func(filter ports.V2Filter)) *ConnectionPermissions_ListConnectionPermissions_Call {
+func (_c *ConnectionPermissions_ListConnectionPermissions_Call) Run(run func(filter ports.Filter)) *ConnectionPermissions_ListConnectionPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -191,13 +191,13 @@ func (_c *ConnectionPermissions_ListConnectionPermissions_Call) Return(connectio
 	return _c
 }
 
-func (_c *ConnectionPermissions_ListConnectionPermissions_Call) RunAndReturn(run func(filter ports.V2Filter) []domain.ConnectionPermissionItem) *ConnectionPermissions_ListConnectionPermissions_Call {
+func (_c *ConnectionPermissions_ListConnectionPermissions_Call) RunAndReturn(run func(filter ports.Filter) []domain.ConnectionPermissionItem) *ConnectionPermissions_ListConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadConnectionPermissions provides a mock function for the type ConnectionPermissions
-func (_mock *ConnectionPermissions) UploadConnectionPermissions(filter ports.V2Filter) []string {
+func (_mock *ConnectionPermissions) UploadConnectionPermissions(filter ports.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -205,7 +205,7 @@ func (_mock *ConnectionPermissions) UploadConnectionPermissions(filter ports.V2F
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -221,16 +221,16 @@ type ConnectionPermissions_UploadConnectionPermissions_Call struct {
 }
 
 // UploadConnectionPermissions is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *ConnectionPermissions_Expecter) UploadConnectionPermissions(filter interface{}) *ConnectionPermissions_UploadConnectionPermissions_Call {
 	return &ConnectionPermissions_UploadConnectionPermissions_Call{Call: _e.mock.On("UploadConnectionPermissions", filter)}
 }
 
-func (_c *ConnectionPermissions_UploadConnectionPermissions_Call) Run(run func(filter ports.V2Filter)) *ConnectionPermissions_UploadConnectionPermissions_Call {
+func (_c *ConnectionPermissions_UploadConnectionPermissions_Call) Run(run func(filter ports.Filter)) *ConnectionPermissions_UploadConnectionPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -244,7 +244,7 @@ func (_c *ConnectionPermissions_UploadConnectionPermissions_Call) Return(strings
 	return _c
 }
 
-func (_c *ConnectionPermissions_UploadConnectionPermissions_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *ConnectionPermissions_UploadConnectionPermissions_Call {
+func (_c *ConnectionPermissions_UploadConnectionPermissions_Call) RunAndReturn(run func(filter ports.Filter) []string) *ConnectionPermissions_UploadConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }

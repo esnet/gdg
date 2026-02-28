@@ -5,15 +5,18 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/backup"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/cli/tools"
 )
 
 // Execute runs the root command with given args and optional RootOptions, returning any error.
 // It constructs the root command, executes it via simplecobra, and displays help on failure.
-func Execute(args []string, options ...support.RootOption) error {
+func Execute(rootCmd *domain.RootCommand, args []string, options ...domain.RootOption) error {
 	var err error
-	rootCmd := support.NewRootCmd(getNewRootCmd(), options...)
+	err = rootCmd.ApplyOptions(options...)
+	if err != nil {
+		return err
+	}
 	x, err := simplecobra.New(rootCmd)
 	if err != nil {
 		return err
@@ -31,16 +34,16 @@ func Execute(args []string, options ...support.RootOption) error {
 	return nil
 }
 
-// getNewRootCmd creates the root command with name "gdg" and subcommands for version,
+// NewRootService creates the root command with name "gdg" and subcommands for version,
 // default config, tools, and backup utilities.
-func getNewRootCmd() *support.RootCommand {
-	return &support.RootCommand{
-		NameP: "gdg",
-		CommandEntries: []simplecobra.Commander{
-			newVersionCmd(),
-			newDefaultConfig(),
-			tools.NewToolsCommand(),
-			backup.NewBackupCommand(),
-		},
+func NewRootService() *domain.RootCommand {
+	p := domain.NewRootCommand("gdg")
+	p.CommandEntries = []simplecobra.Commander{
+		newVersionCmd(),
+		newDefaultConfig(),
+		tools.NewToolsCommand(),
+		backup.NewBackupCommand(),
 	}
+
+	return p
 }

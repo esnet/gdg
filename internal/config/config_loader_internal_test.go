@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	assets "github.com/esnet/gdg/config"
-	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 )
@@ -16,7 +16,7 @@ func TestSecureUnmarshall(t *testing.T) {
 	raw, err := assets.GetFile("secure.yml")
 	assert.NoError(err)
 	assert.NotEmpty(raw)
-	cfg := new(domain.GDGAppConfiguration)
+	cfg := new(config_domain.GDGAppConfiguration)
 	err = yaml.Unmarshal([]byte(raw), cfg)
 	// plugins
 	assert.True(cfg.PluginConfig.Disabled)

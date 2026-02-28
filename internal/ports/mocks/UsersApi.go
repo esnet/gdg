@@ -39,7 +39,7 @@ func (_m *UsersApi) EXPECT() *UsersApi_Expecter {
 }
 
 // DeleteAllUsers provides a mock function for the type UsersApi
-func (_mock *UsersApi) DeleteAllUsers(filter ports.V2Filter) []string {
+func (_mock *UsersApi) DeleteAllUsers(filter ports.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -47,7 +47,7 @@ func (_mock *UsersApi) DeleteAllUsers(filter ports.V2Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -63,16 +63,16 @@ type UsersApi_DeleteAllUsers_Call struct {
 }
 
 // DeleteAllUsers is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *UsersApi_Expecter) DeleteAllUsers(filter interface{}) *UsersApi_DeleteAllUsers_Call {
 	return &UsersApi_DeleteAllUsers_Call{Call: _e.mock.On("DeleteAllUsers", filter)}
 }
 
-func (_c *UsersApi_DeleteAllUsers_Call) Run(run func(filter ports.V2Filter)) *UsersApi_DeleteAllUsers_Call {
+func (_c *UsersApi_DeleteAllUsers_Call) Run(run func(filter ports.Filter)) *UsersApi_DeleteAllUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -86,13 +86,13 @@ func (_c *UsersApi_DeleteAllUsers_Call) Return(strings []string) *UsersApi_Delet
 	return _c
 }
 
-func (_c *UsersApi_DeleteAllUsers_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *UsersApi_DeleteAllUsers_Call {
+func (_c *UsersApi_DeleteAllUsers_Call) RunAndReturn(run func(filter ports.Filter) []string) *UsersApi_DeleteAllUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadUsers provides a mock function for the type UsersApi
-func (_mock *UsersApi) DownloadUsers(filter ports.V2Filter) []string {
+func (_mock *UsersApi) DownloadUsers(filter ports.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -100,7 +100,7 @@ func (_mock *UsersApi) DownloadUsers(filter ports.V2Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -116,16 +116,16 @@ type UsersApi_DownloadUsers_Call struct {
 }
 
 // DownloadUsers is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *UsersApi_Expecter) DownloadUsers(filter interface{}) *UsersApi_DownloadUsers_Call {
 	return &UsersApi_DownloadUsers_Call{Call: _e.mock.On("DownloadUsers", filter)}
 }
 
-func (_c *UsersApi_DownloadUsers_Call) Run(run func(filter ports.V2Filter)) *UsersApi_DownloadUsers_Call {
+func (_c *UsersApi_DownloadUsers_Call) Run(run func(filter ports.Filter)) *UsersApi_DownloadUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -139,7 +139,7 @@ func (_c *UsersApi_DownloadUsers_Call) Return(strings []string) *UsersApi_Downlo
 	return _c
 }
 
-func (_c *UsersApi_DownloadUsers_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *UsersApi_DownloadUsers_Call {
+func (_c *UsersApi_DownloadUsers_Call) RunAndReturn(run func(filter ports.Filter) []string) *UsersApi_DownloadUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -200,7 +200,7 @@ func (_c *UsersApi_GetUserInfo_Call) RunAndReturn(run func() (*models.UserProfil
 }
 
 // ListUsers provides a mock function for the type UsersApi
-func (_mock *UsersApi) ListUsers(filter ports.V2Filter) []*models.UserSearchHitDTO {
+func (_mock *UsersApi) ListUsers(filter ports.Filter) []*models.UserSearchHitDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -208,7 +208,7 @@ func (_mock *UsersApi) ListUsers(filter ports.V2Filter) []*models.UserSearchHitD
 	}
 
 	var r0 []*models.UserSearchHitDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []*models.UserSearchHitDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*models.UserSearchHitDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -224,16 +224,16 @@ type UsersApi_ListUsers_Call struct {
 }
 
 // ListUsers is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *UsersApi_Expecter) ListUsers(filter interface{}) *UsersApi_ListUsers_Call {
 	return &UsersApi_ListUsers_Call{Call: _e.mock.On("ListUsers", filter)}
 }
 
-func (_c *UsersApi_ListUsers_Call) Run(run func(filter ports.V2Filter)) *UsersApi_ListUsers_Call {
+func (_c *UsersApi_ListUsers_Call) Run(run func(filter ports.Filter)) *UsersApi_ListUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -247,7 +247,7 @@ func (_c *UsersApi_ListUsers_Call) Return(userSearchHitDTOs []*models.UserSearch
 	return _c
 }
 
-func (_c *UsersApi_ListUsers_Call) RunAndReturn(run func(filter ports.V2Filter) []*models.UserSearchHitDTO) *UsersApi_ListUsers_Call {
+func (_c *UsersApi_ListUsers_Call) RunAndReturn(run func(filter ports.Filter) []*models.UserSearchHitDTO) *UsersApi_ListUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -313,7 +313,7 @@ func (_c *UsersApi_PromoteUser_Call) RunAndReturn(run func(userLogin string) (st
 }
 
 // UploadUsers provides a mock function for the type UsersApi
-func (_mock *UsersApi) UploadUsers(filter ports.V2Filter) []domain.UserProfileWithAuth {
+func (_mock *UsersApi) UploadUsers(filter ports.Filter) []domain.UserProfileWithAuth {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -321,7 +321,7 @@ func (_mock *UsersApi) UploadUsers(filter ports.V2Filter) []domain.UserProfileWi
 	}
 
 	var r0 []domain.UserProfileWithAuth
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []domain.UserProfileWithAuth); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []domain.UserProfileWithAuth); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -337,16 +337,16 @@ type UsersApi_UploadUsers_Call struct {
 }
 
 // UploadUsers is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *UsersApi_Expecter) UploadUsers(filter interface{}) *UsersApi_UploadUsers_Call {
 	return &UsersApi_UploadUsers_Call{Call: _e.mock.On("UploadUsers", filter)}
 }
 
-func (_c *UsersApi_UploadUsers_Call) Run(run func(filter ports.V2Filter)) *UsersApi_UploadUsers_Call {
+func (_c *UsersApi_UploadUsers_Call) Run(run func(filter ports.Filter)) *UsersApi_UploadUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -360,7 +360,7 @@ func (_c *UsersApi_UploadUsers_Call) Return(userProfileWithAuths []domain.UserPr
 	return _c
 }
 
-func (_c *UsersApi_UploadUsers_Call) RunAndReturn(run func(filter ports.V2Filter) []domain.UserProfileWithAuth) *UsersApi_UploadUsers_Call {
+func (_c *UsersApi_UploadUsers_Call) RunAndReturn(run func(filter ports.Filter) []domain.UserProfileWithAuth) *UsersApi_UploadUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }

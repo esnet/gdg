@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
+	applog "github.com/esnet/gdg/internal/adapter/logger"
 	"github.com/esnet/gdg/internal/config"
-	applog "github.com/esnet/gdg/internal/log"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/internal/ports/mocks"
 	"github.com/stretchr/testify/assert"
@@ -17,14 +17,15 @@ import (
 
 // SetupAndExecuteMockingServices  will create a mock for varous required entities allowing to test the CLI flag parsing
 // process: function that setups mocks and invokes the Execute command
-func SetupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error) (string, func()) {
+func SetupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.GrafanaService, optionMockSvc func() domain.RootOption) error) (string, func()) {
 	testSvc := new(mocks.GrafanaService)
+	testSvc.EXPECT().Login().Return()
 	getMockSvc := func() ports.GrafanaService {
 		return testSvc
 	}
 
-	optionMockSvc := func() support.RootOption {
-		return func(response *support.RootCommand) {
+	optionMockSvc := func() domain.RootOption {
+		return func(response *domain.RootCommand) {
 			response.SetUpTest(getMockSvc())
 		}
 	}
@@ -55,7 +56,7 @@ func InterceptStdout() (*os.File, *os.File, context.CancelFunc) {
 		panic(e)
 	}
 	// Restore streams
-	config.InitGdgConfig("testing")
+	config.NewConfig("testing")
 	cleanup := func() {
 		os.Stdout = backupStd
 		os.Stderr = backupErr

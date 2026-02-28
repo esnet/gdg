@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"github.com/spf13/cobra"
@@ -19,7 +19,7 @@ import (
 
 func newServiceAccountCmd() simplecobra.Commander {
 	description := "Manage api service-account"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "service-accounts",
 		Short: description,
 		Long:  description,
@@ -30,10 +30,10 @@ func newServiceAccountCmd() simplecobra.Commander {
 			newDeleteServiceAccountsCmd(),
 			newServiceAccount(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"service-account", "svcAcct", "svcAccts", "svc"}
 		},
 	}
@@ -41,12 +41,12 @@ func newServiceAccountCmd() simplecobra.Commander {
 
 func newListServiceAccountCmd() simplecobra.Commander {
 	description := "List Service Accounts"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP:        "list",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "service name", "role", "tokens", "token id", "token name", "expiration"})
 			apiKeys := rootCmd.GrafanaSvc().ListServiceAccounts()
 			sort.SliceStable(apiKeys, func(i, j int) bool {
@@ -82,12 +82,12 @@ func newListServiceAccountCmd() simplecobra.Commander {
 
 func newDeleteServiceAccountsCmd() simplecobra.Commander {
 	description := "delete the given service account from grafana"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP:        "delete",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 1 {
 				return errors.New("requires a service account ID to be specified")
 			}
@@ -113,12 +113,12 @@ func newDeleteServiceAccountsCmd() simplecobra.Commander {
 
 func newClearServiceAccountsCmd() simplecobra.Commander {
 	description := "delete all Service Accounts from grafana"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP:        "clear",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllServiceAccounts()
 			slog.Info("Delete Service Accounts for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
@@ -137,12 +137,12 @@ func newClearServiceAccountsCmd() simplecobra.Commander {
 
 func newServiceAccount() simplecobra.Commander {
 	description := "new <serviceName> <role> [ttl in seconds]"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP:        "new",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 2 {
 				return fmt.Errorf("requires a key name and a role(%s) [ttl optional]", strings.Join(getBasicRoles(), ", "))
 			}

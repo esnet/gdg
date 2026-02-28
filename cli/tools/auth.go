@@ -4,17 +4,17 @@ import (
 	"context"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 )
 
 func newAuthCmd() simplecobra.Commander {
 	description := "Manage auth via API"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP:        "auth",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{newServiceAccountCmd()},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}

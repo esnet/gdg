@@ -4,17 +4,17 @@ import (
 	"context"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/spf13/cobra"
 )
 
 func newAlertingCommand() simplecobra.Commander {
 	description := "Manage Alerting resources"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "alerting",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"alert"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -24,7 +24,7 @@ func newAlertingCommand() simplecobra.Commander {
 			newAlertingNotificationCommand(),
 			newAlertingTimingsCommand(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}

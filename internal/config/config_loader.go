@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	assets "github.com/esnet/gdg/config"
-	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 )
@@ -47,10 +47,10 @@ func buildConfigSearchPath(configFilePath string) (configDirs []string, configNa
 	return configDirs, configName, ext
 }
 
-// InitGdgConfig initializes the global configuration from a file or defaults.
+// NewConfig initializes the global configuration from a file or defaults.
 // It loads gdg.yml (or importer.yml) using Viper, updates context names,
 // and stores the configuration in a global variable for later use.
-func InitGdgConfig(override string) *domain.GDGAppConfiguration {
+func NewConfig(override string, opts ...config_domain.GDGAppConfigurationOption) *config_domain.GDGAppConfiguration {
 	var (
 		configDirs      []string
 		ext, configName string
@@ -68,7 +68,7 @@ func InitGdgConfig(override string) *domain.GDGAppConfiguration {
 		overrides = append(overrides, []string{"config/gdg.yml", "config/importer.yml"}...)
 	}
 
-	gdgConfig := new(domain.GDGAppConfiguration)
+	gdgConfig := new(config_domain.GDGAppConfiguration)
 	parseErr := loadDefaultSecureConfig(gdgConfig)
 	if parseErr != nil {
 		slog.Warn("unable to find default secure.yml", "err", parseErr)
@@ -91,10 +91,14 @@ func InitGdgConfig(override string) *domain.GDGAppConfiguration {
 	}
 	gdgConfig.UpdateContextNames()
 	gdgConfig.ViperConfig = v
+
+	for _, opt := range opts {
+		opt(gdgConfig)
+	}
 	return gdgConfig
 }
 
-func loadDefaultSecureConfig(gdgConfig *domain.GDGAppConfiguration) error {
+func loadDefaultSecureConfig(gdgConfig *config_domain.GDGAppConfiguration) error {
 	// PreLoad Secure Defaults
 	secureFile, err := assets.GetFile("secure.yml")
 	if err != nil {
@@ -137,8 +141,8 @@ func readViperConfig[T any](configName string, configDirs []string, object *T, e
 
 // InitTemplateConfig loads templating configuration from a file or defaults.
 // It builds the search path, reads the config with Viper, and returns a
-// populated *domain.TemplatingConfig instance.```
-func InitTemplateConfig(override string) *domain.TemplatingConfig {
+// populated *config_domain.TemplatingConfig instance.```
+func InitTemplateConfig(override string) *config_domain.TemplatingConfig {
 	var ext, configName string
 	var configDirs []string
 	if override == "" {
@@ -146,7 +150,7 @@ func InitTemplateConfig(override string) *domain.TemplatingConfig {
 	} else {
 		configDirs, configName, ext = buildConfigSearchPath(override)
 	}
-	templatingConfig := new(domain.TemplatingConfig)
+	templatingConfig := new(config_domain.TemplatingConfig)
 
 	v, err := readViperConfig(configName, configDirs, templatingConfig, ext)
 	if err != nil {

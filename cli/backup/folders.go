@@ -6,13 +6,13 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/esnet/gdg/internal/config/domain"
+	domain2 "github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/ports"
-	"github.com/esnet/gdg/internal/tools"
+	"github.com/esnet/gdg/pkg/tools"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
-	"github.com/esnet/gdg/internal/service"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"github.com/spf13/cobra"
@@ -20,24 +20,24 @@ import (
 
 var useFolderFilters bool
 
-func getFolderFilter(cfg *domain.GDGAppConfiguration) ports.V2Filter {
+func getFolderFilter(cfg *config_domain.GDGAppConfiguration) ports.Filter {
 	if !useFolderFilters {
 		return nil
 	}
-	return service.NewFolderFilter(cfg)
+	return api.NewFolderFilter(cfg)
 }
 
 func newFolderCommand() simplecobra.Commander {
 	description := "Manage folder entities"
-	return &support.SimpleCommand{
+	return &domain2.SimpleCommand{
 		NameP: "folders",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
 			cmd.Aliases = []string{"fld", "folder", "f"}
 			cmd.PersistentFlags().BoolVar(&useFolderFilters, "use-filters", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 		CommandsList: []simplecobra.Commander{
@@ -52,14 +52,14 @@ func newFolderCommand() simplecobra.Commander {
 
 func newFolderClearCmd() simplecobra.Commander {
 	description := "delete Folders from grafana"
-	return &support.SimpleCommand{
+	return &domain2.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
 			cmd.Aliases = []string{"c", "delete"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
 			slog.Info("Deleting all Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			if !skipConfirmAction {
 				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all folders in the monitored folders list: '%s' "+
@@ -85,14 +85,14 @@ func newFolderClearCmd() simplecobra.Commander {
 
 func newFolderListCmd() simplecobra.Commander {
 	description := "List Folders"
-	return &support.SimpleCommand{
+	return &domain2.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
 			slog.Info("Listing Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "title", "nestedPath"})
 			folders := rootCmd.GrafanaSvc().ListFolders(getFolderFilter(rootCmd.ConfigSvc()))
@@ -113,14 +113,14 @@ func newFolderListCmd() simplecobra.Commander {
 
 func newFolderDownloadCmd() simplecobra.Commander {
 	description := "Download Folders from grafana"
-	return &support.SimpleCommand{
+	return &domain2.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
 			slog.Info("Listing Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			folders := rootCmd.GrafanaSvc().DownloadFolders(getFolderFilter(rootCmd.ConfigSvc()))
@@ -139,14 +139,14 @@ func newFolderDownloadCmd() simplecobra.Commander {
 
 func newFolderUploadCmd() simplecobra.Commander {
 	description := "upload Folders to grafana"
-	return &support.SimpleCommand{
+	return &domain2.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
 			slog.Info("Uploading Folders for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"file"})
 			folders := rootCmd.GrafanaSvc().UploadFolders(getFolderFilter(rootCmd.ConfigSvc()))

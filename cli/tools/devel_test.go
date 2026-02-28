@@ -4,23 +4,25 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/pkg/test_tooling"
 
 	"github.com/esnet/gdg/cli"
-	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/ports/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDevelSrvInfo(t *testing.T) {
-	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
+	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() domain.RootOption) error {
 		expected := make(map[string]any)
 		expected["Database"] = "db"
 		expected["Commit"] = "commit"
 		expected["Version"] = "version"
 
+		mock.EXPECT().Login().Return()
 		mock.EXPECT().GetServerInfo().Return(expected)
-		err := cli.Execute([]string{"tools", "devel", "srvinfo"}, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, []string{"tools", "devel", "srvinfo"}, optionMockSvc())
 		return err
 	}
 	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
@@ -32,9 +34,10 @@ func TestDevelSrvInfo(t *testing.T) {
 }
 
 func TestDevelSrvCompletion(t *testing.T) {
-	fn := func(args []string) func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
-		return func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
-			err := cli.Execute(args, optionMockSvc())
+	rootSvc := cli.NewRootService()
+	fn := func(args []string) func(mock *mocks.GrafanaService, optionMockSvc func() domain.RootOption) error {
+		return func(mock *mocks.GrafanaService, optionMockSvc func() domain.RootOption) error {
+			err := cli.Execute(rootSvc, args, optionMockSvc())
 			return err
 		}
 	}

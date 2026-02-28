@@ -5,20 +5,21 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
+	domain2 "github.com/esnet/gdg/pkg/version"
 
-	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/ports/mocks"
-	"github.com/esnet/gdg/internal/version"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDefaultConfigCommand(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("cli", ".."))
-	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
-		err := Execute([]string{"default-config"}, optionMockSvc())
+	rootSvc := NewRootService()
+	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() domain.RootOption) error {
+		err := Execute(rootSvc, []string{"default-config"}, optionMockSvc())
 		return err
 	}
 	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
@@ -32,8 +33,9 @@ func TestDefaultConfigCommand(t *testing.T) {
 
 func TestVersionCommand(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("cli", ".."))
-	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() support.RootOption) error {
-		err := Execute([]string{"version"}, optionMockSvc())
+	rootSvc := NewRootService()
+	execMe := func(mock *mocks.GrafanaService, optionMockSvc func() domain.RootOption) error {
+		err := Execute(rootSvc, []string{"version"}, optionMockSvc())
 		return err
 	}
 	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, execMe)
@@ -42,7 +44,7 @@ func TestVersionCommand(t *testing.T) {
 	assert.True(t, strings.Contains(outStr, "Build Date:"))
 	assert.True(t, strings.Contains(outStr, "Git Commit:"))
 	assert.True(t, strings.Contains(outStr, "Version:"))
-	assert.True(t, strings.Contains(outStr, version.Version))
+	assert.True(t, strings.Contains(outStr, domain2.Version))
 	assert.True(t, strings.Contains(outStr, "Date:"))
 	assert.True(t, strings.Contains(outStr, "Go Version:"))
 	assert.True(t, strings.Contains(outStr, "OS / Arch:"))
@@ -55,14 +57,15 @@ func TestVersionErrCommand(t *testing.T) {
 		return testSvc
 	}
 
-	optionMockSvc := func() support.RootOption {
-		return func(response *support.RootCommand) {
+	optionMockSvc := func() domain.RootOption {
+		return func(response *domain.RootCommand) {
 			response.SetUpTest(getMockSvc())
 		}
 	}
 	r, w, cleanup := test_tooling.InterceptStdout()
 	defer cleanup()
-	err := Execute([]string{"dumb", "dumb"}, optionMockSvc())
+	rootSvc := NewRootService()
+	err := Execute(rootSvc, []string{"dumb", "dumb"}, optionMockSvc())
 	assert.NotNil(t, err)
 	assert.NoError(t, w.Close())
 

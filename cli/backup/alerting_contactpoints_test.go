@@ -31,6 +31,7 @@ func TestUploadContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "ERR unable to upload contact points err=\"Unable to download data data\""))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().UploadContactPoints().Return(nil, fmt.Errorf("Unable to download data data"))
 			},
@@ -45,6 +46,7 @@ func TestUploadContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "slack"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().UploadContactPoints().Return([]string{"discord", "slack"}, nil)
 			},
@@ -64,7 +66,8 @@ func TestUploadContactPoints(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(listCmd, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -97,6 +100,7 @@ func TestDownloadContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "ERR unable to download contact points"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().DownloadContactPoints().Return("", fmt.Errorf("Unable to download data data"))
 			},
@@ -108,6 +112,7 @@ func TestDownloadContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "INF contact points successfully downloaded file=fileName"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().DownloadContactPoints().Return("fileName", nil)
 			},
@@ -127,7 +132,8 @@ func TestDownloadContactPoints(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(listCmd, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -160,6 +166,7 @@ func TestListContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "No contact points found"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().ListContactPoints().Return(nil, nil)
 			},
@@ -177,6 +184,7 @@ func TestListContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "slackType"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				resp := []*models.EmbeddedContactPoint{
 					{
@@ -211,7 +219,8 @@ func TestListContactPoints(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(listCmd, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, listCmd, optionMockSvc())
 		if tc.expectErr {
 			assert.NotNil(t, err)
 		} else {
@@ -243,6 +252,7 @@ func TestClearContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "ERR unable to clear Contact Points"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().ClearContactPoints().Return(nil, fmt.Errorf("Errror!!!"))
 			},
@@ -254,6 +264,7 @@ func TestClearContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "Contact Points successfully removed"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
 				testSvc.EXPECT().ClearContactPoints().Return(nil, nil)
 			},
@@ -265,6 +276,7 @@ func TestClearContactPoints(t *testing.T) {
 				assert.True(t, strings.Contains(output, "Contact Points successfully removed"))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().ClearContactPoints().Return([]string{"discord", "slack"}, nil)
 				testSvc.EXPECT().InitOrganizations().Return()
 			},
@@ -286,7 +298,8 @@ func TestClearContactPoints(t *testing.T) {
 		r, w, cleanup := test_tooling.InterceptStdout()
 		defer cleanup()
 
-		err := cli.Execute(clearCmd, optionMockSvc())
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, clearCmd, optionMockSvc())
 		assert.Nil(t, err)
 		defer cleanup()
 		assert.NoError(t, w.Close())

@@ -7,11 +7,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
+	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/config/domain"
-	"github.com/esnet/gdg/internal/storage"
-	resourceTypes "github.com/esnet/gdg/pkg/config/domain"
-	"github.com/esnet/gdg/pkg/plugins/secure"
+	"github.com/esnet/gdg/internal/config/config_domain"
+	resourceTypes "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -48,7 +49,7 @@ func TestSetup(t *testing.T) {
 
 	os.Setenv(common.ContextNameEnv, "qa")
 	defer os.Unsetenv(common.ContextNameEnv)
-	confobj := config.InitGdgConfig(common.DefaultTestConfig)
+	confobj := config.NewConfig(common.DefaultTestConfig)
 	conf := confobj.GetViperConfig()
 	slog.Info(conf.ConfigFileUsed())
 
@@ -71,7 +72,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 
 	assert.NoError(t, os.Setenv(common.ContextNameEnv, "qa"))
 	defer os.Unsetenv(common.ContextNameEnv)
-	confobj := config.InitGdgConfig(common.DefaultTestConfig)
+	confobj := config.NewConfig(common.DefaultTestConfig)
 	conf := confobj.GetViperConfig()
 	slog.Info(conf.ConfigFileUsed())
 
@@ -81,7 +82,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 	assert.Equal(t, context, "qa")
 	grafanaConf := confobj.GetDefaultGrafanaConfig()
 	assert.NotNil(t, grafanaConf)
-	grafanaConf.MonitoredFoldersOverride = []domain.MonitoredOrgFolders{{
+	grafanaConf.MonitoredFoldersOverride = []config_domain.MonitoredOrgFolders{{
 		OrganizationName: "Your Org",
 		Folders:          []string{"General", "SpecialFolder"},
 	}}
@@ -102,7 +103,7 @@ func TestWatchedFoldersConfig(t *testing.T) {
 func TestSetupDifferentPath(t *testing.T) {
 	cfgFile := DuplicateConfig(t)
 	defer os.Unsetenv(common.ContextNameEnv)
-	cfg := config.InitGdgConfig(cfgFile)
+	cfg := config.NewConfig(cfgFile)
 	conf := cfg.GetViperConfig()
 	assert.NotNil(t, conf)
 	context := conf.GetString("context_name")
@@ -115,7 +116,7 @@ func TestSetupDifferentPath(t *testing.T) {
 func TestConfigEnv(t *testing.T) {
 	os.Setenv(common.ContextNameEnv, "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	conf := cfg.GetViperConfig()
 	context := conf.GetString("context_name")
 	assert.Equal(t, context, "testing")
@@ -125,7 +126,7 @@ func TestConfigEnv(t *testing.T) {
 	assert.Equal(t, grafanaConfig.URL, url)
 	os.Setenv(common.ContextNameEnv, "production")
 	os.Setenv("GDG_CONTEXTS__PRODUCTION__URL", "grafana.com")
-	cfg = config.InitGdgConfig(common.DefaultTestConfig)
+	cfg = config.NewConfig(common.DefaultTestConfig)
 	conf = cfg.GetViperConfig()
 	url = conf.GetString("contexts.production.url")
 	assert.Equal(t, url, "grafana.com")
@@ -137,7 +138,7 @@ func TestConfigSecureCloud(t *testing.T) {
 	path.FixTestDir("config", "../..")
 	os.Setenv(common.ContextNameEnv, "testing")
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	grafanaCfg := cfg.GetDefaultGrafanaConfig()
 
 	t.Run("Base Test", func(t *testing.T) {
@@ -173,15 +174,14 @@ func TestConfigSecureCloud(t *testing.T) {
 }
 
 func TestConfigSecurePath(t *testing.T) {
-	os.Setenv(common.ContextNameEnv, "testing")
-	defer os.Unsetenv(common.ContextNameEnv)
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
-	grafanaCfg := cfg.GetDefaultGrafanaConfig()
-	override := domain.SecureModel{
+	override := config_domain.SecureModel{
 		Password: "allyourbasesaremine!",
 		Token:    "1234",
 	}
+	assert.NoError(t, path.FixTestDir("config", "../.."))
+	cfg := config.NewConfig(common.DefaultTestConfig, test_tooling.WithSecureAuth(override))
+	grafanaCfg := cfg.GetDefaultGrafanaConfig()
 	assert.NoError(t, grafanaCfg.TestSetSecureAuth(override))
 	assert.Equal(t, grafanaCfg.GetPassword(), override.Password)
 	assert.Equal(t, grafanaCfg.GetAPIToken(), override.Token)
@@ -194,7 +194,7 @@ func TestConfigSecurePath(t *testing.T) {
 	assert.True(t, strings.Contains(location, "test"))
 }
 
-func validateGrafanaQA(t *testing.T, grafana *domain.GrafanaConfig) {
+func validateGrafanaQA(t *testing.T, grafana *config_domain.GrafanaConfig) {
 	assert.Equal(t, "https://staging.grafana.com", grafana.URL)
 	assert.Equal(t, "<CHANGEME>", grafana.GetAPIToken())
 	assert.Equal(t, "", grafana.UserName)
@@ -209,13 +209,13 @@ func validateGrafanaQA(t *testing.T, grafana *domain.GrafanaConfig) {
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)
 	// Last Entry is the default
 	secureLoc := grafana.SecureLocation()
-	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(secureLoc, secure.NoOpEncoder{})
+	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(secureLoc, noop.NoOpEncoder{})
 	assert.Nil(t, err)
 	assert.Equal(t, "user", defaultSettings.User())
 	assert.Equal(t, "password", defaultSettings.Password())
 
 	request.Name = "Complex Name"
-	defaultSettings, _ = dsSettings.GetCredentials(request, secureLoc, secure.NoOpEncoder{})
+	defaultSettings, _ = dsSettings.GetCredentials(request, secureLoc, noop.NoOpEncoder{})
 	assert.Equal(t, "test", defaultSettings.User())
 	assert.Equal(t, "secret", defaultSettings.Password())
 }

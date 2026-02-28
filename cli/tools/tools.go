@@ -5,7 +5,7 @@ import (
 	"slices"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +19,7 @@ func validBasicRole(role string) bool {
 
 func NewToolsCommand() simplecobra.Commander {
 	description := "A collection of tools to manage a grafana instance"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "tools",
 		Short: description,
 		Long:  description,
@@ -31,14 +31,17 @@ func NewToolsCommand() simplecobra.Commander {
 			newOrgCommand(),
 			newHelpers(),
 		},
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"t"}
 		},
-		InitCFunc: func(cd *simplecobra.Commandeer, r *support.RootCommand) error {
-			r.InitConfiguration(cd.CobraCommand)
+		InitCFunc: func(cd *simplecobra.Commandeer, r *domain.RootCommand) error {
+			configOverride, _ := cd.CobraCommand.Flags().GetString("config")
+			contextOverride, _ := cd.CobraCommand.Flags().GetString("context")
+			r.LoadConfig(configOverride, contextOverride)
+			r.GrafanaSvc().Login()
 			return nil
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}

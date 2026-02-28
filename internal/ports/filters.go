@@ -6,7 +6,7 @@ import (
 	"github.com/esnet/gdg/internal/domain"
 )
 
-type V2Filter interface {
+type Filter interface {
 	RegisterReader(entityType reflect.Type, fn domain.FilterReader) error
 	RegisterDataProcessor(entityType domain.FilterType, entity domain.ProcessorEntity) error
 	AddValidation(f domain.FilterType, validation domain.InputValidation, expected any)

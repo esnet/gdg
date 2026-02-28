@@ -6,18 +6,18 @@ import (
 	"os"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 func newFolderPermissionCommand() simplecobra.Commander {
 	description := "Folder Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "permission",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"p", "permissions"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -25,7 +25,7 @@ func newFolderPermissionCommand() simplecobra.Commander {
 			newFolderPermissionUploadCmd(),
 			newFolderPermissionDownloadCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -42,14 +42,14 @@ func getFolderPermTblWriter() table.Writer {
 
 func newFolderPermissionListCmd() simplecobra.Commander {
 	description := "list Folder Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
 
 			slog.Info("Listing Folders for context", "context", rootCmd.ConfigSvc().GetContext())
@@ -82,14 +82,14 @@ func newFolderPermissionListCmd() simplecobra.Commander {
 
 func newFolderPermissionDownloadCmd() simplecobra.Commander {
 	description := "download Folders Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Downloading Folder Permissions for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"filename"})
 			folders := rootCmd.GrafanaSvc().DownloadFolderPermissions(getFolderFilter(rootCmd.ConfigSvc()))
@@ -110,14 +110,14 @@ func newFolderPermissionDownloadCmd() simplecobra.Commander {
 
 func newFolderPermissionUploadCmd() simplecobra.Commander {
 	description := "upload Folders Permissions"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Uploading folder permissions")
 			rootCmd.TableObj.AppendHeader(table.Row{"file name"})
 			folders := rootCmd.GrafanaSvc().UploadFolderPermissions(getFolderFilter(rootCmd.ConfigSvc()))

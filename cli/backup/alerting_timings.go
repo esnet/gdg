@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
@@ -16,11 +16,11 @@ import (
 
 func newAlertingTimingsCommand() simplecobra.Commander {
 	description := "Manage Alerting Mute Timings"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "mute-timings",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"timings", "mute-timing", "timing", "t"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -29,7 +29,7 @@ func newAlertingTimingsCommand() simplecobra.Commander {
 			newUploadTimingsCmd(),
 			newClearTimingsCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -37,14 +37,14 @@ func newAlertingTimingsCommand() simplecobra.Commander {
 
 func newListTimingsCmd() simplecobra.Commander {
 	description := "List all alert timings for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"name", "interval count", "settings"})
 			slog.Info("Listing all alert timings",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
@@ -111,14 +111,14 @@ func printAlertTimings(timedIntervals []*models.MuteTimeInterval) {
 
 func newDownloadTimingsCmd() simplecobra.Commander {
 	description := "Download all alert timings for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"name", "interval count", "settings"})
 			slog.Info("Download all alert timings",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
@@ -137,14 +137,14 @@ func newDownloadTimingsCmd() simplecobra.Commander {
 
 func newUploadTimingsCmd() simplecobra.Commander {
 	description := "Upload all alert timings for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"name"})
 			slog.Info("Uploading all alert timings for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
@@ -165,14 +165,14 @@ func newUploadTimingsCmd() simplecobra.Commander {
 
 func newClearTimingsCmd() simplecobra.Commander {
 	description := "Delete all alert timings for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Delete all alert timings")
 			err := rootCmd.GrafanaSvc().ClearAlertTimings()
 			if err != nil {

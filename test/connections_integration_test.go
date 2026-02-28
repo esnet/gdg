@@ -3,11 +3,13 @@ package test
 import (
 	"context"
 	"log/slog"
-	"os"
 	"strings"
 	"testing"
 
-	configDomain "github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
+	"github.com/esnet/gdg/internal/adapter/storage"
+	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
@@ -15,10 +17,7 @@ import (
 
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 
-	"github.com/esnet/gdg/internal/storage"
-
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -29,25 +28,17 @@ import (
 // There's some issues with these tests, temporarily disabling this
 func TestConnectionPermissionsCrud(t *testing.T) {
 	t.Skip() // Buggy test right now, disabled
-	if os.Getenv(containers.DisableEnterpriseTest) == "true" {
-		t.Skip("Enterprise tests disabled by environment variable")
-	}
+	test_tooling.SkipEnterpriseTests(t)
+	test_tooling.SkipTokenBasedTests(t)
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
-		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
-	}
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	props := containers.DefaultGrafanaEnv()
 	err := containers.SetupGrafanaLicense(&props)
 	if err != nil {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
-	var r *test_tooling.InitContainerResult
-	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, cfg, nil)
-		return r.Err
-	})
+	r := test_tooling.InitTest(t, cfg, props)
 	assert.NotNil(t, r)
 	assert.NoError(t, err)
 	defer func() {
@@ -58,20 +49,20 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 	}()
 	apiClient := r.ApiClient
 	// Upload all connections
-	filtersEntity := service.NewConnectionFilter("")
+	filtersEntity := api.NewConnectionFilter("")
 	connectionsAdded := apiClient.UploadConnections(filtersEntity)
-	assert.Equal(t, len(connectionsAdded), 3)
+	assert.Equal(t, len(connectionsAdded), 4)
 	// Upload all users
-	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
+	newUsers := apiClient.UploadUsers(api.NewUserFilter(""))
 	assert.Equal(t, len(newUsers), 2)
 	// Upload all teams
-	filter := service.NewTeamFilter("")
+	filter := api.NewTeamFilter("")
 	teams := apiClient.UploadTeams(filter)
 	assert.Equal(t, len(teams), 2)
 	// Get current Permissions
-	permissionFilters := service.NewConnectionFilter("")
+	permissionFilters := api.NewConnectionFilter("")
 	currentPerms := apiClient.ListConnectionPermissions(permissionFilters)
-	assert.Equal(t, len(currentPerms), 3)
+	assert.Equal(t, len(currentPerms), 4)
 	var entry *domain.ConnectionPermissionItem
 	for ndx, item := range currentPerms {
 		if item.Connection.Name == "Google Sheets" {
@@ -83,7 +74,7 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 	assert.Equal(t, len(entry.Permissions), 4)
 
 	removed := apiClient.DeleteAllConnectionPermissions(permissionFilters)
-	assert.Equal(t, len(removed), 3)
+	assert.Equal(t, len(removed), 4)
 	currentPerms = apiClient.ListConnectionPermissions(permissionFilters)
 	for ndx, item := range currentPerms {
 		if item.Connection.Name == "Google Sheets" {
@@ -131,7 +122,7 @@ func TestConnectionPermissionsCrud(t *testing.T) {
 }
 
 func TestConnectionsCRUD(t *testing.T) {
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -146,7 +137,7 @@ func TestConnectionsCRUD(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
-	filtersEntity := service.NewConnectionFilter("")
+	filtersEntity := api.NewConnectionFilter("")
 	slog.Info("Exporting all connections")
 	apiClient.UploadConnections(filtersEntity)
 	slog.Info("Listing all connections")
@@ -172,7 +163,7 @@ func TestConnectionsCRUD(t *testing.T) {
 // TestConnectionFilter ensures the regex matching and datasource type filters work as expected
 func TestConnectionFilter(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("test", ".."))
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -203,9 +194,10 @@ func TestConnectionFilter(t *testing.T) {
 	testingContext = cfg.GetContexts()[common.TestContextName]
 
 	localEngine := storage.NewLocalStorage(context.Background())
-	apiClient = service.NewTestApiService(localEngine, cfg)
+	apiClient = api.NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine)
+	apiClient.Login()
 
-	filtersEntity := service.NewConnectionFilter("")
+	filtersEntity := api.NewConnectionFilter("")
 	slog.Info("Exporting all connections")
 	apiClient.UploadConnections(filtersEntity)
 	slog.Info("Listing all connections")
