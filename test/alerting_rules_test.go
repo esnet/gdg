@@ -192,6 +192,34 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 2)
+	// Adding a name based filter
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: true,
+		Name:                 "boom",
+	}
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.Equal(len(rulesList), 1)
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: false,
+		Name:                 "boom",
+	}
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.Equal(len(rulesList), 0)
+	// Now run test for a rule under the monitored folders
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: false,
+		Name:                 "woof",
+	}
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
+	rulesList, err = apiClient.ListAlertRules(alertFilters)
+	is.Equal(len(rulesList), 1)
+	f = domain.AlertRuleFilterParams{
+		IgnoreWatchedFolders: true,
+		Name:                 "woof",
+	}
+	is.Equal(len(rulesList), 1)
 }
 
 func TestAlertingRulesNoFilterCrud(t *testing.T) {

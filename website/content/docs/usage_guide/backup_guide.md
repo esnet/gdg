@@ -34,6 +34,7 @@ gdg backup alerting contactpoints download  -- Download all known contact points
 gdg backup alerting contactpoints upload -- Upload all contact points
 gdg backup alerting contactpoints clear -- Clear all contact points
 ```
+
 {{< details "Example Output:" >}}
 ```
 ┌────────────────┬─────────┬─────────┬───────────────────────────────────────────────────┐
@@ -77,6 +78,12 @@ gdg backup alerting rules download  -- Download all known rules
 gdg backup alerting rules upload -- Upload all rules
 gdg backup alerting rules clear -- Clear all rules
 ```
+
+**Available Options:**
+  - `--folder string`            filter by folder
+  - `--ignore-watched-folders`   Default to false, but if passed then will only operate on the list of folders listed in the configuration file
+  - `--label stringArray`        Filter by label name value pair. (Additive behavior dashboard includes: label1 AND label2).  ex --label env=staging
+  - `--name string`              filter by name
 
 
 {{< details "Example Output:" >}}
