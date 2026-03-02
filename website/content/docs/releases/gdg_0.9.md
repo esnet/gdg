@@ -1,7 +1,7 @@
 ---
 title: "Version 0.9"
 description: "Release Notes for v0.9"
-date: 2026-01-07T00:00:00
+date: 2026-03-07T00:00:00
 draft: false
 images: [ ]
 weight: 2
@@ -11,6 +11,8 @@ toc: true
 ## Release Notes for v0.9.3
 
 ### Changes
+ - [#557](https://github.com/esnet/gdg/pull/557) Adds label and folder based filtering to alert rules.
+ - [#559](https://github.com/esnet/gdg/pull/559) Adds name based filtering to alert rules.
 
 ### BugFixes
   - [#543](https://github.com/esnet/gdg/issues/543) Env vars not working due to a conflict with the secure_location pattern that was previously introduced. Env will work if secure location not used. Next major release (0.10.x) will fix this to allow for Env to take precedence over any config values.
@@ -21,6 +23,7 @@ toc: true
  - [#488](https://github.com/esnet/gdg/issues/488) Added an Env to disable enterprise tests. Allow contributors to not be blocked without a license.
  - [#531](https://github.com/esnet/gdg/issues/531) Fixing documentation issues with the Getting Started guide and css/icons rendering behavior.
  - General dependency and tooling update, upgrade to go 1.26.0, npm updates
+ - [#558](https://github.com/esnet/gdg/pull/558) Refactors code base to follow port/adapters/domains
 
 ## Release Notes for v0.9.2
 

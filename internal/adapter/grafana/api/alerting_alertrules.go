@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -29,6 +30,8 @@ func setupAlertRulesReaders(filterObj ports.Filter, grafanaSvc ports.GrafanaServ
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
+		case domain.Name:
+			return ptr.ValueOrDefault(val.Title, ""), nil
 		case domain.FolderFilter:
 			return val.NestedPath, nil
 		case domain.TagsFilter:
@@ -48,6 +51,14 @@ func setupAlertRulesReaders(filterObj ports.Filter, grafanaSvc ports.GrafanaServ
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
+		case domain.Name:
+			{
+				r := gjson.GetBytes(val, "title")
+				if !r.Exists() || r.IsArray() {
+					return nil, errors.New("no valid rule name was found")
+				}
+				return r.String(), nil
+			}
 		case domain.FolderFilter:
 			{
 				r := gjson.GetBytes(val, "folderUID")
@@ -154,6 +165,22 @@ func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc ports.
 
 		return fmt.Errorf("invalid folder filter. Expected: %v", expressions)
 	}, folderArr)
+
+	filterObj.AddValidation(domain.Name, func(value any, expected any) error {
+		val, expressions, convErr := v2.GetParams[string](value, expected, domain.Name)
+		if convErr != nil {
+			return convErr
+		}
+		//no filter active
+		if expressions == "" {
+			return nil
+		}
+		if expected == val {
+			return nil
+		}
+
+		return fmt.Errorf("invalid folder filter. Expected: %v", expressions)
+	}, filterEntities.Name)
 
 	// Tags
 	filterObj.AddValidation(domain.TagsFilter, func(value any, expected any) error {
