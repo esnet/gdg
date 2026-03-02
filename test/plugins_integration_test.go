@@ -1,15 +1,14 @@
 package test
 
 import (
-	"context"
 	"fmt"
 	"log/slog"
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/config/domain"
-	"github.com/esnet/gdg/internal/service"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -35,9 +34,7 @@ const (
 func TestConnectionsPluginCfg(t *testing.T) {
 	// Plugin is only configured for basic auth, skipping token based patterns
 	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
-		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
-	}
+	test_tooling.SkipTokenBasedTests(t)
 	is := is.New(t)
 	err := path.FixTestDir("test", "..")
 	is.NoErr(err)
@@ -69,14 +66,9 @@ func TestConnectionsPluginCfg(t *testing.T) {
 			continue
 		}
 
-		cfg := config.InitGdgConfig(plugFile)
+		cfg := config.NewConfig(plugFile)
 		patchConfig(t, cfg, tc.testType)
-		var r *test_tooling.InitContainerResult
-		err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-			r = test_tooling.InitTest(t, cfg, nil)
-			return r.Err
-		})
-		is.Equal(err, nil)
+		r := test_tooling.InitTest(t, cfg, nil)
 		is.True(r != nil)
 		defer func() {
 			err := r.CleanUp()
@@ -86,7 +78,7 @@ func TestConnectionsPluginCfg(t *testing.T) {
 		}()
 
 		apiClient := r.ApiClient
-		filtersEntity := service.NewConnectionFilter("")
+		filtersEntity := api.NewConnectionFilter("")
 		slog.Info("Exporting all connections")
 		apiClient.UploadConnections(filtersEntity)
 		slog.Info("Listing all connections")
@@ -110,15 +102,14 @@ func TestConnectionsPluginCfg(t *testing.T) {
 	}
 }
 
-func patchConfig(t *testing.T, cfg *domain.GDGAppConfiguration, testType plugTestType) {
+func patchConfig(t *testing.T, cfg *config_domain.GDGAppConfiguration, testType plugTestType) {
 	cfg.PluginConfig.Disabled = false
 	cfg.PluginConfig.CipherPlugin.GetPluginConfig()
 	switch testType {
 	case envPlugType:
-		const envKey = "TEST_PLUG_SECRET"
-		os.Setenv(envKey, cipherKey)
+		os.Setenv(test_tooling.TestPlugSecretEnv, cipherKey)
 		cfg.PluginConfig.CipherPlugin.SetPluginConfig(map[string]string{
-			"passphrase": fmt.Sprintf("env:%s", envKey),
+			"passphrase": fmt.Sprintf("env:%s", test_tooling.TestPlugSecretEnv),
 		})
 	case filePlugType:
 		tmpFile, err := os.CreateTemp("", "cipher-secret-*.cipher")

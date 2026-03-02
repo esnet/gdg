@@ -38,7 +38,7 @@ func TestLicenseEnterpriseCheck(t *testing.T) {
 			t.Log("Skipping test", tc.name)
 		}
 		t.Log("Running test", tc.name)
-		cfg := config.InitGdgConfig(common.DefaultTestConfig)
+		cfg := config.NewConfig(common.DefaultTestConfig)
 		var r *test_tooling.InitContainerResult
 		var props map[string]string
 		if tc.enterprise {

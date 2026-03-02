@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
-	api "github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
@@ -29,15 +29,15 @@ func getTeamPermission(permissionType models.PermissionType) string {
 
 func newTeamsCommand() simplecobra.Commander {
 	description := "Manage teams"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "teams",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"team", "t"}
 			cmd.PersistentFlags().StringP("team", "t", "", "team ID")
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 		CommandsList: []simplecobra.Commander{
@@ -92,14 +92,14 @@ func printTeamListing(teams map[*models.TeamDTO][]*models.TeamMemberDTO) {
 
 func newTeamsListCmd() simplecobra.Commander {
 	description := "list teams from grafana"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Listing teams for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name", "email", "orgID", "memberCount", "memberID", "member Permission"})
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
@@ -116,14 +116,14 @@ func newTeamsListCmd() simplecobra.Commander {
 
 func newTeamsDownloadCmd() simplecobra.Commander {
 	description := "download teams from grafana"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Downloading Teams and Member data for context", "context", rootCmd.ConfigSvc().GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadTeams(filter)
@@ -139,14 +139,14 @@ func newTeamsDownloadCmd() simplecobra.Commander {
 
 func newTeamsUploadCmd() simplecobra.Commander {
 	description := "upload teams to grafana"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Exporting Teams for context", "context", rootCmd.ConfigSvc().GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().UploadTeams(filter)
@@ -162,14 +162,14 @@ func newTeamsUploadCmd() simplecobra.Commander {
 
 func newTeamsClearCmd() simplecobra.Commander {
 	description := "Delete All Team from grafana"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Deleting teams for context", "context", rootCmd.ConfigSvc().GetContext())
 			filter := api.NewTeamFilter(parseTeamGlobalFlags(cd.CobraCommand)...)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "team ID", "team Name"})

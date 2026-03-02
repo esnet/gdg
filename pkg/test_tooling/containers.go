@@ -7,12 +7,11 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
+	"github.com/esnet/gdg/internal/adapter/storage"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/ports"
-	"github.com/esnet/gdg/internal/storage"
-	"github.com/esnet/gdg/pkg/plugins/secure"
-
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 )
 
@@ -32,6 +31,20 @@ func SetCloudType(cloudType string) CloudTestOpt {
 	}
 }
 
+// SetAccessKey returns a CloudTestOpt that sets the access key (access ID) used for cloud storage authentication.
+func SetAccessKey(val string) CloudTestOpt {
+	return func(m *map[string]string) {
+		(*m)[storage.AccessId] = val
+	}
+}
+
+// SetSecretKey returns a CloudTestOpt that sets the secret key configuration value to the provided string.
+func SetSecretKey(val string) CloudTestOpt {
+	return func(m *map[string]string) {
+		(*m)[storage.SecretKey] = val
+	}
+}
+
 // SetPrefix sets the cloud storage prefix key in the options map.
 func SetPrefix(prefix string) CloudTestOpt {
 	return func(m *map[string]string) {
@@ -41,8 +54,8 @@ func SetPrefix(prefix string) CloudTestOpt {
 
 // SetupCloudFunctionOpt starts a S3 container, configures cloud storage for tests,
 // and returns context, cancel func, Grafana service client, and error.
-func SetupCloudFunctionOpt(cfgObj *domain.GDGAppConfiguration, opts ...CloudTestOpt) (context.Context, context.CancelFunc, ports.GrafanaService, storage.Storage, error) {
-	errorFunc := func(err error) (context.Context, context.CancelFunc, ports.GrafanaService, storage.Storage, error) {
+func SetupCloudFunctionOpt(cfgObj *config_domain.GDGAppConfiguration, encoder ports.CipherEncoder, opts ...CloudTestOpt) (context.Context, context.CancelFunc, ports.GrafanaService, ports.Storage, error) {
+	errorFunc := func(err error) (context.Context, context.CancelFunc, ports.GrafanaService, ports.Storage, error) {
 		return nil, nil, nil, nil, err
 	}
 	_ = os.Setenv(storage.InitBucket, "true")
@@ -77,12 +90,13 @@ func SetupCloudFunctionOpt(cfgObj *domain.GDGAppConfiguration, opts ...CloudTest
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, storage.Context, m)
 
-	s, err := storage.NewCloudStorage(ctx, secure.NoOpEncoder{})
+	storageType, appData := cfgObj.GetCloudConfiguration(cfgObj.GetDefaultGrafanaConfig().Storage)
+	s, err := storage.NewStorageFromConfig(storageType, appData, noop.NoOpEncoder{})
 	if err != nil {
 		log.Fatalf("Could not instantiate cloud storage for type: %s", m[storage.CloudType])
 	}
 
-	apiClient := service.NewTestApiService(s, cfgObj)
+	apiClient := api.NewDashNGo(cfgObj, encoder, s)
 
 	return ctx, cancel, apiClient, s, nil
 }

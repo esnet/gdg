@@ -10,20 +10,20 @@ import (
 	"strings"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 func newOrgUsersCommand() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "users",
 		Short: "Manage organization users",
 		Long:  "Manager organization users",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"user"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -38,11 +38,11 @@ func newOrgUsersCommand() simplecobra.Commander {
 
 func newGetUserOrgCmd() simplecobra.Commander {
 	description := "display org associated with user"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "currentOrg",
 		Short: description,
 		Long:  description,
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Listing organizations for context", "context", rootCmd.ConfigSvc().GetContext())
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "name"})
 			org := rootCmd.GrafanaSvc().GetUserOrganization()
@@ -59,14 +59,14 @@ func newGetUserOrgCmd() simplecobra.Commander {
 
 func newListUsers() simplecobra.Commander {
 	description := "list <orgId> list an Organization users"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"listUsers"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 1 {
 				return errors.New("requires an orgId to be specified")
 			}
@@ -92,14 +92,14 @@ func newListUsers() simplecobra.Commander {
 
 func newUpdateUserRoleCmd() simplecobra.Commander {
 	description := "updateRole <orgSlugName> <userId> <role>"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "updateRole",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"updateUserRole"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 3 {
 				return fmt.Errorf("requires the following parameters to be specified: [<orgId> <userId> <role>]\nValid roles are: [%s]", strings.Join(getBasicRoles(), ", "))
 			}
@@ -124,14 +124,14 @@ func newUpdateUserRoleCmd() simplecobra.Commander {
 
 func newAddUserRoleCmd() simplecobra.Commander {
 	description := "add <orgSlugName> <userId> <role>"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "add",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"addUser", "addUsers"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 3 {
 				return fmt.Errorf("requires the following parameters to be specified: [<orgSlugName> <userId> <role>]\nValid roles are: [%s]", strings.Join(getBasicRoles(), ", "))
 			}
@@ -164,14 +164,14 @@ func newAddUserRoleCmd() simplecobra.Commander {
 
 func newDeleteUserRoleCmd() simplecobra.Commander {
 	description := "deleteUser <orgSlug> <userId> removes a user from the given Organization (This will NOT delete the actual user from Grafana)"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "delete",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"deleteUser", "remove"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 2 {
 				return fmt.Errorf("requires the following parameters to be specified: [<orgSlugName> <userId>]")
 			}

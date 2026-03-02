@@ -1,16 +1,14 @@
 package test
 
 import (
-	"context"
 	"log/slog"
-	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -19,24 +17,16 @@ import (
 )
 
 func TestDashboardPermissionsCrud(t *testing.T) {
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
-		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
-	}
-	if os.Getenv(containers.DisableEnterpriseTest) == "true" {
-		t.Skip("Enterprise tests disabled by environment variable")
-	}
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	test_tooling.SkipTokenBasedTests(t)
+	test_tooling.SkipEnterpriseTests(t)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	props := containers.DefaultGrafanaEnv()
 	err := containers.SetupGrafanaLicense(&props)
 	if err != nil {
 		slog.Error("no valid grafana license found, skipping enterprise tests")
 		t.Skip()
 	}
-	var r *test_tooling.InitContainerResult
-	err = Retry(context.Background(), DefaultRetryAttempts, func() error {
-		r = test_tooling.InitTest(t, cfg, props)
-		return r.Err
-	})
+	r := test_tooling.InitTest(t, cfg, props)
 	assert.NotNil(t, r)
 	assert.NoError(t, err)
 	defer func() {
@@ -47,17 +37,17 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 	}()
 	apiClient := r.ApiClient
 	// Upload all dashboards
-	_, err = apiClient.UploadDashboards(service.NewDashboardFilter(cfg, "", "", ""))
+	_, err = apiClient.UploadDashboards(api.NewDashboardFilter(cfg, "", "", ""))
 	assert.NoError(t, err)
 	// Upload all users
-	newUsers := apiClient.UploadUsers(service.NewUserFilter(""))
+	newUsers := apiClient.UploadUsers(api.NewUserFilter(""))
 	assert.Equal(t, len(newUsers), 2)
 	// Upload all teams
-	filter := service.NewTeamFilter("")
+	filter := api.NewTeamFilter("")
 	teams := apiClient.UploadTeams(filter)
 	assert.Equal(t, len(teams), 2)
 	// Get current Permissions
-	dashFilter := service.NewDashboardFilter(cfg, "", "", "")
+	dashFilter := api.NewDashboardFilter(cfg, "", "", "")
 	currentPerms, err := apiClient.ListDashboardPermissions(dashFilter)
 	assert.Equal(t, len(currentPerms), DashboardCount)
 	entry := new(lo.FirstOrEmpty(lo.Filter(currentPerms, func(item domain.DashboardAndPermissions, index int) bool {

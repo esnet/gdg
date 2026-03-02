@@ -38,7 +38,7 @@ func (_m *DashboardsApi) EXPECT() *DashboardsApi_Expecter {
 }
 
 // DeleteAllDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) DeleteAllDashboards(filter ports.V2Filter) []string {
+func (_mock *DashboardsApi) DeleteAllDashboards(filter ports.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -46,7 +46,7 @@ func (_mock *DashboardsApi) DeleteAllDashboards(filter ports.V2Filter) []string 
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -62,16 +62,16 @@ type DashboardsApi_DeleteAllDashboards_Call struct {
 }
 
 // DeleteAllDashboards is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *DashboardsApi_Expecter) DeleteAllDashboards(filter interface{}) *DashboardsApi_DeleteAllDashboards_Call {
 	return &DashboardsApi_DeleteAllDashboards_Call{Call: _e.mock.On("DeleteAllDashboards", filter)}
 }
 
-func (_c *DashboardsApi_DeleteAllDashboards_Call) Run(run func(filter ports.V2Filter)) *DashboardsApi_DeleteAllDashboards_Call {
+func (_c *DashboardsApi_DeleteAllDashboards_Call) Run(run func(filter ports.Filter)) *DashboardsApi_DeleteAllDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -85,13 +85,13 @@ func (_c *DashboardsApi_DeleteAllDashboards_Call) Return(strings []string) *Dash
 	return _c
 }
 
-func (_c *DashboardsApi_DeleteAllDashboards_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *DashboardsApi_DeleteAllDashboards_Call {
+func (_c *DashboardsApi_DeleteAllDashboards_Call) RunAndReturn(run func(filter ports.Filter) []string) *DashboardsApi_DeleteAllDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) DownloadDashboards(filter ports.V2Filter) []string {
+func (_mock *DashboardsApi) DownloadDashboards(filter ports.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -99,7 +99,7 @@ func (_mock *DashboardsApi) DownloadDashboards(filter ports.V2Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -115,16 +115,16 @@ type DashboardsApi_DownloadDashboards_Call struct {
 }
 
 // DownloadDashboards is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *DashboardsApi_Expecter) DownloadDashboards(filter interface{}) *DashboardsApi_DownloadDashboards_Call {
 	return &DashboardsApi_DownloadDashboards_Call{Call: _e.mock.On("DownloadDashboards", filter)}
 }
 
-func (_c *DashboardsApi_DownloadDashboards_Call) Run(run func(filter ports.V2Filter)) *DashboardsApi_DownloadDashboards_Call {
+func (_c *DashboardsApi_DownloadDashboards_Call) Run(run func(filter ports.Filter)) *DashboardsApi_DownloadDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -138,13 +138,13 @@ func (_c *DashboardsApi_DownloadDashboards_Call) Return(strings []string) *Dashb
 	return _c
 }
 
-func (_c *DashboardsApi_DownloadDashboards_Call) RunAndReturn(run func(filter ports.V2Filter) []string) *DashboardsApi_DownloadDashboards_Call {
+func (_c *DashboardsApi_DownloadDashboards_Call) RunAndReturn(run func(filter ports.Filter) []string) *DashboardsApi_DownloadDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) ListDashboards(filter ports.V2Filter) []*domain.NestedHit {
+func (_mock *DashboardsApi) ListDashboards(filter ports.Filter) []*domain.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -152,7 +152,7 @@ func (_mock *DashboardsApi) ListDashboards(filter ports.V2Filter) []*domain.Nest
 	}
 
 	var r0 []*domain.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []*domain.NestedHit); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -168,16 +168,16 @@ type DashboardsApi_ListDashboards_Call struct {
 }
 
 // ListDashboards is a helper method to define mock.On call
-//   - filter ports.V2Filter
+//   - filter ports.Filter
 func (_e *DashboardsApi_Expecter) ListDashboards(filter interface{}) *DashboardsApi_ListDashboards_Call {
 	return &DashboardsApi_ListDashboards_Call{Call: _e.mock.On("ListDashboards", filter)}
 }
 
-func (_c *DashboardsApi_ListDashboards_Call) Run(run func(filter ports.V2Filter)) *DashboardsApi_ListDashboards_Call {
+func (_c *DashboardsApi_ListDashboards_Call) Run(run func(filter ports.Filter)) *DashboardsApi_ListDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -191,13 +191,13 @@ func (_c *DashboardsApi_ListDashboards_Call) Return(nestedHits []*domain.NestedH
 	return _c
 }
 
-func (_c *DashboardsApi_ListDashboards_Call) RunAndReturn(run func(filter ports.V2Filter) []*domain.NestedHit) *DashboardsApi_ListDashboards_Call {
+func (_c *DashboardsApi_ListDashboards_Call) RunAndReturn(run func(filter ports.Filter) []*domain.NestedHit) *DashboardsApi_ListDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadDashboards provides a mock function for the type DashboardsApi
-func (_mock *DashboardsApi) UploadDashboards(filterReq ports.V2Filter) ([]string, error) {
+func (_mock *DashboardsApi) UploadDashboards(filterReq ports.Filter) ([]string, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -206,17 +206,17 @@ func (_mock *DashboardsApi) UploadDashboards(filterReq ports.V2Filter) ([]string
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]string, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.V2Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.V2Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
 		r1 = returnFunc(filterReq)
 	} else {
 		r1 = ret.Error(1)
@@ -230,16 +230,16 @@ type DashboardsApi_UploadDashboards_Call struct {
 }
 
 // UploadDashboards is a helper method to define mock.On call
-//   - filterReq ports.V2Filter
+//   - filterReq ports.Filter
 func (_e *DashboardsApi_Expecter) UploadDashboards(filterReq interface{}) *DashboardsApi_UploadDashboards_Call {
 	return &DashboardsApi_UploadDashboards_Call{Call: _e.mock.On("UploadDashboards", filterReq)}
 }
 
-func (_c *DashboardsApi_UploadDashboards_Call) Run(run func(filterReq ports.V2Filter)) *DashboardsApi_UploadDashboards_Call {
+func (_c *DashboardsApi_UploadDashboards_Call) Run(run func(filterReq ports.Filter)) *DashboardsApi_UploadDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.V2Filter
+		var arg0 ports.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.V2Filter)
+			arg0 = args[0].(ports.Filter)
 		}
 		run(
 			arg0,
@@ -253,7 +253,7 @@ func (_c *DashboardsApi_UploadDashboards_Call) Return(strings []string, err erro
 	return _c
 }
 
-func (_c *DashboardsApi_UploadDashboards_Call) RunAndReturn(run func(filterReq ports.V2Filter) ([]string, error)) *DashboardsApi_UploadDashboards_Call {
+func (_c *DashboardsApi_UploadDashboards_Call) RunAndReturn(run func(filterReq ports.Filter) ([]string, error)) *DashboardsApi_UploadDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }

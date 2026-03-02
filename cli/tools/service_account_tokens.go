@@ -8,14 +8,14 @@ import (
 	"strconv"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 func newServiceAccountTokensCmd() simplecobra.Commander {
 	description := "Manage api service-account tokens"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "tokens",
 		Short: description,
 		Long:  description,
@@ -23,10 +23,10 @@ func newServiceAccountTokensCmd() simplecobra.Commander {
 			newDeleteServiceAccountTokensCmd(),
 			newServiceAccountTokenCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"token"}
 		},
 	}
@@ -34,12 +34,12 @@ func newServiceAccountTokensCmd() simplecobra.Commander {
 
 func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
 	description := "clear <serviceAccountID>, removes all tokens from service account"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP:        "clear",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 1 {
 				return errors.New("requires a service account ID to be specified")
 			}
@@ -69,12 +69,12 @@ func newDeleteServiceAccountTokensCmd() simplecobra.Commander {
 
 func newServiceAccountTokenCmd() simplecobra.Commander {
 	description := "new <serviceAccountID> <name> [ttl in seconds]"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP:        "new",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 2 {
 				return errors.New("requires a service-account ID and token name [ttl optional] ")
 			}

@@ -6,12 +6,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
 
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"golang.org/x/exp/maps"
@@ -23,7 +23,7 @@ func TestTeamCRUD(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -38,10 +38,10 @@ func TestTeamCRUD(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
-	filter := service.NewTeamFilter("")
+	filter := api.NewTeamFilter("")
 	slog.Info("Exporting current user list")
-	apiClient.UploadUsers(service.NewUserFilter(""))
-	users := apiClient.ListUsers(service.NewUserFilter(""))
+	apiClient.UploadUsers(api.NewUserFilter(""))
+	users := apiClient.ListUsers(api.NewUserFilter(""))
 	assert.Equal(t, len(users), 3)
 	slog.Info("Exporting all teams")
 	apiClient.UploadTeams(filter)
@@ -76,5 +76,5 @@ func TestTeamCRUD(t *testing.T) {
 	_, err = apiClient.DeleteTeam(filter)
 	assert.Nil(t, err)
 	// Remove Users
-	apiClient.DeleteAllUsers(service.NewUserFilter(""))
+	apiClient.DeleteAllUsers(api.NewUserFilter(""))
 }

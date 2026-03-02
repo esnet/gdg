@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +16,7 @@ import (
 // for TOKEN and PASSWORD work even when no secure auth file exists.
 func TestEnvOverrideWithoutSecureFile(t *testing.T) {
 	// Create a config with a context name that has no corresponding secure auth file
-	config := domain.NewGrafanaConfig("nosuchcontext")
+	config := config_domain.NewGrafanaConfig(config_domain.WithContextName("nosuchcontext"))
 	config.OutputPath = t.TempDir()
 
 	// Set env vars for this context
@@ -28,7 +28,7 @@ func TestEnvOverrideWithoutSecureFile(t *testing.T) {
 }
 
 func TestGrafanaConfig(t *testing.T) {
-	config := domain.NewGrafanaConfig("testing")
+	config := config_domain.NewGrafanaConfig(config_domain.WithContextName("testing"))
 	config.URL = "  http://localhost  "
 
 	expected := "http://localhost/"
@@ -41,7 +41,7 @@ func TestGrafanaConfig(t *testing.T) {
 func TestPrintConfig(t *testing.T) {
 	assert := assert.New(t)
 	assert.NoError(path.FixTestDir("config", "../.."))
-	confobj := InitGdgConfig(common.DefaultTestConfig)
+	confobj := NewConfig(common.DefaultTestConfig)
 	backupStd := os.Stdout
 	backupErr := os.Stderr
 	r, w, e := os.Pipe()

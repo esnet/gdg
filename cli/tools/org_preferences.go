@@ -6,20 +6,20 @@ import (
 	"log/slog"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 func newOrgPreferenceCommand() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "preferences",
 		Short: "Update organization preferences",
 		Long:  "Update organization preferences",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"preference", "pref", "p", "prefs"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -31,17 +31,17 @@ func newOrgPreferenceCommand() simplecobra.Commander {
 }
 
 func newUpdateOrgPreferenceCmd() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "set",
 		Short: "Set --orgName [--homeDashUid, --theme, --weekstart] to set Org preferences",
 		Long:  "Set --orgName [--homeDashUid, --theme, --weekstart] to set Org preferences",
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.PersistentFlags().StringP("orgName", "", "", "Organization Name")
 			cmd.PersistentFlags().StringP("homeDashUid", "", "", "UID for the home dashboard")
 			cmd.PersistentFlags().StringP("theme", "", "", "light, dark")
 			cmd.PersistentFlags().StringP("weekstart", "", "", "day of the week (sunday, monday, etc)")
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("update the org preferences")
 			org, _ := cd.CobraCommand.Flags().GetString("orgName")
 			home, _ := cd.CobraCommand.Flags().GetString("homeDashUid")
@@ -80,14 +80,14 @@ func newUpdateOrgPreferenceCmd() simplecobra.Commander {
 }
 
 func newGetOrgPreferenceCmd() simplecobra.Commander {
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "get",
 		Short: "get <orgName> returns org preferences",
 		Long:  "get <orgName> returns org preferences",
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.PersistentFlags().StringP("orgName", "", "", "Organization Name")
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			orgName, _ := cd.CobraCommand.Flags().GetString("orgName")
 
 			pref, err := rootCmd.GrafanaSvc().GetOrgPreferences(orgName)

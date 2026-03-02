@@ -5,13 +5,13 @@ import (
 	"log/slog"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	customModels "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
 
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -45,7 +45,7 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		t.Log("Running test", tc.name)
 		var apiClient ports.GrafanaService
 		var cleanup func() error
-		cfg := config.InitGdgConfig(common.DefaultTestConfig)
+		cfg := config.NewConfig(common.DefaultTestConfig)
 		cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = tc.ignore
 		var r *test_tooling.InitContainerResult
 		err := Retry(context.Background(), DefaultRetryAttempts, func() error {
@@ -56,8 +56,8 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		assert.NoError(t, err)
 		apiClient = r.ApiClient
 		cleanup = r.CleanUp
-		filtersEntity := service.NewLibraryElementFilter(cfg)
-		dashFilter := service.NewDashboardFilter(cfg, "", "", "")
+		filtersEntity := api.NewLibraryElementFilter(cfg)
+		dashFilter := api.NewDashboardFilter(cfg, "", "", "")
 		slog.Info("Exporting all Library Elements")
 		uploadCount := apiClient.UploadLibraryElements(filtersEntity)
 		assert.Equal(t, len(uploadCount), tc.expectedCount)

@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/esnet/gdg/internal/version"
+	"github.com/esnet/gdg/pkg/version"
 	"github.com/spf13/cobra"
 )
 

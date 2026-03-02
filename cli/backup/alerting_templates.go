@@ -6,18 +6,18 @@ import (
 	"log/slog"
 
 	"github.com/bep/simplecobra"
-	"github.com/esnet/gdg/cli/support"
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
 func newAlertingTemplatesCommand() simplecobra.Commander {
 	description := "Manage Alerting Templates"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "templates",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"templates", "t"}
 		},
 		CommandsList: []simplecobra.Commander{
@@ -26,7 +26,7 @@ func newAlertingTemplatesCommand() simplecobra.Commander {
 			newClearAlertTemplatesCmd(),
 			newUploadAlertTemplatesCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -34,14 +34,14 @@ func newAlertingTemplatesCommand() simplecobra.Commander {
 
 func newUploadAlertTemplatesCmd() simplecobra.Commander {
 	description := "Upload all alert templates for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid"})
 			slog.Info("Uploading all alert templates for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
@@ -63,14 +63,14 @@ func newUploadAlertTemplatesCmd() simplecobra.Commander {
 
 func newClearAlertTemplatesCmd() simplecobra.Commander {
 	description := "Clear all alert templates for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Deleting all alert templates for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
@@ -91,14 +91,14 @@ func newClearAlertTemplatesCmd() simplecobra.Commander {
 
 func newListAlertTemplatesCmd() simplecobra.Commander {
 	description := "List all alert templates for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"name", "provenance", "template snippet", "version"})
 			slog.Info("Listing alert templates for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
@@ -126,14 +126,14 @@ func newListAlertTemplatesCmd() simplecobra.Commander {
 
 func newDownloadAlertTemplatesCmd() simplecobra.Commander {
 	description := "Download all alert templates for the given Organization"
-	return &support.SimpleCommand{
+	return &domain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *support.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *support.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"uid", "folderUid", "ruleGroup", "Title", "provenance", "data"})
 			slog.Info("Downloading alert templates for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),

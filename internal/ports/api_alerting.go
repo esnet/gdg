@@ -14,10 +14,10 @@ type AlertingApi interface {
 }
 
 type AlertRules interface {
-	DownloadAlertRules(filter V2Filter) ([]string, error)
-	ListAlertRules(filter V2Filter) ([]*customModels.AlertRuleWithNestedFolder, error)
-	ClearAlertRules(filter V2Filter) ([]string, error)
-	UploadAlertRules(filter V2Filter) error
+	DownloadAlertRules(filter Filter) ([]string, error)
+	ListAlertRules(filter Filter) ([]*customModels.AlertRuleWithNestedFolder, error)
+	ClearAlertRules(filter Filter) ([]string, error)
+	UploadAlertRules(filter Filter) error
 }
 
 type AlertContactPoints interface {

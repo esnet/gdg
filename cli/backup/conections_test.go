@@ -5,11 +5,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/test_tooling"
 
 	"github.com/esnet/gdg/cli"
-	"github.com/esnet/gdg/cli/support"
 	"github.com/esnet/gdg/internal/ports/mocks"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/stretchr/testify/assert"
@@ -31,17 +31,19 @@ func TestConnectionCommand(t *testing.T) {
 		},
 	}
 
+	testSvc.EXPECT().Login().Return()
 	testSvc.EXPECT().InitOrganizations().Return()
 	testSvc.EXPECT().ListConnections(mock.Anything).Return(resp)
 
-	optionMockSvc := func() support.RootOption {
-		return func(response *support.RootCommand) {
+	optionMockSvc := func() domain.RootOption {
+		return func(response *domain.RootCommand) {
 			response.SetUpTest(getMockSvc())
 		}
 	}
 	r, w, cleanup := test_tooling.InterceptStdout()
 
-	err := cli.Execute([]string{"backup", "connections", "list"}, optionMockSvc())
+	rootSvc := cli.NewRootService()
+	err := cli.Execute(rootSvc, []string{"backup", "connections", "list"}, optionMockSvc())
 	assert.Nil(t, err)
 	defer cleanup()
 	assert.NoError(t, w.Close())

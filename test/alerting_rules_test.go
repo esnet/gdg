@@ -8,11 +8,11 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
-	"github.com/esnet/gdg/internal/service"
-	"github.com/esnet/gdg/internal/tools/ptr"
+	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
@@ -26,7 +26,7 @@ func TestAlertingRulesCrud(t *testing.T) {
 	is.NoErr(os.Unsetenv(common.ContextNameEnv))
 
 	is.NoErr(path.FixTestDir("test", ".."))
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -44,7 +44,7 @@ func TestAlertingRulesCrud(t *testing.T) {
 	setupAlertingEnvironment(t, apiClient)
 
 	f := domain.AlertRuleFilterParams{IgnoreWatchedFolders: false}
-	alertFilters := service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters := api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err := apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 0)
@@ -71,7 +71,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 	is.NoErr(os.Unsetenv(common.ContextNameEnv))
 
 	is.NoErr(path.FixTestDir("test", ".."))
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -91,7 +91,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 	f := domain.AlertRuleFilterParams{
 		IgnoreWatchedFolders: true,
 	}
-	alertFilters := service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters := api.NewAlertRuleFilter(cfg, apiClient, f)
 	// Upload everything
 	err = apiClient.UploadAlertRules(alertFilters)
 	is.NoErr(err)
@@ -101,7 +101,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 	is.Equal(len(rulesList), 4)
 	// Filter by folder
 	f.Folder = "Ignored"
-	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
 	is.Equal(len(rulesList), 2)
 	is.NoErr(err)
@@ -118,7 +118,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 		IgnoreWatchedFolders: true,
 		Label:                []string{"environment=alpha"},
 	}
-	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 3)
@@ -141,7 +141,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 		Folder:               "Ignored",
 		Label:                []string{"environment=alpha"},
 	}
-	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 1)
@@ -151,7 +151,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 	f = domain.AlertRuleFilterParams{
 		IgnoreWatchedFolders: false,
 	}
-	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 2)
@@ -167,7 +167,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 		IgnoreWatchedFolders: false,
 		Label:                []string{"deployed=true"},
 	}
-	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 1)
@@ -178,7 +178,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 		IgnoreWatchedFolders: false,
 		Folder:               "linux%2Fgnu/*",
 	}
-	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 2)
@@ -188,7 +188,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 		Folder:               "linux%2Fgnu/Others*",
 		Label:                []string{"deployed=true", "environment=alpha"},
 	}
-	alertFilters = service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters = api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err = apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 2)
@@ -199,7 +199,7 @@ func TestAlertingRulesNoFilterCrud(t *testing.T) {
 	is.NoErr(os.Setenv(common.ContextNameEnv, common.TestContextName))
 	is.NoErr(os.Unsetenv(common.ContextNameEnv))
 	is.NoErr(path.FixTestDir("test", ".."))
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -220,7 +220,7 @@ func TestAlertingRulesNoFilterCrud(t *testing.T) {
 	f := domain.AlertRuleFilterParams{
 		IgnoreWatchedFolders: true,
 	}
-	alertFilters := service.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters := api.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err := apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 0)
@@ -244,7 +244,7 @@ func TestAlertingRulesNoFilterCrud(t *testing.T) {
 func setupAlertingEnvironment(t *testing.T, apiClient ports.GrafanaService) {
 	is := is.New(t)
 	slog.Info("Uploading Connections")
-	conn := apiClient.UploadConnections(service.NewConnectionFilter(""))
+	conn := apiClient.UploadConnections(api.NewConnectionFilter(""))
 	is.True(len(conn) > 0)
 	//
 	slog.Info("Creating Folders")

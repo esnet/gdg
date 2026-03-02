@@ -16,7 +16,7 @@ import (
 )
 
 func TestServiceAccountCrud(t *testing.T) {
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
 		t.Skip("Skipping Token configuration, Organization CRUD requires Basic SecureData")
 	}

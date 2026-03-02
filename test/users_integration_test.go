@@ -6,11 +6,11 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/samber/lo"
 
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
 
@@ -21,8 +21,8 @@ func TestUsers(t *testing.T) {
 	if os.Getenv(test_tooling.EnableTokenTestsEnv) == test_tooling.FeatureEnabled {
 		t.Skip("Skipping Token configuration, Team and User CRUD requires Basic SecureData")
 	}
-	userFilter := service.NewUserFilter("")
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	userFilter := api.NewUserFilter("")
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -45,7 +45,7 @@ func TestUsers(t *testing.T) {
 	assert.Equal(t, adminUser.Login, "admin")
 	assert.Equal(t, adminUser.IsAdmin, true)
 	// Only upload users matching filter
-	newUsers := apiClient.UploadUsers(service.NewUserFilter("foobar"))
+	newUsers := apiClient.UploadUsers(api.NewUserFilter("foobar"))
 	assert.Equal(t, len(newUsers), 1)
 	assert.Equal(t, newUsers[0].Email, "s@s.com")
 	// upload remaining user that do not already exist

@@ -10,12 +10,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 
 	"github.com/esnet/gdg/pkg/test_tooling/common"
-
-	"github.com/esnet/gdg/internal/service"
 
 	"github.com/esnet/gdg/internal/config"
 	"github.com/gosimple/slug"
@@ -29,7 +28,7 @@ import (
 )
 
 func TestFolderCRUD(t *testing.T) {
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	cfg.GetDefaultGrafanaConfig().GetDashboardSettings().IgnoreFilters = false
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
@@ -73,7 +72,7 @@ func TestFolderCRUD(t *testing.T) {
 }
 
 func TestFolderSanityCheck(t *testing.T) {
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -88,12 +87,12 @@ func TestFolderSanityCheck(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
-	newFolders, err := apiClient.(*service.DashNGoImpl).TestCreatedFolders("linux%2Fgnu/Others")
+	newFolders, err := apiClient.(*api.DashNGoImpl).TestCreatedFolders("linux%2Fgnu/Others")
 	assert.NoError(t, err)
 	assert.Equal(t, len(newFolders), 2)
 	folders := apiClient.ListFolders(nil)
 	assert.Equal(t, len(folders), 2)
-	newFolders, err = apiClient.(*service.DashNGoImpl).TestCreatedFolders("linux%2Fgnu/Others/n%2B_%3D23r")
+	newFolders, err = apiClient.(*api.DashNGoImpl).TestCreatedFolders("linux%2Fgnu/Others/n%2B_%3D23r")
 	assert.NoError(t, err)
 	assert.Equal(t, len(newFolders), 1)
 	folders = apiClient.ListFolders(nil)
@@ -102,7 +101,7 @@ func TestFolderSanityCheck(t *testing.T) {
 
 // TODO: write a full CRUD validation of folder permissions
 func TestFolderPermissions(t *testing.T) {
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
 	err := Retry(context.Background(), DefaultRetryAttempts, func() error {
 		r = test_tooling.InitTest(t, cfg, nil)
@@ -149,13 +148,11 @@ func TestFolderPermissions(t *testing.T) {
 
 // TODO: write a full CRUD validation of folder permissions
 func TestFolderNestedPermissions(t *testing.T) {
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
-		t.Skip("skipping token based tests")
-	}
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	test_tooling.SkipTokenBasedTests(t)
+	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
+	cfg := config.NewConfig(common.DefaultTestConfig)
 	containerObj, cleanup := test_tooling.InitOrganizations(t, cfg)
 
-	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
 	defer func() {
 		os.Unsetenv(test_tooling.OrgNameOverride)
 		cleanup()
@@ -196,14 +193,12 @@ func TestFolderNestedPermissions(t *testing.T) {
 }
 
 func TestFolderNestedCRUD(t *testing.T) {
-	if os.Getenv(test_tooling.EnableTokenTestsEnv) == "1" {
-		t.Skip("skipping token based tests")
-	}
-	cfg := config.InitGdgConfig(common.DefaultTestConfig)
+	test_tooling.SkipTokenBasedTests(t)
+	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
+	cfg := config.NewConfig(common.DefaultTestConfig)
 
 	containerObj, cleanup := test_tooling.InitOrganizations(t, cfg)
 
-	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
 	defer func() {
 		os.Unsetenv(test_tooling.OrgNameOverride)
 		cleanup()

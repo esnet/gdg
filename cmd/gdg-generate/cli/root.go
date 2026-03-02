@@ -5,20 +5,20 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/esnet/gdg/internal/config/domain"
-	"github.com/esnet/gdg/internal/version"
-
+	appconfig "github.com/esnet/gdg/internal/adapter/logger"
+	"github.com/esnet/gdg/internal/adapter/templating"
 	"github.com/esnet/gdg/internal/config"
-	appconfig "github.com/esnet/gdg/internal/log"
-	"github.com/esnet/gdg/internal/templating"
+	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/pkg/version"
 	"github.com/spf13/cobra"
 )
 
 var (
 	cfgFile        string
 	tplCfgFile     string
-	templateConfig *domain.TemplatingConfig
-	template       templating.Templating
+	templateConfig *config_domain.TemplatingConfig
+	template       ports.Templating
 	rootCmd        = &cobra.Command{
 		Use:   "gdg-generate",
 		Short: "Generates dashboard templates for use with GDG given a valid configuration",
@@ -46,7 +46,7 @@ func initConfig() {
 		log.Fatal("unable to get template config file")
 	}
 
-	appCfg := config.InitGdgConfig(cfgFile)
+	appCfg := config.NewConfig(cfgFile)
 	templateConfig = config.InitTemplateConfig(tplCfgFile)
 	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, appCfg.IsDebug())
 	template = templating.NewTemplate(templateConfig, appCfg.GetDefaultGrafanaConfig())

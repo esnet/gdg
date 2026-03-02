@@ -9,13 +9,15 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
+	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/config/domain"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/ports"
-	"github.com/esnet/gdg/internal/service"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
-	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -26,6 +28,7 @@ const (
 	GrafanaTestVersionEnv = "GRAFANA_TEST_VERSION"
 	// #nosec G101
 	EnableTokenTestsEnv = "TEST_TOKEN_CONFIG"
+	TestPlugSecretEnv   = "TEST_PLUG_SECRET"
 	FeatureEnabled      = "1"
 	FeatureDisabled     = "0"
 )
@@ -35,6 +38,31 @@ type InitContainerResult struct {
 	Container testcontainers.Container
 	CleanUp   func() error
 	Err       error
+}
+
+func SkipTokenBasedTests(t *testing.T) {
+	if IsTokenBasedTest() {
+		t.Skip("skipping token based tests")
+	}
+}
+
+func SkipEnterpriseTests(t *testing.T) {
+	if os.Getenv(containers.DisableEnterpriseTest) == "true" {
+		t.Skip("Enterprise tests disabled by environment variable")
+	}
+}
+
+// IsTokenBasedTest returns true if the TEST_TOKEN_CONFIG environment variable is set to "1", indicating that
+// token-based authentication tests should be run.
+func IsTokenBasedTest() bool {
+	return os.Getenv(EnableTokenTestsEnv) == "1"
+}
+
+func WithSecureAuth(auth config_domain.SecureModel) config_domain.GDGAppConfigurationOption {
+	return func(s *config_domain.GDGAppConfiguration) {
+		someCfg := s.GetDefaultGrafanaConfig()
+		someCfg.Apply(config_domain.WithSecureAuth(auth))
+	}
 }
 
 // NewInitContainerResult creates an InitContainerResult linking a Grafana API client, container and cleanup function.
@@ -53,7 +81,7 @@ func NewInitContainerResult(client ports.GrafanaService, container testcontainer
 
 // InitTest starts a Grafana test container, creates a client and optionally configures token auth.
 // It returns an InitContainerResult with the client, container, cleanup function and error status.
-func InitTest(t *testing.T, cfg *domain.GDGAppConfiguration, envProp map[string]string) *InitContainerResult {
+func InitTest(t *testing.T, cfg *config_domain.GDGAppConfiguration, envProp map[string]string) *InitContainerResult {
 	var (
 		suffix string
 		err    error
@@ -72,7 +100,7 @@ func InitTest(t *testing.T, cfg *domain.GDGAppConfiguration, envProp map[string]
 		return nil
 	}
 
-	if os.Getenv(EnableTokenTestsEnv) != FeatureEnabled {
+	if !IsTokenBasedTest() {
 		return NewInitContainerResult(apiClient, localGrafanaContainer, cleanUp)
 	}
 
@@ -91,20 +119,19 @@ func InitTest(t *testing.T, cfg *domain.GDGAppConfiguration, envProp map[string]
 	}
 	grafana := cfg.GetDefaultGrafanaConfig()
 	grafana.UserName = ""
-	secureSettings := domain.SecureModel{
+	secureSettings := config_domain.SecureModel{
 		Password: "",
 		Token:    newKey.Key,
 	}
-	WrapTest(func() {
-		assert.NoError(t, cfg.GetDefaultGrafanaConfig().TestSetSecureAuth(secureSettings))
-	})
+
+	grafana.Apply(config_domain.WithSecureAuth(secureSettings))
 
 	apiClient = CreateSimpleClientWithConfig(t, cfg, localGrafanaContainer)
 	return NewInitContainerResult(apiClient, localGrafanaContainer, cleanUp)
 }
 
 // CreateSimpleClientWithConfig creates a GrafanaService for tests using the provided config provider and testcontainers container.
-func CreateSimpleClientWithConfig(t *testing.T, cfg *domain.GDGAppConfiguration, container testcontainers.Container) ports.GrafanaService {
+func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfiguration, container testcontainers.Container) ports.GrafanaService {
 	if cfg == nil {
 		t.Fatal("No valid configuration returned from config provider")
 	}
@@ -117,9 +144,18 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *domain.GDGAppConfiguration,
 		slog.Info("Grafana Test container running", slog.String("host", grafanaHost+"/login"), slog.String("imageVersion", dockerContainer.Image))
 	}
 
-	storageEngine, err := service.ConfigureStorage(cfg)
+	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
+	var encoder ports.CipherEncoder
+	if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
+		encoder = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+	} else {
+		encoder = noop.NoOpEncoder{}
+	}
+
+	storageEngine, err := storage.NewStorageFromConfig(storageType, appData, encoder)
 	assert.NoError(t, err)
-	client := service.NewTestApiService(storageEngine, cfg)
+	client := api.NewDashNGo(cfg, encoder, storageEngine)
+	client.Login()
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {
 		pathErr := os.Chdir("..")
@@ -131,7 +167,7 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *domain.GDGAppConfiguration,
 }
 
 // CreateSimpleClient initializes a test Grafana client and Viper config for unit tests.
-func CreateSimpleClient(t *testing.T, cfg *domain.GDGAppConfiguration, cfgName *string, container testcontainers.Container) (ports.GrafanaService, *viper.Viper) {
+func CreateSimpleClient(t *testing.T, cfg *config_domain.GDGAppConfiguration, cfgName *string, container testcontainers.Container) (ports.GrafanaService, *viper.Viper) {
 	if cfgName == nil {
 		cfgName = new(string)
 		*cfgName = common.DefaultTestConfig
@@ -146,16 +182,30 @@ func CreateSimpleClient(t *testing.T, cfg *domain.GDGAppConfiguration, cfgName *
 		slog.Info("Grafana Test container running", slog.String("host", grafanaHost+"/login"), slog.String("imageVersion", dockerContainer.Image))
 	}
 
-	config.InitGdgConfig(*cfgName)
+	config.NewConfig(*cfgName)
 	conf := cfg.GetViperConfig()
 	assert.NotNil(t, conf)
 	// Hack for Local testing
 	contextName := conf.GetString("context_name")
 	conf.Set(fmt.Sprintf("context.%s.url", contextName), grafanaHost)
 	assert.Equal(t, contextName, "testing")
-	storageEngine, err := service.ConfigureStorage(cfg)
+	//If needed
+	/*
+		cfg := rootSvc.LoadConfig(configPath, contextOverride)
+		var encoder contract.CipherEncoder
+		if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
+			encoder = secure.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		} else {
+			encoder = secure.NoOpEncoder{}
+		}
+
+
+	*/
+	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
+	storageEngine, err := storage.NewStorageFromConfig(storageType, appData, noop.NoOpEncoder{})
 	assert.NoError(t, err)
-	client := service.NewTestApiService(storageEngine, nil)
+	client := api.NewDashNGo(cfg, noop.NoOpEncoder{}, storageEngine)
+	client.Login()
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {
 		err := os.Chdir("..")
@@ -164,22 +214,4 @@ func CreateSimpleClient(t *testing.T, cfg *domain.GDGAppConfiguration, cfgName *
 		}
 	}
 	return client, conf
-}
-
-// MaintainConfigAuth updates Grafana config auth, preserving existing secure data during init.
-func MaintainConfigAuth(cfg *domain.GDGAppConfiguration, configVal string) {
-	var auth *domain.SecureModel
-	auth = cfg.GetDefaultGrafanaConfig().TestGetSecureAuth()
-	cfg = config.InitGdgConfig(configVal)
-	if auth != nil {
-		if err := cfg.GetDefaultGrafanaConfig().TestSetSecureAuth(*auth); err != nil {
-			slog.Warn("unable to set grafana auth")
-		}
-	}
-}
-
-func WrapTest(f func()) {
-	os.Setenv(path.TestEnvKey, "1") // #nosec G104
-	f()
-	os.Unsetenv(path.TestEnvKey)
 }
