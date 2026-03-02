@@ -23,13 +23,14 @@ const (
 	DisableEnterpriseTest    = "ENTERPRISE_DISABLED"
 	DefaultCloudUser         = "test"
 	DefaultCloudPass         = "secretsss"
-	s3UserEnv                = "MINIO_ROOT_USER"
-	s3PassKeyEnv             = "MINIO_ROOT_PASSWORD" // #nosec G101
-	s3ImageTag               = "RELEASE.2025-09-07T16-13-09Z"
-	s3Image                  = "minio/minio"
-	S3UiPort                 = "9001"
-	s3ApiPort                = "9000"
-	s3TcpPortFormatString    = "%s/tcp"
+	S3UiPort              = "9001"
+	s3ApiPort             = "9000"
+	s3TcpPortFormatString = "%s/tcp"
+	//rustfs
+	s3UserEnv    = "RUSTFS_ACCESS_KEY"
+	s3PassKeyEnv = "RUSTFS_SECRET_KEY" // #nosec G101
+	s3ImageTag   = "1.0.0-alpha.77"
+	s3Image      = "rustfs/rustfs"
 )
 
 // BootstrapCloudStorage starts a S3 container for cloud storage testing.
@@ -43,12 +44,12 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 
 	ctx := context.Background()
 	req := testcontainers.ContainerRequest{
-		Image:        fmt.Sprintf("%s:%s", s3Image, s3ImageTag),
-		Cmd:          []string{"server", "start", "--console-address", ":" + S3UiPort},
+		Image: fmt.Sprintf("%s:%s", s3Image, s3ImageTag),
 		ExposedPorts: []string{fmt.Sprintf(s3TcpPortFormatString, s3ApiPort), fmt.Sprintf(s3TcpPortFormatString, S3UiPort)},
 		Env: map[string]string{
 			s3UserEnv:    username,
 			s3PassKeyEnv: password,
+//			"RUST_LOG":   "debug",
 		},
 		WaitingFor: wait.ForListeningPort(nat.Port(fmt.Sprintf(s3TcpPortFormatString, s3ApiPort))),
 	}
@@ -86,7 +87,6 @@ func DefaultGrafanaEnv() map[string]string {
 		"GF_INSTALL_PLUGINS":         "grafana-googlesheets-datasource",
 		"GF_AUTH_ANONYMOUS_ENABLED":  "true",
 		"GF_SECURITY_ADMIN_PASSWORD": "admin", // This is a no-op right now, but we should trickle this up to
-		//"GF_SERVER_HTTP_ADDR":        "::",
 		// allow setting grafana admin credentials.
 	}
 }
