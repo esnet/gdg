@@ -7,7 +7,7 @@ import (
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/config"
-	domain2 "github.com/esnet/gdg/pkg/version"
+	"github.com/esnet/gdg/pkg/version"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +16,7 @@ func newVersionCmd() simplecobra.Commander {
 	return &domain.SimpleCommand{
 		NameP: "version",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *domain.RootCommand, args []string) error {
-			domain2.PrintVersionInfo()
+			version.PrintVersionInfo()
 			return nil
 		},
 		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {

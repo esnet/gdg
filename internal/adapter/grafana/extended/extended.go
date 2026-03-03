@@ -6,16 +6,17 @@ import (
 
 	"github.com/carlmjohnson/requests"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/ports"
 )
 
-// ExtendedApi provides API request building for Grafana with optional debug mode.
-type ExtendedApi struct {
+// Api provides API request building for Grafana with optional debug mode.
+type Api struct {
 	appCfg *config_domain.GDGAppConfiguration
 	debug  bool
 }
 
-func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) *ExtendedApi {
-	o := ExtendedApi{
+func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) ports.ExtendedApi {
+	o := Api{
 		appCfg: cfg,
 		debug:  cfg.IsApiDebug(),
 	}
@@ -23,7 +24,7 @@ func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) *ExtendedApi {
 }
 
 // getRequestBuilder returns a requests.Builder preconfigured with Grafana URL, auth, and optional TLS settings.
-func (extended *ExtendedApi) getRequestBuilder() *requests.Builder {
+func (extended *Api) getRequestBuilder() *requests.Builder {
 	req := requests.URL(extended.appCfg.GetDefaultGrafanaConfig().GetURL())
 	if extended.appCfg.IgnoreSSL() {
 		customTransport := http.DefaultTransport.(*http.Transport).Clone()

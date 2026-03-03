@@ -4,7 +4,7 @@ package domain
 // It allows filtering by folder name, a set of labels, and provides an option to ignore folder-based rules.
 type AlertRuleFilterParams struct {
 	Folder               string
-	Name                 string
+	UID                  string
 	Label                []string
 	IgnoreWatchedFolders bool
 }

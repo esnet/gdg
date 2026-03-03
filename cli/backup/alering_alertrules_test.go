@@ -41,11 +41,13 @@ func TestListAlertRules(t *testing.T) {
 			validateFn: func(t *testing.T, output string) {
 				assert.True(t, strings.Contains(output, "NAME"), "header NAME not found")
 				assert.True(t, strings.Contains(output, "UID"), "header UID not found")
+				assert.True(t, strings.Contains(output, "LABELS"), "header LABELS not found")
 				assert.True(t, strings.Contains(output, "─────"), "table structure not found")
 				assert.True(t, strings.Contains(output, "my-alert-rule"))
 				assert.True(t, strings.Contains(output, "my-alert-uid"))
 				assert.True(t, strings.Contains(output, "my-folder"))
 				assert.True(t, strings.Contains(output, "my-group"))
+				assert.True(t, strings.Contains(output, `{"env":"staging"}`))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
 				testSvc.EXPECT().Login().Return()
@@ -196,18 +198,38 @@ func TestUploadAlertRules(t *testing.T) {
 			setupMocks: func(testSvc *mocks.GrafanaService) {
 				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
-				testSvc.EXPECT().UploadAlertRules(mock.Anything).Return(fmt.Errorf("upload failed"))
+				testSvc.EXPECT().UploadAlertRules(mock.Anything).Return(nil, fmt.Errorf("upload failed"))
 			},
 		},
 		{
 			name: "SuccessUpload",
 			validateFn: func(t *testing.T, output string) {
-				assert.True(t, strings.Contains(output, "Rules have been successfully uploaded to grafana"))
+				assert.True(t, strings.Contains(output, "Rules have been successfully uploaded to Grafana"))
+				assert.True(t, strings.Contains(output, "NAME"), "header NAME not found")
+				assert.True(t, strings.Contains(output, "UID"), "header UID not found")
+				assert.True(t, strings.Contains(output, "LABELS"), "header LABELS not found")
+				assert.True(t, strings.Contains(output, "─────"), "table structure not found")
+				assert.True(t, strings.Contains(output, "my-alert-rule"))
+				assert.True(t, strings.Contains(output, "my-alert-uid"))
+				assert.True(t, strings.Contains(output, "my-folder"))
+				assert.True(t, strings.Contains(output, "my-group"))
+				assert.True(t, strings.Contains(output, `{"env":"staging"}`))
 			},
 			setupMocks: func(testSvc *mocks.GrafanaService) {
 				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
-				testSvc.EXPECT().UploadAlertRules(mock.Anything).Return(nil)
+				rules := []*customModels.AlertRuleWithNestedFolder{
+					{
+						ProvisionedAlertRule: &models.ProvisionedAlertRule{
+							Title:     new("my-alert-rule"),
+							UID:       "my-alert-uid",
+							RuleGroup: new("my-group"),
+							Labels:    map[string]string{"env": "staging"},
+						},
+						NestedPath: "my-folder",
+					},
+				}
+				testSvc.EXPECT().UploadAlertRules(mock.Anything).Return(rules, nil)
 			},
 		},
 	}

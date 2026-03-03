@@ -11,8 +11,10 @@ toc: true
 ## Release Notes for v0.9.3
 
 ### Changes
- - [#557](https://github.com/esnet/gdg/pull/557) Adds label and folder based filtering to alert rules.
- - [#559](https://github.com/esnet/gdg/pull/559) Adds name based filtering to alert rules.
+
+  - [#557](https://github.com/esnet/gdg/pull/560) Adding support for patching folder UID when missing and folder auto-creation.
+  - [#557](https://github.com/esnet/gdg/pull/557) Adds label and folder based filtering to alert rules.
+  - [#559](https://github.com/esnet/gdg/pull/559) Adds ~~name~~ UID based filtering to alert rules.
 
 ### BugFixes
   - [#543](https://github.com/esnet/gdg/issues/543) Env vars not working due to a conflict with the secure_location pattern that was previously introduced. Env will work if secure location not used. Next major release (0.10.x) will fix this to allow for Env to take precedence over any config values.

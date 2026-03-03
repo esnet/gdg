@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	domain2 "github.com/esnet/gdg/cli/domain"
+	cliDomain "github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/pkg/tools"
@@ -36,11 +36,11 @@ func parseDashboardGlobalFlags(command *cobra.Command) []string {
 
 func newDashboardCommand() simplecobra.Commander {
 	description := "Manage Grafana Dashboards"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP: "dashboards",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"dash", "dashboard"}
 			cmd.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
 			cmd.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
@@ -55,7 +55,7 @@ func newDashboardCommand() simplecobra.Commander {
 			// Permissions
 			newDashboardPermissionCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -63,15 +63,15 @@ func newDashboardCommand() simplecobra.Commander {
 
 func newClearDashboardsCmd() simplecobra.Commander {
 	description := "delete all monitored dashboards from grafana"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP:        "clear",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			if !skipConfirmAction {
 				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
 					"(or all dashboards if ignore_dashboard_filters is set to true).  Do you wish to "+
@@ -98,15 +98,15 @@ func newClearDashboardsCmd() simplecobra.Commander {
 
 func newUploadDashboardsCmd() simplecobra.Commander {
 	description := "upload all dashboards to grafana"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP:        "upload",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"u", "up"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			if !skipConfirmAction {
 				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will delete all dashboards from the monitored folders: '%s' "+
 					"(or all dashboards if ignore_dashboard_filters is set to true) and upload your local copy.  Do you wish to "+
@@ -140,15 +140,15 @@ func newUploadDashboardsCmd() simplecobra.Commander {
 
 func newDownloadDashboardsCmd() simplecobra.Commander {
 	description := "download all dashboards from grafana"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP:        "download",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			filter := api.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			savedFiles := rootCmd.GrafanaSvc().DownloadDashboards(filter)
 			slog.Info("Downloading dashboards for context",
@@ -179,15 +179,15 @@ func getDashboardUrl(link *models.Hit, cfg *config_domain.GDGAppConfiguration) s
 
 func newListDashboardsCmd() simplecobra.Commander {
 	description := "List all dashboards from grafana"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP:        "list",
 		Short:        description,
 		Long:         description,
 		CommandsList: []simplecobra.Commander{},
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "NestedPath", "UID", "Tags", "URL"})
 
 			filters := api.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,7 +15,7 @@ import (
 	"sort"
 	"strings"
 
-	v3 "github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/encode"
@@ -33,8 +34,8 @@ const (
 )
 
 func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) ports.Filter {
-	filterObj := v3.NewBaseFilter()
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType domain.FilterType, a any) (any, error) {
+	filterObj := v2.NewBaseFilter()
+	err := filterObj.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -51,8 +52,8 @@ func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) ports.Filter {
 	}
 
 	folderArr := cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
-	filterObj.AddValidation(domain.FolderFilter, func(value any, expected any) error {
-		val, expressions, convErr := v3.GetMismatchParams[string, []string](value, expected, domain.FolderFilter)
+	filterObj.AddValidation(domain.FolderFilter, func(ctx context.Context, value any, expected any) error {
+		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, domain.FolderFilter)
 		if convErr != nil {
 			return convErr
 		}
@@ -207,7 +208,7 @@ func (s *DashNGoImpl) ListFolders(filter ports.Filter) []*domain.NestedHit {
 	for ndx, val := range folderListing {
 		nestedVal := getNestedFolder(val.Title, val.UID, folderUid)
 		val.NestedPath = nestedVal
-		if filter == nil || filter.Validate(domain.FolderFilter, val) { // filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: nestedVal}) {
+		if filter == nil || filter.Validate(context.Background(), domain.FolderFilter, val) { // filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: nestedVal}) {
 			addFolder(ndx, nestedVal)
 		}
 	}
@@ -496,6 +497,23 @@ func (s *DashNGoImpl) DeleteAllFolders(filter ports.Filter) []string {
 	return result
 }
 
+// getFolderByNestedPath retrieves a single folder matching the given nested path, using the provided filter
+// to obtain the list of folders. Returns an error if no folder is found or if multiple folders match.
+func (s *DashNGoImpl) getFolderByNestedPath(nestedPath string, filter ports.Filter) (*domain.NestedHit, error) {
+	folderList := s.ListFolders(filter)
+	result := lo.Filter(folderList, func(item *domain.NestedHit, index int) bool {
+		return item.NestedPath == nestedPath
+	})
+	if len(result) == 0 {
+		return nil, fmt.Errorf("unable to find folder with nested path %s", nestedPath)
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("unexpected behavior, too many folders matched for %s", nestedPath)
+	}
+
+	return result[0], nil
+}
+
 // getFolderMapping returns a mapping of any comparable T to any value based on the folder entity.
 // key is a function that takes the folder type as a parameter and returns the key to use for the resulting map.
 // val is a function that takes the folder type as a parameter and returns the value to set the map value to.
@@ -532,16 +550,6 @@ func (s *DashNGoImpl) getFolderNameUIDMap(folders []*domain.NestedHit) map[strin
 			return fld.UID
 		},
 	)
-}
-
-// reverseLookUp Creates a reverse look up map, where the values are the keys and the keys are the values.
-func reverseLookUp[T comparable, Y comparable](m map[T]Y) map[Y]T {
-	reverse := make(map[Y]T)
-	for key, val := range m {
-		reverse[val] = key
-	}
-
-	return reverse
 }
 
 // getFolderByUid gets a given folder given a valid Uid

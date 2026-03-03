@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,11 +12,11 @@ import (
 	"reflect"
 	"strings"
 
-	v3 "github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
-	tools2 "github.com/esnet/gdg/pkg/tools"
+	"github.com/esnet/gdg/pkg/tools"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/orgs"
@@ -24,7 +25,7 @@ import (
 )
 
 func setupOrgReaders(filterObj ports.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.OrgDTO](), func(filterType domain.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.OrgDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.OrgDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -40,7 +41,7 @@ func setupOrgReaders(filterObj ports.Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Org Filter, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -66,14 +67,14 @@ func setupOrgReaders(filterObj ports.Filter) {
 }
 
 func NewOrganizationFilter(args ...string) ports.Filter {
-	filterObj := v3.NewBaseFilter()
+	filterObj := v2.NewBaseFilter()
 	setupOrgReaders(filterObj)
 	if len(args) == 0 || args[0] == "" {
 		return filterObj
 	}
 
-	filterObj.AddValidation(domain.OrgFilter, func(value any, expected any) error {
-		val, expectedValue, convErr := v3.GetParams[string](value, expected, domain.OrgFilter)
+	filterObj.AddValidation(domain.OrgFilter, func(ctx context.Context, value any, expected any) error {
+		val, expectedValue, convErr := v2.GetParams[string](value, expected, domain.OrgFilter)
 		if convErr != nil {
 			return convErr
 		}
@@ -112,7 +113,7 @@ func (s *DashNGoImpl) sanitizeOrganizationMembership() {
 		currentUserOrgs[org.OrgID] = true
 	}
 	// https://github.com/grafana/grafana/issues/79062 Broken state for Orgs, ensuring not in range
-	if tools2.InRange([]tools2.VersionRange{{MinVersion: "v10.2.1", MaxVersion: "v10.2.2"}}, s) {
+	if tools.InRange([]tools.VersionRange{{MinVersion: "v10.2.1", MaxVersion: "v10.2.2"}}, s) {
 		slog.Error("version check fails.  Cannot programmatically fix org membership in version v10.2.1-v10.2.2.  " +
 			"Please ensure the configured grafana admin is added to the orgs below")
 		for _, org := range allOrgs {
@@ -124,7 +125,7 @@ func (s *DashNGoImpl) sanitizeOrganizationMembership() {
 	}
 
 	slog.Info("You've configured a grafana admin, but you are not a member of every Org.  The grafanaAdmin needs to be a member of every organization in order for GDG to operate successfully.")
-	tools2.GetUserConfirmation("Would you like to continue and add the configured grafana admin to all organizations as an 'admin'? (y/n) ", "", true)
+	tools.GetUserConfirmation("Would you like to continue and add the configured grafana admin to all organizations as an 'admin'? (y/n) ", "", true)
 
 	for _, org := range allOrgs {
 		if _, ok := currentUserOrgs[org.Organization.ID]; !ok {
@@ -244,7 +245,7 @@ func (s *DashNGoImpl) ListOrganizations(filter ports.Filter, withPreferences boo
 
 	var resultsData []*domain.OrgsDTOWithPreferences
 	for _, org := range orgList.GetPayload() {
-		if filter.ValidateAll(*org) {
+		if filter.ValidateAll(context.Background(), *org) {
 			if !withPreferences {
 				resultsData = append(resultsData, &domain.OrgsDTOWithPreferences{Organization: org, Preferences: &models.PreferencesSpec{}})
 			} else {
@@ -330,7 +331,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter ports.Filter) []string {
 			continue
 		}
 		newOrg.Name = jsonOrg.Organization.Name
-		if !filter.ValidateAll(rawFolder) {
+		if !filter.ValidateAll(context.Background(), rawFolder) {
 			slog.Debug("Skipping org, failing filter check", "file", file)
 			continue
 		}

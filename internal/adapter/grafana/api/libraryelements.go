@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/pkg/tools"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -27,7 +29,7 @@ const (
 )
 
 func setupLibElementsReaders(filterObj ports.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.WithNested[models.LibraryElementDTO]](), func(filterType domain.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[*domain.WithNested[models.LibraryElementDTO]](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.WithNested[models.LibraryElementDTO])
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -43,7 +45,7 @@ func setupLibElementsReaders(filterObj ports.Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Library Elements Filter, obj entity filter failure, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -66,7 +68,7 @@ func setupLibElementsReaders(filterObj ports.Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Library Elements Filter, json filter failure, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[map[string]any](), func(filterType domain.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[map[string]any](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(map[string]any)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -156,7 +158,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter ports.Filter) []*domain.WithNes
 			nestedPath = fld.NestedPath
 		}
 
-		if ignoreFilters || filter.ValidateAll(map[string]any{NestedDashFolderName: nestedPath}) {
+		if ignoreFilters || filter.ValidateAll(context.Background(), map[string]any{NestedDashFolderName: nestedPath}) {
 			newData = append(newData, &domain.WithNested[models.LibraryElementDTO]{
 				Entity:     val,
 				NestedPath: nestedPath,
@@ -176,7 +178,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter ports.Filter) []string {
 		dataFiles []string
 	)
 
-	folderMap := reverseLookUp(s.getFolderNameUIDMap(s.ListFolders(nil)))
+	folderMap := tools.ReverseLookUp(s.getFolderNameUIDMap(s.ListFolders(nil)))
 	listing = s.ListLibraryElements(filter)
 	for _, item := range listing {
 		if dsPacked, err = json.MarshalIndent(item, "", "	"); err != nil {
@@ -243,7 +245,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.Filter) []string {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 			folderName = DefaultFolderName
 		}
-		if !ignoreFilters && !filterReq.Validate(domain.FolderFilter, map[string]any{NestedDashFolderName: folderName}) {
+		if !ignoreFilters && !filterReq.Validate(context.Background(), domain.FolderFilter, map[string]any{NestedDashFolderName: folderName}) {
 			slog.Warn("Skipping since requested file is not in a folder gdg is configured to manage", "folder", folderName, "file", file)
 			continue
 		}

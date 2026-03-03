@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,8 +10,8 @@ import (
 	"reflect"
 	"strings"
 
-	v3 "github.com/esnet/gdg/internal/adapter/filters/v2"
-	domain2 "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	domain "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/tidwall/gjson"
 
@@ -20,13 +21,13 @@ import (
 )
 
 func setupConnectionReaders(filterObj ports.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.DataSourceListItemDTO](), func(filterType domain2.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.DataSourceListItemDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.DataSourceListItemDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case domain2.Name:
+		case domain.Name:
 			return val.Name, nil
 
 		default:
@@ -36,13 +37,13 @@ func setupConnectionReaders(filterObj ports.Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Connection Filter, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain2.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case domain2.Name:
+		case domain.Name:
 			{
 				r := gjson.GetBytes(val, "name")
 				if !r.Exists() || r.IsArray() {
@@ -51,7 +52,7 @@ func setupConnectionReaders(filterObj ports.Filter) {
 				return r.String(), nil
 
 			}
-		case domain2.ConnectionName:
+		case domain.ConnectionName:
 			{
 				r := gjson.GetBytes(val, "Connection.name")
 				if !r.Exists() || r.IsArray() {
@@ -70,11 +71,11 @@ func setupConnectionReaders(filterObj ports.Filter) {
 }
 
 func NewConnectionFilter(name string) ports.Filter {
-	filterEntity := v3.NewBaseFilter()
+	filterEntity := v2.NewBaseFilter()
 	setupConnectionReaders(filterEntity)
-	getValidateFunc := func(filterType domain2.FilterType) func(value any, expected any) error {
-		return func(value any, expected any) error {
-			val, expression, convErr := v3.GetParams[string](value, expected, filterType)
+	getValidateFunc := func(filterType domain.FilterType) func(ctx context.Context, value any, expected any) error {
+		return func(ctx context.Context, value any, expected any) error {
+			val, expression, convErr := v2.GetParams[string](value, expected, filterType)
 			if convErr != nil {
 				return convErr
 			}
@@ -88,9 +89,9 @@ func NewConnectionFilter(name string) ports.Filter {
 		}
 	}
 
-	filterEntity.AddValidation(domain2.Name, getValidateFunc(domain2.Name), name)
+	filterEntity.AddValidation(domain.Name, getValidateFunc(domain.Name), name)
 	// used to check filter for connection permissions
-	filterEntity.AddValidation(domain2.ConnectionName, getValidateFunc(domain2.ConnectionName), name)
+	filterEntity.AddValidation(domain.ConnectionName, getValidateFunc(domain.ConnectionName), name)
 
 	return filterEntity
 }
@@ -114,7 +115,7 @@ func (s *DashNGoImpl) ListConnections(filter ports.Filter) []models.DataSourceLi
 			slog.Debug("Skipping data source, since it fails datatype filter checks", "datasource", item.Name, "datatype", item.Type)
 			continue
 		}
-		if filter.Validate(domain2.Name, *item) {
+		if filter.Validate(context.Background(), domain.Name, *item) {
 			result = append(result, *item)
 		}
 	}
@@ -138,7 +139,7 @@ func (s *DashNGoImpl) DownloadConnections(filter ports.Filter) []string {
 			continue
 		}
 
-		dsPath := buildResourcePath(s.grafanaConf, slug.Make(ds.Name), domain2.ConnectionResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := buildResourcePath(s.grafanaConf, slug.Make(ds.Name), domain.ConnectionResource, s.isLocal(), s.GetGlobals().ClearOutput)
 
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "filename", slug.Make(ds.Name), "err", err)
@@ -171,8 +172,8 @@ func (s *DashNGoImpl) UploadConnections(filter ports.Filter) []string {
 	var exported []string
 
 	orgName := s.grafanaConf.GetOrganizationName()
-	slog.Info("Reading files from folder", "folder", s.grafanaConf.GetPath(domain2.ConnectionResource, orgName))
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain2.ConnectionResource, orgName), false)
+	slog.Info("Reading files from folder", "folder", s.grafanaConf.GetPath(domain.ConnectionResource, orgName))
+	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.ConnectionResource, orgName), false)
 	if err != nil {
 		slog.Error("failed to list files in directory for datasources", "err", err)
 	}
@@ -182,7 +183,7 @@ func (s *DashNGoImpl) UploadConnections(filter ports.Filter) []string {
 
 	dsSettings := s.grafanaConf.GetConnectionSettings()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain2.ConnectionResource, orgName), file)
+		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain.ConnectionResource, orgName), file)
 		if !strings.HasSuffix(fileLocation, ".json") {
 			slog.Debug("Ignoring file", "fileLocation", fileLocation)
 			continue
@@ -191,7 +192,7 @@ func (s *DashNGoImpl) UploadConnections(filter ports.Filter) []string {
 			slog.Error("failed to read file", "filename", fileLocation, "credentialsErr", err)
 			continue
 		}
-		if !filter.Validate(domain2.Name, rawDS) {
+		if !filter.Validate(context.Background(), domain.Name, rawDS) {
 			continue
 		}
 

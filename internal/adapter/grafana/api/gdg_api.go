@@ -1,13 +1,12 @@
 package api
 
 import (
-	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/ports"
 )
 
 type DashNGoImpl struct {
-	extended    *extended.ExtendedApi
+	extended    ports.ExtendedApi
 	gdgConfig   *config_domain.GDGAppConfiguration
 	grafanaConf *config_domain.GrafanaConfig
 	storage     ports.Storage

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,8 +11,8 @@ import (
 	"reflect"
 	"strings"
 
-	v3 "github.com/esnet/gdg/internal/adapter/filters/v2"
-	domain2 "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/samber/lo"
@@ -30,13 +31,13 @@ const (
 )
 
 func setupTeamReader(filterObj ports.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.TeamDTO](), func(filterType domain2.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.TeamDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.TeamDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case domain2.Name:
+		case domain.Name:
 			return ptr.ValueOrDefault(val.Name, ""), nil
 
 		default:
@@ -46,13 +47,13 @@ func setupTeamReader(filterObj ports.Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid Team Filter, obj entity reader failed, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain2.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
 		}
 		switch filterType {
-		case domain2.Name:
+		case domain.Name:
 			{
 				r := gjson.GetBytes(val, "name")
 				if !r.Exists() || r.IsArray() {
@@ -72,10 +73,10 @@ func setupTeamReader(filterObj ports.Filter) {
 }
 
 func NewTeamFilter(entries ...string) ports.Filter {
-	filterObj := v3.NewBaseFilter()
+	filterObj := v2.NewBaseFilter()
 	setupTeamReader(filterObj)
-	filterObj.AddValidation(domain2.Name, func(value any, expected any) error {
-		val, expectedValue, convErr := v3.GetParams[string](value, expected, domain2.Name)
+	filterObj.AddValidation(domain.Name, func(ctx context.Context, value any, expected any) error {
+		val, expectedValue, convErr := v2.GetParams[string](value, expected, domain.Name)
 		if convErr != nil {
 			return convErr
 		}
@@ -95,7 +96,7 @@ func NewTeamFilter(entries ...string) ports.Filter {
 func (s *DashNGoImpl) DownloadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
-	teamPath := BuildResourceFolder(s.grafanaConf, "", domain2.TeamResource, s.isLocal(), s.GetGlobals().ClearOutput)
+	teamPath := BuildResourceFolder(s.grafanaConf, "", domain.TeamResource, s.isLocal(), s.GetGlobals().ClearOutput)
 	for ndx, team := range teamListing {
 		// Teams
 		teamFileName := filepath.Join(teamPath, GetSlug(ptr.ValueOrDefault(team.Name, "")), "team.json")
@@ -131,7 +132,7 @@ func (s *DashNGoImpl) DownloadTeams(filter ports.Filter) map[*models.TeamDTO][]*
 // UploadTeams Export Teams
 func (s *DashNGoImpl) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain2.TeamResource, orgName), true)
+	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.TeamResource, orgName), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for teams", "err", err)
 	}
@@ -149,7 +150,7 @@ func (s *DashNGoImpl) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*mo
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
-			if !filter.ValidateAll(rawTeam) {
+			if !filter.ValidateAll(context.Background(), rawTeam) {
 				slog.Debug("Skipping file, failed Team filter", "file", fileLocation)
 				continue
 			}
@@ -173,7 +174,7 @@ func (s *DashNGoImpl) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*mo
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
 
-			teamMemberLocation := filepath.Join(s.grafanaConf.GetPath(domain2.TeamResource, orgName), GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
+			teamMemberLocation := filepath.Join(s.grafanaConf.GetPath(domain.TeamResource, orgName), GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
 			if rawMembers, err = s.storage.ReadFile(teamMemberLocation); err != nil {
 				slog.Error("failed to find team members", "filename", fileLocation, "err", err)
 				continue
@@ -221,7 +222,7 @@ func (s *DashNGoImpl) ListTeams(filter ports.Filter) map[*models.TeamDTO][]*mode
 
 	for _, team := range data.GetPayload().Teams {
 		if filter != nil {
-			if filter.Validate(domain2.Name, *team) {
+			if filter.Validate(context.Background(), domain.Name, *team) {
 				getTeamMembers(team)
 			}
 		} else {
@@ -237,7 +238,7 @@ func (s *DashNGoImpl) DeleteTeam(filter ports.Filter) ([]*models.TeamDTO, error)
 	teamListing := maps.Keys(s.ListTeams(filter))
 	var result []*models.TeamDTO
 	for _, team := range teamListing {
-		if !filter.ValidateAll(*team) || team.ID == nil {
+		if !filter.ValidateAll(context.Background(), *team) || team.ID == nil {
 			slog.Error("Team failed basic validation, could not delete entry")
 			continue
 		}

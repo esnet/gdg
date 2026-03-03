@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -100,7 +101,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter ports.Filter) []string 
 				continue
 			}
 		}
-		if !filter.Validate(domain.ConnectionName, rawFolder) {
+		if !filter.Validate(context.Background(), domain.ConnectionName, rawFolder) {
 			slog.Debug("File does not match pattern, skipping file", "filename", file)
 			continue
 		}

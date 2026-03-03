@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/bep/simplecobra"
-	domain2 "github.com/esnet/gdg/cli/domain"
+	cliDomain "github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -16,11 +16,11 @@ import (
 
 func newConnectionsCommand() simplecobra.Commander {
 	description := "Manage connections (formerly Data Sources)"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP: "connections",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"connection", "ds", "c", "datasource", "datasources"}
 			connections := cmd
 			connections.PersistentFlags().StringP("connection", "", "", "filter by connection slug")
@@ -32,7 +32,7 @@ func newConnectionsCommand() simplecobra.Commander {
 			newListConnectionsCmd(),
 			newConnectionsPermissionCmd(),
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
 	}
@@ -40,14 +40,14 @@ func newConnectionsCommand() simplecobra.Commander {
 
 func newClearConnectionsCmd() simplecobra.Commander {
 	description := "clear all connections for the given Organization"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP: "clear",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"c"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			slog.Info("Delete connections", slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())))
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := api.NewConnectionFilter(dashboardFilter)
@@ -64,14 +64,14 @@ func newClearConnectionsCmd() simplecobra.Commander {
 
 func newUploadConnectionsCmd() simplecobra.Commander {
 	description := "upload all connections to grafana for the given Organization"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP: "upload",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"u"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			slog.Info("Uploading connections", slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())))
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := api.NewConnectionFilter(dashboardFilter)
@@ -88,14 +88,14 @@ func newUploadConnectionsCmd() simplecobra.Commander {
 
 func newDownloadConnectionsCmd() simplecobra.Commander {
 	description := "download all connections from grafana for the given Organization"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP: "download",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"d"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			slog.Info("Importing connections for context",
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				"context", rootCmd.ConfigSvc().GetContext())
@@ -114,14 +114,14 @@ func newDownloadConnectionsCmd() simplecobra.Commander {
 
 func newListConnectionsCmd() simplecobra.Commander {
 	description := "List all connections for the given Organization"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP: "list",
 		Short: description,
 		Long:  description,
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"l"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			rootCmd.TableObj.AppendHeader(table.Row{"id", "uid", "name", "slug", "type", "default", "url"})
 			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
 			filters := api.NewConnectionFilter(dashboardFilter)

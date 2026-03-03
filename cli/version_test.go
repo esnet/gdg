@@ -9,7 +9,7 @@ import (
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
-	domain2 "github.com/esnet/gdg/pkg/version"
+	"github.com/esnet/gdg/pkg/version"
 
 	"github.com/esnet/gdg/internal/ports/mocks"
 	"github.com/stretchr/testify/assert"
@@ -44,7 +44,7 @@ func TestVersionCommand(t *testing.T) {
 	assert.True(t, strings.Contains(outStr, "Build Date:"))
 	assert.True(t, strings.Contains(outStr, "Git Commit:"))
 	assert.True(t, strings.Contains(outStr, "Version:"))
-	assert.True(t, strings.Contains(outStr, domain2.Version))
+	assert.True(t, strings.Contains(outStr, version.Version))
 	assert.True(t, strings.Contains(outStr, "Date:"))
 	assert.True(t, strings.Contains(outStr, "Go Version:"))
 	assert.True(t, strings.Contains(outStr, "OS / Arch:"))

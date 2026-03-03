@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	"context"
 	"reflect"
 
 	"github.com/esnet/gdg/internal/domain"
@@ -91,16 +92,16 @@ func (_c *Filter_AddValidation_Call) RunAndReturn(run func(f domain.FilterType, 
 }
 
 // GetExpectedString provides a mock function for the type Filter
-func (_mock *Filter) GetExpectedString(filterType domain.FilterType) string {
-	ret := _mock.Called(filterType)
+func (_mock *Filter) GetExpectedString(ctx context.Context, filterType domain.FilterType) string {
+	ret := _mock.Called(ctx, filterType)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetExpectedString")
 	}
 
 	var r0 string
-	if returnFunc, ok := ret.Get(0).(func(domain.FilterType) string); ok {
-		r0 = returnFunc(filterType)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.FilterType) string); ok {
+		r0 = returnFunc(ctx, filterType)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
@@ -113,19 +114,25 @@ type Filter_GetExpectedString_Call struct {
 }
 
 // GetExpectedString is a helper method to define mock.On call
+//   - ctx context.Context
 //   - filterType domain.FilterType
-func (_e *Filter_Expecter) GetExpectedString(filterType interface{}) *Filter_GetExpectedString_Call {
-	return &Filter_GetExpectedString_Call{Call: _e.mock.On("GetExpectedString", filterType)}
+func (_e *Filter_Expecter) GetExpectedString(ctx interface{}, filterType interface{}) *Filter_GetExpectedString_Call {
+	return &Filter_GetExpectedString_Call{Call: _e.mock.On("GetExpectedString", ctx, filterType)}
 }
 
-func (_c *Filter_GetExpectedString_Call) Run(run func(filterType domain.FilterType)) *Filter_GetExpectedString_Call {
+func (_c *Filter_GetExpectedString_Call) Run(run func(ctx context.Context, filterType domain.FilterType)) *Filter_GetExpectedString_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 domain.FilterType
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(domain.FilterType)
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 domain.FilterType
+		if args[1] != nil {
+			arg1 = args[1].(domain.FilterType)
 		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -136,14 +143,14 @@ func (_c *Filter_GetExpectedString_Call) Return(s string) *Filter_GetExpectedStr
 	return _c
 }
 
-func (_c *Filter_GetExpectedString_Call) RunAndReturn(run func(filterType domain.FilterType) string) *Filter_GetExpectedString_Call {
+func (_c *Filter_GetExpectedString_Call) RunAndReturn(run func(ctx context.Context, filterType domain.FilterType) string) *Filter_GetExpectedString_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetExpectedStringSlice provides a mock function for the type Filter
-func (_mock *Filter) GetExpectedStringSlice(filterType domain.FilterType) ([]string, error) {
-	ret := _mock.Called(filterType)
+func (_mock *Filter) GetExpectedStringSlice(ctx context.Context, filterType domain.FilterType) ([]string, error) {
+	ret := _mock.Called(ctx, filterType)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetExpectedStringSlice")
@@ -151,18 +158,18 @@ func (_mock *Filter) GetExpectedStringSlice(filterType domain.FilterType) ([]str
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(domain.FilterType) ([]string, error)); ok {
-		return returnFunc(filterType)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.FilterType) ([]string, error)); ok {
+		return returnFunc(ctx, filterType)
 	}
-	if returnFunc, ok := ret.Get(0).(func(domain.FilterType) []string); ok {
-		r0 = returnFunc(filterType)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.FilterType) []string); ok {
+		r0 = returnFunc(ctx, filterType)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(domain.FilterType) error); ok {
-		r1 = returnFunc(filterType)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, domain.FilterType) error); ok {
+		r1 = returnFunc(ctx, filterType)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -175,19 +182,25 @@ type Filter_GetExpectedStringSlice_Call struct {
 }
 
 // GetExpectedStringSlice is a helper method to define mock.On call
+//   - ctx context.Context
 //   - filterType domain.FilterType
-func (_e *Filter_Expecter) GetExpectedStringSlice(filterType interface{}) *Filter_GetExpectedStringSlice_Call {
-	return &Filter_GetExpectedStringSlice_Call{Call: _e.mock.On("GetExpectedStringSlice", filterType)}
+func (_e *Filter_Expecter) GetExpectedStringSlice(ctx interface{}, filterType interface{}) *Filter_GetExpectedStringSlice_Call {
+	return &Filter_GetExpectedStringSlice_Call{Call: _e.mock.On("GetExpectedStringSlice", ctx, filterType)}
 }
 
-func (_c *Filter_GetExpectedStringSlice_Call) Run(run func(filterType domain.FilterType)) *Filter_GetExpectedStringSlice_Call {
+func (_c *Filter_GetExpectedStringSlice_Call) Run(run func(ctx context.Context, filterType domain.FilterType)) *Filter_GetExpectedStringSlice_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 domain.FilterType
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(domain.FilterType)
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 domain.FilterType
+		if args[1] != nil {
+			arg1 = args[1].(domain.FilterType)
 		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -198,22 +211,22 @@ func (_c *Filter_GetExpectedStringSlice_Call) Return(strings []string, err error
 	return _c
 }
 
-func (_c *Filter_GetExpectedStringSlice_Call) RunAndReturn(run func(filterType domain.FilterType) ([]string, error)) *Filter_GetExpectedStringSlice_Call {
+func (_c *Filter_GetExpectedStringSlice_Call) RunAndReturn(run func(ctx context.Context, filterType domain.FilterType) ([]string, error)) *Filter_GetExpectedStringSlice_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetExpectedValue provides a mock function for the type Filter
-func (_mock *Filter) GetExpectedValue(filterType domain.FilterType) any {
-	ret := _mock.Called(filterType)
+func (_mock *Filter) GetExpectedValue(ctx context.Context, filterType domain.FilterType) any {
+	ret := _mock.Called(ctx, filterType)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetExpectedValue")
 	}
 
 	var r0 any
-	if returnFunc, ok := ret.Get(0).(func(domain.FilterType) any); ok {
-		r0 = returnFunc(filterType)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.FilterType) any); ok {
+		r0 = returnFunc(ctx, filterType)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(any)
@@ -228,19 +241,25 @@ type Filter_GetExpectedValue_Call struct {
 }
 
 // GetExpectedValue is a helper method to define mock.On call
+//   - ctx context.Context
 //   - filterType domain.FilterType
-func (_e *Filter_Expecter) GetExpectedValue(filterType interface{}) *Filter_GetExpectedValue_Call {
-	return &Filter_GetExpectedValue_Call{Call: _e.mock.On("GetExpectedValue", filterType)}
+func (_e *Filter_Expecter) GetExpectedValue(ctx interface{}, filterType interface{}) *Filter_GetExpectedValue_Call {
+	return &Filter_GetExpectedValue_Call{Call: _e.mock.On("GetExpectedValue", ctx, filterType)}
 }
 
-func (_c *Filter_GetExpectedValue_Call) Run(run func(filterType domain.FilterType)) *Filter_GetExpectedValue_Call {
+func (_c *Filter_GetExpectedValue_Call) Run(run func(ctx context.Context, filterType domain.FilterType)) *Filter_GetExpectedValue_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 domain.FilterType
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(domain.FilterType)
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 domain.FilterType
+		if args[1] != nil {
+			arg1 = args[1].(domain.FilterType)
 		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -251,7 +270,72 @@ func (_c *Filter_GetExpectedValue_Call) Return(v any) *Filter_GetExpectedValue_C
 	return _c
 }
 
-func (_c *Filter_GetExpectedValue_Call) RunAndReturn(run func(filterType domain.FilterType) any) *Filter_GetExpectedValue_Call {
+func (_c *Filter_GetExpectedValue_Call) RunAndReturn(run func(ctx context.Context, filterType domain.FilterType) any) *Filter_GetExpectedValue_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetReaderValue provides a mock function for the type Filter
+func (_mock *Filter) GetReaderValue(ctx context.Context, filterType domain.FilterType, obj any) any {
+	ret := _mock.Called(ctx, filterType, obj)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetReaderValue")
+	}
+
+	var r0 any
+	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.FilterType, any) any); ok {
+		r0 = returnFunc(ctx, filterType, obj)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(any)
+		}
+	}
+	return r0
+}
+
+// Filter_GetReaderValue_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetReaderValue'
+type Filter_GetReaderValue_Call struct {
+	*mock.Call
+}
+
+// GetReaderValue is a helper method to define mock.On call
+//   - ctx context.Context
+//   - filterType domain.FilterType
+//   - obj any
+func (_e *Filter_Expecter) GetReaderValue(ctx interface{}, filterType interface{}, obj interface{}) *Filter_GetReaderValue_Call {
+	return &Filter_GetReaderValue_Call{Call: _e.mock.On("GetReaderValue", ctx, filterType, obj)}
+}
+
+func (_c *Filter_GetReaderValue_Call) Run(run func(ctx context.Context, filterType domain.FilterType, obj any)) *Filter_GetReaderValue_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 domain.FilterType
+		if args[1] != nil {
+			arg1 = args[1].(domain.FilterType)
+		}
+		var arg2 any
+		if args[2] != nil {
+			arg2 = args[2].(any)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *Filter_GetReaderValue_Call) Return(v any) *Filter_GetReaderValue_Call {
+	_c.Call.Return(v)
+	return _c
+}
+
+func (_c *Filter_GetReaderValue_Call) RunAndReturn(run func(ctx context.Context, filterType domain.FilterType, obj any) any) *Filter_GetReaderValue_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -371,16 +455,16 @@ func (_c *Filter_RegisterReader_Call) RunAndReturn(run func(entityType reflect.T
 }
 
 // Validate provides a mock function for the type Filter
-func (_mock *Filter) Validate(filterType domain.FilterType, v any) bool {
-	ret := _mock.Called(filterType, v)
+func (_mock *Filter) Validate(context1 context.Context, filterType domain.FilterType, v any) bool {
+	ret := _mock.Called(context1, filterType, v)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Validate")
 	}
 
 	var r0 bool
-	if returnFunc, ok := ret.Get(0).(func(domain.FilterType, any) bool); ok {
-		r0 = returnFunc(filterType, v)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.FilterType, any) bool); ok {
+		r0 = returnFunc(context1, filterType, v)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
@@ -393,17 +477,80 @@ type Filter_Validate_Call struct {
 }
 
 // Validate is a helper method to define mock.On call
+//   - context1 context.Context
 //   - filterType domain.FilterType
 //   - v any
-func (_e *Filter_Expecter) Validate(filterType interface{}, v interface{}) *Filter_Validate_Call {
-	return &Filter_Validate_Call{Call: _e.mock.On("Validate", filterType, v)}
+func (_e *Filter_Expecter) Validate(context1 interface{}, filterType interface{}, v interface{}) *Filter_Validate_Call {
+	return &Filter_Validate_Call{Call: _e.mock.On("Validate", context1, filterType, v)}
 }
 
-func (_c *Filter_Validate_Call) Run(run func(filterType domain.FilterType, v any)) *Filter_Validate_Call {
+func (_c *Filter_Validate_Call) Run(run func(context1 context.Context, filterType domain.FilterType, v any)) *Filter_Validate_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 domain.FilterType
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(domain.FilterType)
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 domain.FilterType
+		if args[1] != nil {
+			arg1 = args[1].(domain.FilterType)
+		}
+		var arg2 any
+		if args[2] != nil {
+			arg2 = args[2].(any)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *Filter_Validate_Call) Return(b bool) *Filter_Validate_Call {
+	_c.Call.Return(b)
+	return _c
+}
+
+func (_c *Filter_Validate_Call) RunAndReturn(run func(context1 context.Context, filterType domain.FilterType, v any) bool) *Filter_Validate_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ValidateAll provides a mock function for the type Filter
+func (_mock *Filter) ValidateAll(ctx context.Context, data any) bool {
+	ret := _mock.Called(ctx, data)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ValidateAll")
+	}
+
+	var r0 bool
+	if returnFunc, ok := ret.Get(0).(func(context.Context, any) bool); ok {
+		r0 = returnFunc(ctx, data)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+	return r0
+}
+
+// Filter_ValidateAll_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ValidateAll'
+type Filter_ValidateAll_Call struct {
+	*mock.Call
+}
+
+// ValidateAll is a helper method to define mock.On call
+//   - ctx context.Context
+//   - data any
+func (_e *Filter_Expecter) ValidateAll(ctx interface{}, data interface{}) *Filter_ValidateAll_Call {
+	return &Filter_ValidateAll_Call{Call: _e.mock.On("ValidateAll", ctx, data)}
+}
+
+func (_c *Filter_ValidateAll_Call) Run(run func(ctx context.Context, data any)) *Filter_ValidateAll_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
 		}
 		var arg1 any
 		if args[1] != nil {
@@ -417,63 +564,12 @@ func (_c *Filter_Validate_Call) Run(run func(filterType domain.FilterType, v any
 	return _c
 }
 
-func (_c *Filter_Validate_Call) Return(b bool) *Filter_Validate_Call {
-	_c.Call.Return(b)
-	return _c
-}
-
-func (_c *Filter_Validate_Call) RunAndReturn(run func(filterType domain.FilterType, v any) bool) *Filter_Validate_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// ValidateAll provides a mock function for the type Filter
-func (_mock *Filter) ValidateAll(v any) bool {
-	ret := _mock.Called(v)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ValidateAll")
-	}
-
-	var r0 bool
-	if returnFunc, ok := ret.Get(0).(func(any) bool); ok {
-		r0 = returnFunc(v)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-	return r0
-}
-
-// Filter_ValidateAll_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ValidateAll'
-type Filter_ValidateAll_Call struct {
-	*mock.Call
-}
-
-// ValidateAll is a helper method to define mock.On call
-//   - v any
-func (_e *Filter_Expecter) ValidateAll(v interface{}) *Filter_ValidateAll_Call {
-	return &Filter_ValidateAll_Call{Call: _e.mock.On("ValidateAll", v)}
-}
-
-func (_c *Filter_ValidateAll_Call) Run(run func(v any)) *Filter_ValidateAll_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 any
-		if args[0] != nil {
-			arg0 = args[0].(any)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
 func (_c *Filter_ValidateAll_Call) Return(b bool) *Filter_ValidateAll_Call {
 	_c.Call.Return(b)
 	return _c
 }
 
-func (_c *Filter_ValidateAll_Call) RunAndReturn(run func(v any) bool) *Filter_ValidateAll_Call {
+func (_c *Filter_ValidateAll_Call) RunAndReturn(run func(ctx context.Context, data any) bool) *Filter_ValidateAll_Call {
 	_c.Call.Return(run)
 	return _c
 }

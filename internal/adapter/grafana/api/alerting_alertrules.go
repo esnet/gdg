@@ -1,216 +1,27 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"log"
 	"log/slog"
-	"reflect"
-	"regexp"
 	"strings"
 
-	"github.com/esnet/gdg/internal/adapter/filters/v2"
-	configDomain "github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/gosimple/slug"
-	"github.com/samber/lo"
-	"github.com/tidwall/gjson"
-
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
+	"github.com/samber/lo"
+	"github.com/tidwall/sjson"
 )
 
-func setupAlertRulesReaders(filterObj ports.Filter, grafanaSvc ports.GrafanaService) {
-	// Object Reader
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.AlertRuleWithNestedFolder](), func(filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(*domain.AlertRuleWithNestedFolder)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
-		switch filterType {
-		case domain.Name:
-			return ptr.ValueOrDefault(val.Title, ""), nil
-		case domain.FolderFilter:
-			return val.NestedPath, nil
-		case domain.TagsFilter:
-			return val.Labels, nil
-		default:
-			return nil, fmt.Errorf("unsupported data type")
-		}
-	})
-	if err != nil {
-		log.Fatalf("unable to register a valid Alert Rule for alert rules filter. %v", err)
-	}
+type contextKey string
 
-	// Raw Reader
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
-		switch filterType {
-		case domain.Name:
-			{
-				r := gjson.GetBytes(val, "title")
-				if !r.Exists() || r.IsArray() {
-					return nil, errors.New("no valid rule name was found")
-				}
-				return r.String(), nil
-			}
-		case domain.FolderFilter:
-			{
-				r := gjson.GetBytes(val, "folderUID")
-				if !r.Exists() || r.IsArray() {
-					return DefaultFolderName, nil
-				}
-				folderUid := r.String()
-				folderObj, folderErr := grafanaSvc.(*DashNGoImpl).getFolderByUid(folderUid)
-				if folderErr != nil {
-					return nil, folderErr
-				}
-				return folderObj.NestedPath, nil
-			}
-		case domain.TagsFilter:
-			{
-				slog.Info("Trying to read labels filter")
-				r := gjson.GetBytes(val, "labels")
-				data := make(map[string]string)
-				if !r.Exists() || r.IsArray() {
-					slog.Debug("unable to read rules labels")
-					return data, nil
-				}
-				ar := r.Map()
-				for k, v := range ar {
-					data[k] = v.String()
-				}
-				return data, nil
-			}
-
-		default:
-			return nil, fmt.Errorf("unsupported data type")
-		}
-	})
-	if err != nil {
-		log.Fatalf("unable to register a valid byte reader for alert rules filter")
-	}
-}
-
-// NewAlertRuleFilter creates and configures a new Filter for alert rules. It registers readers and validations
-// for both typed alert rule objects and raw byte data, supporting folder-based and label-based filtering.
-// Folder filtering uses regex matching against monitored folders from configuration or an explicit folder override.
-// Label filtering expects labels in "key=value" format. The function terminates the process if reader registration fails.
-func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc ports.GrafanaService, filterEntities domain.AlertRuleFilterParams) ports.Filter {
-	filterObj := v2.NewBaseFilter()
-	// Define how we read data
-	setupAlertRulesReaders(filterObj, grafanaSvc)
-	err := filterObj.RegisterDataProcessor(domain.FolderFilter, domain.ProcessorEntity{
-		Name: "folderQuoteRegEx",
-		Processor: func(item any) (any, error) {
-			switch w := item.(type) {
-			case string:
-				slog.Debug("folder quote filter applied to string")
-				quoteRegex, _ := regexp.Compile("['\"]+")
-				w = quoteRegex.ReplaceAllString(w, "")
-				return w, nil
-			case []string:
-				slog.Debug("folder quote filter applied to []string")
-				return lo.Map(w, func(i string, index int) string {
-					quoteRegex, _ := regexp.Compile("['\"]+")
-					i = quoteRegex.ReplaceAllString(i, "")
-					return i
-				}), nil
-			}
-			return item, nil
-		},
-	})
-	if err != nil {
-		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
-	}
-
-	// Define the rules we enforce
-	// Folder Behavior
-	var folderArr []string
-	if filterEntities.IgnoreWatchedFolders {
-		if filterEntities.Folder != "" {
-			folderArr = []string{filterEntities.Folder}
-		} else {
-			folderArr = []string{".*"}
-		}
-	} else {
-		folderArr = cfg.GetDefaultGrafanaConfig().GetMonitoredFolders(false)
-		if filterEntities.Folder != "" {
-			folderArr = []string{filterEntities.Folder}
-		}
-	}
-
-	filterObj.AddValidation(domain.FolderFilter, func(value any, expected any) error {
-		//if filterEntities.IgnoreWatchedFolders && filterEntities.Folder == "" {
-		//	return nil
-		//}
-		val, expressions, convErr := v2.GetMismatchParams[string, []string](value, expected, domain.FolderFilter)
-		if convErr != nil {
-			return convErr
-		}
-		for _, exp := range expressions {
-			r, ReErr := regexp.Compile(exp)
-			if ReErr != nil {
-				return fmt.Errorf("invalid regex: %s", exp)
-			}
-			if r.MatchString(val) {
-				return nil
-			}
-		}
-
-		return fmt.Errorf("invalid folder filter. Expected: %v", expressions)
-	}, folderArr)
-
-	filterObj.AddValidation(domain.Name, func(value any, expected any) error {
-		val, expressions, convErr := v2.GetParams[string](value, expected, domain.Name)
-		if convErr != nil {
-			return convErr
-		}
-		//no filter active
-		if expressions == "" {
-			return nil
-		}
-		if expected == val {
-			return nil
-		}
-
-		return fmt.Errorf("invalid folder filter. Expected: %v", expressions)
-	}, filterEntities.Name)
-
-	// Tags
-	filterObj.AddValidation(domain.TagsFilter, func(value any, expected any) error {
-		val, exp, convErr := v2.GetMismatchParams[map[string]string, []string](value, expected, domain.TagsFilter)
-
-		if convErr != nil {
-			return convErr
-		}
-		// no filter active, returning nil
-		if len(exp) == 0 {
-			return nil
-		}
-		for _, labelFilterVal := range exp {
-			elements := strings.Split(labelFilterVal, "=")
-			if len(elements) != 2 {
-				return fmt.Errorf("invalid label format, key=value expected")
-			}
-			entryKey := strings.TrimSpace(elements[0])
-			entryValue := strings.TrimSpace(elements[1])
-
-			if val[entryKey] == entryValue {
-				return nil
-			}
-		}
-
-		return fmt.Errorf("failed validation test val:%s  expected: %s", val, exp)
-	}, filterEntities.Label)
-
-	return filterObj
-}
+const (
+	fileContextKey contextKey = "file"
+)
 
 func (s *DashNGoImpl) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	data, err := s.GetClient().Provisioning.GetAlertRules()
@@ -229,7 +40,14 @@ func (s *DashNGoImpl) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWi
 		if folder, ok := folderUidMap[ptr.ValueOrDefault(item.FolderUID, "")]; ok {
 			entry.NestedPath = folder.NestedPath
 		}
-		if filter == nil || filter.ValidateAll(entry) {
+		file := getDestinationFilePath(s.grafanaConf, entry, s.isLocal(), s)
+		folderNameLocation, err := getFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		if err != nil {
+			slog.Error(fmt.Sprintf("unable to determine alert rule folder name, falling back on default, %v", err))
+			continue
+		}
+		ctx := getFilterContext(folderNameLocation)
+		if filter == nil || filter.ValidateAll(ctx, entry) {
 			results = append(results, entry)
 		}
 	}
@@ -237,9 +55,27 @@ func (s *DashNGoImpl) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWi
 	return results, nil
 }
 
-func (s *DashNGoImpl) UploadAlertRules(filter ports.Filter) error {
+// getDestinationFilePath constructs the full file path for an alert rule JSON file based on the Grafana configuration,
+// the alert rule's nested folder path, and whether the output is for local storage or should be cleared.
+func getDestinationFilePath(grafanaConf *config_domain.GrafanaConfig, entry *domain.AlertRuleWithNestedFolder, local bool, s ports.GrafanaService) string {
+	base := BuildResourceFolder(grafanaConf, entry.NestedPath, domain.AlertingRulesResource, local, false)
+	file := fmt.Sprintf("%s/%s.json", base, slug.Make(ptr.ValueOrDefault(entry.Title, "no-name")))
+
+	return file
+}
+
+// getFilterContext creates and returns a context populated with the given file path, Grafana configuration, and storage.
+func getFilterContext(file string) context.Context {
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, fileContextKey, file)
+
+	return ctx
+}
+
+func (s *DashNGoImpl) UploadAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	// TODO: once filtering in enabled we should delete any rules that we're not tracking in the folders that gdg manages
 	var (
+		success   []*domain.AlertRuleWithNestedFolder
 		err       error
 		rawEntity []byte
 	)
@@ -247,11 +83,11 @@ func (s *DashNGoImpl) UploadAlertRules(filter ports.Filter) error {
 	rulesPath := s.grafanaConf.GetPath(domain.AlertingRulesResource, s.grafanaConf.GetOrganizationName())
 	filesInDir, err := s.storage.FindAllFiles(rulesPath, true)
 	if err != nil {
-		return fmt.Errorf("unable to find any rules to export from storage engine, err: %w", err)
+		return nil, fmt.Errorf("unable to find any rules to export from storage engine, err: %w", err)
 	}
 	currentRules, err := s.ListAlertRules(filter)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	m := lo.Associate(currentRules, func(item *domain.AlertRuleWithNestedFolder) (string, *domain.AlertRuleWithNestedFolder) {
 		return item.UID, item
@@ -266,19 +102,41 @@ func (s *DashNGoImpl) UploadAlertRules(filter ports.Filter) error {
 			slog.Warn("Unable to read file", "filename", file, "err", err)
 			continue
 		}
-		if filter != nil && !filter.ValidateAll(rawEntity) {
+
+		folderNameLocation, err := getFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		if err != nil {
+			slog.Debug("unable to determine alert rule folder name", "err", err)
+		}
+		ctx := getFilterContext(folderNameLocation)
+
+		if filter != nil && !filter.ValidateAll(ctx, rawEntity) {
 			slog.Debug("Skipping file, failed alert rule filter", "file", file)
+			continue
+		}
+		folderUidRaw := filter.GetReaderValue(ctx, domain.FolderFilter, rawEntity)
+		var folderUid string
+		var ok bool
+		if folderUid, ok = folderUidRaw.(string); !ok {
+			slog.Error("Could not retrieve folder ID, skipping", "file", file)
+			continue
+		}
+
+		rawEntity, err = s.alertRulesFolderResolver(ctx, folderUid, rawEntity, file)
+		if err != nil {
+			slog.Error("failed sanity check for alert rule folder. Skipping", "file", file)
 			continue
 		}
 		entity := new(domain.AlertRuleWithNestedFolder)
 		if err = json.Unmarshal(rawEntity, &entity); err != nil {
-			return fmt.Errorf("failed to unmarshall file, file:%s, err: %w", file, err)
+			slog.Error("failed to unmarshall file.", "file", file, "err", err)
+			continue
 		}
 
 		if _, ok := m[entity.UID]; ok {
 			p := provisioning.NewPutAlertRuleParams()
 			p.Body = entity.ProvisionedAlertRule
 			p.UID = entity.UID
+
 			p.XDisableProvenance = new("true")
 			_, err = s.GetClient().Provisioning.PutAlertRule(p)
 		} else {
@@ -289,10 +147,43 @@ func (s *DashNGoImpl) UploadAlertRules(filter ports.Filter) error {
 		}
 		if err != nil {
 			slog.Error("unable to import rule", "uid", entity.UID, "err", err)
+		} else {
+			success = append(success, entity)
 		}
 	}
 
-	return nil
+	return success, nil
+}
+
+// Create a Folder Resolver to be invoked by AlertRules
+func (s *DashNGoImpl) alertRulesFolderResolver(ctx context.Context, folderUid string, rawEntity []byte, file string) ([]byte, error) {
+	folderNameLocation, fileLocationErr := getFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+	if fileLocationErr != nil {
+		fmt.Printf("unable to determine alert rule folder name, %v", fileLocationErr)
+	}
+	folderObj, folderErr := s.getFolderByUid(folderUid)
+	if folderErr != nil && fileLocationErr != nil {
+		return nil, fmt.Errorf("unable to proceed, folder does not exist and unable to look up name from file path. %v, %v", folderErr, fileLocationErr)
+	}
+	folderByPath, folderPathLookupErr := s.getFolderByNestedPath(folderNameLocation, nil)
+	// Folder exists but with a different UID
+	if folderErr != nil && folderPathLookupErr == nil {
+		return sjson.SetBytes(rawEntity, "folderUID", folderByPath.UID)
+	}
+	if folderErr != nil {
+		_, err := s.createdFoldersWithBaseUID(folderNameLocation, folderUid)
+		if err != nil {
+			return nil, fmt.Errorf("unable to proceed, could not create missing folder with UID: %s and path: %s. folderPathLookupErr: %v", folderUid, folderNameLocation, err)
+		}
+		return rawEntity, nil
+	}
+	// At this point we should have a valid folder lookup and file path lookup.
+	if !strings.EqualFold(folderObj.NestedPath, folderNameLocation) {
+		return nil, fmt.Errorf("invalid state, folder exists but does not have the expected path. %s, %s", folderObj.NestedPath, folderNameLocation)
+	}
+
+	// everything looks good we can proceed
+	return rawEntity, nil
 }
 
 func (s *DashNGoImpl) DownloadAlertRules(filter ports.Filter) ([]string, error) {
@@ -306,8 +197,7 @@ func (s *DashNGoImpl) DownloadAlertRules(filter ports.Filter) ([]string, error) 
 	}
 	var savedFiles []string
 	for _, link := range data {
-		base := BuildResourceFolder(s.grafanaConf, link.NestedPath, domain.AlertingRulesResource, s.isLocal(), s.GetGlobals().ClearOutput)
-		fileName := fmt.Sprintf("%s/%s.json", base, slug.Make(ptr.ValueOrDefault(link.Title, "no-name")))
+		fileName := getDestinationFilePath(s.grafanaConf, link, s.isLocal(), s)
 		if dsPacked, err = json.MarshalIndent(link, "", "	"); err != nil {
 			return nil, fmt.Errorf("unable to serialize data to JSON. %w", err)
 		}
@@ -334,7 +224,7 @@ func (s *DashNGoImpl) ClearAlertRules(filter ports.Filter) ([]string, error) {
 			slog.Error("unable to delete rule", "rule", rule.UID)
 			continue
 		}
-		data = append(data, ptr.ValueOrDefault(rule.Title, ""))
+		data = append(data, fmt.Sprintf("%s/%s", rule.NestedPath, ptr.ValueOrDefault(rule.Title, "")))
 	}
 
 	return data, nil
