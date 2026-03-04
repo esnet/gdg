@@ -11,7 +11,7 @@ toc: true
 ## Release Notes for v0.9.3
 
 ### Changes
-
+  - [563](https://github.com/esnet/gdg/issues/532) Adding TUI for S3 configuration
   - [#557](https://github.com/esnet/gdg/pull/560) Adding support for patching folder UID when missing and folder auto-creation.
   - [#557](https://github.com/esnet/gdg/pull/557) Adds label and folder based filtering to alert rules.
   - [#559](https://github.com/esnet/gdg/pull/559) Adds ~~name~~ UID based filtering to alert rules.
