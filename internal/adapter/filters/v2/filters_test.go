@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"slices"
@@ -17,7 +18,7 @@ import (
 )
 
 func setupReaders(t *testing.T, v ports.Filter) {
-	err := v.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(filterType domain.FilterType, a any) (any, error) {
+	err := v.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -36,7 +37,7 @@ func setupReaders(t *testing.T, v ports.Filter) {
 	})
 	assert.NoError(t, err)
 
-	err = v.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain.FilterType, a any) (any, error) {
+	err = v.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -84,7 +85,7 @@ func TestFilters(t *testing.T) {
 	var v ports.Filter = NewBaseFilter()
 	setupReaders(t, v)
 
-	v.AddValidation(domain.TagsFilter, func(item any, expected any) error {
+	v.AddValidation(domain.TagsFilter, func(ctx context.Context, item any, expected any) error {
 		itemObj, itemOk := item.([]string)
 		if !itemOk {
 			return fmt.Errorf("item was not a slice")
@@ -110,7 +111,7 @@ func TestFilters(t *testing.T) {
 
 	err := v.RegisterDataProcessor(domain.TagsFilter, domain.ProcessorEntity{
 		Name: "Space Remover",
-		Processor: func(item any) (any, error) {
+		Processor: func(ctx context.Context, item any) (any, error) {
 			val, ok := item.([]string)
 			if !ok {
 				return val, fmt.Errorf("invalid data format received")
@@ -124,17 +125,18 @@ func TestFilters(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	assert.True(t, v.Validate(domain.TagsFilter, obj))
-	assert.True(t, v.ValidateAll(obj))
+	ctx := context.Background()
+	assert.True(t, v.Validate(ctx, domain.TagsFilter, obj))
+	assert.True(t, v.ValidateAll(ctx, obj))
 
-	strVal := v.GetExpectedString(domain.TagsFilter)
+	strVal := v.GetExpectedString(ctx, domain.TagsFilter)
 	assert.Equal(t, "[netsage Ho]", strVal)
 	// no data
-	strVal = v.GetExpectedString(domain.DashFilter)
+	strVal = v.GetExpectedString(ctx, domain.DashFilter)
 	assert.Equal(t, "", strVal)
 	//
-	assert.Nil(t, v.GetExpectedValue(domain.DashFilter))
-	anyVal := v.GetExpectedValue(domain.TagsFilter)
+	assert.Nil(t, v.GetExpectedValue(ctx, domain.DashFilter))
+	anyVal := v.GetExpectedValue(ctx, domain.TagsFilter)
 	anyArr, ok := anyVal.([]string)
 	assert.True(t, ok)
 	assert.Equal(t, []string{"netsage", "Ho"}, anyArr)

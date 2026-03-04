@@ -97,7 +97,6 @@ func TestDashboardCloudCRUD(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
-	// defer cleanup, "Failed to cleanup test containers for %s", t.Name())
 	// Wipe all data from grafana
 	dashFilter := api.NewDashboardFilter(cfg, "", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)
@@ -154,7 +153,6 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
-	// defer cleanup, "Failed to clean up test containers for %s", t.Name())
 	// Wipe all data from grafana
 	dashFilter := api.NewDashboardFilter(cfg, "", "", "")
 	apiClient.DeleteAllDashboards(dashFilter)

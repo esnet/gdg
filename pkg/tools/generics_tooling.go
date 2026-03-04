@@ -44,3 +44,13 @@ func CreateDestinationPath(folderName string, clearOutput bool, v string) {
 		log.Fatalf("unable to create path %s, err: %s", v, err.Error())
 	}
 }
+
+// ReverseLookUp Creates a reverse look up map, where the values are the keys and the keys are the values.
+func ReverseLookUp[T comparable, Y comparable](m map[T]Y) map[Y]T {
+	reverse := make(map[Y]T)
+	for key, val := range m {
+		reverse[val] = key
+	}
+
+	return reverse
+}

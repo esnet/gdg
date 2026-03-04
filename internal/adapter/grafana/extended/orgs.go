@@ -14,7 +14,7 @@ import (
 
 // GetConfiguredOrgId needed to call grafana API in order to configure the Grafana API correctly.  Invoking
 // this endpoint manually to avoid a circular dependency.
-func (extended *ExtendedApi) GetConfiguredOrgId(orgName string) (int64, error) {
+func (extended *Api) GetConfiguredOrgId(orgName string) (int64, error) {
 	var result []*models.UserOrgDTO
 	fetch := func() error {
 		req := extended.getRequestBuilder().

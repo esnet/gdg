@@ -83,7 +83,7 @@ gdg backup alerting rules clear -- Clear all rules
   - `--folder string`            filter by folder
   - `--ignore-watched-folders`   Default to false, but if passed then will only operate on the list of folders listed in the configuration file
   - `--label stringArray`        Filter by label name value pair. (Additive behavior dashboard includes: label1 AND label2).  ex --label env=staging
-  - `--name string`              filter by name
+  - `--uid string`               filter by rule uid
 
 
 {{< details "Example Output:" >}}

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,7 +13,7 @@ import (
 	"sort"
 	"strings"
 
-	v3 "github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/samber/lo"
@@ -26,7 +27,7 @@ import (
 )
 
 func setupUserReaders(filterObj ports.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.UserSearchHitDTO](), func(filterType domain.FilterType, a any) (any, error) {
+	err := filterObj.RegisterReader(reflect.TypeFor[models.UserSearchHitDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.UserSearchHitDTO)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -42,7 +43,7 @@ func setupUserReaders(filterObj ports.Filter) {
 	if err != nil {
 		log.Fatalf("Unable to create a valid User Filter, obj reader failed, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(filterType domain.FilterType, a any) (any, error) {
+	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.([]byte)
 		if !ok {
 			return nil, fmt.Errorf("unsupported data type")
@@ -70,14 +71,14 @@ func setupUserReaders(filterObj ports.Filter) {
 }
 
 func NewUserFilter(label string) ports.Filter {
-	filterEntity := v3.NewBaseFilter()
+	filterEntity := v2.NewBaseFilter()
 	setupUserReaders(filterEntity)
 	var labelArray []string
 	if label != "" {
 		labelArray = []string{label}
 	}
-	filterEntity.AddValidation(domain.AuthLabel, func(value any, expected any) error {
-		val, expectedList, convErr := v3.GetParams[[]string](value, expected, domain.FolderFilter)
+	filterEntity.AddValidation(domain.AuthLabel, func(ctx context.Context, value any, expected any) error {
+		val, expectedList, convErr := v2.GetParams[[]string](value, expected, domain.FolderFilter)
 		if convErr != nil {
 			return convErr
 		}
@@ -162,7 +163,7 @@ func (s *DashNGoImpl) UploadUsers(filter ports.Filter) []domain.UserProfileWithA
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
-			if !filter.Validate(domain.AuthLabel, rawUser) {
+			if !filter.Validate(context.Background(), domain.AuthLabel, rawUser) {
 				slog.Debug("User failed filter on auth label, skipping", "file", fileLocation)
 				continue
 			}
@@ -231,7 +232,7 @@ func (s *DashNGoImpl) ListUsers(filter ports.Filter) []*models.UserSearchHitDTO 
 	for _, entry := range usersList.GetPayload() {
 		if len(entry.AuthLabels) == 0 {
 			filteredUsers = append(filteredUsers, entry)
-		} else if filter.ValidateAll(entry) {
+		} else if filter.ValidateAll(context.Background(), entry) {
 			filteredUsers = append(filteredUsers, entry)
 		}
 	}
@@ -264,7 +265,7 @@ func (s *DashNGoImpl) DeleteAllUsers(filter ports.Filter) []string {
 // PromoteUser promote the user to have Admin Access
 func (s *DashNGoImpl) PromoteUser(userLogin string) (string, error) {
 	// Get all users
-	userListing := s.ListUsers(v3.NewBaseFilter())
+	userListing := s.ListUsers(v2.NewBaseFilter())
 	var user *models.UserSearchHitDTO
 	for ndx, item := range userListing {
 		if item.Email == userLogin {

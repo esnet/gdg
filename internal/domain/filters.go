@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -10,14 +11,15 @@ const (
 	FolderFilter        FilterType = "FolderFilter"
 	AlertRuleFilterType            = "AlertRuleFilter"
 	Name                FilterType = "Name"
+	UID                 FilterType = "UID"
 	ConnectionName      FilterType = "ConnectionName" // used for Connection name
 	AuthLabel           FilterType = "AuthLabel"
 	OrgFilter           FilterType = "OrgFilter"
 )
 
 type (
-	InputValidation func(value any, expected any) error
-	Processor       func(item any) (any, error)
+	InputValidation func(ctx context.Context, value any, expected any) error
+	Processor       func(ctx context.Context, item any) (any, error)
 )
 
 type ProcessorEntity struct {
@@ -35,7 +37,7 @@ func (p ProcessorEntity) Validate() error {
 	return nil
 }
 
-type FilterReader func(FilterType, any) (any, error)
+type FilterReader func(context.Context, FilterType, any) (any, error)
 
 // FilterType Currently supported filters
 type FilterType string

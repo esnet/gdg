@@ -14,7 +14,7 @@ func TestAssets(t *testing.T) {
 	file, err := GetFile("gdg-example.yml")
 	is.NoErr(err)
 	is.True(strings.Contains(file, "storage_engine"))
-	//failing test
+	// failing test
 	file, err = GetFile("dummy")
 	is.True(err != nil)
 	is.Equal(err.Error(), "open dummy: file does not exist")

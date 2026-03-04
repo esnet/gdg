@@ -3816,20 +3816,31 @@ func (_c *GrafanaService_UploadAlertNotifications_Call) RunAndReturn(run func() 
 }
 
 // UploadAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadAlertRules(filter ports.Filter) error {
+func (_mock *GrafanaService) UploadAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UploadAlertRules")
 	}
 
-	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) error); ok {
+	var r0 []*domain.AlertRuleWithNestedFolder
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
+		return returnFunc(filter)
+	}
+	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.AlertRuleWithNestedFolder); ok {
 		r0 = returnFunc(filter)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
+		}
 	}
-	return r0
+	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+		r1 = returnFunc(filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
 }
 
 // GrafanaService_UploadAlertRules_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadAlertRules'
@@ -3856,12 +3867,12 @@ func (_c *GrafanaService_UploadAlertRules_Call) Run(run func(filter ports.Filter
 	return _c
 }
 
-func (_c *GrafanaService_UploadAlertRules_Call) Return(err error) *GrafanaService_UploadAlertRules_Call {
-	_c.Call.Return(err)
+func (_c *GrafanaService_UploadAlertRules_Call) Return(alertRuleWithNestedFolders []*domain.AlertRuleWithNestedFolder, err error) *GrafanaService_UploadAlertRules_Call {
+	_c.Call.Return(alertRuleWithNestedFolders, err)
 	return _c
 }
 
-func (_c *GrafanaService_UploadAlertRules_Call) RunAndReturn(run func(filter ports.Filter) error) *GrafanaService_UploadAlertRules_Call {
+func (_c *GrafanaService_UploadAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *GrafanaService_UploadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }

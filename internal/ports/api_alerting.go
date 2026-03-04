@@ -17,7 +17,7 @@ type AlertRules interface {
 	DownloadAlertRules(filter Filter) ([]string, error)
 	ListAlertRules(filter Filter) ([]*customModels.AlertRuleWithNestedFolder, error)
 	ClearAlertRules(filter Filter) ([]string, error)
-	UploadAlertRules(filter Filter) error
+	UploadAlertRules(filter Filter) ([]*customModels.AlertRuleWithNestedFolder, error)
 }
 
 type AlertContactPoints interface {

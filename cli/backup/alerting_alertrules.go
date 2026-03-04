@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"sort"
+	"strings"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
@@ -23,7 +25,7 @@ func getAlertRulesFilter(cfg *config_domain.GDGAppConfiguration, grafanaService 
 	f := appDomain.AlertRuleFilterParams{}
 	f.Folder, _ = command.Flags().GetString("folder")
 	f.Label, _ = command.Flags().GetStringArray("label")
-	f.Name, _ = command.Flags().GetString("name")
+	f.UID, _ = command.Flags().GetString("uid")
 	f.IgnoreWatchedFolders, _ = command.Flags().GetBool("ignore-watched-folders")
 
 	return f, api.NewAlertRuleFilter(cfg, grafanaService, f)
@@ -42,7 +44,7 @@ func newAlertingRulesCommand() simplecobra.Commander {
 			cmd.Aliases = []string{"rule", "alert-rules", "alert-rule"}
 			cmd.PersistentFlags().Bool("ignore-watched-folders", false, "Default to false, but if passed then will only operate on the list of folders listed in the configuration file")
 			cmd.PersistentFlags().String("folder", "", "filter by folder")
-			cmd.PersistentFlags().String("name", "", "filter by name")
+			cmd.PersistentFlags().String("uid", "", "filter by uid")
 			cmd.PersistentFlags().StringArray("label", []string{}, "Filter by label name value pair. (Additive behavior dashboard includes: label1 AND label2).  ex --label env=staging")
 		},
 		CommandsList: []simplecobra.Commander{
@@ -70,19 +72,46 @@ func newUploadAlertRulesCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			filtersList, rulesFilter := getAlertRulesFilter(rootCmd.ConfigSvc(), rootCmd.GrafanaSvc(), cd.CobraCommand)
-			rootCmd.TableObj.AppendHeader(table.Row{"uid"})
 			slog.Info("Uploading all alert rules for context",
 				slog.String("folder", filtersList.Folder),
 				slog.Any("labelFilter", filtersList.Label),
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			err := rootCmd.GrafanaSvc().UploadAlertRules(rulesFilter)
+			rootCmd.TableObj.AppendHeader(table.Row{"name", "uid", "folder", "ruleGroup", "Labels", "For"})
+			rules, err := rootCmd.GrafanaSvc().UploadAlertRules(rulesFilter)
 			if err != nil {
 				slog.Error("unable to upload Org's rule alerts", slog.Any("err", err))
 				return nil
 			}
-			slog.Info("Rules have been successfully uploaded to grafana")
+			if len(rules) == 0 {
+				slog.Info("No alert rules found")
+			} else {
+				slog.Info("Rules have been successfully uploaded to Grafana", "rulesCount", len(rules))
+				sortRules(rules)
+				for _, link := range rules {
+
+					var labels string
+					if len(link.Labels) > 0 {
+						raw, jsonErr := json.Marshal(link.Labels)
+						if jsonErr != nil {
+							slog.Warn("unable to marshal labels", slog.Any("err", jsonErr))
+						}
+						labels = string(raw)
+					}
+
+					rootCmd.TableObj.AppendRow(table.Row{
+						ptr.ValueOrDefault(link.Title, ""),
+						link.UID,
+						link.NestedPath,
+						ptr.ValueOrDefault(link.RuleGroup, ""),
+						labels,
+						ptr.ValueOrDefault(link.For, strfmt.Duration(0)),
+					})
+				}
+				rootCmd.Render(cd.CobraCommand, rules)
+			}
+
 			return nil
 		},
 	}
@@ -127,6 +156,19 @@ func newClearAlertRulesCmd() simplecobra.Commander {
 		},
 	}
 }
+func sortRules(rules []*appDomain.AlertRuleWithNestedFolder) {
+	sort.Slice(rules, func(i, j int) bool {
+		folderA := strings.ToLower(rules[i].NestedPath)
+		folderB := strings.ToLower(rules[j].NestedPath)
+		if folderA != folderB {
+			return folderA < folderB // primary: folder
+		}
+		// secondary: title
+		a := strings.ToLower(ptr.ValueOrDefault(rules[i].Title, ""))
+		b := strings.ToLower(ptr.ValueOrDefault(rules[j].Title, ""))
+		return a < b
+	})
+}
 
 // newListAlertRulesCmd creates and returns a Commander that lists all alert rules for the given Organization.
 // It supports filtering by folder and label, and renders results as a table or JSON output.
@@ -157,6 +199,7 @@ func newListAlertRulesCmd() simplecobra.Commander {
 			if len(rules) == 0 {
 				slog.Info("No alert rules found")
 			} else {
+				sortRules(rules)
 				for _, link := range rules {
 					var labels string
 					if len(link.Labels) > 0 {

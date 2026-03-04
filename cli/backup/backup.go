@@ -4,25 +4,25 @@ import (
 	"context"
 
 	"github.com/bep/simplecobra"
-	domain2 "github.com/esnet/gdg/cli/domain"
+	cliDomain "github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/spf13/cobra"
 )
 
 func NewBackupCommand() simplecobra.Commander {
 	description := "Manage entities that are backup up and updated via api"
-	return &domain2.SimpleCommand{
+	return &cliDomain.SimpleCommand{
 		NameP: "backup",
 		Short: description,
 		Long: `Manage entities that are backup up and updated via api.  These utilities are mostly
 limited to clear/delete, list, download and upload.  Any other functionality will be found under the tools.`,
-		WithCFunc: func(cmd *cobra.Command, r *domain2.RootCommand) {
+		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"b"}
 		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain2.RootCommand, args []string) error {
+		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
-		InitCFunc: func(cd *simplecobra.Commandeer, r *domain2.RootCommand) error {
+		InitCFunc: func(cd *simplecobra.Commandeer, r *cliDomain.RootCommand) error {
 			configOverride, _ := cd.CobraCommand.Flags().GetString("config")
 			contextOverride, _ := cd.CobraCommand.Flags().GetString("context")
 			r.LoadConfig(configOverride, contextOverride)
