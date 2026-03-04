@@ -26,6 +26,7 @@ func newContextCmd() simplecobra.Commander {
 			newDeleteContext(),
 			newContext(),
 			newSetContext(),
+			newS3Cmd(),
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()

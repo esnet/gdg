@@ -86,7 +86,6 @@ func newGetOrgPreferenceCmd() simplecobra.Commander {
 		Long:      "get current org preferences",
 		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
-
 			pref, err := rootCmd.GrafanaSvc().GetOrgPreferences()
 			if err != nil {
 				log.Fatal(err.Error())
