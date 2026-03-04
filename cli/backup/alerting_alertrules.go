@@ -156,6 +156,7 @@ func newClearAlertRulesCmd() simplecobra.Commander {
 		},
 	}
 }
+
 func sortRules(rules []*appDomain.AlertRuleWithNestedFolder) {
 	sort.Slice(rules, func(i, j int) bool {
 		folderA := strings.ToLower(rules[i].NestedPath)
