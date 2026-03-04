@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"sort"
+	"strings"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
@@ -86,7 +88,9 @@ func newUploadAlertRulesCmd() simplecobra.Commander {
 				slog.Info("No alert rules found")
 			} else {
 				slog.Info("Rules have been successfully uploaded to Grafana", "rulesCount", len(rules))
+				sortRules(rules)
 				for _, link := range rules {
+
 					var labels string
 					if len(link.Labels) > 0 {
 						raw, jsonErr := json.Marshal(link.Labels)
@@ -152,6 +156,19 @@ func newClearAlertRulesCmd() simplecobra.Commander {
 		},
 	}
 }
+func sortRules(rules []*appDomain.AlertRuleWithNestedFolder) {
+	sort.Slice(rules, func(i, j int) bool {
+		folderA := strings.ToLower(rules[i].NestedPath)
+		folderB := strings.ToLower(rules[j].NestedPath)
+		if folderA != folderB {
+			return folderA < folderB // primary: folder
+		}
+		// secondary: title
+		a := strings.ToLower(ptr.ValueOrDefault(rules[i].Title, ""))
+		b := strings.ToLower(ptr.ValueOrDefault(rules[j].Title, ""))
+		return a < b
+	})
+}
 
 // newListAlertRulesCmd creates and returns a Commander that lists all alert rules for the given Organization.
 // It supports filtering by folder and label, and renders results as a table or JSON output.
@@ -182,6 +199,7 @@ func newListAlertRulesCmd() simplecobra.Commander {
 			if len(rules) == 0 {
 				slog.Info("No alert rules found")
 			} else {
+				sortRules(rules)
 				for _, link := range rules {
 					var labels string
 					if len(link.Labels) > 0 {

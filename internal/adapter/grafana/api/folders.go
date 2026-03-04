@@ -208,7 +208,7 @@ func (s *DashNGoImpl) ListFolders(filter ports.Filter) []*domain.NestedHit {
 	for ndx, val := range folderListing {
 		nestedVal := getNestedFolder(val.Title, val.UID, folderUid)
 		val.NestedPath = nestedVal
-		if filter == nil || filter.Validate(context.Background(), domain.FolderFilter, val) { // filter.ValidateAll(map[filters.FilterType]string{filters.FolderFilter: nestedVal}) {
+		if filter == nil || filter.Validate(context.Background(), domain.FolderFilter, val) {
 			addFolder(ndx, nestedVal)
 		}
 	}

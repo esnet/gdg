@@ -399,65 +399,6 @@ func (s *DashNGoImpl) TestCreatedFolders(folderName string) (map[string]string, 
 
 // createFolders Creates a new folder with the given name.  If nested, each sub folder that does not exist is also created
 func (s *DashNGoImpl) createdFolders(folderName string) (map[string]string, error) {
-	//namedUIDMap := getFolderMapping(s.ListFolders(NewFolderFilter(s.gdgConfig)),
-	//	func(db *domain.NestedHit) string {
-	//		return db.NestedPath
-	//	},
-	//	func(fld *domain.NestedHit) *domain.NestedHit { return fld },
-	//)
-	//
-	//cratedBaseFolder := func(createFolder string, parent string) (string, error) {
-	//	request := &models.CreateFolderCommand{
-	//		Title:     createFolder,
-	//		ParentUID: parent,
-	//	}
-	//	res, err := s.GetClient().Folders.CreateFolder(request)
-	//	if err != nil {
-	//		return "", err
-	//	}
-	//	return res.GetPayload().UID, nil
-	//}
-	//newFoldersMap := make(map[string]string)
-	//
-	//folderPath := strings.Builder{}
-	//parentUid := ""
-	//const pathSeparator = string(os.PathSeparator)
-	//if strings.Contains(folderName, pathSeparator) {
-	//	elements := strings.Split(folderName, pathSeparator)
-	//	for ndx, folder := range elements {
-	//		var (
-	//			cnt     int
-	//			pathErr error
-	//		)
-	//		if ndx == 0 {
-	//			cnt, pathErr = folderPath.WriteString(folder)
-	//		} else {
-	//			cnt, pathErr = fmt.Fprintf(&folderPath, "%s%s", pathSeparator, folder)
-	//		}
-	//
-	//		if pathErr != nil || cnt <= 0 {
-	//			log.Fatal("unable to update folder path, critical logic error")
-	//		}
-	//		if val, ok := namedUIDMap[folderPath.String()]; ok {
-	//			parentUid = val.UID
-	//		} else {
-	//			uid, err := cratedBaseFolder(encode.Decode(folder), parentUid)
-	//			if err != nil {
-	//				return newFoldersMap, err
-	//			}
-	//			newFoldersMap[folderPath.String()] = uid
-	//			parentUid = uid
-	//		}
-	//	}
-	//} else { // Handles simple case
-	//	data, err := cratedBaseFolder(encode.Decode(folderName), "")
-	//	if err == nil {
-	//		newFoldersMap[folderName] = data
-	//	}
-	//	return newFoldersMap, err
-	//}
-	//
-	//return newFoldersMap, nil
 	return s.createdFoldersWithBaseUID(folderName, "")
 }
 
@@ -581,7 +522,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq ports.Filter) ([]string, error)
 			alreadyProcessed[board["uid"]] = true
 		}
 
-		// Extract Folder UID based on dashboardPath
+		// Extract Folder Name based on dashboardPath
 		folderName, err = getFolderFromResourcePath(s.grafanaConf, file, domain.DashboardResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
