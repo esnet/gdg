@@ -23,8 +23,9 @@ type RootCommand struct {
 	NameP  string
 	isInit bool
 
-	configObj *config_domain.GDGAppConfiguration
-	app       ports.GrafanaService
+	configObj      *config_domain.GDGAppConfiguration
+	app            ports.GrafanaService
+	serviceFactory func(*config_domain.GDGAppConfiguration) ports.GrafanaService
 
 	ctx                  context.Context
 	initThis             *simplecobra.Commandeer
@@ -91,6 +92,13 @@ func NewRootCommand(name string) *RootCommand {
 
 func (c *RootCommand) SetService(svc ports.GrafanaService) {
 	c.app = svc
+}
+
+// SetServiceFactory registers a factory function that builds a GrafanaService from a loaded
+// configuration. LoadConfig will call it automatically the first time config is loaded,
+// so commands that don't need a config (version, default-config, help) never trigger it.
+func (c *RootCommand) SetServiceFactory(factory func(*config_domain.GDGAppConfiguration) ports.GrafanaService) {
+	c.serviceFactory = factory
 }
 
 // Commands returns a list of Cobra commands
@@ -169,5 +177,13 @@ func (c *RootCommand) LoadConfig(configOverride, contextOverride string) *config
 			slog.Debug("unable to set debug env value", slog.Any("err", err))
 		}
 	}
+
+	// Build the GrafanaService lazily the first time config is loaded.
+	// Commands that don't require a config (version, default-config, help) never
+	// call LoadConfig, so they never trigger service construction.
+	if c.app == nil && c.serviceFactory != nil {
+		c.app = c.serviceFactory(c.configObj)
+	}
+
 	return c.configObj
 }

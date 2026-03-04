@@ -212,8 +212,8 @@ func (_c *OrganizationsApi_DownloadOrganizations_Call) RunAndReturn(run func(fil
 }
 
 // GetOrgPreferences provides a mock function for the type OrganizationsApi
-func (_mock *OrganizationsApi) GetOrgPreferences(orgName string) (*models.PreferencesSpec, error) {
-	ret := _mock.Called(orgName)
+func (_mock *OrganizationsApi) GetOrgPreferences() (*models.PreferencesSpec, error) {
+	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetOrgPreferences")
@@ -221,18 +221,18 @@ func (_mock *OrganizationsApi) GetOrgPreferences(orgName string) (*models.Prefer
 
 	var r0 *models.PreferencesSpec
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*models.PreferencesSpec, error)); ok {
-		return returnFunc(orgName)
+	if returnFunc, ok := ret.Get(0).(func() (*models.PreferencesSpec, error)); ok {
+		return returnFunc()
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) *models.PreferencesSpec); ok {
-		r0 = returnFunc(orgName)
+	if returnFunc, ok := ret.Get(0).(func() *models.PreferencesSpec); ok {
+		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.PreferencesSpec)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(orgName)
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -245,20 +245,13 @@ type OrganizationsApi_GetOrgPreferences_Call struct {
 }
 
 // GetOrgPreferences is a helper method to define mock.On call
-//   - orgName string
-func (_e *OrganizationsApi_Expecter) GetOrgPreferences(orgName interface{}) *OrganizationsApi_GetOrgPreferences_Call {
-	return &OrganizationsApi_GetOrgPreferences_Call{Call: _e.mock.On("GetOrgPreferences", orgName)}
+func (_e *OrganizationsApi_Expecter) GetOrgPreferences() *OrganizationsApi_GetOrgPreferences_Call {
+	return &OrganizationsApi_GetOrgPreferences_Call{Call: _e.mock.On("GetOrgPreferences")}
 }
 
-func (_c *OrganizationsApi_GetOrgPreferences_Call) Run(run func(orgName string)) *OrganizationsApi_GetOrgPreferences_Call {
+func (_c *OrganizationsApi_GetOrgPreferences_Call) Run(run func()) *OrganizationsApi_GetOrgPreferences_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
+		run()
 	})
 	return _c
 }
@@ -268,7 +261,7 @@ func (_c *OrganizationsApi_GetOrgPreferences_Call) Return(preferencesSpec *model
 	return _c
 }
 
-func (_c *OrganizationsApi_GetOrgPreferences_Call) RunAndReturn(run func(orgName string) (*models.PreferencesSpec, error)) *OrganizationsApi_GetOrgPreferences_Call {
+func (_c *OrganizationsApi_GetOrgPreferences_Call) RunAndReturn(run func() (*models.PreferencesSpec, error)) *OrganizationsApi_GetOrgPreferences_Call {
 	_c.Call.Return(run)
 	return _c
 }

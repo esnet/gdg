@@ -54,7 +54,7 @@ func newUpdateOrgPreferenceCmd() simplecobra.Commander {
 				log.Fatal("At least one of [--homeDashUid, --theme, --weekstart] needs to be set")
 			}
 
-			preferences, err := rootCmd.GrafanaSvc().GetOrgPreferences(org)
+			preferences, err := rootCmd.GrafanaSvc().GetOrgPreferences()
 			if err != nil {
 				log.Fatal(err.Error())
 			}
@@ -81,16 +81,13 @@ func newUpdateOrgPreferenceCmd() simplecobra.Commander {
 
 func newGetOrgPreferenceCmd() simplecobra.Commander {
 	return &domain.SimpleCommand{
-		NameP: "get",
-		Short: "get <orgName> returns org preferences",
-		Long:  "get <orgName> returns org preferences",
-		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
-			cmd.PersistentFlags().StringP("orgName", "", "", "Organization Name")
-		},
+		NameP:     "get",
+		Short:     "get current org preferences",
+		Long:      "get current org preferences",
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
-			orgName, _ := cd.CobraCommand.Flags().GetString("orgName")
 
-			pref, err := rootCmd.GrafanaSvc().GetOrgPreferences(orgName)
+			pref, err := rootCmd.GrafanaSvc().GetOrgPreferences()
 			if err != nil {
 				log.Fatal(err.Error())
 			}

@@ -139,14 +139,14 @@ func TestOrganizationProperties(t *testing.T) {
 	apiClient := r.ApiClient
 	_, err = apiClient.UploadDashboards(api.NewDashboardFilter(cfg, "", "", ""))
 	assert.NoError(t, err)
-	prefs, err := apiClient.GetOrgPreferences("Main Org.")
+	prefs, err := apiClient.GetOrgPreferences()
 	assert.Nil(t, err)
 	prefs.HomeDashboardUID = "000000003"
 	prefs.Theme = "dark"
 	prefs.WeekStart = "Saturday"
 	err = apiClient.UploadOrgPreferences("Main Org.", prefs)
 	assert.Nil(t, err)
-	prefs, err = apiClient.GetOrgPreferences("Main Org.")
+	prefs, err = apiClient.GetOrgPreferences()
 	assert.Nil(t, err)
 	assert.NotNil(t, prefs)
 	assert.Equal(t, prefs.Theme, "dark")

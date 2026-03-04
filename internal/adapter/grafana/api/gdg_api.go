@@ -28,9 +28,10 @@ func (s *DashNGoImpl) SetStorage(v ports.Storage) {
 	s.storage = v
 }
 
-func NewDashNGo(cfg *config_domain.GDGAppConfiguration, encoder ports.CipherEncoder, disk ports.Storage) ports.GrafanaService {
+func NewDashNGo(cfg *config_domain.GDGAppConfiguration, encoder ports.CipherEncoder, disk ports.Storage, extended ports.ExtendedApi) ports.GrafanaService {
 	obj := &DashNGoImpl{
 		gdgConfig: cfg,
+		extended:  extended,
 	}
 	// Attach config
 	obj.grafanaConf = cfg.GetDefaultGrafanaConfig()
