@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
@@ -96,7 +97,7 @@ func SetupCloudFunctionOpt(cfgObj *config_domain.GDGAppConfiguration, encoder po
 		log.Fatalf("Could not instantiate cloud storage for type: %s", m[storage.CloudType])
 	}
 
-	apiClient := api.NewDashNGo(cfgObj, encoder, s)
+	apiClient := api.NewDashNGo(cfgObj, encoder, s, extended.NewExtendedApi(cfgObj))
 
 	return ctx, cancel, apiClient, s, nil
 }

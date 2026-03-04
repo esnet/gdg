@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config"
@@ -34,7 +35,7 @@ func TestRelativePathLogin(t *testing.T) {
 	}()
 
 	localEngine := storage.NewLocalStorage(context.Background())
-	svc := NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine)
+	svc := NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine, extended.NewExtendedApi(cfg))
 	_, clientCfg := svc.(*DashNGoImpl).getNewClient()
 	assert.Equal(t, clientCfg.Host, "localhost:3000")
 	assert.Equal(t, clientCfg.BasePath, "/grafana/api")

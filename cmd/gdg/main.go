@@ -6,6 +6,7 @@ import (
 
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
@@ -42,7 +43,7 @@ func buildGrafanaService(cfg *configDomain.GDGAppConfiguration) ports.GrafanaSer
 	if err != nil {
 		log.Fatal("Unable to configure a valid storage engine, %w", err)
 	}
-	// TODO: wire NewExtendedApi in main instead of relying on config values.
-	grafanaSvc := api.NewDashNGo(cfg, encoder, storageEngine)
+	extendedApi := extended.NewExtendedApi(cfg)
+	grafanaSvc := api.NewDashNGo(cfg, encoder, storageEngine, extendedApi)
 	return grafanaSvc
 }

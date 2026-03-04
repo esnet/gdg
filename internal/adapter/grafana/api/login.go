@@ -32,8 +32,6 @@ func (s *DashNGoImpl) Login() {
 			s.grafanaConf.SetGrafanaAdmin(userInfo.IsGrafanaAdmin)
 		}
 	}
-
-	s.extended = extended.NewExtendedApi(s.gdgConfig)
 }
 
 func ignoreSSL(transportConfig *client.TransportConfig) {
@@ -43,7 +41,12 @@ func ignoreSSL(transportConfig *client.TransportConfig) {
 
 type NewClientOpts func(transportConfig *client.TransportConfig)
 
-func GetOrgNameClientOpts(cfg *config_domain.GDGAppConfiguration) NewClientOpts {
+// getOrgNameClientOpts returns a NewClientOpts function that configures the transport with the organization ID
+// corresponding to the configured organization name. If an organization name is set in the default Grafana config,
+// it resolves the name to an ID via the extended API, falling back to org ID 1 on error. If no organization name
+// is configured, it returns a function that sets the org ID to the default organization ID.
+func (s *DashNGoImpl) getOrgNameClientOpts() NewClientOpts {
+	cfg := s.gdgConfig
 	orgName := cfg.GetDefaultGrafanaConfig().OrganizationName
 	if orgName != "" {
 		return func(transportConfig *client.TransportConfig) {
@@ -84,7 +87,7 @@ func (s *DashNGoImpl) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 
 	// If more than one opts is passed, depend on the caller to setup his required configuration
 	if s.grafanaConf.IsBasicAuth() && len(opts) == 1 {
-		opts = append(opts, GetOrgNameClientOpts(s.gdgConfig))
+		opts = append(opts, s.getOrgNameClientOpts())
 	}
 	for _, opt := range opts {
 		if opt != nil {

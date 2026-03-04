@@ -93,7 +93,7 @@ type AuthenticationApi interface {
 
 // OrgPreferencesApi Contract definition
 type OrgPreferencesApi interface {
-	GetOrgPreferences(orgName string) (*models.PreferencesSpec, error)
+	GetOrgPreferences() (*models.PreferencesSpec, error)
 	UploadOrgPreferences(orgName string, pref *models.PreferencesSpec) error
 }
 

@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
@@ -154,7 +155,7 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfigu
 
 	storageEngine, err := storage.NewStorageFromConfig(storageType, appData, encoder)
 	assert.NoError(t, err)
-	client := api.NewDashNGo(cfg, encoder, storageEngine)
+	client := api.NewDashNGo(cfg, encoder, storageEngine, extended.NewExtendedApi(cfg))
 	client.Login()
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {
@@ -204,7 +205,7 @@ func CreateSimpleClient(t *testing.T, cfg *config_domain.GDGAppConfiguration, cf
 	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
 	storageEngine, err := storage.NewStorageFromConfig(storageType, appData, noop.NoOpEncoder{})
 	assert.NoError(t, err)
-	client := api.NewDashNGo(cfg, noop.NoOpEncoder{}, storageEngine)
+	client := api.NewDashNGo(cfg, noop.NoOpEncoder{}, storageEngine, extended.NewExtendedApi(cfg))
 	client.Login()
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {

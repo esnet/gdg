@@ -249,7 +249,7 @@ func (s *DashNGoImpl) ListOrganizations(filter ports.Filter, withPreferences boo
 			if !withPreferences {
 				resultsData = append(resultsData, &domain.OrgsDTOWithPreferences{Organization: org, Preferences: &models.PreferencesSpec{}})
 			} else {
-				preferences, err := s.GetOrgPreferences(org.Name)
+				preferences, err := s.GetOrgPreferences()
 				if err != nil {
 					slog.Warn("unable to retrieve org preferences for org", slog.String("organization", org.Name))
 					preferences = &models.PreferencesSpec{}

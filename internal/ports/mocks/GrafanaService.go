@@ -2063,8 +2063,8 @@ func (_c *GrafanaService_EncodeValue_Call) RunAndReturn(run func(in string) stri
 }
 
 // GetOrgPreferences provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) GetOrgPreferences(orgName string) (*models.PreferencesSpec, error) {
-	ret := _mock.Called(orgName)
+func (_mock *GrafanaService) GetOrgPreferences() (*models.PreferencesSpec, error) {
+	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetOrgPreferences")
@@ -2072,18 +2072,18 @@ func (_mock *GrafanaService) GetOrgPreferences(orgName string) (*models.Preferen
 
 	var r0 *models.PreferencesSpec
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*models.PreferencesSpec, error)); ok {
-		return returnFunc(orgName)
+	if returnFunc, ok := ret.Get(0).(func() (*models.PreferencesSpec, error)); ok {
+		return returnFunc()
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) *models.PreferencesSpec); ok {
-		r0 = returnFunc(orgName)
+	if returnFunc, ok := ret.Get(0).(func() *models.PreferencesSpec); ok {
+		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.PreferencesSpec)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(orgName)
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -2096,20 +2096,13 @@ type GrafanaService_GetOrgPreferences_Call struct {
 }
 
 // GetOrgPreferences is a helper method to define mock.On call
-//   - orgName string
-func (_e *GrafanaService_Expecter) GetOrgPreferences(orgName interface{}) *GrafanaService_GetOrgPreferences_Call {
-	return &GrafanaService_GetOrgPreferences_Call{Call: _e.mock.On("GetOrgPreferences", orgName)}
+func (_e *GrafanaService_Expecter) GetOrgPreferences() *GrafanaService_GetOrgPreferences_Call {
+	return &GrafanaService_GetOrgPreferences_Call{Call: _e.mock.On("GetOrgPreferences")}
 }
 
-func (_c *GrafanaService_GetOrgPreferences_Call) Run(run func(orgName string)) *GrafanaService_GetOrgPreferences_Call {
+func (_c *GrafanaService_GetOrgPreferences_Call) Run(run func()) *GrafanaService_GetOrgPreferences_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
+		run()
 	})
 	return _c
 }
@@ -2119,7 +2112,7 @@ func (_c *GrafanaService_GetOrgPreferences_Call) Return(preferencesSpec *models.
 	return _c
 }
 
-func (_c *GrafanaService_GetOrgPreferences_Call) RunAndReturn(run func(orgName string) (*models.PreferencesSpec, error)) *GrafanaService_GetOrgPreferences_Call {
+func (_c *GrafanaService_GetOrgPreferences_Call) RunAndReturn(run func() (*models.PreferencesSpec, error)) *GrafanaService_GetOrgPreferences_Call {
 	_c.Call.Return(run)
 	return _c
 }
