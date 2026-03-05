@@ -1,6 +1,7 @@
 ---
 title: "Docker Compose Example"
 weight: 51
+description: "Illustrates an example on how to use docker and taking advantage of the built in secret feature in conjunction with GDG."
 ---
 
 You can configure gdg in a variety of different ways but if you want so use secret the is currently the simplest pattern:
