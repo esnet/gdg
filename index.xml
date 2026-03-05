@@ -1,6 +1,675 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GDG - Grafana Dash-n-Grab on GDG</title><link>https://software.es.net/gdg/</link><description>Recent content in GDG - Grafana Dash-n-Grab on GDG</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 07 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://software.es.net/gdg/index.xml" rel="self" type="application/rss+xml"/><item><title>Version 0.9</title><link>https://software.es.net/gdg/docs/releases/version-0.9/</link><pubDate>Wed, 07 Jan 2026 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.9/</guid><description>Release Notes for v0.9.2 This is a quick bug fix release to address the behavior of alert rules. The other changes are enabling encryption for connection settings as well.</description></item><item><title>Version 0.8</title><link>https://software.es.net/gdg/docs/releases/version-0.8/</link><pubDate>Thu, 15 May 2025 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.8/</guid><description>Release Notes for v0.8.1 Release Date: 06/30/2025
-BugFix: #456 Issued with folders containing spaces Changes: #450 Update GoReleaser configurations (#453) Changes the patterns for brew installs from Formula to Cask: https://goreleaser.</description></item><item><title>Version 0.7</title><link>https://software.es.net/gdg/docs/releases/version-0.7/</link><pubDate>Wed, 11 Sep 2024 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.7/</guid><description>Release Notes for v0.7.2 Release Date: 01/17/2025
-Breaking Changes #318 Only affects those with no valid configuration present. Removed the default config fall back.</description></item><item><title>Legacy Versions</title><link>https://software.es.net/gdg/docs/releases/legacy-versions/</link><pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/legacy-versions/</guid><description>Release Notes for v0.6.0 Release Date: 03/11/2024
-Breaking Changes This is a major release, so once again doing some cleanups and introducing some breaking changes.</description></item><item><title>Getting Started</title><link>https://software.es.net/gdg/docs/gdg/getting-started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/getting-started/</guid><description>Setup new configuration You can create new context configuration using an interactive setup.
-$ gdg tools contexts new mycontextWhen creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context.</description></item><item><title>Installation</title><link>https://software.es.net/gdg/docs/gdg/installation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/installation/</guid><description>Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here.</description></item><item><title>Frequently Asked Questions</title><link>https://software.es.net/gdg/docs/gdg/frequently-asked-questions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/frequently-asked-questions/</guid><description>Can I use GDG to backup grafana? yes and no. GDG is not a full backup solution. If you are migrating from one server to another, doing disaster recovery gdg is not the right tool for the job.</description></item><item><title>Backup Guide</title><link>https://software.es.net/gdg/docs/usage_guide/backup-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/backup-guide/</guid><description>Every namespace supporting CRUD operations has the functions: list, download, upload, clear operating on only the monitored folders.
-Alerting Alerting is made up of several type of entities: ContactPoints, Alert Rules, Notification Policy and finally Templates.</description></item><item><title>Tools Guide</title><link>https://software.es.net/gdg/docs/usage_guide/tools-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/tools-guide/</guid><description>This guide focuses on the &amp;rsquo;tools&amp;rsquo; subcommand. Every command that isn&amp;rsquo;t specific to a CRUD operation falls under the tools command.</description></item><item><title>Enterprise Guide</title><link>https://software.es.net/gdg/docs/usage_guide/enterprise-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/enterprise-guide/</guid><description>The features listed below are for the enterprise edition of Grafana only. They will not work on the OSS version.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GDG - Grafana Dash-n-Grab on GDG</title><link>https://software.es.net/gdg/</link><description>Recent content in GDG - Grafana Dash-n-Grab on GDG</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 04 Mar 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://software.es.net/gdg/index.xml" rel="self" type="application/rss+xml"/><item><title>Version 0.9</title><link>https://software.es.net/gdg/docs/releases/version-0.9/</link><pubDate>Wed, 04 Mar 2026 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.9/</guid><description>&lt;h2 id="release-notes-for-v093"&gt;Release Notes for v0.9.3&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 03/05/2026&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="breaking-changes-v093"&gt;Breaking Changes (v0.9.3)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Dropped &lt;code&gt;gdg tools devel completion&lt;/code&gt; since it&amp;rsquo;s already exposed as a top level command &lt;code&gt;gdg completion&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="bugfixes-v093"&gt;BugFixes (v0.9.3)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/543" rel="external"&gt;#543&lt;/a&gt; Env vars not working due to a conflict with the secure_location pattern that was previously introduced. Env will work if secure location not used. Next major release (0.10.x) will fix this to allow for Env to take precedence over any config values.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="changes-v093"&gt;Changes (v0.9.3)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/565" rel="external"&gt;#565&lt;/a&gt; Dropping S3 TUI and merging logic into context builder&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/564" rel="external"&gt;#564&lt;/a&gt; Adding TUI config generator updates.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/563" rel="external"&gt;#563&lt;/a&gt; Adding TUI for S3 configuration&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/560" rel="external"&gt;#557&lt;/a&gt; Adding support for patching folder UID when missing and folder auto-creation.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/557" rel="external"&gt;#557&lt;/a&gt; Adds label and folder based filtering to alert rules.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/559" rel="external"&gt;#559&lt;/a&gt; Adds &lt;del&gt;name&lt;/del&gt; UID based filtering to alert rules.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="techdebt-v093"&gt;TechDebt (v0.9.3)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Bug 
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/501" rel="external"&gt;#501&lt;/a&gt; Fixing issues with test failures due to containers not being available.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/539" rel="external"&gt;#539&lt;/a&gt; Added test to cover to plugin code path.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/488" rel="external"&gt;#488&lt;/a&gt; Added an Env to disable enterprise tests. Allow contributors to not be blocked without a license.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/531" rel="external"&gt;#531&lt;/a&gt; Fixing documentation issues with the Getting Started guide and css/icons rendering behavior.&lt;/li&gt;
+&lt;li&gt;General dependency and tooling update, upgrade to go 1.26.0, npm updates&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/558" rel="external"&gt;#558&lt;/a&gt; Refactors code base to follow port/adapters/domains&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="release-notes-for-v092"&gt;Release Notes for v0.9.2&lt;/h2&gt;
+&lt;p&gt;This is a quick bug fix release to address the behavior of alert rules. The other changes are enabling encryption for
+connection settings as well. This should cover all sensitive data that GDG manages.&lt;/p&gt;</description></item><item><title>Version 0.8</title><link>https://software.es.net/gdg/docs/releases/version-0.8/</link><pubDate>Thu, 15 May 2025 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.8/</guid><description>&lt;h2 id="release-notes-for-v081"&gt;Release Notes for v0.8.1&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 06/30/2025&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="bugfix"&gt;BugFix:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/456" rel="external"&gt;#456&lt;/a&gt; Issued with folders containing spaces&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="changes"&gt;Changes:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/450" rel="external"&gt;#450&lt;/a&gt; Update GoReleaser configurations (#453)
+Changes the patterns for brew installs from Formula to Cask: https://goreleaser.com/deprecations/#brews&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/454" rel="external"&gt;#454&lt;/a&gt; Adding a logo GDG logo (#454)&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/445" rel="external"&gt;#445&lt;/a&gt; Added a global &amp;ndash;context to easy switch without needing a config change.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="release-notes-for-v080"&gt;Release Notes for v0.8.0&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 06/25/2025&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Major features in this release are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dropped the configuration flag for nested folders (&lt;code&gt;nested_folders&lt;/code&gt;) as it is now the default behavior.&lt;/li&gt;
+&lt;li&gt;Dropped the configuration flag to ignore bad folders (&lt;code&gt;nested_folders&lt;/code&gt;), instead special characters are handled by
+URL encoding the output.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;aka. Folder named &lt;code&gt;/t/'n / r'/booh/k &amp;amp; r&lt;/code&gt; will be stored locally as: &lt;code&gt;t/n+%2F+r/booh/n+%2F+r.json&lt;/code&gt;&lt;/p&gt;</description></item><item><title>Version 0.7</title><link>https://software.es.net/gdg/docs/releases/version-0.7/</link><pubDate>Wed, 11 Sep 2024 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.7/</guid><description>&lt;h2 id="release-notes-for-v072"&gt;Release Notes for v0.7.2&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 01/17/2025&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="breaking-changes"&gt;Breaking Changes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/318" rel="external"&gt;#318&lt;/a&gt; Only affects those with no valid configuration present. Removed the default
+config fall back. For backup and tools functionality a valid configuration file is now required. A new cli parameter is introduced: &lt;code&gt;default-config&lt;/code&gt;
+which will print an example configuration to stdout.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="feature-changes"&gt;Feature Changes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/319" rel="external"&gt;#319&lt;/a&gt; Remove the requirement for GF_FEATURE_TOGGLES_ENABLE for nested folder as it was incorrectly required in 0.7.1&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/302" rel="external"&gt;#302&lt;/a&gt; Adding Alerting Contact Points support. (Beta Feature, API/format may change in the next release)&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/303" rel="external"&gt;#303&lt;/a&gt; Cleaning up Permission based listings. (Visualization)&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/274" rel="external"&gt;#274&lt;/a&gt; Adding Dashboard Permissions, enterprise feature.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/337" rel="external"&gt;#337&lt;/a&gt; Fix to maintain UIDs when updating dashboards&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/324" rel="external"&gt;#324&lt;/a&gt; Introducing a new config option to disregard bad folders&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Example:&lt;/p&gt;</description></item><item><title>Legacy Versions</title><link>https://software.es.net/gdg/docs/releases/legacy-versions/</link><pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/legacy-versions/</guid><description>&lt;h2 id="release-notes-for-v060"&gt;Release Notes for v0.6.0&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 03/11/2024&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="breaking-changes"&gt;Breaking Changes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;This is a major release, so once again doing some cleanups and introducing some breaking changes. Please use version
+v0.5.2 if you wish to maintain backward compatibility. Previous version organized downloads by org_id. Example an
+export for dashboards would be stored in &lt;code&gt;export/org_1/dashboards&lt;/code&gt;. The org ID is inconsistent and something that
+cannot be guaranteed across installations of grafana. Instead, we&amp;rsquo;ve switched over to using a slug of the OrgName. The
+default dashboard backup will go in: &lt;code&gt;export/org_main-org/dashboards&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Getting Started</title><link>https://software.es.net/gdg/docs/gdg/getting-started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/getting-started/</guid><description>&lt;h2 id="setup-new-configuration"&gt;Setup new configuration&lt;/h2&gt;
+&lt;p&gt;You can create new context configuration using an interactive setup. This is the easiest and
+recommended way of getting setup.&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;pre tabindex="0"&gt;&lt;code&gt;$ gdg tools contexts new mycontext&lt;/code&gt;&lt;/pre&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Default option (&amp;ldquo;General&amp;rdquo;)&lt;/li&gt;
+&lt;li&gt;List of folders you wish to manage&lt;/li&gt;
+&lt;li&gt;Wildcard configuration (all folders)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="authentication-concepts"&gt;Authentication Concepts&lt;/h2&gt;
+&lt;p&gt;First let&amp;rsquo;s touch on a few things regrading Grafana and authentication. You can connect to the Grafana API (which is what GDG is using)
+by either using basic authentication (aka. username/password) or using a service token.&lt;/p&gt;</description></item><item><title>Installation</title><link>https://software.es.net/gdg/docs/gdg/installation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/installation/</guid><description>&lt;h2 id="installation"&gt;Installation&lt;/h2&gt;
+&lt;p&gt;The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found 
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/releases" rel="external"&gt;here&lt;/a&gt;. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.&lt;/p&gt;
+&lt;p&gt;The following packages are currently supported:&lt;/p&gt;</description></item><item><title>Frequently Asked Questions</title><link>https://software.es.net/gdg/docs/gdg/frequently-asked-questions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/frequently-asked-questions/</guid><description>&lt;h3 id="can-i-use-gdg-to-backup-grafana"&gt;Can I use GDG to backup grafana?&lt;/h3&gt;
+&lt;p&gt;yes and no. GDG is not a full backup solution. If you are migrating from one server to another, doing disaster recovery gdg is not the right tool for the job. Grafana already has some really nice 
+
+&lt;a class="link link--text" href="https://grafana.com/docs/grafana/latest/administration/back-up-grafana/" rel="external"&gt;guides&lt;/a&gt; for how to do that.&lt;/p&gt;
+&lt;p&gt;GDG is used to backup and recreate specific entities. Usually it is used to allow for a consistent way to move say a dashboard, connections, alerts etc from one installation of grafana to the next.&lt;/p&gt;</description></item><item><title>Backup Guide</title><link>https://software.es.net/gdg/docs/usage_guide/backup-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/backup-guide/</guid><description>&lt;p&gt;Every namespace supporting CRUD operations has the functions: list, download, upload, clear operating on only the monitored folders.&lt;/p&gt;
+&lt;h3 id="alerting"&gt;Alerting&lt;/h3&gt;
+&lt;p&gt;Alerting is made up of several type of entities: ContactPoints, Alert Rules, Notification Policy and finally Templates.&lt;/p&gt;
+&lt;p&gt;Some entities have dependencies on one another.&lt;/p&gt;
+&lt;p&gt;Example: Alert Rules need the contact points to exist in older to be created. They also need the folders or dashboards that they
+operate on to exist.&lt;/p&gt;</description></item><item><title>Tools Guide</title><link>https://software.es.net/gdg/docs/usage_guide/tools-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/tools-guide/</guid><description>&lt;p&gt;This guide focuses on the &amp;rsquo;tools&amp;rsquo; subcommand. Every command that isn&amp;rsquo;t specific to a CRUD operation falls under the tools command.&lt;/p&gt;
+&lt;p&gt;There are a few utility functions that have been introduced that might be useful to the user, or is geared at managing the configuration,
+switching contexts or Orgs for a given user and so on.&lt;/p&gt;
+&lt;h3 id="authentication-management"&gt;Authentication Management&lt;/h3&gt;
+&lt;p&gt;This is mainly added as a convenience mechanism. It was needed to support some testing and exposing the feature is useful as a really simple CLI to create tokens / service Keys. You probably should be using other tooling for managing all your service files and tokens. Unlike most other entities, this is not a backup feature as much as utility.&lt;/p&gt;</description></item><item><title>Enterprise Guide</title><link>https://software.es.net/gdg/docs/usage_guide/enterprise-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/enterprise-guide/</guid><description>&lt;p&gt;The features listed below are for the enterprise edition of Grafana only. They will not work on the OSS version.&lt;/p&gt;
+&lt;p&gt;In order to use these features you need.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Have a running Enterprise version of grafana, I&amp;rsquo;ll defer to the grafana community on instructions on how to set this up.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For a docker setup, you need to set:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;GF_ENTERPRISE_LICENSE_TEXT='jwt token value'&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id="connections-permissions"&gt;Connections Permissions&lt;/h3&gt;
+&lt;p&gt;Note: Available with +v0.4.6. All of these commands are a subset of the connection command. Requires grafana version: +v10.2.3&lt;/p&gt;</description></item><item><title>Other Commands</title><link>https://software.es.net/gdg/docs/usage_guide/other-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/other-commands/</guid><description>&lt;p&gt;These are miscellaneous commands that don&amp;rsquo;t fit under any category.&lt;/p&gt;
+&lt;h3 id="contexts"&gt;Contexts&lt;/h3&gt;
+&lt;p&gt;Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.&lt;/p&gt;
+&lt;p&gt;ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame is-terminal not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sh" data-lang="sh"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;./bin/gdg tools ctx list -- Lists all known contexts
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;./bin/gdg tools ctx show qa -- shows the configuration &lt;span class="k"&gt;for&lt;/span&gt; the selected context
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;./bin/gdg tools ctx &lt;span class="nb"&gt;set&lt;/span&gt; production -- updates the active config and sets it to the request value.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;./bin/gdg tools ctx delete qa -- Deletes the QA context
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;./bin/gdg tools ctx cp qa staging -- copies the qa context to staging and sets it as active
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;./bin/gdg tools ctx clear -- Will delete all active contexts leaving only a single example entry&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;h3 id="version"&gt;Version&lt;/h3&gt;
+&lt;p&gt;Print the applications release version&lt;/p&gt;</description></item><item><title>Structure</title><link>https://software.es.net/gdg/docs/templating/configuration/structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/templating/configuration/structure/</guid><description>&lt;p&gt;The structure of the templating config is all defined under the key &lt;code&gt;entities.dashboards&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The app expects to find a file named &amp;rsquo;templates.yml&amp;rsquo;. You can also find an example in 
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/blob/main/config/templates-example.yml" rel="external"&gt;git&lt;/a&gt; which is likely to be more updated.&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;entites&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;dashboards&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;template_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;template_example&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;output&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;folder&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;General&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;organization_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Main Org.&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;dashboard_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Testing Foobar&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;template_data&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;Title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Bob Loves Candy&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;enabledlight&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;lightsources&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;sun&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;moon&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;lightbulb&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;office lights&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;folder&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Testing&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;organization_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Some Other Org&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;dashboard_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;template_data&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;Title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Uncle McDonalds&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;enabledlight&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;lightsources&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;sun&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;moon&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;h3 id="template-name"&gt;Template Name&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;template_name&lt;/code&gt; is the name of the template which will be used to generate the given dashboards. The file is expected to live under &lt;code&gt;{output_path}/templates/{template_name}.go.tmpl&lt;/code&gt;. The output_path would be the same the one configured for the main gdg app.&lt;/p&gt;</description></item><item><title>Usage Guide</title><link>https://software.es.net/gdg/docs/templating/usage-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/templating/usage-guide/</guid><description>&lt;p&gt;GDG has now introduced a new supporting tool that works in conjunction with GDG. It is currently dependent on the GDG
+configuration
+since it will operate on the currently selected context. You can confirm what the current context is by
+running &lt;code&gt;gdg tools ctx show&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;For example, my current output is as follows:&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;context_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;storage&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;enterprise_support&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;url&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;http://localhost:3000&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;user_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;admin&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;password&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;admin&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;organization_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Main Org.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;watched_folders_override&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;watched&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;General&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;Other&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;connections&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;credential_rules&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;rules&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;field&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;name&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;regex&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;misc&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;field&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;url&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;secure_data&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;misc.json&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;rules&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;field&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;url&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;regex&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;.*esproxy2*&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;secure_data&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;proxy.json&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;rules&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;field&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;name&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;regex&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;.*&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;secure_data&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;default.yaml&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;dashboard_settings&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ignore_filters&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;output_path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;test/data&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Most of the config isn&amp;rsquo;t that interesting, except the output_path will be used to determine where the newly generated
+dashboards will be. Make sure you have a valid configuration before continuing.&lt;/p&gt;</description></item><item><title>Working with Library Panels</title><link>https://software.es.net/gdg/docs/tutorials/working-with-library-panels/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/working-with-library-panels/</guid><description>&lt;p&gt;Starting with version 0.4, library panels are going to be supported. It&amp;rsquo;s a bit special and the behavior is somewhat unique.&lt;/p&gt;
+&lt;p&gt;Rules:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Library Panels are immutable. They cannot be moved to a different folder. They are linked to one or multiple dashboards.&lt;/li&gt;
+&lt;li&gt;The only way I can see to move a lib element is to unlink the panel, delete the panel and re-create it in a different folder, then re-link it.&lt;/li&gt;
+&lt;li&gt;In theory it&amp;rsquo;s supposed to move with the dashboards but I haven&amp;rsquo;t been able to re-create that behavior.&lt;/li&gt;
+&lt;li&gt;You cannot delete a library element while a dashboard is still using it.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="import-components"&gt;Import components&lt;/h2&gt;
+&lt;p&gt;will retrieve all the components from Grafana and save to local file system.&lt;/p&gt;</description></item><item><title>Organization and Authentication</title><link>https://software.es.net/gdg/docs/tutorials/organization-and-authentication/</link><pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/organization-and-authentication/</guid><description>&lt;h2 id="concepts"&gt;Concepts&lt;/h2&gt;
+&lt;p&gt;At it&amp;rsquo;s core an Organization in grafana is an entity that allows you (the user) to organize and structure entities to seperate access for both usability
+and security. So a Connection under org1 would never be able to be configured to use a dashboard under Org2.&lt;/p&gt;
+&lt;p&gt;Authentication with GDG and grafana can take a few different patterns.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Grafana Admin - this is your typical admin/admin default user that comes with most installs. You have full access to do everything.&lt;/li&gt;
+&lt;li&gt;Org Admin - this is a user that is an admin for one or multiple Orgs and can manage most entities under the given org but not high level entities.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Each user can be authenticated with &amp;lsquo;BasicAuth&amp;rsquo; or APIKeys/Service Tokens.&lt;/p&gt;</description></item><item><title>Working with Nested Folders</title><link>https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/</guid><description>&lt;p&gt;Starting with GDG 0.7, support for nested folders has been added. This feature requires grafana 11+. You can watch a Intro 
+
+&lt;a class="link link--text" href="https://www.youtube.com/watch?v=R9mehA0EssU" rel="external"&gt;video&lt;/a&gt; or read the offical annoucements 
+
+&lt;a class="link link--text" href="https://grafana.com/docs/grafana-cloud/whats-new/2024-02-27-subfolders/" rel="external"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It is current behind a feature toggle. You will need to set the folliwing value in your grafana.ini&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;feature_toggles&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;enable&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;nestedFolders&lt;/span&gt;&lt;span class="p"&gt;,...&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;or have the following ENV variable set&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-env" data-lang="env"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;GF_FEATURE_TOGGLES_ENABLE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nestedFolders&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Additionaly GDG configuration needs to have the behavior enabled.&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;dashboard_settings&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;nested_folders&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Once enabled, the behavior for Dashboards and folders should reflect that.&lt;/p&gt;</description></item><item><title>Docker Compose Example</title><link>https://software.es.net/gdg/docs/cookbook/docker-compose-example/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/cookbook/docker-compose-example/</guid><description>&lt;p&gt;You can configure gdg in a variety of different ways but if you want so use secret the is currently the simplest pattern:&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;3.8&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;app&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ghcr.io/esnet/gdg:0.8.0&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;./gdg.yml:/app/config/gdg.yml:ro&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;secrets&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;auth_staging.yaml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;default.yaml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;secrets&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;auth_staging.yaml&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;./auth_staging.yaml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;default.yaml&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;./default_connection_auth.yaml&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Then update your config file with the following:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;secure_location: /run/secrets/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;For any connection settings, you will have to additionally define all the connection settings accordingly.&lt;/p&gt;</description></item><item><title>Kubernetes Crontab Example</title><link>https://software.es.net/gdg/docs/cookbook/kubernetes-crontab-example/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/cookbook/kubernetes-crontab-example/</guid><description>&lt;p&gt;This is a bit beyond the scope of GDG, but wanted to provide an example of how to setup GDG to run on a regular cadence and take backups of your dashboards. Example provided courtesy of 
+
+&lt;a class="link link--text" href="https://github.com/arnecls" rel="external"&gt;arnecls&lt;/a&gt;&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;apiVersion&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;batch/v1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;kind&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;CronJob&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;metadata&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;helm.sh/chart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;grafana-operator-package-5.6.1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;grafana-backup&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;namespace&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;grafana-operator&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;spec&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;concurrencyPolicy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Forbid&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;failedJobsHistoryLimit&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;schedule&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;*&lt;span class="w"&gt; &lt;/span&gt;*&lt;span class="w"&gt; &lt;/span&gt;*&lt;span class="w"&gt; &lt;/span&gt;*&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;successfulJobsHistoryLimit&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;jobTemplate&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;spec&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;backoffLimit&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;completions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;template&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;spec&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;containers&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;args&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- -&lt;span class="l"&gt;c&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/etc/config/gdg.yaml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;backup&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;dashboards&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;upload&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- --&lt;span class="l"&gt;skip-confirmation&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="cp"&gt;***/ghcr-io-mirror/esnet/gdg:0.7.1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;grafana-backup-dashboards&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;resources&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;limits&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;memory&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;256Mi&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;requests&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cpu&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;100m&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;memory&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;256Mi&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;securityContext&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;allowPrivilegeEscalation&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;capabilities&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;drop&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;ALL&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;readOnlyRootFilesystem&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;runAsGroup&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;65532&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;runAsNonRoot&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;runAsUser&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;65532&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumeMounts&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;mountPath&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;/etc/config/&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;config&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;readOnly&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;mountPath&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;/app/backup&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# &amp;lt;--- this&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;scratch&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;readOnly&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restartPolicy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Never&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;serviceAccountName&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;grafana-operator-grafana-sa&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;configMap&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;defaultMode&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;0444&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;grafana-backup&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;config&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;emptyDir&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;{}&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;scratch&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;</description></item><item><title>Developer Guide</title><link>https://software.es.net/gdg/docs/developer/developer-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/developer/developer-guide/</guid><description>&lt;h2 id="dependencies"&gt;Dependencies&lt;/h2&gt;
+&lt;p&gt;Development requirements.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;As gdg is written in 
+
+&lt;a class="link link--text" href="https://go.dev/" rel="external"&gt;go&lt;/a&gt;, a current compiler is required.&lt;/li&gt;
+&lt;li&gt;task management tool 
+
+&lt;a class="link link--text" href="https://github.com/go-task/task" rel="external"&gt;go-task&lt;/a&gt;. 
+
+&lt;a class="link link--text" href="https://taskfile.dev/installation/" rel="external"&gt;Installation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://www.docker.com/products/docker-desktop/" rel="external"&gt;Docker&lt;/a&gt; for running tests&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Install the remaining dependencies via: &lt;code&gt;task install_tools&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="buildingrunning-gdg"&gt;Building/Running gdg&lt;/h2&gt;
+&lt;p&gt;Running it then should be as simple as:&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame is-terminal not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ task build_all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ ./bin/gdg &lt;span class="c1"&gt;## main binary&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ ./bin/gdg-generate &lt;span class="c1"&gt;## Dashboard Templating engine&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Requires 
+
+&lt;a class="link link--text" href="https://github.com/go-task/task.git" rel="external"&gt;task&lt;/a&gt; to be installed locally&lt;/p&gt;
+&lt;h2 id="running-tests"&gt;Running Tests&lt;/h2&gt;
+&lt;p&gt;BasicAuth:
+&lt;code&gt;task test&lt;/code&gt;
+Token:
+&lt;code&gt;task test_tokens&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="making-a-release"&gt;Making a release&lt;/h2&gt;
+&lt;p&gt;You can validate that goreleaser work appropriately via&lt;/p&gt;</description></item><item><title>Contributing</title><link>https://software.es.net/gdg/docs/developer/contributing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/developer/contributing/</guid><description>&lt;p&gt;First of all, gdg contains two binaries. &lt;code&gt;gdg&lt;/code&gt; which manages grafana entities and provide some tooling facilities
+and &lt;code&gt;gdg-generate&lt;/code&gt; a tool to help generate dashboards from templates to allow for some more flexible management.
+gdg-generate is fairly new, but the same quality of PRs would be nice to have.&lt;/p&gt;
+&lt;h2 id="gdg"&gt;GDG&lt;/h2&gt;
+&lt;p&gt;There two types of features that get added to gdg, a &lt;code&gt;tool&lt;/code&gt; or &lt;code&gt;backup&lt;/code&gt; feature.&lt;/p&gt;
+&lt;h3 id="backup-feature"&gt;Backup Feature&lt;/h3&gt;
+&lt;p&gt;A backup feature is some entity that you want to add to GDG that it will track.&lt;/p&gt;</description></item><item><title>Structure</title><link>https://software.es.net/gdg/docs/gdg/configuration/structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/structure/</guid><description>&lt;p&gt;GDG Configuration is based on a YAML configuration. It also has the option to override configuration values via environmental variables.&lt;/p&gt;
+&lt;p&gt;The default config file is gdg.yml which should exist in $CWD/config, $CWD or /etc/gdg. If no valid file can be found, the application will fail. An example config file can be found in 
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/blob/main/config/gdg-example.yml" rel="external"&gt;github&lt;/a&gt; under the config folder.&lt;/p&gt;
+&lt;p&gt;The configuration has a few sections of note:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;context_name: the selected context&lt;/li&gt;
+&lt;li&gt;Storage &amp;ndash; defines the storage engine if a cloud provider is used&lt;/li&gt;
+&lt;li&gt;contexts: defines every context you operate on, think of it as the definition of a grafana instance and how to connect to it. It also defines behavior for what folders to inspect, authentication mechanism, etc.&lt;/li&gt;
+&lt;li&gt;global: defines global behavior for all contexts. These settings are not context specific. They tend to be things like enabling debugging, retry logic, api debugging etc.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="environment-overrides"&gt;Environment Overrides&lt;/h2&gt;
+&lt;div class="callout callout-caution d-flex flex-row mt-4 mb-4 pt-4 pe-4 pb-2 ps-3"&gt;
+ &lt;svg
+ xmlns="http://www.w3.org/2000/svg"
+ width="24"
+ height="24"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ stroke-width="2"
+ stroke-linecap="round"
+ stroke-linejoin="round"
+ 
+ class="alert-triangle svg-inline callout-icon me-2 mb-3" id="svg-alert-triangle" role="img"&gt;
+ &lt;path stroke="none" d="M0 0h24v24H0z" fill="none"/&gt;
+ &lt;path d="M12 9v4" /&gt;
+ &lt;path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0" /&gt;
+ &lt;path d="M12 16h.01" /&gt;
+&lt;/svg&gt;
+ &lt;div class="callout-content"&gt;
+ &lt;div class="callout-title"&gt;
+ &lt;p&gt;Caution&lt;/p&gt;</description></item><item><title>Globals</title><link>https://software.es.net/gdg/docs/gdg/configuration/globals/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/globals/</guid><description>&lt;p&gt;Global flags are configuration that applies to all contexts. The following flags are all nested under &lt;code&gt;globals:&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id="clear-output"&gt;Clear Output&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;clear_output&lt;/code&gt; when set to true will remove all files in the destination folder prior to importing the data.&lt;/p&gt;
+&lt;p&gt;ie. if fetching all dashboards for the default org, then all files in the folder: &lt;code&gt;{output_path}/org_main-org/dashboards&lt;/code&gt; will be removed.&lt;/p&gt;
+&lt;div class="callout callout-caution d-flex flex-row mt-4 mb-4 pt-4 pe-4 pb-2 ps-3"&gt;
+ &lt;svg
+ xmlns="http://www.w3.org/2000/svg"
+ width="24"
+ height="24"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ stroke-width="2"
+ stroke-linecap="round"
+ stroke-linejoin="round"
+ 
+ class="alert-triangle svg-inline callout-icon me-2 mb-3" id="svg-alert-triangle" role="img"&gt;
+ &lt;path stroke="none" d="M0 0h24v24H0z" fill="none"/&gt;
+ &lt;path d="M12 9v4" /&gt;
+ &lt;path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0" /&gt;
+ &lt;path d="M12 16h.01" /&gt;
+&lt;/svg&gt;
+ &lt;div class="callout-content"&gt;
+ &lt;div class="callout-title"&gt;
+ &lt;p&gt;Caution&lt;/p&gt;</description></item><item><title>Storage</title><link>https://software.es.net/gdg/docs/gdg/configuration/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/storage/</guid><description>&lt;p&gt;This is only needed if you intend to use a cloud provider to store your backups. If you are downloading your backups to your local file system you can skip this section.&lt;/p&gt;
+&lt;p&gt;GDG should work with most S3 compatible providers. It leverages the 
+
+&lt;a class="link link--text" href="https://github.com/google/go-cloud" rel="external"&gt;go-cloud&lt;/a&gt; framework to provide this functionality. The standard providers should &amp;lsquo;just work&amp;rsquo; out of the box relying on the authentication mechanism that each provider supports. ie. AWS looks for ~/.aws/credentials, google will look for its respective config and so on. GDG also supports custom providers that allows for S3 compatible self-hosted solutions such as Minio, Ceph, etc.&lt;/p&gt;</description></item><item><title>Contexts</title><link>https://software.es.net/gdg/docs/gdg/configuration/contexts/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/contexts/</guid><description>&lt;p&gt;Contexts define a connection to grafana and how to interact with it, authenticate, how to map the connection credentials, how users are created etc. All contexts are defined under the &lt;code&gt;contexts&lt;/code&gt; key.&lt;/p&gt;
+&lt;h3 id="api-token"&gt;API Token&lt;/h3&gt;
+&lt;div class="callout callout-danger d-flex flex-row mt-4 mb-4 pt-4 pe-4 pb-2 ps-3"&gt;
+ &lt;svg
+ xmlns="http://www.w3.org/2000/svg"
+ width="24"
+ height="24"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ stroke-width="2"
+ stroke-linecap="round"
+ stroke-linejoin="round"
+ 
+ class="alert-octagon svg-inline callout-icon me-2 mb-3" id="svg-alert-octagon" role="img"&gt;
+ &lt;path stroke="none" d="M0 0h24v24H0z" fill="none"/&gt;
+ &lt;path d="M12.802 2.165l5.575 2.389c.48 .206 .863 .589 1.07 1.07l2.388 5.574c.22 .512 .22 1.092 0 1.604l-2.389 5.575c-.206 .48 -.589 .863 -1.07 1.07l-5.574 2.388c-.512 .22 -1.092 .22 -1.604 0l-5.575 -2.389a2.036 2.036 0 0 1 -1.07 -1.07l-2.388 -5.574a2.036 2.036 0 0 1 0 -1.604l2.389 -5.575c.206 -.48 .589 -.863 1.07 -1.07l5.574 -2.388a2.036 2.036 0 0 1 1.604 0" /&gt;
+ &lt;path d="M12 8v4" /&gt;
+ &lt;path d="M12 16h.01" /&gt;
+&lt;/svg&gt;
+ &lt;div class="callout-content"&gt;
+ &lt;div class="callout-title"&gt;
+ &lt;p&gt;Danger&lt;/p&gt;</description></item><item><title>Plugins</title><link>https://software.es.net/gdg/docs/gdg/configuration/plugins/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/plugins/</guid><description>&lt;h2 id="plugins"&gt;Plugins&lt;/h2&gt;
+&lt;p&gt;GDG supports a plugin system based on 
+
+&lt;a class="link link--text" href="https://extism.org/" rel="external"&gt;extism&lt;/a&gt;. Version 0.9.0 introduced a cipher plugin that
+allows the user to encrypt sensitive information and rely on the provided to encode/decode sensitive data like token,
+passwords, AWS keys etc.&lt;/p&gt;
+&lt;h3 id="configuring-gdg"&gt;Configuring GDG&lt;/h3&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;plugins&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;disabled&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cipher&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;## AES-256 config&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;url&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugins/cipher_aes256_gcm.wasm&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# file_path: ./foobar/moo Only enable either filepath Or URL not both.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;config&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;## map passed to plugin.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# If any field starts with env: then it will instead load the env value&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# if any field start with file: then it will load the file data and use its value to be passed to the config&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;passphrase&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;hello_world&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;## Ansible Vault&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# url: https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugins/cipher_ansible.wasm&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# config: ## map passed to plugin.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# # If any field starts with env: then it will instead load the env value&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# # if any field start with file: then it will load the file data and use its value to be passed to the config&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# vault_password: file:$HOME/.ansible/vaultSecret&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Plugins will be disabled by default. If you would like to enabled them make sure you have &lt;code&gt;plugins.disabled&lt;/code&gt; set to true.&lt;/p&gt;</description></item><item><title>Secure Fields</title><link>https://software.es.net/gdg/docs/gdg/configuration/secure-fields/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/secure-fields/</guid><description>&lt;h1 id="secure-fields"&gt;Secure Fields&lt;/h1&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;secure_config&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;alerting&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s1"&gt;&amp;#39;#.receivers.#.settings.url&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s1"&gt;&amp;#39;#.receivers.#.settings.password&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s1"&gt;&amp;#39;#.receivers.#.settings.token&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Secure fields are regex patterns that should be matched against the payload of a given entity. GDG itself needs to be
+updates as this is not natively applied to every resource. This might be changed in a future version but there is something
+to be said for speed vs flexibility.&lt;/p&gt;
+&lt;p&gt;Currently, the only supported entity is contact-points with alerting. The regex patterns above are ones that I&amp;rsquo;ve seen
+containing sensitive date. It&amp;rsquo;s likely not a comprehensive list, but if you are happy with the list you won&amp;rsquo;t need to modify it.&lt;/p&gt;</description></item><item><title>Debugging</title><link>https://software.es.net/gdg/docs/gdg/configuration/debugging/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/debugging/</guid><description>&lt;h2 id="debugging--trouble-shooting"&gt;Debugging / Trouble shooting&lt;/h2&gt;
+&lt;p&gt;There are two configuration flags that can be very useful to determine the issue.&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;...&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;global&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;api_debug&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;The debug flag enables very logging which may provide some insight on the core issue that you&amp;rsquo;re running into. Additionally, api_debug
+when enabled with print every request being made and response.&lt;/p&gt;
+&lt;p&gt;For example, attempting to upload all the given folders I get the follow response.&lt;/p&gt;</description></item><item><title>Legacy</title><link>https://software.es.net/gdg/docs/gdg/configuration/legacy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/legacy/</guid><description>&lt;h2 id="configuration"&gt;Configuration&lt;/h2&gt;
+&lt;p&gt;This is mostly left for reference to older documentation patterns for previous versions.&lt;/p&gt;
+&lt;h2 id="connection"&gt;Connection&lt;/h2&gt;
+&lt;h3 id="connection-credentials"&gt;Connection Credentials&lt;/h3&gt;
+&lt;h4 id="version-v042-v051"&gt;Version v0.4.2-v0.5.1&lt;/h4&gt;
+&lt;details&gt;
+ &lt;summary&gt;Legacy Behavior&lt;/summary&gt;
+ &lt;p&gt;Preview behavior did not support the use of a secure/secureData.json pattern, instead an auth: codeblock was used.&lt;/p&gt;
+&lt;p&gt;Please note that only basicAuth worked prior to version v0.5.2&lt;/p&gt;
+&lt;p&gt;Example can be seen below:&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;testing&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;output_path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;testing_data&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;connections&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;credential_rules&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;rules&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;field&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;name&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;regex&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;.*&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;auth&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;user&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;user&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;password&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;secret&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;url&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;http://localhost:3000&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;user_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;admin&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;password&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;admin&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ignore_filters&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# When set to true all Watched filtered folders will be ignored and ALL folders will be acted on&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;watched&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;General&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;Other&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;h4 id="version-prior-to-v042"&gt;Version Prior to v0.4.2&lt;/h4&gt;
+&lt;details&gt;
+ &lt;summary&gt;Legacy Behavior&lt;/summary&gt;
+ &lt;p&gt;If the connection has BasicAuth enabled, then we&amp;rsquo;ll attempt to set the auth with the following precedence on matches:&lt;/p&gt;</description></item></channel></rss>

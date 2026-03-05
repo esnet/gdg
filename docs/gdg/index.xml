@@ -1,2 +1,31 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GDG</title><link>https://software.es.net/gdg/docs/gdg/</link><description>Recent content on GDG</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://software.es.net/gdg/docs/gdg/index.xml" rel="self" type="application/rss+xml"/><item><title>Getting Started</title><link>https://software.es.net/gdg/docs/gdg/getting-started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/getting-started/</guid><description>Setup new configuration You can create new context configuration using an interactive setup.
-$ gdg tools contexts new mycontextWhen creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context.</description></item><item><title>Installation</title><link>https://software.es.net/gdg/docs/gdg/installation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/installation/</guid><description>Installation The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found here.</description></item><item><title>Frequently Asked Questions</title><link>https://software.es.net/gdg/docs/gdg/frequently-asked-questions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/frequently-asked-questions/</guid><description>Can I use GDG to backup grafana? yes and no. GDG is not a full backup solution. If you are migrating from one server to another, doing disaster recovery gdg is not the right tool for the job.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GDG</title><link>https://software.es.net/gdg/docs/gdg/</link><description>Recent content on GDG</description><generator>Hugo</generator><language>en</language><atom:link href="https://software.es.net/gdg/docs/gdg/index.xml" rel="self" type="application/rss+xml"/><item><title>Getting Started</title><link>https://software.es.net/gdg/docs/gdg/getting-started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/getting-started/</guid><description>&lt;h2 id="setup-new-configuration"&gt;Setup new configuration&lt;/h2&gt;
+&lt;p&gt;You can create new context configuration using an interactive setup. This is the easiest and
+recommended way of getting setup.&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;pre tabindex="0"&gt;&lt;code&gt;$ gdg tools contexts new mycontext&lt;/code&gt;&lt;/pre&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;When creating a new context, you will be asked for authorization type, your default datasource and username/password, along with which folders you wish to manage under the context. You have three options:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Default option (&amp;ldquo;General&amp;rdquo;)&lt;/li&gt;
+&lt;li&gt;List of folders you wish to manage&lt;/li&gt;
+&lt;li&gt;Wildcard configuration (all folders)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="authentication-concepts"&gt;Authentication Concepts&lt;/h2&gt;
+&lt;p&gt;First let&amp;rsquo;s touch on a few things regrading Grafana and authentication. You can connect to the Grafana API (which is what GDG is using)
+by either using basic authentication (aka. username/password) or using a service token.&lt;/p&gt;</description></item><item><title>Installation</title><link>https://software.es.net/gdg/docs/gdg/installation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/installation/</guid><description>&lt;h2 id="installation"&gt;Installation&lt;/h2&gt;
+&lt;p&gt;The easiest way to install GDG is to get one of the pre-compiled binaries from our release page which can be found 
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/releases" rel="external"&gt;here&lt;/a&gt;. Packages for a few distributions have been added. The release cycle relies on goreleaser so anything that is well supported can be added it at some point. There is no APT or such you can connect to but the packages are available for download.&lt;/p&gt;
+&lt;p&gt;The following packages are currently supported:&lt;/p&gt;</description></item><item><title>Frequently Asked Questions</title><link>https://software.es.net/gdg/docs/gdg/frequently-asked-questions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/frequently-asked-questions/</guid><description>&lt;h3 id="can-i-use-gdg-to-backup-grafana"&gt;Can I use GDG to backup grafana?&lt;/h3&gt;
+&lt;p&gt;yes and no. GDG is not a full backup solution. If you are migrating from one server to another, doing disaster recovery gdg is not the right tool for the job. Grafana already has some really nice 
+
+&lt;a class="link link--text" href="https://grafana.com/docs/grafana/latest/administration/back-up-grafana/" rel="external"&gt;guides&lt;/a&gt; for how to do that.&lt;/p&gt;
+&lt;p&gt;GDG is used to backup and recreate specific entities. Usually it is used to allow for a consistent way to move say a dashboard, connections, alerts etc from one installation of grafana to the next.&lt;/p&gt;</description></item></channel></rss>

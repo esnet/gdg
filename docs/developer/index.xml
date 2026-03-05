@@ -1,2 +1,47 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Developer Guide on GDG</title><link>https://software.es.net/gdg/docs/developer/</link><description>Recent content in Developer Guide on GDG</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://software.es.net/gdg/docs/developer/index.xml" rel="self" type="application/rss+xml"/><item><title>Developer Guide</title><link>https://software.es.net/gdg/docs/developer/developer-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/developer/developer-guide/</guid><description>Dependencies Development requirements.
-As gdg is written in go, a current compiler is required. task management tool go-task. Installation Docker for running tests Install the remaining dependencies via: task install_tools</description></item><item><title>Contributing</title><link>https://software.es.net/gdg/docs/developer/contributing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/developer/contributing/</guid><description>First of all, gdg contains two binaries. gdg which manages grafana entities and provide some tooling facilities and gdg-generate a tool to help generate dashboards from templates to allow for some more flexible management.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Developer Guide on GDG</title><link>https://software.es.net/gdg/docs/developer/</link><description>Recent content in Developer Guide on GDG</description><generator>Hugo</generator><language>en</language><atom:link href="https://software.es.net/gdg/docs/developer/index.xml" rel="self" type="application/rss+xml"/><item><title>Developer Guide</title><link>https://software.es.net/gdg/docs/developer/developer-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/developer/developer-guide/</guid><description>&lt;h2 id="dependencies"&gt;Dependencies&lt;/h2&gt;
+&lt;p&gt;Development requirements.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;As gdg is written in 
+
+&lt;a class="link link--text" href="https://go.dev/" rel="external"&gt;go&lt;/a&gt;, a current compiler is required.&lt;/li&gt;
+&lt;li&gt;task management tool 
+
+&lt;a class="link link--text" href="https://github.com/go-task/task" rel="external"&gt;go-task&lt;/a&gt;. 
+
+&lt;a class="link link--text" href="https://taskfile.dev/installation/" rel="external"&gt;Installation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://www.docker.com/products/docker-desktop/" rel="external"&gt;Docker&lt;/a&gt; for running tests&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Install the remaining dependencies via: &lt;code&gt;task install_tools&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="buildingrunning-gdg"&gt;Building/Running gdg&lt;/h2&gt;
+&lt;p&gt;Running it then should be as simple as:&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame is-terminal not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ task build_all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ ./bin/gdg &lt;span class="c1"&gt;## main binary&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ ./bin/gdg-generate &lt;span class="c1"&gt;## Dashboard Templating engine&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Requires 
+
+&lt;a class="link link--text" href="https://github.com/go-task/task.git" rel="external"&gt;task&lt;/a&gt; to be installed locally&lt;/p&gt;
+&lt;h2 id="running-tests"&gt;Running Tests&lt;/h2&gt;
+&lt;p&gt;BasicAuth:
+&lt;code&gt;task test&lt;/code&gt;
+Token:
+&lt;code&gt;task test_tokens&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="making-a-release"&gt;Making a release&lt;/h2&gt;
+&lt;p&gt;You can validate that goreleaser work appropriately via&lt;/p&gt;</description></item><item><title>Contributing</title><link>https://software.es.net/gdg/docs/developer/contributing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/developer/contributing/</guid><description>&lt;p&gt;First of all, gdg contains two binaries. &lt;code&gt;gdg&lt;/code&gt; which manages grafana entities and provide some tooling facilities
+and &lt;code&gt;gdg-generate&lt;/code&gt; a tool to help generate dashboards from templates to allow for some more flexible management.
+gdg-generate is fairly new, but the same quality of PRs would be nice to have.&lt;/p&gt;
+&lt;h2 id="gdg"&gt;GDG&lt;/h2&gt;
+&lt;p&gt;There two types of features that get added to gdg, a &lt;code&gt;tool&lt;/code&gt; or &lt;code&gt;backup&lt;/code&gt; feature.&lt;/p&gt;
+&lt;h3 id="backup-feature"&gt;Backup Feature&lt;/h3&gt;
+&lt;p&gt;A backup feature is some entity that you want to add to GDG that it will track.&lt;/p&gt;</description></item></channel></rss>

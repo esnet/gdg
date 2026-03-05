@@ -1,4 +1,194 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Configuration on GDG</title><link>https://software.es.net/gdg/docs/gdg/configuration/</link><description>Recent content in Configuration on GDG</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://software.es.net/gdg/docs/gdg/configuration/index.xml" rel="self" type="application/rss+xml"/><item><title>Structure</title><link>https://software.es.net/gdg/docs/gdg/configuration/structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/structure/</guid><description>GDG Configuration is based on a YAML configuration. It also has the option to override configuration values via environmental variables.</description></item><item><title>Globals</title><link>https://software.es.net/gdg/docs/gdg/configuration/globals/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/globals/</guid><description>Global flags are configuration that applies to all contexts. The following flags are all nested under globals:
-Clear Output clear_output when set to true will remove all files in the destination folder prior to importing the data.</description></item><item><title>Storage</title><link>https://software.es.net/gdg/docs/gdg/configuration/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/storage/</guid><description>This is only needed if you intend to use a cloud provider to store your backups. If you are downloading your backups to your local file system you can skip this section.</description></item><item><title>Contexts</title><link>https://software.es.net/gdg/docs/gdg/configuration/contexts/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/contexts/</guid><description>Contexts define a connection to grafana and how to interact with it, authenticate, how to map the connection credentials, how users are created etc.</description></item><item><title>Plugins</title><link>https://software.es.net/gdg/docs/gdg/configuration/plugins/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/plugins/</guid><description>Plugins GDG supports a plugin system based on extism. Version 0.9.0 introduced a cipher plugin that allows the user to encrypt sensitive information and rely on the provided to encode/decode sensitive data like token, passwords, AWS keys etc.</description></item><item><title>Secure Fields</title><link>https://software.es.net/gdg/docs/gdg/configuration/secure-fields/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/secure-fields/</guid><description>Secure Fields secure_config: alerting: - &amp;#39;#.receivers.#.settings.url&amp;#39; - &amp;#39;#.receivers.#.settings.password&amp;#39; - &amp;#39;#.receivers.#.settings.token&amp;#39;Secure fields are regex patterns that should be matched against the payload of a given entity.</description></item><item><title>Debugging</title><link>https://software.es.net/gdg/docs/gdg/configuration/debugging/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/debugging/</guid><description>Debugging / Trouble shooting There are two configuration flags that can be very useful to determine the issue.
-... global: debug: true api_debug: trueThe debug flag enables very logging which may provide some insight on the core issue that you&amp;rsquo;re running into.</description></item><item><title>Legacy</title><link>https://software.es.net/gdg/docs/gdg/configuration/legacy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/legacy/</guid><description>Configuration This is mostly left for reference to older documentation patterns for previous versions.
-Connection Connection Credentials Version v0.4.2-v0.5.1 Legacy BehaviorPreview behavior did not support the use of a secure/secureData.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Configuration on GDG</title><link>https://software.es.net/gdg/docs/gdg/configuration/</link><description>Recent content in Configuration on GDG</description><generator>Hugo</generator><language>en</language><atom:link href="https://software.es.net/gdg/docs/gdg/configuration/index.xml" rel="self" type="application/rss+xml"/><item><title>Structure</title><link>https://software.es.net/gdg/docs/gdg/configuration/structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/structure/</guid><description>&lt;p&gt;GDG Configuration is based on a YAML configuration. It also has the option to override configuration values via environmental variables.&lt;/p&gt;
+&lt;p&gt;The default config file is gdg.yml which should exist in $CWD/config, $CWD or /etc/gdg. If no valid file can be found, the application will fail. An example config file can be found in 
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/blob/main/config/gdg-example.yml" rel="external"&gt;github&lt;/a&gt; under the config folder.&lt;/p&gt;
+&lt;p&gt;The configuration has a few sections of note:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;context_name: the selected context&lt;/li&gt;
+&lt;li&gt;Storage &amp;ndash; defines the storage engine if a cloud provider is used&lt;/li&gt;
+&lt;li&gt;contexts: defines every context you operate on, think of it as the definition of a grafana instance and how to connect to it. It also defines behavior for what folders to inspect, authentication mechanism, etc.&lt;/li&gt;
+&lt;li&gt;global: defines global behavior for all contexts. These settings are not context specific. They tend to be things like enabling debugging, retry logic, api debugging etc.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="environment-overrides"&gt;Environment Overrides&lt;/h2&gt;
+&lt;div class="callout callout-caution d-flex flex-row mt-4 mb-4 pt-4 pe-4 pb-2 ps-3"&gt;
+ &lt;svg
+ xmlns="http://www.w3.org/2000/svg"
+ width="24"
+ height="24"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ stroke-width="2"
+ stroke-linecap="round"
+ stroke-linejoin="round"
+ 
+ class="alert-triangle svg-inline callout-icon me-2 mb-3" id="svg-alert-triangle" role="img"&gt;
+ &lt;path stroke="none" d="M0 0h24v24H0z" fill="none"/&gt;
+ &lt;path d="M12 9v4" /&gt;
+ &lt;path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0" /&gt;
+ &lt;path d="M12 16h.01" /&gt;
+&lt;/svg&gt;
+ &lt;div class="callout-content"&gt;
+ &lt;div class="callout-title"&gt;
+ &lt;p&gt;Caution&lt;/p&gt;</description></item><item><title>Globals</title><link>https://software.es.net/gdg/docs/gdg/configuration/globals/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/globals/</guid><description>&lt;p&gt;Global flags are configuration that applies to all contexts. The following flags are all nested under &lt;code&gt;globals:&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id="clear-output"&gt;Clear Output&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;clear_output&lt;/code&gt; when set to true will remove all files in the destination folder prior to importing the data.&lt;/p&gt;
+&lt;p&gt;ie. if fetching all dashboards for the default org, then all files in the folder: &lt;code&gt;{output_path}/org_main-org/dashboards&lt;/code&gt; will be removed.&lt;/p&gt;
+&lt;div class="callout callout-caution d-flex flex-row mt-4 mb-4 pt-4 pe-4 pb-2 ps-3"&gt;
+ &lt;svg
+ xmlns="http://www.w3.org/2000/svg"
+ width="24"
+ height="24"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ stroke-width="2"
+ stroke-linecap="round"
+ stroke-linejoin="round"
+ 
+ class="alert-triangle svg-inline callout-icon me-2 mb-3" id="svg-alert-triangle" role="img"&gt;
+ &lt;path stroke="none" d="M0 0h24v24H0z" fill="none"/&gt;
+ &lt;path d="M12 9v4" /&gt;
+ &lt;path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0" /&gt;
+ &lt;path d="M12 16h.01" /&gt;
+&lt;/svg&gt;
+ &lt;div class="callout-content"&gt;
+ &lt;div class="callout-title"&gt;
+ &lt;p&gt;Caution&lt;/p&gt;</description></item><item><title>Storage</title><link>https://software.es.net/gdg/docs/gdg/configuration/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/storage/</guid><description>&lt;p&gt;This is only needed if you intend to use a cloud provider to store your backups. If you are downloading your backups to your local file system you can skip this section.&lt;/p&gt;
+&lt;p&gt;GDG should work with most S3 compatible providers. It leverages the 
+
+&lt;a class="link link--text" href="https://github.com/google/go-cloud" rel="external"&gt;go-cloud&lt;/a&gt; framework to provide this functionality. The standard providers should &amp;lsquo;just work&amp;rsquo; out of the box relying on the authentication mechanism that each provider supports. ie. AWS looks for ~/.aws/credentials, google will look for its respective config and so on. GDG also supports custom providers that allows for S3 compatible self-hosted solutions such as Minio, Ceph, etc.&lt;/p&gt;</description></item><item><title>Contexts</title><link>https://software.es.net/gdg/docs/gdg/configuration/contexts/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/contexts/</guid><description>&lt;p&gt;Contexts define a connection to grafana and how to interact with it, authenticate, how to map the connection credentials, how users are created etc. All contexts are defined under the &lt;code&gt;contexts&lt;/code&gt; key.&lt;/p&gt;
+&lt;h3 id="api-token"&gt;API Token&lt;/h3&gt;
+&lt;div class="callout callout-danger d-flex flex-row mt-4 mb-4 pt-4 pe-4 pb-2 ps-3"&gt;
+ &lt;svg
+ xmlns="http://www.w3.org/2000/svg"
+ width="24"
+ height="24"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ stroke-width="2"
+ stroke-linecap="round"
+ stroke-linejoin="round"
+ 
+ class="alert-octagon svg-inline callout-icon me-2 mb-3" id="svg-alert-octagon" role="img"&gt;
+ &lt;path stroke="none" d="M0 0h24v24H0z" fill="none"/&gt;
+ &lt;path d="M12.802 2.165l5.575 2.389c.48 .206 .863 .589 1.07 1.07l2.388 5.574c.22 .512 .22 1.092 0 1.604l-2.389 5.575c-.206 .48 -.589 .863 -1.07 1.07l-5.574 2.388c-.512 .22 -1.092 .22 -1.604 0l-5.575 -2.389a2.036 2.036 0 0 1 -1.07 -1.07l-2.388 -5.574a2.036 2.036 0 0 1 0 -1.604l2.389 -5.575c.206 -.48 .589 -.863 1.07 -1.07l5.574 -2.388a2.036 2.036 0 0 1 1.604 0" /&gt;
+ &lt;path d="M12 8v4" /&gt;
+ &lt;path d="M12 16h.01" /&gt;
+&lt;/svg&gt;
+ &lt;div class="callout-content"&gt;
+ &lt;div class="callout-title"&gt;
+ &lt;p&gt;Danger&lt;/p&gt;</description></item><item><title>Plugins</title><link>https://software.es.net/gdg/docs/gdg/configuration/plugins/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/plugins/</guid><description>&lt;h2 id="plugins"&gt;Plugins&lt;/h2&gt;
+&lt;p&gt;GDG supports a plugin system based on 
+
+&lt;a class="link link--text" href="https://extism.org/" rel="external"&gt;extism&lt;/a&gt;. Version 0.9.0 introduced a cipher plugin that
+allows the user to encrypt sensitive information and rely on the provided to encode/decode sensitive data like token,
+passwords, AWS keys etc.&lt;/p&gt;
+&lt;h3 id="configuring-gdg"&gt;Configuring GDG&lt;/h3&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;plugins&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;disabled&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cipher&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;## AES-256 config&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;url&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugins/cipher_aes256_gcm.wasm&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# file_path: ./foobar/moo Only enable either filepath Or URL not both.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;config&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;## map passed to plugin.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# If any field starts with env: then it will instead load the env value&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# if any field start with file: then it will load the file data and use its value to be passed to the config&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;passphrase&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;hello_world&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;## Ansible Vault&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# url: https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugins/cipher_ansible.wasm&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# config: ## map passed to plugin.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# # If any field starts with env: then it will instead load the env value&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# # if any field start with file: then it will load the file data and use its value to be passed to the config&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# vault_password: file:$HOME/.ansible/vaultSecret&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Plugins will be disabled by default. If you would like to enabled them make sure you have &lt;code&gt;plugins.disabled&lt;/code&gt; set to true.&lt;/p&gt;</description></item><item><title>Secure Fields</title><link>https://software.es.net/gdg/docs/gdg/configuration/secure-fields/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/secure-fields/</guid><description>&lt;h1 id="secure-fields"&gt;Secure Fields&lt;/h1&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;secure_config&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;alerting&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s1"&gt;&amp;#39;#.receivers.#.settings.url&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s1"&gt;&amp;#39;#.receivers.#.settings.password&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s1"&gt;&amp;#39;#.receivers.#.settings.token&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Secure fields are regex patterns that should be matched against the payload of a given entity. GDG itself needs to be
+updates as this is not natively applied to every resource. This might be changed in a future version but there is something
+to be said for speed vs flexibility.&lt;/p&gt;
+&lt;p&gt;Currently, the only supported entity is contact-points with alerting. The regex patterns above are ones that I&amp;rsquo;ve seen
+containing sensitive date. It&amp;rsquo;s likely not a comprehensive list, but if you are happy with the list you won&amp;rsquo;t need to modify it.&lt;/p&gt;</description></item><item><title>Debugging</title><link>https://software.es.net/gdg/docs/gdg/configuration/debugging/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/debugging/</guid><description>&lt;h2 id="debugging--trouble-shooting"&gt;Debugging / Trouble shooting&lt;/h2&gt;
+&lt;p&gt;There are two configuration flags that can be very useful to determine the issue.&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;...&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;global&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;api_debug&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;The debug flag enables very logging which may provide some insight on the core issue that you&amp;rsquo;re running into. Additionally, api_debug
+when enabled with print every request being made and response.&lt;/p&gt;
+&lt;p&gt;For example, attempting to upload all the given folders I get the follow response.&lt;/p&gt;</description></item><item><title>Legacy</title><link>https://software.es.net/gdg/docs/gdg/configuration/legacy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/gdg/configuration/legacy/</guid><description>&lt;h2 id="configuration"&gt;Configuration&lt;/h2&gt;
+&lt;p&gt;This is mostly left for reference to older documentation patterns for previous versions.&lt;/p&gt;
+&lt;h2 id="connection"&gt;Connection&lt;/h2&gt;
+&lt;h3 id="connection-credentials"&gt;Connection Credentials&lt;/h3&gt;
+&lt;h4 id="version-v042-v051"&gt;Version v0.4.2-v0.5.1&lt;/h4&gt;
+&lt;details&gt;
+ &lt;summary&gt;Legacy Behavior&lt;/summary&gt;
+ &lt;p&gt;Preview behavior did not support the use of a secure/secureData.json pattern, instead an auth: codeblock was used.&lt;/p&gt;
+&lt;p&gt;Please note that only basicAuth worked prior to version v0.5.2&lt;/p&gt;
+&lt;p&gt;Example can be seen below:&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;testing&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;output_path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;testing_data&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;connections&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;credential_rules&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;rules&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;field&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;name&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;regex&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;.*&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;auth&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;user&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;user&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;password&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;secret&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;url&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;http://localhost:3000&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;user_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;admin&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;password&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;admin&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ignore_filters&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# When set to true all Watched filtered folders will be ignored and ALL folders will be acted on&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;watched&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;General&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;Other&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;h4 id="version-prior-to-v042"&gt;Version Prior to v0.4.2&lt;/h4&gt;
+&lt;details&gt;
+ &lt;summary&gt;Legacy Behavior&lt;/summary&gt;
+ &lt;p&gt;If the connection has BasicAuth enabled, then we&amp;rsquo;ll attempt to set the auth with the following precedence on matches:&lt;/p&gt;</description></item></channel></rss>

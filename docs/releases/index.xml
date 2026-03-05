@@ -1,4 +1,124 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on GDG</title><link>https://software.es.net/gdg/docs/releases/</link><description>Recent content in Releases on GDG</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 07 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://software.es.net/gdg/docs/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>Version 0.9</title><link>https://software.es.net/gdg/docs/releases/version-0.9/</link><pubDate>Wed, 07 Jan 2026 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.9/</guid><description>Release Notes for v0.9.2 This is a quick bug fix release to address the behavior of alert rules. The other changes are enabling encryption for connection settings as well.</description></item><item><title>Version 0.8</title><link>https://software.es.net/gdg/docs/releases/version-0.8/</link><pubDate>Thu, 15 May 2025 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.8/</guid><description>Release Notes for v0.8.1 Release Date: 06/30/2025
-BugFix: #456 Issued with folders containing spaces Changes: #450 Update GoReleaser configurations (#453) Changes the patterns for brew installs from Formula to Cask: https://goreleaser.</description></item><item><title>Version 0.7</title><link>https://software.es.net/gdg/docs/releases/version-0.7/</link><pubDate>Wed, 11 Sep 2024 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.7/</guid><description>Release Notes for v0.7.2 Release Date: 01/17/2025
-Breaking Changes #318 Only affects those with no valid configuration present. Removed the default config fall back.</description></item><item><title>Legacy Versions</title><link>https://software.es.net/gdg/docs/releases/legacy-versions/</link><pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/legacy-versions/</guid><description>Release Notes for v0.6.0 Release Date: 03/11/2024
-Breaking Changes This is a major release, so once again doing some cleanups and introducing some breaking changes.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on GDG</title><link>https://software.es.net/gdg/docs/releases/</link><description>Recent content in Releases on GDG</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 04 Mar 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://software.es.net/gdg/docs/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>Version 0.9</title><link>https://software.es.net/gdg/docs/releases/version-0.9/</link><pubDate>Wed, 04 Mar 2026 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.9/</guid><description>&lt;h2 id="release-notes-for-v093"&gt;Release Notes for v0.9.3&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 03/05/2026&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="breaking-changes-v093"&gt;Breaking Changes (v0.9.3)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Dropped &lt;code&gt;gdg tools devel completion&lt;/code&gt; since it&amp;rsquo;s already exposed as a top level command &lt;code&gt;gdg completion&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="bugfixes-v093"&gt;BugFixes (v0.9.3)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/543" rel="external"&gt;#543&lt;/a&gt; Env vars not working due to a conflict with the secure_location pattern that was previously introduced. Env will work if secure location not used. Next major release (0.10.x) will fix this to allow for Env to take precedence over any config values.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="changes-v093"&gt;Changes (v0.9.3)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/565" rel="external"&gt;#565&lt;/a&gt; Dropping S3 TUI and merging logic into context builder&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/564" rel="external"&gt;#564&lt;/a&gt; Adding TUI config generator updates.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/563" rel="external"&gt;#563&lt;/a&gt; Adding TUI for S3 configuration&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/560" rel="external"&gt;#557&lt;/a&gt; Adding support for patching folder UID when missing and folder auto-creation.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/557" rel="external"&gt;#557&lt;/a&gt; Adds label and folder based filtering to alert rules.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/559" rel="external"&gt;#559&lt;/a&gt; Adds &lt;del&gt;name&lt;/del&gt; UID based filtering to alert rules.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="techdebt-v093"&gt;TechDebt (v0.9.3)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Bug 
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/501" rel="external"&gt;#501&lt;/a&gt; Fixing issues with test failures due to containers not being available.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/539" rel="external"&gt;#539&lt;/a&gt; Added test to cover to plugin code path.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/488" rel="external"&gt;#488&lt;/a&gt; Added an Env to disable enterprise tests. Allow contributors to not be blocked without a license.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/531" rel="external"&gt;#531&lt;/a&gt; Fixing documentation issues with the Getting Started guide and css/icons rendering behavior.&lt;/li&gt;
+&lt;li&gt;General dependency and tooling update, upgrade to go 1.26.0, npm updates&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/558" rel="external"&gt;#558&lt;/a&gt; Refactors code base to follow port/adapters/domains&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="release-notes-for-v092"&gt;Release Notes for v0.9.2&lt;/h2&gt;
+&lt;p&gt;This is a quick bug fix release to address the behavior of alert rules. The other changes are enabling encryption for
+connection settings as well. This should cover all sensitive data that GDG manages.&lt;/p&gt;</description></item><item><title>Version 0.8</title><link>https://software.es.net/gdg/docs/releases/version-0.8/</link><pubDate>Thu, 15 May 2025 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.8/</guid><description>&lt;h2 id="release-notes-for-v081"&gt;Release Notes for v0.8.1&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 06/30/2025&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="bugfix"&gt;BugFix:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/456" rel="external"&gt;#456&lt;/a&gt; Issued with folders containing spaces&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="changes"&gt;Changes:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/450" rel="external"&gt;#450&lt;/a&gt; Update GoReleaser configurations (#453)
+Changes the patterns for brew installs from Formula to Cask: https://goreleaser.com/deprecations/#brews&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/454" rel="external"&gt;#454&lt;/a&gt; Adding a logo GDG logo (#454)&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/445" rel="external"&gt;#445&lt;/a&gt; Added a global &amp;ndash;context to easy switch without needing a config change.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="release-notes-for-v080"&gt;Release Notes for v0.8.0&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 06/25/2025&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Major features in this release are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dropped the configuration flag for nested folders (&lt;code&gt;nested_folders&lt;/code&gt;) as it is now the default behavior.&lt;/li&gt;
+&lt;li&gt;Dropped the configuration flag to ignore bad folders (&lt;code&gt;nested_folders&lt;/code&gt;), instead special characters are handled by
+URL encoding the output.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;aka. Folder named &lt;code&gt;/t/'n / r'/booh/k &amp;amp; r&lt;/code&gt; will be stored locally as: &lt;code&gt;t/n+%2F+r/booh/n+%2F+r.json&lt;/code&gt;&lt;/p&gt;</description></item><item><title>Version 0.7</title><link>https://software.es.net/gdg/docs/releases/version-0.7/</link><pubDate>Wed, 11 Sep 2024 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.7/</guid><description>&lt;h2 id="release-notes-for-v072"&gt;Release Notes for v0.7.2&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 01/17/2025&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="breaking-changes"&gt;Breaking Changes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/318" rel="external"&gt;#318&lt;/a&gt; Only affects those with no valid configuration present. Removed the default
+config fall back. For backup and tools functionality a valid configuration file is now required. A new cli parameter is introduced: &lt;code&gt;default-config&lt;/code&gt;
+which will print an example configuration to stdout.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="feature-changes"&gt;Feature Changes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/319" rel="external"&gt;#319&lt;/a&gt; Remove the requirement for GF_FEATURE_TOGGLES_ENABLE for nested folder as it was incorrectly required in 0.7.1&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/302" rel="external"&gt;#302&lt;/a&gt; Adding Alerting Contact Points support. (Beta Feature, API/format may change in the next release)&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/303" rel="external"&gt;#303&lt;/a&gt; Cleaning up Permission based listings. (Visualization)&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/274" rel="external"&gt;#274&lt;/a&gt; Adding Dashboard Permissions, enterprise feature.&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/337" rel="external"&gt;#337&lt;/a&gt; Fix to maintain UIDs when updating dashboards&lt;/li&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/pull/324" rel="external"&gt;#324&lt;/a&gt; Introducing a new config option to disregard bad folders&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Example:&lt;/p&gt;</description></item><item><title>Legacy Versions</title><link>https://software.es.net/gdg/docs/releases/legacy-versions/</link><pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/legacy-versions/</guid><description>&lt;h2 id="release-notes-for-v060"&gt;Release Notes for v0.6.0&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Release Date: 03/11/2024&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="breaking-changes"&gt;Breaking Changes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;This is a major release, so once again doing some cleanups and introducing some breaking changes. Please use version
+v0.5.2 if you wish to maintain backward compatibility. Previous version organized downloads by org_id. Example an
+export for dashboards would be stored in &lt;code&gt;export/org_1/dashboards&lt;/code&gt;. The org ID is inconsistent and something that
+cannot be guaranteed across installations of grafana. Instead, we&amp;rsquo;ve switched over to using a slug of the OrgName. The
+default dashboard backup will go in: &lt;code&gt;export/org_main-org/dashboards&lt;/code&gt;.&lt;/p&gt;</description></item></channel></rss>

@@ -1,1 +1,61 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorials on GDG</title><link>https://software.es.net/gdg/docs/tutorials/</link><description>Recent content in Tutorials on GDG</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 01 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://software.es.net/gdg/docs/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Working with Library Panels</title><link>https://software.es.net/gdg/docs/tutorials/working-with-library-panels/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/working-with-library-panels/</guid><description>Starting with version 0.4, library panels are going to be supported. It&amp;rsquo;s a bit special and the behavior is somewhat unique.</description></item><item><title>Organization and Authentication</title><link>https://software.es.net/gdg/docs/tutorials/organization-and-authentication/</link><pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/organization-and-authentication/</guid><description>Concepts At it&amp;rsquo;s core an Organization in grafana is an entity that allows you (the user) to organize and structure entities to seperate access for both usability and security.</description></item><item><title>Working with Nested Folders</title><link>https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/</guid><description>Starting with GDG 0.7, support for nested folders has been added. This feature requires grafana 11+. You can watch a Intro video or read the offical annoucements here.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorials on GDG</title><link>https://software.es.net/gdg/docs/tutorials/</link><description>Recent content in Tutorials on GDG</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 01 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://software.es.net/gdg/docs/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Working with Library Panels</title><link>https://software.es.net/gdg/docs/tutorials/working-with-library-panels/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/working-with-library-panels/</guid><description>&lt;p&gt;Starting with version 0.4, library panels are going to be supported. It&amp;rsquo;s a bit special and the behavior is somewhat unique.&lt;/p&gt;
+&lt;p&gt;Rules:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Library Panels are immutable. They cannot be moved to a different folder. They are linked to one or multiple dashboards.&lt;/li&gt;
+&lt;li&gt;The only way I can see to move a lib element is to unlink the panel, delete the panel and re-create it in a different folder, then re-link it.&lt;/li&gt;
+&lt;li&gt;In theory it&amp;rsquo;s supposed to move with the dashboards but I haven&amp;rsquo;t been able to re-create that behavior.&lt;/li&gt;
+&lt;li&gt;You cannot delete a library element while a dashboard is still using it.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="import-components"&gt;Import components&lt;/h2&gt;
+&lt;p&gt;will retrieve all the components from Grafana and save to local file system.&lt;/p&gt;</description></item><item><title>Organization and Authentication</title><link>https://software.es.net/gdg/docs/tutorials/organization-and-authentication/</link><pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/organization-and-authentication/</guid><description>&lt;h2 id="concepts"&gt;Concepts&lt;/h2&gt;
+&lt;p&gt;At it&amp;rsquo;s core an Organization in grafana is an entity that allows you (the user) to organize and structure entities to seperate access for both usability
+and security. So a Connection under org1 would never be able to be configured to use a dashboard under Org2.&lt;/p&gt;
+&lt;p&gt;Authentication with GDG and grafana can take a few different patterns.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Grafana Admin - this is your typical admin/admin default user that comes with most installs. You have full access to do everything.&lt;/li&gt;
+&lt;li&gt;Org Admin - this is a user that is an admin for one or multiple Orgs and can manage most entities under the given org but not high level entities.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Each user can be authenticated with &amp;lsquo;BasicAuth&amp;rsquo; or APIKeys/Service Tokens.&lt;/p&gt;</description></item><item><title>Working with Nested Folders</title><link>https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/</guid><description>&lt;p&gt;Starting with GDG 0.7, support for nested folders has been added. This feature requires grafana 11+. You can watch a Intro 
+
+&lt;a class="link link--text" href="https://www.youtube.com/watch?v=R9mehA0EssU" rel="external"&gt;video&lt;/a&gt; or read the offical annoucements 
+
+&lt;a class="link link--text" href="https://grafana.com/docs/grafana-cloud/whats-new/2024-02-27-subfolders/" rel="external"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It is current behind a feature toggle. You will need to set the folliwing value in your grafana.ini&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;feature_toggles&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;enable&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;nestedFolders&lt;/span&gt;&lt;span class="p"&gt;,...&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;or have the following ENV variable set&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-env" data-lang="env"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;GF_FEATURE_TOGGLES_ENABLE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nestedFolders&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Additionaly GDG configuration needs to have the behavior enabled.&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;dashboard_settings&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;nested_folders&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;Once enabled, the behavior for Dashboards and folders should reflect that.&lt;/p&gt;</description></item></channel></rss>

@@ -1,0 +1,74 @@
+# GDG
+
+> Congrats on setting up a new Doks project!
+
+- [GDG - Grafana Dash-n-Grab](https://software.es.net/gdg/docs/): GDG is a tool used to manage dashboards, connections, orgs and various entities of the Grafana application platform.
+
+## GDG - Grafana Dash-n-Grab
+
+> GDG is a tool used to manage dashboards, connections, orgs and various entities of the Grafana application platform.
+
+- [Releases](https://software.es.net/gdg/docs/releases/)
+- [GDG](https://software.es.net/gdg/docs/gdg/)
+- [Usage Guide](https://software.es.net/gdg/docs/usage_guide/)
+- [Generate Docs (templating)](https://software.es.net/gdg/docs/templating/)
+- [Tutorials](https://software.es.net/gdg/docs/tutorials/)
+- [Cookbook](https://software.es.net/gdg/docs/cookbook/): A collection of recipes and patterns that can be used with GDG, including kubernetes configs, docker, etc
+- [Developer Guide](https://software.es.net/gdg/docs/developer/)
+
+### Releases
+
+
+
+- [Version 0.9](https://software.es.net/gdg/docs/releases/version-0.9/): Release Notes for v0.9
+- [Version 0.8](https://software.es.net/gdg/docs/releases/version-0.8/): Release Notes for v0.8
+- [Version 0.7](https://software.es.net/gdg/docs/releases/version-0.7/): Release Notes for v0.7
+- [Legacy Versions](https://software.es.net/gdg/docs/releases/legacy-versions/): Release Notes for Legacy Versions
+
+### GDG
+
+
+
+- [Configuration](https://software.es.net/gdg/docs/gdg/configuration/)
+- [Getting Started](https://software.es.net/gdg/docs/gdg/getting-started/)
+- [Installation](https://software.es.net/gdg/docs/gdg/installation/)
+- [Frequently Asked Questions](https://software.es.net/gdg/docs/gdg/frequently-asked-questions/)
+
+### Usage Guide
+
+
+
+- [Backup Guide](https://software.es.net/gdg/docs/usage_guide/backup-guide/)
+- [Tools Guide](https://software.es.net/gdg/docs/usage_guide/tools-guide/)
+- [Enterprise Guide](https://software.es.net/gdg/docs/usage_guide/enterprise-guide/)
+- [Other Commands](https://software.es.net/gdg/docs/usage_guide/other-commands/)
+
+### Generate Docs (templating)
+
+
+
+- [Configuration](https://software.es.net/gdg/docs/templating/configuration/)
+- [Usage Guide](https://software.es.net/gdg/docs/templating/usage-guide/)
+
+### Tutorials
+
+
+
+- [Working with Library Panels](https://software.es.net/gdg/docs/tutorials/working-with-library-panels/)
+- [Organization and Authentication](https://software.es.net/gdg/docs/tutorials/organization-and-authentication/)
+- [Working with Nested Folders](https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/)
+
+### Cookbook
+
+> A collection of recipes and patterns that can be used with GDG, including kubernetes configs, docker, etc
+
+- [Docker Compose Example](https://software.es.net/gdg/docs/cookbook/docker-compose-example/): Illustrates an example on how to use docker and taking advantage of the built in secret feature in conjunction with GDG.
+- [Kubernetes Crontab Example](https://software.es.net/gdg/docs/cookbook/kubernetes-crontab-example/)
+
+### Developer Guide
+
+
+
+- [Developer Guide](https://software.es.net/gdg/docs/developer/developer-guide/)
+- [Contributing](https://software.es.net/gdg/docs/developer/contributing/)
+
