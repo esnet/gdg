@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.96.3
 	github.com/aws/smithy-go v1.24.2
 	github.com/bep/simplecobra v0.7.0
-	github.com/brianvoe/gofakeit/v7 v7.14.0
+	github.com/brianvoe/gofakeit/v7 v7.14.1
 	github.com/carlmjohnson/requests v0.25.1
 	github.com/charmbracelet/huh v0.8.0
 	github.com/docker/go-connections v0.6.0
