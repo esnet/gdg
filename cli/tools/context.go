@@ -82,20 +82,27 @@ func newContextCopy() simplecobra.Commander {
 	v := &domain.SimpleCommand{
 		NameP: "copy",
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
+			// Guard against the validator not firing (defensive belt-and-suspenders).
+			if len(args) < 2 {
+				return errors.New("requires a src and destination argument")
+			}
 			src := args[0]
 			dest := args[1]
 			config.CopyContext(rootCmd.ConfigSvc(), src, dest)
 			return nil
 		},
-		InitCFunc: func(cd *simplecobra.Commandeer, r *domain.RootCommand) error {
-			cd.CobraCommand.Aliases = []string{"cp"}
-			cd.CobraCommand.Args = func(cmd *cobra.Command, args []string) error {
+		// WithCFunc runs during command-tree Init(), before any execution, so
+		// cmd.Args set here is visible to Cobra's ValidateArgs call.
+		// InitCFunc runs in PreRun(), which is after ValidateArgs — too late for
+		// an Args validator to prevent RunFunc from being called.
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
+			cmd.Aliases = []string{"cp"}
+			cmd.Args = func(cmd *cobra.Command, args []string) error {
 				if len(args) < 2 {
 					return errors.New("requires a src and destination argument")
 				}
 				return nil
 			}
-			return nil
 		},
 		Short: "copy context <src> <dest>",
 		Long:  "copy contexts  <src> <dest>",
