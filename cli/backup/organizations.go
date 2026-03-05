@@ -29,7 +29,7 @@ func newOrganizationsCommand() simplecobra.Commander {
 			cmd.PersistentFlags().StringP("org-name", "o", "", "Filter by org name")
 		},
 
-		InitCFunc: func(cd *simplecobra.Commandeer, r *domain.RootCommand) error {
+		InitCFunc: func(cd *simplecobra.Commandeer, runner *simplecobra.Commandeer, r *domain.RootCommand) error {
 			return nil
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {

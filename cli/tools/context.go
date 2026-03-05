@@ -26,7 +26,6 @@ func newContextCmd() simplecobra.Commander {
 			newDeleteContext(),
 			newContext(),
 			newSetContext(),
-			newS3Cmd(),
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, r *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
@@ -114,12 +113,20 @@ func newContextCopy() simplecobra.Commander {
 func newShowContext() simplecobra.Commander {
 	return &domain.SimpleCommand{
 		NameP: "show",
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
+			cmd.Flags().Bool("all", false, "Also display plugin and storage engine configuration")
+		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			contextEntry := rootCmd.ConfigSvc().GetContext()
 			if len(args) > 0 && len(args[0]) > 0 {
 				contextEntry = args[0]
 			}
-			rootCmd.ConfigSvc().PrintContext(contextEntry)
+			all, _ := cd.CobraCommand.Flags().GetBool("all")
+			if all {
+				rootCmd.ConfigSvc().PrintContextAll(contextEntry)
+			} else {
+				rootCmd.ConfigSvc().PrintContext(contextEntry)
+			}
 			return nil
 		},
 		Short: "show optional[context]",
@@ -141,7 +148,7 @@ func newDeleteContext() simplecobra.Commander {
 			slog.Info("Successfully deleted context", "context", contextEntry)
 			return nil
 		},
-		InitCFunc: func(cd *simplecobra.Commandeer, r *domain.RootCommand) error {
+		InitCFunc: func(cd *simplecobra.Commandeer, runner *simplecobra.Commandeer, r *domain.RootCommand) error {
 			cd.CobraCommand.Aliases = []string{"del"}
 			return nil
 		},

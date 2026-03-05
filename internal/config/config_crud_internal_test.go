@@ -59,8 +59,8 @@ func TestLooksLikeRegex_LiteralNames(t *testing.T) {
 
 func TestLooksLikeRegex_RegexPatterns(t *testing.T) {
 	// Inputs containing regex metacharacters must be flagged.
-	assert.True(t, looksLikeRegex("Stardust/.*"))  // '*' triggers detection
-	assert.True(t, looksLikeRegex("DEV-.*"))        // '*'
+	assert.True(t, looksLikeRegex("Stardust/.*"))    // '*' triggers detection
+	assert.True(t, looksLikeRegex("DEV-.*"))         // '*'
 	assert.True(t, looksLikeRegex("(prod|staging)")) // '(' and '|' and ')'
 	assert.True(t, looksLikeRegex("[Dd]ev"))         // '['
 	assert.True(t, looksLikeRegex("node_\\d+"))      // '\'

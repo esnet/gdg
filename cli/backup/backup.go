@@ -22,7 +22,7 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
 		},
-		InitCFunc: func(cd *simplecobra.Commandeer, r *cliDomain.RootCommand) error {
+		InitCFunc: func(cd *simplecobra.Commandeer, runner *simplecobra.Commandeer, r *cliDomain.RootCommand) error {
 			configOverride, _ := cd.CobraCommand.Flags().GetString("config")
 			contextOverride, _ := cd.CobraCommand.Flags().GetString("context")
 			r.LoadConfig(configOverride, contextOverride)
