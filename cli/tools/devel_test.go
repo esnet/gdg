@@ -42,15 +42,15 @@ func TestDevelSrvCompletion(t *testing.T) {
 		}
 	}
 
-	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "fish"}))
+	outStr, closeReader := test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"completion", "fish"}))
 	assert.True(t, strings.Contains(outStr, "fish"))
-	assert.True(t, strings.Contains(outStr, "__completion_prepare_completions"))
+	assert.True(t, strings.Contains(outStr, "__gdg_perform_completion"))
 	closeReader()
-	outStr, closeReader = test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "bash"}))
+	outStr, closeReader = test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"completion", "bash"}))
 	assert.True(t, strings.Contains(outStr, "bash"))
-	assert.True(t, strings.Contains(outStr, "flag_parsing_disabled"))
+	assert.True(t, strings.Contains(outStr, "__gdg_init_completion"))
 	closeReader()
-	outStr, closeReader = test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"tools", "devel", "completion", "zsh"}))
-	assert.True(t, strings.Contains(outStr, "shellCompDirectiveKeepOrder"))
+	outStr, closeReader = test_tooling.SetupAndExecuteMockingServices(t, fn([]string{"completion", "zsh"}))
+	assert.True(t, strings.Contains(outStr, "shellCompDirectiveFilterFileExt"))
 	closeReader()
 }

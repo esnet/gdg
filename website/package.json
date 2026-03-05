@@ -25,15 +25,15 @@
     "postinstall": "hugo-installer --version otherDependencies.hugo --extended --destination node_modules/.bin/hugo"
   },
   "dependencies": {
-    "@hyas/doks-core": "^1.6.1",
-    "@hyas/images": "^3.2.0",
-    "@hyas/inline-svg": "^1.1.0",
-    "@hyas/seo": "^2.3.0",
-    "@tabler/icons": "^3.29.0",
+    "@tabler/icons": "^3.36.1",
+    "@thulite/core": "^1.5.9",
+    "@thulite/doks-core": "^1.9.3",
+    "@thulite/images": "^3.3.4",
+    "@thulite/inline-svg": "^1.2.2",
+    "@thulite/seo": "^2.4.3",
     "autoprefixer": "^10.4.20",
     "cross-spawn": "^7.0.6",
     "exec-bin": "^1.0.0",
-    "gethyas": "^2.4.2",
     "hugo-installer": "^4.0.1",
     "nanoid": "^5.0.9",
     "pnpm": "^10.11.0",
@@ -44,7 +44,7 @@
     "shx": "^0.4.0"
   },
   "otherDependencies": {
-    "hugo": "0.123.7"
+    "hugo": "0.152.2"
   },
   "overrides": {
     "semver": "^7.5.4"

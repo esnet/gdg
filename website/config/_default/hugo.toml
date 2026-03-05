@@ -11,7 +11,8 @@ enableEmoji = true
 enableGitInfo = false
 enableRobotsTXT = true
 languageCode = "en-US"
-paginate = 10
+[pagination]
+pagerSize = 10
 rssLimit = 10
 summarylength = 20 # 70 (default)
 
@@ -23,67 +24,73 @@ defaultContentLanguageInSubdir = false
 copyRight = ""
 
 [build.buildStats]
-  enable = true
+enable = true
 
 [outputs]
-  home = ["HTML", "RSS", "searchIndex"]
-  section = ["HTML", "RSS", "SITEMAP"]
+home = ["html", "rss", "sitemap", "searchIndex", "llms"]
+page = ["html", "markdown"]
+section = ["html", "rss", "sitemap"]
+taxonomy = ["html", "rss", "sitemap"]
+term = ["html", "rss", "sitemap"]
 
 [outputFormats.searchIndex]
-  mediaType = "application/json"
-  baseName = "search-index"
-  isPlainText = true
-  notAlternative = true
+mediaType = "application/json"
+baseName = "search-index"
+isPlainText = true
+notAlternative = true
 
-# Add output format for section sitemap.xml
-[outputFormats.SITEMAP]
-  mediaType = "application/xml"
-  baseName = "sitemap"
-  isHTML = false
-  isPlainText = true
-  noUgly = true
-  rel  = "sitemap"
+[outputFormats.markdown]
+baseName = "index"
+isHTML = false
+isPlainText = true
+mediaType = "text/markdown"
+
+[outputFormats.llms]
+baseName = "llms"
+isHTML = false
+isPlainText = true
+mediaType = "text/plain"
 
 [sitemap]
-  changefreq = "monthly"
-  filename = "sitemap.xml"
-  priority = 0.5
+changefreq = "monthly"
+filename = "sitemap.xml"
+priority = 0.5
 
 [caches]
-  [caches.getjson]
-    dir = ":cacheDir/:project"
-    maxAge = -1 # "30m"
+[caches.getresource]
+dir = ":cacheDir/:project"
+maxAge = -1 # "30m"
 
 [taxonomies]
-  contributor = "contributors"
-  category = "categories"
-  tag = "tags"
+contributor = "contributors"
+category = "categories"
+tag = "tags"
 
 [permalinks]
-  blog = "/blog/:slug/"
-  docs = "/docs/:sections[1:]/:slug/"
+blog = "/blog/:slug/"
+docs = "/docs/:sections[1:]/:slug/"
 # docs = "/docs/1.0/:sections[1:]/:slug/"
 
 [minify.tdewolff.html]
-  keepWhitespace = false
+keepWhitespace = false
 
 [related]
-  threshold = 80
-  includeNewer = true
-  toLower = false
-    [[related.indices]]
-      name = "categories"
-      weight = 100
-    [[related.indices]]
-      name = "tags"
-      weight = 80
-    [[related.indices]]
-      name = "date"
-      weight = 10
+threshold = 80
+includeNewer = true
+toLower = false
+[[related.indices]]
+name = "categories"
+weight = 100
+[[related.indices]]
+name = "tags"
+weight = 80
+[[related.indices]]
+name = "date"
+weight = 10
 
 [imaging]
-  anchor = "Center"
-  bgColor = "#ffffff"
-  hint = "photo"
-  quality = 85
-  resampleFilter = "Lanczos"
+anchor = "Center"
+bgColor = "#ffffff"
+hint = "photo"
+quality = 85
+resampleFilter = "Lanczos"

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -128,6 +129,27 @@ func appendDefaultCredentialRule(rules []*config_domain.RegexMatchesList) []*con
 	})
 }
 
+// validateGrafanaURL checks that s is a syntactically valid http/https URL with a
+// non-empty host.  It is used as a huh.Input Validate callback so errors are shown
+// inline in the TUI; no live reachability probe is performed.
+func validateGrafanaURL(s string) error {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return errors.New("URL is required")
+	}
+	u, err := url.Parse(s)
+	if err != nil {
+		return fmt.Errorf("invalid URL: %w", err)
+	}
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return errors.New("URL must start with http:// or https://")
+	}
+	if u.Host == "" {
+		return errors.New("URL must include a host (e.g. http://grafana.example.com)")
+	}
+	return nil
+}
+
 // summariseFilters returns a compact human-readable description of a filter list,
 // used for display purposes between interactive prompts.
 func summariseFilters(filters []config_domain.MatchingRule) string {
@@ -157,6 +179,12 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 	} else {
 		encoder = noop.NoOpEncoder{}
 	}
+
+	fmt.Println()
+	fmt.Println("  💡 Tip: To skip the wizard and start from a full example config, run:")
+	fmt.Println("       mkdir config && gdg default-config > config/gdg.yml")
+	fmt.Println()
+
 	var authType string
 	err := huh.NewForm(
 		huh.NewGroup(
@@ -189,52 +217,73 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 	}
 
 	// Watched folders — seamless one-at-a-time workflow with encoding and regex testing
-	newConfig.MonitoredFolders = configureWatchedFolders()
-
-	// Connection filters
-	newConfig.ConnectionSettings.FilterRules = configureConnectionFilters()
-
-	// Default connection credentials
-	var (
-		connectionUser     string
-		connectionPassword string
-	)
-	err = huh.NewForm(huh.NewGroup(
-		huh.NewInput().Title("Connection Default User").Description("Default user for Grafana data source connections").Value(&connectionUser),
-		huh.NewInput().Title("Connection Default Password").Description("Default password for Grafana data source connections").EchoMode(huh.EchoModePassword).Value(&connectionPassword),
-	)).Run()
-	if err != nil {
-		log.Fatalf("Unable to get Connection Auth Settings")
-	}
-
-	const passKey = "basicAuthPassword"
-	defaultDs := config_domain.GrafanaConnection{
-		"user":  connectionUser,
-		passKey: connectionPassword,
-	}
-
-	securePath := resourceTypes.SecureSecretsResource
-	location := filepath.Join(newConfig.OutputPath, string(securePath))
-	err = os.MkdirAll(location, 0o750)
-	if err != nil {
-		log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
-	}
-
-	secretFileLocation := filepath.Join(location, "default.yaml")
-	if encoder != nil {
-		newVal, encodeErr := encoder.EncodeValue(defaultDs.Password())
-		if encodeErr == nil {
-			defaultDs[passKey] = newVal
+	folders, ignoreFilters := configureWatchedFolders()
+	newConfig.MonitoredFolders = folders
+	if ignoreFilters {
+		if newConfig.DashboardSettings == nil {
+			newConfig.DashboardSettings = &config_domain.DashboardSettings{}
 		}
+		newConfig.DashboardSettings.IgnoreFilters = true
 	}
 
-	err = writeSecureFileData(defaultDs, secretFileLocation)
-	if err != nil {
-		log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
-	}
+	// Connection settings — opt-in; skip entirely if the user declines.
+	var configureConnections bool
+	err = huh.NewForm(
+		huh.NewGroup(
+			huh.NewConfirm().
+				Title("Configure connection settings?").
+				Description("Set up data source connection filters, default credentials, and credential rules.\nYou can skip this and configure connections later by editing gdg.yml.").
+				Value(&configureConnections),
+		),
+	).WithShowHelp(false).WithShowErrors(false).Run()
 
-	// Credential rules — loop with default catch-all appended
-	newConfig.ConnectionSettings.MatchingRules = configureCredentialRules()
+	var secretFileLocation string
+	if err == nil && configureConnections {
+		// Connection filters
+		newConfig.ConnectionSettings.FilterRules = configureConnectionFilters()
+
+		// Default connection credentials
+		var (
+			connectionUser     string
+			connectionPassword string
+		)
+		err = huh.NewForm(huh.NewGroup(
+			huh.NewInput().Title("Connection Default User").Description("Default user for Grafana data source connections").Value(&connectionUser),
+			huh.NewInput().Title("Connection Default Password").Description("Default password for Grafana data source connections").EchoMode(huh.EchoModePassword).Value(&connectionPassword),
+		)).Run()
+		if err != nil {
+			log.Fatalf("Unable to get Connection Auth Settings")
+		}
+
+		const passKey = "basicAuthPassword"
+		defaultDs := config_domain.GrafanaConnection{
+			"user":  connectionUser,
+			passKey: connectionPassword,
+		}
+
+		securePath := resourceTypes.SecureSecretsResource
+		location := filepath.Join(newConfig.OutputPath, string(securePath))
+		err = os.MkdirAll(location, 0o750)
+		if err != nil {
+			log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
+		}
+
+		secretFileLocation = filepath.Join(location, "default.yaml")
+		if encoder != nil {
+			newVal, encodeErr := encoder.EncodeValue(defaultDs.Password())
+			if encodeErr == nil {
+				defaultDs[passKey] = newVal
+			}
+		}
+
+		err = writeSecureFileData(defaultDs, secretFileLocation)
+		if err != nil {
+			log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
+		}
+
+		// Credential rules — loop with default catch-all appended
+		newConfig.ConnectionSettings.MatchingRules = configureCredentialRules()
+	}
 
 	// Auth location
 	secretFileLocation = fmt.Sprintf("%s.yaml", newConfig.GetAuthLocation())
@@ -254,13 +303,47 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 		log.Fatal("could not save configuration.")
 	}
 	slog.Info("New configuration has been created", "newContext", name)
+
+	// Optional step — configure a cloud storage engine for this context.
+	var configureStorage bool
+	err = huh.NewForm(
+		huh.NewGroup(
+			huh.NewConfirm().
+				Title("Configure cloud storage?").
+				Description("Would you like to set up a cloud storage engine for this context now? (You can skip and add one later via the config file.)").
+				Value(&configureStorage),
+		),
+	).WithShowHelp(false).WithShowErrors(false).Run()
+	if err == nil && configureStorage {
+		NewCustomS3Config(app)
+	}
 }
 
-// configureWatchedFolders interactively prompts the user to build the watched-folder list
-// one entry at a time. Each entry is URL- and regex-encoded automatically via
-// encodeFolderName, and the user may test any entered pattern against a sample value
-// via testFolderRegexMatch before finishing.
-func configureWatchedFolders() []string {
+// configureWatchedFolders interactively prompts the user to choose between monitoring
+// all folders or building a specific allowlist.  It returns the folder list and an
+// ignoreFilters flag.  When ignoreFilters is true the caller should set
+// DashboardSettings.IgnoreFilters = true and the returned slice will be nil.
+func configureWatchedFolders() ([]string, bool) {
+	const (
+		scopeAll       = "all"
+		scopeAllowlist = "allowlist"
+	)
+	var scope string
+	err := huh.NewForm(huh.NewGroup(
+		huh.NewSelect[string]().
+			Title("Folder scope").
+			Description("Choose whether to monitor every Grafana folder or restrict to a specific list.").
+			Options(
+				huh.NewOption("Monitor all folders (ignore filters)", scopeAll),
+				huh.NewOption("Build a folder allowlist", scopeAllowlist),
+			).
+			Value(&scope),
+	)).WithShowHelp(false).WithShowErrors(false).Run()
+	if err != nil || scope == scopeAll {
+		// Ctrl+C or explicit "all" — treat as monitor-all.
+		return nil, true
+	}
+
 	var folders []string
 
 	for {
@@ -310,8 +393,8 @@ func configureWatchedFolders() []string {
 			err = huh.NewForm(huh.NewGroup(
 				huh.NewInput().
 					Title("Folder Name or Regex").
-					Description("Enter a Grafana folder name or a regex pattern.\n"+
-						"Literal names (e.g. 'Happy Gilmore') are URL-encoded automatically.\n"+
+					Description("Enter a Grafana folder name or a regex pattern.\n" +
+						"Literal names (e.g. 'Happy Gilmore') are URL-encoded automatically.\n" +
 						"Regex patterns (e.g. 'Stardust/.*') are stored as-is — you will be asked.").
 					Value(&folderName),
 			)).WithShowHelp(false).WithShowErrors(false).Run()
@@ -334,26 +417,7 @@ func configureWatchedFolders() []string {
 			folders = append(folders, stored)
 
 		case actionTest:
-			var testValue string
-			err = huh.NewForm(huh.NewGroup(
-				huh.NewInput().
-					Title("Test Folder Name").
-					Description(fmt.Sprintf("Enter a folder name to test against the current list: [%s]", currentList)).
-					Value(&testValue),
-			)).WithShowHelp(false).WithShowErrors(false).Run()
-			if err != nil || strings.TrimSpace(testValue) == "" {
-				continue
-			}
-			matched, matches := testFolderRegexMatch(folders, testValue)
-			encoded := encodeFolderName(testValue)
-			fmt.Printf("\n  Testing '%s' (encoded: '%s') against current folders:\n", testValue, encoded)
-			for _, m := range matches {
-				fmt.Printf("  ✓  Matches pattern '%s'\n", m)
-			}
-			if !matched {
-				fmt.Printf("  ✗  No match found in current folder list\n")
-			}
-			fmt.Println()
+			runFolderRegexTestSession(folders)
 		}
 	}
 
@@ -361,7 +425,7 @@ func configureWatchedFolders() []string {
 		folders = []string{"General"}
 		fmt.Println("  No folders specified — defaulting to 'General'")
 	}
-	return folders
+	return folders, false
 }
 
 // configureConnectionFilters interactively builds the connections.filters slice.
@@ -415,9 +479,12 @@ func configureConnectionFilters() []config_domain.MatchingRule {
 			}
 			fmt.Printf("\n  ✓  Added filter: field='%s'  regex='%s'  type=%s\n", field, regex, filterType)
 
-			// Offer inline regex test
+			// Offer inline regex test; user may modify the regex mid-session
 			if shouldTestRegex(fmt.Sprintf("field='%s' regex='%s'", field, regex)) {
-				runRegexTest(regex)
+				if newRegex := runRegexTest(regex); newRegex != regex && len(filters) > 0 {
+					filters[len(filters)-1].Regex = newRegex
+					fmt.Printf("  ✎  Filter regex updated to '%s'\n\n", newRegex)
+				}
 			}
 		}
 
@@ -497,9 +564,12 @@ func configureCredentialRules() []*config_domain.RegexMatchesList {
 				matchingRules = append(matchingRules, *rule)
 				fmt.Printf("\n  ✓  Added matching rule: field='%s'  regex='%s'\n", field, regexVal)
 
-				// Offer inline regex test
+				// Offer inline regex test; user may modify the regex mid-session
 				if shouldTestRegex(fmt.Sprintf("field='%s' regex='%s'", field, regexVal)) {
-					runRegexTest(regexVal)
+					if newRegex := runRegexTest(regexVal); newRegex != regexVal && len(matchingRules) > 0 {
+						matchingRules[len(matchingRules)-1].Regex = newRegex
+						fmt.Printf("  ✎  Credential rule regex updated to '%s'\n\n", newRegex)
+					}
 				}
 			}
 
@@ -568,28 +638,123 @@ func shouldTestRegex(label string) bool {
 	return err == nil && want
 }
 
-// runRegexTest prompts for a test value and prints whether it matches the supplied
-// regex. The match logic is delegated to testRegexMatch.
-func runRegexTest(regex string) {
-	var testValue string
-	err := huh.NewForm(huh.NewGroup(
-		huh.NewInput().
-			Title("Test Value").
-			Description(fmt.Sprintf("Enter a value to test against regex '%s'", regex)).
-			Value(&testValue),
-	)).WithShowHelp(false).WithShowErrors(false).Run()
-	if err != nil || strings.TrimSpace(testValue) == "" {
-		return
+// runRegexTest runs an interactive loop that lets the user test values against
+// a regex, and optionally modify the regex mid-session. It returns the final
+// regex (which may differ from the input if the user chose to modify it).
+// The loop exits when the user picks "Done", cancels a form, or enters nothing.
+func runRegexTest(regex string) string {
+	type testAction string
+	const (
+		actionTestAnother testAction = "another"
+		actionModify      testAction = "modify"
+		actionDone        testAction = "done"
+	)
+
+	for {
+		// ── Step 1: prompt for a test value ──────────────────────────────
+		var testValue string
+		err := huh.NewForm(huh.NewGroup(
+			huh.NewInput().
+				Title("Test Value").
+				Description(fmt.Sprintf("Enter a value to test against regex '%s'", regex)).
+				Value(&testValue),
+		)).WithShowHelp(false).WithShowErrors(false).Run()
+		if err != nil {
+			break
+		}
+
+		if strings.TrimSpace(testValue) != "" {
+			matched, matchErr := testRegexMatch(regex, testValue)
+			if matchErr != nil {
+				fmt.Printf("  ⚠  %v\n\n", matchErr)
+			} else if matched {
+				fmt.Printf("  ✓  '%s' MATCHES regex '%s'\n\n", testValue, regex)
+			} else {
+				fmt.Printf("  ✗  '%s' does NOT match regex '%s'\n\n", testValue, regex)
+			}
+		}
+
+		// ── Step 2: what next? ────────────────────────────────────────────
+		var nextAction string
+		err = huh.NewForm(huh.NewGroup(
+			huh.NewSelect[string]().
+				Title("What would you like to do?").
+				Options(
+					huh.NewOption("Test another value", string(actionTestAnother)),
+					huh.NewOption("Modify the regex", string(actionModify)),
+					huh.NewOption("Done testing", string(actionDone)),
+				).
+				Value(&nextAction),
+		)).WithShowHelp(false).WithShowErrors(false).Run()
+		if err != nil || testAction(nextAction) == actionDone {
+			break
+		}
+
+		if testAction(nextAction) == actionModify {
+			var newRegex string
+			err = huh.NewForm(huh.NewGroup(
+				huh.NewInput().
+					Title("Update Regex").
+					Description(fmt.Sprintf("Current regex: '%s'\nEnter the updated regex pattern", regex)).
+					Value(&newRegex),
+			)).WithShowHelp(false).WithShowErrors(false).Run()
+			if err != nil {
+				break
+			}
+			newRegex = strings.TrimSpace(newRegex)
+			if newRegex == "" {
+				fmt.Println(" ⚠ Empty regex — keeping the original")
+				continue
+			}
+			if _, compErr := regexp.Compile(newRegex); compErr != nil {
+				fmt.Printf("  ⚠  Invalid regex %q: %v — keeping the original\n\n", newRegex, compErr)
+				continue
+			}
+			fmt.Printf("  ✎  Regex updated: '%s'  →  '%s'\n\n", regex, newRegex)
+			regex = newRegex
+		}
+		// actionTestAnother: fall through to top of loop
 	}
-	matched, matchErr := testRegexMatch(regex, testValue)
-	if matchErr != nil {
-		fmt.Printf("  ⚠  %v\n\n", matchErr)
-		return
-	}
-	if matched {
-		fmt.Printf("  ✓  '%s' MATCHES regex '%s'\n\n", testValue, regex)
-	} else {
-		fmt.Printf("  ✗  '%s' does NOT match regex '%s'\n\n", testValue, regex)
+	return regex
+}
+
+// runFolderRegexTestSession runs an interactive loop that lets the user test
+// folder name values against the full folder list repeatedly, without having
+// to return to the main watched-folders menu between tests.
+func runFolderRegexTestSession(folders []string) {
+	currentList := strings.Join(folders, ", ")
+	for {
+		var testValue string
+		err := huh.NewForm(huh.NewGroup(
+			huh.NewInput().
+				Title("Test Folder Name").
+				Description(fmt.Sprintf("Enter a folder name to test against the current list: [%s]", currentList)).
+				Value(&testValue),
+		)).WithShowHelp(false).WithShowErrors(false).Run()
+		if err != nil || strings.TrimSpace(testValue) == "" {
+			break
+		}
+
+		matched, matches := testFolderRegexMatch(folders, testValue)
+		encoded := encodeFolderName(testValue)
+		fmt.Printf("\n  Testing '%s' (encoded: '%s') against current folders:\n", testValue, encoded)
+		for _, m := range matches {
+			fmt.Printf("  ✓  Matches pattern '%s'\n", m)
+		}
+		if !matched {
+			fmt.Printf("  ✗  No match found in current folder list\n")
+		}
+		fmt.Println()
+
+		var testMore bool
+		err = huh.NewForm(huh.NewGroup(
+			huh.NewConfirm().
+				Title("Test another folder name?").
+				Value(&testMore),
+		)).WithShowHelp(false).WithShowErrors(false).Run()
+		if err != nil || !testMore {
+			break
+		}
 	}
 }
 
@@ -644,7 +809,8 @@ func buildFormGroups(authType string, config *config_domain.GrafanaConfig, secur
 			Value(&config.OutputPath),
 		huh.NewInput().
 			Description("What is the Grafana URL include http(s)?").
-			Value(&config.URL),
+			Value(&config.URL).
+			Validate(validateGrafanaURL),
 	),
 	)
 

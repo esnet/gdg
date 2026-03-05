@@ -60,7 +60,8 @@ func NewCustomS3Config(app *config_domain.GDGAppConfiguration) {
 		),
 	).WithShowHelp(false).WithShowErrors(false).Run()
 	if err != nil {
-		log.Fatal("provider selection cancelled")
+		slog.Warn("storage configuration cancelled — no storage engine added")
+		return
 	}
 
 	if cp := cloudProvider(provider); cp != providerCustom {
@@ -68,6 +69,7 @@ func NewCustomS3Config(app *config_domain.GDGAppConfiguration) {
 		fmt.Printf("Documentation: %s\n\n", providerDocURLs[cp])
 		fmt.Println("Once credentials are in place, add a storage_engine entry to gdg.yml:")
 		fmt.Printf("  cloud_type: %s\n  bucket_name: <your-bucket>\n\n", cp)
+		slog.Info("storage engine not configured here — add gdg.yml entry manually", "provider", string(cp))
 		return
 	}
 
