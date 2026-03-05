@@ -5,7 +5,10 @@ weight: 11
 
 ## Setup new configuration
 
-You can create new context configuration using an interactive setup.
+You can create new context configuration using an interactive setup. This is the easiest and
+recommended way of getting setup.
+
+
 ```
 $ gdg tools contexts new mycontext
 ```

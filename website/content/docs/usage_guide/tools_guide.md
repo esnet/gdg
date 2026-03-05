@@ -110,7 +110,7 @@ Some developer helper utilities
 
 
 ```sh
-./bin/gdg tools devel completion  [bash|fish|powershell|zsh] --  Will generate autocompletion for GDG for your favorite shell
+./bin/gdg completion  [bash|fish|powershell|zsh] --  Will generate autocompletion for GDG for your favorite shell
 ./bin/gdg tools devel srvinfo -- print grafana server info
 ```
 

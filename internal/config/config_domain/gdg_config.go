@@ -172,6 +172,44 @@ func (app *GDGAppConfiguration) PrintContext(name string) {
 	fmt.Printf("---context: %s\n%s\n", name, string(d))
 }
 
+// PrintContextAll outputs the same YAML as PrintContext plus the plugin configuration
+// and any storage engines associated with the named context (or all engines if none
+// is assigned).  It is used by "gdg tools contexts show --all".
+func (app *GDGAppConfiguration) PrintContextAll(name string) {
+	// Always print the base context first.
+	app.PrintContext(name)
+
+	// Plugin configuration.
+	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
+		d, err := yaml.Marshal(app.PluginConfig)
+		if err == nil {
+			fmt.Printf("---plugins:\n%s\n", string(d))
+		}
+	}
+
+	// Storage engines: show only the one assigned to this context, or all if none assigned.
+	if len(app.StorageEngine) > 0 {
+		name = strings.ToLower(name)
+		ctx := app.GetContexts()[name]
+		assigned := ""
+		if ctx != nil {
+			assigned = ctx.Storage
+		}
+
+		engines := app.StorageEngine
+		if assigned != "" {
+			if entry, ok := engines[assigned]; ok {
+				engines = map[string]map[string]string{assigned: entry}
+			}
+		}
+
+		d, err := yaml.Marshal(map[string]any{"storage_engine": engines})
+		if err == nil {
+			fmt.Printf("---%s", string(d))
+		}
+	}
+}
+
 // GetDefaultGrafanaConfig returns the default aka. selected grafana config
 func (app *GDGAppConfiguration) GetDefaultGrafanaConfig() *GrafanaConfig {
 	name := app.GetContext()

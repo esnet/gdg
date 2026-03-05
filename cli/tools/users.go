@@ -20,7 +20,6 @@ func newUserCommand() simplecobra.Commander {
 		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"u", "user"}
 		},
-		InitCFunc:    nil,
 		CommandsList: []simplecobra.Commander{newPromoteUserCmd()},
 	}
 }
@@ -51,7 +50,5 @@ func newPromoteUserCmd() simplecobra.Commander {
 				slog.Debug("Failed to mark user flag as required")
 			}
 		},
-		InitCFunc:    nil,
-		CommandsList: nil,
 	}
 }

@@ -10,8 +10,13 @@ toc: true
 
 ## Release Notes for v0.9.3
 
+### Breaking Changes
+  - Dropped `gdg tools devel completion` since it's already exposed as a top level command `gdg completion`
+
 ### Changes
-  - [563](https://github.com/esnet/gdg/issues/532) Adding TUI for S3 configuration
+  - [#565](https://github.com/esnet/gdg/pull/565) Dropping S3 TUI and merging logic into context builder
+  - [#564](https://github.com/esnet/gdg/pull/564) Adding TUI config generator updates.
+  - [563](https://github.com/esnet/gdg/pull/563) Adding TUI for S3 configuration
   - [#557](https://github.com/esnet/gdg/pull/560) Adding support for patching folder UID when missing and folder auto-creation.
   - [#557](https://github.com/esnet/gdg/pull/557) Adds label and folder based filtering to alert rules.
   - [#559](https://github.com/esnet/gdg/pull/559) Adds ~~name~~ UID based filtering to alert rules.
