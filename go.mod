@@ -12,7 +12,9 @@ require (
 	github.com/bep/simplecobra v0.7.0
 	github.com/brianvoe/gofakeit/v7 v7.14.0
 	github.com/carlmjohnson/requests v0.25.1
+	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/huh v0.8.0
+	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/docker/go-connections v0.6.0
 	github.com/extism/go-sdk v1.7.1
 	github.com/go-openapi/strfmt v0.25.0
@@ -87,9 +89,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/charmbracelet/bubbles v1.0.0 // indirect
-	github.com/charmbracelet/bubbletea v1.3.10 // indirect
 	github.com/charmbracelet/colorprofile v0.4.2 // indirect
-	github.com/charmbracelet/lipgloss v1.1.0 // indirect
 	github.com/charmbracelet/x/ansi v0.11.6 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.15 // indirect
 	github.com/charmbracelet/x/exp/strings v0.1.0 // indirect
