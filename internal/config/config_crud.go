@@ -12,8 +12,10 @@ import (
 	"strings"
 
 	"charm.land/huh/v2"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
+	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	resourceTypes "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
@@ -182,9 +184,9 @@ func summariseFilters(filters []config_domain.MatchingRule) string {
 
 // ── TUI functions ─────────────────────────────────────────────────────────────
 
-// CreateNewContext prompts the user to configure a new Grafana context with authentication,
-// watched folders, connection filters, and credential rules. It builds the configuration,
-// writes secure files, updates the internal context map, saves the config to disk, and logs completion.
+// CreateNewContext launches the 3-panel config builder TUI to interactively
+// configure a new Grafana context. On successful completion it writes secure
+// files, updates the context map, and saves the config to disk.
 func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 	var encoder ports.CipherEncoder
 	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
@@ -197,95 +199,38 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 		encoder = noop.NoOpEncoder{}
 	}
 
-	fmt.Println()
-	fmt.Println("  💡 Tip: To skip the wizard and start from a full example config, run:")
-	fmt.Println("       mkdir config && gdg default-config > config/gdg.yml")
-	fmt.Println()
-
-	var authType string
-	err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewSelect[string]().
-				Options(
-					huh.NewOption("Basic Authentication", basicAuthForm.String()),
-					huh.NewOption("Token/Service Authentication", tokenAuthForm.String()),
-					huh.NewOption("Both", bothAuthForm.String()),
-				).
-				Value(&authType).
-				Title("Choose your Auth Mechanism").
-				Description("This will determine your Authentication type"),
-		),
-	).
-		WithShowHelp(false).
-		WithShowErrors(false).Run()
+	model := newConfigBuilderModel(app, name, encoder)
+	p := tea.NewProgram(model, tea.WithAltScreen())
+	result, err := p.Run()
 	if err != nil {
-		log.Fatal("unable to get auth selection from user")
+		log.Fatalf("TUI error: %v", err)
 	}
 
-	newConfig := config_domain.NewGrafanaConfig(config_domain.WithContextName(name))
-	newConfig.ConnectionSettings = &config_domain.ConnectionSettings{
-		MatchingRules: make([]*config_domain.RegexMatchesList, 0),
-	}
-	newConfig.OrganizationName = "Main Org."
-	secure := config_domain.SecureModel{}
-	err = huh.NewForm(buildFormGroups(authType, newConfig, &secure)...).Run()
-	if err != nil {
-		log.Fatalf("Could not set grafana config: %v", err)
+	final := result.(configBuilderModel)
+	if final.cancelled || !final.done {
+		slog.Info("Configuration cancelled — no changes were made.")
+		return
 	}
 
-	// Watched folders — seamless one-at-a-time workflow with encoding and regex testing
-	folders, ignoreFilters := configureWatchedFolders()
-	newConfig.MonitoredFolders = folders
-	if ignoreFilters {
-		if newConfig.DashboardSettings == nil {
-			newConfig.DashboardSettings = &config_domain.DashboardSettings{}
-		}
-		newConfig.DashboardSettings.IgnoreFilters = true
-	}
+	bs := final.bs
+	newConfig := bs.config
+	secure := bs.secure
 
-	// Connection settings — opt-in; skip entirely if the user declines.
-	var configureConnections bool
-	err = huh.NewForm(
-		huh.NewGroup(
-			huh.NewConfirm().
-				Title("Configure connection settings?").
-				Description("Set up data source connection filters, default credentials, and credential rules.\nYou can skip this and configure connections later by editing gdg.yml.").
-				Value(&configureConnections),
-		),
-	).WithShowHelp(false).WithShowErrors(false).Run()
-
-	var secretFileLocation string
-	if err == nil && configureConnections {
-		// Connection filters
-		newConfig.ConnectionSettings.FilterRules = configureConnectionFilters()
-
-		// Default connection credentials
-		var (
-			connectionUser     string
-			connectionPassword string
-		)
-		err = huh.NewForm(huh.NewGroup(
-			huh.NewInput().Title("Connection Default User").Description("Default user for Grafana data source connections").Value(&connectionUser),
-			huh.NewInput().Title("Connection Default Password").Description("Default password for Grafana data source connections").EchoMode(huh.EchoModePassword).Value(&connectionPassword),
-		)).Run()
-		if err != nil {
-			log.Fatalf("Unable to get Connection Auth Settings")
-		}
-
+	// ── Write default connection credentials ──────────────────────────────
+	if bs.configureConnections {
 		const passKey = "basicAuthPassword"
 		defaultDs := config_domain.GrafanaConnection{
-			"user":  connectionUser,
-			passKey: connectionPassword,
+			"user":  bs.connectionUser,
+			passKey: bs.connectionPassword,
 		}
 
 		securePath := resourceTypes.SecureSecretsResource
 		location := filepath.Join(newConfig.OutputPath, string(securePath))
-		err = os.MkdirAll(location, 0o750)
-		if err != nil {
-			log.Fatalf("unable to create default secret location.  location: %s, %v", location, err)
+		if mkErr := os.MkdirAll(location, 0o750); mkErr != nil {
+			log.Fatalf("unable to create default secret location.  location: %s, %v", location, mkErr)
 		}
 
-		secretFileLocation = filepath.Join(location, "default.yaml")
+		secretFileLocation := filepath.Join(location, "default.yaml")
 		if encoder != nil {
 			newVal, encodeErr := encoder.EncodeValue(defaultDs.Password())
 			if encodeErr == nil {
@@ -293,533 +238,88 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 			}
 		}
 
-		err = writeSecureFileData(defaultDs, secretFileLocation)
-		if err != nil {
-			log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, err)
+		if writeErr := writeSecureFileData(defaultDs, secretFileLocation); writeErr != nil {
+			log.Fatalf("unable to write secret default file.  location: %s, %v", secretFileLocation, writeErr)
 		}
 
-		// Credential rules — loop with default catch-all appended
-		newConfig.ConnectionSettings.MatchingRules = configureCredentialRules(encoder, location)
+		// Write credential rule files
+		for _, cred := range bs.pendingCreds {
+			ds := config_domain.GrafanaConnection{
+				"user":  cred.user,
+				passKey: cred.password,
+			}
+			if encoder != nil {
+				newVal, encodeErr := encoder.EncodeValue(ds.Password())
+				if encodeErr == nil {
+					ds[passKey] = newVal
+				}
+			}
+			credFilePath := filepath.Join(location, cred.secureData)
+			if writeErr := writeSecureFileData(ds, credFilePath); writeErr != nil {
+				log.Fatalf("unable to write credential file.  location: %s, %v", credFilePath, writeErr)
+			}
+			slog.Info("Credential file created", "file", credFilePath)
+		}
 	}
 
-	// Auth location
-	secretFileLocation = fmt.Sprintf("%s.yaml", newConfig.GetAuthLocation())
+	// ── Write auth credentials file ───────────────────────────────────────
+	authFileLocation := fmt.Sprintf("%s.yaml", newConfig.GetAuthLocation())
 	secure.UpdateSecureModel(encoder.EncodeValue)
 
-	err = writeSecureFileData(secure, secretFileLocation)
-	if err != nil {
-		log.Fatalf("unable to write secret auth file.  location: %s, %v", secretFileLocation, err)
+	if writeErr := writeSecureFileData(*secure, authFileLocation); writeErr != nil {
+		log.Fatalf("unable to write secret auth file.  location: %s, %v", authFileLocation, writeErr)
 	}
 
+	// ── Write cloud storage config + credentials ──────────────────────────
+	if bs.configureStorage && cloudProvider(bs.storageProvider) == providerCustom {
+		if app.StorageEngine == nil {
+			app.StorageEngine = make(map[string]map[string]string)
+		}
+
+		encodedSecret, encErr := encoder.EncodeValue(bs.storageSecretKey)
+		if encErr != nil {
+			log.Fatalf("failed to encode storage secret key: %v", encErr)
+		}
+
+		securePath := newConfig.SecureLocation()
+		if mkErr := os.MkdirAll(securePath, 0o750); mkErr != nil {
+			log.Fatalf("unable to create secure directory %s: %v", securePath, mkErr)
+		}
+
+		credFile := filepath.Join(
+			securePath,
+			fmt.Sprintf("%s_%s.yaml", config_domain.CloudAuthPrefix, bs.storageLabel),
+		)
+		creds := map[string]string{
+			storage.AccessId:  bs.storageAccessID,
+			storage.SecretKey: encodedSecret,
+		}
+		if writeErr := writeSecureFileData(creds, credFile); writeErr != nil {
+			log.Fatalf("unable to write storage credentials file %s: %v", credFile, writeErr)
+		}
+
+		app.StorageEngine[bs.storageLabel] = map[string]string{
+			cloudKindKey:       cloudKindCloud,
+			storage.CloudType:  storage.Custom,
+			storage.Endpoint:   bs.storageEndpoint,
+			storage.BucketName: bs.storageBucket,
+			storage.Region:     bs.storageRegion,
+			storage.Prefix:     bs.storagePrefix,
+			storage.InitBucket: fmt.Sprintf("%t", bs.storageInitBucket),
+			sslEnabledKey:      fmt.Sprintf("%t", bs.storageSSL),
+		}
+	}
+
+	// ── Update config and save ────────────────────────────────────────────
 	contextMap := app.GetContexts()
 	contextMap[name] = newConfig
 	app.ContextName = name
 
-	err = app.SaveToDisk(false)
-	if err != nil {
+	if saveErr := app.SaveToDisk(false); saveErr != nil {
 		log.Fatal("could not save configuration.")
 	}
 
-	// Optional step — configure a cloud storage engine for this context.
-	var configureStorage bool
-	err = huh.NewForm(
-		huh.NewGroup(
-			huh.NewConfirm().
-				Title("Configure cloud storage?").
-				Description("Would you like to set up a cloud storage engine for this context now? (You can skip and add one later via the config file.)").
-				Value(&configureStorage),
-		),
-	).WithShowHelp(false).WithShowErrors(false).Run()
-	if err == nil && configureStorage {
-		NewCustomS3Config(app)
-	}
-
 	slog.Info("New configuration has been created", "newContext", name)
-}
-
-// configureWatchedFolders interactively prompts the user to choose between monitoring
-// all folders or building a specific allowlist.  It returns the folder list and an
-// ignoreFilters flag.  When ignoreFilters is true the caller should set
-// DashboardSettings.IgnoreFilters = true and the returned slice will be nil.
-func configureWatchedFolders() ([]string, bool) {
-	const (
-		scopeAll       = "all"
-		scopeAllowlist = "allowlist"
-	)
-	var scope string
-	err := huh.NewForm(huh.NewGroup(
-		huh.NewSelect[string]().
-			Title("Folder scope").
-			Description("Choose whether to monitor every Grafana folder or restrict to a specific list.").
-			Options(
-				huh.NewOption("Monitor all folders (ignore filters)", scopeAll),
-				huh.NewOption("Build a folder allowlist", scopeAllowlist),
-			).
-			Value(&scope),
-	)).WithShowHelp(false).WithShowErrors(false).Run()
-	if err != nil || scope == scopeAll {
-		// Ctrl+C or explicit "all" — treat as monitor-all.
-		return nil, true
-	}
-
-	var folders []string
-
-	for {
-		currentList := "none"
-		if len(folders) > 0 {
-			currentList = strings.Join(folders, ", ")
-		}
-
-		type folderAction string
-		const (
-			actionAdd  folderAction = "add"
-			actionTest folderAction = "test"
-			actionDone folderAction = "done"
-		)
-
-		var action string
-		opts := []huh.Option[string]{
-			huh.NewOption("Add a folder", string(actionAdd)),
-		}
-		if len(folders) > 0 {
-			opts = append(opts,
-				huh.NewOption("Test a folder name against current list", string(actionTest)),
-				huh.NewOption("Done", string(actionDone)),
-			)
-		}
-
-		err := huh.NewForm(huh.NewGroup(
-			huh.NewSelect[string]().
-				Title("Watched Folders").
-				Description(fmt.Sprintf("Folders currently in list: [%s]", currentList)).
-				Options(opts...).
-				Value(&action),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil {
-			// Treat cancelled form (Ctrl+C / Esc) as "done"
-			break
-		}
-
-		fa := folderAction(action)
-		if fa == actionDone {
-			break
-		}
-
-		switch fa {
-		case actionAdd:
-			var folderName string
-			err = huh.NewForm(huh.NewGroup(
-				huh.NewInput().
-					Title("Folder Name or Regex").
-					Description("Enter a Grafana folder name or a regex pattern.\n" +
-						"Literal names (e.g. 'Happy Gilmore') are URL-encoded automatically.\n" +
-						"Regex patterns (e.g. 'Stardust/.*') are stored as-is — you will be asked.").
-					Value(&folderName),
-			)).WithShowHelp(false).WithShowErrors(false).Run()
-			if err != nil || strings.TrimSpace(folderName) == "" {
-				continue
-			}
-			trimmed := strings.TrimSpace(folderName)
-			var stored string
-			if looksLikeRegex(trimmed) && shouldTreatAsRegex(trimmed) {
-				// User confirmed: store the pattern verbatim so it works as a regex.
-				stored = trimmed
-				fmt.Printf("\n  ✎  Stored as raw regex: '%s'\n\n", stored)
-			} else {
-				// Literal folder name: URL-encode + regex-escape for safe storage.
-				stored = encodeFolderName(folderName)
-				if stored != trimmed {
-					fmt.Printf("\n  ✎  '%s'  →  encoded as  '%s'\n\n", folderName, stored)
-				}
-			}
-			folders = append(folders, stored)
-
-		case actionTest:
-			runFolderRegexTestSession(folders)
-		}
-	}
-
-	if len(folders) == 0 {
-		folders = []string{"General"}
-		fmt.Println("  No folders specified — defaulting to 'General'")
-	}
-	return folders, false
-}
-
-// configureConnectionFilters interactively builds the connections.filters slice.
-// Each filter specifies a field, a regex, and whether it is inclusive (allowlist) or
-// exclusive (denylist, the default). Validation is delegated to validateFilter so
-// the business rules are independently testable.
-func configureConnectionFilters() []config_domain.MatchingRule {
-	var filters []config_domain.MatchingRule
-
-	var addFilters bool
-	err := huh.NewForm(huh.NewGroup(
-		huh.NewConfirm().
-			Title("Configure Connection Filters?").
-			Description("Filters control which data sources are included or excluded during backup/restore.\nExample: exclude all DEV connections, or include only elasticsearch sources.").
-			Value(&addFilters),
-	)).WithShowHelp(false).WithShowErrors(false).Run()
-	if err != nil || !addFilters {
-		return filters
-	}
-
-	for {
-		var field, regex string
-		var inclusive bool
-
-		err = huh.NewForm(huh.NewGroup(
-			huh.NewInput().
-				Title("Filter Field").
-				Description("JSON field to match on (e.g. 'name', 'type', 'url')").
-				Value(&field),
-			huh.NewInput().
-				Title("Filter Regex").
-				Description("Regular expression to match against the field value").
-				Value(&regex),
-			huh.NewConfirm().
-				Title("Inclusive filter?").
-				Description("Inclusive = keep only matches (allowlist). Exclusive = drop matches (denylist, default).").
-				Value(&inclusive),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil {
-			break
-		}
-
-		rule, ruleErr := validateFilter(field, regex, inclusive)
-		if ruleErr != nil {
-			fmt.Printf("  ⚠  %v — skipping.\n", ruleErr)
-		} else {
-			filters = append(filters, *rule)
-			filterType := "exclusive (denylist)"
-			if inclusive {
-				filterType = "inclusive (allowlist)"
-			}
-			fmt.Printf("\n  ✓  Added filter: field='%s'  regex='%s'  type=%s\n", field, regex, filterType)
-
-			// Offer inline regex test; user may modify the regex mid-session
-			if shouldTestRegex(fmt.Sprintf("field='%s' regex='%s'", field, regex)) {
-				if newRegex := runRegexTest(regex); newRegex != regex && len(filters) > 0 {
-					filters[len(filters)-1].Regex = newRegex
-					fmt.Printf("  ✎  Filter regex updated to '%s'\n\n", newRegex)
-				}
-			}
-		}
-
-		fmt.Printf("\n  Filters so far (%d): %s\n\n", len(filters), summariseFilters(filters))
-
-		var addMore bool
-		err = huh.NewForm(huh.NewGroup(
-			huh.NewConfirm().
-				Title("Add another filter?").
-				Value(&addMore),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil || !addMore {
-			break
-		}
-	}
-
-	return filters
-}
-
-// configureCredentialRules interactively builds the connections.credential_rules slice.
-// Each rule groups one or more field/regex matchers with a secure-data filename.
-// For non-default secure data files, it prompts for credentials and writes the file.
-// A default catch-all rule (field=name, regex=.*) is always appended at the end
-// via appendDefaultCredentialRule.
-func configureCredentialRules(encoder ports.CipherEncoder, secureLocation string) []*config_domain.RegexMatchesList {
-	var rules []*config_domain.RegexMatchesList
-
-	var addRules bool
-	err := huh.NewForm(huh.NewGroup(
-		huh.NewConfirm().
-			Title("Configure Credential Rules?").
-			Description("Credential rules map data sources to their credentials file.\nA default catch-all rule (name=.*) will always be appended at the end.").
-			Value(&addRules),
-	)).WithShowHelp(false).WithShowErrors(false).Run()
-	if err != nil || !addRules {
-		return appendDefaultCredentialRule(rules)
-	}
-
-	for {
-		// ── Secure data file ──────────────────────────────────────────────
-		var secureData string
-		err = huh.NewForm(huh.NewGroup(
-			huh.NewInput().
-				Title("Secure Data File").
-				Description("Credentials filename for this rule (e.g. 'elastic.yaml', 'prod.yaml').\n'default.yaml' is reserved for the default connection credentials.").
-				Value(&secureData).
-				Validate(validateSecureDataFile),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil {
-			break
-		}
-		secureData = strings.TrimSpace(secureData)
-
-		// ── Matching rules for this credential entry ──────────────────────
-		var matchingRules []config_domain.MatchingRule
-		for {
-			var field, regexVal string
-			err = huh.NewForm(huh.NewGroup(
-				huh.NewInput().
-					Title("Matching Field").
-					Description(fmt.Sprintf("Field to match (e.g. 'name', 'url', 'type'). Secure file: '%s'", secureData)).
-					Value(&field),
-				huh.NewInput().
-					Title("Matching Regex").
-					Description("Regular expression to match against the field value").
-					Value(&regexVal),
-			)).WithShowHelp(false).WithShowErrors(false).Run()
-			if err != nil {
-				break
-			}
-
-			rule, ruleErr := validateCredentialRule(field, regexVal)
-			if ruleErr != nil {
-				fmt.Printf("  ⚠  %v — skipping.\n", ruleErr)
-			} else {
-				matchingRules = append(matchingRules, *rule)
-				fmt.Printf("\n  ✓  Added matching rule: field='%s'  regex='%s'\n", field, regexVal)
-
-				// Offer inline regex test; user may modify the regex mid-session
-				if shouldTestRegex(fmt.Sprintf("field='%s' regex='%s'", field, regexVal)) {
-					if newRegex := runRegexTest(regexVal); newRegex != regexVal && len(matchingRules) > 0 {
-						matchingRules[len(matchingRules)-1].Regex = newRegex
-						fmt.Printf("  ✎  Credential rule regex updated to '%s'\n\n", newRegex)
-					}
-				}
-			}
-
-			var addMoreRules bool
-			err = huh.NewForm(huh.NewGroup(
-				huh.NewConfirm().
-					Title(fmt.Sprintf("Add another matching rule to this credential entry? (%d so far)", len(matchingRules))).
-					Value(&addMoreRules),
-			)).WithShowHelp(false).WithShowErrors(false).Run()
-			if err != nil || !addMoreRules {
-				break
-			}
-		}
-
-		if len(matchingRules) > 0 {
-			rules = append(rules, &config_domain.RegexMatchesList{
-				Rules:      matchingRules,
-				SecureData: secureData,
-			})
-			fmt.Printf("\n  ✓  Credential rule added: %d matcher(s) → '%s'\n", len(matchingRules), secureData)
-
-			// Prompt for credentials for this secure file
-			const passKey = "basicAuthPassword"
-			var credUser, credPass string
-			credErr := huh.NewForm(huh.NewGroup(
-				huh.NewInput().
-					Title(fmt.Sprintf("User for '%s'", secureData)).
-					Description(fmt.Sprintf("Connection user for credentials file '%s'", secureData)).
-					Value(&credUser),
-				huh.NewInput().
-					Title(fmt.Sprintf("Password for '%s'", secureData)).
-					Description(fmt.Sprintf("Connection password for credentials file '%s'", secureData)).
-					EchoMode(huh.EchoModePassword).
-					Value(&credPass),
-			)).Run()
-			if credErr != nil {
-				slog.Warn("skipping credential file creation", "file", secureData)
-			} else {
-				ds := config_domain.GrafanaConnection{
-					"user":  credUser,
-					passKey: credPass,
-				}
-				if encoder != nil {
-					newVal, encodeErr := encoder.EncodeValue(ds.Password())
-					if encodeErr == nil {
-						ds[passKey] = newVal
-					}
-				}
-				credFilePath := filepath.Join(secureLocation, secureData)
-				if writeErr := writeSecureFileData(ds, credFilePath); writeErr != nil {
-					log.Fatalf("unable to write credential file.  location: %s, %v", credFilePath, writeErr)
-				}
-				slog.Info("Credential file created", "file", credFilePath)
-			}
-
-			// Show a YAML preview of all credential rules so far
-			preview := appendDefaultCredentialRule(rules)
-			previewData, marshalErr := yaml.Marshal(preview)
-			if marshalErr == nil {
-				fmt.Printf("\n  Current credential rules:\n  ─────────────────────────\n")
-				for _, line := range strings.Split(string(previewData), "\n") {
-					if line != "" {
-						fmt.Printf("  %s\n", line)
-					}
-				}
-				fmt.Println()
-			}
-		}
-
-		var addMoreCredRules bool
-		err = huh.NewForm(huh.NewGroup(
-			huh.NewConfirm().
-				Title(fmt.Sprintf("Add another credential rule? (%d rule(s) configured so far)", len(rules))).
-				Value(&addMoreCredRules),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil || !addMoreCredRules {
-			break
-		}
-	}
-
-	return appendDefaultCredentialRule(rules)
-}
-
-// shouldTreatAsRegex prompts the user when their folder input contains regex
-// metacharacters. Returning true means "store as a raw regex pattern (no
-// encoding)"; returning false means "encode it as a literal folder name".
-func shouldTreatAsRegex(raw string) bool {
-	var isRegex bool
-	_ = huh.NewForm(huh.NewGroup(
-		huh.NewConfirm().
-			Title("Regex characters detected").
-			Description(fmt.Sprintf(
-				"'%s' contains regex metacharacters.\n"+
-					"  Yes → store as a raw regex pattern (used as-is)\n"+
-					"  No  → encode as a literal folder name",
-				raw,
-			)).
-			Affirmative("Yes, it's a regex").
-			Negative("No, encode it").
-			Value(&isRegex),
-	)).WithShowHelp(false).WithShowErrors(false).Run()
-	return isRegex
-}
-
-// shouldTestRegex asks whether the user wants to test a given regex inline.
-func shouldTestRegex(label string) bool {
-	var want bool
-	err := huh.NewForm(huh.NewGroup(
-		huh.NewConfirm().
-			Title(fmt.Sprintf("Test regex for %s?", label)).
-			Value(&want),
-	)).WithShowHelp(false).WithShowErrors(false).Run()
-	return err == nil && want
-}
-
-// runRegexTest runs an interactive loop that lets the user test values against
-// a regex, and optionally modify the regex mid-session. It returns the final
-// regex (which may differ from the input if the user chose to modify it).
-// The loop exits when the user picks "Done", cancels a form, or enters nothing.
-func runRegexTest(regex string) string {
-	type testAction string
-	const (
-		actionTestAnother testAction = "another"
-		actionModify      testAction = "modify"
-		actionDone        testAction = "done"
-	)
-
-	for {
-		// ── Step 1: prompt for a test value ──────────────────────────────
-		var testValue string
-		err := huh.NewForm(huh.NewGroup(
-			huh.NewInput().
-				Title("Test Value").
-				Description(fmt.Sprintf("Enter a value to test against regex '%s'", regex)).
-				Value(&testValue),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil {
-			break
-		}
-
-		if strings.TrimSpace(testValue) != "" {
-			matched, matchErr := testRegexMatch(regex, testValue)
-			if matchErr != nil {
-				fmt.Printf("  ⚠  %v\n\n", matchErr)
-			} else if matched {
-				fmt.Printf("  ✓  '%s' MATCHES regex '%s'\n\n", testValue, regex)
-			} else {
-				fmt.Printf("  ✗  '%s' does NOT match regex '%s'\n\n", testValue, regex)
-			}
-		}
-
-		// ── Step 2: what next? ────────────────────────────────────────────
-		var nextAction string
-		err = huh.NewForm(huh.NewGroup(
-			huh.NewSelect[string]().
-				Title("What would you like to do?").
-				Options(
-					huh.NewOption("Test another value", string(actionTestAnother)),
-					huh.NewOption("Modify the regex", string(actionModify)),
-					huh.NewOption("Done testing", string(actionDone)),
-				).
-				Value(&nextAction),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil || testAction(nextAction) == actionDone {
-			break
-		}
-
-		if testAction(nextAction) == actionModify {
-			var newRegex string
-			err = huh.NewForm(huh.NewGroup(
-				huh.NewInput().
-					Title("Update Regex").
-					Description(fmt.Sprintf("Current regex: '%s'\nEnter the updated regex pattern", regex)).
-					Value(&newRegex),
-			)).WithShowHelp(false).WithShowErrors(false).Run()
-			if err != nil {
-				break
-			}
-			newRegex = strings.TrimSpace(newRegex)
-			if newRegex == "" {
-				fmt.Println(" ⚠ Empty regex — keeping the original")
-				continue
-			}
-			if _, compErr := regexp.Compile(newRegex); compErr != nil {
-				fmt.Printf("  ⚠  Invalid regex %q: %v — keeping the original\n\n", newRegex, compErr)
-				continue
-			}
-			fmt.Printf("  ✎  Regex updated: '%s'  →  '%s'\n\n", regex, newRegex)
-			regex = newRegex
-		}
-		// actionTestAnother: fall through to top of loop
-	}
-	return regex
-}
-
-// runFolderRegexTestSession runs an interactive loop that lets the user test
-// folder name values against the full folder list repeatedly, without having
-// to return to the main watched-folders menu between tests.
-func runFolderRegexTestSession(folders []string) {
-	currentList := strings.Join(folders, ", ")
-	for {
-		var testValue string
-		err := huh.NewForm(huh.NewGroup(
-			huh.NewInput().
-				Title("Test Folder Name").
-				Description(fmt.Sprintf("Enter a folder name to test against the current list: [%s]", currentList)).
-				Value(&testValue),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil || strings.TrimSpace(testValue) == "" {
-			break
-		}
-
-		matched, matches := testFolderRegexMatch(folders, testValue)
-		encoded := encodeFolderName(testValue)
-		fmt.Printf("\n  Testing '%s' (encoded: '%s') against current folders:\n", testValue, encoded)
-		for _, m := range matches {
-			fmt.Printf("  ✓  Matches pattern '%s'\n", m)
-		}
-		if !matched {
-			fmt.Printf("  ✗  No match found in current folder list\n")
-		}
-		fmt.Println()
-
-		var testMore bool
-		err = huh.NewForm(huh.NewGroup(
-			huh.NewConfirm().
-				Title("Test another folder name?").
-				Value(&testMore),
-		)).WithShowHelp(false).WithShowErrors(false).Run()
-		if err != nil || !testMore {
-			break
-		}
-	}
 }
 
 // ── Auth form helpers ─────────────────────────────────────────────────────────
@@ -832,53 +332,6 @@ func writeSecureFileData[T any](object T, location string) error {
 	}
 	err = os.WriteFile(location, data, 0o600)
 	return err
-}
-
-// buildFormGroups creates form groups for Grafana authentication and configuration.
-// It returns a slice of *huh.Group based on authType, including username/password,
-// token, output path, and URL inputs.
-func buildFormGroups(authType string, config *config_domain.GrafanaConfig, secureModel *config_domain.SecureModel) []*huh.Group {
-	groups := make([]*huh.Group, 0)
-	basicGrps := huh.NewGroup(
-		huh.NewInput().
-			Value(&config.UserName).
-			Title("Grafana Username").Description("Grafana Username"),
-		huh.NewInput().
-			Value(&secureModel.Password).
-			Title("Grafana Password").
-			Description("Grafana Password").
-			EchoMode(huh.EchoModePassword),
-	)
-	tokenGrps := huh.NewGroup(
-		huh.NewInput().
-			Value(&secureModel.Token).
-			Title("Grafana Token").
-			Description("Grafana Token").
-			EchoMode(huh.EchoModePassword),
-	).
-		WithShowHelp(false).
-		WithShowErrors(false)
-
-	switch authType {
-	case basicAuthForm.String():
-		groups = append(groups, basicGrps)
-	case tokenAuthForm.String():
-		groups = append(groups, tokenGrps)
-	case bothAuthForm.String():
-		groups = append(groups, []*huh.Group{basicGrps, tokenGrps}...)
-	}
-	groups = append(groups, huh.NewGroup(
-		huh.NewInput().
-			Description("Destination Folder?").
-			Value(&config.OutputPath),
-		huh.NewInput().
-			Description("What is the Grafana URL include http(s)?").
-			Value(&config.URL).
-			Validate(validateGrafanaURL),
-	),
-	)
-
-	return groups
 }
 
 // ── Context management (no TUI) ───────────────────────────────────────────────
