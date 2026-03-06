@@ -10,7 +10,7 @@ Set Height 600
 
 
 Type "gdg tools context list" Sleep 500ms  Enter
-Sleep 3s
+Sleep 5s
 Type "clear" Enter
 Type "gdg tools context new demo" Sleep 500ms  Enter
 
