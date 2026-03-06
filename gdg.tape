@@ -131,8 +131,16 @@ Sleep 2s Enter
 # Add another matching rule to this credential entry? (default No, skip)
 Sleep 2s Enter
 
-# Add another credential rule? (default No, skip)
-Sleep 2s Enter
+# Credentials for elastic.yaml — User
+Sleep 1s
+Type "elastic" Sleep 500ms  Enter
+
+# Credentials for elastic.yaml — Password
+Type "elastic" Sleep 500ms  Enter
+Sleep 2s
+
+# YAML preview is displayed, then: Add another credential rule? (default No, skip)
+Sleep 3s Enter
 
 # Configure cloud storage? (default No, toggle to Yes)
 Sleep 2s
@@ -177,5 +185,9 @@ Type "gdg backup dash list" Sleep 500ms  Enter
 Sleep 3s
 
 Type "gdg tools context delete demo" Sleep 500ms  Enter
+
+# Delete credential files? (default No, toggle to Yes)
+Sleep 2s
+Left Sleep 500ms Enter
 
 Sleep 5s

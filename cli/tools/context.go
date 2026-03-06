@@ -139,17 +139,18 @@ func newDeleteContext() simplecobra.Commander {
 		NameP: "delete",
 		Short: "delete context <context>",
 		Long:  "delete context <context>",
+		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
+			cmd.Aliases = []string{"del"}
+			cmd.Flags().Bool("skip-confirmation", false, "Skip confirmation prompt and delete all credential files (except default.yaml)")
+		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			if len(args) < 1 {
 				return errors.New("requires a context argument")
 			}
 			contextEntry := args[0]
-			config.DeleteContext(rootCmd.ConfigSvc(), contextEntry)
+			skipConfirm, _ := cd.CobraCommand.Flags().GetBool("skip-confirmation")
+			config.DeleteContext(rootCmd.ConfigSvc(), contextEntry, skipConfirm)
 			slog.Info("Successfully deleted context", "context", contextEntry)
-			return nil
-		},
-		InitCFunc: func(cd *simplecobra.Commandeer, runner *simplecobra.Commandeer, r *domain.RootCommand) error {
-			cd.CobraCommand.Aliases = []string{"del"}
 			return nil
 		},
 	}
