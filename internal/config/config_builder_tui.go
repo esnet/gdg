@@ -22,15 +22,21 @@ const (
 	phaseTokenCreds
 	phaseServerSettings
 	phaseFolderScope
-	phaseFolderInput
+	phaseFolderMenu       // select: Add / Test / Done
+	phaseFolderAdd        // input folder name
+	phaseFolderTest       // input test value
+	phaseFolderTestResult // show results + test another?
 	phaseConnectionToggle
 	phaseFilterToggle
 	phaseFilterInput
 	phaseDefaultCreds
 	phaseCredRuleToggle
-	phaseCredRuleInput
+	phaseCredRuleFile    // input secure data filename
+	phaseCredRuleMatcher // input field + regex + add another matcher?
+	phaseCredRuleCreds   // input user + password + add another rule?
 	phaseStorageToggle
 	phaseStorageProvider
+	phaseStorageProviderInfo // shows docs for managed providers (S3/GCS/Azure)
 	phaseStorageCustomConfig
 	phaseStorageCustomCreds
 	phaseStorageCustomOptions
@@ -44,13 +50,15 @@ func (p builderPhase) sectionName() string {
 		return "Authentication"
 	case phaseServerSettings:
 		return "Server Settings"
-	case phaseFolderScope, phaseFolderInput:
+	case phaseFolderScope, phaseFolderMenu, phaseFolderAdd, phaseFolderTest, phaseFolderTestResult:
 		return "Watched Folders"
 	case phaseConnectionToggle, phaseFilterToggle, phaseFilterInput,
-		phaseDefaultCreds, phaseCredRuleToggle, phaseCredRuleInput:
+		phaseDefaultCreds, phaseCredRuleToggle, phaseCredRuleFile,
+		phaseCredRuleMatcher, phaseCredRuleCreds:
 		return "Connection Settings"
-	case phaseStorageToggle, phaseStorageProvider, phaseStorageCustomConfig,
-		phaseStorageCustomCreds, phaseStorageCustomOptions, phaseStorageAssign:
+	case phaseStorageToggle, phaseStorageProvider, phaseStorageProviderInfo,
+		phaseStorageCustomConfig, phaseStorageCustomCreds, phaseStorageCustomOptions,
+		phaseStorageAssign:
 		return "Cloud Storage"
 	default:
 		return ""
@@ -87,10 +95,13 @@ type builderState struct {
 	outputPath string
 
 	// Folders
-	folderScope    string // "all" or "allowlist"
-	folderName     string
-	addMoreFolders bool
-	folders        []string
+	folderScope      string // "all" or "allowlist"
+	folderAction     string // "add", "test", "done"
+	folderName       string
+	folders          []string
+	folderTestValue  string
+	folderTestResult string // rendered result text from last test
+	folderTestMore   bool
 
 	// Connections toggle
 	configureConnections bool
@@ -108,15 +119,17 @@ type builderState struct {
 	connectionPassword string
 
 	// Credential rules
-	addCredRules     bool
-	credSecureData   string
-	credField        string
-	credRegex        string
-	credUser         string
-	credPassword     string
-	addMoreCredRules bool
-	credRules        []*config_domain.RegexMatchesList
-	pendingCreds     []pendingCredFile
+	addCredRules       bool
+	credSecureData     string
+	credField          string
+	credRegex          string
+	credAddMoreMatcher bool
+	credUser           string
+	credPassword       string
+	addMoreCredRules   bool
+	credCurrentRules   []config_domain.MatchingRule // matchers for current rule being built
+	credRules          []*config_domain.RegexMatchesList
+	pendingCreds       []pendingCredFile
 
 	// Storage
 	configureStorage  bool
@@ -397,22 +410,63 @@ func (m *configBuilderModel) buildForm() *huh.Form {
 			),
 		).WithShowHelp(false).WithShowErrors(true)
 
-	case phaseFolderInput:
+	case phaseFolderMenu:
 		currentList := "none"
 		if len(m.bs.folders) > 0 {
 			currentList = strings.Join(m.bs.folders, ", ")
 		}
+		opts := []huh.Option[string]{
+			huh.NewOption("Add a folder", "add"),
+		}
+		if len(m.bs.folders) > 0 {
+			opts = append(opts,
+				huh.NewOption("Test a folder name against current list", "test"),
+				huh.NewOption("Done", "done"),
+			)
+		}
+		return huh.NewForm(
+			huh.NewGroup(
+				huh.NewSelect[string]().
+					Title("Watched Folders").
+					Description(fmt.Sprintf("Current: [%s]", currentList)).
+					Options(opts...).
+					Value(&m.bs.folderAction),
+			),
+		).WithShowHelp(false).WithShowErrors(true)
+
+	case phaseFolderAdd:
 		m.bs.folderName = ""
-		m.bs.addMoreFolders = true
 		return huh.NewForm(
 			huh.NewGroup(
 				huh.NewInput().
 					Title("Folder Name or Regex").
-					Description(fmt.Sprintf("Current: [%s]\nEnter a folder name (auto-encoded) or regex pattern.", currentList)).
+					Description("Enter a folder name (auto-encoded) or regex pattern.\nLiteral names are URL-encoded automatically.\nRegex patterns (containing *?[]|^$\\) are stored as-is.").
 					Value(&m.bs.folderName),
+			),
+		).WithShowHelp(false).WithShowErrors(true)
+
+	case phaseFolderTest:
+		currentList := strings.Join(m.bs.folders, ", ")
+		m.bs.folderTestValue = ""
+		return huh.NewForm(
+			huh.NewGroup(
+				huh.NewInput().
+					Title("Test Folder Name").
+					Description(fmt.Sprintf("Enter a folder name to test against: [%s]", currentList)).
+					Value(&m.bs.folderTestValue),
+			),
+		).WithShowHelp(false).WithShowErrors(true)
+
+	case phaseFolderTestResult:
+		m.bs.folderTestMore = true
+		return huh.NewForm(
+			huh.NewGroup(
+				huh.NewNote().
+					Title("Test Results").
+					Description(m.bs.folderTestResult),
 				huh.NewConfirm().
-					Title("Add another folder after this one?").
-					Value(&m.bs.addMoreFolders),
+					Title("Test another folder name?").
+					Value(&m.bs.folderTestMore),
 			),
 		).WithShowHelp(false).WithShowErrors(true)
 
@@ -486,13 +540,9 @@ func (m *configBuilderModel) buildForm() *huh.Form {
 			),
 		).WithShowHelp(false).WithShowErrors(true)
 
-	case phaseCredRuleInput:
+	case phaseCredRuleFile:
 		m.bs.credSecureData = ""
-		m.bs.credField = ""
-		m.bs.credRegex = ""
-		m.bs.credUser = ""
-		m.bs.credPassword = ""
-		m.bs.addMoreCredRules = false
+		m.bs.credCurrentRules = nil
 		return huh.NewForm(
 			huh.NewGroup(
 				huh.NewInput().
@@ -500,16 +550,42 @@ func (m *configBuilderModel) buildForm() *huh.Form {
 					Description("Credentials filename (e.g. 'elastic.yaml'). 'default.yaml' is reserved.").
 					Validate(validateSecureDataFile).
 					Value(&m.bs.credSecureData),
+			),
+		).WithShowHelp(false).WithShowErrors(true)
+
+	case phaseCredRuleMatcher:
+		m.bs.credField = ""
+		m.bs.credRegex = ""
+		m.bs.credAddMoreMatcher = false
+		matcherDesc := "none"
+		if len(m.bs.credCurrentRules) > 0 {
+			matcherDesc = summariseFilters(m.bs.credCurrentRules)
+		}
+		return huh.NewForm(
+			huh.NewGroup(
 				huh.NewInput().
 					Title("Matching Field").
-					Description("Field to match (e.g. 'name', 'url', 'type')").
+					Description(fmt.Sprintf("Matchers so far: %s\nField to match (e.g. 'name', 'url', 'type')", matcherDesc)).
 					Value(&m.bs.credField),
 				huh.NewInput().
 					Title("Matching Regex").
 					Description("Regular expression to match against the field value").
 					Value(&m.bs.credRegex),
+				huh.NewConfirm().
+					Title("Add another matcher for this credential file?").
+					Value(&m.bs.credAddMoreMatcher),
+			),
+		).WithShowHelp(false).WithShowErrors(true)
+
+	case phaseCredRuleCreds:
+		m.bs.credUser = ""
+		m.bs.credPassword = ""
+		m.bs.addMoreCredRules = false
+		return huh.NewForm(
+			huh.NewGroup(
 				huh.NewInput().
 					Title("User for this credential file").
+					Description(fmt.Sprintf("File: %s | Matchers: %s", m.bs.credSecureData, summariseFilters(m.bs.credCurrentRules))).
 					Value(&m.bs.credUser),
 				huh.NewInput().
 					Title("Password for this credential file").
@@ -544,6 +620,30 @@ func (m *configBuilderModel) buildForm() *huh.Form {
 						huh.NewOption("Azure Blob Storage", string(providerAzure)),
 					).
 					Value(&m.bs.storageProvider),
+			),
+		).WithShowHelp(false).WithShowErrors(true)
+
+	case phaseStorageProviderInfo:
+		cp := cloudProvider(m.bs.storageProvider)
+		docURL := providerDocURLs[cp]
+		info := fmt.Sprintf(
+			"For %s, authentication is handled by the provider SDK — not configured here.\n\n"+
+				"Documentation:\n  %s\n\n"+
+				"Once credentials are in place, add a storage_engine entry to gdg.yml:\n"+
+				"  cloud_type: %s\n"+
+				"  bucket_name: <your-bucket>",
+			cp, docURL, cp,
+		)
+		return huh.NewForm(
+			huh.NewGroup(
+				huh.NewNote().
+					Title("Managed Provider Setup").
+					Description(info),
+				huh.NewConfirm().
+					Title("Understood — finish setup?").
+					Affirmative("OK").
+					Negative("").
+					Value(&m.bs.storageAssign), // reuse as throwaway bool
 			),
 		).WithShowHelp(false).WithShowErrors(true)
 
@@ -638,7 +738,16 @@ func (m *configBuilderModel) applyPhase() {
 			m.bs.config.DashboardSettings.IgnoreFilters = true
 		}
 
-	case phaseFolderInput:
+	case phaseFolderMenu:
+		// folderAction already bound ("add", "test", "done")
+		if m.bs.folderAction == "done" {
+			if len(m.bs.folders) == 0 {
+				m.bs.folders = []string{"General"}
+			}
+			m.bs.config.MonitoredFolders = m.bs.folders
+		}
+
+	case phaseFolderAdd:
 		name := strings.TrimSpace(m.bs.folderName)
 		if name != "" {
 			if looksLikeRegex(name) {
@@ -646,18 +755,24 @@ func (m *configBuilderModel) applyPhase() {
 			} else {
 				m.bs.folders = append(m.bs.folders, encodeFolderName(name))
 			}
-		}
-		// Always update config so preview reflects current state
-		if len(m.bs.folders) > 0 {
 			m.bs.config.MonitoredFolders = m.bs.folders
 		}
-		// If we're done (no more to add, or empty name), finalize
-		if !m.bs.addMoreFolders || name == "" {
-			if len(m.bs.folders) == 0 {
-				m.bs.folders = []string{"General"}
+
+	case phaseFolderTest:
+		testVal := strings.TrimSpace(m.bs.folderTestValue)
+		if testVal != "" {
+			matched, patterns := testFolderRegexMatch(m.bs.folders, testVal)
+			if matched {
+				m.bs.folderTestResult = fmt.Sprintf("MATCH: %q matched patterns: %s", testVal, strings.Join(patterns, ", "))
+			} else {
+				m.bs.folderTestResult = fmt.Sprintf("NO MATCH: %q did not match any of: [%s]", testVal, strings.Join(m.bs.folders, ", "))
 			}
-			m.bs.config.MonitoredFolders = m.bs.folders
+		} else {
+			m.bs.folderTestResult = "No value entered."
 		}
+
+	case phaseFolderTestResult:
+		// folderTestMore already bound
 
 	case phaseConnectionToggle:
 		// configureConnections already bound
@@ -679,11 +794,20 @@ func (m *configBuilderModel) applyPhase() {
 	case phaseCredRuleToggle:
 		// addCredRules already bound
 
-	case phaseCredRuleInput:
+	case phaseCredRuleFile:
+		// credSecureData already bound; credCurrentRules reset in buildForm
+
+	case phaseCredRuleMatcher:
 		rule, err := validateCredentialRule(m.bs.credField, m.bs.credRegex)
 		if err == nil {
+			m.bs.credCurrentRules = append(m.bs.credCurrentRules, *rule)
+		}
+
+	case phaseCredRuleCreds:
+		// Commit the completed rule (all matchers + credentials)
+		if len(m.bs.credCurrentRules) > 0 {
 			m.bs.credRules = append(m.bs.credRules, &config_domain.RegexMatchesList{
-				Rules:      []config_domain.MatchingRule{*rule},
+				Rules:      m.bs.credCurrentRules,
 				SecureData: strings.TrimSpace(m.bs.credSecureData),
 			})
 			m.bs.pendingCreds = append(m.bs.pendingCreds, pendingCredFile{
@@ -692,6 +816,7 @@ func (m *configBuilderModel) applyPhase() {
 				password:   m.bs.credPassword,
 			})
 		}
+		m.bs.credCurrentRules = nil
 		// Update config for live preview (always include the default catch-all)
 		m.bs.config.ConnectionSettings.MatchingRules = appendDefaultCredentialRule(m.bs.credRules)
 
@@ -742,14 +867,29 @@ func (m *configBuilderModel) nextPhase() builderPhase {
 		if m.bs.folderScope == "all" {
 			return phaseConnectionToggle
 		}
-		return phaseFolderInput
+		return phaseFolderMenu
 
-	case phaseFolderInput:
-		name := strings.TrimSpace(m.bs.folderName)
-		if m.bs.addMoreFolders && name != "" {
-			return phaseFolderInput // loop
+	case phaseFolderMenu:
+		switch m.bs.folderAction {
+		case "add":
+			return phaseFolderAdd
+		case "test":
+			return phaseFolderTest
+		default: // "done"
+			return phaseConnectionToggle
 		}
-		return phaseConnectionToggle
+
+	case phaseFolderAdd:
+		return phaseFolderMenu
+
+	case phaseFolderTest:
+		return phaseFolderTestResult
+
+	case phaseFolderTestResult:
+		if m.bs.folderTestMore {
+			return phaseFolderTest
+		}
+		return phaseFolderMenu
 
 	case phaseConnectionToggle:
 		if m.bs.configureConnections {
@@ -774,13 +914,22 @@ func (m *configBuilderModel) nextPhase() builderPhase {
 
 	case phaseCredRuleToggle:
 		if m.bs.addCredRules {
-			return phaseCredRuleInput
+			return phaseCredRuleFile
 		}
 		return phaseStorageToggle
 
-	case phaseCredRuleInput:
+	case phaseCredRuleFile:
+		return phaseCredRuleMatcher
+
+	case phaseCredRuleMatcher:
+		if m.bs.credAddMoreMatcher {
+			return phaseCredRuleMatcher // loop for more matchers
+		}
+		return phaseCredRuleCreds
+
+	case phaseCredRuleCreds:
 		if m.bs.addMoreCredRules {
-			return phaseCredRuleInput // loop
+			return phaseCredRuleFile // start new rule
 		}
 		return phaseStorageToggle
 
@@ -792,9 +941,12 @@ func (m *configBuilderModel) nextPhase() builderPhase {
 
 	case phaseStorageProvider:
 		if cloudProvider(m.bs.storageProvider) != providerCustom {
-			return phaseDone
+			return phaseStorageProviderInfo
 		}
 		return phaseStorageCustomConfig
+
+	case phaseStorageProviderInfo:
+		return phaseDone
 
 	case phaseStorageCustomConfig:
 		return phaseStorageCustomCreds
