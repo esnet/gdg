@@ -110,6 +110,19 @@ func testRegexMatch(regex, value string) (bool, error) {
 	return p.MatchString(strings.TrimSpace(value)), nil
 }
 
+// validateSecureDataFile checks that a secure data filename is non-blank and
+// is not the reserved name "default.yaml".
+func validateSecureDataFile(s string) error {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return errors.New("filename is required (default.yaml is reserved)")
+	}
+	if s == "default.yaml" {
+		return errors.New("default.yaml is reserved for default connection credentials")
+	}
+	return nil
+}
+
 // appendDefaultCredentialRule ensures a catch-all rule (field=name, regex=.*)
 // pointing to default.yaml is always the last entry in the credential rules list.
 // If an equivalent rule already exists the input is returned unchanged.
@@ -282,7 +295,7 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 		}
 
 		// Credential rules — loop with default catch-all appended
-		newConfig.ConnectionSettings.MatchingRules = configureCredentialRules()
+		newConfig.ConnectionSettings.MatchingRules = configureCredentialRules(encoder, location)
 	}
 
 	// Auth location
@@ -302,7 +315,6 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 	if err != nil {
 		log.Fatal("could not save configuration.")
 	}
-	slog.Info("New configuration has been created", "newContext", name)
 
 	// Optional step — configure a cloud storage engine for this context.
 	var configureStorage bool
@@ -317,6 +329,8 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 	if err == nil && configureStorage {
 		NewCustomS3Config(app)
 	}
+
+	slog.Info("New configuration has been created", "newContext", name)
 }
 
 // configureWatchedFolders interactively prompts the user to choose between monitoring
@@ -506,9 +520,10 @@ func configureConnectionFilters() []config_domain.MatchingRule {
 
 // configureCredentialRules interactively builds the connections.credential_rules slice.
 // Each rule groups one or more field/regex matchers with a secure-data filename.
+// For non-default secure data files, it prompts for credentials and writes the file.
 // A default catch-all rule (field=name, regex=.*) is always appended at the end
 // via appendDefaultCredentialRule.
-func configureCredentialRules() []*config_domain.RegexMatchesList {
+func configureCredentialRules(encoder ports.CipherEncoder, secureLocation string) []*config_domain.RegexMatchesList {
 	var rules []*config_domain.RegexMatchesList
 
 	var addRules bool
@@ -528,16 +543,14 @@ func configureCredentialRules() []*config_domain.RegexMatchesList {
 		err = huh.NewForm(huh.NewGroup(
 			huh.NewInput().
 				Title("Secure Data File").
-				Description("Credentials filename stored in the secure directory (e.g. 'default.yaml', 'prod.yaml').\nLeave blank to use 'default.yaml'.").
-				Value(&secureData),
+				Description("Credentials filename for this rule (e.g. 'elastic.yaml', 'prod.yaml').\n'default.yaml' is reserved for the default connection credentials.").
+				Value(&secureData).
+				Validate(validateSecureDataFile),
 		)).WithShowHelp(false).WithShowErrors(false).Run()
 		if err != nil {
 			break
 		}
 		secureData = strings.TrimSpace(secureData)
-		if secureData == "" {
-			secureData = "default.yaml"
-		}
 
 		// ── Matching rules for this credential entry ──────────────────────
 		var matchingRules []config_domain.MatchingRule
@@ -589,7 +602,54 @@ func configureCredentialRules() []*config_domain.RegexMatchesList {
 				Rules:      matchingRules,
 				SecureData: secureData,
 			})
-			fmt.Printf("\n  ✓  Credential rule added: %d matcher(s) → '%s'\n\n", len(matchingRules), secureData)
+			fmt.Printf("\n  ✓  Credential rule added: %d matcher(s) → '%s'\n", len(matchingRules), secureData)
+
+			// Prompt for credentials for this secure file
+			const passKey = "basicAuthPassword"
+			var credUser, credPass string
+			credErr := huh.NewForm(huh.NewGroup(
+				huh.NewInput().
+					Title(fmt.Sprintf("User for '%s'", secureData)).
+					Description(fmt.Sprintf("Connection user for credentials file '%s'", secureData)).
+					Value(&credUser),
+				huh.NewInput().
+					Title(fmt.Sprintf("Password for '%s'", secureData)).
+					Description(fmt.Sprintf("Connection password for credentials file '%s'", secureData)).
+					EchoMode(huh.EchoModePassword).
+					Value(&credPass),
+			)).Run()
+			if credErr != nil {
+				slog.Warn("skipping credential file creation", "file", secureData)
+			} else {
+				ds := config_domain.GrafanaConnection{
+					"user":  credUser,
+					passKey: credPass,
+				}
+				if encoder != nil {
+					newVal, encodeErr := encoder.EncodeValue(ds.Password())
+					if encodeErr == nil {
+						ds[passKey] = newVal
+					}
+				}
+				credFilePath := filepath.Join(secureLocation, secureData)
+				if writeErr := writeSecureFileData(ds, credFilePath); writeErr != nil {
+					log.Fatalf("unable to write credential file.  location: %s, %v", credFilePath, writeErr)
+				}
+				slog.Info("Credential file created", "file", credFilePath)
+			}
+
+			// Show a YAML preview of all credential rules so far
+			preview := appendDefaultCredentialRule(rules)
+			previewData, marshalErr := yaml.Marshal(preview)
+			if marshalErr == nil {
+				fmt.Printf("\n  Current credential rules:\n  ─────────────────────────\n")
+				for _, line := range strings.Split(string(previewData), "\n") {
+					if line != "" {
+						fmt.Printf("  %s\n", line)
+					}
+				}
+				fmt.Println()
+			}
 		}
 
 		var addMoreCredRules bool
@@ -819,8 +879,11 @@ func buildFormGroups(authType string, config *config_domain.GrafanaConfig, secur
 
 // ── Context management (no TUI) ───────────────────────────────────────────────
 
-// DeleteContext remove a given context
-func DeleteContext(app *config_domain.GDGAppConfiguration, name string) {
+// DeleteContext removes a given context and its associated credential files.
+// When skipConfirmation is true, all credential files (except default.yaml) are
+// deleted without prompting. Otherwise the user is asked to confirm deletion of
+// each file.
+func DeleteContext(app *config_domain.GDGAppConfiguration, name string, skipConfirmation bool) {
 	name = strings.ToLower(name) // ensure name is lower case
 	contexts := app.GetContexts()
 	ctx, ok := contexts[name]
@@ -828,8 +891,66 @@ func DeleteContext(app *config_domain.GDGAppConfiguration, name string) {
 		log.Fatalf("Context not found, cannot delete context: %s", name)
 		return
 	}
+
 	secureLoc := ctx.SecureLocation()
-	fileName := filepath.Join(secureLoc, fmt.Sprintf("auth_%s.yaml", name))
+
+	// Collect credential files to delete (auth file + connection credential files).
+	var filesToDelete []string
+
+	authFile := filepath.Join(secureLoc, fmt.Sprintf("auth_%s.yaml", name))
+	if _, statErr := os.Stat(authFile); statErr == nil {
+		filesToDelete = append(filesToDelete, authFile)
+	}
+
+	if ctx.ConnectionSettings != nil {
+		for _, rule := range ctx.ConnectionSettings.MatchingRules {
+			if rule.SecureData == "" || rule.SecureData == "default.yaml" {
+				continue
+			}
+			credFile := filepath.Join(secureLoc, rule.SecureData)
+			if _, statErr := os.Stat(credFile); statErr == nil {
+				filesToDelete = append(filesToDelete, credFile)
+			}
+		}
+	}
+
+	if len(filesToDelete) > 0 {
+		if skipConfirmation {
+			for _, f := range filesToDelete {
+				if removeErr := os.Remove(f); removeErr != nil {
+					slog.Warn("failed to remove credential file", "file", f)
+				} else {
+					slog.Info("Removed credential file", "file", f)
+				}
+			}
+		} else {
+			fmt.Println("\n  The following credential files are associated with this context:")
+			for _, f := range filesToDelete {
+				fmt.Printf("    - %s\n", f)
+			}
+			fmt.Println()
+
+			var confirmDelete bool
+			err := huh.NewForm(huh.NewGroup(
+				huh.NewConfirm().
+					Title("Delete these credential files?").
+					Description("Select No to keep the files on disk.").
+					Value(&confirmDelete),
+			)).WithShowHelp(false).WithShowErrors(false).Run()
+			if err == nil && confirmDelete {
+				for _, f := range filesToDelete {
+					if removeErr := os.Remove(f); removeErr != nil {
+						slog.Warn("failed to remove credential file", "file", f)
+					} else {
+						slog.Info("Removed credential file", "file", f)
+					}
+				}
+			} else {
+				slog.Info("Credential files were kept on disk")
+			}
+		}
+	}
+
 	delete(contexts, name)
 	if len(contexts) != 0 {
 		for key := range contexts {
@@ -841,14 +962,6 @@ func DeleteContext(app *config_domain.GDGAppConfiguration, name string) {
 	err := app.SaveToDisk(false)
 	if err != nil {
 		log.Fatal("Failed to make save changes")
-	}
-	if _, statErr := os.Stat(fileName); statErr != nil {
-		slog.Warn("auth file does not exists")
-	} else {
-		errRemove := os.Remove(fileName)
-		if errRemove != nil {
-			slog.Warn("failed to remove auth file", "file", fileName)
-		}
 	}
 
 	slog.Info("Deleted context and set new context to", "deletedContext", name, "newActiveContext", app.ContextName)

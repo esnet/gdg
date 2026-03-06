@@ -117,7 +117,7 @@ func TestCopyContext_IsDeepCopy(t *testing.T) {
 func TestDeleteContext_RemovesContext(t *testing.T) {
 	app, _ := newCrudTestApp(t)
 
-	config.DeleteContext(app, "secondary")
+	config.DeleteContext(app, "secondary", true)
 
 	assert.NotContains(t, app.GetContexts(), "secondary",
 		"deleted context should be removed from the map")
@@ -129,7 +129,7 @@ func TestDeleteContext_CaseInsensitive(t *testing.T) {
 	app, _ := newCrudTestApp(t)
 
 	// DeleteContext lower-cases the name before lookup.
-	config.DeleteContext(app, "SECONDARY")
+	config.DeleteContext(app, "SECONDARY", true)
 
 	assert.NotContains(t, app.GetContexts(), "secondary")
 }
@@ -138,7 +138,7 @@ func TestDeleteContext_SwitchesActiveContext(t *testing.T) {
 	app, _ := newCrudTestApp(t)
 
 	// Delete the currently active context; the active context should switch to another one.
-	config.DeleteContext(app, "primary")
+	config.DeleteContext(app, "primary", true)
 
 	remaining := app.GetContexts()
 	assert.NotContains(t, remaining, "primary")
@@ -156,7 +156,7 @@ func TestDeleteContext_RemovesAuthFileIfPresent(t *testing.T) {
 	authFile := filepath.Join(secureDir, "auth_secondary.yaml")
 	require.NoError(t, os.WriteFile(authFile, []byte("token: fake\n"), 0o600))
 
-	config.DeleteContext(app, "secondary")
+	config.DeleteContext(app, "secondary", true)
 
 	_, statErr := os.Stat(authFile)
 	assert.True(t, os.IsNotExist(statErr),
@@ -166,7 +166,7 @@ func TestDeleteContext_RemovesAuthFileIfPresent(t *testing.T) {
 func TestDeleteContext_PersistsToDisk(t *testing.T) {
 	app, _ := newCrudTestApp(t)
 
-	config.DeleteContext(app, "secondary")
+	config.DeleteContext(app, "secondary", true)
 
 	cfgFile := app.GetViperConfig().ConfigFileUsed()
 	reloaded := config.NewConfig(cfgFile)
@@ -174,6 +174,186 @@ func TestDeleteContext_PersistsToDisk(t *testing.T) {
 		"deleted context should not reappear after a config reload")
 	assert.Contains(t, reloaded.GetContexts(), "primary",
 		"surviving context should still be present after reload")
+}
+
+// ── DeleteContext — credential file cleanup ───────────────────────────────────
+
+// newCrudTestAppWithCredentials creates a test config where the "secondary"
+// context has connection credential_rules pointing to the given secure data
+// filenames. It returns the app, the output directory, and the secure directory.
+func newCrudTestAppWithCredentials(t *testing.T, secureDataFiles ...string) (*config_domain.GDGAppConfiguration, string, string) {
+	t.Helper()
+
+	outputDir := t.TempDir()
+	cfgDir := t.TempDir()
+	cfgPath := filepath.Join(cfgDir, "gdg-crud-cred-test.yml")
+
+	// Build credential_rules YAML for the "secondary" context.
+	credRulesYAML := ""
+	for _, file := range secureDataFiles {
+		credRulesYAML += fmt.Sprintf(`
+        - rules:
+            - field: name
+              regex: ".*"
+          secure_data: %s`, file)
+	}
+
+	yamlContent := fmt.Sprintf(`
+context_name: primary
+contexts:
+  primary:
+    url: http://grafana-primary:3000
+    output_path: %s
+    watched:
+      - General
+  secondary:
+    url: http://grafana-secondary:3000
+    output_path: %s
+    watched:
+      - General
+    connections:
+      credential_rules:%s
+storage_engine: {}
+`, outputDir, outputDir, credRulesYAML)
+
+	require.NoError(t, os.WriteFile(cfgPath, []byte(yamlContent), 0o600))
+	app := config.NewConfig(cfgPath)
+
+	secureDir := filepath.Join(outputDir, "secure")
+	require.NoError(t, os.MkdirAll(secureDir, 0o750))
+
+	return app, outputDir, secureDir
+}
+
+func TestDeleteContext_RemovesCredentialFiles(t *testing.T) {
+	app, _, secureDir := newCrudTestAppWithCredentials(t, "elastic.yaml")
+
+	// Create the credential file on disk.
+	credFile := filepath.Join(secureDir, "elastic.yaml")
+	require.NoError(t, os.WriteFile(credFile, []byte("user: elastic\n"), 0o600))
+
+	config.DeleteContext(app, "secondary", true)
+
+	_, statErr := os.Stat(credFile)
+	assert.True(t, os.IsNotExist(statErr),
+		"credential file elastic.yaml should be removed when the context is deleted")
+}
+
+func TestDeleteContext_PreservesDefaultYaml(t *testing.T) {
+	app, _, secureDir := newCrudTestAppWithCredentials(t, "elastic.yaml", "default.yaml")
+
+	// Create both files on disk.
+	defaultFile := filepath.Join(secureDir, "default.yaml")
+	elasticFile := filepath.Join(secureDir, "elastic.yaml")
+	require.NoError(t, os.WriteFile(defaultFile, []byte("user: default\n"), 0o600))
+	require.NoError(t, os.WriteFile(elasticFile, []byte("user: elastic\n"), 0o600))
+
+	config.DeleteContext(app, "secondary", true)
+
+	_, statErr := os.Stat(defaultFile)
+	assert.False(t, os.IsNotExist(statErr),
+		"default.yaml should NOT be removed during context deletion")
+
+	_, statErr = os.Stat(elasticFile)
+	assert.True(t, os.IsNotExist(statErr),
+		"elastic.yaml should be removed during context deletion")
+}
+
+func TestDeleteContext_NoCredentialFiles_NoPanic(t *testing.T) {
+	// Context has credential rules referencing files that don't exist on disk.
+	// DeleteContext should complete without error or panic.
+	app, _, _ := newCrudTestAppWithCredentials(t, "nonexistent.yaml")
+
+	assert.NotPanics(t, func() {
+		config.DeleteContext(app, "secondary", true)
+	})
+
+	assert.NotContains(t, app.GetContexts(), "secondary",
+		"context should still be deleted even if credential files are missing")
+}
+
+func TestDeleteContext_MultipleCredentialFilesRemoved(t *testing.T) {
+	app, _, secureDir := newCrudTestAppWithCredentials(t, "elastic.yaml", "postgres.yaml")
+
+	elasticFile := filepath.Join(secureDir, "elastic.yaml")
+	pgFile := filepath.Join(secureDir, "postgres.yaml")
+	require.NoError(t, os.WriteFile(elasticFile, []byte("user: elastic\n"), 0o600))
+	require.NoError(t, os.WriteFile(pgFile, []byte("user: postgres\n"), 0o600))
+
+	config.DeleteContext(app, "secondary", true)
+
+	_, statErr := os.Stat(elasticFile)
+	assert.True(t, os.IsNotExist(statErr), "elastic.yaml should be removed")
+	_, statErr = os.Stat(pgFile)
+	assert.True(t, os.IsNotExist(statErr), "postgres.yaml should be removed")
+}
+
+func TestDeleteContext_AuthAndCredentialFilesRemoved(t *testing.T) {
+	app, _, secureDir := newCrudTestAppWithCredentials(t, "elastic.yaml")
+
+	// Create both the auth file and a credential file.
+	authFile := filepath.Join(secureDir, "auth_secondary.yaml")
+	credFile := filepath.Join(secureDir, "elastic.yaml")
+	require.NoError(t, os.WriteFile(authFile, []byte("token: fake\n"), 0o600))
+	require.NoError(t, os.WriteFile(credFile, []byte("user: elastic\n"), 0o600))
+
+	config.DeleteContext(app, "secondary", true)
+
+	_, statErr := os.Stat(authFile)
+	assert.True(t, os.IsNotExist(statErr), "auth file should be removed")
+	_, statErr = os.Stat(credFile)
+	assert.True(t, os.IsNotExist(statErr), "credential file should be removed")
+}
+
+func TestDeleteContext_EmptySecureDataSkipped(t *testing.T) {
+	// A credential rule with empty SecureData should be silently skipped.
+	app, _, secureDir := newCrudTestAppWithCredentials(t, "elastic.yaml", "")
+
+	credFile := filepath.Join(secureDir, "elastic.yaml")
+	require.NoError(t, os.WriteFile(credFile, []byte("user: elastic\n"), 0o600))
+
+	config.DeleteContext(app, "secondary", true)
+
+	_, statErr := os.Stat(credFile)
+	assert.True(t, os.IsNotExist(statErr), "elastic.yaml should be removed")
+	assert.NotContains(t, app.GetContexts(), "secondary")
+}
+
+func TestDeleteContext_NilConnectionSettings(t *testing.T) {
+	// Context without ConnectionSettings at all should not panic.
+	app, _ := newCrudTestApp(t)
+
+	assert.NotPanics(t, func() {
+		config.DeleteContext(app, "secondary", true)
+	})
+	assert.NotContains(t, app.GetContexts(), "secondary")
+}
+
+func TestDeleteContext_RemoveErrorDoesNotPanic(t *testing.T) {
+	if os.Getuid() == 0 {
+		t.Skip("skipping: test requires non-root user for permission checks")
+	}
+
+	app, _, secureDir := newCrudTestAppWithCredentials(t, "elastic.yaml")
+
+	credFile := filepath.Join(secureDir, "elastic.yaml")
+	require.NoError(t, os.WriteFile(credFile, []byte("user: elastic\n"), 0o600))
+
+	// Make the directory read-only so os.Remove fails.
+	require.NoError(t, os.Chmod(secureDir, 0o555))
+	t.Cleanup(func() {
+		os.Chmod(secureDir, 0o755) //nolint:errcheck // restore for t.TempDir cleanup
+	})
+
+	// Should log a warning but not panic or crash.
+	assert.NotPanics(t, func() {
+		config.DeleteContext(app, "secondary", true)
+	})
+
+	// File should still exist because removal failed.
+	_, statErr := os.Stat(credFile)
+	assert.False(t, os.IsNotExist(statErr),
+		"credential file should remain when directory is read-only")
 }
 
 // ── ClearContexts ─────────────────────────────────────────────────────────────
