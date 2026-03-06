@@ -110,6 +110,19 @@ func testRegexMatch(regex, value string) (bool, error) {
 	return p.MatchString(strings.TrimSpace(value)), nil
 }
 
+// validateSecureDataFile checks that a secure data filename is non-blank and
+// is not the reserved name "default.yaml".
+func validateSecureDataFile(s string) error {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return errors.New("filename is required (default.yaml is reserved)")
+	}
+	if s == "default.yaml" {
+		return errors.New("default.yaml is reserved for default connection credentials")
+	}
+	return nil
+}
+
 // appendDefaultCredentialRule ensures a catch-all rule (field=name, regex=.*)
 // pointing to default.yaml is always the last entry in the credential rules list.
 // If an equivalent rule already exists the input is returned unchanged.
@@ -532,16 +545,7 @@ func configureCredentialRules(encoder ports.CipherEncoder, secureLocation string
 				Title("Secure Data File").
 				Description("Credentials filename for this rule (e.g. 'elastic.yaml', 'prod.yaml').\n'default.yaml' is reserved for the default connection credentials.").
 				Value(&secureData).
-				Validate(func(s string) error {
-					s = strings.TrimSpace(s)
-					if s == "" {
-						return errors.New("filename is required (default.yaml is reserved)")
-					}
-					if s == "default.yaml" {
-						return errors.New("default.yaml is reserved for default connection credentials")
-					}
-					return nil
-				}),
+				Validate(validateSecureDataFile),
 		)).WithShowHelp(false).WithShowErrors(false).Run()
 		if err != nil {
 			break

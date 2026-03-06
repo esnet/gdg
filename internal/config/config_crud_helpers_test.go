@@ -341,3 +341,89 @@ func TestValidateGrafanaURL_LeadingTrailingSpacesAccepted(t *testing.T) {
 	// Whitespace is trimmed before validation; the URL itself is valid.
 	assert.NoError(t, validateGrafanaURL("  http://localhost:3000  "))
 }
+
+// ── validateSecureDataFile ────────────────────────────────────────────────────
+
+func TestValidateSecureDataFile_BlankReturnsError(t *testing.T) {
+	err := validateSecureDataFile("")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "required")
+}
+
+func TestValidateSecureDataFile_WhitespaceOnlyReturnsError(t *testing.T) {
+	err := validateSecureDataFile("   ")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "required")
+}
+
+func TestValidateSecureDataFile_DefaultYamlReturnsError(t *testing.T) {
+	err := validateSecureDataFile("default.yaml")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "reserved")
+}
+
+func TestValidateSecureDataFile_ValidFilenameReturnsNil(t *testing.T) {
+	assert.NoError(t, validateSecureDataFile("elastic.yaml"))
+}
+
+func TestValidateSecureDataFile_WhitespaceAroundValidNameReturnsNil(t *testing.T) {
+	// Leading/trailing whitespace is trimmed; the inner name is valid.
+	assert.NoError(t, validateSecureDataFile("  elastic.yaml  "))
+}
+
+func TestValidateSecureDataFile_WhitespaceAroundDefaultYamlReturnsError(t *testing.T) {
+	// After trimming, the name is "default.yaml" which is reserved.
+	err := validateSecureDataFile("  default.yaml  ")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "reserved")
+}
+
+// ── formSelection.String ──────────────────────────────────────────────────────
+
+func TestFormSelection_String(t *testing.T) {
+	assert.Equal(t, "basicAuth", basicAuthForm.String())
+	assert.Equal(t, "tokenAuth", tokenAuthForm.String())
+	assert.Equal(t, "bothAuth", bothAuthForm.String())
+}
+
+// ── buildFormGroups ───────────────────────────────────────────────────────────
+
+func TestBuildFormGroups_BasicAuth(t *testing.T) {
+	cfg := config_domain.NewGrafanaConfig()
+	sec := &config_domain.SecureModel{}
+
+	groups := buildFormGroups(basicAuthForm.String(), cfg, sec)
+
+	// basicAuth → 1 basic-auth group + 1 output/URL group = 2
+	assert.Len(t, groups, 2)
+}
+
+func TestBuildFormGroups_TokenAuth(t *testing.T) {
+	cfg := config_domain.NewGrafanaConfig()
+	sec := &config_domain.SecureModel{}
+
+	groups := buildFormGroups(tokenAuthForm.String(), cfg, sec)
+
+	// tokenAuth → 1 token group + 1 output/URL group = 2
+	assert.Len(t, groups, 2)
+}
+
+func TestBuildFormGroups_BothAuth(t *testing.T) {
+	cfg := config_domain.NewGrafanaConfig()
+	sec := &config_domain.SecureModel{}
+
+	groups := buildFormGroups(bothAuthForm.String(), cfg, sec)
+
+	// both → 1 basic + 1 token + 1 output/URL = 3
+	assert.Len(t, groups, 3)
+}
+
+func TestBuildFormGroups_UnknownAuthType(t *testing.T) {
+	cfg := config_domain.NewGrafanaConfig()
+	sec := &config_domain.SecureModel{}
+
+	groups := buildFormGroups("unknown", cfg, sec)
+
+	// No auth groups matched, only the output/URL group = 1
+	assert.Len(t, groups, 1)
+}
