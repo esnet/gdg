@@ -12,7 +12,7 @@ require (
 	github.com/bep/simplecobra v0.7.0
 	github.com/brianvoe/gofakeit/v7 v7.14.0
 	github.com/carlmjohnson/requests v0.25.1
-	github.com/charmbracelet/huh v0.8.0
+	github.com/charmbracelet/huh/v2 v2.0.3
 	github.com/docker/go-connections v0.6.0
 	github.com/extism/go-sdk v1.7.1
 	github.com/go-openapi/strfmt v0.25.0
