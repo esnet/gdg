@@ -11,10 +11,10 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
-	grafana2 "github.com/esnet/gdg/internal/adapter/grafana"
+	"github.com/esnet/gdg/internal/adapter/grafana"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/tools"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
@@ -28,7 +28,7 @@ const (
 	listLibraryVars   int64 = 2
 )
 
-func setupLibElementsReaders(filterObj ports.Filter) {
+func setupLibElementsReaders(filterObj outbound.Filter) {
 	err := filterObj.RegisterReader(reflect.TypeFor[*domain.WithNested[models.LibraryElementDTO]](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.WithNested[models.LibraryElementDTO])
 		if !ok {
@@ -87,7 +87,7 @@ func setupLibElementsReaders(filterObj ports.Filter) {
 	}
 }
 
-func NewLibraryElementFilter(cfg *configDomain.GDGAppConfiguration) ports.Filter {
+func NewLibraryElementFilter(cfg *configDomain.GDGAppConfiguration) outbound.Filter {
 	filterObj := v2.NewBaseFilter()
 	setupLibElementsReaders(filterObj)
 	addFolderFilter(cfg, filterObj, "")
@@ -95,7 +95,7 @@ func NewLibraryElementFilter(cfg *configDomain.GDGAppConfiguration) ports.Filter
 	return filterObj
 }
 
-func (s *DashNGoImpl) ListLibraryElementsConnections(filter ports.Filter, connectionID string) []*models.DashboardFullWithMeta {
+func (s *DashNGoImpl) ListLibraryElementsConnections(filter outbound.Filter, connectionID string) []*models.DashboardFullWithMeta {
 	payload, err := s.GetClient().LibraryElements.GetLibraryElementConnections(connectionID)
 	if err != nil {
 		log.Fatalf("unable to retrieve a valid connection for %s", connectionID)
@@ -113,7 +113,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter ports.Filter, connec
 	return results
 }
 
-func (s *DashNGoImpl) ListLibraryElements(filter ports.Filter) []*domain.WithNested[models.LibraryElementDTO] {
+func (s *DashNGoImpl) ListLibraryElements(filter outbound.Filter) []*domain.WithNested[models.LibraryElementDTO] {
 	const limit int64 = 100
 	var (
 		page        int64 = 1
@@ -148,7 +148,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter ports.Filter) []*domain.WithNes
 	for _, val := range allElements {
 		var nestedPath string
 		if val.FolderUID == "" {
-			nestedPath = DefaultFolderName
+			nestedPath = domain.ApiConsts.DefaultFolderName
 		} else {
 			fld, err := s.getFolderByUid(val.FolderUID)
 			if err != nil {
@@ -170,7 +170,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter ports.Filter) []*domain.WithNes
 }
 
 // DownloadLibraryElements downloads all the Library Elements
-func (s *DashNGoImpl) DownloadLibraryElements(filter ports.Filter) []string {
+func (s *DashNGoImpl) DownloadLibraryElements(filter outbound.Filter) []string {
 	var (
 		listing   []*domain.WithNested[models.LibraryElementDTO]
 		dsPacked  []byte
@@ -185,13 +185,13 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter ports.Filter) []string {
 			slog.Error("Unable to serialize object", "err", err, "library-element", item.Entity.Name)
 			continue
 		}
-		folderName := DefaultFolderName
+		folderName := domain.ApiConsts.DefaultFolderName
 
 		if val, ok := folderMap[item.Entity.FolderUID]; ok {
 			folderName = val
 		}
 
-		libraryPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(s.grafanaConf, folderName, domain.LibraryElementResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(item.Entity.Name))
+		libraryPath := fmt.Sprintf("%s/%s.json", s.resources.BuildResourceFolder(s.grafanaConf, folderName, domain.LibraryElementResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(item.Entity.Name))
 
 		if err = s.storage.WriteFile(libraryPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err, "library-element", slug.Make(item.Entity.Name))
@@ -203,7 +203,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter ports.Filter) []string {
 }
 
 // UploadLibraryElements uploads all the Library Elements
-func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.Filter) []string {
+func (s *DashNGoImpl) UploadLibraryElements(filterReq outbound.Filter) []string {
 	var (
 		exported          = make([]string, 0)
 		rawLibraryElement []byte
@@ -240,16 +240,16 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.Filter) []string {
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = getFolderFromResourcePath(s.grafanaConf, file, domain.LibraryElementResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		folderName, err = s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.LibraryElementResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
-			folderName = DefaultFolderName
+			folderName = domain.ApiConsts.DefaultFolderName
 		}
 		if !ignoreFilters && !filterReq.Validate(context.Background(), domain.FolderFilter, map[string]any{NestedDashFolderName: folderName}) {
 			slog.Warn("Skipping since requested file is not in a folder gdg is configured to manage", "folder", folderName, "file", file)
 			continue
 		}
-		if folderName != DefaultFolderName {
+		if folderName != domain.ApiConsts.DefaultFolderName {
 			Results := gjson.GetBytes(rawLibraryElement, "Entity.folderUid")
 			if Results.Exists() {
 				folderUid = Results.String()
@@ -273,10 +273,10 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.Filter) []string {
 			continue
 		}
 		if folderName == "" {
-			folderName = DefaultFolderName
+			folderName = domain.ApiConsts.DefaultFolderName
 		}
 
-		if folderName != DefaultFolderName {
+		if folderName != domain.ApiConsts.DefaultFolderName {
 			if val, ok := folderUidMap[folderName]; ok {
 				folderUid = val
 			} else {
@@ -297,7 +297,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.Filter) []string {
 			slog.Error("failed to unmarshall file", "filename", file, "err", err)
 			continue
 		}
-		newLibraryRequest := grafana2.WithNestedToCreateLibraryElement(libraryRequest)
+		newLibraryRequest := grafana.WithNestedToCreateLibraryElement(libraryRequest)
 		if folderUid != "" {
 			newLibraryRequest.FolderUID = folderUid
 		}
@@ -313,7 +313,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.Filter) []string {
 }
 
 // DeleteAllLibraryElements deletes all the Library Elements
-func (s *DashNGoImpl) DeleteAllLibraryElements(filter ports.Filter) []string {
+func (s *DashNGoImpl) DeleteAllLibraryElements(filter outbound.Filter) []string {
 	var entries []string
 	libraryElements := s.ListLibraryElements(filter)
 	for _, element := range libraryElements {

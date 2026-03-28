@@ -8,6 +8,33 @@ weight: 2
 toc: true
 ---
 
+
+## Release Notes for v0.9.4
+
+**Release Date: 00/00/2026**
+
+### Breaking Changes (v0.9.4)
+
+{{< callout context="note" title="Note" icon="info-circle" >}}
+This release has a major TUI revamp that should capture all configuration options as of 0.9.3. This should allow the user to configure
+GDG using the easy-to-use wizard as well as providing a custom configuration file if that's preferred.
+{{< /callout >}}
+
+### Changes (v0.9.4)
+  - [569](https://github.com/esnet/gdg/issues/569) Added plugin rekey that will update all values with the encrypted equivalent when enabling a new plugin
+  - [568](https://github.com/esnet/gdg/issues/568) A plugin registry was added to help discover new plugin to choose from.
+  - [566](https://github.com/esnet/gdg/issues/566) Very similar to 568 but adding the TUI that uses that functionality.
+
+### BugFixes (v0.9.4)
+
+
+### TechDebt (v0.9.4)
+  - [570](https://github.com/esnet/gdg/issues/570) Upgraded website code to a latest version.
+  - [571](https://github.com/esnet/gdg/issues/571) Fixed documentation issues that help clarify how to use gdg for new users
+  - [574](https://github.com/esnet/gdg/issues/574) Upgraded to use huh v2 (and later replacet with bubbles deprecating huh from code base)
+
+
+
 ## Release Notes for v0.9.3
 
 **Release Date: 03/05/2026**

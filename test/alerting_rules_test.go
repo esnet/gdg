@@ -11,7 +11,7 @@ import (
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -389,7 +389,7 @@ func TestAlertingRulesNoFilterCrud(t *testing.T) {
 
 // setupAlertingEnvironment prepares the prerequisite resources needed for alerting tests by uploading
 // connections, creating folders, and uploading contact points via the provided GrafanaService API client.
-func setupAlertingEnvironment(is *is.I, apiClient ports.GrafanaService, includeFolder bool) {
+func setupAlertingEnvironment(is *is.I, apiClient outbound.GrafanaService, includeFolder bool) {
 	slog.Info("Uploading Connections")
 	conn := apiClient.UploadConnections(api.NewConnectionFilter(""))
 	is.True(len(conn) > 0)

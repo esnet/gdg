@@ -12,7 +12,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	appDomain "github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/go-openapi/strfmt"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -21,7 +21,7 @@ import (
 
 // getAlertRulesFilter constructs alert rule filters from command-line flags and returns both the parsed
 // AlertRuleFilterParams and a corresponding Filter for use in alert rule operations.
-func getAlertRulesFilter(cfg *config_domain.GDGAppConfiguration, grafanaService ports.GrafanaService, command *cobra.Command) (appDomain.AlertRuleFilterParams, ports.Filter) {
+func getAlertRulesFilter(cfg *config_domain.GDGAppConfiguration, grafanaService outbound.GrafanaService, command *cobra.Command) (appDomain.AlertRuleFilterParams, outbound.Filter) {
 	f := appDomain.AlertRuleFilterParams{}
 	f.Folder, _ = command.Flags().GetString("folder")
 	f.Label, _ = command.Flags().GetStringArray("label")

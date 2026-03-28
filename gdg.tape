@@ -4,190 +4,207 @@ Require echo
 
 Set Shell "bash"
 Set FontSize 20
-Set Width 1200
-Set Height 600
+Set Width 1600
+Set Height 800
 
 
 
-Type "gdg tools context list" Sleep 500ms  Enter
+Type "gdg tools context list" Sleep 1s  Enter
 Sleep 5s
 Type "clear" Enter
-Type "gdg tools context new demo" Sleep 500ms  Enter
+Type "gdg tools context new demo" Sleep 1s  Enter
 
+# ── phasePluginToggle ──
+# Configure a cipher plugin? (default No — skip for this demo)
+Sleep 2s Enter
+
+# ── phaseAuthType ──
 # Auth type: "Basic Authentication" (first option, already selected)
-Sleep 500ms Enter
+Sleep 2s Enter
 
+# ── phaseBasicCreds (single form: username + password) ──
 # Grafana Username
-Sleep 500ms
+Sleep 2s
 Type "admin" Sleep 200ms  Enter
 
 # Grafana Password
 Type "admin" Sleep 1000ms  Enter
 
-# Destination Folder
-Type "test/data" Enter
-
+# ── phaseServerSettings (single form: URL + output path) ──
 # Grafana URL
-Type "http://localhost:3000" Sleep 500ms  Enter
+Sleep 2s
+Type "http://localhost:3000" Sleep 1s  Enter
 
+# Output Path
+Type "test/data" Sleep 1s Enter
+
+# ── phaseUserSettings (Generate random passwords for imported users?) ──
+# Default is No — accept default
+Sleep 2s Enter
+
+# ── phaseFolderScope ──
 # Folder scope: "Build a folder allowlist" (second option)
-Sleep 500ms
+Sleep 2s
 Down Enter
 
-# Watched Folders: "Add a folder" (only option on first pass)
-Sleep 500ms Enter
+# ── phaseFolderMenu — first visit (1 option: Add a folder) ──
+Sleep 2s Enter
 
-# Folder name
-Type "General" Sleep 500ms  Enter
+# ── phaseFolderAdd ──
+Sleep 2s
+Type "General" Sleep 1s  Enter
 
-# Watched Folders: "Add a folder" (first option) to add second folder
-Sleep 1s Enter
+# ── phaseFolderMenu — cursor at 0 (Add), 3 options now ──
+Sleep 2s Enter
 
-# Folder name: linux/gnu (literal, no regex metacharacters — will be URL-encoded)
-Sleep 500ms
+# ── phaseFolderAdd ──
+# Folder name: linux/gnu (literal — will be URL-encoded)
+Sleep 2s
 Type "linux/gnu" Sleep 1s  Enter
-Sleep 1s
 
-# Watched Folders: "Add a folder" (first option) to add third folder
-Sleep 1s Enter
+# ── phaseFolderMenu — cursor at 0 (Add) ──
+Sleep 2s Enter
 
-# Folder name: linux.* (contains regex metacharacter *)
-Sleep 500ms
+# ── phaseFolderAdd ──
+# Folder name: linux.* (regex metacharacters auto-detected, stored as-is)
+Sleep 2s
 Type "linux.*" Sleep 1s  Enter
 
-# "Regex characters detected" confirm: toggle to "Yes, it's a regex"
-Sleep 1s
-Left Sleep 500ms Enter
-Sleep 1s
-
-# Watched Folders: "Test a folder name against current list" (second option)
-Sleep 1s
-Down Sleep 500ms Enter
-
-# Test folder name: linux/gnu/foobar
-Sleep 500ms
-Type "linux/gnu/foobar" Sleep 1s  Enter
+# ── phaseFolderMenu — cursor at 0 (Add). Down to "Test" (position 1) ──
 Sleep 2s
+Down Sleep 1s Enter
 
-# "Test another folder name?" confirm: No (default)
-Sleep 1s Enter
+# ── phaseFolderTest ──
+Sleep 2s
+Type "linux/gnu/foobar" Sleep 1s  Enter
 
-# Watched Folders: select "Done" (third option)
-Sleep 1s
-Down Down Enter
+# ── phaseFolderTestResult ──
+# "Test another folder name?" default is Yes. Toggle to No.
+Sleep 2s
+Right Sleep 1s Enter
 
+# ── phaseFolderMenu — cursor at 1 (Test) after returning from test.
+# One Down to reach "Done" (position 2). Two Downs would wrap to "Add".
+Sleep 2s
+Down Enter
+
+# ── phaseConnectionToggle ──
 # Configure connection settings? (default No, toggle to Yes)
-Sleep 1s
+Sleep 2s
 Left Enter
 
+# ── phaseFilterToggle ──
 # Configure Connection Filters? (default No, toggle to Yes)
-Sleep 1s
-Left Sleep 500ms Enter
+Sleep 2s
+Left Sleep 1s Enter
 
+# ── phaseFilterInput (single form: field + regex + inclusive + add more) ──
 # Filter Field
-Sleep 500ms
+Sleep 2s
 Type "access" Sleep 1s  Enter
 
 # Filter Regex
-Sleep 500ms
+Sleep 1s
 Type "proxy" Sleep 1s  Enter
 
 # Inclusive filter? (default No, toggle to Yes)
 Sleep 1s
-Left Sleep 500ms Enter
-Sleep 1s
+Left Sleep 1s Enter
 
-# Test regex? (default No, skip)
+# Add another filter? (default No, skip — submits the form)
 Sleep 1s Enter
 
-# Add another filter? (default No, skip)
-Sleep 1s Enter
-
+# ── phaseDefaultCreds (single form: user + password) ──
 # Connection Default User
-Type "ds_admin" Sleep 500ms  Enter
+Sleep 2s
+Type "ds_admin" Sleep 1s  Enter
 
 # Connection Default Password
-Type "ds_pass" Sleep 500ms  Enter
+Type "ds_pass" Sleep 1s  Enter
 
+# ── phaseCredRuleToggle ──
 # Configure Credential Rules? (default No, toggle to Yes)
 Sleep 2s
-Left Sleep 500ms Enter
+Left Sleep 1s Enter
 
+# ── phaseCredRuleFile ──
 # Secure Data File
-Sleep 1s
+Sleep 2s
 Type "elastic.yaml" Sleep 1s  Enter
 
+# ── phaseCredRuleMatcher (single form: field + regex + add more) ──
 # Matching Field
-Sleep 1s
+Sleep 2s
 Type "type" Sleep 1s  Enter
 
 # Matching Regex
 Sleep 1s
 Type "elasticsearch" Sleep 1s  Enter
 
-# Test regex? (default No, skip)
-Sleep 2s Enter
+# Add another matcher for this credential file? (default No, skip — submits)
+Sleep 1s Enter
 
-# Add another matching rule to this credential entry? (default No, skip)
-Sleep 2s Enter
-
+# ── phaseCredRuleCreds (single form: user + password + add more) ──
 # Credentials for elastic.yaml — User
-Sleep 1s
-Type "elastic" Sleep 500ms  Enter
+Sleep 2s
+Type "elastic" Sleep 1s  Enter
 
 # Credentials for elastic.yaml — Password
-Type "elastic" Sleep 500ms  Enter
-Sleep 2s
+Type "elastic" Sleep 1s  Enter
 
-# YAML preview is displayed, then: Add another credential rule? (default No, skip)
-Sleep 3s Enter
+# Add another credential rule? (default No, skip — submits the form)
+Sleep 2s Enter
 
+# ── phaseStorageToggle ──
 # Configure cloud storage? (default No, toggle to Yes)
 Sleep 2s
 Left Enter
 
+# ── phaseStorageProvider ──
 # Cloud storage provider: "AWS S3" (second option)
 Sleep 2s
-Down Sleep 500ms Enter
-Sleep 3s
+Down Sleep 1s Enter
+
+# ── phaseStorageProviderInfo (managed provider docs + OK) ──
+Sleep 5s Enter
 
 Sleep 2s
-Type "gdg tools context show demo  --all" Sleep 500ms  Enter
+Type "gdg tools context show demo  --all" Sleep 1s  Enter
 Sleep 3s
-Type "echo encrypted auth using plugin" Sleep 500ms Enter
+Type "echo --- auth credentials ---" Sleep 1s Enter
 Sleep 3s
-Type "cat test/data/secure/auth_demo.yaml" Sleep 500ms Enter
+Type "cat test/data/secure/auth_demo.yaml" Sleep 1s Enter
 Sleep 4s
-Type "echo encrypted connection settings using plugin" Sleep 500ms Enter
+Type "echo --- default connection credentials ---" Sleep 1s Enter
 Sleep 3s
-Type "cat test/data/secure/default.yaml" Sleep 500ms Enter
+Type "cat test/data/secure/default.yaml" Sleep 1s Enter
 Sleep 4s
-Type "echo encrypted elasticsearch credentials using plugin" Sleep 500ms Enter
+Type "echo --- elasticsearch credentials ---" Sleep 1s Enter
 Sleep 3s
-Type "cat test/data/secure/elastic.yaml" Sleep 500ms Enter
+Type "cat test/data/secure/elastic.yaml" Sleep 1s Enter
 Sleep 5s
 Type "clear" Enter
-Type "gdg backup dash list" Sleep 500ms  Enter
+Type "gdg backup dash list" Sleep 1s  Enter
 Sleep 3s
-Type "gdg backup dash upload" Sleep 500ms  Enter
-Sleep 1s
-Type "y" Sleep 500ms  Enter
+Type "gdg backup dash upload" Sleep 1s  Enter
+Sleep 2s
+Type "y" Sleep 1s  Enter
 Sleep 3s
-Type "gdg backup dash list" Sleep 500ms  Enter
+Type "gdg backup dash list" Sleep 1s  Enter
 Sleep 3s
-Type "gdg backup dash download" Sleep 500ms  Enter
+Type "gdg backup dash download" Sleep 1s  Enter
 Sleep 3s
-Type "gdg backup dash clear" Sleep 500ms  Enter
-Sleep 1s
-Type "y" Sleep 500ms  Enter
+Type "gdg backup dash clear" Sleep 1s  Enter
+Sleep 2s
+Type "y" Sleep 1s  Enter
 Sleep 3s
-Type "gdg backup dash list" Sleep 500ms  Enter
+Type "gdg backup dash list" Sleep 1s  Enter
 Sleep 3s
 
-Type "gdg tools context delete demo" Sleep 500ms  Enter
+Type "gdg tools context delete demo" Sleep 1s  Enter
 
 # Delete credential files? (default No, toggle to Yes)
 Sleep 2s
-Left Sleep 500ms Enter
+Left Sleep 1s Enter
 
 Sleep 5s

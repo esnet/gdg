@@ -9,6 +9,7 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/internal/adapter/plugins/registry"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/jedib0t/go-pretty/v6/table"
 
@@ -166,7 +167,14 @@ func newContext() simplecobra.Commander {
 				return errors.New("requires a context NameP")
 			}
 			contextEntry := args[0]
-			config.CreateNewContext(rootCmd.ConfigSvc(), contextEntry)
+			// Build a registry client from app globals so the builder TUI can
+			// offer cipher plugin selection without any extra flags.
+			globals := rootCmd.ConfigSvc().GetAppGlobals()
+			regClient := registry.NewClient(registry.ClientConfig{
+				FilePath: globals.PluginRegistryFile,
+				URL:      globals.PluginRegistryURL,
+			})
+			config.CreateNewContext(rootCmd.ConfigSvc(), contextEntry, regClient)
 			return nil
 		},
 	}

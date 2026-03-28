@@ -6,11 +6,11 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/cli/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/test_tooling"
 
 	"github.com/esnet/gdg/cli"
-	"github.com/esnet/gdg/internal/ports/mocks"
+	"github.com/esnet/gdg/internal/ports/outbound/mocks"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -18,7 +18,7 @@ import (
 
 func TestConnectionCommand(t *testing.T) {
 	testSvc := new(mocks.GrafanaService)
-	getMockSvc := func() ports.GrafanaService {
+	getMockSvc := func() outbound.GrafanaService {
 		return testSvc
 	}
 	resp := []models.DataSourceListItemDTO{

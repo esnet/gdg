@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	_ "gocloud.dev/blob/azureblob"
 	_ "gocloud.dev/blob/gcsblob"
 	_ "gocloud.dev/blob/s3blob"
 )
 
-func NewStorageFromConfig(storageType string, appData map[string]string, encoder ports.CipherEncoder) (ports.Storage, error) {
+func NewStorageFromConfig(storageType string, appData map[string]string, encoder outbound.CipherEncoder) (outbound.Storage, error) {
 	var (
-		storageEngine ports.Storage
+		storageEngine outbound.Storage
 		err           error
 	)
 

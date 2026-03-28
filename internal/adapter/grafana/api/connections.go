@@ -11,8 +11,9 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	domain "github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/tidwall/gjson"
 
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -20,7 +21,7 @@ import (
 	"github.com/gosimple/slug"
 )
 
-func setupConnectionReaders(filterObj ports.Filter) {
+func setupConnectionReaders(filterObj outbound.Filter) {
 	err := filterObj.RegisterReader(reflect.TypeFor[models.DataSourceListItemDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.DataSourceListItemDTO)
 		if !ok {
@@ -70,7 +71,8 @@ func setupConnectionReaders(filterObj ports.Filter) {
 	}
 }
 
-func NewConnectionFilter(name string) ports.Filter {
+func NewConnectionFilter(name string) outbound.Filter {
+	resourceHelper := resources.NewHelpers()
 	filterEntity := v2.NewBaseFilter()
 	setupConnectionReaders(filterEntity)
 	getValidateFunc := func(filterType domain.FilterType) func(ctx context.Context, value any, expected any) error {
@@ -82,7 +84,7 @@ func NewConnectionFilter(name string) ports.Filter {
 			if expression == "" {
 				return nil
 			}
-			if name != GetSlug(val) {
+			if name != resourceHelper.GetSlug(val) {
 				return fmt.Errorf("invalid connection filter. Expected: %v", expression)
 			}
 			return nil
@@ -97,7 +99,7 @@ func NewConnectionFilter(name string) ports.Filter {
 }
 
 // ListConnections list all the currently configured connections
-func (s *DashNGoImpl) ListConnections(filter ports.Filter) []models.DataSourceListItemDTO {
+func (s *DashNGoImpl) ListConnections(filter outbound.Filter) []models.DataSourceListItemDTO {
 	err := s.SwitchOrganizationByName(s.grafanaConf.GetOrganizationName())
 	if err != nil {
 		log.Fatalf("Failed to switch organization ID %s: ", s.grafanaConf.OrganizationName)
@@ -125,7 +127,7 @@ func (s *DashNGoImpl) ListConnections(filter ports.Filter) []models.DataSourceLi
 
 // DownloadConnections  will read in all the configured datasources.
 // NOTE: credentials cannot be retrieved and need to be set via configuration
-func (s *DashNGoImpl) DownloadConnections(filter ports.Filter) []string {
+func (s *DashNGoImpl) DownloadConnections(filter outbound.Filter) []string {
 	var (
 		dsListing []models.DataSourceListItemDTO
 		dsPacked  []byte
@@ -139,7 +141,7 @@ func (s *DashNGoImpl) DownloadConnections(filter ports.Filter) []string {
 			continue
 		}
 
-		dsPath := buildResourcePath(s.grafanaConf, slug.Make(ds.Name), domain.ConnectionResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := s.resources.BuildResourcePath(s.grafanaConf, slug.Make(ds.Name), domain.ConnectionResource, s.isLocal(), s.GetGlobals().ClearOutput)
 
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "filename", slug.Make(ds.Name), "err", err)
@@ -151,7 +153,7 @@ func (s *DashNGoImpl) DownloadConnections(filter ports.Filter) []string {
 }
 
 // DeleteAllConnections Removes all current datasources
-func (s *DashNGoImpl) DeleteAllConnections(filter ports.Filter) []string {
+func (s *DashNGoImpl) DeleteAllConnections(filter outbound.Filter) []string {
 	ds := make([]string, 0)
 	items := s.ListConnections(filter)
 	for _, item := range items {
@@ -166,7 +168,7 @@ func (s *DashNGoImpl) DeleteAllConnections(filter ports.Filter) []string {
 }
 
 // UploadConnections exports all connections to grafana using the credentials configured in config file.
-func (s *DashNGoImpl) UploadConnections(filter ports.Filter) []string {
+func (s *DashNGoImpl) UploadConnections(filter outbound.Filter) []string {
 	var dsListing []models.DataSourceListItemDTO
 
 	var exported []string

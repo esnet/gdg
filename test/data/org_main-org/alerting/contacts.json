@@ -5,7 +5,7 @@
 		"receivers": [
 			{
 				"settings": {
-					"url": "https://www.discord.com?q=woot",
+					"url": "Y5PP+Dqi4aY+Ck/IGPDachqQHp8sT+gAVh3ZjLly8lUrgv2jVnpOiFXeT4QFr4NUSlF9RWet8Jxyt9RwmqQ1v7wcdsyne92Gv0c=",
 					"use_discord_username": false
 				},
 				"type": "discord",
@@ -20,7 +20,7 @@
 			{
 				"settings": {
 					"recipient": "testing",
-					"token": "moooo"
+					"token": "MbS/pcgIswOOwo3pZ3iai2ZMnET7WhiJduTKQ7g66VGG/AdZ0b8C07EsdkGfJ1pBJw=="
 				},
 				"type": "slack",
 				"uid": "aeov0rrgij7r4a"

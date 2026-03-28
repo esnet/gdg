@@ -49,7 +49,7 @@ tasks:
   mocks:
     desc: "Re-generate Mocks"
     cmds:
-      - rm -fr internal/ports/mocks/
+      - rm -fr internal/ports/mocks/ internal/ports/outbound/mocks/ 
       - go tool {{ .TOOLS_ARG}} mockery
   linux:
     desc: "Build linux binary"
