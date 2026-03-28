@@ -3,9 +3,7 @@ package cipher
 import (
 	"context"
 	"fmt"
-	"log"
 	"log/slog"
-	"os"
 	"strings"
 
 	"github.com/esnet/gdg/internal/config/config_domain"
@@ -161,8 +159,8 @@ func (p PluginCipherEncoder) Decode(resourceType resourceTypes.ResourceType, b [
 
 // NewPluginCipherEncoder creates a CipherEncoder that uses a WebAssembly plugin to encode and decode values.
 // It initializes the plugin from either a file path or URL, processes configuration,
-// and returns a PluginCipherEncoder ready for use.
-func NewPluginCipherEncoder(plugCfg *config_domain.PluginEntity, secureFields map[string][]string) ports.CipherEncoder {
+// and returns a PluginCipherEncoder ready for use, or an error if the plugin cannot be loaded.
+func NewPluginCipherEncoder(plugCfg *config_domain.PluginEntity, secureFields map[string][]string) (ports.CipherEncoder, error) {
 	o := &PluginCipherEncoder{
 		cfg:          plugCfg,
 		secureFields: secureFields,
@@ -173,7 +171,7 @@ func NewPluginCipherEncoder(plugCfg *config_domain.PluginEntity, secureFields ma
 	} else if plugCfg.Url != "" {
 		wasmInt = extism.WasmUrl{Url: plugCfg.Url}
 	} else {
-		log.Fatal("plugin configuration is invalid. No Url or file path was found")
+		return nil, fmt.Errorf("plugin configuration is invalid: no URL or file path was provided")
 	}
 
 	manifest := extism.Manifest{
@@ -189,10 +187,9 @@ func NewPluginCipherEncoder(plugCfg *config_domain.PluginEntity, secureFields ma
 	}
 	plugin, err := extism.NewPlugin(ctx, manifest, config, []extism.HostFunction{})
 	if err != nil {
-		fmt.Printf("Failed to initialize plugin: %v\n", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("failed to initialize cipher plugin: %w", err)
 	}
 
 	o.wasmExec = plugin
-	return o
+	return o, nil
 }

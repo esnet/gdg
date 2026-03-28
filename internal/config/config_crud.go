@@ -188,7 +188,11 @@ func summariseFilters(filters []config_domain.MatchingRule) string {
 func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 	var encoder ports.CipherEncoder
 	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
-		encoder = cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
+		var encErr error
+		encoder, encErr = cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
+		if encErr != nil {
+			log.Fatalf("Failed to load cipher plugin: %v", encErr)
+		}
 	} else {
 		encoder = noop.NoOpEncoder{}
 	}

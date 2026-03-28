@@ -145,7 +145,11 @@ func NewCustomS3Config(app *config_domain.GDGAppConfiguration) {
 	// If no plugin is configured, NoOpEncoder passes values through unchanged.
 	var encoder ports.CipherEncoder
 	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
-		encoder = cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
+		var encErr error
+		encoder, encErr = cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
+		if encErr != nil {
+			log.Fatalf("Failed to load cipher plugin: %v", encErr)
+		}
 	} else {
 		encoder = noop.NoOpEncoder{}
 	}
