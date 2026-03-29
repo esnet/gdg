@@ -72,7 +72,10 @@ func BuildResourceFolder(cfg *configDomain.GrafanaConfig, folderName string, res
 	return v
 }
 
-func buildResourcePath(cfg *configDomain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
+// BuildResourcePath returns the full file path for a resource within the configured output directory.
+// The path format is: <output_path>/<org_name>/<resource_type>/<folderName>.json
+// If createDestination is true, the directory is created on disk.
+func BuildResourcePath(cfg *configDomain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
 	v := fmt.Sprintf("%s%s%s.json", cfg.GetPath(resourceType, cfg.GetOrganizationName()), pathSeparator, folderName)
 	if createDestination {
 		tools.CreateDestinationPath(cfg.GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, filepath.Dir(v))

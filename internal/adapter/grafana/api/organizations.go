@@ -280,7 +280,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter ports.Filter) []string {
 			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Organization.Name)
 			continue
 		}
-		dsPath := buildResourcePath(s.grafanaConf, slug.Make(organisation.Organization.Name), domain.OrganizationResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := BuildResourcePath(s.grafanaConf, slug.Make(organisation.Organization.Name), domain.OrganizationResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "organization", slug.Make(organisation.Organization.Name))
 		} else {

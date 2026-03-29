@@ -51,7 +51,7 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 		return item.Name != emailReceiver
 	})
 
-	dsPath := buildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
+	dsPath := BuildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
 	if dsPacked, err = json.MarshalIndent(payload.ContactPoints, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
@@ -89,7 +89,7 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 		m[i.UID] = currentContacts[ndx]
 	}
 
-	fileLocation := buildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
+	fileLocation := BuildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
 	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}
