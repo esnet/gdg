@@ -4,12 +4,27 @@
 package config
 
 import (
+	"fmt"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+//common tools
+
+// testRegexMatch compiles regex and tests whether value matches.
+// Returns (matched, nil) on success, or (false, error) when the regex is invalid.
+func testRegexMatch(regex, value string) (bool, error) {
+	p, err := regexp.Compile(regex)
+	if err != nil {
+		return false, fmt.Errorf("invalid regex %q: %w", regex, err)
+	}
+	return p.MatchString(strings.TrimSpace(value)), nil
+}
 
 // ── looksLikeRegex ────────────────────────────────────────────────────────────
 
@@ -384,46 +399,4 @@ func TestFormSelection_String(t *testing.T) {
 	assert.Equal(t, "basicAuth", basicAuthForm.String())
 	assert.Equal(t, "tokenAuth", tokenAuthForm.String())
 	assert.Equal(t, "bothAuth", bothAuthForm.String())
-}
-
-// ── buildFormGroups ───────────────────────────────────────────────────────────
-
-func TestBuildFormGroups_BasicAuth(t *testing.T) {
-	cfg := config_domain.NewGrafanaConfig()
-	sec := &config_domain.SecureModel{}
-
-	groups := buildFormGroups(basicAuthForm.String(), cfg, sec)
-
-	// basicAuth → 1 basic-auth group + 1 output/URL group = 2
-	assert.Len(t, groups, 2)
-}
-
-func TestBuildFormGroups_TokenAuth(t *testing.T) {
-	cfg := config_domain.NewGrafanaConfig()
-	sec := &config_domain.SecureModel{}
-
-	groups := buildFormGroups(tokenAuthForm.String(), cfg, sec)
-
-	// tokenAuth → 1 token group + 1 output/URL group = 2
-	assert.Len(t, groups, 2)
-}
-
-func TestBuildFormGroups_BothAuth(t *testing.T) {
-	cfg := config_domain.NewGrafanaConfig()
-	sec := &config_domain.SecureModel{}
-
-	groups := buildFormGroups(bothAuthForm.String(), cfg, sec)
-
-	// both → 1 basic + 1 token + 1 output/URL = 3
-	assert.Len(t, groups, 3)
-}
-
-func TestBuildFormGroups_UnknownAuthType(t *testing.T) {
-	cfg := config_domain.NewGrafanaConfig()
-	sec := &config_domain.SecureModel{}
-
-	groups := buildFormGroups("unknown", cfg, sec)
-
-	// No auth groups matched, only the output/URL group = 1
-	assert.Len(t, groups, 1)
 }

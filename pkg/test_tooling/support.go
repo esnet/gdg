@@ -10,8 +10,8 @@ import (
 	"github.com/esnet/gdg/cli/domain"
 	applog "github.com/esnet/gdg/internal/adapter/logger"
 	"github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/ports"
-	"github.com/esnet/gdg/internal/ports/mocks"
+	"github.com/esnet/gdg/internal/ports/outbound"
+	"github.com/esnet/gdg/internal/ports/outbound/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +20,7 @@ import (
 func SetupAndExecuteMockingServices(t *testing.T, process func(mock *mocks.GrafanaService, optionMockSvc func() domain.RootOption) error) (string, func()) {
 	testSvc := new(mocks.GrafanaService)
 	testSvc.EXPECT().Login().Return()
-	getMockSvc := func() ports.GrafanaService {
+	getMockSvc := func() outbound.GrafanaService {
 		return testSvc
 	}
 

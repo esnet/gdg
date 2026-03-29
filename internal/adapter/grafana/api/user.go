@@ -15,7 +15,7 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
 
@@ -26,7 +26,7 @@ import (
 	"github.com/tidwall/pretty"
 )
 
-func setupUserReaders(filterObj ports.Filter) {
+func setupUserReaders(filterObj outbound.Filter) {
 	err := filterObj.RegisterReader(reflect.TypeFor[models.UserSearchHitDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.UserSearchHitDTO)
 		if !ok {
@@ -70,7 +70,7 @@ func setupUserReaders(filterObj ports.Filter) {
 	}
 }
 
-func NewUserFilter(label string) ports.Filter {
+func NewUserFilter(label string) outbound.Filter {
 	filterEntity := v2.NewBaseFilter()
 	setupUserReaders(filterEntity)
 	var labelArray []string
@@ -104,7 +104,7 @@ func (s *DashNGoImpl) GetUserInfo() (*models.UserProfileDTO, error) {
 	return nil, err
 }
 
-func (s *DashNGoImpl) DownloadUsers(filter ports.Filter) []string {
+func (s *DashNGoImpl) DownloadUsers(filter outbound.Filter) []string {
 	var (
 		userData []byte
 		err      error
@@ -113,13 +113,13 @@ func (s *DashNGoImpl) DownloadUsers(filter ports.Filter) []string {
 	userListing := s.ListUsers(filter)
 	var importedUsers []string
 
-	userPath := BuildResourceFolder(s.grafanaConf, "", domain.UserResource, s.isLocal(), s.GetGlobals().ClearOutput)
+	userPath := s.resources.BuildResourceFolder(s.grafanaConf, "", domain.UserResource, s.isLocal(), s.GetGlobals().ClearOutput)
 	for ndx, user := range userListing {
 		if s.isAdminUser(user.ID, user.Name) {
 			slog.Info("Skipping admin super user")
 			continue
 		}
-		fileName := filepath.Join(userPath, fmt.Sprintf("%s.json", GetSlug(user.Login)))
+		fileName := filepath.Join(userPath, fmt.Sprintf("%s.json", s.resources.GetSlug(user.Login)))
 		userData, err = json.Marshal(&userListing[ndx])
 		if err != nil {
 			slog.Error("could not serialize user object for userId", "userID", user.ID)
@@ -139,7 +139,7 @@ func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
 	return id == 1 || name == "admin"
 }
 
-func (s *DashNGoImpl) UploadUsers(filter ports.Filter) []domain.UserProfileWithAuth {
+func (s *DashNGoImpl) UploadUsers(filter outbound.Filter) []domain.UserProfileWithAuth {
 	orgName := s.grafanaConf.GetOrganizationName()
 	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.UserResource, orgName), false)
 	if err != nil {
@@ -217,7 +217,7 @@ func (s *DashNGoImpl) UploadUsers(filter ports.Filter) []domain.UserProfileWithA
 }
 
 // ListUsers list all grafana users
-func (s *DashNGoImpl) ListUsers(filter ports.Filter) []*models.UserSearchHitDTO {
+func (s *DashNGoImpl) ListUsers(filter outbound.Filter) []*models.UserSearchHitDTO {
 	if !s.grafanaConf.IsBasicAuth() {
 		log.Fatal("User listing requires basic auth to be configured.  Token based listing is not supported")
 	}
@@ -243,7 +243,7 @@ func (s *DashNGoImpl) ListUsers(filter ports.Filter) []*models.UserSearchHitDTO 
 }
 
 // DeleteAllUsers remove all users excluding admin or anything matching the filter
-func (s *DashNGoImpl) DeleteAllUsers(filter ports.Filter) []string {
+func (s *DashNGoImpl) DeleteAllUsers(filter outbound.Filter) []string {
 	userListing := s.ListUsers(filter)
 	var deletedUsers []string
 	for _, user := range userListing {

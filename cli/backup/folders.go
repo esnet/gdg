@@ -9,7 +9,7 @@ import (
 	cliDomain "github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/tools"
 
 	"github.com/bep/simplecobra"
@@ -20,7 +20,7 @@ import (
 
 var useFolderFilters bool
 
-func getFolderFilter(cfg *config_domain.GDGAppConfiguration) ports.Filter {
+func getFolderFilter(cfg *config_domain.GDGAppConfiguration) outbound.Filter {
 	if !useFolderFilters {
 		return nil
 	}

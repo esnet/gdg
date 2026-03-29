@@ -6,7 +6,7 @@ import (
 
 	"github.com/carlmjohnson/requests"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 )
 
 // Api provides API request building for Grafana with optional debug mode.
@@ -15,7 +15,7 @@ type Api struct {
 	debug  bool
 }
 
-func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) ports.ExtendedApi {
+func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) outbound.ExtendedApi {
 	o := Api{
 		appCfg: cfg,
 		debug:  cfg.IsApiDebug(),

@@ -6,7 +6,7 @@ package mocks
 
 import (
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -39,7 +39,7 @@ func (_m *LibraryElementsApi) EXPECT() *LibraryElementsApi_Expecter {
 }
 
 // DeleteAllLibraryElements provides a mock function for the type LibraryElementsApi
-func (_mock *LibraryElementsApi) DeleteAllLibraryElements(filter ports.Filter) []string {
+func (_mock *LibraryElementsApi) DeleteAllLibraryElements(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -47,7 +47,7 @@ func (_mock *LibraryElementsApi) DeleteAllLibraryElements(filter ports.Filter) [
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -63,16 +63,16 @@ type LibraryElementsApi_DeleteAllLibraryElements_Call struct {
 }
 
 // DeleteAllLibraryElements is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *LibraryElementsApi_Expecter) DeleteAllLibraryElements(filter interface{}) *LibraryElementsApi_DeleteAllLibraryElements_Call {
 	return &LibraryElementsApi_DeleteAllLibraryElements_Call{Call: _e.mock.On("DeleteAllLibraryElements", filter)}
 }
 
-func (_c *LibraryElementsApi_DeleteAllLibraryElements_Call) Run(run func(filter ports.Filter)) *LibraryElementsApi_DeleteAllLibraryElements_Call {
+func (_c *LibraryElementsApi_DeleteAllLibraryElements_Call) Run(run func(filter outbound.Filter)) *LibraryElementsApi_DeleteAllLibraryElements_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -86,13 +86,13 @@ func (_c *LibraryElementsApi_DeleteAllLibraryElements_Call) Return(strings []str
 	return _c
 }
 
-func (_c *LibraryElementsApi_DeleteAllLibraryElements_Call) RunAndReturn(run func(filter ports.Filter) []string) *LibraryElementsApi_DeleteAllLibraryElements_Call {
+func (_c *LibraryElementsApi_DeleteAllLibraryElements_Call) RunAndReturn(run func(filter outbound.Filter) []string) *LibraryElementsApi_DeleteAllLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadLibraryElements provides a mock function for the type LibraryElementsApi
-func (_mock *LibraryElementsApi) DownloadLibraryElements(filter ports.Filter) []string {
+func (_mock *LibraryElementsApi) DownloadLibraryElements(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -100,7 +100,7 @@ func (_mock *LibraryElementsApi) DownloadLibraryElements(filter ports.Filter) []
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -116,16 +116,16 @@ type LibraryElementsApi_DownloadLibraryElements_Call struct {
 }
 
 // DownloadLibraryElements is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *LibraryElementsApi_Expecter) DownloadLibraryElements(filter interface{}) *LibraryElementsApi_DownloadLibraryElements_Call {
 	return &LibraryElementsApi_DownloadLibraryElements_Call{Call: _e.mock.On("DownloadLibraryElements", filter)}
 }
 
-func (_c *LibraryElementsApi_DownloadLibraryElements_Call) Run(run func(filter ports.Filter)) *LibraryElementsApi_DownloadLibraryElements_Call {
+func (_c *LibraryElementsApi_DownloadLibraryElements_Call) Run(run func(filter outbound.Filter)) *LibraryElementsApi_DownloadLibraryElements_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -139,13 +139,13 @@ func (_c *LibraryElementsApi_DownloadLibraryElements_Call) Return(strings []stri
 	return _c
 }
 
-func (_c *LibraryElementsApi_DownloadLibraryElements_Call) RunAndReturn(run func(filter ports.Filter) []string) *LibraryElementsApi_DownloadLibraryElements_Call {
+func (_c *LibraryElementsApi_DownloadLibraryElements_Call) RunAndReturn(run func(filter outbound.Filter) []string) *LibraryElementsApi_DownloadLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListLibraryElements provides a mock function for the type LibraryElementsApi
-func (_mock *LibraryElementsApi) ListLibraryElements(filter ports.Filter) []*domain.WithNested[models.LibraryElementDTO] {
+func (_mock *LibraryElementsApi) ListLibraryElements(filter outbound.Filter) []*domain.WithNested[models.LibraryElementDTO] {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -153,7 +153,7 @@ func (_mock *LibraryElementsApi) ListLibraryElements(filter ports.Filter) []*dom
 	}
 
 	var r0 []*domain.WithNested[models.LibraryElementDTO]
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.WithNested[models.LibraryElementDTO]); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.WithNested[models.LibraryElementDTO]); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -169,16 +169,16 @@ type LibraryElementsApi_ListLibraryElements_Call struct {
 }
 
 // ListLibraryElements is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *LibraryElementsApi_Expecter) ListLibraryElements(filter interface{}) *LibraryElementsApi_ListLibraryElements_Call {
 	return &LibraryElementsApi_ListLibraryElements_Call{Call: _e.mock.On("ListLibraryElements", filter)}
 }
 
-func (_c *LibraryElementsApi_ListLibraryElements_Call) Run(run func(filter ports.Filter)) *LibraryElementsApi_ListLibraryElements_Call {
+func (_c *LibraryElementsApi_ListLibraryElements_Call) Run(run func(filter outbound.Filter)) *LibraryElementsApi_ListLibraryElements_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -192,13 +192,13 @@ func (_c *LibraryElementsApi_ListLibraryElements_Call) Return(withNesteds []*dom
 	return _c
 }
 
-func (_c *LibraryElementsApi_ListLibraryElements_Call) RunAndReturn(run func(filter ports.Filter) []*domain.WithNested[models.LibraryElementDTO]) *LibraryElementsApi_ListLibraryElements_Call {
+func (_c *LibraryElementsApi_ListLibraryElements_Call) RunAndReturn(run func(filter outbound.Filter) []*domain.WithNested[models.LibraryElementDTO]) *LibraryElementsApi_ListLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListLibraryElementsConnections provides a mock function for the type LibraryElementsApi
-func (_mock *LibraryElementsApi) ListLibraryElementsConnections(filter ports.Filter, connectionID string) []*models.DashboardFullWithMeta {
+func (_mock *LibraryElementsApi) ListLibraryElementsConnections(filter outbound.Filter, connectionID string) []*models.DashboardFullWithMeta {
 	ret := _mock.Called(filter, connectionID)
 
 	if len(ret) == 0 {
@@ -206,7 +206,7 @@ func (_mock *LibraryElementsApi) ListLibraryElementsConnections(filter ports.Fil
 	}
 
 	var r0 []*models.DashboardFullWithMeta
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter, string) []*models.DashboardFullWithMeta); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter, string) []*models.DashboardFullWithMeta); ok {
 		r0 = returnFunc(filter, connectionID)
 	} else {
 		if ret.Get(0) != nil {
@@ -222,17 +222,17 @@ type LibraryElementsApi_ListLibraryElementsConnections_Call struct {
 }
 
 // ListLibraryElementsConnections is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 //   - connectionID string
 func (_e *LibraryElementsApi_Expecter) ListLibraryElementsConnections(filter interface{}, connectionID interface{}) *LibraryElementsApi_ListLibraryElementsConnections_Call {
 	return &LibraryElementsApi_ListLibraryElementsConnections_Call{Call: _e.mock.On("ListLibraryElementsConnections", filter, connectionID)}
 }
 
-func (_c *LibraryElementsApi_ListLibraryElementsConnections_Call) Run(run func(filter ports.Filter, connectionID string)) *LibraryElementsApi_ListLibraryElementsConnections_Call {
+func (_c *LibraryElementsApi_ListLibraryElementsConnections_Call) Run(run func(filter outbound.Filter, connectionID string)) *LibraryElementsApi_ListLibraryElementsConnections_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		var arg1 string
 		if args[1] != nil {
@@ -251,13 +251,13 @@ func (_c *LibraryElementsApi_ListLibraryElementsConnections_Call) Return(dashboa
 	return _c
 }
 
-func (_c *LibraryElementsApi_ListLibraryElementsConnections_Call) RunAndReturn(run func(filter ports.Filter, connectionID string) []*models.DashboardFullWithMeta) *LibraryElementsApi_ListLibraryElementsConnections_Call {
+func (_c *LibraryElementsApi_ListLibraryElementsConnections_Call) RunAndReturn(run func(filter outbound.Filter, connectionID string) []*models.DashboardFullWithMeta) *LibraryElementsApi_ListLibraryElementsConnections_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadLibraryElements provides a mock function for the type LibraryElementsApi
-func (_mock *LibraryElementsApi) UploadLibraryElements(filter ports.Filter) []string {
+func (_mock *LibraryElementsApi) UploadLibraryElements(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -265,7 +265,7 @@ func (_mock *LibraryElementsApi) UploadLibraryElements(filter ports.Filter) []st
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -281,16 +281,16 @@ type LibraryElementsApi_UploadLibraryElements_Call struct {
 }
 
 // UploadLibraryElements is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *LibraryElementsApi_Expecter) UploadLibraryElements(filter interface{}) *LibraryElementsApi_UploadLibraryElements_Call {
 	return &LibraryElementsApi_UploadLibraryElements_Call{Call: _e.mock.On("UploadLibraryElements", filter)}
 }
 
-func (_c *LibraryElementsApi_UploadLibraryElements_Call) Run(run func(filter ports.Filter)) *LibraryElementsApi_UploadLibraryElements_Call {
+func (_c *LibraryElementsApi_UploadLibraryElements_Call) Run(run func(filter outbound.Filter)) *LibraryElementsApi_UploadLibraryElements_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -304,7 +304,7 @@ func (_c *LibraryElementsApi_UploadLibraryElements_Call) Return(strings []string
 	return _c
 }
 
-func (_c *LibraryElementsApi_UploadLibraryElements_Call) RunAndReturn(run func(filter ports.Filter) []string) *LibraryElementsApi_UploadLibraryElements_Call {
+func (_c *LibraryElementsApi_UploadLibraryElements_Call) RunAndReturn(run func(filter outbound.Filter) []string) *LibraryElementsApi_UploadLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }

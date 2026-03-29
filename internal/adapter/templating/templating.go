@@ -9,10 +9,10 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	resourceTypes "github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/tools"
 
 	"github.com/Masterminds/sprig/v3"
@@ -23,15 +23,17 @@ type templateImpl struct {
 	gdgCfg *config_domain.GrafanaConfig
 }
 
-func NewTemplate(cfg *config_domain.TemplatingConfig, gdgCfg *config_domain.GrafanaConfig) ports.Templating {
+func NewTemplate(cfg *config_domain.TemplatingConfig, gdgCfg *config_domain.GrafanaConfig) outbound.Templating {
 	return &templateImpl{
 		cfg:    cfg,
 		gdgCfg: gdgCfg,
 	}
 }
 
+var resourceHelpers = resources.NewHelpers()
+
 var fns = template.FuncMap{
-	"ToSlug": api.GetSlug,
+	"ToSlug": resourceHelpers.GetSlug,
 	"QuotedStringJoin": func(arr []any) string {
 		parts := make([]string, len(arr))
 		for i, item := range arr {
@@ -87,7 +89,8 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 				slog.Any("data", outputEntity.TemplateData),
 			)
 			grafana.OrganizationName = outputEntity.OrganizationName
-			outputPath := api.BuildResourceFolder(t.gdgCfg, outputEntity.Folder, resourceTypes.DashboardResource, true, false)
+			resourceHelper := resources.NewHelpers()
+			outputPath := resourceHelper.BuildResourceFolder(t.gdgCfg, outputEntity.Folder, resourceTypes.DashboardResource, true, false)
 			// Merge two maps.
 			tmpl, tmplErr := template.New("").Funcs(fns).Parse(string(templateData))
 			if tmplErr != nil {
@@ -99,7 +102,7 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 			tools.CreateDestinationPath("", false, outputPath)
 			dashboardName := entity.TemplateName
 			if outputEntity.DashboardName != "" {
-				dashboardName = api.GetSlug(outputEntity.DashboardName)
+				dashboardName = resourceHelper.GetSlug(outputEntity.DashboardName)
 			}
 			f, err := os.Create(fmt.Sprintf("%s/%s.json", outputPath, dashboardName))
 			if err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/bep/simplecobra"
 	cliDomain "github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 
@@ -132,8 +133,9 @@ func newListConnectionsCmd() simplecobra.Commander {
 			if len(dsListing) == 0 {
 				slog.Info("No connections found")
 			} else {
+				resourceHelpers := resources.NewHelpers()
 				for _, link := range dsListing {
-					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, api.GetSlug(link.Name), link.Type, link.IsDefault, getConnectionURL(link.UID, rootCmd.ConfigSvc())})
+					rootCmd.TableObj.AppendRow(table.Row{link.ID, link.UID, link.Name, resourceHelpers.GetSlug(link.Name), link.Type, link.IsDefault, getConnectionURL(link.UID, rootCmd.ConfigSvc())})
 				}
 				rootCmd.Render(cd.CobraCommand, dsListing)
 			}

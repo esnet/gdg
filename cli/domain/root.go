@@ -13,7 +13,7 @@ import (
 	appconfig "github.com/esnet/gdg/internal/adapter/logger"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -24,8 +24,8 @@ type RootCommand struct {
 	isInit bool
 
 	configObj      *config_domain.GDGAppConfiguration
-	app            ports.GrafanaService
-	serviceFactory func(*config_domain.GDGAppConfiguration) ports.GrafanaService
+	app            outbound.GrafanaService
+	serviceFactory func(*config_domain.GDGAppConfiguration) outbound.GrafanaService
 
 	ctx                  context.Context
 	initThis             *simplecobra.Commandeer
@@ -40,13 +40,13 @@ type RootCommand struct {
 
 // SetUpTest initializes the RootCommand for testing by setting a mock GrafanaService and loading test configuration.
 // It only runs when the TESTING environment variable is set to "1".
-func (c *RootCommand) SetUpTest(app ports.GrafanaService) {
+func (c *RootCommand) SetUpTest(app outbound.GrafanaService) {
 	c.app = app
 	c.configObj = config.NewConfig("testing")
 }
 
 // GrafanaSvc returns the configured GrafanaService instance, initializing it if nil.
-func (c *RootCommand) GrafanaSvc() ports.GrafanaService {
+func (c *RootCommand) GrafanaSvc() outbound.GrafanaService {
 	return c.app
 }
 
@@ -90,14 +90,14 @@ func NewRootCommand(name string) *RootCommand {
 	}
 }
 
-func (c *RootCommand) SetService(svc ports.GrafanaService) {
+func (c *RootCommand) SetService(svc outbound.GrafanaService) {
 	c.app = svc
 }
 
 // SetServiceFactory registers a factory function that builds a GrafanaService from a loaded
 // configuration. LoadConfig will call it automatically the first time config is loaded,
 // so commands that don't need a config (version, default-config, help) never trigger it.
-func (c *RootCommand) SetServiceFactory(factory func(*config_domain.GDGAppConfiguration) ports.GrafanaService) {
+func (c *RootCommand) SetServiceFactory(factory func(*config_domain.GDGAppConfiguration) outbound.GrafanaService) {
 	c.serviceFactory = factory
 }
 

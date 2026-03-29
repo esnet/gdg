@@ -6,12 +6,12 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/cli/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/esnet/gdg/pkg/version"
 
-	"github.com/esnet/gdg/internal/ports/mocks"
+	"github.com/esnet/gdg/internal/ports/outbound/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,7 +53,7 @@ func TestVersionCommand(t *testing.T) {
 func TestVersionErrCommand(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("cli", ".."))
 	testSvc := new(mocks.GrafanaService)
-	getMockSvc := func() ports.GrafanaService {
+	getMockSvc := func() outbound.GrafanaService {
 		return testSvc
 	}
 

@@ -6,7 +6,7 @@ package mocks
 
 import (
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -146,7 +146,7 @@ func (_c *GrafanaService_ClearAlertNotifications_Call) RunAndReturn(run func() e
 }
 
 // ClearAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ClearAlertRules(filter ports.Filter) ([]string, error) {
+func (_mock *GrafanaService) ClearAlertRules(filter outbound.Filter) ([]string, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -155,17 +155,17 @@ func (_mock *GrafanaService) ClearAlertRules(filter ports.Filter) ([]string, err
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -179,16 +179,16 @@ type GrafanaService_ClearAlertRules_Call struct {
 }
 
 // ClearAlertRules is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ClearAlertRules(filter interface{}) *GrafanaService_ClearAlertRules_Call {
 	return &GrafanaService_ClearAlertRules_Call{Call: _e.mock.On("ClearAlertRules", filter)}
 }
 
-func (_c *GrafanaService_ClearAlertRules_Call) Run(run func(filter ports.Filter)) *GrafanaService_ClearAlertRules_Call {
+func (_c *GrafanaService_ClearAlertRules_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ClearAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -202,7 +202,7 @@ func (_c *GrafanaService_ClearAlertRules_Call) Return(strings []string, err erro
 	return _c
 }
 
-func (_c *GrafanaService_ClearAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]string, error)) *GrafanaService_ClearAlertRules_Call {
+func (_c *GrafanaService_ClearAlertRules_Call) RunAndReturn(run func(filter outbound.Filter) ([]string, error)) *GrafanaService_ClearAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -362,7 +362,7 @@ func (_c *GrafanaService_ClearContactPoints_Call) RunAndReturn(run func() ([]str
 }
 
 // ClearDashboardPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ClearDashboardPermissions(filterReq ports.Filter) error {
+func (_mock *GrafanaService) ClearDashboardPermissions(filterReq outbound.Filter) error {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -370,7 +370,7 @@ func (_mock *GrafanaService) ClearDashboardPermissions(filterReq ports.Filter) e
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) error); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		r0 = ret.Error(0)
@@ -384,16 +384,16 @@ type GrafanaService_ClearDashboardPermissions_Call struct {
 }
 
 // ClearDashboardPermissions is a helper method to define mock.On call
-//   - filterReq ports.Filter
+//   - filterReq outbound.Filter
 func (_e *GrafanaService_Expecter) ClearDashboardPermissions(filterReq interface{}) *GrafanaService_ClearDashboardPermissions_Call {
 	return &GrafanaService_ClearDashboardPermissions_Call{Call: _e.mock.On("ClearDashboardPermissions", filterReq)}
 }
 
-func (_c *GrafanaService_ClearDashboardPermissions_Call) Run(run func(filterReq ports.Filter)) *GrafanaService_ClearDashboardPermissions_Call {
+func (_c *GrafanaService_ClearDashboardPermissions_Call) Run(run func(filterReq outbound.Filter)) *GrafanaService_ClearDashboardPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -407,7 +407,7 @@ func (_c *GrafanaService_ClearDashboardPermissions_Call) Return(err error) *Graf
 	return _c
 }
 
-func (_c *GrafanaService_ClearDashboardPermissions_Call) RunAndReturn(run func(filterReq ports.Filter) error) *GrafanaService_ClearDashboardPermissions_Call {
+func (_c *GrafanaService_ClearDashboardPermissions_Call) RunAndReturn(run func(filterReq outbound.Filter) error) *GrafanaService_ClearDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -612,7 +612,7 @@ func (_c *GrafanaService_DecodeValue_Call) RunAndReturn(run func(in string) stri
 }
 
 // DeleteAllConnectionPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DeleteAllConnectionPermissions(filter ports.Filter) []string {
+func (_mock *GrafanaService) DeleteAllConnectionPermissions(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -620,7 +620,7 @@ func (_mock *GrafanaService) DeleteAllConnectionPermissions(filter ports.Filter)
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -636,16 +636,16 @@ type GrafanaService_DeleteAllConnectionPermissions_Call struct {
 }
 
 // DeleteAllConnectionPermissions is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DeleteAllConnectionPermissions(filter interface{}) *GrafanaService_DeleteAllConnectionPermissions_Call {
 	return &GrafanaService_DeleteAllConnectionPermissions_Call{Call: _e.mock.On("DeleteAllConnectionPermissions", filter)}
 }
 
-func (_c *GrafanaService_DeleteAllConnectionPermissions_Call) Run(run func(filter ports.Filter)) *GrafanaService_DeleteAllConnectionPermissions_Call {
+func (_c *GrafanaService_DeleteAllConnectionPermissions_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DeleteAllConnectionPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -659,13 +659,13 @@ func (_c *GrafanaService_DeleteAllConnectionPermissions_Call) Return(strings []s
 	return _c
 }
 
-func (_c *GrafanaService_DeleteAllConnectionPermissions_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DeleteAllConnectionPermissions_Call {
+func (_c *GrafanaService_DeleteAllConnectionPermissions_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DeleteAllConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DeleteAllConnections provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DeleteAllConnections(filter ports.Filter) []string {
+func (_mock *GrafanaService) DeleteAllConnections(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -673,7 +673,7 @@ func (_mock *GrafanaService) DeleteAllConnections(filter ports.Filter) []string 
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -689,16 +689,16 @@ type GrafanaService_DeleteAllConnections_Call struct {
 }
 
 // DeleteAllConnections is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DeleteAllConnections(filter interface{}) *GrafanaService_DeleteAllConnections_Call {
 	return &GrafanaService_DeleteAllConnections_Call{Call: _e.mock.On("DeleteAllConnections", filter)}
 }
 
-func (_c *GrafanaService_DeleteAllConnections_Call) Run(run func(filter ports.Filter)) *GrafanaService_DeleteAllConnections_Call {
+func (_c *GrafanaService_DeleteAllConnections_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DeleteAllConnections_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -712,13 +712,13 @@ func (_c *GrafanaService_DeleteAllConnections_Call) Return(strings []string) *Gr
 	return _c
 }
 
-func (_c *GrafanaService_DeleteAllConnections_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DeleteAllConnections_Call {
+func (_c *GrafanaService_DeleteAllConnections_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DeleteAllConnections_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DeleteAllDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DeleteAllDashboards(filter ports.Filter) []string {
+func (_mock *GrafanaService) DeleteAllDashboards(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -726,7 +726,7 @@ func (_mock *GrafanaService) DeleteAllDashboards(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -742,16 +742,16 @@ type GrafanaService_DeleteAllDashboards_Call struct {
 }
 
 // DeleteAllDashboards is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DeleteAllDashboards(filter interface{}) *GrafanaService_DeleteAllDashboards_Call {
 	return &GrafanaService_DeleteAllDashboards_Call{Call: _e.mock.On("DeleteAllDashboards", filter)}
 }
 
-func (_c *GrafanaService_DeleteAllDashboards_Call) Run(run func(filter ports.Filter)) *GrafanaService_DeleteAllDashboards_Call {
+func (_c *GrafanaService_DeleteAllDashboards_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DeleteAllDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -765,13 +765,13 @@ func (_c *GrafanaService_DeleteAllDashboards_Call) Return(strings []string) *Gra
 	return _c
 }
 
-func (_c *GrafanaService_DeleteAllDashboards_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DeleteAllDashboards_Call {
+func (_c *GrafanaService_DeleteAllDashboards_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DeleteAllDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DeleteAllFolders provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DeleteAllFolders(filter ports.Filter) []string {
+func (_mock *GrafanaService) DeleteAllFolders(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -779,7 +779,7 @@ func (_mock *GrafanaService) DeleteAllFolders(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -795,16 +795,16 @@ type GrafanaService_DeleteAllFolders_Call struct {
 }
 
 // DeleteAllFolders is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DeleteAllFolders(filter interface{}) *GrafanaService_DeleteAllFolders_Call {
 	return &GrafanaService_DeleteAllFolders_Call{Call: _e.mock.On("DeleteAllFolders", filter)}
 }
 
-func (_c *GrafanaService_DeleteAllFolders_Call) Run(run func(filter ports.Filter)) *GrafanaService_DeleteAllFolders_Call {
+func (_c *GrafanaService_DeleteAllFolders_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DeleteAllFolders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -818,13 +818,13 @@ func (_c *GrafanaService_DeleteAllFolders_Call) Return(strings []string) *Grafan
 	return _c
 }
 
-func (_c *GrafanaService_DeleteAllFolders_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DeleteAllFolders_Call {
+func (_c *GrafanaService_DeleteAllFolders_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DeleteAllFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DeleteAllLibraryElements provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DeleteAllLibraryElements(filter ports.Filter) []string {
+func (_mock *GrafanaService) DeleteAllLibraryElements(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -832,7 +832,7 @@ func (_mock *GrafanaService) DeleteAllLibraryElements(filter ports.Filter) []str
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -848,16 +848,16 @@ type GrafanaService_DeleteAllLibraryElements_Call struct {
 }
 
 // DeleteAllLibraryElements is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DeleteAllLibraryElements(filter interface{}) *GrafanaService_DeleteAllLibraryElements_Call {
 	return &GrafanaService_DeleteAllLibraryElements_Call{Call: _e.mock.On("DeleteAllLibraryElements", filter)}
 }
 
-func (_c *GrafanaService_DeleteAllLibraryElements_Call) Run(run func(filter ports.Filter)) *GrafanaService_DeleteAllLibraryElements_Call {
+func (_c *GrafanaService_DeleteAllLibraryElements_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DeleteAllLibraryElements_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -871,7 +871,7 @@ func (_c *GrafanaService_DeleteAllLibraryElements_Call) Return(strings []string)
 	return _c
 }
 
-func (_c *GrafanaService_DeleteAllLibraryElements_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DeleteAllLibraryElements_Call {
+func (_c *GrafanaService_DeleteAllLibraryElements_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DeleteAllLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -923,7 +923,7 @@ func (_c *GrafanaService_DeleteAllServiceAccounts_Call) RunAndReturn(run func() 
 }
 
 // DeleteAllUsers provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DeleteAllUsers(filter ports.Filter) []string {
+func (_mock *GrafanaService) DeleteAllUsers(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -931,7 +931,7 @@ func (_mock *GrafanaService) DeleteAllUsers(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -947,16 +947,16 @@ type GrafanaService_DeleteAllUsers_Call struct {
 }
 
 // DeleteAllUsers is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DeleteAllUsers(filter interface{}) *GrafanaService_DeleteAllUsers_Call {
 	return &GrafanaService_DeleteAllUsers_Call{Call: _e.mock.On("DeleteAllUsers", filter)}
 }
 
-func (_c *GrafanaService_DeleteAllUsers_Call) Run(run func(filter ports.Filter)) *GrafanaService_DeleteAllUsers_Call {
+func (_c *GrafanaService_DeleteAllUsers_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DeleteAllUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -970,7 +970,7 @@ func (_c *GrafanaService_DeleteAllUsers_Call) Return(strings []string) *GrafanaS
 	return _c
 }
 
-func (_c *GrafanaService_DeleteAllUsers_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DeleteAllUsers_Call {
+func (_c *GrafanaService_DeleteAllUsers_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DeleteAllUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1080,7 +1080,7 @@ func (_c *GrafanaService_DeleteServiceAccountTokens_Call) RunAndReturn(run func(
 }
 
 // DeleteTeam provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DeleteTeam(filter ports.Filter) ([]*models.TeamDTO, error) {
+func (_mock *GrafanaService) DeleteTeam(filter outbound.Filter) ([]*models.TeamDTO, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1089,17 +1089,17 @@ func (_mock *GrafanaService) DeleteTeam(filter ports.Filter) ([]*models.TeamDTO,
 
 	var r0 []*models.TeamDTO
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]*models.TeamDTO, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]*models.TeamDTO, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*models.TeamDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*models.TeamDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*models.TeamDTO)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -1113,16 +1113,16 @@ type GrafanaService_DeleteTeam_Call struct {
 }
 
 // DeleteTeam is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DeleteTeam(filter interface{}) *GrafanaService_DeleteTeam_Call {
 	return &GrafanaService_DeleteTeam_Call{Call: _e.mock.On("DeleteTeam", filter)}
 }
 
-func (_c *GrafanaService_DeleteTeam_Call) Run(run func(filter ports.Filter)) *GrafanaService_DeleteTeam_Call {
+func (_c *GrafanaService_DeleteTeam_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DeleteTeam_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1136,7 +1136,7 @@ func (_c *GrafanaService_DeleteTeam_Call) Return(teamDTOs []*models.TeamDTO, err
 	return _c
 }
 
-func (_c *GrafanaService_DeleteTeam_Call) RunAndReturn(run func(filter ports.Filter) ([]*models.TeamDTO, error)) *GrafanaService_DeleteTeam_Call {
+func (_c *GrafanaService_DeleteTeam_Call) RunAndReturn(run func(filter outbound.Filter) ([]*models.TeamDTO, error)) *GrafanaService_DeleteTeam_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1252,7 +1252,7 @@ func (_c *GrafanaService_DownloadAlertNotifications_Call) RunAndReturn(run func(
 }
 
 // DownloadAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadAlertRules(filter ports.Filter) ([]string, error) {
+func (_mock *GrafanaService) DownloadAlertRules(filter outbound.Filter) ([]string, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1261,17 +1261,17 @@ func (_mock *GrafanaService) DownloadAlertRules(filter ports.Filter) ([]string, 
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -1285,16 +1285,16 @@ type GrafanaService_DownloadAlertRules_Call struct {
 }
 
 // DownloadAlertRules is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadAlertRules(filter interface{}) *GrafanaService_DownloadAlertRules_Call {
 	return &GrafanaService_DownloadAlertRules_Call{Call: _e.mock.On("DownloadAlertRules", filter)}
 }
 
-func (_c *GrafanaService_DownloadAlertRules_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadAlertRules_Call {
+func (_c *GrafanaService_DownloadAlertRules_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1308,7 +1308,7 @@ func (_c *GrafanaService_DownloadAlertRules_Call) Return(strings []string, err e
 	return _c
 }
 
-func (_c *GrafanaService_DownloadAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]string, error)) *GrafanaService_DownloadAlertRules_Call {
+func (_c *GrafanaService_DownloadAlertRules_Call) RunAndReturn(run func(filter outbound.Filter) ([]string, error)) *GrafanaService_DownloadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1420,7 +1420,7 @@ func (_c *GrafanaService_DownloadAlertTimings_Call) RunAndReturn(run func() (str
 }
 
 // DownloadConnectionPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadConnectionPermissions(filter ports.Filter) []string {
+func (_mock *GrafanaService) DownloadConnectionPermissions(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1428,7 +1428,7 @@ func (_mock *GrafanaService) DownloadConnectionPermissions(filter ports.Filter) 
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1444,16 +1444,16 @@ type GrafanaService_DownloadConnectionPermissions_Call struct {
 }
 
 // DownloadConnectionPermissions is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadConnectionPermissions(filter interface{}) *GrafanaService_DownloadConnectionPermissions_Call {
 	return &GrafanaService_DownloadConnectionPermissions_Call{Call: _e.mock.On("DownloadConnectionPermissions", filter)}
 }
 
-func (_c *GrafanaService_DownloadConnectionPermissions_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadConnectionPermissions_Call {
+func (_c *GrafanaService_DownloadConnectionPermissions_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadConnectionPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1467,13 +1467,13 @@ func (_c *GrafanaService_DownloadConnectionPermissions_Call) Return(strings []st
 	return _c
 }
 
-func (_c *GrafanaService_DownloadConnectionPermissions_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DownloadConnectionPermissions_Call {
+func (_c *GrafanaService_DownloadConnectionPermissions_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DownloadConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadConnections provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadConnections(filter ports.Filter) []string {
+func (_mock *GrafanaService) DownloadConnections(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1481,7 +1481,7 @@ func (_mock *GrafanaService) DownloadConnections(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1497,16 +1497,16 @@ type GrafanaService_DownloadConnections_Call struct {
 }
 
 // DownloadConnections is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadConnections(filter interface{}) *GrafanaService_DownloadConnections_Call {
 	return &GrafanaService_DownloadConnections_Call{Call: _e.mock.On("DownloadConnections", filter)}
 }
 
-func (_c *GrafanaService_DownloadConnections_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadConnections_Call {
+func (_c *GrafanaService_DownloadConnections_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadConnections_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1520,7 +1520,7 @@ func (_c *GrafanaService_DownloadConnections_Call) Return(strings []string) *Gra
 	return _c
 }
 
-func (_c *GrafanaService_DownloadConnections_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DownloadConnections_Call {
+func (_c *GrafanaService_DownloadConnections_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DownloadConnections_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1579,7 +1579,7 @@ func (_c *GrafanaService_DownloadContactPoints_Call) RunAndReturn(run func() (st
 }
 
 // DownloadDashboardPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadDashboardPermissions(filterReq ports.Filter) ([]string, error) {
+func (_mock *GrafanaService) DownloadDashboardPermissions(filterReq outbound.Filter) ([]string, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -1588,17 +1588,17 @@ func (_mock *GrafanaService) DownloadDashboardPermissions(filterReq ports.Filter
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filterReq)
 	} else {
 		r1 = ret.Error(1)
@@ -1612,16 +1612,16 @@ type GrafanaService_DownloadDashboardPermissions_Call struct {
 }
 
 // DownloadDashboardPermissions is a helper method to define mock.On call
-//   - filterReq ports.Filter
+//   - filterReq outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadDashboardPermissions(filterReq interface{}) *GrafanaService_DownloadDashboardPermissions_Call {
 	return &GrafanaService_DownloadDashboardPermissions_Call{Call: _e.mock.On("DownloadDashboardPermissions", filterReq)}
 }
 
-func (_c *GrafanaService_DownloadDashboardPermissions_Call) Run(run func(filterReq ports.Filter)) *GrafanaService_DownloadDashboardPermissions_Call {
+func (_c *GrafanaService_DownloadDashboardPermissions_Call) Run(run func(filterReq outbound.Filter)) *GrafanaService_DownloadDashboardPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1635,13 +1635,13 @@ func (_c *GrafanaService_DownloadDashboardPermissions_Call) Return(strings []str
 	return _c
 }
 
-func (_c *GrafanaService_DownloadDashboardPermissions_Call) RunAndReturn(run func(filterReq ports.Filter) ([]string, error)) *GrafanaService_DownloadDashboardPermissions_Call {
+func (_c *GrafanaService_DownloadDashboardPermissions_Call) RunAndReturn(run func(filterReq outbound.Filter) ([]string, error)) *GrafanaService_DownloadDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadDashboards(filter ports.Filter) []string {
+func (_mock *GrafanaService) DownloadDashboards(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1649,7 +1649,7 @@ func (_mock *GrafanaService) DownloadDashboards(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1665,16 +1665,16 @@ type GrafanaService_DownloadDashboards_Call struct {
 }
 
 // DownloadDashboards is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadDashboards(filter interface{}) *GrafanaService_DownloadDashboards_Call {
 	return &GrafanaService_DownloadDashboards_Call{Call: _e.mock.On("DownloadDashboards", filter)}
 }
 
-func (_c *GrafanaService_DownloadDashboards_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadDashboards_Call {
+func (_c *GrafanaService_DownloadDashboards_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1688,13 +1688,13 @@ func (_c *GrafanaService_DownloadDashboards_Call) Return(strings []string) *Graf
 	return _c
 }
 
-func (_c *GrafanaService_DownloadDashboards_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DownloadDashboards_Call {
+func (_c *GrafanaService_DownloadDashboards_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DownloadDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadFolderPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadFolderPermissions(filter ports.Filter) []string {
+func (_mock *GrafanaService) DownloadFolderPermissions(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1702,7 +1702,7 @@ func (_mock *GrafanaService) DownloadFolderPermissions(filter ports.Filter) []st
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1718,16 +1718,16 @@ type GrafanaService_DownloadFolderPermissions_Call struct {
 }
 
 // DownloadFolderPermissions is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadFolderPermissions(filter interface{}) *GrafanaService_DownloadFolderPermissions_Call {
 	return &GrafanaService_DownloadFolderPermissions_Call{Call: _e.mock.On("DownloadFolderPermissions", filter)}
 }
 
-func (_c *GrafanaService_DownloadFolderPermissions_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadFolderPermissions_Call {
+func (_c *GrafanaService_DownloadFolderPermissions_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadFolderPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1741,13 +1741,13 @@ func (_c *GrafanaService_DownloadFolderPermissions_Call) Return(strings []string
 	return _c
 }
 
-func (_c *GrafanaService_DownloadFolderPermissions_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DownloadFolderPermissions_Call {
+func (_c *GrafanaService_DownloadFolderPermissions_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DownloadFolderPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadFolders provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadFolders(filter ports.Filter) []string {
+func (_mock *GrafanaService) DownloadFolders(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1755,7 +1755,7 @@ func (_mock *GrafanaService) DownloadFolders(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1771,16 +1771,16 @@ type GrafanaService_DownloadFolders_Call struct {
 }
 
 // DownloadFolders is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadFolders(filter interface{}) *GrafanaService_DownloadFolders_Call {
 	return &GrafanaService_DownloadFolders_Call{Call: _e.mock.On("DownloadFolders", filter)}
 }
 
-func (_c *GrafanaService_DownloadFolders_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadFolders_Call {
+func (_c *GrafanaService_DownloadFolders_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadFolders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1794,13 +1794,13 @@ func (_c *GrafanaService_DownloadFolders_Call) Return(strings []string) *Grafana
 	return _c
 }
 
-func (_c *GrafanaService_DownloadFolders_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DownloadFolders_Call {
+func (_c *GrafanaService_DownloadFolders_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DownloadFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadLibraryElements provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadLibraryElements(filter ports.Filter) []string {
+func (_mock *GrafanaService) DownloadLibraryElements(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1808,7 +1808,7 @@ func (_mock *GrafanaService) DownloadLibraryElements(filter ports.Filter) []stri
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1824,16 +1824,16 @@ type GrafanaService_DownloadLibraryElements_Call struct {
 }
 
 // DownloadLibraryElements is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadLibraryElements(filter interface{}) *GrafanaService_DownloadLibraryElements_Call {
 	return &GrafanaService_DownloadLibraryElements_Call{Call: _e.mock.On("DownloadLibraryElements", filter)}
 }
 
-func (_c *GrafanaService_DownloadLibraryElements_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadLibraryElements_Call {
+func (_c *GrafanaService_DownloadLibraryElements_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadLibraryElements_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1847,13 +1847,13 @@ func (_c *GrafanaService_DownloadLibraryElements_Call) Return(strings []string) 
 	return _c
 }
 
-func (_c *GrafanaService_DownloadLibraryElements_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DownloadLibraryElements_Call {
+func (_c *GrafanaService_DownloadLibraryElements_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DownloadLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadOrganizations provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadOrganizations(filter ports.Filter) []string {
+func (_mock *GrafanaService) DownloadOrganizations(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1861,7 +1861,7 @@ func (_mock *GrafanaService) DownloadOrganizations(filter ports.Filter) []string
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1877,16 +1877,16 @@ type GrafanaService_DownloadOrganizations_Call struct {
 }
 
 // DownloadOrganizations is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadOrganizations(filter interface{}) *GrafanaService_DownloadOrganizations_Call {
 	return &GrafanaService_DownloadOrganizations_Call{Call: _e.mock.On("DownloadOrganizations", filter)}
 }
 
-func (_c *GrafanaService_DownloadOrganizations_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadOrganizations_Call {
+func (_c *GrafanaService_DownloadOrganizations_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1900,13 +1900,13 @@ func (_c *GrafanaService_DownloadOrganizations_Call) Return(strings []string) *G
 	return _c
 }
 
-func (_c *GrafanaService_DownloadOrganizations_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DownloadOrganizations_Call {
+func (_c *GrafanaService_DownloadOrganizations_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DownloadOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadTeams provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (_mock *GrafanaService) DownloadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1914,7 +1914,7 @@ func (_mock *GrafanaService) DownloadTeams(filter ports.Filter) map[*models.Team
 	}
 
 	var r0 map[*models.TeamDTO][]*models.TeamMemberDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1930,16 +1930,16 @@ type GrafanaService_DownloadTeams_Call struct {
 }
 
 // DownloadTeams is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadTeams(filter interface{}) *GrafanaService_DownloadTeams_Call {
 	return &GrafanaService_DownloadTeams_Call{Call: _e.mock.On("DownloadTeams", filter)}
 }
 
-func (_c *GrafanaService_DownloadTeams_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadTeams_Call {
+func (_c *GrafanaService_DownloadTeams_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadTeams_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -1953,13 +1953,13 @@ func (_c *GrafanaService_DownloadTeams_Call) Return(teamDTOToTeamMemberDTOs map[
 	return _c
 }
 
-func (_c *GrafanaService_DownloadTeams_Call) RunAndReturn(run func(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *GrafanaService_DownloadTeams_Call {
+func (_c *GrafanaService_DownloadTeams_Call) RunAndReturn(run func(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *GrafanaService_DownloadTeams_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadUsers provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadUsers(filter ports.Filter) []string {
+func (_mock *GrafanaService) DownloadUsers(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -1967,7 +1967,7 @@ func (_mock *GrafanaService) DownloadUsers(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -1983,16 +1983,16 @@ type GrafanaService_DownloadUsers_Call struct {
 }
 
 // DownloadUsers is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) DownloadUsers(filter interface{}) *GrafanaService_DownloadUsers_Call {
 	return &GrafanaService_DownloadUsers_Call{Call: _e.mock.On("DownloadUsers", filter)}
 }
 
-func (_c *GrafanaService_DownloadUsers_Call) Run(run func(filter ports.Filter)) *GrafanaService_DownloadUsers_Call {
+func (_c *GrafanaService_DownloadUsers_Call) Run(run func(filter outbound.Filter)) *GrafanaService_DownloadUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -2006,7 +2006,7 @@ func (_c *GrafanaService_DownloadUsers_Call) Return(strings []string) *GrafanaSe
 	return _c
 }
 
-func (_c *GrafanaService_DownloadUsers_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_DownloadUsers_Call {
+func (_c *GrafanaService_DownloadUsers_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_DownloadUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2443,7 +2443,7 @@ func (_c *GrafanaService_ListAlertNotifications_Call) RunAndReturn(run func() (*
 }
 
 // ListAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+func (_mock *GrafanaService) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -2452,17 +2452,17 @@ func (_mock *GrafanaService) ListAlertRules(filter ports.Filter) ([]*domain.Aler
 
 	var r0 []*domain.AlertRuleWithNestedFolder
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.AlertRuleWithNestedFolder); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.AlertRuleWithNestedFolder); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -2476,16 +2476,16 @@ type GrafanaService_ListAlertRules_Call struct {
 }
 
 // ListAlertRules is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListAlertRules(filter interface{}) *GrafanaService_ListAlertRules_Call {
 	return &GrafanaService_ListAlertRules_Call{Call: _e.mock.On("ListAlertRules", filter)}
 }
 
-func (_c *GrafanaService_ListAlertRules_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListAlertRules_Call {
+func (_c *GrafanaService_ListAlertRules_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -2499,7 +2499,7 @@ func (_c *GrafanaService_ListAlertRules_Call) Return(alertRuleWithNestedFolders 
 	return _c
 }
 
-func (_c *GrafanaService_ListAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *GrafanaService_ListAlertRules_Call {
+func (_c *GrafanaService_ListAlertRules_Call) RunAndReturn(run func(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *GrafanaService_ListAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2615,7 +2615,7 @@ func (_c *GrafanaService_ListAlertTimings_Call) RunAndReturn(run func() ([]*mode
 }
 
 // ListConnectionPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListConnectionPermissions(filter ports.Filter) []domain.ConnectionPermissionItem {
+func (_mock *GrafanaService) ListConnectionPermissions(filter outbound.Filter) []domain.ConnectionPermissionItem {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -2623,7 +2623,7 @@ func (_mock *GrafanaService) ListConnectionPermissions(filter ports.Filter) []do
 	}
 
 	var r0 []domain.ConnectionPermissionItem
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []domain.ConnectionPermissionItem); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []domain.ConnectionPermissionItem); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -2639,16 +2639,16 @@ type GrafanaService_ListConnectionPermissions_Call struct {
 }
 
 // ListConnectionPermissions is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListConnectionPermissions(filter interface{}) *GrafanaService_ListConnectionPermissions_Call {
 	return &GrafanaService_ListConnectionPermissions_Call{Call: _e.mock.On("ListConnectionPermissions", filter)}
 }
 
-func (_c *GrafanaService_ListConnectionPermissions_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListConnectionPermissions_Call {
+func (_c *GrafanaService_ListConnectionPermissions_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListConnectionPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -2662,13 +2662,13 @@ func (_c *GrafanaService_ListConnectionPermissions_Call) Return(connectionPermis
 	return _c
 }
 
-func (_c *GrafanaService_ListConnectionPermissions_Call) RunAndReturn(run func(filter ports.Filter) []domain.ConnectionPermissionItem) *GrafanaService_ListConnectionPermissions_Call {
+func (_c *GrafanaService_ListConnectionPermissions_Call) RunAndReturn(run func(filter outbound.Filter) []domain.ConnectionPermissionItem) *GrafanaService_ListConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListConnections provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListConnections(filter ports.Filter) []models.DataSourceListItemDTO {
+func (_mock *GrafanaService) ListConnections(filter outbound.Filter) []models.DataSourceListItemDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -2676,7 +2676,7 @@ func (_mock *GrafanaService) ListConnections(filter ports.Filter) []models.DataS
 	}
 
 	var r0 []models.DataSourceListItemDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []models.DataSourceListItemDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []models.DataSourceListItemDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -2692,16 +2692,16 @@ type GrafanaService_ListConnections_Call struct {
 }
 
 // ListConnections is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListConnections(filter interface{}) *GrafanaService_ListConnections_Call {
 	return &GrafanaService_ListConnections_Call{Call: _e.mock.On("ListConnections", filter)}
 }
 
-func (_c *GrafanaService_ListConnections_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListConnections_Call {
+func (_c *GrafanaService_ListConnections_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListConnections_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -2715,7 +2715,7 @@ func (_c *GrafanaService_ListConnections_Call) Return(dataSourceListItemDTOs []m
 	return _c
 }
 
-func (_c *GrafanaService_ListConnections_Call) RunAndReturn(run func(filter ports.Filter) []models.DataSourceListItemDTO) *GrafanaService_ListConnections_Call {
+func (_c *GrafanaService_ListConnections_Call) RunAndReturn(run func(filter outbound.Filter) []models.DataSourceListItemDTO) *GrafanaService_ListConnections_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2776,7 +2776,7 @@ func (_c *GrafanaService_ListContactPoints_Call) RunAndReturn(run func() ([]*mod
 }
 
 // ListDashboardPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListDashboardPermissions(filterReq ports.Filter) ([]domain.DashboardAndPermissions, error) {
+func (_mock *GrafanaService) ListDashboardPermissions(filterReq outbound.Filter) ([]domain.DashboardAndPermissions, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -2785,17 +2785,17 @@ func (_mock *GrafanaService) ListDashboardPermissions(filterReq ports.Filter) ([
 
 	var r0 []domain.DashboardAndPermissions
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]domain.DashboardAndPermissions, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]domain.DashboardAndPermissions, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []domain.DashboardAndPermissions); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []domain.DashboardAndPermissions); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.DashboardAndPermissions)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filterReq)
 	} else {
 		r1 = ret.Error(1)
@@ -2809,16 +2809,16 @@ type GrafanaService_ListDashboardPermissions_Call struct {
 }
 
 // ListDashboardPermissions is a helper method to define mock.On call
-//   - filterReq ports.Filter
+//   - filterReq outbound.Filter
 func (_e *GrafanaService_Expecter) ListDashboardPermissions(filterReq interface{}) *GrafanaService_ListDashboardPermissions_Call {
 	return &GrafanaService_ListDashboardPermissions_Call{Call: _e.mock.On("ListDashboardPermissions", filterReq)}
 }
 
-func (_c *GrafanaService_ListDashboardPermissions_Call) Run(run func(filterReq ports.Filter)) *GrafanaService_ListDashboardPermissions_Call {
+func (_c *GrafanaService_ListDashboardPermissions_Call) Run(run func(filterReq outbound.Filter)) *GrafanaService_ListDashboardPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -2832,13 +2832,13 @@ func (_c *GrafanaService_ListDashboardPermissions_Call) Return(dashboardAndPermi
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(filterReq ports.Filter) ([]domain.DashboardAndPermissions, error)) *GrafanaService_ListDashboardPermissions_Call {
+func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(filterReq outbound.Filter) ([]domain.DashboardAndPermissions, error)) *GrafanaService_ListDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListDashboards(filter ports.Filter) []*domain.NestedHit {
+func (_mock *GrafanaService) ListDashboards(filter outbound.Filter) []*domain.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -2846,7 +2846,7 @@ func (_mock *GrafanaService) ListDashboards(filter ports.Filter) []*domain.Neste
 	}
 
 	var r0 []*domain.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.NestedHit); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -2862,16 +2862,16 @@ type GrafanaService_ListDashboards_Call struct {
 }
 
 // ListDashboards is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListDashboards(filter interface{}) *GrafanaService_ListDashboards_Call {
 	return &GrafanaService_ListDashboards_Call{Call: _e.mock.On("ListDashboards", filter)}
 }
 
-func (_c *GrafanaService_ListDashboards_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListDashboards_Call {
+func (_c *GrafanaService_ListDashboards_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -2885,13 +2885,13 @@ func (_c *GrafanaService_ListDashboards_Call) Return(nestedHits []*domain.Nested
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filter ports.Filter) []*domain.NestedHit) *GrafanaService_ListDashboards_Call {
+func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filter outbound.Filter) []*domain.NestedHit) *GrafanaService_ListDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListFolderPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListFolderPermissions(filter ports.Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
+func (_mock *GrafanaService) ListFolderPermissions(filter outbound.Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -2899,7 +2899,7 @@ func (_mock *GrafanaService) ListFolderPermissions(filter ports.Filter) map[*dom
 	}
 
 	var r0 map[*domain.NestedHit][]*models.DashboardACLInfoDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -2915,16 +2915,16 @@ type GrafanaService_ListFolderPermissions_Call struct {
 }
 
 // ListFolderPermissions is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListFolderPermissions(filter interface{}) *GrafanaService_ListFolderPermissions_Call {
 	return &GrafanaService_ListFolderPermissions_Call{Call: _e.mock.On("ListFolderPermissions", filter)}
 }
 
-func (_c *GrafanaService_ListFolderPermissions_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListFolderPermissions_Call {
+func (_c *GrafanaService_ListFolderPermissions_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListFolderPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -2938,13 +2938,13 @@ func (_c *GrafanaService_ListFolderPermissions_Call) Return(nestedHitToDashboard
 	return _c
 }
 
-func (_c *GrafanaService_ListFolderPermissions_Call) RunAndReturn(run func(filter ports.Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
+func (_c *GrafanaService_ListFolderPermissions_Call) RunAndReturn(run func(filter outbound.Filter) map[*domain.NestedHit][]*models.DashboardACLInfoDTO) *GrafanaService_ListFolderPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListFolders provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListFolders(filter ports.Filter) []*domain.NestedHit {
+func (_mock *GrafanaService) ListFolders(filter outbound.Filter) []*domain.NestedHit {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -2952,7 +2952,7 @@ func (_mock *GrafanaService) ListFolders(filter ports.Filter) []*domain.NestedHi
 	}
 
 	var r0 []*domain.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.NestedHit); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.NestedHit); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -2968,16 +2968,16 @@ type GrafanaService_ListFolders_Call struct {
 }
 
 // ListFolders is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListFolders(filter interface{}) *GrafanaService_ListFolders_Call {
 	return &GrafanaService_ListFolders_Call{Call: _e.mock.On("ListFolders", filter)}
 }
 
-func (_c *GrafanaService_ListFolders_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListFolders_Call {
+func (_c *GrafanaService_ListFolders_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListFolders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -2991,13 +2991,13 @@ func (_c *GrafanaService_ListFolders_Call) Return(nestedHits []*domain.NestedHit
 	return _c
 }
 
-func (_c *GrafanaService_ListFolders_Call) RunAndReturn(run func(filter ports.Filter) []*domain.NestedHit) *GrafanaService_ListFolders_Call {
+func (_c *GrafanaService_ListFolders_Call) RunAndReturn(run func(filter outbound.Filter) []*domain.NestedHit) *GrafanaService_ListFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListLibraryElements provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListLibraryElements(filter ports.Filter) []*domain.WithNested[models.LibraryElementDTO] {
+func (_mock *GrafanaService) ListLibraryElements(filter outbound.Filter) []*domain.WithNested[models.LibraryElementDTO] {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -3005,7 +3005,7 @@ func (_mock *GrafanaService) ListLibraryElements(filter ports.Filter) []*domain.
 	}
 
 	var r0 []*domain.WithNested[models.LibraryElementDTO]
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.WithNested[models.LibraryElementDTO]); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.WithNested[models.LibraryElementDTO]); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -3021,16 +3021,16 @@ type GrafanaService_ListLibraryElements_Call struct {
 }
 
 // ListLibraryElements is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListLibraryElements(filter interface{}) *GrafanaService_ListLibraryElements_Call {
 	return &GrafanaService_ListLibraryElements_Call{Call: _e.mock.On("ListLibraryElements", filter)}
 }
 
-func (_c *GrafanaService_ListLibraryElements_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListLibraryElements_Call {
+func (_c *GrafanaService_ListLibraryElements_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListLibraryElements_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -3044,13 +3044,13 @@ func (_c *GrafanaService_ListLibraryElements_Call) Return(withNesteds []*domain.
 	return _c
 }
 
-func (_c *GrafanaService_ListLibraryElements_Call) RunAndReturn(run func(filter ports.Filter) []*domain.WithNested[models.LibraryElementDTO]) *GrafanaService_ListLibraryElements_Call {
+func (_c *GrafanaService_ListLibraryElements_Call) RunAndReturn(run func(filter outbound.Filter) []*domain.WithNested[models.LibraryElementDTO]) *GrafanaService_ListLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListLibraryElementsConnections provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListLibraryElementsConnections(filter ports.Filter, connectionID string) []*models.DashboardFullWithMeta {
+func (_mock *GrafanaService) ListLibraryElementsConnections(filter outbound.Filter, connectionID string) []*models.DashboardFullWithMeta {
 	ret := _mock.Called(filter, connectionID)
 
 	if len(ret) == 0 {
@@ -3058,7 +3058,7 @@ func (_mock *GrafanaService) ListLibraryElementsConnections(filter ports.Filter,
 	}
 
 	var r0 []*models.DashboardFullWithMeta
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter, string) []*models.DashboardFullWithMeta); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter, string) []*models.DashboardFullWithMeta); ok {
 		r0 = returnFunc(filter, connectionID)
 	} else {
 		if ret.Get(0) != nil {
@@ -3074,17 +3074,17 @@ type GrafanaService_ListLibraryElementsConnections_Call struct {
 }
 
 // ListLibraryElementsConnections is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 //   - connectionID string
 func (_e *GrafanaService_Expecter) ListLibraryElementsConnections(filter interface{}, connectionID interface{}) *GrafanaService_ListLibraryElementsConnections_Call {
 	return &GrafanaService_ListLibraryElementsConnections_Call{Call: _e.mock.On("ListLibraryElementsConnections", filter, connectionID)}
 }
 
-func (_c *GrafanaService_ListLibraryElementsConnections_Call) Run(run func(filter ports.Filter, connectionID string)) *GrafanaService_ListLibraryElementsConnections_Call {
+func (_c *GrafanaService_ListLibraryElementsConnections_Call) Run(run func(filter outbound.Filter, connectionID string)) *GrafanaService_ListLibraryElementsConnections_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		var arg1 string
 		if args[1] != nil {
@@ -3103,7 +3103,7 @@ func (_c *GrafanaService_ListLibraryElementsConnections_Call) Return(dashboardFu
 	return _c
 }
 
-func (_c *GrafanaService_ListLibraryElementsConnections_Call) RunAndReturn(run func(filter ports.Filter, connectionID string) []*models.DashboardFullWithMeta) *GrafanaService_ListLibraryElementsConnections_Call {
+func (_c *GrafanaService_ListLibraryElementsConnections_Call) RunAndReturn(run func(filter outbound.Filter, connectionID string) []*models.DashboardFullWithMeta) *GrafanaService_ListLibraryElementsConnections_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3162,7 +3162,7 @@ func (_c *GrafanaService_ListOrgUsers_Call) RunAndReturn(run func(orgId int64) [
 }
 
 // ListOrganizations provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListOrganizations(filter ports.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
+func (_mock *GrafanaService) ListOrganizations(filter outbound.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
 	ret := _mock.Called(filter, withPreferences)
 
 	if len(ret) == 0 {
@@ -3170,7 +3170,7 @@ func (_mock *GrafanaService) ListOrganizations(filter ports.Filter, withPreferen
 	}
 
 	var r0 []*domain.OrgsDTOWithPreferences
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter, bool) []*domain.OrgsDTOWithPreferences); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter, bool) []*domain.OrgsDTOWithPreferences); ok {
 		r0 = returnFunc(filter, withPreferences)
 	} else {
 		if ret.Get(0) != nil {
@@ -3186,17 +3186,17 @@ type GrafanaService_ListOrganizations_Call struct {
 }
 
 // ListOrganizations is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 //   - withPreferences bool
 func (_e *GrafanaService_Expecter) ListOrganizations(filter interface{}, withPreferences interface{}) *GrafanaService_ListOrganizations_Call {
 	return &GrafanaService_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter, withPreferences)}
 }
 
-func (_c *GrafanaService_ListOrganizations_Call) Run(run func(filter ports.Filter, withPreferences bool)) *GrafanaService_ListOrganizations_Call {
+func (_c *GrafanaService_ListOrganizations_Call) Run(run func(filter outbound.Filter, withPreferences bool)) *GrafanaService_ListOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		var arg1 bool
 		if args[1] != nil {
@@ -3215,7 +3215,7 @@ func (_c *GrafanaService_ListOrganizations_Call) Return(orgsDTOWithPreferencess 
 	return _c
 }
 
-func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filter ports.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
+func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filter outbound.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3329,7 +3329,7 @@ func (_c *GrafanaService_ListServiceAccountsTokens_Call) RunAndReturn(run func(i
 }
 
 // ListTeams provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (_mock *GrafanaService) ListTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -3337,7 +3337,7 @@ func (_mock *GrafanaService) ListTeams(filter ports.Filter) map[*models.TeamDTO]
 	}
 
 	var r0 map[*models.TeamDTO][]*models.TeamMemberDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -3353,16 +3353,16 @@ type GrafanaService_ListTeams_Call struct {
 }
 
 // ListTeams is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListTeams(filter interface{}) *GrafanaService_ListTeams_Call {
 	return &GrafanaService_ListTeams_Call{Call: _e.mock.On("ListTeams", filter)}
 }
 
-func (_c *GrafanaService_ListTeams_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListTeams_Call {
+func (_c *GrafanaService_ListTeams_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListTeams_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -3376,7 +3376,7 @@ func (_c *GrafanaService_ListTeams_Call) Return(teamDTOToTeamMemberDTOs map[*mod
 	return _c
 }
 
-func (_c *GrafanaService_ListTeams_Call) RunAndReturn(run func(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *GrafanaService_ListTeams_Call {
+func (_c *GrafanaService_ListTeams_Call) RunAndReturn(run func(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *GrafanaService_ListTeams_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3437,7 +3437,7 @@ func (_c *GrafanaService_ListUserOrganizations_Call) RunAndReturn(run func() ([]
 }
 
 // ListUsers provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListUsers(filter ports.Filter) []*models.UserSearchHitDTO {
+func (_mock *GrafanaService) ListUsers(filter outbound.Filter) []*models.UserSearchHitDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -3445,7 +3445,7 @@ func (_mock *GrafanaService) ListUsers(filter ports.Filter) []*models.UserSearch
 	}
 
 	var r0 []*models.UserSearchHitDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*models.UserSearchHitDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*models.UserSearchHitDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -3461,16 +3461,16 @@ type GrafanaService_ListUsers_Call struct {
 }
 
 // ListUsers is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) ListUsers(filter interface{}) *GrafanaService_ListUsers_Call {
 	return &GrafanaService_ListUsers_Call{Call: _e.mock.On("ListUsers", filter)}
 }
 
-func (_c *GrafanaService_ListUsers_Call) Run(run func(filter ports.Filter)) *GrafanaService_ListUsers_Call {
+func (_c *GrafanaService_ListUsers_Call) Run(run func(filter outbound.Filter)) *GrafanaService_ListUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -3484,7 +3484,7 @@ func (_c *GrafanaService_ListUsers_Call) Return(userSearchHitDTOs []*models.User
 	return _c
 }
 
-func (_c *GrafanaService_ListUsers_Call) RunAndReturn(run func(filter ports.Filter) []*models.UserSearchHitDTO) *GrafanaService_ListUsers_Call {
+func (_c *GrafanaService_ListUsers_Call) RunAndReturn(run func(filter outbound.Filter) []*models.UserSearchHitDTO) *GrafanaService_ListUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3809,7 +3809,7 @@ func (_c *GrafanaService_UploadAlertNotifications_Call) RunAndReturn(run func() 
 }
 
 // UploadAlertRules provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+func (_mock *GrafanaService) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -3818,17 +3818,17 @@ func (_mock *GrafanaService) UploadAlertRules(filter ports.Filter) ([]*domain.Al
 
 	var r0 []*domain.AlertRuleWithNestedFolder
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.AlertRuleWithNestedFolder); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.AlertRuleWithNestedFolder); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -3842,16 +3842,16 @@ type GrafanaService_UploadAlertRules_Call struct {
 }
 
 // UploadAlertRules is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadAlertRules(filter interface{}) *GrafanaService_UploadAlertRules_Call {
 	return &GrafanaService_UploadAlertRules_Call{Call: _e.mock.On("UploadAlertRules", filter)}
 }
 
-func (_c *GrafanaService_UploadAlertRules_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadAlertRules_Call {
+func (_c *GrafanaService_UploadAlertRules_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -3865,7 +3865,7 @@ func (_c *GrafanaService_UploadAlertRules_Call) Return(alertRuleWithNestedFolder
 	return _c
 }
 
-func (_c *GrafanaService_UploadAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *GrafanaService_UploadAlertRules_Call {
+func (_c *GrafanaService_UploadAlertRules_Call) RunAndReturn(run func(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *GrafanaService_UploadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3981,7 +3981,7 @@ func (_c *GrafanaService_UploadAlertTimings_Call) RunAndReturn(run func() ([]str
 }
 
 // UploadConnectionPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadConnectionPermissions(filter ports.Filter) []string {
+func (_mock *GrafanaService) UploadConnectionPermissions(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -3989,7 +3989,7 @@ func (_mock *GrafanaService) UploadConnectionPermissions(filter ports.Filter) []
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -4005,16 +4005,16 @@ type GrafanaService_UploadConnectionPermissions_Call struct {
 }
 
 // UploadConnectionPermissions is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadConnectionPermissions(filter interface{}) *GrafanaService_UploadConnectionPermissions_Call {
 	return &GrafanaService_UploadConnectionPermissions_Call{Call: _e.mock.On("UploadConnectionPermissions", filter)}
 }
 
-func (_c *GrafanaService_UploadConnectionPermissions_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadConnectionPermissions_Call {
+func (_c *GrafanaService_UploadConnectionPermissions_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadConnectionPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4028,13 +4028,13 @@ func (_c *GrafanaService_UploadConnectionPermissions_Call) Return(strings []stri
 	return _c
 }
 
-func (_c *GrafanaService_UploadConnectionPermissions_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_UploadConnectionPermissions_Call {
+func (_c *GrafanaService_UploadConnectionPermissions_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_UploadConnectionPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadConnections provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadConnections(filter ports.Filter) []string {
+func (_mock *GrafanaService) UploadConnections(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -4042,7 +4042,7 @@ func (_mock *GrafanaService) UploadConnections(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -4058,16 +4058,16 @@ type GrafanaService_UploadConnections_Call struct {
 }
 
 // UploadConnections is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadConnections(filter interface{}) *GrafanaService_UploadConnections_Call {
 	return &GrafanaService_UploadConnections_Call{Call: _e.mock.On("UploadConnections", filter)}
 }
 
-func (_c *GrafanaService_UploadConnections_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadConnections_Call {
+func (_c *GrafanaService_UploadConnections_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadConnections_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4081,7 +4081,7 @@ func (_c *GrafanaService_UploadConnections_Call) Return(strings []string) *Grafa
 	return _c
 }
 
-func (_c *GrafanaService_UploadConnections_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_UploadConnections_Call {
+func (_c *GrafanaService_UploadConnections_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_UploadConnections_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4142,7 +4142,7 @@ func (_c *GrafanaService_UploadContactPoints_Call) RunAndReturn(run func() ([]st
 }
 
 // UploadDashboardPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadDashboardPermissions(filterReq ports.Filter) ([]string, error) {
+func (_mock *GrafanaService) UploadDashboardPermissions(filterReq outbound.Filter) ([]string, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -4151,17 +4151,17 @@ func (_mock *GrafanaService) UploadDashboardPermissions(filterReq ports.Filter) 
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filterReq)
 	} else {
 		r1 = ret.Error(1)
@@ -4175,16 +4175,16 @@ type GrafanaService_UploadDashboardPermissions_Call struct {
 }
 
 // UploadDashboardPermissions is a helper method to define mock.On call
-//   - filterReq ports.Filter
+//   - filterReq outbound.Filter
 func (_e *GrafanaService_Expecter) UploadDashboardPermissions(filterReq interface{}) *GrafanaService_UploadDashboardPermissions_Call {
 	return &GrafanaService_UploadDashboardPermissions_Call{Call: _e.mock.On("UploadDashboardPermissions", filterReq)}
 }
 
-func (_c *GrafanaService_UploadDashboardPermissions_Call) Run(run func(filterReq ports.Filter)) *GrafanaService_UploadDashboardPermissions_Call {
+func (_c *GrafanaService_UploadDashboardPermissions_Call) Run(run func(filterReq outbound.Filter)) *GrafanaService_UploadDashboardPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4198,13 +4198,13 @@ func (_c *GrafanaService_UploadDashboardPermissions_Call) Return(strings []strin
 	return _c
 }
 
-func (_c *GrafanaService_UploadDashboardPermissions_Call) RunAndReturn(run func(filterReq ports.Filter) ([]string, error)) *GrafanaService_UploadDashboardPermissions_Call {
+func (_c *GrafanaService_UploadDashboardPermissions_Call) RunAndReturn(run func(filterReq outbound.Filter) ([]string, error)) *GrafanaService_UploadDashboardPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadDashboards(filterReq ports.Filter) ([]string, error) {
+func (_mock *GrafanaService) UploadDashboards(filterReq outbound.Filter) ([]string, error) {
 	ret := _mock.Called(filterReq)
 
 	if len(ret) == 0 {
@@ -4213,17 +4213,17 @@ func (_mock *GrafanaService) UploadDashboards(filterReq ports.Filter) ([]string,
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
 		return returnFunc(filterReq)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filterReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filterReq)
 	} else {
 		r1 = ret.Error(1)
@@ -4237,16 +4237,16 @@ type GrafanaService_UploadDashboards_Call struct {
 }
 
 // UploadDashboards is a helper method to define mock.On call
-//   - filterReq ports.Filter
+//   - filterReq outbound.Filter
 func (_e *GrafanaService_Expecter) UploadDashboards(filterReq interface{}) *GrafanaService_UploadDashboards_Call {
 	return &GrafanaService_UploadDashboards_Call{Call: _e.mock.On("UploadDashboards", filterReq)}
 }
 
-func (_c *GrafanaService_UploadDashboards_Call) Run(run func(filterReq ports.Filter)) *GrafanaService_UploadDashboards_Call {
+func (_c *GrafanaService_UploadDashboards_Call) Run(run func(filterReq outbound.Filter)) *GrafanaService_UploadDashboards_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4260,13 +4260,13 @@ func (_c *GrafanaService_UploadDashboards_Call) Return(strings []string, err err
 	return _c
 }
 
-func (_c *GrafanaService_UploadDashboards_Call) RunAndReturn(run func(filterReq ports.Filter) ([]string, error)) *GrafanaService_UploadDashboards_Call {
+func (_c *GrafanaService_UploadDashboards_Call) RunAndReturn(run func(filterReq outbound.Filter) ([]string, error)) *GrafanaService_UploadDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadFolderPermissions provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadFolderPermissions(filter ports.Filter) []string {
+func (_mock *GrafanaService) UploadFolderPermissions(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -4274,7 +4274,7 @@ func (_mock *GrafanaService) UploadFolderPermissions(filter ports.Filter) []stri
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -4290,16 +4290,16 @@ type GrafanaService_UploadFolderPermissions_Call struct {
 }
 
 // UploadFolderPermissions is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadFolderPermissions(filter interface{}) *GrafanaService_UploadFolderPermissions_Call {
 	return &GrafanaService_UploadFolderPermissions_Call{Call: _e.mock.On("UploadFolderPermissions", filter)}
 }
 
-func (_c *GrafanaService_UploadFolderPermissions_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadFolderPermissions_Call {
+func (_c *GrafanaService_UploadFolderPermissions_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadFolderPermissions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4313,13 +4313,13 @@ func (_c *GrafanaService_UploadFolderPermissions_Call) Return(strings []string) 
 	return _c
 }
 
-func (_c *GrafanaService_UploadFolderPermissions_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_UploadFolderPermissions_Call {
+func (_c *GrafanaService_UploadFolderPermissions_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_UploadFolderPermissions_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadFolders provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadFolders(filter ports.Filter) []string {
+func (_mock *GrafanaService) UploadFolders(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -4327,7 +4327,7 @@ func (_mock *GrafanaService) UploadFolders(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -4343,16 +4343,16 @@ type GrafanaService_UploadFolders_Call struct {
 }
 
 // UploadFolders is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadFolders(filter interface{}) *GrafanaService_UploadFolders_Call {
 	return &GrafanaService_UploadFolders_Call{Call: _e.mock.On("UploadFolders", filter)}
 }
 
-func (_c *GrafanaService_UploadFolders_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadFolders_Call {
+func (_c *GrafanaService_UploadFolders_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadFolders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4366,13 +4366,13 @@ func (_c *GrafanaService_UploadFolders_Call) Return(strings []string) *GrafanaSe
 	return _c
 }
 
-func (_c *GrafanaService_UploadFolders_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_UploadFolders_Call {
+func (_c *GrafanaService_UploadFolders_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_UploadFolders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadLibraryElements provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadLibraryElements(filter ports.Filter) []string {
+func (_mock *GrafanaService) UploadLibraryElements(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -4380,7 +4380,7 @@ func (_mock *GrafanaService) UploadLibraryElements(filter ports.Filter) []string
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -4396,16 +4396,16 @@ type GrafanaService_UploadLibraryElements_Call struct {
 }
 
 // UploadLibraryElements is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadLibraryElements(filter interface{}) *GrafanaService_UploadLibraryElements_Call {
 	return &GrafanaService_UploadLibraryElements_Call{Call: _e.mock.On("UploadLibraryElements", filter)}
 }
 
-func (_c *GrafanaService_UploadLibraryElements_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadLibraryElements_Call {
+func (_c *GrafanaService_UploadLibraryElements_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadLibraryElements_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4419,7 +4419,7 @@ func (_c *GrafanaService_UploadLibraryElements_Call) Return(strings []string) *G
 	return _c
 }
 
-func (_c *GrafanaService_UploadLibraryElements_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_UploadLibraryElements_Call {
+func (_c *GrafanaService_UploadLibraryElements_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_UploadLibraryElements_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4482,7 +4482,7 @@ func (_c *GrafanaService_UploadOrgPreferences_Call) RunAndReturn(run func(orgNam
 }
 
 // UploadOrganizations provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadOrganizations(filter ports.Filter) []string {
+func (_mock *GrafanaService) UploadOrganizations(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -4490,7 +4490,7 @@ func (_mock *GrafanaService) UploadOrganizations(filter ports.Filter) []string {
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -4506,16 +4506,16 @@ type GrafanaService_UploadOrganizations_Call struct {
 }
 
 // UploadOrganizations is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadOrganizations(filter interface{}) *GrafanaService_UploadOrganizations_Call {
 	return &GrafanaService_UploadOrganizations_Call{Call: _e.mock.On("UploadOrganizations", filter)}
 }
 
-func (_c *GrafanaService_UploadOrganizations_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadOrganizations_Call {
+func (_c *GrafanaService_UploadOrganizations_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4529,13 +4529,13 @@ func (_c *GrafanaService_UploadOrganizations_Call) Return(strings []string) *Gra
 	return _c
 }
 
-func (_c *GrafanaService_UploadOrganizations_Call) RunAndReturn(run func(filter ports.Filter) []string) *GrafanaService_UploadOrganizations_Call {
+func (_c *GrafanaService_UploadOrganizations_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_UploadOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadTeams provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (_mock *GrafanaService) UploadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -4543,7 +4543,7 @@ func (_mock *GrafanaService) UploadTeams(filter ports.Filter) map[*models.TeamDT
 	}
 
 	var r0 map[*models.TeamDTO][]*models.TeamMemberDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -4559,16 +4559,16 @@ type GrafanaService_UploadTeams_Call struct {
 }
 
 // UploadTeams is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadTeams(filter interface{}) *GrafanaService_UploadTeams_Call {
 	return &GrafanaService_UploadTeams_Call{Call: _e.mock.On("UploadTeams", filter)}
 }
 
-func (_c *GrafanaService_UploadTeams_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadTeams_Call {
+func (_c *GrafanaService_UploadTeams_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadTeams_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4582,13 +4582,13 @@ func (_c *GrafanaService_UploadTeams_Call) Return(teamDTOToTeamMemberDTOs map[*m
 	return _c
 }
 
-func (_c *GrafanaService_UploadTeams_Call) RunAndReturn(run func(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *GrafanaService_UploadTeams_Call {
+func (_c *GrafanaService_UploadTeams_Call) RunAndReturn(run func(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *GrafanaService_UploadTeams_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadUsers provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) UploadUsers(filter ports.Filter) []domain.UserProfileWithAuth {
+func (_mock *GrafanaService) UploadUsers(filter outbound.Filter) []domain.UserProfileWithAuth {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -4596,7 +4596,7 @@ func (_mock *GrafanaService) UploadUsers(filter ports.Filter) []domain.UserProfi
 	}
 
 	var r0 []domain.UserProfileWithAuth
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []domain.UserProfileWithAuth); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []domain.UserProfileWithAuth); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -4612,16 +4612,16 @@ type GrafanaService_UploadUsers_Call struct {
 }
 
 // UploadUsers is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *GrafanaService_Expecter) UploadUsers(filter interface{}) *GrafanaService_UploadUsers_Call {
 	return &GrafanaService_UploadUsers_Call{Call: _e.mock.On("UploadUsers", filter)}
 }
 
-func (_c *GrafanaService_UploadUsers_Call) Run(run func(filter ports.Filter)) *GrafanaService_UploadUsers_Call {
+func (_c *GrafanaService_UploadUsers_Call) Run(run func(filter outbound.Filter)) *GrafanaService_UploadUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -4635,7 +4635,7 @@ func (_c *GrafanaService_UploadUsers_Call) Return(userProfileWithAuths []domain.
 	return _c
 }
 
-func (_c *GrafanaService_UploadUsers_Call) RunAndReturn(run func(filter ports.Filter) []domain.UserProfileWithAuth) *GrafanaService_UploadUsers_Call {
+func (_c *GrafanaService_UploadUsers_Call) RunAndReturn(run func(filter outbound.Filter) []domain.UserProfileWithAuth) *GrafanaService_UploadUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }

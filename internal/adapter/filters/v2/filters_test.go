@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
@@ -17,7 +17,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func setupReaders(t *testing.T, v ports.Filter) {
+func setupReaders(t *testing.T, v outbound.Filter) {
 	err := v.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.NestedHit)
 		if !ok {
@@ -82,7 +82,7 @@ func setupReaders(t *testing.T, v ports.Filter) {
 }
 
 func TestFilters(t *testing.T) {
-	var v ports.Filter = NewBaseFilter()
+	var v outbound.Filter = NewBaseFilter()
 	setupReaders(t, v)
 
 	v.AddValidation(domain.TagsFilter, func(ctx context.Context, item any, expected any) error {

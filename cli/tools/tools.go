@@ -14,6 +14,7 @@ import (
 var noLoginGroups = map[string]bool{
 	"contexts": true,
 	"helpers":  true,
+	"plugins":  true,
 }
 
 // needsLogin walks runner's Cobra parent chain from the leaf up to (but not
@@ -51,6 +52,7 @@ func NewToolsCommand() simplecobra.Commander {
 			newAuthCmd(),
 			newOrgCommand(),
 			newHelpers(),
+			newPluginsCmd(),
 		},
 		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"t"}
