@@ -28,18 +28,18 @@ import (
 type rekeyPhase int
 
 const (
-	phaseRekeyCurrentInfo  rekeyPhase = iota // Note: display current plugin config
-	phaseRekeyAction                         // Select: switch / disable / cancel
-	phaseRekeyPluginSelect                   // (switch only) Select plugin from registry
-	phaseRekeyPluginVersion                  // (switch only) Select version
-	phaseRekeyPluginConfig                   // (switch only, loops) Input each config field
-	phaseRekeyContextSelect                  // Select which context to migrate
-	phaseRekeyBackupOptions                  // Backup yes/no + optional backup directory
-	phaseRekeyCredentials                    // Include per-context auth file?
-	phaseRekeyDryRun                         // Scan files; results shown as a Note
-	phaseRekeyFileSelect                     // MultiSelect: choose which files to process
-	phaseRekeyConfirm                        // Final confirmation before writing
-	phaseRekeyDone                           // Sentinel — triggers program exit
+	phaseRekeyCurrentInfo   rekeyPhase = iota // Note: display current plugin config
+	phaseRekeyAction                          // Select: switch / disable / cancel
+	phaseRekeyPluginSelect                    // (switch only) Select plugin from registry
+	phaseRekeyPluginVersion                   // (switch only) Select version
+	phaseRekeyPluginConfig                    // (switch only, loops) Input each config field
+	phaseRekeyContextSelect                   // Select which context to migrate
+	phaseRekeyBackupOptions                   // Backup yes/no + optional backup directory
+	phaseRekeyCredentials                     // Include per-context auth file?
+	phaseRekeyDryRun                          // Scan files; results shown as a Note
+	phaseRekeyFileSelect                      // MultiSelect: choose which files to process
+	phaseRekeyConfirm                         // Final confirmation before writing
+	phaseRekeyDone                            // Sentinel — triggers program exit
 )
 
 func (p rekeyPhase) sectionName() string {
@@ -78,17 +78,17 @@ type rekeyState struct {
 	action string // "switch" | "disable" | "cancel"
 
 	// Plugin selection (action == "switch").
-	availablePlugins    []domain.PluginRegistryEntry
-	registryError       string
-	pluginName          string
-	pluginVersion       string
-	resolvedEntry       *domain.PluginRegistryEntry
+	availablePlugins     []domain.PluginRegistryEntry
+	registryError        string
+	pluginName           string
+	pluginVersion        string
+	resolvedEntry        *domain.PluginRegistryEntry
 	resolvedVersionEntry *domain.PluginVersionEntry
-	pluginConfigFields  []string
-	configFieldIdx      int
-	configFieldValue    string
-	pluginConfigValues  map[string]string
-	newPluginEntity     *config_domain.PluginEntity
+	pluginConfigFields   []string
+	configFieldIdx       int
+	configFieldValue     string
+	pluginConfigValues   map[string]string
+	newPluginEntity      *config_domain.PluginEntity
 
 	// Context selection.
 	contextName string
@@ -296,7 +296,7 @@ func (m *pluginRekeyModel) buildForm() *huh.Form {
 				huh.NewGroup(
 					huh.NewNote().
 						Title("Registry Unavailable").
-						Description(m.rs.registryError+"\n\nPress enter to go back and choose a different action.").
+						Description(m.rs.registryError + "\n\nPress enter to go back and choose a different action.").
 						Next(true).
 						NextLabel("Go Back"),
 				),
@@ -431,23 +431,32 @@ func (m *pluginRekeyModel) buildForm() *huh.Form {
 		scanReport := m.runDryScan()
 		m.rs.previews = scanReport.Previews
 		m.rs.scanErrors = scanReport.Errors
+		fmtErrHandler := func(err error) {
+			if err != nil {
+				slog.Warn("Failed to update string builder", "err", err)
+			}
+		}
 
 		// Build the summary text.
 		var sb strings.Builder
 		if len(scanReport.Previews) == 0 {
 			sb.WriteString("No encrypted files found for the selected context.")
 		} else {
-			sb.WriteString(fmt.Sprintf("Found %d file(s) that would be processed:\n\n", len(scanReport.Previews)))
+			_, fmtErr := fmt.Fprintf(&sb, "Found %d file(s) that would be processed:\n\n", len(scanReport.Previews))
+			fmtErrHandler(fmtErr)
 			for _, p := range scanReport.Previews {
 				statusMark := "✓"
 				if !p.DecodedOK {
 					statusMark = "⚠"
 				}
 				label := filepath.Base(p.Path)
-				sb.WriteString(fmt.Sprintf("  %s [%s] %s\n", statusMark, p.Category, label))
-				sb.WriteString(fmt.Sprintf("      %s\n", p.Path))
+				_, fmtErr = fmt.Fprintf(&sb, "  %s [%s] %s\n", statusMark, p.Category, label)
+				fmtErrHandler(fmtErr)
+				_, fmtErr = fmt.Fprintf(&sb, "      %s\n", p.Path)
+				fmtErrHandler(fmtErr)
 				if !p.DecodedOK {
-					sb.WriteString(fmt.Sprintf("      Error: %s\n", p.DecodeErr))
+					_, fmtErr = fmt.Fprintf(&sb, "      Error: %s\n", p.DecodeErr)
+					fmtErrHandler(fmtErr)
 				}
 				sb.WriteString("\n")
 			}
@@ -455,7 +464,8 @@ func (m *pluginRekeyModel) buildForm() *huh.Form {
 		if len(scanReport.Errors) > 0 {
 			sb.WriteString("Scan errors:\n")
 			for _, e := range scanReport.Errors {
-				sb.WriteString(fmt.Sprintf("  • %s\n", e))
+				_, fmtErr := fmt.Fprintf(&sb, "  • %s\n", e)
+				fmtErrHandler(fmtErr)
 			}
 		}
 		return huh.NewForm(

@@ -133,11 +133,19 @@ func (m *Migrator) Rekey(opts RekeyOptions) (RekeyReport, error) {
 	if !opts.NoBackup {
 		if opts.BackupDir == "" {
 			timestamp := time.Now().Format("20060102-150405")
-			dir, err := os.MkdirTemp("", fmt.Sprintf("gdg-rekey-backup-%s-*", timestamp))
+			cwd, err := os.Getwd()
 			if err != nil {
+				return report, fmt.Errorf("get working directory for backup: %w", err)
+			}
+			dir := filepath.Join(cwd, fmt.Sprintf("gdg-rekey-backup-%s", timestamp))
+			if err := os.MkdirAll(dir, 0o750); err != nil {
 				return report, fmt.Errorf("create backup directory: %w", err)
 			}
 			opts.BackupDir = dir
+		} else {
+			if err := os.MkdirAll(opts.BackupDir, 0o750); err != nil {
+				return report, fmt.Errorf("create backup directory: %w", err)
+			}
 		}
 		report.BackupDir = opts.BackupDir
 	}

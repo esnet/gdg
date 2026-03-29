@@ -4,12 +4,27 @@
 package config
 
 import (
+	"fmt"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+//common tools
+
+// testRegexMatch compiles regex and tests whether value matches.
+// Returns (matched, nil) on success, or (false, error) when the regex is invalid.
+func testRegexMatch(regex, value string) (bool, error) {
+	p, err := regexp.Compile(regex)
+	if err != nil {
+		return false, fmt.Errorf("invalid regex %q: %w", regex, err)
+	}
+	return p.MatchString(strings.TrimSpace(value)), nil
+}
 
 // ── looksLikeRegex ────────────────────────────────────────────────────────────
 

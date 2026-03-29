@@ -102,16 +102,6 @@ func validateCredentialRule(field, regex string) (*config_domain.MatchingRule, e
 	return validateFilter(field, regex, false)
 }
 
-// testRegexMatch compiles regex and tests whether value matches.
-// Returns (matched, nil) on success, or (false, error) when the regex is invalid.
-func testRegexMatch(regex, value string) (bool, error) {
-	p, err := regexp.Compile(regex)
-	if err != nil {
-		return false, fmt.Errorf("invalid regex %q: %w", regex, err)
-	}
-	return p.MatchString(strings.TrimSpace(value)), nil
-}
-
 // validateSecureDataFile checks that a secure data filename is non-blank and
 // is not the reserved name "default.yaml".
 func validateSecureDataFile(s string) error {
