@@ -12,7 +12,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 )
 
 const (
@@ -143,7 +143,7 @@ func NewCustomS3Config(app *config_domain.GDGAppConfiguration) {
 
 	// Initialise the cipher encoder — mirrors CreateNewContext.
 	// If no plugin is configured, NoOpEncoder passes values through unchanged.
-	var encoder ports.CipherEncoder
+	var encoder outbound.CipherEncoder
 	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
 		var encErr error
 		encoder, encErr = cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)

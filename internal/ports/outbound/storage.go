@@ -1,4 +1,4 @@
-package ports
+package outbound
 
 // TODO: pull all the cloud based interaction into a Plugin System
 type Storage interface {

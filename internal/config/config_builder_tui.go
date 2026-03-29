@@ -8,7 +8,7 @@ import (
 	"charm.land/huh/v2"
 	"charm.land/lipgloss/v2"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"gopkg.in/yaml.v3"
 )
 
@@ -78,7 +78,7 @@ type pendingCredFile struct {
 type builderState struct {
 	contextName string
 	app         *config_domain.GDGAppConfiguration
-	encoder     ports.CipherEncoder
+	encoder     outbound.CipherEncoder
 
 	// Config being assembled
 	config *config_domain.GrafanaConfig
@@ -185,7 +185,7 @@ type configBuilderModel struct {
 func newConfigBuilderModel(
 	app *config_domain.GDGAppConfiguration,
 	name string,
-	encoder ports.CipherEncoder,
+	encoder outbound.CipherEncoder,
 ) configBuilderModel {
 	bs := &builderState{
 		contextName: name,

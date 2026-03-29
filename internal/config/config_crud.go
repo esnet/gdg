@@ -18,7 +18,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	resourceTypes "github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/encode"
 	"github.com/esnet/gdg/pkg/tools"
 	"gopkg.in/yaml.v3"
@@ -178,7 +178,7 @@ func summariseFilters(filters []config_domain.MatchingRule) string {
 // configure a new Grafana context. On successful completion it writes secure
 // files, updates the context map, and saves the config to disk.
 func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
-	var encoder ports.CipherEncoder
+	var encoder outbound.CipherEncoder
 	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
 		var encErr error
 		encoder, encErr = cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)

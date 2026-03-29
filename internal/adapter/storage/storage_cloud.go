@@ -16,7 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	transport "github.com/aws/smithy-go/endpoints"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/s3blob"
 )
@@ -124,7 +124,7 @@ func (s *CloudStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 // NewCloudStorage creates a CloudStorage instance using context‑provided config.
 // It validates context, parses app data, supports custom S3 endpoints or native cloud URLs,
 // initializes the bucket (creating it if requested), and returns a configured Storage.
-func NewCloudStorage(c context.Context, encoder ports.CipherEncoder) (ports.Storage, error) {
+func NewCloudStorage(c context.Context, encoder outbound.CipherEncoder) (outbound.Storage, error) {
 	var (
 		err       error
 		bucketObj *blob.Bucket

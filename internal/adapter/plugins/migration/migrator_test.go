@@ -15,7 +15,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/matryer/is"
 	"gopkg.in/yaml.v3"
 )
@@ -77,7 +77,7 @@ func (m *mockStorage) ReadFile(filename string) ([]byte, error) {
 }
 
 // Ensure mockStorage satisfies the interface.
-var _ ports.Storage = (*mockStorage)(nil)
+var _ outbound.Storage = (*mockStorage)(nil)
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -96,7 +96,8 @@ func newGrafanaConfig(outputPath string) *config_domain.GrafanaConfig {
 func contactsPath(t *testing.T, outputPath string) string {
 	t.Helper()
 	cfg := newGrafanaConfig(outputPath)
-	return resources.BuildResourcePath(cfg, "contacts", domain.AlertingResource, false, false)
+	r := resources.NewHelpers()
+	return r.BuildResourcePath(cfg, "contacts", domain.AlertingResource, false, false)
 }
 
 // writeFile writes data to path, creating all parent directories.
@@ -128,12 +129,7 @@ func TestRekeyContactPoints_Success(t *testing.T) {
 	cfg := newGrafanaConfig(tmp)
 	stor := storage.NewLocalStorage(context.Background())
 
-	m := migration.Migrator{
-		OldEncoder:  oldEnc,
-		NewEncoder:  newEnc,
-		GrafanaConf: cfg,
-		Storage:     stor,
-	}
+	m := migration.NewMigrator(oldEnc, newEnc, cfg, stor, resources.NewHelpers())
 	report, err := m.Rekey(migration.RekeyOptions{NoBackup: true})
 	is.NoErr(err)
 	is.Equal(len(report.Errors), 0)

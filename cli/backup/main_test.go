@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/cli/domain"
-	"github.com/esnet/gdg/internal/ports/mocks"
+	"github.com/esnet/gdg/internal/ports/outbound/mocks"
 
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 )

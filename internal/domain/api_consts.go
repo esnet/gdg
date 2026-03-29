@@ -1,9 +1,13 @@
 package domain
 
 type apiConsts struct {
-	DefaultFolderName string
+	DefaultFolderName   string
+	SearchTypeDashboard string
+	SearchTypeFolder    string
 }
 
 var ApiConsts = apiConsts{
-	DefaultFolderName: "General",
+	DefaultFolderName:   "General",
+	SearchTypeDashboard: "dash-db",
+	SearchTypeFolder:    "dash-folder",
 }

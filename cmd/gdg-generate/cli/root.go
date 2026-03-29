@@ -9,7 +9,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/templating"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/version"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +18,7 @@ var (
 	cfgFile        string
 	tplCfgFile     string
 	templateConfig *config_domain.TemplatingConfig
-	template       ports.Templating
+	template       outbound.Templating
 	rootCmd        = &cobra.Command{
 		Use:   "gdg-generate",
 		Short: "Generates dashboard templates for use with GDG given a valid configuration",

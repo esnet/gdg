@@ -9,10 +9,11 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 )
 
@@ -55,8 +56,8 @@ func SetPrefix(prefix string) CloudTestOpt {
 
 // SetupCloudFunctionOpt starts a S3 container, configures cloud storage for tests,
 // and returns context, cancel func, Grafana service client, and error.
-func SetupCloudFunctionOpt(cfgObj *config_domain.GDGAppConfiguration, encoder ports.CipherEncoder, opts ...CloudTestOpt) (context.Context, context.CancelFunc, ports.GrafanaService, ports.Storage, error) {
-	errorFunc := func(err error) (context.Context, context.CancelFunc, ports.GrafanaService, ports.Storage, error) {
+func SetupCloudFunctionOpt(cfgObj *config_domain.GDGAppConfiguration, encoder outbound.CipherEncoder, opts ...CloudTestOpt) (context.Context, context.CancelFunc, outbound.GrafanaService, outbound.Storage, error) {
+	errorFunc := func(err error) (context.Context, context.CancelFunc, outbound.GrafanaService, outbound.Storage, error) {
 		return nil, nil, nil, nil, err
 	}
 	_ = os.Setenv(storage.InitBucket, "true")
@@ -97,7 +98,7 @@ func SetupCloudFunctionOpt(cfgObj *config_domain.GDGAppConfiguration, encoder po
 		log.Fatalf("Could not instantiate cloud storage for type: %s", m[storage.CloudType])
 	}
 
-	apiClient := api.NewDashNGo(cfgObj, encoder, s, extended.NewExtendedApi(cfgObj))
+	apiClient := api.NewDashNGo(cfgObj, encoder, s, extended.NewExtendedApi(cfgObj), resources.NewHelpers())
 
 	return ctx, cancel, apiClient, s, nil
 }

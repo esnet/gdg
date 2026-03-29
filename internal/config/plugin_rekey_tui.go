@@ -12,6 +12,8 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/huh/v2"
 	"charm.land/lipgloss/v2"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
+	"github.com/esnet/gdg/internal/ports/outbound"
 
 	"github.com/esnet/gdg/internal/adapter/plugins/migration"
 	"github.com/esnet/gdg/internal/adapter/plugins/registry"
@@ -20,7 +22,6 @@ import (
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
 )
 
 // ── Rekey TUI phases ──────────────────────────────────────────────────────────
@@ -72,7 +73,7 @@ func (p rekeyPhase) sectionName() string {
 type rekeyState struct {
 	app        *config_domain.GDGAppConfiguration
 	regClient  *registry.Client
-	oldEncoder ports.CipherEncoder
+	oldEncoder outbound.CipherEncoder
 
 	// Action chosen by the user.
 	action string // "switch" | "disable" | "cancel"
@@ -560,7 +561,7 @@ func (m *pluginRekeyModel) runDryScan() migration.RekeyReport {
 		slog.Warn("rekey dry-run: could not build local storage", "err", err)
 		return migration.RekeyReport{}
 	}
-	scanner := migration.NewMigrator(m.rs.oldEncoder, noop.NoOpEncoder{}, grafanaConf, stor)
+	scanner := migration.NewMigrator(m.rs.oldEncoder, noop.NoOpEncoder{}, grafanaConf, stor, resources.NewHelpers())
 	report, _ := scanner.Rekey(migration.RekeyOptions{
 		DryRun:                true,
 		NoBackup:              true,
@@ -764,7 +765,7 @@ func currentPluginDescription(app *config_domain.GDGAppConfiguration) string {
 // nil to skip plugin selection (only "disable" will be available).
 func RunRekey(app *config_domain.GDGAppConfiguration, regClient *registry.Client) error {
 	// Build the old encoder from the current plugin config.
-	var oldEncoder ports.CipherEncoder = noop.NoOpEncoder{}
+	var oldEncoder outbound.CipherEncoder = noop.NoOpEncoder{}
 	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
 		enc, encErr := cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
 		if encErr != nil {
@@ -799,7 +800,7 @@ func RunRekey(app *config_domain.GDGAppConfiguration, regClient *registry.Client
 	}
 
 	// Build the new encoder.
-	var newEncoder ports.CipherEncoder = noop.NoOpEncoder{}
+	var newEncoder outbound.CipherEncoder = noop.NoOpEncoder{}
 	if final.rs.action == "switch" && final.rs.newPluginEntity != nil {
 		enc, encErr := cipher.NewPluginCipherEncoder(final.rs.newPluginEntity, app.SecureConfig)
 		if encErr != nil {
@@ -818,7 +819,7 @@ func RunRekey(app *config_domain.GDGAppConfiguration, regClient *registry.Client
 	if err != nil {
 		return fmt.Errorf("build storage for context %q: %w", final.rs.contextName, err)
 	}
-	migrator := migration.NewMigrator(oldEncoder, newEncoder, grafanaConf, stor)
+	migrator := migration.NewMigrator(oldEncoder, newEncoder, grafanaConf, stor, resources.NewHelpers())
 
 	opts := migration.RekeyOptions{
 		NoBackup:              !final.rs.doBackup,

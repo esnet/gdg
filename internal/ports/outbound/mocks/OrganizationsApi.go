@@ -6,7 +6,7 @@ package mocks
 
 import (
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -159,7 +159,7 @@ func (_c *OrganizationsApi_DeleteUserFromOrg_Call) RunAndReturn(run func(orgId s
 }
 
 // DownloadOrganizations provides a mock function for the type OrganizationsApi
-func (_mock *OrganizationsApi) DownloadOrganizations(filter ports.Filter) []string {
+func (_mock *OrganizationsApi) DownloadOrganizations(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -167,7 +167,7 @@ func (_mock *OrganizationsApi) DownloadOrganizations(filter ports.Filter) []stri
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -183,16 +183,16 @@ type OrganizationsApi_DownloadOrganizations_Call struct {
 }
 
 // DownloadOrganizations is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *OrganizationsApi_Expecter) DownloadOrganizations(filter interface{}) *OrganizationsApi_DownloadOrganizations_Call {
 	return &OrganizationsApi_DownloadOrganizations_Call{Call: _e.mock.On("DownloadOrganizations", filter)}
 }
 
-func (_c *OrganizationsApi_DownloadOrganizations_Call) Run(run func(filter ports.Filter)) *OrganizationsApi_DownloadOrganizations_Call {
+func (_c *OrganizationsApi_DownloadOrganizations_Call) Run(run func(filter outbound.Filter)) *OrganizationsApi_DownloadOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -206,7 +206,7 @@ func (_c *OrganizationsApi_DownloadOrganizations_Call) Return(strings []string) 
 	return _c
 }
 
-func (_c *OrganizationsApi_DownloadOrganizations_Call) RunAndReturn(run func(filter ports.Filter) []string) *OrganizationsApi_DownloadOrganizations_Call {
+func (_c *OrganizationsApi_DownloadOrganizations_Call) RunAndReturn(run func(filter outbound.Filter) []string) *OrganizationsApi_DownloadOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -445,7 +445,7 @@ func (_c *OrganizationsApi_ListOrgUsers_Call) RunAndReturn(run func(orgId int64)
 }
 
 // ListOrganizations provides a mock function for the type OrganizationsApi
-func (_mock *OrganizationsApi) ListOrganizations(filter ports.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
+func (_mock *OrganizationsApi) ListOrganizations(filter outbound.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
 	ret := _mock.Called(filter, withPreferences)
 
 	if len(ret) == 0 {
@@ -453,7 +453,7 @@ func (_mock *OrganizationsApi) ListOrganizations(filter ports.Filter, withPrefer
 	}
 
 	var r0 []*domain.OrgsDTOWithPreferences
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter, bool) []*domain.OrgsDTOWithPreferences); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter, bool) []*domain.OrgsDTOWithPreferences); ok {
 		r0 = returnFunc(filter, withPreferences)
 	} else {
 		if ret.Get(0) != nil {
@@ -469,17 +469,17 @@ type OrganizationsApi_ListOrganizations_Call struct {
 }
 
 // ListOrganizations is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 //   - withPreferences bool
 func (_e *OrganizationsApi_Expecter) ListOrganizations(filter interface{}, withPreferences interface{}) *OrganizationsApi_ListOrganizations_Call {
 	return &OrganizationsApi_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter, withPreferences)}
 }
 
-func (_c *OrganizationsApi_ListOrganizations_Call) Run(run func(filter ports.Filter, withPreferences bool)) *OrganizationsApi_ListOrganizations_Call {
+func (_c *OrganizationsApi_ListOrganizations_Call) Run(run func(filter outbound.Filter, withPreferences bool)) *OrganizationsApi_ListOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		var arg1 bool
 		if args[1] != nil {
@@ -498,7 +498,7 @@ func (_c *OrganizationsApi_ListOrganizations_Call) Return(orgsDTOWithPreferences
 	return _c
 }
 
-func (_c *OrganizationsApi_ListOrganizations_Call) RunAndReturn(run func(filter ports.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences) *OrganizationsApi_ListOrganizations_Call {
+func (_c *OrganizationsApi_ListOrganizations_Call) RunAndReturn(run func(filter outbound.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences) *OrganizationsApi_ListOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -787,7 +787,7 @@ func (_c *OrganizationsApi_UploadOrgPreferences_Call) RunAndReturn(run func(orgN
 }
 
 // UploadOrganizations provides a mock function for the type OrganizationsApi
-func (_mock *OrganizationsApi) UploadOrganizations(filter ports.Filter) []string {
+func (_mock *OrganizationsApi) UploadOrganizations(filter outbound.Filter) []string {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -795,7 +795,7 @@ func (_mock *OrganizationsApi) UploadOrganizations(filter ports.Filter) []string
 	}
 
 	var r0 []string
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -811,16 +811,16 @@ type OrganizationsApi_UploadOrganizations_Call struct {
 }
 
 // UploadOrganizations is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *OrganizationsApi_Expecter) UploadOrganizations(filter interface{}) *OrganizationsApi_UploadOrganizations_Call {
 	return &OrganizationsApi_UploadOrganizations_Call{Call: _e.mock.On("UploadOrganizations", filter)}
 }
 
-func (_c *OrganizationsApi_UploadOrganizations_Call) Run(run func(filter ports.Filter)) *OrganizationsApi_UploadOrganizations_Call {
+func (_c *OrganizationsApi_UploadOrganizations_Call) Run(run func(filter outbound.Filter)) *OrganizationsApi_UploadOrganizations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -834,7 +834,7 @@ func (_c *OrganizationsApi_UploadOrganizations_Call) Return(strings []string) *O
 	return _c
 }
 
-func (_c *OrganizationsApi_UploadOrganizations_Call) RunAndReturn(run func(filter ports.Filter) []string) *OrganizationsApi_UploadOrganizations_Call {
+func (_c *OrganizationsApi_UploadOrganizations_Call) RunAndReturn(run func(filter outbound.Filter) []string) *OrganizationsApi_UploadOrganizations_Call {
 	_c.Call.Return(run)
 	return _c
 }

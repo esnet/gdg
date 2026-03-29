@@ -9,9 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/grafana/grafana-openapi-client-go/client/access_control"
 
 	"github.com/gosimple/slug"
@@ -28,7 +27,7 @@ const (
 )
 
 // ListConnectionPermissions lists all connection permission matching the given filter
-func (s *DashNGoImpl) ListConnectionPermissions(filter ports.Filter) []domain.ConnectionPermissionItem {
+func (s *DashNGoImpl) ListConnectionPermissions(filter outbound.Filter) []domain.ConnectionPermissionItem {
 	if !s.IsEnterprise() {
 		log.Fatal("Requires Enterprise to be enabled.  Please check your GDG configuration and try again")
 	}
@@ -56,7 +55,7 @@ func (s *DashNGoImpl) ListConnectionPermissions(filter ports.Filter) []domain.Co
 }
 
 // DownloadConnectionPermissions download permissions to local file system
-func (s *DashNGoImpl) DownloadConnectionPermissions(filter ports.Filter) []string {
+func (s *DashNGoImpl) DownloadConnectionPermissions(filter outbound.Filter) []string {
 	slog.Info("Downloading connection permissions")
 	var (
 		dsPacked  []byte
@@ -69,7 +68,7 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter ports.Filter) []strin
 			slog.Error("unable to marshall json ", "err", err.Error(), "connectionName", connection.Connection.Name)
 			continue
 		}
-		dsPath := resources.BuildResourcePath(s.grafanaConf, slug.Make(connection.Connection.Name), domain.ConnectionPermissionResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := s.resources.BuildResourcePath(s.grafanaConf, slug.Make(connection.Connection.Name), domain.ConnectionPermissionResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(connection.Connection.Name), "error", err.Error())
 		} else {
@@ -80,7 +79,7 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter ports.Filter) []strin
 }
 
 // UploadConnectionPermissions upload connection permissions
-func (s *DashNGoImpl) UploadConnectionPermissions(filter ports.Filter) []string {
+func (s *DashNGoImpl) UploadConnectionPermissions(filter outbound.Filter) []string {
 	if !s.IsEnterprise() {
 		log.Fatal("Requires Enterprise to be enabled.  Please check your GDG configuration and try again")
 	}
@@ -153,7 +152,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter ports.Filter) []string 
 }
 
 // DeleteAllConnectionPermissions clear all non-default permissions from all connections
-func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter ports.Filter) []string {
+func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter outbound.Filter) []string {
 	dataSources := make([]string, 0)
 	connectionPermissions := s.ListConnectionPermissions(filter)
 	for _, conn := range connectionPermissions {

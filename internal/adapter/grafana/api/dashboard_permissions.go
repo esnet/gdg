@@ -7,9 +7,8 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
 
@@ -17,7 +16,7 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-func (s *DashNGoImpl) ListDashboardPermissions(filterReq ports.Filter) ([]domain.DashboardAndPermissions, error) {
+func (s *DashNGoImpl) ListDashboardPermissions(filterReq outbound.Filter) ([]domain.DashboardAndPermissions, error) {
 	validateDashboardEnterpriseSupport(s)
 	dashboards := s.ListDashboards(filterReq)
 	var result []domain.DashboardAndPermissions
@@ -38,7 +37,7 @@ func (s *DashNGoImpl) ListDashboardPermissions(filterReq ports.Filter) ([]domain
 	return result, nil
 }
 
-func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq ports.Filter) ([]string, error) {
+func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq outbound.Filter) ([]string, error) {
 	var (
 		dsPacked  []byte
 		err       error
@@ -59,7 +58,7 @@ func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq ports.Filter) ([]st
 			continue
 		}
 
-		dsPath := fmt.Sprintf("%s/%s.json", resources.BuildResourceFolder(s.grafanaConf, link.Dashboard.NestedPath, domain.DashboardPermissionsResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(link.Dashboard.Title))
+		dsPath := fmt.Sprintf("%s/%s.json", s.resources.BuildResourceFolder(s.grafanaConf, link.Dashboard.NestedPath, domain.DashboardPermissionsResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(link.Dashboard.Title))
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(link.Dashboard.Title), "error", err.Error())
 		} else {
@@ -76,7 +75,7 @@ func validateDashboardEnterpriseSupport(s *DashNGoImpl) {
 	}
 }
 
-func (s *DashNGoImpl) UploadDashboardPermissions(filterReq ports.Filter) ([]string, error) {
+func (s *DashNGoImpl) UploadDashboardPermissions(filterReq outbound.Filter) ([]string, error) {
 	validateDashboardEnterpriseSupport(s)
 	var (
 		rawFile   []byte
@@ -120,7 +119,7 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq ports.Filter) ([]stri
 		}
 
 		// Extract Folder Name based on path
-		folderName, foldErr := getFolderFromResourcePath(s.grafanaConf, file, domain.DashboardPermissionsResource, s.storage.GetPrefix(), orgName)
+		folderName, foldErr := s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.DashboardPermissionsResource, s.storage.GetPrefix(), orgName)
 		if foldErr != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default", "err", foldErr)
 			folderName = domain.ApiConsts.DefaultFolderName
@@ -160,7 +159,7 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq ports.Filter) ([]stri
 	return dataFiles, nil
 }
 
-func (s *DashNGoImpl) ClearDashboardPermissions(filterReq ports.Filter) error {
+func (s *DashNGoImpl) ClearDashboardPermissions(filterReq outbound.Filter) error {
 	validateDashboardEnterpriseSupport(s)
 	boardLinks, err := s.ListDashboardPermissions(filterReq)
 	if err != nil {

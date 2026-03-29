@@ -6,7 +6,7 @@ package mocks
 
 import (
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -83,7 +83,7 @@ func (_c *AlertingApi_ClearAlertNotifications_Call) RunAndReturn(run func() erro
 }
 
 // ClearAlertRules provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) ClearAlertRules(filter ports.Filter) ([]string, error) {
+func (_mock *AlertingApi) ClearAlertRules(filter outbound.Filter) ([]string, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -92,17 +92,17 @@ func (_mock *AlertingApi) ClearAlertRules(filter ports.Filter) ([]string, error)
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -116,16 +116,16 @@ type AlertingApi_ClearAlertRules_Call struct {
 }
 
 // ClearAlertRules is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *AlertingApi_Expecter) ClearAlertRules(filter interface{}) *AlertingApi_ClearAlertRules_Call {
 	return &AlertingApi_ClearAlertRules_Call{Call: _e.mock.On("ClearAlertRules", filter)}
 }
 
-func (_c *AlertingApi_ClearAlertRules_Call) Run(run func(filter ports.Filter)) *AlertingApi_ClearAlertRules_Call {
+func (_c *AlertingApi_ClearAlertRules_Call) Run(run func(filter outbound.Filter)) *AlertingApi_ClearAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -139,7 +139,7 @@ func (_c *AlertingApi_ClearAlertRules_Call) Return(strings []string, err error) 
 	return _c
 }
 
-func (_c *AlertingApi_ClearAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]string, error)) *AlertingApi_ClearAlertRules_Call {
+func (_c *AlertingApi_ClearAlertRules_Call) RunAndReturn(run func(filter outbound.Filter) ([]string, error)) *AlertingApi_ClearAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -352,7 +352,7 @@ func (_c *AlertingApi_DownloadAlertNotifications_Call) RunAndReturn(run func() (
 }
 
 // DownloadAlertRules provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) DownloadAlertRules(filter ports.Filter) ([]string, error) {
+func (_mock *AlertingApi) DownloadAlertRules(filter outbound.Filter) ([]string, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -361,17 +361,17 @@ func (_mock *AlertingApi) DownloadAlertRules(filter ports.Filter) ([]string, err
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -385,16 +385,16 @@ type AlertingApi_DownloadAlertRules_Call struct {
 }
 
 // DownloadAlertRules is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *AlertingApi_Expecter) DownloadAlertRules(filter interface{}) *AlertingApi_DownloadAlertRules_Call {
 	return &AlertingApi_DownloadAlertRules_Call{Call: _e.mock.On("DownloadAlertRules", filter)}
 }
 
-func (_c *AlertingApi_DownloadAlertRules_Call) Run(run func(filter ports.Filter)) *AlertingApi_DownloadAlertRules_Call {
+func (_c *AlertingApi_DownloadAlertRules_Call) Run(run func(filter outbound.Filter)) *AlertingApi_DownloadAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -408,7 +408,7 @@ func (_c *AlertingApi_DownloadAlertRules_Call) Return(strings []string, err erro
 	return _c
 }
 
-func (_c *AlertingApi_DownloadAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]string, error)) *AlertingApi_DownloadAlertRules_Call {
+func (_c *AlertingApi_DownloadAlertRules_Call) RunAndReturn(run func(filter outbound.Filter) ([]string, error)) *AlertingApi_DownloadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -628,7 +628,7 @@ func (_c *AlertingApi_ListAlertNotifications_Call) RunAndReturn(run func() (*mod
 }
 
 // ListAlertRules provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+func (_mock *AlertingApi) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -637,17 +637,17 @@ func (_mock *AlertingApi) ListAlertRules(filter ports.Filter) ([]*domain.AlertRu
 
 	var r0 []*domain.AlertRuleWithNestedFolder
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.AlertRuleWithNestedFolder); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.AlertRuleWithNestedFolder); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -661,16 +661,16 @@ type AlertingApi_ListAlertRules_Call struct {
 }
 
 // ListAlertRules is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *AlertingApi_Expecter) ListAlertRules(filter interface{}) *AlertingApi_ListAlertRules_Call {
 	return &AlertingApi_ListAlertRules_Call{Call: _e.mock.On("ListAlertRules", filter)}
 }
 
-func (_c *AlertingApi_ListAlertRules_Call) Run(run func(filter ports.Filter)) *AlertingApi_ListAlertRules_Call {
+func (_c *AlertingApi_ListAlertRules_Call) Run(run func(filter outbound.Filter)) *AlertingApi_ListAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -684,7 +684,7 @@ func (_c *AlertingApi_ListAlertRules_Call) Return(alertRuleWithNestedFolders []*
 	return _c
 }
 
-func (_c *AlertingApi_ListAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *AlertingApi_ListAlertRules_Call {
+func (_c *AlertingApi_ListAlertRules_Call) RunAndReturn(run func(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *AlertingApi_ListAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -910,7 +910,7 @@ func (_c *AlertingApi_UploadAlertNotifications_Call) RunAndReturn(run func() (*m
 }
 
 // UploadAlertRules provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) UploadAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+func (_mock *AlertingApi) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -919,17 +919,17 @@ func (_mock *AlertingApi) UploadAlertRules(filter ports.Filter) ([]*domain.Alert
 
 	var r0 []*domain.AlertRuleWithNestedFolder
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*domain.AlertRuleWithNestedFolder); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.AlertRuleWithNestedFolder); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.AlertRuleWithNestedFolder)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -943,16 +943,16 @@ type AlertingApi_UploadAlertRules_Call struct {
 }
 
 // UploadAlertRules is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *AlertingApi_Expecter) UploadAlertRules(filter interface{}) *AlertingApi_UploadAlertRules_Call {
 	return &AlertingApi_UploadAlertRules_Call{Call: _e.mock.On("UploadAlertRules", filter)}
 }
 
-func (_c *AlertingApi_UploadAlertRules_Call) Run(run func(filter ports.Filter)) *AlertingApi_UploadAlertRules_Call {
+func (_c *AlertingApi_UploadAlertRules_Call) Run(run func(filter outbound.Filter)) *AlertingApi_UploadAlertRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -966,7 +966,7 @@ func (_c *AlertingApi_UploadAlertRules_Call) Return(alertRuleWithNestedFolders [
 	return _c
 }
 
-func (_c *AlertingApi_UploadAlertRules_Call) RunAndReturn(run func(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *AlertingApi_UploadAlertRules_Call {
+func (_c *AlertingApi_UploadAlertRules_Call) RunAndReturn(run func(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error)) *AlertingApi_UploadAlertRules_Call {
 	_c.Call.Return(run)
 	return _c
 }

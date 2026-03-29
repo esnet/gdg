@@ -10,7 +10,7 @@ import (
 	"github.com/esnet/gdg/cli"
 	"github.com/esnet/gdg/cli/domain"
 	gdgdomain "github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports/mocks"
+	"github.com/esnet/gdg/internal/ports/outbound/mocks"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/matryer/is"
 )
@@ -40,8 +40,8 @@ var registryFixture = []gdgdomain.PluginRegistryEntry{
 	},
 	{
 		// Non-cipher entry — must be filtered out of the list output.
-		Name:    "future-tool",
-		Type:    "future-type",
+		Name:     "future-tool",
+		Type:     "future-type",
 		Versions: []gdgdomain.PluginVersionEntry{{Version: "1.0.0"}},
 	},
 }

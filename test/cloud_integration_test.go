@@ -9,7 +9,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
@@ -80,7 +80,7 @@ func TestDashboardCloudCRUD(t *testing.T) {
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	var (
 		err error
-		s   ports.Storage
+		s   outbound.Storage
 	)
 	cfg := config.NewConfig(common.DefaultTestConfig)
 	var r *test_tooling.InitContainerResult
@@ -214,7 +214,7 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 			continue
 		}
 		t.Log("Running test", tc.name)
-		var storageSvc ports.Storage
+		var storageSvc outbound.Storage
 		slog.Warn("Running testcase", "name", tc.name)
 		if tc.useEnv {
 			os.Setenv("AWS_ACCESS_KEY", "test")

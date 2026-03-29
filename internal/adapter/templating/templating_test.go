@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/pkg/test_tooling/path"
 
 	"github.com/esnet/gdg/internal/config"
@@ -33,7 +33,7 @@ func TestGenerate(t *testing.T) {
 		os.Remove(generatedFiles[0])
 		os.Remove(generatedFiles[1])
 	}()
-
+	resourceHelper := resources.NewHelpers()
 	// Obtain first Config and validate output.
 	cfg := config.InitTemplateConfig(common.DefaultTemplateConfig)
 	templateCfg := cfg.Entities.Dashboards[0].DashboardEntities[0]
@@ -42,11 +42,11 @@ func TestGenerate(t *testing.T) {
 	parser := gjson.ParseBytes(rawData)
 	val := parser.Get("annotations.list.0.hashKey")
 	assert.True(val.Exists())
-	expected := api.GetSlug(templateCfg.TemplateData["title"].(string))
+	expected := resourceHelper.GetSlug(templateCfg.TemplateData["title"].(string))
 	val = parser.Get("annotations.list.0.datasource")
 	expected = "elasticsearch"
 	assert.Equal(val.String(), expected)
-	expected = api.GetSlug(templateCfg.TemplateData["title"].(string))
+	expected = resourceHelper.GetSlug(templateCfg.TemplateData["title"].(string))
 	valArray := parser.Get("panels.0.link_text").Array()
 	val = parser.Get("panels.0.link_url.0")
 	lightSources := templateCfg.TemplateData["lightsources"].([]any)

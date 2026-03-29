@@ -5,7 +5,7 @@
 package mocks
 
 import (
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -38,7 +38,7 @@ func (_m *TeamsApi) EXPECT() *TeamsApi_Expecter {
 }
 
 // DeleteTeam provides a mock function for the type TeamsApi
-func (_mock *TeamsApi) DeleteTeam(filter ports.Filter) ([]*models.TeamDTO, error) {
+func (_mock *TeamsApi) DeleteTeam(filter outbound.Filter) ([]*models.TeamDTO, error) {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -47,17 +47,17 @@ func (_mock *TeamsApi) DeleteTeam(filter ports.Filter) ([]*models.TeamDTO, error
 
 	var r0 []*models.TeamDTO
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) ([]*models.TeamDTO, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]*models.TeamDTO, error)); ok {
 		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) []*models.TeamDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*models.TeamDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*models.TeamDTO)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(ports.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
 		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
@@ -71,16 +71,16 @@ type TeamsApi_DeleteTeam_Call struct {
 }
 
 // DeleteTeam is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *TeamsApi_Expecter) DeleteTeam(filter interface{}) *TeamsApi_DeleteTeam_Call {
 	return &TeamsApi_DeleteTeam_Call{Call: _e.mock.On("DeleteTeam", filter)}
 }
 
-func (_c *TeamsApi_DeleteTeam_Call) Run(run func(filter ports.Filter)) *TeamsApi_DeleteTeam_Call {
+func (_c *TeamsApi_DeleteTeam_Call) Run(run func(filter outbound.Filter)) *TeamsApi_DeleteTeam_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -94,13 +94,13 @@ func (_c *TeamsApi_DeleteTeam_Call) Return(teamDTOs []*models.TeamDTO, err error
 	return _c
 }
 
-func (_c *TeamsApi_DeleteTeam_Call) RunAndReturn(run func(filter ports.Filter) ([]*models.TeamDTO, error)) *TeamsApi_DeleteTeam_Call {
+func (_c *TeamsApi_DeleteTeam_Call) RunAndReturn(run func(filter outbound.Filter) ([]*models.TeamDTO, error)) *TeamsApi_DeleteTeam_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DownloadTeams provides a mock function for the type TeamsApi
-func (_mock *TeamsApi) DownloadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (_mock *TeamsApi) DownloadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -108,7 +108,7 @@ func (_mock *TeamsApi) DownloadTeams(filter ports.Filter) map[*models.TeamDTO][]
 	}
 
 	var r0 map[*models.TeamDTO][]*models.TeamMemberDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -124,16 +124,16 @@ type TeamsApi_DownloadTeams_Call struct {
 }
 
 // DownloadTeams is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *TeamsApi_Expecter) DownloadTeams(filter interface{}) *TeamsApi_DownloadTeams_Call {
 	return &TeamsApi_DownloadTeams_Call{Call: _e.mock.On("DownloadTeams", filter)}
 }
 
-func (_c *TeamsApi_DownloadTeams_Call) Run(run func(filter ports.Filter)) *TeamsApi_DownloadTeams_Call {
+func (_c *TeamsApi_DownloadTeams_Call) Run(run func(filter outbound.Filter)) *TeamsApi_DownloadTeams_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -147,13 +147,13 @@ func (_c *TeamsApi_DownloadTeams_Call) Return(teamDTOToTeamMemberDTOs map[*model
 	return _c
 }
 
-func (_c *TeamsApi_DownloadTeams_Call) RunAndReturn(run func(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *TeamsApi_DownloadTeams_Call {
+func (_c *TeamsApi_DownloadTeams_Call) RunAndReturn(run func(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *TeamsApi_DownloadTeams_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListTeams provides a mock function for the type TeamsApi
-func (_mock *TeamsApi) ListTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (_mock *TeamsApi) ListTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -161,7 +161,7 @@ func (_mock *TeamsApi) ListTeams(filter ports.Filter) map[*models.TeamDTO][]*mod
 	}
 
 	var r0 map[*models.TeamDTO][]*models.TeamMemberDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -177,16 +177,16 @@ type TeamsApi_ListTeams_Call struct {
 }
 
 // ListTeams is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *TeamsApi_Expecter) ListTeams(filter interface{}) *TeamsApi_ListTeams_Call {
 	return &TeamsApi_ListTeams_Call{Call: _e.mock.On("ListTeams", filter)}
 }
 
-func (_c *TeamsApi_ListTeams_Call) Run(run func(filter ports.Filter)) *TeamsApi_ListTeams_Call {
+func (_c *TeamsApi_ListTeams_Call) Run(run func(filter outbound.Filter)) *TeamsApi_ListTeams_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -200,13 +200,13 @@ func (_c *TeamsApi_ListTeams_Call) Return(teamDTOToTeamMemberDTOs map[*models.Te
 	return _c
 }
 
-func (_c *TeamsApi_ListTeams_Call) RunAndReturn(run func(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *TeamsApi_ListTeams_Call {
+func (_c *TeamsApi_ListTeams_Call) RunAndReturn(run func(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *TeamsApi_ListTeams_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UploadTeams provides a mock function for the type TeamsApi
-func (_mock *TeamsApi) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (_mock *TeamsApi) UploadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
@@ -214,7 +214,7 @@ func (_mock *TeamsApi) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*m
 	}
 
 	var r0 map[*models.TeamDTO][]*models.TeamMemberDTO
-	if returnFunc, ok := ret.Get(0).(func(ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -230,16 +230,16 @@ type TeamsApi_UploadTeams_Call struct {
 }
 
 // UploadTeams is a helper method to define mock.On call
-//   - filter ports.Filter
+//   - filter outbound.Filter
 func (_e *TeamsApi_Expecter) UploadTeams(filter interface{}) *TeamsApi_UploadTeams_Call {
 	return &TeamsApi_UploadTeams_Call{Call: _e.mock.On("UploadTeams", filter)}
 }
 
-func (_c *TeamsApi_UploadTeams_Call) Run(run func(filter ports.Filter)) *TeamsApi_UploadTeams_Call {
+func (_c *TeamsApi_UploadTeams_Call) Run(run func(filter outbound.Filter)) *TeamsApi_UploadTeams_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 ports.Filter
+		var arg0 outbound.Filter
 		if args[0] != nil {
-			arg0 = args[0].(ports.Filter)
+			arg0 = args[0].(outbound.Filter)
 		}
 		run(
 			arg0,
@@ -253,7 +253,7 @@ func (_c *TeamsApi_UploadTeams_Call) Return(teamDTOToTeamMemberDTOs map[*models.
 	return _c
 }
 
-func (_c *TeamsApi_UploadTeams_Call) RunAndReturn(run func(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *TeamsApi_UploadTeams_Call {
+func (_c *TeamsApi_UploadTeams_Call) RunAndReturn(run func(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO) *TeamsApi_UploadTeams_Call {
 	_c.Call.Return(run)
 	return _c
 }

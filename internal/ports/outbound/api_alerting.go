@@ -1,4 +1,4 @@
-package ports
+package outbound
 
 import (
 	customModels "github.com/esnet/gdg/internal/domain"

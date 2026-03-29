@@ -1,4 +1,4 @@
-package ports
+package outbound
 
 // Templating defines an interface for generating and listing dashboard templates based on templating configuration.
 type Templating interface {

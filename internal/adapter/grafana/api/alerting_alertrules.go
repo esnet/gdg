@@ -7,10 +7,10 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
@@ -24,7 +24,7 @@ const (
 	fileContextKey contextKey = "file"
 )
 
-func (s *DashNGoImpl) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+func (s *DashNGoImpl) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	data, err := s.GetClient().Provisioning.GetAlertRules()
 	if err != nil {
 		return nil, err
@@ -41,8 +41,8 @@ func (s *DashNGoImpl) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWi
 		if folder, ok := folderUidMap[ptr.ValueOrDefault(item.FolderUID, "")]; ok {
 			entry.NestedPath = folder.NestedPath
 		}
-		file := getDestinationFilePath(s.grafanaConf, entry, s.isLocal(), s)
-		folderNameLocation, err := getFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		file := getDestinationFilePath(s.grafanaConf, entry, s.isLocal(), s.resources)
+		folderNameLocation, err := s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Error(fmt.Sprintf("unable to determine alert rule folder name, falling back on default, %v", err))
 			continue
@@ -58,8 +58,8 @@ func (s *DashNGoImpl) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWi
 
 // getDestinationFilePath constructs the full file path for an alert rule JSON file based on the Grafana configuration,
 // the alert rule's nested folder path, and whether the output is for local storage or should be cleared.
-func getDestinationFilePath(grafanaConf *config_domain.GrafanaConfig, entry *domain.AlertRuleWithNestedFolder, local bool, s ports.GrafanaService) string {
-	base := resources.BuildResourceFolder(grafanaConf, entry.NestedPath, domain.AlertingRulesResource, local, false)
+func getDestinationFilePath(grafanaConf *config_domain.GrafanaConfig, entry *domain.AlertRuleWithNestedFolder, local bool, s ports.Resources) string {
+	base := s.BuildResourceFolder(grafanaConf, entry.NestedPath, domain.AlertingRulesResource, local, false)
 	file := fmt.Sprintf("%s/%s.json", base, slug.Make(ptr.ValueOrDefault(entry.Title, "no-name")))
 
 	return file
@@ -73,7 +73,7 @@ func getFilterContext(file string) context.Context {
 	return ctx
 }
 
-func (s *DashNGoImpl) UploadAlertRules(filter ports.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	// TODO: once filtering in enabled we should delete any rules that we're not tracking in the folders that gdg manages
 	var (
 		success   []*domain.AlertRuleWithNestedFolder
@@ -104,7 +104,7 @@ func (s *DashNGoImpl) UploadAlertRules(filter ports.Filter) ([]*domain.AlertRule
 			continue
 		}
 
-		folderNameLocation, err := getFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		folderNameLocation, err := s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Debug("unable to determine alert rule folder name", "err", err)
 		}
@@ -158,7 +158,7 @@ func (s *DashNGoImpl) UploadAlertRules(filter ports.Filter) ([]*domain.AlertRule
 
 // Create a Folder Resolver to be invoked by AlertRules
 func (s *DashNGoImpl) alertRulesFolderResolver(ctx context.Context, folderUid string, rawEntity []byte, file string) ([]byte, error) {
-	folderNameLocation, fileLocationErr := getFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+	folderNameLocation, fileLocationErr := s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 	if fileLocationErr != nil {
 		fmt.Printf("unable to determine alert rule folder name, %v", fileLocationErr)
 	}
@@ -187,7 +187,7 @@ func (s *DashNGoImpl) alertRulesFolderResolver(ctx context.Context, folderUid st
 	return rawEntity, nil
 }
 
-func (s *DashNGoImpl) DownloadAlertRules(filter ports.Filter) ([]string, error) {
+func (s *DashNGoImpl) DownloadAlertRules(filter outbound.Filter) ([]string, error) {
 	var (
 		dsPacked []byte
 		err      error
@@ -198,7 +198,7 @@ func (s *DashNGoImpl) DownloadAlertRules(filter ports.Filter) ([]string, error) 
 	}
 	var savedFiles []string
 	for _, link := range data {
-		fileName := getDestinationFilePath(s.grafanaConf, link, s.isLocal(), s)
+		fileName := getDestinationFilePath(s.grafanaConf, link, s.isLocal(), s.resources)
 		if dsPacked, err = json.MarshalIndent(link, "", "	"); err != nil {
 			return nil, fmt.Errorf("unable to serialize data to JSON. %w", err)
 		}
@@ -211,7 +211,7 @@ func (s *DashNGoImpl) DownloadAlertRules(filter ports.Filter) ([]string, error) 
 	return savedFiles, nil
 }
 
-func (s *DashNGoImpl) ClearAlertRules(filter ports.Filter) ([]string, error) {
+func (s *DashNGoImpl) ClearAlertRules(filter outbound.Filter) ([]string, error) {
 	rules, err := s.ListAlertRules(filter)
 	if err != nil {
 		return nil, err

@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/fileblob"
 )
@@ -91,6 +91,6 @@ func (s *LocalStorage) FindAllFiles(folder string, fullPath bool) ([]string, err
 	return fileList, nil
 }
 
-func NewLocalStorage(ctx context.Context) ports.Storage {
+func NewLocalStorage(ctx context.Context) outbound.Storage {
 	return &LocalStorage{ctx: ctx}
 }

@@ -8,7 +8,7 @@ import (
 
 	"github.com/esnet/gdg/internal/config/config_domain"
 	resourceTypes "github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	extism "github.com/extism/go-sdk"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -22,7 +22,7 @@ type PluginCipherEncoder struct {
 
 // EncodeValue encodes the input byte slice using a WebAssembly plugin and returns the encoded bytes or an error.
 func (p PluginCipherEncoder) EncodeValue(b string) (string, error) {
-	exit, out, err := p.wasmExec.Call(ports.EncodeOperation, []byte(b))
+	exit, out, err := p.wasmExec.Call(outbound.EncodeOperation, []byte(b))
 	if err != nil {
 		return "", err
 	}
@@ -35,7 +35,7 @@ func (p PluginCipherEncoder) EncodeValue(b string) (string, error) {
 
 // DecodeValue decodes the input byte slice using a WebAssembly plugin and returns decoded bytes or an error.
 func (p PluginCipherEncoder) DecodeValue(b string) (string, error) {
-	exit, out, err := p.wasmExec.Call(ports.DecodeOperation, []byte(b))
+	exit, out, err := p.wasmExec.Call(outbound.DecodeOperation, []byte(b))
 	if err != nil {
 		return "", err
 	}
@@ -160,7 +160,7 @@ func (p PluginCipherEncoder) Decode(resourceType resourceTypes.ResourceType, b [
 // NewPluginCipherEncoder creates a CipherEncoder that uses a WebAssembly plugin to encode and decode values.
 // It initializes the plugin from either a file path or URL, processes configuration,
 // and returns a PluginCipherEncoder ready for use, or an error if the plugin cannot be loaded.
-func NewPluginCipherEncoder(plugCfg *config_domain.PluginEntity, secureFields map[string][]string) (ports.CipherEncoder, error) {
+func NewPluginCipherEncoder(plugCfg *config_domain.PluginEntity, secureFields map[string][]string) (outbound.CipherEncoder, error) {
 	o := &PluginCipherEncoder{
 		cfg:          plugCfg,
 		secureFields: secureFields,

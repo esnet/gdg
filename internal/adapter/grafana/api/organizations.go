@@ -13,10 +13,9 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
-	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/tools"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client"
@@ -25,7 +24,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func setupOrgReaders(filterObj ports.Filter) {
+func setupOrgReaders(filterObj outbound.Filter) {
 	err := filterObj.RegisterReader(reflect.TypeFor[models.OrgDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.OrgDTO)
 		if !ok {
@@ -67,7 +66,7 @@ func setupOrgReaders(filterObj ports.Filter) {
 	}
 }
 
-func NewOrganizationFilter(args ...string) ports.Filter {
+func NewOrganizationFilter(args ...string) outbound.Filter {
 	filterObj := v2.NewBaseFilter()
 	setupOrgReaders(filterObj)
 	if len(args) == 0 || args[0] == "" {
@@ -225,7 +224,7 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 }
 
 // ListOrganizations List all dashboards
-func (s *DashNGoImpl) ListOrganizations(filter ports.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
+func (s *DashNGoImpl) ListOrganizations(filter outbound.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
@@ -264,7 +263,7 @@ func (s *DashNGoImpl) ListOrganizations(filter ports.Filter, withPreferences boo
 }
 
 // DownloadOrganizations Download organizations
-func (s *DashNGoImpl) DownloadOrganizations(filter ports.Filter) []string {
+func (s *DashNGoImpl) DownloadOrganizations(filter outbound.Filter) []string {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations")
 		return nil
@@ -281,7 +280,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter ports.Filter) []string {
 			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Organization.Name)
 			continue
 		}
-		dsPath := resources.BuildResourcePath(s.grafanaConf, slug.Make(organisation.Organization.Name), domain.OrganizationResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := s.resources.BuildResourcePath(s.grafanaConf, slug.Make(organisation.Organization.Name), domain.OrganizationResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "organization", slug.Make(organisation.Organization.Name))
 		} else {
@@ -293,7 +292,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter ports.Filter) []string {
 }
 
 // UploadOrganizations Upload organizations to Grafana
-func (s *DashNGoImpl) UploadOrganizations(filter ports.Filter) []string {
+func (s *DashNGoImpl) UploadOrganizations(filter outbound.Filter) []string {
 	if !s.grafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot upload Organizations")
 		return nil

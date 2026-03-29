@@ -20,11 +20,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"gopkg.in/yaml.v3"
 )
 
@@ -36,25 +36,29 @@ const contactsFile = "contacts"
 type Migrator struct {
 	// OldEncoder decrypts values as they are currently stored on disk.
 	// Use noop.NoOpEncoder{} when data is currently in plaintext.
-	OldEncoder ports.CipherEncoder
+	OldEncoder outbound.CipherEncoder
 
 	// NewEncoder encrypts values for the new storage format.
 	// Use noop.NoOpEncoder{} to revert all files to plaintext.
-	NewEncoder ports.CipherEncoder
+	NewEncoder outbound.CipherEncoder
 
 	// GrafanaConf is the active context configuration, used for path resolution.
 	GrafanaConf *config_domain.GrafanaConfig
 
 	// Storage is the storage backend; contact point migration is skipped for non-local backends.
-	Storage ports.Storage
+	Storage outbound.Storage
+
+	// Resources Helper
+	Resources ports.Resources
 }
 
-func NewMigrator(oldEncoder ports.CipherEncoder, newEncoder ports.CipherEncoder, grafanaConf *config_domain.GrafanaConfig, storage ports.Storage) *Migrator {
+func NewMigrator(oldEncoder outbound.CipherEncoder, newEncoder outbound.CipherEncoder, grafanaConf *config_domain.GrafanaConfig, storage outbound.Storage, resources ports.Resources) *Migrator {
 	return &Migrator{
 		OldEncoder:  oldEncoder,
 		NewEncoder:  newEncoder,
 		GrafanaConf: grafanaConf,
 		Storage:     storage,
+		Resources:   resources,
 	}
 }
 
@@ -197,7 +201,7 @@ func (m *Migrator) rekeyContactPoints(report *RekeyReport, opts RekeyOptions, al
 		return
 	}
 
-	path := resources.BuildResourcePath(m.GrafanaConf, contactsFile, domain.AlertingResource, false, false)
+	path := m.Resources.BuildResourcePath(m.GrafanaConf, contactsFile, domain.AlertingResource, false, false)
 
 	if !isAllowed(path, allowSet) {
 		return
