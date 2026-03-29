@@ -148,7 +148,8 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfigu
 	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
 	var encoder ports.CipherEncoder
 	if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
-		encoder = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		encoder, err = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		assert.NoError(t, err, "failed to load cipher plugin")
 	} else {
 		encoder = noop.NoOpEncoder{}
 	}

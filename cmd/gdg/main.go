@@ -32,7 +32,11 @@ func main() {
 func buildGrafanaService(cfg *configDomain.GDGAppConfiguration) ports.GrafanaService {
 	var encoder ports.CipherEncoder
 	if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
-		encoder = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		var err error
+		encoder, err = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		if err != nil {
+			log.Fatalf("Failed to load cipher plugin: %v", err)
+		}
 	} else {
 		encoder = noop.NoOpEncoder{}
 	}

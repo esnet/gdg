@@ -81,7 +81,7 @@ func TestBuildFolderSourcePath(t *testing.T) {
 		OutputPath:       "test/data",
 		OrganizationName: "Your Org",
 	}
-	result := buildResourcePath(cfg, slug.Make("Some Folder"), domain.FolderResource, false, false)
+	result := BuildResourcePath(cfg, slug.Make("Some Folder"), domain.FolderResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/folders/some-folder.json", result)
 }
 
@@ -92,6 +92,6 @@ func TestBuildDataSourcePath(t *testing.T) {
 		OutputPath:       "test/data",
 		OrganizationName: "Your Org",
 	}
-	result := buildResourcePath(cfg, slug.Make("My DS"), domain.ConnectionResource, false, false)
+	result := BuildResourcePath(cfg, slug.Make("My DS"), domain.ConnectionResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/connections/my-ds.json", result)
 }
