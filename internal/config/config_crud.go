@@ -11,8 +11,8 @@ import (
 	"regexp"
 	"strings"
 
+	tea "charm.land/bubbletea/v2"
 	"charm.land/huh/v2"
-	tea "github.com/charmbracelet/bubbletea"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
@@ -200,7 +200,7 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string) {
 	}
 
 	model := newConfigBuilderModel(app, name, encoder)
-	p := tea.NewProgram(model, tea.WithAltScreen())
+	p := tea.NewProgram(model)
 	result, err := p.Run()
 	if err != nil {
 		log.Fatalf("TUI error: %v", err)

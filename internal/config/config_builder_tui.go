@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/lipgloss"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/huh/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/ports"
 	"gopkg.in/yaml.v3"
@@ -254,11 +254,11 @@ func (m configBuilderModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m configBuilderModel) View() string {
+func (m configBuilderModel) View() tea.View {
 	if m.done || m.cancelled {
-		return ""
+		return tea.NewView("")
 	}
-
+	v := tea.NewView("")
 	// ── Header ──
 	headerStyle := lipgloss.NewStyle().
 		Bold(true).
@@ -311,8 +311,9 @@ func (m configBuilderModel) View() string {
 		Width(m.width).
 		Padding(0, 2).
 		Render("ctrl+c: cancel  •  enter: submit  •  ↑/↓: navigate")
-
-	return lipgloss.JoinVertical(lipgloss.Left, header, stepInfo, body, footer)
+	v.Content = lipgloss.JoinVertical(lipgloss.Left, header, stepInfo, body, footer)
+	v.AltScreen = true
+	return v
 }
 
 // ── Layout helpers ────────────────────────────────────────────────────────────
