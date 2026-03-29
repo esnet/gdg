@@ -710,3 +710,123 @@ func (e prefixEncoder) mustEncodeValue(s string) string {
 	}
 	return v
 }
+
+// ---------------------------------------------------------------------------
+// Dry-run tests
+// ---------------------------------------------------------------------------
+
+func TestRekey_DryRun_ContactPoints_PopulatesPreviews(t *testing.T) {
+	is := is.New(t)
+	tmp := t.TempDir()
+
+	oldEnc := prefixEncoder{"OLD:"}
+	plaintext := []byte(`[{"uid":"abc","name":"test"}]`)
+	encoded, _ := oldEnc.Encode(domain.AlertingResource, plaintext)
+
+	path := contactsPath(t, tmp)
+	writeFile(t, path, encoded)
+
+	cfg := newGrafanaConfig(tmp)
+	stor := storage.NewLocalStorage(context.Background())
+
+	m := migration.Migrator{
+		OldEncoder:  oldEnc,
+		NewEncoder:  prefixEncoder{"NEW:"},
+		GrafanaConf: cfg,
+		Storage:     stor,
+	}
+	report, err := m.Rekey(migration.RekeyOptions{DryRun: true})
+	is.NoErr(err)
+
+	// DryRun must not modify the file.
+	result, _ := os.ReadFile(path)
+	is.Equal(string(result), string(encoded)) // file unchanged
+
+	// Report must contain a FilePreview for the contacts file.
+	is.Equal(len(report.ContactPointsFiles), 0) // no writes
+	is.Equal(len(report.Previews), 1)
+	is.Equal(report.Previews[0].Category, "contact_points")
+	is.Equal(report.Previews[0].Path, path)
+	is.True(report.Previews[0].DecodedOK)
+}
+
+func TestRekey_DryRun_SecureData_PopulatesPreviews(t *testing.T) {
+	is := is.New(t)
+	tmp := t.TempDir()
+
+	oldEnc := prefixEncoder{"OLD:"}
+	secureDir := filepath.Join(tmp, "secure")
+	is.NoErr(os.MkdirAll(secureDir, 0o750))
+
+	creds := map[string]string{"user": "OLD:alice", "pass": "OLD:secret"}
+	credRaw, _ := yaml.Marshal(creds)
+	credFile := filepath.Join(secureDir, "creds.yml")
+	writeFile(t, credFile, credRaw)
+
+	cfg := newGrafanaConfigWithRule(tmp, "creds.yml")
+	stor := storage.NewLocalStorage(context.Background())
+
+	m := migration.Migrator{
+		OldEncoder:  oldEnc,
+		NewEncoder:  prefixEncoder{"NEW:"},
+		GrafanaConf: cfg,
+		Storage:     stor,
+	}
+	report, err := m.Rekey(migration.RekeyOptions{DryRun: true})
+	is.NoErr(err)
+
+	// File must be unchanged.
+	result, _ := os.ReadFile(credFile)
+	is.Equal(string(result), string(credRaw))
+
+	// One FilePreview for the creds file.
+	is.Equal(len(report.SecureDataFiles), 0)
+	is.Equal(len(report.Previews), 1)
+	is.Equal(report.Previews[0].Category, "secure_data")
+	is.True(report.Previews[0].DecodedOK)
+	is.Equal(len(report.Previews[0].Keys), 2) // "pass" and "user"
+}
+
+func TestRekey_AllowList_RestrictsProcessing(t *testing.T) {
+	is := is.New(t)
+	tmp := t.TempDir()
+
+	oldEnc := prefixEncoder{"OLD:"}
+	newEnc := prefixEncoder{"NEW:"}
+
+	secureDir := filepath.Join(tmp, "secure")
+	is.NoErr(os.MkdirAll(secureDir, 0o750))
+
+	file1 := filepath.Join(secureDir, "creds1.yml")
+	file2 := filepath.Join(secureDir, "creds2.yml")
+	raw1, _ := yaml.Marshal(map[string]string{"key": "OLD:val1"})
+	raw2, _ := yaml.Marshal(map[string]string{"key": "OLD:val2"})
+	writeFile(t, file1, raw1)
+	writeFile(t, file2, raw2)
+
+	cfg := newGrafanaConfigWithRules(tmp, "creds1.yml", "creds2.yml")
+	stor := storage.NewLocalStorage(context.Background())
+
+	m := migration.Migrator{
+		OldEncoder:  oldEnc,
+		NewEncoder:  newEnc,
+		GrafanaConf: cfg,
+		Storage:     stor,
+	}
+	// Only allow file1.
+	report, err := m.Rekey(migration.RekeyOptions{
+		NoBackup:  true,
+		AllowList: []string{file1},
+	})
+	is.NoErr(err)
+	is.Equal(len(report.Errors), 0)
+
+	// file1 must be re-encrypted; file2 must be untouched.
+	is.Equal(len(report.SecureDataFiles), 1)
+	is.Equal(report.SecureDataFiles[0], file1)
+
+	result1, _ := os.ReadFile(file1)
+	result2, _ := os.ReadFile(file2)
+	is.True(strings.Contains(string(result1), "NEW:")) // re-encrypted
+	is.Equal(string(result2), string(raw2))            // unchanged
+}
