@@ -10,6 +10,7 @@ import (
 	"text/template"
 
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	resourceTypes "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
@@ -87,7 +88,7 @@ func (t *templateImpl) Generate(templateName string) (map[string][]string, error
 				slog.Any("data", outputEntity.TemplateData),
 			)
 			grafana.OrganizationName = outputEntity.OrganizationName
-			outputPath := api.BuildResourceFolder(t.gdgCfg, outputEntity.Folder, resourceTypes.DashboardResource, true, false)
+			outputPath := resources.BuildResourceFolder(t.gdgCfg, outputEntity.Folder, resourceTypes.DashboardResource, true, false)
 			// Merge two maps.
 			tmpl, tmplErr := template.New("").Funcs(fns).Parse(string(templateData))
 			if tmplErr != nil {

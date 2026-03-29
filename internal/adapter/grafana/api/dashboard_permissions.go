@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/common"
 	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
@@ -124,9 +123,9 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq ports.Filter) ([]stri
 		folderName, foldErr := getFolderFromResourcePath(s.grafanaConf, file, domain.DashboardPermissionsResource, s.storage.GetPrefix(), orgName)
 		if foldErr != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default", "err", foldErr)
-			folderName = common.DefaultFolderName
+			folderName = domain.ApiConsts.DefaultFolderName
 		} else if folderName == "" {
-			folderName = common.DefaultFolderName
+			folderName = domain.ApiConsts.DefaultFolderName
 		}
 		folderUidMap, err = s.baseFolderValidation(filterReq, folderName, new(""), folderUidMap, rawFile)
 		if err != nil {

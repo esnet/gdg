@@ -12,7 +12,6 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/adapter/grafana"
-	"github.com/esnet/gdg/internal/adapter/grafana/common"
 	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
@@ -150,7 +149,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter ports.Filter) []*domain.WithNes
 	for _, val := range allElements {
 		var nestedPath string
 		if val.FolderUID == "" {
-			nestedPath = common.DefaultFolderName
+			nestedPath = domain.ApiConsts.DefaultFolderName
 		} else {
 			fld, err := s.getFolderByUid(val.FolderUID)
 			if err != nil {
@@ -187,7 +186,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter ports.Filter) []string {
 			slog.Error("Unable to serialize object", "err", err, "library-element", item.Entity.Name)
 			continue
 		}
-		folderName := common.DefaultFolderName
+		folderName := domain.ApiConsts.DefaultFolderName
 
 		if val, ok := folderMap[item.Entity.FolderUID]; ok {
 			folderName = val
@@ -245,13 +244,13 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.Filter) []string {
 		folderName, err = getFolderFromResourcePath(s.grafanaConf, file, domain.LibraryElementResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
-			folderName = common.DefaultFolderName
+			folderName = domain.ApiConsts.DefaultFolderName
 		}
 		if !ignoreFilters && !filterReq.Validate(context.Background(), domain.FolderFilter, map[string]any{NestedDashFolderName: folderName}) {
 			slog.Warn("Skipping since requested file is not in a folder gdg is configured to manage", "folder", folderName, "file", file)
 			continue
 		}
-		if folderName != common.DefaultFolderName {
+		if folderName != domain.ApiConsts.DefaultFolderName {
 			Results := gjson.GetBytes(rawLibraryElement, "Entity.folderUid")
 			if Results.Exists() {
 				folderUid = Results.String()
@@ -275,10 +274,10 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq ports.Filter) []string {
 			continue
 		}
 		if folderName == "" {
-			folderName = common.DefaultFolderName
+			folderName = domain.ApiConsts.DefaultFolderName
 		}
 
-		if folderName != common.DefaultFolderName {
+		if folderName != domain.ApiConsts.DefaultFolderName {
 			if val, ok := folderUidMap[folderName]; ok {
 				folderUid = val
 			} else {

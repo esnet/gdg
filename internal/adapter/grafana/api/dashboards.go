@@ -15,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
-	"github.com/esnet/gdg/internal/adapter/grafana/common"
 	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
@@ -298,7 +297,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq ports.Filter) []*domain.NestedHit
 		validFolder = false
 		folderMatch := link.FolderTitle
 		if folderMatch == "" {
-			folderMatch = common.DefaultFolderName
+			folderMatch = domain.ApiConsts.DefaultFolderName
 		}
 		folderMatch = getNestedFolder(folderMatch, link.FolderUID, folderUidMap)
 		link.NestedPath = folderMatch
@@ -308,8 +307,8 @@ func (s *DashNGoImpl) ListDashboards(filterReq ports.Filter) []*domain.NestedHit
 			validFolder = true
 		} else if filterReq.Validate(context.Background(), domain.FolderFilter, link) /* if no global ignore and filter is set, check folder validity */ {
 			validFolder = true
-		} else if slices.Contains(s.grafanaConf.GetMonitoredFolders(false), common.DefaultFolderName) && link.FolderID == 0 {
-			link.FolderTitle = common.DefaultFolderName
+		} else if slices.Contains(s.grafanaConf.GetMonitoredFolders(false), domain.ApiConsts.DefaultFolderName) && link.FolderID == 0 {
+			link.FolderTitle = domain.ApiConsts.DefaultFolderName
 			validFolder = true
 		}
 
@@ -320,7 +319,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq ports.Filter) []*domain.NestedHit
 
 		validUid = filterReq.Validate(context.Background(), domain.DashFilter, link)
 		if link.FolderID == 0 && string(link.Type) == searchTypeDashboard {
-			link.FolderTitle = common.DefaultFolderName
+			link.FolderTitle = domain.ApiConsts.DefaultFolderName
 		}
 		// check folder
 
@@ -531,7 +530,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq ports.Filter) ([]string, error)
 		}
 
 		if folderName == "" {
-			folderName = common.DefaultFolderName
+			folderName = domain.ApiConsts.DefaultFolderName
 		}
 		folderUidMap, err = s.validateDashUploadEntity(filterReq, folderName, &folderUid, folderUidMap, rawBoard)
 		if err != nil {
@@ -574,7 +573,7 @@ func (s *DashNGoImpl) baseFolderValidation(filterReq ports.Filter, folderName st
 		return folderUidMap, errors.New("dashboard fails to pass folder filter")
 	}
 
-	if folderName == common.DefaultFolderName {
+	if folderName == domain.ApiConsts.DefaultFolderName {
 		*folderUid = ""
 	} else {
 		if val, ok := folderUidMap[folderName]; ok {

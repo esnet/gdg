@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/common"
 	"github.com/jellydator/ttlcache/v3"
 
 	v2 "github.com/esnet/gdg/internal/adapter/filters/v2"
@@ -78,7 +77,7 @@ func setupAlertRulesReaders(filterObj ports.Filter, grafanaSvc ports.GrafanaServ
 			{
 				r := gjson.GetBytes(val, "folderUID")
 				if !r.Exists() || r.IsArray() {
-					return common.DefaultFolderName, nil
+					return domain.ApiConsts.DefaultFolderName, nil
 				}
 
 				return r.String(), nil
