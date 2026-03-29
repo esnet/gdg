@@ -9,14 +9,10 @@ import (
 
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/pkg/tools"
 	"github.com/gosimple/slug"
 )
 
-const pathSeparator = string(os.PathSeparator)
-
 var (
-	DefaultFolderName   = "General"
 	searchTypeDashboard = "dash-db"
 	SearchTypeFolder    = "dash-folder"
 )
@@ -59,26 +55,4 @@ func getFolderFromResourcePath(cfg *configDomain.GrafanaConfig, filePath string,
 		return folderName, nil
 	}
 	return "", errors.New("unable to parse resource to retrieve folder name")
-}
-
-func BuildResourceFolder(cfg *configDomain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
-	if (resourceType == domain.DashboardResource || resourceType == domain.AlertingRulesResource) && folderName == "" {
-		folderName = DefaultFolderName
-	}
-	v := fmt.Sprintf("%s/%s", cfg.GetPath(resourceType, cfg.GetOrganizationName()), folderName)
-	if createDestination {
-		tools.CreateDestinationPath(cfg.GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, v)
-	}
-	return v
-}
-
-// BuildResourcePath returns the full file path for a resource within the configured output directory.
-// The path format is: <output_path>/<org_name>/<resource_type>/<folderName>.json
-// If createDestination is true, the directory is created on disk.
-func BuildResourcePath(cfg *configDomain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
-	v := fmt.Sprintf("%s%s%s.json", cfg.GetPath(resourceType, cfg.GetOrganizationName()), pathSeparator, folderName)
-	if createDestination {
-		tools.CreateDestinationPath(cfg.GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, filepath.Dir(v))
-	}
-	return v
 }

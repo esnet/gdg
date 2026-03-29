@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/ptr"
@@ -96,7 +97,7 @@ func NewTeamFilter(entries ...string) ports.Filter {
 func (s *DashNGoImpl) DownloadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
-	teamPath := BuildResourceFolder(s.grafanaConf, "", domain.TeamResource, s.isLocal(), s.GetGlobals().ClearOutput)
+	teamPath := resources.BuildResourceFolder(s.grafanaConf, "", domain.TeamResource, s.isLocal(), s.GetGlobals().ClearOutput)
 	for ndx, team := range teamListing {
 		// Teams
 		teamFileName := filepath.Join(teamPath, GetSlug(ptr.ValueOrDefault(team.Name, "")), "team.json")

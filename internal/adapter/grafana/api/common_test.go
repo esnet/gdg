@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config"
@@ -59,7 +60,7 @@ func TestUserPath(t *testing.T) {
 	cfg := &configDomain.GrafanaConfig{
 		OutputPath: "test/data",
 	}
-	userPath := BuildResourceFolder(cfg, "", domain.UserResource, false, false)
+	userPath := resources.BuildResourceFolder(cfg, "", domain.UserResource, false, false)
 	assert.Equal(t, "test/data/users/", userPath)
 }
 
@@ -70,7 +71,7 @@ func TestBuildDashboardPath(t *testing.T) {
 		OutputPath:       "test/data",
 		OrganizationName: "Your Org",
 	}
-	result := BuildResourceFolder(cfg, "General", domain.DashboardResource, false, false)
+	result := resources.BuildResourceFolder(cfg, "General", domain.DashboardResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/dashboards/General", result)
 }
 
@@ -81,7 +82,7 @@ func TestBuildFolderSourcePath(t *testing.T) {
 		OutputPath:       "test/data",
 		OrganizationName: "Your Org",
 	}
-	result := BuildResourcePath(cfg, slug.Make("Some Folder"), domain.FolderResource, false, false)
+	result := resources.BuildResourcePath(cfg, slug.Make("Some Folder"), domain.FolderResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/folders/some-folder.json", result)
 }
 
@@ -92,6 +93,6 @@ func TestBuildDataSourcePath(t *testing.T) {
 		OutputPath:       "test/data",
 		OrganizationName: "Your Org",
 	}
-	result := BuildResourcePath(cfg, slug.Make("My DS"), domain.ConnectionResource, false, false)
+	result := resources.BuildResourcePath(cfg, slug.Make("My DS"), domain.ConnectionResource, false, false)
 	assert.Equal(t, "test/data/org_your-org/connections/my-ds.json", result)
 }

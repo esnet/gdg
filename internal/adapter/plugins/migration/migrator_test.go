@@ -9,11 +9,11 @@ import (
 	"strings"
 	"testing"
 
-	grafanaapi "github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/adapter/plugins/migration"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
-	config_domain "github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/matryer/is"
@@ -61,9 +61,12 @@ func newMockStorage(name string) *mockStorage {
 	return &mockStorage{name: name, files: make(map[string][]byte)}
 }
 
-func (m *mockStorage) Name() string                                  { return m.name }
-func (m *mockStorage) GetPrefix() string                             { return "" }
-func (m *mockStorage) WriteFile(filename string, data []byte) error  { m.files[filename] = data; return nil }
+func (m *mockStorage) Name() string      { return m.name }
+func (m *mockStorage) GetPrefix() string { return "" }
+func (m *mockStorage) WriteFile(filename string, data []byte) error {
+	m.files[filename] = data
+	return nil
+}
 func (m *mockStorage) FindAllFiles(_ string, _ bool) ([]string, error) { return nil, nil }
 func (m *mockStorage) ReadFile(filename string) ([]byte, error) {
 	data, ok := m.files[filename]
@@ -93,7 +96,7 @@ func newGrafanaConfig(outputPath string) *config_domain.GrafanaConfig {
 func contactsPath(t *testing.T, outputPath string) string {
 	t.Helper()
 	cfg := newGrafanaConfig(outputPath)
-	return grafanaapi.BuildResourcePath(cfg, "contacts", domain.AlertingResource, false, false)
+	return resources.BuildResourcePath(cfg, "contacts", domain.AlertingResource, false, false)
 }
 
 // writeFile writes data to path, creating all parent directories.

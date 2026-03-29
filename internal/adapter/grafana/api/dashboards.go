@@ -15,6 +15,8 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/grafana/common"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/encode"
@@ -296,7 +298,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq ports.Filter) []*domain.NestedHit
 		validFolder = false
 		folderMatch := link.FolderTitle
 		if folderMatch == "" {
-			folderMatch = DefaultFolderName
+			folderMatch = common.DefaultFolderName
 		}
 		folderMatch = getNestedFolder(folderMatch, link.FolderUID, folderUidMap)
 		link.NestedPath = folderMatch
@@ -306,8 +308,8 @@ func (s *DashNGoImpl) ListDashboards(filterReq ports.Filter) []*domain.NestedHit
 			validFolder = true
 		} else if filterReq.Validate(context.Background(), domain.FolderFilter, link) /* if no global ignore and filter is set, check folder validity */ {
 			validFolder = true
-		} else if slices.Contains(s.grafanaConf.GetMonitoredFolders(false), DefaultFolderName) && link.FolderID == 0 {
-			link.FolderTitle = DefaultFolderName
+		} else if slices.Contains(s.grafanaConf.GetMonitoredFolders(false), common.DefaultFolderName) && link.FolderID == 0 {
+			link.FolderTitle = common.DefaultFolderName
 			validFolder = true
 		}
 
@@ -318,7 +320,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq ports.Filter) []*domain.NestedHit
 
 		validUid = filterReq.Validate(context.Background(), domain.DashFilter, link)
 		if link.FolderID == 0 && string(link.Type) == searchTypeDashboard {
-			link.FolderTitle = DefaultFolderName
+			link.FolderTitle = common.DefaultFolderName
 		}
 		// check folder
 
@@ -364,7 +366,7 @@ func (s *DashNGoImpl) DownloadDashboards(filter ports.Filter) []string {
 			continue
 		}
 
-		fileName := fmt.Sprintf("%s/%s.json", BuildResourceFolder(s.grafanaConf, link.NestedPath, domain.DashboardResource, s.isLocal(), s.GetGlobals().ClearOutput), metaData.GetPayload().Meta.Slug)
+		fileName := fmt.Sprintf("%s/%s.json", resources.BuildResourceFolder(s.grafanaConf, link.NestedPath, domain.DashboardResource, s.isLocal(), s.GetGlobals().ClearOutput), metaData.GetPayload().Meta.Slug)
 		if err = s.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
@@ -529,7 +531,7 @@ func (s *DashNGoImpl) UploadDashboards(filterReq ports.Filter) ([]string, error)
 		}
 
 		if folderName == "" {
-			folderName = DefaultFolderName
+			folderName = common.DefaultFolderName
 		}
 		folderUidMap, err = s.validateDashUploadEntity(filterReq, folderName, &folderUid, folderUidMap, rawBoard)
 		if err != nil {
@@ -572,7 +574,7 @@ func (s *DashNGoImpl) baseFolderValidation(filterReq ports.Filter, folderName st
 		return folderUidMap, errors.New("dashboard fails to pass folder filter")
 	}
 
-	if folderName == DefaultFolderName {
+	if folderName == common.DefaultFolderName {
 		*folderUid = ""
 	} else {
 		if val, ok := folderUidMap[folderName]; ok {

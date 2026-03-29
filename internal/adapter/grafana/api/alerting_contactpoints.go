@@ -6,6 +6,7 @@ import (
 	"log"
 	"log/slog"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/samber/lo"
@@ -51,7 +52,7 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 		return item.Name != emailReceiver
 	})
 
-	dsPath := BuildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
+	dsPath := resources.BuildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
 	if dsPacked, err = json.MarshalIndent(payload.ContactPoints, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
@@ -89,7 +90,7 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 		m[i.UID] = currentContacts[ndx]
 	}
 
-	fileLocation := BuildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
+	fileLocation := resources.BuildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
 	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}

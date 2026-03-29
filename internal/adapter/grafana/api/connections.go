@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	domain "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/tidwall/gjson"
@@ -139,7 +140,7 @@ func (s *DashNGoImpl) DownloadConnections(filter ports.Filter) []string {
 			continue
 		}
 
-		dsPath := BuildResourcePath(s.grafanaConf, slug.Make(ds.Name), domain.ConnectionResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := resources.BuildResourcePath(s.grafanaConf, slug.Make(ds.Name), domain.ConnectionResource, s.isLocal(), s.GetGlobals().ClearOutput)
 
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "filename", slug.Make(ds.Name), "err", err)

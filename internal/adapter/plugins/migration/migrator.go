@@ -20,9 +20,9 @@ import (
 	"strings"
 	"time"
 
-	grafanaapi "github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/adapter/storage"
-	config_domain "github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"gopkg.in/yaml.v3"
@@ -47,6 +47,15 @@ type Migrator struct {
 
 	// Storage is the storage backend; contact point migration is skipped for non-local backends.
 	Storage ports.Storage
+}
+
+func NewMigrator(oldEncoder ports.CipherEncoder, newEncoder ports.CipherEncoder, grafanaConf *config_domain.GrafanaConfig, storage ports.Storage) *Migrator {
+	return &Migrator{
+		OldEncoder:  oldEncoder,
+		NewEncoder:  newEncoder,
+		GrafanaConf: grafanaConf,
+		Storage:     storage,
+	}
 }
 
 // RekeyOptions controls what gets migrated and how.
@@ -188,7 +197,7 @@ func (m *Migrator) rekeyContactPoints(report *RekeyReport, opts RekeyOptions, al
 		return
 	}
 
-	path := grafanaapi.BuildResourcePath(m.GrafanaConf, contactsFile, domain.AlertingResource, false, false)
+	path := resources.BuildResourcePath(m.GrafanaConf, contactsFile, domain.AlertingResource, false, false)
 
 	if !isAllowed(path, allowSet) {
 		return

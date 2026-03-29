@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
@@ -58,7 +59,7 @@ func (s *DashNGoImpl) ListAlertRules(filter ports.Filter) ([]*domain.AlertRuleWi
 // getDestinationFilePath constructs the full file path for an alert rule JSON file based on the Grafana configuration,
 // the alert rule's nested folder path, and whether the output is for local storage or should be cleared.
 func getDestinationFilePath(grafanaConf *config_domain.GrafanaConfig, entry *domain.AlertRuleWithNestedFolder, local bool, s ports.GrafanaService) string {
-	base := BuildResourceFolder(grafanaConf, entry.NestedPath, domain.AlertingRulesResource, local, false)
+	base := resources.BuildResourceFolder(grafanaConf, entry.NestedPath, domain.AlertingRulesResource, local, false)
 	file := fmt.Sprintf("%s/%s.json", base, slug.Make(ptr.ValueOrDefault(entry.Title, "no-name")))
 
 	return file

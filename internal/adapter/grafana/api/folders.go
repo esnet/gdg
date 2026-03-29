@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/encode"
@@ -90,7 +91,7 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter ports.Filter) []string {
 		if fileName == "" {
 			fileName = folder.Title
 		}
-		dsPath := BuildResourcePath(s.grafanaConf, slug.Make(fileName), domain.FolderPermissionResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := resources.BuildResourcePath(s.grafanaConf, slug.Make(fileName), domain.FolderPermissionResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "filename", slug.Make(folder.Title))
 		} else {
@@ -229,7 +230,7 @@ func (s *DashNGoImpl) DownloadFolders(filter ports.Filter) []string {
 			slog.Error("Unable to serialize data to JSON", "err", err, "folderName", folder.Title)
 			continue
 		}
-		dsPath := BuildResourcePath(s.grafanaConf, folder.NestedPath, domain.FolderResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := resources.BuildResourcePath(s.grafanaConf, folder.NestedPath, domain.FolderResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file.", "err", err.Error(), "folderName", slug.Make(folder.Title))
 		} else {

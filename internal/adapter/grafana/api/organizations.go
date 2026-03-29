@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
@@ -280,7 +281,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter ports.Filter) []string {
 			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Organization.Name)
 			continue
 		}
-		dsPath := BuildResourcePath(s.grafanaConf, slug.Make(organisation.Organization.Name), domain.OrganizationResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := resources.BuildResourcePath(s.grafanaConf, slug.Make(organisation.Organization.Name), domain.OrganizationResource, s.isLocal(), s.GetGlobals().ClearOutput)
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "organization", slug.Make(organisation.Organization.Name))
 		} else {

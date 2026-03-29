@@ -560,12 +560,7 @@ func (m *pluginRekeyModel) runDryScan() migration.RekeyReport {
 		slog.Warn("rekey dry-run: could not build local storage", "err", err)
 		return migration.RekeyReport{}
 	}
-	scanner := &migration.Migrator{
-		OldEncoder:  m.rs.oldEncoder,
-		NewEncoder:  noop.NoOpEncoder{},
-		GrafanaConf: grafanaConf,
-		Storage:     stor,
-	}
+	scanner := migration.NewMigrator(m.rs.oldEncoder, noop.NoOpEncoder{}, grafanaConf, stor)
 	report, _ := scanner.Rekey(migration.RekeyOptions{
 		DryRun:                true,
 		NoBackup:              true,
@@ -823,12 +818,8 @@ func RunRekey(app *config_domain.GDGAppConfiguration, regClient *registry.Client
 	if err != nil {
 		return fmt.Errorf("build storage for context %q: %w", final.rs.contextName, err)
 	}
-	migrator := &migration.Migrator{
-		OldEncoder:  oldEncoder,
-		NewEncoder:  newEncoder,
-		GrafanaConf: grafanaConf,
-		Storage:     stor,
-	}
+	migrator := migration.NewMigrator(oldEncoder, newEncoder, grafanaConf, stor)
+
 	opts := migration.RekeyOptions{
 		NoBackup:              !final.rs.doBackup,
 		BackupDir:             final.rs.backupDir,

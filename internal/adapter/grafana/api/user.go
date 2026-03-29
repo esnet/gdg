@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/samber/lo"
@@ -113,7 +114,7 @@ func (s *DashNGoImpl) DownloadUsers(filter ports.Filter) []string {
 	userListing := s.ListUsers(filter)
 	var importedUsers []string
 
-	userPath := BuildResourceFolder(s.grafanaConf, "", domain.UserResource, s.isLocal(), s.GetGlobals().ClearOutput)
+	userPath := resources.BuildResourceFolder(s.grafanaConf, "", domain.UserResource, s.isLocal(), s.GetGlobals().ClearOutput)
 	for ndx, user := range userListing {
 		if s.isAdminUser(user.ID, user.Name) {
 			slog.Info("Skipping admin super user")

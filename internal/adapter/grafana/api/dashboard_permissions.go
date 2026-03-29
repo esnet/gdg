@@ -7,6 +7,8 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/common"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/samber/lo"
@@ -58,7 +60,7 @@ func (s *DashNGoImpl) DownloadDashboardPermissions(filterReq ports.Filter) ([]st
 			continue
 		}
 
-		dsPath := fmt.Sprintf("%s/%s.json", BuildResourceFolder(s.grafanaConf, link.Dashboard.NestedPath, domain.DashboardPermissionsResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(link.Dashboard.Title))
+		dsPath := fmt.Sprintf("%s/%s.json", resources.BuildResourceFolder(s.grafanaConf, link.Dashboard.NestedPath, domain.DashboardPermissionsResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(link.Dashboard.Title))
 		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(link.Dashboard.Title), "error", err.Error())
 		} else {
@@ -122,9 +124,9 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filterReq ports.Filter) ([]stri
 		folderName, foldErr := getFolderFromResourcePath(s.grafanaConf, file, domain.DashboardPermissionsResource, s.storage.GetPrefix(), orgName)
 		if foldErr != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default", "err", foldErr)
-			folderName = DefaultFolderName
+			folderName = common.DefaultFolderName
 		} else if folderName == "" {
-			folderName = DefaultFolderName
+			folderName = common.DefaultFolderName
 		}
 		folderUidMap, err = s.baseFolderValidation(filterReq, folderName, new(""), folderUidMap, rawFile)
 		if err != nil {
