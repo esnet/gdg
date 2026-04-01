@@ -21,7 +21,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.15.0
-	github.com/grafana/grafana-openapi-client-go v0.0.0-20251202103709-7ef691d4df1d
+	github.com/grafana/grafana-openapi-client-go v0.0.0-20260330113218-ee77c4f6f90e
 	github.com/jedib0t/go-pretty/v6 v6.7.8
 	github.com/jellydator/ttlcache/v3 v3.4.0
 	github.com/joho/godotenv v1.5.1
