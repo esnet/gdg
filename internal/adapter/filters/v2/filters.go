@@ -7,7 +7,7 @@ import (
 	"reflect"
 
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 )
 
 type BaseFilter struct {
@@ -158,7 +158,7 @@ func (b BaseFilter) GetExpectedStringSlice(ctx context.Context, filterType domai
 	}
 }
 
-func NewBaseFilter() ports.Filter {
+func NewBaseFilter() outbound.Filter {
 	return &BaseFilter{
 		readerMap:           make(map[reflect.Type]domain.FilterReader),
 		validationMethods:   make(map[domain.FilterType]domain.InputValidation),

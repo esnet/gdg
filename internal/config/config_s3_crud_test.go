@@ -192,3 +192,205 @@ func TestDeleteS3Config_PersistsToDisk(t *testing.T) {
 	assert.Contains(t, reloaded.StorageEngine, "keep-me",
 		"unrelated engine should still be present in reloaded config")
 }
+
+// ---------------------------------------------------------------------------
+// ListS3Configs — additional coverage
+// ---------------------------------------------------------------------------
+
+// TestListS3Configs_NilStorageEngine covers the nil-guard branch: when
+// app.StorageEngine is explicitly nil the function must return a non-nil
+// empty map rather than nil (callers iterate the result without nil checks).
+func TestListS3Configs_NilStorageEngine(t *testing.T) {
+	app, _ := newS3TestApp(t)
+	app.StorageEngine = nil
+
+	result := config.ListS3Configs(app)
+
+	assert.NotNil(t, result, "returned map must never be nil")
+	assert.Empty(t, result, "nil StorageEngine should yield an empty result")
+}
+
+// TestListS3Configs_SingleEngine_AllFields verifies that a single engine entry
+// with all standard storage fields (endpoint, bucket, region, prefix) is
+// returned intact.
+func TestListS3Configs_SingleEngine_AllFields(t *testing.T) {
+	app, _ := newS3TestApp(t)
+
+	app.StorageEngine = map[string]map[string]string{
+		"full-engine": {
+			storage.CloudType:  storage.Custom,
+			storage.Endpoint:   "http://minio.example.com:9000",
+			storage.BucketName: "my-bucket",
+			storage.Region:     "us-west-2",
+			storage.Prefix:     "grafana/",
+			storage.InitBucket: "true",
+		},
+	}
+
+	result := config.ListS3Configs(app)
+
+	require.Contains(t, result, "full-engine")
+	eng := result["full-engine"]
+	assert.Equal(t, storage.Custom, eng[storage.CloudType])
+	assert.Equal(t, "http://minio.example.com:9000", eng[storage.Endpoint])
+	assert.Equal(t, "my-bucket", eng[storage.BucketName])
+	assert.Equal(t, "us-west-2", eng[storage.Region])
+	assert.Equal(t, "grafana/", eng[storage.Prefix])
+	assert.Equal(t, "true", eng[storage.InitBucket])
+}
+
+// TestListS3Configs_ReturnsSameReference confirms that ListS3Configs returns
+// the live map (not a defensive copy).  A mutation made through the returned
+// map must be visible via app.StorageEngine.
+func TestListS3Configs_ReturnsSameReference(t *testing.T) {
+	app, _ := newS3TestApp(t)
+
+	app.StorageEngine = map[string]map[string]string{
+		"original": {storage.BucketName: "bucket"},
+	}
+
+	result := config.ListS3Configs(app)
+	result["new-engine"] = map[string]string{storage.BucketName: "new-bucket"}
+
+	assert.Contains(t, app.StorageEngine, "new-engine",
+		"mutation via returned map should be reflected in app.StorageEngine")
+}
+
+// ---------------------------------------------------------------------------
+// DeleteS3Config — additional coverage
+// ---------------------------------------------------------------------------
+
+// TestDeleteS3Config_MultipleContextsBothAssigned ensures that when two
+// contexts both reference the same storage engine, both have their Storage
+// field cleared after deletion.
+func TestDeleteS3Config_MultipleContextsBothAssigned(t *testing.T) {
+	app, outputDir := newS3TestApp(t)
+
+	app.StorageEngine = map[string]map[string]string{
+		"shared-minio": {storage.CloudType: storage.Custom},
+	}
+
+	// Assign the engine to the default "testing" context.
+	app.GetDefaultGrafanaConfig().Storage = "shared-minio"
+
+	// Add a second context also referencing the same engine.
+	secondCtx := config_domain.NewGrafanaConfig()
+	secondCtx.Storage = "shared-minio"
+	secondCtx.OutputPath = outputDir
+	app.Contexts["staging"] = secondCtx
+
+	config.DeleteS3Config(app, "shared-minio")
+
+	assert.Empty(t, app.GetDefaultGrafanaConfig().Storage,
+		"testing context Storage should be cleared")
+	assert.Empty(t, app.Contexts["staging"].Storage,
+		"staging context Storage should be cleared")
+	assert.NotContains(t, app.StorageEngine, "shared-minio")
+}
+
+// TestDeleteS3Config_MultipleContexts_OtherStorageUntouched verifies that a
+// context pointing to a *different* storage engine is not disturbed when an
+// unrelated engine is deleted.
+func TestDeleteS3Config_MultipleContexts_OtherStorageUntouched(t *testing.T) {
+	app, outputDir := newS3TestApp(t)
+
+	app.StorageEngine = map[string]map[string]string{
+		"target":  {storage.CloudType: storage.Custom},
+		"keeper":  {storage.CloudType: storage.Custom},
+	}
+
+	// Default context is assigned to the engine being deleted.
+	app.GetDefaultGrafanaConfig().Storage = "target"
+
+	// Second context uses a different engine — must be left alone.
+	secondCtx := config_domain.NewGrafanaConfig()
+	secondCtx.Storage = "keeper"
+	secondCtx.OutputPath = outputDir
+	app.Contexts["staging"] = secondCtx
+
+	config.DeleteS3Config(app, "target")
+
+	assert.Empty(t, app.GetDefaultGrafanaConfig().Storage,
+		"testing context (assigned to deleted engine) should be cleared")
+	assert.Equal(t, "keeper", app.Contexts["staging"].Storage,
+		"staging context (assigned to a different engine) must not be modified")
+}
+
+// TestDeleteS3Config_MultipleEngines_OnlyTargetCredRemoved checks that when
+// two engines each have a credentials file only the deleted engine's file is
+// removed; the other file must remain on disk.
+func TestDeleteS3Config_MultipleEngines_OnlyTargetCredRemoved(t *testing.T) {
+	app, outputDir := newS3TestApp(t)
+
+	app.StorageEngine = map[string]map[string]string{
+		"delete-me": {storage.CloudType: storage.Custom},
+		"keep-me":   {storage.CloudType: storage.Custom},
+	}
+
+	deletedCred := writeFakeCredFile(t, outputDir, "delete-me")
+	keptCred := writeFakeCredFile(t, outputDir, "keep-me")
+
+	config.DeleteS3Config(app, "delete-me")
+
+	_, errDeleted := os.Stat(deletedCred)
+	assert.True(t, os.IsNotExist(errDeleted),
+		"deleted engine's credentials file should be removed")
+
+	_, errKept := os.Stat(keptCred)
+	assert.NoError(t, errKept,
+		"surviving engine's credentials file must still exist")
+}
+
+// TestDeleteS3Config_SurvivingEngineIntact confirms that after one engine is
+// deleted the remaining engine's configuration map is fully preserved.
+func TestDeleteS3Config_SurvivingEngineIntact(t *testing.T) {
+	app, _ := newS3TestApp(t)
+
+	app.StorageEngine = map[string]map[string]string{
+		"gone": {storage.CloudType: storage.Custom, storage.BucketName: "gone-bucket"},
+		"stay": {
+			storage.CloudType:  storage.Custom,
+			storage.Endpoint:   "http://stay.example.com",
+			storage.BucketName: "stay-bucket",
+			storage.Region:     "eu-central-1",
+			storage.Prefix:     "stay/",
+		},
+	}
+
+	config.DeleteS3Config(app, "gone")
+
+	require.Contains(t, app.StorageEngine, "stay",
+		"surviving engine must still be present")
+	stay := app.StorageEngine["stay"]
+	assert.Equal(t, storage.Custom, stay[storage.CloudType])
+	assert.Equal(t, "http://stay.example.com", stay[storage.Endpoint])
+	assert.Equal(t, "stay-bucket", stay[storage.BucketName])
+	assert.Equal(t, "eu-central-1", stay[storage.Region])
+	assert.Equal(t, "stay/", stay[storage.Prefix])
+}
+
+// TestDeleteS3Config_CredFilePathUsesCloudAuthPrefix verifies that the
+// credentials file is looked up (and removed) using the expected naming
+// convention: <secure_dir>/<CloudAuthPrefix>_<label>.yaml.
+func TestDeleteS3Config_CredFilePathUsesCloudAuthPrefix(t *testing.T) {
+	app, outputDir := newS3TestApp(t)
+
+	const label = "path-check"
+	app.StorageEngine = map[string]map[string]string{
+		label: {storage.CloudType: storage.Custom},
+	}
+
+	expectedPath := filepath.Join(
+		outputDir, "secure",
+		fmt.Sprintf("%s_%s.yaml", config_domain.CloudAuthPrefix, label),
+	)
+	// Write the file at exactly the path the implementation should target.
+	require.NoError(t, os.MkdirAll(filepath.Dir(expectedPath), 0o750))
+	require.NoError(t, os.WriteFile(expectedPath, []byte("access_id: x\n"), 0o600))
+
+	config.DeleteS3Config(app, label)
+
+	_, err := os.Stat(expectedPath)
+	assert.True(t, os.IsNotExist(err),
+		"credential file at the CloudAuthPrefix-based path should be removed")
+}

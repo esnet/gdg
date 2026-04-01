@@ -9,6 +9,7 @@ import (
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/pkg/tools"
 	"github.com/jedib0t/go-pretty/v6/table"
 
@@ -64,9 +65,11 @@ func newConnectionsPermissionListCmd() simplecobra.Commander {
 			if len(connections) == 0 {
 				slog.Info("No connections found")
 			} else {
+				resourceHelpers := resources.NewHelpers()
 				for _, item := range connections {
 					writer := getConnPermTblWriter()
-					writer.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, api.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID, rootCmd.ConfigSvc())})
+
+					writer.AppendRow(table.Row{item.Connection.ID, item.Connection.UID, item.Connection.Name, resourceHelpers.GetSlug(item.Connection.Name), item.Connection.Type, item.Connection.IsDefault, getConnectionURL(item.Connection.UID, rootCmd.ConfigSvc())})
 					writer.Render()
 					if item.Permissions != nil {
 						twConfigs := table.NewWriter()

@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"gopkg.in/yaml.v3"
 )
 
@@ -40,7 +40,7 @@ type ConnectionFilters struct {
 // GrafanaConnection Default connection credentials
 type GrafanaConnection map[string]string
 
-func (r *RegexMatchesList) GetConnectionAuth(path string, encoder ports.CipherEncoder) (*GrafanaConnection, error) {
+func (r *RegexMatchesList) GetConnectionAuth(path string, encoder outbound.CipherEncoder) (*GrafanaConnection, error) {
 	if r.result != nil {
 		return r.result, nil
 	}

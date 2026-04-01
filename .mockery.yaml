@@ -6,9 +6,15 @@ recursive: false
 filename: "{{.InterfaceName}}.go"
 template: testify
 packages:
+  github.com/esnet/gdg/internal/ports/outbound:
+    config:
+      all: true
+      dir: '{{.InterfaceDir}}/mocks'
+      pkgname: mocks
   github.com/esnet/gdg/internal/ports:
     config:
       all: true
       dir: '{{.InterfaceDir}}/mocks'
       pkgname: mocks
+
 

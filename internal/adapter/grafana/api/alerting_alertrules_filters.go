@@ -11,13 +11,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/jellydator/ttlcache/v3"
-	_ "github.com/jellydator/ttlcache/v3"
 
 	v2 "github.com/esnet/gdg/internal/adapter/filters/v2"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
@@ -36,7 +35,7 @@ var alertRuleCache = ttlcache.New[string, *domain.NestedHit](
 // reader extracts fields directly from the struct, while the raw byte reader parses JSON using gjson and
 // resolves folder UIDs to nested paths via the Grafana service. The function terminates the process via
 // log.Fatalf if either reader registration fails.
-func setupAlertRulesReaders(filterObj ports.Filter, grafanaSvc ports.GrafanaService) {
+func setupAlertRulesReaders(filterObj outbound.Filter, grafanaSvc outbound.GrafanaService) {
 	// Object Reader
 	err := filterObj.RegisterReader(reflect.TypeFor[*domain.AlertRuleWithNestedFolder](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(*domain.AlertRuleWithNestedFolder)
@@ -78,7 +77,7 @@ func setupAlertRulesReaders(filterObj ports.Filter, grafanaSvc ports.GrafanaServ
 			{
 				r := gjson.GetBytes(val, "folderUID")
 				if !r.Exists() || r.IsArray() {
-					return DefaultFolderName, nil
+					return domain.ApiConsts.DefaultFolderName, nil
 				}
 
 				return r.String(), nil
@@ -114,7 +113,7 @@ func setupAlertRulesReaders(filterObj ports.Filter, grafanaSvc ports.GrafanaServ
 // or a wildcard match-all pattern; otherwise, it defaults to the monitored folders from the Grafana configuration,
 // optionally overridden by a specific folder in filterEntities. The function terminates the process if the
 // filter registration fails.
-func setupAlertRulesFolderFilter(filterObj ports.Filter, filterEntities domain.AlertRuleFilterParams, cfg *configDomain.GDGAppConfiguration, grafanaSvc ports.GrafanaService) {
+func setupAlertRulesFolderFilter(filterObj outbound.Filter, filterEntities domain.AlertRuleFilterParams, cfg *configDomain.GDGAppConfiguration, grafanaSvc outbound.GrafanaService) {
 	const folderSeparator = "|"
 	err := filterObj.RegisterDataProcessor(domain.FolderFilter, domain.ProcessorEntity{
 		Name: "folderQuoteRegEx",
@@ -195,7 +194,7 @@ func setupAlertRulesFolderFilter(filterObj ports.Filter, filterEntities domain.A
 // folder's nested path does not match the file-based location (case-insensitive), both values are returned
 // joined by a pipe delimiter to allow validation against either path. Returns an error if the file name
 // cannot be extracted from the context.
-func alertRuleFilterLookUpFolderName(ctx context.Context, folderUid string, grafanaSvc ports.GrafanaService) (string, error) {
+func alertRuleFilterLookUpFolderName(ctx context.Context, folderUid string, grafanaSvc outbound.GrafanaService) (string, error) {
 	var err error
 	folderNameLocation, ok := ctx.Value(fileContextKey).(string)
 	if !ok {
@@ -228,7 +227,7 @@ func alertRuleFilterLookUpFolderName(ctx context.Context, folderUid string, graf
 // for both typed alert rule objects and raw byte data, supporting folder-based and label-based filtering.
 // Folder filtering uses regex matching against monitored folders from configuration or an explicit folder override.
 // Label filtering expects labels in "key=value" format. The function terminates the process if reader registration fails.
-func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc ports.GrafanaService, filterEntities domain.AlertRuleFilterParams) ports.Filter {
+func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc outbound.GrafanaService, filterEntities domain.AlertRuleFilterParams) outbound.Filter {
 	filterObj := v2.NewBaseFilter()
 	// Define how we read data
 	setupAlertRulesReaders(filterObj, grafanaSvc)

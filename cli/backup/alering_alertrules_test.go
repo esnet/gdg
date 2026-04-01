@@ -9,7 +9,7 @@ import (
 
 	"github.com/esnet/gdg/cli"
 	customModels "github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports/mocks"
+	"github.com/esnet/gdg/internal/ports/outbound/mocks"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/stretchr/testify/assert"

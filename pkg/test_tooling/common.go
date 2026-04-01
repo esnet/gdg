@@ -11,12 +11,13 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"
 	"github.com/google/uuid"
@@ -35,7 +36,7 @@ const (
 )
 
 type InitContainerResult struct {
-	ApiClient ports.GrafanaService
+	ApiClient outbound.GrafanaService
 	Container testcontainers.Container
 	CleanUp   func() error
 	Err       error
@@ -68,7 +69,7 @@ func WithSecureAuth(auth config_domain.SecureModel) config_domain.GDGAppConfigur
 
 // NewInitContainerResult creates an InitContainerResult linking a Grafana API client, container and cleanup function.
 // It sets Err if the container is not running.
-func NewInitContainerResult(client ports.GrafanaService, container testcontainers.Container, cleanUp func() error) *InitContainerResult {
+func NewInitContainerResult(client outbound.GrafanaService, container testcontainers.Container, cleanUp func() error) *InitContainerResult {
 	obj := &InitContainerResult{
 		ApiClient: client,
 		Container: container,
@@ -132,7 +133,7 @@ func InitTest(t *testing.T, cfg *config_domain.GDGAppConfiguration, envProp map[
 }
 
 // CreateSimpleClientWithConfig creates a GrafanaService for tests using the provided config provider and testcontainers container.
-func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfiguration, container testcontainers.Container) ports.GrafanaService {
+func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfiguration, container testcontainers.Container) outbound.GrafanaService {
 	if cfg == nil {
 		t.Fatal("No valid configuration returned from config provider")
 	}
@@ -146,16 +147,17 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfigu
 	}
 
 	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
-	var encoder ports.CipherEncoder
+	var encoder outbound.CipherEncoder
 	if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
-		encoder = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		encoder, err = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		assert.NoError(t, err, "failed to load cipher plugin")
 	} else {
 		encoder = noop.NoOpEncoder{}
 	}
 
 	storageEngine, err := storage.NewStorageFromConfig(storageType, appData, encoder)
 	assert.NoError(t, err)
-	client := api.NewDashNGo(cfg, encoder, storageEngine, extended.NewExtendedApi(cfg))
+	client := api.NewDashNGo(cfg, encoder, storageEngine, extended.NewExtendedApi(cfg), resources.NewHelpers())
 	client.Login()
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {
@@ -168,7 +170,7 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfigu
 }
 
 // CreateSimpleClient initializes a test Grafana client and Viper config for unit tests.
-func CreateSimpleClient(t *testing.T, cfg *config_domain.GDGAppConfiguration, cfgName *string, container testcontainers.Container) (ports.GrafanaService, *viper.Viper) {
+func CreateSimpleClient(t *testing.T, cfg *config_domain.GDGAppConfiguration, cfgName *string, container testcontainers.Container) (outbound.GrafanaService, *viper.Viper) {
 	if cfgName == nil {
 		cfgName = new(string)
 		*cfgName = common.DefaultTestConfig
@@ -205,7 +207,7 @@ func CreateSimpleClient(t *testing.T, cfg *config_domain.GDGAppConfiguration, cf
 	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
 	storageEngine, err := storage.NewStorageFromConfig(storageType, appData, noop.NoOpEncoder{})
 	assert.NoError(t, err)
-	client := api.NewDashNGo(cfg, noop.NoOpEncoder{}, storageEngine, extended.NewExtendedApi(cfg))
+	client := api.NewDashNGo(cfg, noop.NoOpEncoder{}, storageEngine, extended.NewExtendedApi(cfg), resources.NewHelpers())
 	client.Login()
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {

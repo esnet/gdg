@@ -13,7 +13,7 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/ports"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/ptr"
 	"github.com/samber/lo"
 
@@ -30,7 +30,7 @@ const (
 	AdminUserPermission = 4
 )
 
-func setupTeamReader(filterObj ports.Filter) {
+func setupTeamReader(filterObj outbound.Filter) {
 	err := filterObj.RegisterReader(reflect.TypeFor[models.TeamDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
 		val, ok := a.(models.TeamDTO)
 		if !ok {
@@ -72,7 +72,7 @@ func setupTeamReader(filterObj ports.Filter) {
 	}
 }
 
-func NewTeamFilter(entries ...string) ports.Filter {
+func NewTeamFilter(entries ...string) outbound.Filter {
 	filterObj := v2.NewBaseFilter()
 	setupTeamReader(filterObj)
 	filterObj.AddValidation(domain.Name, func(ctx context.Context, value any, expected any) error {
@@ -93,20 +93,20 @@ func NewTeamFilter(entries ...string) ports.Filter {
 }
 
 // DownloadTeams fetches all teams for a given Org
-func (s *DashNGoImpl) DownloadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (s *DashNGoImpl) DownloadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
-	teamPath := BuildResourceFolder(s.grafanaConf, "", domain.TeamResource, s.isLocal(), s.GetGlobals().ClearOutput)
+	teamPath := s.resources.BuildResourceFolder(s.grafanaConf, "", domain.TeamResource, s.isLocal(), s.GetGlobals().ClearOutput)
 	for ndx, team := range teamListing {
 		// Teams
-		teamFileName := filepath.Join(teamPath, GetSlug(ptr.ValueOrDefault(team.Name, "")), "team.json")
+		teamFileName := filepath.Join(teamPath, s.resources.GetSlug(ptr.ValueOrDefault(team.Name, "")), "team.json")
 		teamData, err := json.MarshalIndent(&teamListing[ndx], "", "\t")
 		if err != nil {
 			slog.Error("could not serialize team object for team name", "teamName", team.Name)
 			continue
 		}
 		// Members
-		memberFileName := filepath.Join(teamPath, GetSlug(ptr.ValueOrDefault(team.Name, "")), "members.json")
+		memberFileName := filepath.Join(teamPath, s.resources.GetSlug(ptr.ValueOrDefault(team.Name, "")), "members.json")
 		members, err := s.GetClient().Teams.GetTeamMembers(fmt.Sprintf("%d", ptr.ValueOrDefault(team.ID, 0)))
 		if err != nil {
 			slog.Error("could not get team members object for team name", "teamName", team.Name)
@@ -130,7 +130,7 @@ func (s *DashNGoImpl) DownloadTeams(filter ports.Filter) map[*models.TeamDTO][]*
 }
 
 // UploadTeams Export Teams
-func (s *DashNGoImpl) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (s *DashNGoImpl) UploadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	orgName := s.grafanaConf.GetOrganizationName()
 	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.TeamResource, orgName), true)
 	if err != nil {
@@ -174,7 +174,7 @@ func (s *DashNGoImpl) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*mo
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
 
-			teamMemberLocation := filepath.Join(s.grafanaConf.GetPath(domain.TeamResource, orgName), GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
+			teamMemberLocation := filepath.Join(s.grafanaConf.GetPath(domain.TeamResource, orgName), s.resources.GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
 			if rawMembers, err = s.storage.ReadFile(teamMemberLocation); err != nil {
 				slog.Error("failed to find team members", "filename", fileLocation, "err", err)
 				continue
@@ -203,7 +203,7 @@ func (s *DashNGoImpl) UploadTeams(filter ports.Filter) map[*models.TeamDTO][]*mo
 }
 
 // ListTeams List all Teams in a given org
-func (s *DashNGoImpl) ListTeams(filter ports.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
+func (s *DashNGoImpl) ListTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	result := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
 	p := teams.NewSearchTeamsParams()
 	p.Perpage = new(int64(99999))
@@ -234,7 +234,7 @@ func (s *DashNGoImpl) ListTeams(filter ports.Filter) map[*models.TeamDTO][]*mode
 }
 
 // DeleteTeam removes all Teams
-func (s *DashNGoImpl) DeleteTeam(filter ports.Filter) ([]*models.TeamDTO, error) {
+func (s *DashNGoImpl) DeleteTeam(filter outbound.Filter) ([]*models.TeamDTO, error) {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	var result []*models.TeamDTO
 	for _, team := range teamListing {
