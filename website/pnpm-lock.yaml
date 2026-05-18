@@ -13,7 +13,7 @@ importers:
         version: 3.44.0
       '@thulite/core':
         specifier: ^1.5.9
-        version: 1.5.9(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+        version: 1.5.9
       '@thulite/doks-core':
         specifier: ^1.9.3
         version: 1.9.3
@@ -42,8 +42,8 @@ importers:
         specifier: ^5.0.9
         version: 5.1.11
       pnpm:
-        specifier: ^10.11.0
-        version: 10.33.4
+        specifier: ^11.0.0
+        version: 11.1.2
       postcss:
         specifier: ^8.5.1
         version: 8.5.14
@@ -1208,10 +1208,6 @@ packages:
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
-  loose-envify@1.4.0:
-    resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
-    hasBin: true
-
   lowercase-keys@2.0.0:
     resolution: {integrity: sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==}
     engines: {node: '>=8'}
@@ -1374,9 +1370,9 @@ packages:
     resolution: {integrity: sha512-MnUuEycAemtSaeFSjXKW/aroV7akBbY+Sv+RkyqFjgAe73F+MR0TBWKBRDkmfWq/HiFmdavfZ1G7h4SPZXaCSg==}
     engines: {node: '>=0.10.0'}
 
-  pnpm@10.33.4:
-    resolution: {integrity: sha512-HGezs1my1AgRm6HtKJ80uPw8aHNBK+xv0mT73IJInlEPy+y5zp0i2ufzt2Jp2EQQRgFL3KU7mXnNelYa1jG4AA==}
-    engines: {node: '>=18.12'}
+  pnpm@11.1.2:
+    resolution: {integrity: sha512-QVocwll0cx51RVwUaDcb50xapft2IbUNQFbSIkUWCfEUEvI/1gLmFp8eBgRmZB95hZfhvpYaEGiINqZ7FlaUmQ==}
+    engines: {node: '>=22.13'}
     hasBin: true
 
   possible-typed-array-names@1.1.0:
@@ -1429,9 +1425,6 @@ packages:
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
 
-  prop-types@15.8.1:
-    resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
-
   pump@3.0.4:
     resolution: {integrity: sha512-VS7sjc6KR7e1ukRFhQSY5LM2uBWAUPiOPa/A3mkKmiMwSmRFUITt0xuj+/lesgnCv+dPIEYlkzrcyXgquIHMcA==}
 
@@ -1456,18 +1449,6 @@ packages:
         optional: true
       react-dom:
         optional: true
-
-  react-dom@16.14.0:
-    resolution: {integrity: sha512-1gCeQXDLoIqMgqD3IO2Ah9bnf0w9kzhwN5q4FGnHZ67hBm9yePzB5JJAIQCc8x3pFnNlwFq4RidZggNAAkzWWw==}
-    peerDependencies:
-      react: ^16.14.0
-
-  react-is@16.13.1:
-    resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
-
-  react@16.14.0:
-    resolution: {integrity: sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==}
-    engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
     resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==}
@@ -1545,9 +1526,6 @@ packages:
 
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
-
-  scheduler@0.19.1:
-    resolution: {integrity: sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==}
 
   seek-bzip@1.0.6:
     resolution: {integrity: sha512-e1QtP3YL5tWww8uKaOCQ18UxIT2laNBXHjV/S2WYCiK4udiv8lkG89KRIoCjUagnAmCBurjF4zEVX2ByBbnCjQ==}
@@ -2484,7 +2462,7 @@ snapshots:
       '@popperjs/core': 2.11.8
       bootstrap: 5.3.8(@popperjs/core@2.11.8)
 
-  '@thulite/core@1.5.9(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
+  '@thulite/core@1.5.9':
     dependencies:
       '@babel/cli': 7.28.6(@babel/core@7.29.0)
       '@babel/core': 7.29.0
@@ -2495,7 +2473,7 @@ snapshots:
       modern-css-reset: 1.4.0
       postcss: 8.5.14
       postcss-cli: 11.0.1(postcss@8.5.14)
-      quicklink: 3.0.1(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      quicklink: 3.0.1
     transitivePeerDependencies:
       - jiti
       - react
@@ -3122,11 +3100,6 @@ snapshots:
 
   lodash.debounce@4.0.8: {}
 
-  loose-envify@1.4.0:
-    dependencies:
-      js-tokens: 4.0.0
-    optional: true
-
   lowercase-keys@2.0.0: {}
 
   lowercase-keys@3.0.0: {}
@@ -3235,7 +3208,7 @@ snapshots:
 
   pinkie@2.0.4: {}
 
-  pnpm@10.33.4: {}
+  pnpm@11.1.2: {}
 
   possible-typed-array-names@1.1.0: {}
 
@@ -3287,13 +3260,6 @@ snapshots:
 
   process-nextick-args@2.0.1: {}
 
-  prop-types@15.8.1:
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-      react-is: 16.13.1
-    optional: true
-
   pump@3.0.4:
     dependencies:
       end-of-stream: 1.4.5
@@ -3310,32 +3276,10 @@ snapshots:
 
   quick-lru@5.1.1: {}
 
-  quicklink@3.0.1(react-dom@16.14.0(react@16.14.0))(react@16.14.0):
+  quicklink@3.0.1:
     dependencies:
       route-manifest: 1.0.0
       throttles: 1.0.1
-    optionalDependencies:
-      react: 16.14.0
-      react-dom: 16.14.0(react@16.14.0)
-
-  react-dom@16.14.0(react@16.14.0):
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-      prop-types: 15.8.1
-      react: 16.14.0
-      scheduler: 0.19.1
-    optional: true
-
-  react-is@16.13.1:
-    optional: true
-
-  react@16.14.0:
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-      prop-types: 15.8.1
-    optional: true
 
   read-cache@1.0.0:
     dependencies:
@@ -3417,12 +3361,6 @@ snapshots:
   safe-buffer@5.1.2: {}
 
   safe-buffer@5.2.1: {}
-
-  scheduler@0.19.1:
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-    optional: true
 
   seek-bzip@1.0.6:
     dependencies:
