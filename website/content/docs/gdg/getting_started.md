@@ -1,5 +1,6 @@
 ---
 title: "Getting Started"
+description: "Quick start guide for GDG: create a configuration, connect to a Grafana instance, and run your first backup or restore."
 weight: 11
 ---
 

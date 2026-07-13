@@ -1,5 +1,6 @@
 ---
 title: "Plugins"
+description: "GDG plugin system documentation covering the extism-based WASM plugin interface, cipher plugins, and plugin configuration."
 weight: 104
 ---
 ## Plugins

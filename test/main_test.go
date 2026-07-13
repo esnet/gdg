@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	defaultGrafanaVersion = "11.6.0-ubuntu"
+	defaultGrafanaVersion = "13.0-ubuntu"
 	basicAuth             = "basicAuth"
 	testDebug             = "TEST_DEBUG"
 	developerEnv          = "DEVELOPER"

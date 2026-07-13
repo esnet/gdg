@@ -1,5 +1,6 @@
 ---
 title: "Working with Library Panels"
+description: "Tutorial for managing Grafana library panels with GDG, covering backup, restore, folder rules, and immutability constraints."
 weight: 32
 ---
 

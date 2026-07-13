@@ -1,11 +1,4 @@
 package api
 
-// IsEnterprise will return a valid response if the grafana version is running an enterprise version
-func (s *DashNGoImpl) IsEnterprise() bool {
-	r, err := s.GetClient().Licensing.GetStatus()
-	if err != nil {
-		return false
-	}
-
-	return r.IsSuccess()
-}
+// IsEnterprise is promoted from baseService which is embedded in DashNGoImpl.
+// This file is intentionally left minimal; the implementation lives in base_service.go.

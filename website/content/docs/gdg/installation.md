@@ -1,5 +1,6 @@
 ---
 title: "Installation"
+description: "How to install GDG using pre-built binaries, RPM packages, or building from source via the Go toolchain or goreleaser."
 weight: 12
 ---
 ## Installation

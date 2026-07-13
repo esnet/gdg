@@ -64,7 +64,7 @@ type GrafanaService_AddUserToOrg_Call struct {
 //   - role string
 //   - orgSlug string
 //   - userId int64
-func (_e *GrafanaService_Expecter) AddUserToOrg(role interface{}, orgSlug interface{}, userId interface{}) *GrafanaService_AddUserToOrg_Call {
+func (_e *GrafanaService_Expecter) AddUserToOrg(role any, orgSlug any, userId any) *GrafanaService_AddUserToOrg_Call {
 	return &GrafanaService_AddUserToOrg_Call{Call: _e.mock.On("AddUserToOrg", role, orgSlug, userId)}
 }
 
@@ -180,7 +180,7 @@ type GrafanaService_ClearAlertRules_Call struct {
 
 // ClearAlertRules is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ClearAlertRules(filter interface{}) *GrafanaService_ClearAlertRules_Call {
+func (_e *GrafanaService_Expecter) ClearAlertRules(filter any) *GrafanaService_ClearAlertRules_Call {
 	return &GrafanaService_ClearAlertRules_Call{Call: _e.mock.On("ClearAlertRules", filter)}
 }
 
@@ -385,7 +385,7 @@ type GrafanaService_ClearDashboardPermissions_Call struct {
 
 // ClearDashboardPermissions is a helper method to define mock.On call
 //   - filterReq outbound.Filter
-func (_e *GrafanaService_Expecter) ClearDashboardPermissions(filterReq interface{}) *GrafanaService_ClearDashboardPermissions_Call {
+func (_e *GrafanaService_Expecter) ClearDashboardPermissions(filterReq any) *GrafanaService_ClearDashboardPermissions_Call {
 	return &GrafanaService_ClearDashboardPermissions_Call{Call: _e.mock.On("ClearDashboardPermissions", filterReq)}
 }
 
@@ -449,7 +449,7 @@ type GrafanaService_CreateServiceAccount_Call struct {
 //   - name string
 //   - role string
 //   - expiration int64
-func (_e *GrafanaService_Expecter) CreateServiceAccount(name interface{}, role interface{}, expiration interface{}) *GrafanaService_CreateServiceAccount_Call {
+func (_e *GrafanaService_Expecter) CreateServiceAccount(name any, role any, expiration any) *GrafanaService_CreateServiceAccount_Call {
 	return &GrafanaService_CreateServiceAccount_Call{Call: _e.mock.On("CreateServiceAccount", name, role, expiration)}
 }
 
@@ -523,7 +523,7 @@ type GrafanaService_CreateServiceAccountToken_Call struct {
 //   - serviceAccountId int64
 //   - name string
 //   - expiration int64
-func (_e *GrafanaService_Expecter) CreateServiceAccountToken(serviceAccountId interface{}, name interface{}, expiration interface{}) *GrafanaService_CreateServiceAccountToken_Call {
+func (_e *GrafanaService_Expecter) CreateServiceAccountToken(serviceAccountId any, name any, expiration any) *GrafanaService_CreateServiceAccountToken_Call {
 	return &GrafanaService_CreateServiceAccountToken_Call{Call: _e.mock.On("CreateServiceAccountToken", serviceAccountId, name, expiration)}
 }
 
@@ -560,6 +560,52 @@ func (_c *GrafanaService_CreateServiceAccountToken_Call) RunAndReturn(run func(s
 	return _c
 }
 
+// DashboardSvc provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) DashboardSvc() outbound.DashboardService {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for DashboardSvc")
+	}
+
+	var r0 outbound.DashboardService
+	if returnFunc, ok := ret.Get(0).(func() outbound.DashboardService); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(outbound.DashboardService)
+		}
+	}
+	return r0
+}
+
+// GrafanaService_DashboardSvc_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DashboardSvc'
+type GrafanaService_DashboardSvc_Call struct {
+	*mock.Call
+}
+
+// DashboardSvc is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) DashboardSvc() *GrafanaService_DashboardSvc_Call {
+	return &GrafanaService_DashboardSvc_Call{Call: _e.mock.On("DashboardSvc")}
+}
+
+func (_c *GrafanaService_DashboardSvc_Call) Run(run func()) *GrafanaService_DashboardSvc_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_DashboardSvc_Call) Return(dashboardService outbound.DashboardService) *GrafanaService_DashboardSvc_Call {
+	_c.Call.Return(dashboardService)
+	return _c
+}
+
+func (_c *GrafanaService_DashboardSvc_Call) RunAndReturn(run func() outbound.DashboardService) *GrafanaService_DashboardSvc_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // DecodeValue provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) DecodeValue(in string) string {
 	ret := _mock.Called(in)
@@ -584,7 +630,7 @@ type GrafanaService_DecodeValue_Call struct {
 
 // DecodeValue is a helper method to define mock.On call
 //   - in string
-func (_e *GrafanaService_Expecter) DecodeValue(in interface{}) *GrafanaService_DecodeValue_Call {
+func (_e *GrafanaService_Expecter) DecodeValue(in any) *GrafanaService_DecodeValue_Call {
 	return &GrafanaService_DecodeValue_Call{Call: _e.mock.On("DecodeValue", in)}
 }
 
@@ -637,7 +683,7 @@ type GrafanaService_DeleteAllConnectionPermissions_Call struct {
 
 // DeleteAllConnectionPermissions is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DeleteAllConnectionPermissions(filter interface{}) *GrafanaService_DeleteAllConnectionPermissions_Call {
+func (_e *GrafanaService_Expecter) DeleteAllConnectionPermissions(filter any) *GrafanaService_DeleteAllConnectionPermissions_Call {
 	return &GrafanaService_DeleteAllConnectionPermissions_Call{Call: _e.mock.On("DeleteAllConnectionPermissions", filter)}
 }
 
@@ -690,7 +736,7 @@ type GrafanaService_DeleteAllConnections_Call struct {
 
 // DeleteAllConnections is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DeleteAllConnections(filter interface{}) *GrafanaService_DeleteAllConnections_Call {
+func (_e *GrafanaService_Expecter) DeleteAllConnections(filter any) *GrafanaService_DeleteAllConnections_Call {
 	return &GrafanaService_DeleteAllConnections_Call{Call: _e.mock.On("DeleteAllConnections", filter)}
 }
 
@@ -743,7 +789,7 @@ type GrafanaService_DeleteAllDashboards_Call struct {
 
 // DeleteAllDashboards is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DeleteAllDashboards(filter interface{}) *GrafanaService_DeleteAllDashboards_Call {
+func (_e *GrafanaService_Expecter) DeleteAllDashboards(filter any) *GrafanaService_DeleteAllDashboards_Call {
 	return &GrafanaService_DeleteAllDashboards_Call{Call: _e.mock.On("DeleteAllDashboards", filter)}
 }
 
@@ -796,7 +842,7 @@ type GrafanaService_DeleteAllFolders_Call struct {
 
 // DeleteAllFolders is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DeleteAllFolders(filter interface{}) *GrafanaService_DeleteAllFolders_Call {
+func (_e *GrafanaService_Expecter) DeleteAllFolders(filter any) *GrafanaService_DeleteAllFolders_Call {
 	return &GrafanaService_DeleteAllFolders_Call{Call: _e.mock.On("DeleteAllFolders", filter)}
 }
 
@@ -849,7 +895,7 @@ type GrafanaService_DeleteAllLibraryElements_Call struct {
 
 // DeleteAllLibraryElements is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DeleteAllLibraryElements(filter interface{}) *GrafanaService_DeleteAllLibraryElements_Call {
+func (_e *GrafanaService_Expecter) DeleteAllLibraryElements(filter any) *GrafanaService_DeleteAllLibraryElements_Call {
 	return &GrafanaService_DeleteAllLibraryElements_Call{Call: _e.mock.On("DeleteAllLibraryElements", filter)}
 }
 
@@ -948,7 +994,7 @@ type GrafanaService_DeleteAllUsers_Call struct {
 
 // DeleteAllUsers is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DeleteAllUsers(filter interface{}) *GrafanaService_DeleteAllUsers_Call {
+func (_e *GrafanaService_Expecter) DeleteAllUsers(filter any) *GrafanaService_DeleteAllUsers_Call {
 	return &GrafanaService_DeleteAllUsers_Call{Call: _e.mock.On("DeleteAllUsers", filter)}
 }
 
@@ -999,7 +1045,7 @@ type GrafanaService_DeleteServiceAccount_Call struct {
 
 // DeleteServiceAccount is a helper method to define mock.On call
 //   - accountId int64
-func (_e *GrafanaService_Expecter) DeleteServiceAccount(accountId interface{}) *GrafanaService_DeleteServiceAccount_Call {
+func (_e *GrafanaService_Expecter) DeleteServiceAccount(accountId any) *GrafanaService_DeleteServiceAccount_Call {
 	return &GrafanaService_DeleteServiceAccount_Call{Call: _e.mock.On("DeleteServiceAccount", accountId)}
 }
 
@@ -1052,7 +1098,7 @@ type GrafanaService_DeleteServiceAccountTokens_Call struct {
 
 // DeleteServiceAccountTokens is a helper method to define mock.On call
 //   - serviceId int64
-func (_e *GrafanaService_Expecter) DeleteServiceAccountTokens(serviceId interface{}) *GrafanaService_DeleteServiceAccountTokens_Call {
+func (_e *GrafanaService_Expecter) DeleteServiceAccountTokens(serviceId any) *GrafanaService_DeleteServiceAccountTokens_Call {
 	return &GrafanaService_DeleteServiceAccountTokens_Call{Call: _e.mock.On("DeleteServiceAccountTokens", serviceId)}
 }
 
@@ -1114,7 +1160,7 @@ type GrafanaService_DeleteTeam_Call struct {
 
 // DeleteTeam is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DeleteTeam(filter interface{}) *GrafanaService_DeleteTeam_Call {
+func (_e *GrafanaService_Expecter) DeleteTeam(filter any) *GrafanaService_DeleteTeam_Call {
 	return &GrafanaService_DeleteTeam_Call{Call: _e.mock.On("DeleteTeam", filter)}
 }
 
@@ -1166,7 +1212,7 @@ type GrafanaService_DeleteUserFromOrg_Call struct {
 // DeleteUserFromOrg is a helper method to define mock.On call
 //   - orgId string
 //   - userId int64
-func (_e *GrafanaService_Expecter) DeleteUserFromOrg(orgId interface{}, userId interface{}) *GrafanaService_DeleteUserFromOrg_Call {
+func (_e *GrafanaService_Expecter) DeleteUserFromOrg(orgId any, userId any) *GrafanaService_DeleteUserFromOrg_Call {
 	return &GrafanaService_DeleteUserFromOrg_Call{Call: _e.mock.On("DeleteUserFromOrg", orgId, userId)}
 }
 
@@ -1286,7 +1332,7 @@ type GrafanaService_DownloadAlertRules_Call struct {
 
 // DownloadAlertRules is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadAlertRules(filter interface{}) *GrafanaService_DownloadAlertRules_Call {
+func (_e *GrafanaService_Expecter) DownloadAlertRules(filter any) *GrafanaService_DownloadAlertRules_Call {
 	return &GrafanaService_DownloadAlertRules_Call{Call: _e.mock.On("DownloadAlertRules", filter)}
 }
 
@@ -1445,7 +1491,7 @@ type GrafanaService_DownloadConnectionPermissions_Call struct {
 
 // DownloadConnectionPermissions is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadConnectionPermissions(filter interface{}) *GrafanaService_DownloadConnectionPermissions_Call {
+func (_e *GrafanaService_Expecter) DownloadConnectionPermissions(filter any) *GrafanaService_DownloadConnectionPermissions_Call {
 	return &GrafanaService_DownloadConnectionPermissions_Call{Call: _e.mock.On("DownloadConnectionPermissions", filter)}
 }
 
@@ -1498,7 +1544,7 @@ type GrafanaService_DownloadConnections_Call struct {
 
 // DownloadConnections is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadConnections(filter interface{}) *GrafanaService_DownloadConnections_Call {
+func (_e *GrafanaService_Expecter) DownloadConnections(filter any) *GrafanaService_DownloadConnections_Call {
 	return &GrafanaService_DownloadConnections_Call{Call: _e.mock.On("DownloadConnections", filter)}
 }
 
@@ -1613,7 +1659,7 @@ type GrafanaService_DownloadDashboardPermissions_Call struct {
 
 // DownloadDashboardPermissions is a helper method to define mock.On call
 //   - filterReq outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadDashboardPermissions(filterReq interface{}) *GrafanaService_DownloadDashboardPermissions_Call {
+func (_e *GrafanaService_Expecter) DownloadDashboardPermissions(filterReq any) *GrafanaService_DownloadDashboardPermissions_Call {
 	return &GrafanaService_DownloadDashboardPermissions_Call{Call: _e.mock.On("DownloadDashboardPermissions", filterReq)}
 }
 
@@ -1666,7 +1712,7 @@ type GrafanaService_DownloadDashboards_Call struct {
 
 // DownloadDashboards is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadDashboards(filter interface{}) *GrafanaService_DownloadDashboards_Call {
+func (_e *GrafanaService_Expecter) DownloadDashboards(filter any) *GrafanaService_DownloadDashboards_Call {
 	return &GrafanaService_DownloadDashboards_Call{Call: _e.mock.On("DownloadDashboards", filter)}
 }
 
@@ -1719,7 +1765,7 @@ type GrafanaService_DownloadFolderPermissions_Call struct {
 
 // DownloadFolderPermissions is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadFolderPermissions(filter interface{}) *GrafanaService_DownloadFolderPermissions_Call {
+func (_e *GrafanaService_Expecter) DownloadFolderPermissions(filter any) *GrafanaService_DownloadFolderPermissions_Call {
 	return &GrafanaService_DownloadFolderPermissions_Call{Call: _e.mock.On("DownloadFolderPermissions", filter)}
 }
 
@@ -1772,7 +1818,7 @@ type GrafanaService_DownloadFolders_Call struct {
 
 // DownloadFolders is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadFolders(filter interface{}) *GrafanaService_DownloadFolders_Call {
+func (_e *GrafanaService_Expecter) DownloadFolders(filter any) *GrafanaService_DownloadFolders_Call {
 	return &GrafanaService_DownloadFolders_Call{Call: _e.mock.On("DownloadFolders", filter)}
 }
 
@@ -1825,7 +1871,7 @@ type GrafanaService_DownloadLibraryElements_Call struct {
 
 // DownloadLibraryElements is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadLibraryElements(filter interface{}) *GrafanaService_DownloadLibraryElements_Call {
+func (_e *GrafanaService_Expecter) DownloadLibraryElements(filter any) *GrafanaService_DownloadLibraryElements_Call {
 	return &GrafanaService_DownloadLibraryElements_Call{Call: _e.mock.On("DownloadLibraryElements", filter)}
 }
 
@@ -1878,7 +1924,7 @@ type GrafanaService_DownloadOrganizations_Call struct {
 
 // DownloadOrganizations is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadOrganizations(filter interface{}) *GrafanaService_DownloadOrganizations_Call {
+func (_e *GrafanaService_Expecter) DownloadOrganizations(filter any) *GrafanaService_DownloadOrganizations_Call {
 	return &GrafanaService_DownloadOrganizations_Call{Call: _e.mock.On("DownloadOrganizations", filter)}
 }
 
@@ -1931,7 +1977,7 @@ type GrafanaService_DownloadTeams_Call struct {
 
 // DownloadTeams is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadTeams(filter interface{}) *GrafanaService_DownloadTeams_Call {
+func (_e *GrafanaService_Expecter) DownloadTeams(filter any) *GrafanaService_DownloadTeams_Call {
 	return &GrafanaService_DownloadTeams_Call{Call: _e.mock.On("DownloadTeams", filter)}
 }
 
@@ -1984,7 +2030,7 @@ type GrafanaService_DownloadUsers_Call struct {
 
 // DownloadUsers is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) DownloadUsers(filter interface{}) *GrafanaService_DownloadUsers_Call {
+func (_e *GrafanaService_Expecter) DownloadUsers(filter any) *GrafanaService_DownloadUsers_Call {
 	return &GrafanaService_DownloadUsers_Call{Call: _e.mock.On("DownloadUsers", filter)}
 }
 
@@ -2035,7 +2081,7 @@ type GrafanaService_EncodeValue_Call struct {
 
 // EncodeValue is a helper method to define mock.On call
 //   - in string
-func (_e *GrafanaService_Expecter) EncodeValue(in interface{}) *GrafanaService_EncodeValue_Call {
+func (_e *GrafanaService_Expecter) EncodeValue(in any) *GrafanaService_EncodeValue_Call {
 	return &GrafanaService_EncodeValue_Call{Call: _e.mock.On("EncodeValue", in)}
 }
 
@@ -2387,6 +2433,50 @@ func (_c *GrafanaService_IsEnterprise_Call) RunAndReturn(run func() bool) *Grafa
 	return _c
 }
 
+// IsDataSourcePermissionsEnabled provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) IsDataSourcePermissionsEnabled() bool {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for IsDataSourcePermissionsEnabled")
+	}
+
+	var r0 bool
+	if returnFunc, ok := ret.Get(0).(func() bool); ok {
+		r0 = returnFunc()
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+	return r0
+}
+
+// GrafanaService_IsDataSourcePermissionsEnabled_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IsDataSourcePermissionsEnabled'
+type GrafanaService_IsDataSourcePermissionsEnabled_Call struct {
+	*mock.Call
+}
+
+// IsDataSourcePermissionsEnabled is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) IsDataSourcePermissionsEnabled() *GrafanaService_IsDataSourcePermissionsEnabled_Call {
+	return &GrafanaService_IsDataSourcePermissionsEnabled_Call{Call: _e.mock.On("IsDataSourcePermissionsEnabled")}
+}
+
+func (_c *GrafanaService_IsDataSourcePermissionsEnabled_Call) Run(run func()) *GrafanaService_IsDataSourcePermissionsEnabled_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_IsDataSourcePermissionsEnabled_Call) Return(b bool) *GrafanaService_IsDataSourcePermissionsEnabled_Call {
+	_c.Call.Return(b)
+	return _c
+}
+
+func (_c *GrafanaService_IsDataSourcePermissionsEnabled_Call) RunAndReturn(run func() bool) *GrafanaService_IsDataSourcePermissionsEnabled_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListAlertNotifications provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) ListAlertNotifications() (*models.Route, error) {
 	ret := _mock.Called()
@@ -2477,7 +2567,7 @@ type GrafanaService_ListAlertRules_Call struct {
 
 // ListAlertRules is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListAlertRules(filter interface{}) *GrafanaService_ListAlertRules_Call {
+func (_e *GrafanaService_Expecter) ListAlertRules(filter any) *GrafanaService_ListAlertRules_Call {
 	return &GrafanaService_ListAlertRules_Call{Call: _e.mock.On("ListAlertRules", filter)}
 }
 
@@ -2640,7 +2730,7 @@ type GrafanaService_ListConnectionPermissions_Call struct {
 
 // ListConnectionPermissions is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListConnectionPermissions(filter interface{}) *GrafanaService_ListConnectionPermissions_Call {
+func (_e *GrafanaService_Expecter) ListConnectionPermissions(filter any) *GrafanaService_ListConnectionPermissions_Call {
 	return &GrafanaService_ListConnectionPermissions_Call{Call: _e.mock.On("ListConnectionPermissions", filter)}
 }
 
@@ -2693,7 +2783,7 @@ type GrafanaService_ListConnections_Call struct {
 
 // ListConnections is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListConnections(filter interface{}) *GrafanaService_ListConnections_Call {
+func (_e *GrafanaService_Expecter) ListConnections(filter any) *GrafanaService_ListConnections_Call {
 	return &GrafanaService_ListConnections_Call{Call: _e.mock.On("ListConnections", filter)}
 }
 
@@ -2810,7 +2900,7 @@ type GrafanaService_ListDashboardPermissions_Call struct {
 
 // ListDashboardPermissions is a helper method to define mock.On call
 //   - filterReq outbound.Filter
-func (_e *GrafanaService_Expecter) ListDashboardPermissions(filterReq interface{}) *GrafanaService_ListDashboardPermissions_Call {
+func (_e *GrafanaService_Expecter) ListDashboardPermissions(filterReq any) *GrafanaService_ListDashboardPermissions_Call {
 	return &GrafanaService_ListDashboardPermissions_Call{Call: _e.mock.On("ListDashboardPermissions", filterReq)}
 }
 
@@ -2838,19 +2928,19 @@ func (_c *GrafanaService_ListDashboardPermissions_Call) RunAndReturn(run func(fi
 }
 
 // ListDashboards provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListDashboards(filter outbound.Filter) []*domain.NestedHit {
+func (_mock *GrafanaService) ListDashboards(filter outbound.Filter) []*domain.DashboardV2Gdg {
 	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListDashboards")
 	}
 
-	var r0 []*domain.NestedHit
-	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.NestedHit); ok {
+	var r0 []*domain.DashboardV2Gdg
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*domain.DashboardV2Gdg); ok {
 		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*domain.NestedHit)
+			r0 = ret.Get(0).([]*domain.DashboardV2Gdg)
 		}
 	}
 	return r0
@@ -2863,7 +2953,7 @@ type GrafanaService_ListDashboards_Call struct {
 
 // ListDashboards is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListDashboards(filter interface{}) *GrafanaService_ListDashboards_Call {
+func (_e *GrafanaService_Expecter) ListDashboards(filter any) *GrafanaService_ListDashboards_Call {
 	return &GrafanaService_ListDashboards_Call{Call: _e.mock.On("ListDashboards", filter)}
 }
 
@@ -2880,12 +2970,12 @@ func (_c *GrafanaService_ListDashboards_Call) Run(run func(filter outbound.Filte
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboards_Call) Return(nestedHits []*domain.NestedHit) *GrafanaService_ListDashboards_Call {
-	_c.Call.Return(nestedHits)
+func (_c *GrafanaService_ListDashboards_Call) Return(dashboardV2Gdgs []*domain.DashboardV2Gdg) *GrafanaService_ListDashboards_Call {
+	_c.Call.Return(dashboardV2Gdgs)
 	return _c
 }
 
-func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filter outbound.Filter) []*domain.NestedHit) *GrafanaService_ListDashboards_Call {
+func (_c *GrafanaService_ListDashboards_Call) RunAndReturn(run func(filter outbound.Filter) []*domain.DashboardV2Gdg) *GrafanaService_ListDashboards_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2916,7 +3006,7 @@ type GrafanaService_ListFolderPermissions_Call struct {
 
 // ListFolderPermissions is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListFolderPermissions(filter interface{}) *GrafanaService_ListFolderPermissions_Call {
+func (_e *GrafanaService_Expecter) ListFolderPermissions(filter any) *GrafanaService_ListFolderPermissions_Call {
 	return &GrafanaService_ListFolderPermissions_Call{Call: _e.mock.On("ListFolderPermissions", filter)}
 }
 
@@ -2969,7 +3059,7 @@ type GrafanaService_ListFolders_Call struct {
 
 // ListFolders is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListFolders(filter interface{}) *GrafanaService_ListFolders_Call {
+func (_e *GrafanaService_Expecter) ListFolders(filter any) *GrafanaService_ListFolders_Call {
 	return &GrafanaService_ListFolders_Call{Call: _e.mock.On("ListFolders", filter)}
 }
 
@@ -3022,7 +3112,7 @@ type GrafanaService_ListLibraryElements_Call struct {
 
 // ListLibraryElements is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListLibraryElements(filter interface{}) *GrafanaService_ListLibraryElements_Call {
+func (_e *GrafanaService_Expecter) ListLibraryElements(filter any) *GrafanaService_ListLibraryElements_Call {
 	return &GrafanaService_ListLibraryElements_Call{Call: _e.mock.On("ListLibraryElements", filter)}
 }
 
@@ -3076,7 +3166,7 @@ type GrafanaService_ListLibraryElementsConnections_Call struct {
 // ListLibraryElementsConnections is a helper method to define mock.On call
 //   - filter outbound.Filter
 //   - connectionID string
-func (_e *GrafanaService_Expecter) ListLibraryElementsConnections(filter interface{}, connectionID interface{}) *GrafanaService_ListLibraryElementsConnections_Call {
+func (_e *GrafanaService_Expecter) ListLibraryElementsConnections(filter any, connectionID any) *GrafanaService_ListLibraryElementsConnections_Call {
 	return &GrafanaService_ListLibraryElementsConnections_Call{Call: _e.mock.On("ListLibraryElementsConnections", filter, connectionID)}
 }
 
@@ -3134,7 +3224,7 @@ type GrafanaService_ListOrgUsers_Call struct {
 
 // ListOrgUsers is a helper method to define mock.On call
 //   - orgId int64
-func (_e *GrafanaService_Expecter) ListOrgUsers(orgId interface{}) *GrafanaService_ListOrgUsers_Call {
+func (_e *GrafanaService_Expecter) ListOrgUsers(orgId any) *GrafanaService_ListOrgUsers_Call {
 	return &GrafanaService_ListOrgUsers_Call{Call: _e.mock.On("ListOrgUsers", orgId)}
 }
 
@@ -3188,7 +3278,7 @@ type GrafanaService_ListOrganizations_Call struct {
 // ListOrganizations is a helper method to define mock.On call
 //   - filter outbound.Filter
 //   - withPreferences bool
-func (_e *GrafanaService_Expecter) ListOrganizations(filter interface{}, withPreferences interface{}) *GrafanaService_ListOrganizations_Call {
+func (_e *GrafanaService_Expecter) ListOrganizations(filter any, withPreferences any) *GrafanaService_ListOrganizations_Call {
 	return &GrafanaService_ListOrganizations_Call{Call: _e.mock.On("ListOrganizations", filter, withPreferences)}
 }
 
@@ -3301,7 +3391,7 @@ type GrafanaService_ListServiceAccountsTokens_Call struct {
 
 // ListServiceAccountsTokens is a helper method to define mock.On call
 //   - id int64
-func (_e *GrafanaService_Expecter) ListServiceAccountsTokens(id interface{}) *GrafanaService_ListServiceAccountsTokens_Call {
+func (_e *GrafanaService_Expecter) ListServiceAccountsTokens(id any) *GrafanaService_ListServiceAccountsTokens_Call {
 	return &GrafanaService_ListServiceAccountsTokens_Call{Call: _e.mock.On("ListServiceAccountsTokens", id)}
 }
 
@@ -3354,7 +3444,7 @@ type GrafanaService_ListTeams_Call struct {
 
 // ListTeams is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListTeams(filter interface{}) *GrafanaService_ListTeams_Call {
+func (_e *GrafanaService_Expecter) ListTeams(filter any) *GrafanaService_ListTeams_Call {
 	return &GrafanaService_ListTeams_Call{Call: _e.mock.On("ListTeams", filter)}
 }
 
@@ -3462,7 +3552,7 @@ type GrafanaService_ListUsers_Call struct {
 
 // ListUsers is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) ListUsers(filter interface{}) *GrafanaService_ListUsers_Call {
+func (_e *GrafanaService_Expecter) ListUsers(filter any) *GrafanaService_ListUsers_Call {
 	return &GrafanaService_ListUsers_Call{Call: _e.mock.On("ListUsers", filter)}
 }
 
@@ -3555,7 +3645,7 @@ type GrafanaService_PromoteUser_Call struct {
 
 // PromoteUser is a helper method to define mock.On call
 //   - userLogin string
-func (_e *GrafanaService_Expecter) PromoteUser(userLogin interface{}) *GrafanaService_PromoteUser_Call {
+func (_e *GrafanaService_Expecter) PromoteUser(userLogin any) *GrafanaService_PromoteUser_Call {
 	return &GrafanaService_PromoteUser_Call{Call: _e.mock.On("PromoteUser", userLogin)}
 }
 
@@ -3607,7 +3697,7 @@ type GrafanaService_SetOrganizationByName_Call struct {
 // SetOrganizationByName is a helper method to define mock.On call
 //   - name string
 //   - useSlug bool
-func (_e *GrafanaService_Expecter) SetOrganizationByName(name interface{}, useSlug interface{}) *GrafanaService_SetOrganizationByName_Call {
+func (_e *GrafanaService_Expecter) SetOrganizationByName(name any, useSlug any) *GrafanaService_SetOrganizationByName_Call {
 	return &GrafanaService_SetOrganizationByName_Call{Call: _e.mock.On("SetOrganizationByName", name, useSlug)}
 }
 
@@ -3663,7 +3753,7 @@ type GrafanaService_SetUserOrganizations_Call struct {
 
 // SetUserOrganizations is a helper method to define mock.On call
 //   - id int64
-func (_e *GrafanaService_Expecter) SetUserOrganizations(id interface{}) *GrafanaService_SetUserOrganizations_Call {
+func (_e *GrafanaService_Expecter) SetUserOrganizations(id any) *GrafanaService_SetUserOrganizations_Call {
 	return &GrafanaService_SetUserOrganizations_Call{Call: _e.mock.On("SetUserOrganizations", id)}
 }
 
@@ -3716,7 +3806,7 @@ type GrafanaService_UpdateUserInOrg_Call struct {
 //   - role string
 //   - orgSlug string
 //   - userId int64
-func (_e *GrafanaService_Expecter) UpdateUserInOrg(role interface{}, orgSlug interface{}, userId interface{}) *GrafanaService_UpdateUserInOrg_Call {
+func (_e *GrafanaService_Expecter) UpdateUserInOrg(role any, orgSlug any, userId any) *GrafanaService_UpdateUserInOrg_Call {
 	return &GrafanaService_UpdateUserInOrg_Call{Call: _e.mock.On("UpdateUserInOrg", role, orgSlug, userId)}
 }
 
@@ -3843,7 +3933,7 @@ type GrafanaService_UploadAlertRules_Call struct {
 
 // UploadAlertRules is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadAlertRules(filter interface{}) *GrafanaService_UploadAlertRules_Call {
+func (_e *GrafanaService_Expecter) UploadAlertRules(filter any) *GrafanaService_UploadAlertRules_Call {
 	return &GrafanaService_UploadAlertRules_Call{Call: _e.mock.On("UploadAlertRules", filter)}
 }
 
@@ -4006,7 +4096,7 @@ type GrafanaService_UploadConnectionPermissions_Call struct {
 
 // UploadConnectionPermissions is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadConnectionPermissions(filter interface{}) *GrafanaService_UploadConnectionPermissions_Call {
+func (_e *GrafanaService_Expecter) UploadConnectionPermissions(filter any) *GrafanaService_UploadConnectionPermissions_Call {
 	return &GrafanaService_UploadConnectionPermissions_Call{Call: _e.mock.On("UploadConnectionPermissions", filter)}
 }
 
@@ -4059,7 +4149,7 @@ type GrafanaService_UploadConnections_Call struct {
 
 // UploadConnections is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadConnections(filter interface{}) *GrafanaService_UploadConnections_Call {
+func (_e *GrafanaService_Expecter) UploadConnections(filter any) *GrafanaService_UploadConnections_Call {
 	return &GrafanaService_UploadConnections_Call{Call: _e.mock.On("UploadConnections", filter)}
 }
 
@@ -4176,7 +4266,7 @@ type GrafanaService_UploadDashboardPermissions_Call struct {
 
 // UploadDashboardPermissions is a helper method to define mock.On call
 //   - filterReq outbound.Filter
-func (_e *GrafanaService_Expecter) UploadDashboardPermissions(filterReq interface{}) *GrafanaService_UploadDashboardPermissions_Call {
+func (_e *GrafanaService_Expecter) UploadDashboardPermissions(filterReq any) *GrafanaService_UploadDashboardPermissions_Call {
 	return &GrafanaService_UploadDashboardPermissions_Call{Call: _e.mock.On("UploadDashboardPermissions", filterReq)}
 }
 
@@ -4238,7 +4328,7 @@ type GrafanaService_UploadDashboards_Call struct {
 
 // UploadDashboards is a helper method to define mock.On call
 //   - filterReq outbound.Filter
-func (_e *GrafanaService_Expecter) UploadDashboards(filterReq interface{}) *GrafanaService_UploadDashboards_Call {
+func (_e *GrafanaService_Expecter) UploadDashboards(filterReq any) *GrafanaService_UploadDashboards_Call {
 	return &GrafanaService_UploadDashboards_Call{Call: _e.mock.On("UploadDashboards", filterReq)}
 }
 
@@ -4291,7 +4381,7 @@ type GrafanaService_UploadFolderPermissions_Call struct {
 
 // UploadFolderPermissions is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadFolderPermissions(filter interface{}) *GrafanaService_UploadFolderPermissions_Call {
+func (_e *GrafanaService_Expecter) UploadFolderPermissions(filter any) *GrafanaService_UploadFolderPermissions_Call {
 	return &GrafanaService_UploadFolderPermissions_Call{Call: _e.mock.On("UploadFolderPermissions", filter)}
 }
 
@@ -4344,7 +4434,7 @@ type GrafanaService_UploadFolders_Call struct {
 
 // UploadFolders is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadFolders(filter interface{}) *GrafanaService_UploadFolders_Call {
+func (_e *GrafanaService_Expecter) UploadFolders(filter any) *GrafanaService_UploadFolders_Call {
 	return &GrafanaService_UploadFolders_Call{Call: _e.mock.On("UploadFolders", filter)}
 }
 
@@ -4397,7 +4487,7 @@ type GrafanaService_UploadLibraryElements_Call struct {
 
 // UploadLibraryElements is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadLibraryElements(filter interface{}) *GrafanaService_UploadLibraryElements_Call {
+func (_e *GrafanaService_Expecter) UploadLibraryElements(filter any) *GrafanaService_UploadLibraryElements_Call {
 	return &GrafanaService_UploadLibraryElements_Call{Call: _e.mock.On("UploadLibraryElements", filter)}
 }
 
@@ -4449,7 +4539,7 @@ type GrafanaService_UploadOrgPreferences_Call struct {
 // UploadOrgPreferences is a helper method to define mock.On call
 //   - orgName string
 //   - pref *models.PreferencesSpec
-func (_e *GrafanaService_Expecter) UploadOrgPreferences(orgName interface{}, pref interface{}) *GrafanaService_UploadOrgPreferences_Call {
+func (_e *GrafanaService_Expecter) UploadOrgPreferences(orgName any, pref any) *GrafanaService_UploadOrgPreferences_Call {
 	return &GrafanaService_UploadOrgPreferences_Call{Call: _e.mock.On("UploadOrgPreferences", orgName, pref)}
 }
 
@@ -4507,7 +4597,7 @@ type GrafanaService_UploadOrganizations_Call struct {
 
 // UploadOrganizations is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadOrganizations(filter interface{}) *GrafanaService_UploadOrganizations_Call {
+func (_e *GrafanaService_Expecter) UploadOrganizations(filter any) *GrafanaService_UploadOrganizations_Call {
 	return &GrafanaService_UploadOrganizations_Call{Call: _e.mock.On("UploadOrganizations", filter)}
 }
 
@@ -4560,7 +4650,7 @@ type GrafanaService_UploadTeams_Call struct {
 
 // UploadTeams is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadTeams(filter interface{}) *GrafanaService_UploadTeams_Call {
+func (_e *GrafanaService_Expecter) UploadTeams(filter any) *GrafanaService_UploadTeams_Call {
 	return &GrafanaService_UploadTeams_Call{Call: _e.mock.On("UploadTeams", filter)}
 }
 
@@ -4613,7 +4703,7 @@ type GrafanaService_UploadUsers_Call struct {
 
 // UploadUsers is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *GrafanaService_Expecter) UploadUsers(filter interface{}) *GrafanaService_UploadUsers_Call {
+func (_e *GrafanaService_Expecter) UploadUsers(filter any) *GrafanaService_UploadUsers_Call {
 	return &GrafanaService_UploadUsers_Call{Call: _e.mock.On("UploadUsers", filter)}
 }
 

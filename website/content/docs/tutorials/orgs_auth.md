@@ -1,5 +1,6 @@
 ---
 title: "Organization and Authentication"
+description: "Tutorial on managing multiple Grafana organizations with GDG, including API token auth, basic auth, and org switching."
 weight: 33
 date: 2023-09-01T00:00:00
 ---

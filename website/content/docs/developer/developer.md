@@ -1,5 +1,6 @@
 ---
 title: "Developer Guide"
+description: "Developer reference for GDG covering build tooling, Go and task dependencies, architecture overview, and testing guidance."
 weight: 61
 ---
 

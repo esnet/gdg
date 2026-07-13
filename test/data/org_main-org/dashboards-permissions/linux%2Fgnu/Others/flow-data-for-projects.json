@@ -1,17 +1,74 @@
-[
-	{
-		"created": "2025-06-30T16:15:01.000Z",
-		"dashboardId": 15,
-		"permission": 4,
-		"permissionName": "Admin",
-		"slug": "flow-data-for-projects",
-		"title": "Flow Data for Projects",
-		"uid": "ie7TeomGz",
-		"updated": "2025-06-30T16:15:01.000Z",
-		"url": "/d/ie7TeomGz/flow-data-for-projects",
-		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
-		"userEmail": "admin@localhost",
-		"userId": 1,
-		"userLogin": "admin"
-	}
-]
+{
+  "dashboard_uid": "ie7TeomGz",
+  "dashboard_name": "Flow Data for Projects",
+  "gdg_api_version": "dashboard-permissions.grafana/v2",
+  "permissions": [
+    {
+      "actions": [
+        "dashboards:read",
+        "annotations:read",
+        "dashboards:write",
+        "dashboards:delete",
+        "annotations:write",
+        "annotations:delete",
+        "annotations:create",
+        "dashboards.permissions:read",
+        "dashboards.permissions:write"
+      ],
+      "id": 811,
+      "isInherited": true,
+      "permission": "Admin",
+      "roleName": "managed:users:1:permissions",
+      "userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+      "userId": 1,
+      "userLogin": "admin",
+      "userUid": "aft7sxnqxvdoge"
+    },
+    {
+      "actions": [
+        "dashboards:read",
+        "dashboards:delete",
+        "annotations:write",
+        "dashboards:write",
+        "dashboards.permissions:write",
+        "dashboards:write",
+        "dashboards.permissions:read",
+        "dashboards:delete",
+        "dashboards.permissions:write",
+        "annotations:delete",
+        "dashboards.permissions:read",
+        "annotations:create",
+        "dashboards:read",
+        "annotations:read"
+      ],
+      "builtInRole": "Admin",
+      "id": 529,
+      "permission": "Admin",
+      "roleName": "basic:admin"
+    },
+    {
+      "actions": [
+        "dashboards:read",
+        "annotations:read",
+        "dashboards:write",
+        "dashboards:delete",
+        "annotations:write",
+        "annotations:delete",
+        "annotations:create"
+      ],
+      "builtInRole": "Editor",
+      "id": 812,
+      "isInherited": true,
+      "permission": "Edit",
+      "roleName": "managed:builtins:editor:permissions"
+    },
+    {
+      "actions": ["dashboards:read", "annotations:read"],
+      "builtInRole": "Viewer",
+      "id": 813,
+      "isInherited": true,
+      "permission": "View",
+      "roleName": "managed:builtins:viewer:permissions"
+    }
+  ]
+}

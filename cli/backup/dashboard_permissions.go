@@ -4,17 +4,36 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"net/url"
 	"os"
-	"strings"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/pkg/tools"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"github.com/spf13/cobra"
 )
+
+// getDashboardPermUrl builds a Grafana dashboard URL from a v1 NestedHit.
+// Dashboard permissions are an Enterprise v1 feature so NestedHit is the
+// appropriate type here; the unified getDashboardUrl in dashboard.go operates
+// on DashboardV2Gdg for the list command.
+func getDashboardPermUrl(link *models.Hit, cfg *config_domain.GDGAppConfiguration) string {
+	base, err := url.Parse(cfg.GetDefaultGrafanaConfig().GetURL())
+	var baseHost string
+	if err != nil {
+		baseHost = "http://unknown/"
+		slog.Warn("unable to determine grafana base host for dashboard", slog.String("dashboard-uid", link.UID))
+	} else {
+		base.Path = ""
+		baseHost = base.String()
+	}
+	return fmt.Sprintf("%s%s", baseHost, link.URL)
+}
 
 func newDashboardPermissionCmd() simplecobra.Commander {
 	description := "Dashboard Permission"
@@ -69,12 +88,12 @@ func newDashboardPermissionListCmd() simplecobra.Commander {
 			} else {
 				for _, perms := range permissions {
 					writer := getDashboardPermTblWriter()
-					urlValue := getDashboardUrl(perms.Dashboard.Hit, rootCmd.ConfigSvc())
-					link := perms.Dashboard
-					writer.AppendRow(table.Row{
-						link.ID, link.Title, link.Slug, link.NestedPath,
-						link.UID, urlValue,
-					})
+			urlValue := getDashboardPermUrl(perms.Dashboard.Hit, rootCmd.ConfigSvc())
+				link := perms.Dashboard
+				writer.AppendRow(table.Row{
+					link.ID, link.Title, link.Slug, link.NestedPath,
+					link.UID, urlValue,
+				})
 					writer.Render()
 					if perms.Permissions != nil {
 						twConfigs := table.NewWriter()
@@ -84,13 +103,13 @@ func newDashboardPermissionListCmd() simplecobra.Commander {
 						for _, dashPerm := range perms.Permissions {
 							var userLogin string
 							if len(dashPerm.UserLogin) > 0 {
-								if strings.HasPrefix(dashPerm.UserEmail, "sa-") && !strings.Contains(dashPerm.UserEmail, "@") {
+								if dashPerm.IsServiceAccount {
 									userLogin = fmt.Sprintf("service:%s", dashPerm.UserLogin)
 								} else {
 									userLogin = fmt.Sprintf("user:%s", dashPerm.UserLogin)
 								}
 							}
-							twConfigs.AppendRow(table.Row{link.UID, link.Title, userLogin, dashPerm.Team, dashPerm.Role, dashPerm.PermissionName})
+							twConfigs.AppendRow(table.Row{link.UID, link.Title, userLogin, dashPerm.Team, dashPerm.BuiltInRole, dashPerm.Permission})
 						}
 						if len(perms.Permissions) > 0 {
 							twConfigs.Render()

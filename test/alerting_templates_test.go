@@ -17,7 +17,7 @@ import (
 
 func TestTemplatesCrud(t *testing.T) {
 	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
-	assert.NoError(t, os.Unsetenv(common.ContextNameEnv))
+	defer os.Unsetenv(common.ContextNameEnv)
 
 	assert.NoError(t, path.FixTestDir("test", ".."))
 	cfg := config.NewConfig(common.DefaultTestConfig)

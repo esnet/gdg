@@ -1,41 +1,74 @@
-[
-	{
-		"created": "2025-06-30T16:15:01.000Z",
-		"dashboardId": 10,
-		"permission": 4,
-		"permissionName": "Admin",
-		"slug": "science-discipline-patterns",
-		"title": "Science Discipline Patterns",
-		"uid": "ufIS9W7Zk",
-		"updated": "2025-06-30T16:15:01.000Z",
-		"url": "/d/ufIS9W7Zk/science-discipline-patterns",
-		"userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
-		"userEmail": "admin@localhost",
-		"userId": 1,
-		"userLogin": "admin"
-	},
-	{
-		"created": "2025-06-30T16:15:01.000Z",
-		"dashboardId": 10,
-		"permission": 2,
-		"permissionName": "Edit",
-		"role": "Editor",
-		"slug": "science-discipline-patterns",
-		"title": "Science Discipline Patterns",
-		"uid": "ufIS9W7Zk",
-		"updated": "2025-06-30T16:15:01.000Z",
-		"url": "/d/ufIS9W7Zk/science-discipline-patterns"
-	},
-	{
-		"created": "2025-06-30T16:15:01.000Z",
-		"dashboardId": 10,
-		"permission": 1,
-		"permissionName": "View",
-		"role": "Viewer",
-		"slug": "science-discipline-patterns",
-		"title": "Science Discipline Patterns",
-		"uid": "ufIS9W7Zk",
-		"updated": "2025-06-30T16:15:01.000Z",
-		"url": "/d/ufIS9W7Zk/science-discipline-patterns"
-	}
-]
+{
+  "dashboard_uid": "ufIS9W7Zk",
+  "dashboard_name": "Science Discipline Patterns",
+  "gdg_api_version": "dashboard-permissions.grafana/v2",
+  "permissions": [
+    {
+      "actions": [
+        "dashboards:read",
+        "annotations:read",
+        "dashboards:write",
+        "dashboards:delete",
+        "annotations:write",
+        "annotations:delete",
+        "annotations:create",
+        "dashboards.permissions:read",
+        "dashboards.permissions:write"
+      ],
+      "id": 817,
+      "isManaged": true,
+      "permission": "Admin",
+      "roleName": "managed:users:1:permissions",
+      "userAvatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56",
+      "userId": 1,
+      "userLogin": "admin",
+      "userUid": "aft7sxnqxvdoge"
+    },
+    {
+      "actions": [
+        "dashboards:read",
+        "dashboards:delete",
+        "annotations:write",
+        "dashboards:write",
+        "dashboards.permissions:write",
+        "dashboards:write",
+        "dashboards.permissions:read",
+        "dashboards:delete",
+        "dashboards.permissions:write",
+        "annotations:delete",
+        "dashboards.permissions:read",
+        "annotations:create",
+        "dashboards:read",
+        "annotations:read"
+      ],
+      "builtInRole": "Admin",
+      "id": 529,
+      "permission": "Admin",
+      "roleName": "basic:admin"
+    },
+    {
+      "actions": [
+        "dashboards:read",
+        "annotations:read",
+        "dashboards:write",
+        "dashboards:delete",
+        "annotations:write",
+        "annotations:delete",
+        "annotations:create"
+      ],
+      "builtInRole": "Editor",
+      "id": 818,
+      "isManaged": true,
+      "permission": "Edit",
+      "roleName": "managed:builtins:editor:permissions"
+    },
+    {
+      "actions": ["dashboards:read", "annotations:read"],
+      "builtInRole": "Viewer",
+      "id": 819,
+      "isManaged": true,
+      "permission": "View",
+      "roleName": "managed:builtins:viewer:permissions"
+    }
+  ]
+}

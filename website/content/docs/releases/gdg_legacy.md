@@ -1,6 +1,6 @@
 ---
 title: "Legacy Versions"
-description: "Release Notes for Legacy Versions"
+description: "Release notes for legacy GDG versions (v0.4 through v0.6), including historical changes, breaking changes, and bug fixes."
 date: 2023-09-01T00:00:00
 draft: false
 images: [ ]

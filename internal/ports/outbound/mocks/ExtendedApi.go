@@ -68,7 +68,7 @@ type ExtendedApi_GetConfiguredOrgId_Call struct {
 
 // GetConfiguredOrgId is a helper method to define mock.On call
 //   - orgName string
-func (_e *ExtendedApi_Expecter) GetConfiguredOrgId(orgName interface{}) *ExtendedApi_GetConfiguredOrgId_Call {
+func (_e *ExtendedApi_Expecter) GetConfiguredOrgId(orgName any) *ExtendedApi_GetConfiguredOrgId_Call {
 	return &ExtendedApi_GetConfiguredOrgId_Call{Call: _e.mock.On("GetConfiguredOrgId", orgName)}
 }
 

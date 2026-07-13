@@ -1,5 +1,6 @@
 ---
 title: "Tools Guide"
+description: "Guide to the GDG tools subcommand covering auth management, context switching, organization tools, and user administration."
 weight: 17
 ---
 

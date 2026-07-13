@@ -101,6 +101,15 @@ func (s *GrafanaConfig) GetDashboardSettings() *DashboardSettings {
 	return s.DashboardSettings
 }
 
+// GetExperimental returns the experimental feature flags for this context,
+// initialising the struct with all flags disabled if it has not been set.
+func (s *GrafanaConfig) GetExperimental() *ExperimentalFeatures {
+	if s.Experimental == nil {
+		s.Experimental = new(ExperimentalFeatures)
+	}
+	return s.Experimental
+}
+
 // GetConnectionSettings returns the settings for the connection
 func (s *GrafanaConfig) GetConnectionSettings() *ConnectionSettings {
 	if s.ConnectionSettings == nil {

@@ -1,5 +1,6 @@
 ---
 title: "Storage"
+description: "GDG storage backend configuration for S3, GCS, Azure Blob, and custom S3-compatible providers like MinIO and Ceph."
 weight: 102
 ---
 

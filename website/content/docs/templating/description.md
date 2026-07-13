@@ -1,5 +1,6 @@
 ---
 title: "Usage Guide"
+description: "Usage guide for the GDG templating tool (gdg-generate), covering context selection, template rendering, and dashboard generation."
 weight: 25
 ---
 

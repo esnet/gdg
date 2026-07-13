@@ -1,5 +1,6 @@
 ---
 title: "Frequently Asked Questions"
+description: "Answers to common questions about GDG capabilities, limitations, supported Grafana versions, and typical use cases."
 weight: 13
 ---
 

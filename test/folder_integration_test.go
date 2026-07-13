@@ -12,8 +12,6 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/pkg/test_tooling/containers"
-
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 
 	"github.com/esnet/gdg/internal/config"
@@ -166,17 +164,14 @@ func TestFolderNestedPermissions(t *testing.T) {
 	assert.Equal(t, len(folders), 4)
 	result := apiClient.ListFolderPermissions(nil)
 	assert.True(t, len(result) > 0)
-	grafanaVersion := getGrafanaVersion(":" + containers.GetGrafanaVersion())
 
 	for key, val := range result {
 		assert.NotNil(t, key)
+		// Top-level folders carry 3 explicit ACL entries (Viewer/Editor/Admin built-in roles).
+		// Nested child folders (NestedPath contains "/") return 0 — RBAC handles inheritance
+		// at the server level and does not surface it in the legacy ACL permissions endpoint.
 		if strings.Contains(key.NestedPath, "/") {
-			switch grafanaVersion {
-			case 11:
-				assert.Equal(t, 1, len(val))
-			case 12:
-				assert.Equal(t, 0, len(val))
-			}
+			assert.Equal(t, 0, len(val))
 		} else {
 			assert.Equal(t, 3, len(val))
 		}

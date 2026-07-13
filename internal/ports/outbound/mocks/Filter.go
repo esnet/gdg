@@ -54,7 +54,7 @@ type Filter_AddValidation_Call struct {
 //   - f domain.FilterType
 //   - validation domain.InputValidation
 //   - expected any
-func (_e *Filter_Expecter) AddValidation(f interface{}, validation interface{}, expected interface{}) *Filter_AddValidation_Call {
+func (_e *Filter_Expecter) AddValidation(f any, validation any, expected any) *Filter_AddValidation_Call {
 	return &Filter_AddValidation_Call{Call: _e.mock.On("AddValidation", f, validation, expected)}
 }
 
@@ -116,7 +116,7 @@ type Filter_GetExpectedString_Call struct {
 // GetExpectedString is a helper method to define mock.On call
 //   - ctx context.Context
 //   - filterType domain.FilterType
-func (_e *Filter_Expecter) GetExpectedString(ctx interface{}, filterType interface{}) *Filter_GetExpectedString_Call {
+func (_e *Filter_Expecter) GetExpectedString(ctx any, filterType any) *Filter_GetExpectedString_Call {
 	return &Filter_GetExpectedString_Call{Call: _e.mock.On("GetExpectedString", ctx, filterType)}
 }
 
@@ -184,7 +184,7 @@ type Filter_GetExpectedStringSlice_Call struct {
 // GetExpectedStringSlice is a helper method to define mock.On call
 //   - ctx context.Context
 //   - filterType domain.FilterType
-func (_e *Filter_Expecter) GetExpectedStringSlice(ctx interface{}, filterType interface{}) *Filter_GetExpectedStringSlice_Call {
+func (_e *Filter_Expecter) GetExpectedStringSlice(ctx any, filterType any) *Filter_GetExpectedStringSlice_Call {
 	return &Filter_GetExpectedStringSlice_Call{Call: _e.mock.On("GetExpectedStringSlice", ctx, filterType)}
 }
 
@@ -243,7 +243,7 @@ type Filter_GetExpectedValue_Call struct {
 // GetExpectedValue is a helper method to define mock.On call
 //   - ctx context.Context
 //   - filterType domain.FilterType
-func (_e *Filter_Expecter) GetExpectedValue(ctx interface{}, filterType interface{}) *Filter_GetExpectedValue_Call {
+func (_e *Filter_Expecter) GetExpectedValue(ctx any, filterType any) *Filter_GetExpectedValue_Call {
 	return &Filter_GetExpectedValue_Call{Call: _e.mock.On("GetExpectedValue", ctx, filterType)}
 }
 
@@ -303,7 +303,7 @@ type Filter_GetReaderValue_Call struct {
 //   - ctx context.Context
 //   - filterType domain.FilterType
 //   - obj any
-func (_e *Filter_Expecter) GetReaderValue(ctx interface{}, filterType interface{}, obj interface{}) *Filter_GetReaderValue_Call {
+func (_e *Filter_Expecter) GetReaderValue(ctx any, filterType any, obj any) *Filter_GetReaderValue_Call {
 	return &Filter_GetReaderValue_Call{Call: _e.mock.On("GetReaderValue", ctx, filterType, obj)}
 }
 
@@ -365,7 +365,7 @@ type Filter_RegisterDataProcessor_Call struct {
 // RegisterDataProcessor is a helper method to define mock.On call
 //   - entityType domain.FilterType
 //   - entity domain.ProcessorEntity
-func (_e *Filter_Expecter) RegisterDataProcessor(entityType interface{}, entity interface{}) *Filter_RegisterDataProcessor_Call {
+func (_e *Filter_Expecter) RegisterDataProcessor(entityType any, entity any) *Filter_RegisterDataProcessor_Call {
 	return &Filter_RegisterDataProcessor_Call{Call: _e.mock.On("RegisterDataProcessor", entityType, entity)}
 }
 
@@ -422,7 +422,7 @@ type Filter_RegisterReader_Call struct {
 // RegisterReader is a helper method to define mock.On call
 //   - entityType reflect.Type
 //   - fn domain.FilterReader
-func (_e *Filter_Expecter) RegisterReader(entityType interface{}, fn interface{}) *Filter_RegisterReader_Call {
+func (_e *Filter_Expecter) RegisterReader(entityType any, fn any) *Filter_RegisterReader_Call {
 	return &Filter_RegisterReader_Call{Call: _e.mock.On("RegisterReader", entityType, fn)}
 }
 
@@ -480,7 +480,7 @@ type Filter_Validate_Call struct {
 //   - context1 context.Context
 //   - filterType domain.FilterType
 //   - v any
-func (_e *Filter_Expecter) Validate(context1 interface{}, filterType interface{}, v interface{}) *Filter_Validate_Call {
+func (_e *Filter_Expecter) Validate(context1 any, filterType any, v any) *Filter_Validate_Call {
 	return &Filter_Validate_Call{Call: _e.mock.On("Validate", context1, filterType, v)}
 }
 
@@ -542,7 +542,7 @@ type Filter_ValidateAll_Call struct {
 // ValidateAll is a helper method to define mock.On call
 //   - ctx context.Context
 //   - data any
-func (_e *Filter_Expecter) ValidateAll(ctx interface{}, data interface{}) *Filter_ValidateAll_Call {
+func (_e *Filter_Expecter) ValidateAll(ctx any, data any) *Filter_ValidateAll_Call {
 	return &Filter_ValidateAll_Call{Call: _e.mock.On("ValidateAll", ctx, data)}
 }
 

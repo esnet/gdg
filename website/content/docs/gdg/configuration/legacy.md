@@ -1,5 +1,6 @@
 ---
 title: "Legacy"
+description: "Legacy GDG configuration reference for older versions, kept for historical reference and migration from previous config formats."
 weight: 150
 ---
 

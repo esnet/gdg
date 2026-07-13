@@ -1,5 +1,6 @@
 ---
 title: "Globals"
+description: "Reference for GDG global configuration flags that apply across all contexts, including debug, SSL, retry, and output settings."
 weight: 101
 ---
 

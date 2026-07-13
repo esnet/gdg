@@ -11,8 +11,7 @@ type ServerInfoApi interface {
 
 type GrafanaService interface {
 	OrganizationsApi
-	DashboardsApi
-	DashboardPermissionsApi
+	DashboardService
 	ConnectionsApi
 	UsersApi
 	FoldersApi
@@ -24,10 +23,20 @@ type GrafanaService interface {
 	// MetaData
 	ServerInfoApi
 	LicenseApi
+	MetaServiceApi
+}
+
+type MetaServiceApi interface {
+	DashboardSvc() DashboardService
 }
 
 type LicenseApi interface {
 	IsEnterprise() bool
+	// IsDataSourcePermissionsEnabled probes whether the connected Grafana instance
+	// supports fine-grained per-user/per-team datasource permissions (Enterprise FGAC).
+	// It returns false when the server responds with 403 Unlicensed, which happens
+	// even on Enterprise instances whose license tier does not include FGAC.
+	IsDataSourcePermissionsEnabled() bool
 }
 
 // ConnectionsApi Contract definition
@@ -47,14 +56,22 @@ type ConnectionPermissions interface {
 	DeleteAllConnectionPermissions(filter Filter) []string
 }
 
-// DashboardsApi Contract definition
-type DashboardsApi interface {
-	ListDashboards(filter Filter) []*customModels.NestedHit
+// DashboardService is the unified contract for all dashboard operations.
+// Implementations route between the legacy v1 API (/api/dashboards) and the
+// App Platform v2 API (dashboard.grafana.app/v2) based on server version:
+// Grafana v13+ uses v2 automatically; older servers use v1.
+//
+// All methods return []*customModels.DashboardV2Gdg so the CLI layer always
+// works with a single type regardless of which API was used.
+type DashboardService interface {
+	ListDashboards(filter Filter) []*customModels.DashboardV2Gdg
 	DownloadDashboards(filter Filter) []string
 	UploadDashboards(filterReq Filter) ([]string, error)
 	DeleteAllDashboards(filter Filter) []string
+	DashboardPermissionsApi
 }
 
+// DashboardPermissionsApi manages per-dashboard ACL entries (Enterprise only).
 type DashboardPermissionsApi interface {
 	ListDashboardPermissions(filterReq Filter) ([]customModels.DashboardAndPermissions, error)
 	DownloadDashboardPermissions(filterReq Filter) ([]string, error)

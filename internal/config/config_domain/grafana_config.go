@@ -13,7 +13,13 @@ import (
 )
 
 type DashboardSettings struct {
-	IgnoreFilters bool `yaml:"ignore_filters" mapstructure:"ignore_filters" `
+	IgnoreFilters bool `yaml:"ignore_filters" mapstructure:"ignore_filters"`
+}
+
+// ExperimentalFeatures holds opt-in flags for functionality that is not yet GA.
+// Add new experimental flags here as needed; each flag should document its
+// minimum Grafana version requirement in a comment.
+type ExperimentalFeatures struct {
 }
 
 type dashFilter struct {
@@ -27,6 +33,7 @@ type GrafanaConfig struct {
 	secureAuth               *SecureModel
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
+	Experimental             *ExperimentalFeatures `mapstructure:"experimental" yaml:"experimental,omitempty"`
 	MonitoredFolders         []string              `mapstructure:"watched" yaml:"watched"`
 	filterFolder             *dashFilter           `mapstructure:"-" yaml:"-"`
 	MonitoredFoldersOverride []MonitoredOrgFolders `mapstructure:"watched_folders_override" yaml:"watched_folders_override"`

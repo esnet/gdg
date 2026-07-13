@@ -1,1333 +1,485 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
-        },
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations \u0026 Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
-        "type": "dashboard"
-      }
-    ]
-  },
-  "description": "Extreme Dashboard Makeover Workshop",
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "gnetId": 16415,
-  "graphTooltip": 0,
-  "id": 15,
-  "links": [],
-  "liveNow": false,
-  "panels": [
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": {
-        "type": "testdata",
-        "uid": "EJHgYyf4z"
+  "resource": {
+    "kind": "Dashboard",
+    "apiVersion": "dashboard.grafana.app/v2",
+    "metadata": {
+      "name": "F3eInwQ7z",
+      "namespace": "default",
+      "uid": "e22f6a23-817e-4b3c-a4f7-283aeeb1ee72",
+      "resourceVersion": "1784640466948981",
+      "generation": 1,
+      "creationTimestamp": "2026-07-21T13:27:46Z",
+      "labels": {
+        "grafana.app/deprecatedInternalID": "2135913261838336"
       },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "fahrenheit"
-        },
-        "overrides": []
+      "annotations": {
+        "grafana.app/createdBy": "user:bfrzirobu2bcwf",
+        "grafana.app/folder": "dfs38kiljzim8f"
       },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 0
-      },
-      "hiddenSeries": false,
-      "id": 13,
-      "interval": "",
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-        "libraryPanel": {
-          "description": "",
-          "meta": {
-            "connectedDashboards": 3,
-            "created": "2022-05-17T19:35:06Z",
-            "createdBy": {
-              "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-              "id": 13,
-              "name": "mike.johnson@grafana.com"
+      "managedFields": [
+        {
+          "manager": "grafana",
+          "operation": "Update",
+          "apiVersion": "dashboard.grafana.app/v0alpha1",
+          "time": "2026-07-21T13:27:46Z",
+          "fieldsType": "FieldsV1",
+          "fieldsV1": {
+            "f:metadata": {
+              "f:annotations": {
+                ".": {},
+                "f:grafana.app/folder": {}
+              }
             },
-            "folderName": "mj",
-            "folderUid": "R0bMCcW7z",
-            "updated": "2022-05-17T19:37:14Z",
-            "updatedBy": {
-              "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-              "id": 13,
-              "name": "mike.johnson@grafana.com"
+            "f:spec": {
+              "f:annotations": {
+                ".": {},
+                "f:list": {}
+              },
+              "f:description": {},
+              "f:editable": {},
+              "f:fiscalYearStartMonth": {},
+              "f:gnetId": {},
+              "f:graphTooltip": {},
+              "f:links": {},
+              "f:liveNow": {},
+              "f:panels": {},
+              "f:refresh": {},
+              "f:schemaVersion": {},
+              "f:style": {},
+              "f:tags": {},
+              "f:templating": {
+                ".": {},
+                "f:list": {}
+              },
+              "f:time": {
+                ".": {},
+                "f:from": {},
+                "f:to": {}
+              },
+              "f:timepicker": {},
+              "f:timezone": {},
+              "f:title": {},
+              "f:uid": {},
+              "f:version": {},
+              "f:weekStart": {}
             }
-          },
-          "name": "Extreme Dashboard Makeover - Grill",
-          "type": "graph",
-          "uid": "y1C0A5unz",
-          "version": 2
-        },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.5.5",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "Grill",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "max": 394,
-          "min": 380,
-          "refId": "A",
-          "scenarioId": "random_walk",
-          "startValue": 383
-        }
-      ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "Grill",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:63",
-          "format": "fahrenheit",
-          "logBase": 1,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:64",
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": {
-        "type": "testdata",
-        "uid": "EJHgYyf4z"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "unit": "fahrenheit"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "hiddenSeries": false,
-      "id": 14,
-      "interval": "",
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "libraryPanel": {
-        "description": "",
-        "meta": {
-          "connectedDashboards": 3,
-          "created": "2022-05-17T19:42:54Z",
-          "createdBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          },
-          "folderName": "mj",
-          "folderUid": "R0bMCcW7z",
-          "updated": "2022-05-17T19:42:54Z",
-          "updatedBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
           }
-        },
-        "name": "Extreme Dashboard Makeover - Room Temperature (F)",
-        "type": "graph",
-        "uid": "3dSe05X7z",
-        "version": 1
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.5.5",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "Zone 1",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "max": 70,
-          "min": 67,
-          "refId": "A",
-          "scenarioId": "random_walk",
-          "spread": 0.5,
-          "startValue": 68
-        },
-        {
-          "alias": "Zone 2",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 71,
-          "min": 69,
-          "noise": 0.1,
-          "refId": "B",
-          "scenarioId": "random_walk",
-          "spread": 0.5,
-          "startValue": 70
-        },
-        {
-          "alias": "Zone 3",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 71,
-          "min": 69,
-          "noise": 0.1,
-          "refId": "C",
-          "scenarioId": "random_walk",
-          "spread": 0.5,
-          "startValue": 70
-        },
-        {
-          "alias": "Zone 4",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 71,
-          "min": 69,
-          "noise": 0.1,
-          "refId": "D",
-          "scenarioId": "random_walk",
-          "spread": 0.5,
-          "startValue": 70
-        },
-        {
-          "alias": "Zone 5",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 71,
-          "min": 69,
-          "noise": 0.1,
-          "refId": "E",
-          "scenarioId": "random_walk",
-          "spread": 0.5,
-          "startValue": 70
-        },
-        {
-          "alias": "Zone 6",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 71,
-          "min": 69,
-          "noise": 0.1,
-          "refId": "F",
-          "scenarioId": "random_walk",
-          "spread": 0.5,
-          "startValue": 70
-        },
-        {
-          "alias": "Zone 7",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 71,
-          "min": 69,
-          "noise": 0.1,
-          "refId": "G",
-          "scenarioId": "random_walk",
-          "spread": 0.5,
-          "startValue": 70
-        },
-        {
-          "alias": "Zone 8",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 71,
-          "min": 69,
-          "noise": 0.1,
-          "refId": "H",
-          "scenarioId": "random_walk",
-          "spread": 0.5,
-          "startValue": 70
         }
-      ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "Room Temperature (F)",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:63",
-          "format": "fahrenheit",
-          "logBase": 1,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:64",
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
+      ]
     },
-    {
-      "datasource": {
-        "type": "grafana-googlesheets-datasource",
-        "uid": "uL86Byf4k"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto",
-            "inspect": true
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
+    "spec": {
+      "annotations": [
+        {
+          "kind": "AnnotationQuery",
+          "spec": {
+            "query": {
+              "kind": "DataQuery",
+              "group": "grafana",
+              "version": "v0",
+              "datasource": {
+                "name": "-- Grafana --"
               },
-              {
-                "color": "yellow",
-                "value": 35
-              },
-              {
-                "color": "red",
-                "value": 60
+              "spec": {
+                "limit": 100,
+                "matchAny": false,
+                "tags": [],
+                "type": "dashboard"
               }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Purchase Date"
             },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeFromNow"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 30,
-        "w": 5,
-        "x": 0,
-        "y": 8
-      },
-      "id": 2,
-      "interval": "",
-      "libraryPanel": {
-        "description": "",
-        "meta": {
-          "connectedDashboards": 3,
-          "created": "2022-04-27T18:58:06Z",
-          "createdBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          },
-          "folderName": "mj",
-          "folderUid": "R0bMCcW7z",
-          "updated": "2022-04-27T20:40:51Z",
-          "updatedBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          }
-        },
-        "name": "Dashboard Makeover - Time since we purchased these spices",
-        "type": "table",
-        "uid": "1D_h3UQ7k",
-        "version": 4
-      },
-      "links": [
-        {
-          "targetBlank": true,
-          "title": "Raw Data",
-          "url": "https://docs.google.com/spreadsheets/d/1uoZrXcnv_ZeKoLk56eaBdTOI8kMYaulZdMxFNQUxmGs/edit#gid=527121891"
-        }
-      ],
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": ["sum"],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "8.5.5",
-      "targets": [
-        {
-          "cacheDurationSeconds": 0,
-          "datasource": {
-            "type": "grafana-googlesheets-datasource",
-            "uid": "uL86Byf4k"
-          },
-          "expr": "web_http_5xx_errors",
-          "legendFormat": "500",
-          "range": "SpicesAge!A1:B32",
-          "refId": "A",
-          "spreadsheet": "1uoZrXcnv_ZeKoLk56eaBdTOI8kMYaulZdMxFNQUxmGs",
-          "useTimeFilter": false
-        }
-      ],
-      "title": "Time since we purchased these spices",
-      "transformations": [],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "grafana-googlesheets-datasource",
-        "uid": "uL86Byf4k"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "inspect": true
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 35
-              },
-              {
-                "color": "red",
-                "value": 60
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Purchase Date"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeFromNow"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 19,
-        "x": 5,
-        "y": 8
-      },
-      "id": 10,
-      "interval": "",
-      "libraryPanel": {
-        "description": "",
-        "meta": {
-          "connectedDashboards": 3,
-          "created": "2022-04-28T12:36:10Z",
-          "createdBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          },
-          "folderName": "mj",
-          "folderUid": "R0bMCcW7z",
-          "updated": "2022-05-17T19:18:36Z",
-          "updatedBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          }
-        },
-        "name": "Dashboard Makeover - Lighting Status",
-        "type": "table",
-        "uid": "u97RX_Q7z",
-        "version": 2
-      },
-      "links": [],
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": ["sum"],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "8.5.5",
-      "targets": [
-        {
-          "cacheDurationSeconds": 0,
-          "datasource": {
-            "type": "grafana-googlesheets-datasource",
-            "uid": "uL86Byf4k"
-          },
-          "expr": "web_http_5xx_errors",
-          "legendFormat": "500",
-          "range": "Lighting!A1:BW2",
-          "refId": "A",
-          "spreadsheet": "1uoZrXcnv_ZeKoLk56eaBdTOI8kMYaulZdMxFNQUxmGs",
-          "useTimeFilter": false
-        }
-      ],
-      "title": "Lighting Status",
-      "transformations": [],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "testdata",
-        "uid": "EJHgYyf4z"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "super-light-purple",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 380
-              }
-            ]
-          },
-          "unit": "fahrenheit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 5,
-        "y": 12
-      },
-      "id": 16,
-      "interval": "",
-      "libraryPanel": {
-        "description": "",
-        "meta": {
-          "connectedDashboards": 3,
-          "created": "2022-05-17T19:50:27Z",
-          "createdBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          },
-          "folderName": "mj",
-          "folderUid": "R0bMCcW7z",
-          "updated": "2022-05-17T19:50:27Z",
-          "updatedBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          }
-        },
-        "name": "Extreme Dashboard Makeover - Mac Oven",
-        "type": "stat",
-        "uid": "VvzpJ5X7z",
-        "version": 1
-      },
-      "links": [],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "8.5.5",
-      "targets": [
-        {
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "max": 377,
-          "min": 373,
-          "refId": "A",
-          "scenarioId": "random_walk",
-          "startValue": 375
-        }
-      ],
-      "title": "Mac Oven",
-      "transformations": [],
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "testdata",
-        "uid": "EJHgYyf4z"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 11,
-        "x": 13,
-        "y": 12
-      },
-      "id": 19,
-      "interval": "",
-      "libraryPanel": {
-        "description": "",
-        "meta": {
-          "connectedDashboards": 3,
-          "created": "2022-05-17T19:55:14Z",
-          "createdBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          },
-          "folderName": "mj",
-          "folderUid": "R0bMCcW7z",
-          "updated": "2022-05-17T20:57:48Z",
-          "updatedBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          }
-        },
-        "name": "Extreme Dashboard Makeover - Salmon Cooking Times, past 7 days",
-        "type": "gauge",
-        "uid": "fwwLJ5X7k",
-        "version": 4
-      },
-      "links": [],
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "8.5.5",
-      "targets": [
-        {
-          "alias": "Rick",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "refId": "A",
-          "scenarioId": "csv_metric_values",
-          "stringInput": "147,167,171,144,159,166"
-        },
-        {
-          "alias": "Jose",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "refId": "B",
-          "scenarioId": "csv_metric_values",
-          "stringInput": "141,144,139,141,140,140,149"
-        },
-        {
-          "alias": "Kaitlyn",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "refId": "C",
-          "scenarioId": "csv_metric_values",
-          "stringInput": "151,150,150,151,150,150,149"
-        },
-        {
-          "alias": "Raj",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "refId": "D",
-          "scenarioId": "csv_metric_values",
-          "stringInput": "147,150,155,148,154,146,149"
-        },
-        {
-          "alias": "Lee",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "refId": "E",
-          "scenarioId": "csv_metric_values",
-          "stringInput": "153,147,155,152,156,150,149"
-        }
-      ],
-      "title": "Salmon Cooking Times per side, past 7 days",
-      "transformations": [],
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "testdata",
-        "uid": "EJHgYyf4z"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 35
-              },
-              {
-                "color": "red",
-                "value": 39
-              }
-            ]
-          },
-          "unit": "fahrenheit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 5,
-        "y": 19
-      },
-      "id": 18,
-      "interval": "",
-      "libraryPanel": {
-        "description": "",
-        "meta": {
-          "connectedDashboards": 3,
-          "created": "2022-05-17T19:47:32Z",
-          "createdBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          },
-          "folderName": "mj",
-          "folderUid": "R0bMCcW7z",
-          "updated": "2022-05-17T19:47:51Z",
-          "updatedBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          }
-        },
-        "name": "Extreme Dashboard Makeover - Refrigerator Temperature (F)",
-        "type": "stat",
-        "uid": "kGPSJcu7z",
-        "version": 2
-      },
-      "links": [],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.5.5",
-      "targets": [
-        {
-          "alias": "Grill",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "max": 38,
-          "min": 33,
-          "refId": "A",
-          "scenarioId": "random_walk",
-          "startValue": 33
-        }
-      ],
-      "title": "Fridge Temp (F)",
-      "transformations": [],
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "grafana-googlesheets-datasource",
-        "uid": "uL86Byf4k"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto",
-            "inspect": false
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "m"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Image"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "image"
-              },
-              {
-                "id": "custom.width",
-                "value": 72
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 11,
-        "x": 13,
-        "y": 23
-      },
-      "id": 9,
-      "interval": "",
-      "libraryPanel": {
-        "description": "",
-        "meta": {
-          "connectedDashboards": 3,
-          "created": "2022-04-27T21:27:23Z",
-          "createdBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          },
-          "folderName": "mj",
-          "folderUid": "R0bMCcW7z",
-          "updated": "2022-04-27T21:29:50Z",
-          "updatedBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          }
-        },
-        "name": "Dashboard Makeover - Extra Cleaning Duty Assignment Today",
-        "type": "table",
-        "uid": "T47RSwQnz",
-        "version": 2
-      },
-      "links": [],
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": ["sum"],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.5.0",
-      "targets": [
-        {
-          "cacheDurationSeconds": 0,
-          "datasource": {
-            "type": "grafana-googlesheets-datasource",
-            "uid": "uL86Byf4k"
-          },
-          "expr": "web_http_5xx_errors",
-          "legendFormat": "500",
-          "range": "ExtraCleaningDuty!G1:J6",
-          "refId": "A",
-          "spreadsheet": "1uoZrXcnv_ZeKoLk56eaBdTOI8kMYaulZdMxFNQUxmGs",
-          "useTimeFilter": false
-        }
-      ],
-      "title": "Extra Cleaning Duty Assignment Today",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Value": true
-            },
-            "indexByName": {},
-            "renameByName": {
-              "Duty": ""
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations \u0026 Alerts",
+            "builtIn": true,
+            "legacyOptions": {
+              "type": "dashboard"
             }
           }
         }
       ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "testdata",
-        "uid": "EJHgYyf4z"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "4000": {
-                  "index": 0,
-                  "text": "Max Time Allotted"
+      "cursorSync": "Off",
+      "description": "Extreme Dashboard Makeover Workshop",
+      "editable": true,
+      "elements": {
+        "panel-10": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 10,
+            "title": "Lighting Status",
+            "libraryPanel": {
+              "name": "Dashboard Makeover - Lighting Status",
+              "uid": "u97RX_Q7z"
+            }
+          }
+        },
+        "panel-13": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 13,
+            "title": "Grill",
+            "libraryPanel": {
+              "name": "Extreme Dashboard Makeover - Grill",
+              "uid": "y1C0A5unz"
+            }
+          }
+        },
+        "panel-14": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 14,
+            "title": "Room Temperature (F)",
+            "libraryPanel": {
+              "name": "Extreme Dashboard Makeover - Room Temperature (F)",
+              "uid": "3dSe05X7z"
+            }
+          }
+        },
+        "panel-16": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 16,
+            "title": "Mac Oven",
+            "libraryPanel": {
+              "name": "Extreme Dashboard Makeover - Mac Oven",
+              "uid": "VvzpJ5X7z"
+            }
+          }
+        },
+        "panel-18": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 18,
+            "title": "Fridge Temp (F)",
+            "libraryPanel": {
+              "name": "Extreme Dashboard Makeover - Refrigerator Temperature (F)",
+              "uid": "kGPSJcu7z"
+            }
+          }
+        },
+        "panel-19": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 19,
+            "title": "Salmon Cooking Times per side, past 7 days",
+            "libraryPanel": {
+              "name": "Extreme Dashboard Makeover - Salmon Cooking Times, past 7 days",
+              "uid": "fwwLJ5X7k"
+            }
+          }
+        },
+        "panel-2": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 2,
+            "title": "Time since we purchased these spices",
+            "libraryPanel": {
+              "name": "Dashboard Makeover - Time since we purchased these spices",
+              "uid": "1D_h3UQ7k"
+            }
+          }
+        },
+        "panel-4": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 4,
+            "title": "Side Dish Prep Times, past 7 days",
+            "libraryPanel": {
+              "name": "Dashboard Makeover - Side Dish Prep Times, past 7 days",
+              "uid": "WDs3jUQ7k"
+            }
+          }
+        },
+        "panel-8": {
+          "kind": "Panel",
+          "spec": {
+            "id": 8,
+            "title": "Soup: Minutes until we need to throw this soup out and make some new soup for our guests/customers",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "testdata",
+                        "version": "v0",
+                        "datasource": {
+                          "name": "EJHgYyf4z"
+                        },
+                        "spec": {
+                          "scenarioId": "csv_metric_values",
+                          "stringInput": "1470,1410,1350,1290,1170,1110,1050,990,930,870,810,750,690,630,570,510,450,390,330,270,210,150,90"
+                        }
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {
+                  "timeFrom": "24h",
+                  "timeShift": "1d"
                 }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "#EAB839",
-                "value": 4000
               }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 8,
-        "x": 5,
-        "y": 27
-      },
-      "id": 4,
-      "interval": "6h",
-      "libraryPanel": {
-        "description": "",
-        "meta": {
-          "connectedDashboards": 3,
-          "created": "2022-04-27T18:49:19Z",
-          "createdBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
-          },
-          "folderName": "mj",
-          "folderUid": "R0bMCcW7z",
-          "updated": "2022-05-20T18:43:44Z",
-          "updatedBy": {
-            "avatarUrl": "/avatar/579fc54abdc9ab34fb4865322f2870a1",
-            "id": 13,
-            "name": "mike.johnson@grafana.com"
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "timeseries",
+              "version": "8.5.0",
+              "spec": {
+                "options": {
+                  "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                  },
+                  "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                  }
+                },
+                "fieldConfig": {
+                  "defaults": {
+                    "decimals": 1,
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "value": null,
+                          "color": "green"
+                        },
+                        {
+                          "value": 80,
+                          "color": "red"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "mode": "palette-classic"
+                    },
+                    "custom": {
+                      "axisLabel": "Time until we need new soup in the number of overall minutes",
+                      "axisPlacement": "auto",
+                      "barAlignment": 0,
+                      "drawStyle": "bars",
+                      "fillOpacity": 0,
+                      "gradientMode": "none",
+                      "hideFrom": {
+                        "legend": false,
+                        "tooltip": false,
+                        "viz": false
+                      },
+                      "lineInterpolation": "linear",
+                      "lineWidth": 1,
+                      "pointSize": 5,
+                      "scaleDistribution": {
+                        "type": "linear"
+                      },
+                      "showPoints": "auto",
+                      "spanNulls": false,
+                      "stacking": {
+                        "group": "A",
+                        "mode": "none"
+                      },
+                      "thresholdsStyle": {
+                        "mode": "off"
+                      }
+                    }
+                  },
+                  "overrides": []
+                }
+              }
+            }
           }
         },
-        "name": "Dashboard Makeover - Side Dish Prep Times, past 7 days",
-        "type": "gauge",
-        "uid": "WDs3jUQ7k",
-        "version": 9
+        "panel-9": {
+          "kind": "LibraryPanel",
+          "spec": {
+            "id": 9,
+            "title": "Extra Cleaning Duty Assignment Today",
+            "libraryPanel": {
+              "name": "Dashboard Makeover - Extra Cleaning Duty Assignment Today",
+              "uid": "T47RSwQnz"
+            }
+          }
+        }
+      },
+      "layout": {
+        "kind": "GridLayout",
+        "spec": {
+          "items": [
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 0,
+                "width": 12,
+                "height": 8,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-13"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 12,
+                "y": 0,
+                "width": 12,
+                "height": 8,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-14"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 8,
+                "width": 5,
+                "height": 30,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-2"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 5,
+                "y": 8,
+                "width": 19,
+                "height": 4,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-10"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 5,
+                "y": 12,
+                "width": 8,
+                "height": 7,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-16"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 13,
+                "y": 12,
+                "width": 11,
+                "height": 11,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-19"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 5,
+                "y": 19,
+                "width": 8,
+                "height": 8,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-18"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 13,
+                "y": 23,
+                "width": 11,
+                "height": 8,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-9"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 5,
+                "y": 27,
+                "width": 8,
+                "height": 11,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-4"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 13,
+                "y": 31,
+                "width": 11,
+                "height": 7,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-8"
+                }
+              }
+            }
+          ]
+        }
       },
       "links": [],
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+      "liveNow": false,
+      "preload": false,
+      "tags": [],
+      "timeSettings": {
+        "from": "now-7d",
+        "to": "now",
+        "autoRefresh": "",
+        "autoRefreshIntervals": [
+          "5s",
+          "10s",
+          "30s",
+          "1m",
+          "5m",
+          "15m",
+          "30m",
+          "1h",
+          "2h",
+          "1d"
+        ],
+        "hideTimepicker": false,
+        "fiscalYearStartMonth": 0
       },
-      "pluginVersion": "8.5.3",
-      "targets": [
-        {
-          "alias": "Rick",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "max": 5400,
-          "min": 3800,
-          "refId": "A",
-          "scenarioId": "random_walk",
-          "spread": 100,
-          "startValue": 4500
-        },
-        {
-          "alias": "Jose",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 3800,
-          "min": 3400,
-          "refId": "B",
-          "scenarioId": "random_walk",
-          "spread": 50,
-          "startValue": 3600
-        },
-        {
-          "alias": "Kaitlyn",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 3800,
-          "min": 3400,
-          "refId": "C",
-          "scenarioId": "random_walk",
-          "spread": 50,
-          "startValue": 3600
-        },
-        {
-          "alias": "Raj",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 3800,
-          "min": 3400,
-          "refId": "D",
-          "scenarioId": "random_walk",
-          "spread": 50,
-          "startValue": 3600
-        },
-        {
-          "alias": "Lee",
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "hide": false,
-          "max": 3800,
-          "min": 3400,
-          "refId": "E",
-          "scenarioId": "random_walk",
-          "spread": 50,
-          "startValue": 3600
-        }
-      ],
-      "title": "Side Dish Prep Times, past 7 days",
-      "transformations": [],
-      "type": "gauge"
+      "title": "Dashboard Makeover Challenge",
+      "variables": []
     },
-    {
-      "datasource": {
-        "type": "testdata",
-        "uid": "EJHgYyf4z"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "Time until we need new soup in the number of overall minutes",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "bars",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 11,
-        "x": 13,
-        "y": 31
-      },
-      "id": 8,
-      "interval": "",
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "8.5.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "testdata",
-            "uid": "EJHgYyf4z"
-          },
-          "refId": "A",
-          "scenarioId": "csv_metric_values",
-          "stringInput": "1470,1410,1350,1290,1170,1110,1050,990,930,870,810,750,690,630,570,510,450,390,330,270,210,150,90"
-        }
-      ],
-      "timeFrom": "24h",
-      "timeShift": "1d",
-      "title": "Soup: Minutes until we need to throw this soup out and make some new soup for our guests/customers",
-      "transformations": [],
-      "type": "timeseries"
+    "status": {
+      "conversion": {
+        "failed": false,
+        "storedVersion": "v0alpha1"
+      }
     }
-  ],
-  "refresh": "",
-  "schemaVersion": 36,
-  "style": "dark",
-  "tags": [],
-  "templating": {
-    "list": []
   },
-  "time": {
-    "from": "now-7d",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "",
-  "title": "Dashboard Makeover Challenge",
-  "uid": "F3eInwQ7z",
-  "version": 1,
-  "weekStart": ""
+  "nested_path": "linux%2Fgnu/Others/n%2B_%3D23r",
+  "gdg_api_version": "dashboard.grafana.app/v2"
 }

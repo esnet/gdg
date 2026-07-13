@@ -65,7 +65,7 @@ type Resources_BuildResourceFolder_Call struct {
 //   - resourceType domain.ResourceType
 //   - createDestination bool
 //   - clearOutput bool
-func (_e *Resources_Expecter) BuildResourceFolder(cfg interface{}, folderName interface{}, resourceType interface{}, createDestination interface{}, clearOutput interface{}) *Resources_BuildResourceFolder_Call {
+func (_e *Resources_Expecter) BuildResourceFolder(cfg any, folderName any, resourceType any, createDestination any, clearOutput any) *Resources_BuildResourceFolder_Call {
 	return &Resources_BuildResourceFolder_Call{Call: _e.mock.On("BuildResourceFolder", cfg, folderName, resourceType, createDestination, clearOutput)}
 }
 
@@ -140,7 +140,7 @@ type Resources_BuildResourcePath_Call struct {
 //   - resourceType domain.ResourceType
 //   - createDestination bool
 //   - clearOutput bool
-func (_e *Resources_Expecter) BuildResourcePath(cfg interface{}, folderName interface{}, resourceType interface{}, createDestination interface{}, clearOutput interface{}) *Resources_BuildResourcePath_Call {
+func (_e *Resources_Expecter) BuildResourcePath(cfg any, folderName any, resourceType any, createDestination any, clearOutput any) *Resources_BuildResourcePath_Call {
 	return &Resources_BuildResourcePath_Call{Call: _e.mock.On("BuildResourcePath", cfg, folderName, resourceType, createDestination, clearOutput)}
 }
 
@@ -224,7 +224,7 @@ type Resources_GetFolderFromResourcePath_Call struct {
 //   - resourceType domain.ResourceType
 //   - prefix string
 //   - orgName string
-func (_e *Resources_Expecter) GetFolderFromResourcePath(cfg interface{}, filePath interface{}, resourceType interface{}, prefix interface{}, orgName interface{}) *Resources_GetFolderFromResourcePath_Call {
+func (_e *Resources_Expecter) GetFolderFromResourcePath(cfg any, filePath any, resourceType any, prefix any, orgName any) *Resources_GetFolderFromResourcePath_Call {
 	return &Resources_GetFolderFromResourcePath_Call{Call: _e.mock.On("GetFolderFromResourcePath", cfg, filePath, resourceType, prefix, orgName)}
 }
 
@@ -295,7 +295,7 @@ type Resources_GetSlug_Call struct {
 
 // GetSlug is a helper method to define mock.On call
 //   - title string
-func (_e *Resources_Expecter) GetSlug(title interface{}) *Resources_GetSlug_Call {
+func (_e *Resources_Expecter) GetSlug(title any) *Resources_GetSlug_Call {
 	return &Resources_GetSlug_Call{Call: _e.mock.On("GetSlug", title)}
 }
 
@@ -346,7 +346,7 @@ type Resources_UpdateSlug_Call struct {
 
 // UpdateSlug is a helper method to define mock.On call
 //   - board string
-func (_e *Resources_Expecter) UpdateSlug(board interface{}) *Resources_UpdateSlug_Call {
+func (_e *Resources_Expecter) UpdateSlug(board any) *Resources_UpdateSlug_Call {
 	return &Resources_UpdateSlug_Call{Call: _e.mock.On("UpdateSlug", board)}
 }
 

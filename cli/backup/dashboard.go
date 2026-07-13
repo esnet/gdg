@@ -11,8 +11,8 @@ import (
 	cliDomain "github.com/esnet/gdg/cli/domain"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/pkg/tools"
-	"github.com/grafana/grafana-openapi-client-go/models"
 
 	"github.com/bep/simplecobra"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -164,21 +164,23 @@ func newDownloadDashboardsCmd() simplecobra.Commander {
 	}
 }
 
-func getDashboardUrl(link *models.Hit, cfg *config_domain.GDGAppConfiguration) string {
+func getDashboardUrl(link *domain.DashboardV2Gdg, cfg *config_domain.GDGAppConfiguration) string {
 	base, err := url.Parse(cfg.GetDefaultGrafanaConfig().GetURL())
 	var baseHost string
 	if err != nil {
 		baseHost = "http://unknown/"
-		slog.Warn("unable to determine grafana base host for dashboard", slog.String("dashboard-uid", link.UID))
+		slog.Warn("unable to determine Grafana base host for dashboard", slog.String("dashboard-uid", string(link.Resource.UID)))
 	} else {
 		base.Path = ""
 		baseHost = base.String()
 	}
-	return fmt.Sprintf("%s%s", baseHost, link.URL)
+	// v2 resources use /d/<name> style URLs; v1 resources carry a URL field via NestedHit.
+	// For the unified view we construct from the resource name.
+	return fmt.Sprintf("%s/d/%s", baseHost, link.Resource.Name)
 }
 
 func newListDashboardsCmd() simplecobra.Commander {
-	description := "List all dashboards from grafana"
+	description := "List all dashboards from Grafana"
 	return &cliDomain.SimpleCommand{
 		NameP:        "list",
 		Short:        description,
@@ -188,7 +190,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 			cmd.Aliases = []string{"l"}
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
-			rootCmd.TableObj.AppendHeader(table.Row{"id", "Title", "Slug", "Folder", "NestedPath", "UID", "Tags", "URL"})
+			rootCmd.TableObj.AppendHeader(table.Row{"UID", "Title", "NestedPath", "Tags", "URL"})
 
 			filters := api.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			boards := rootCmd.GrafanaSvc().ListDashboards(filters)
@@ -202,19 +204,18 @@ func newListDashboardsCmd() simplecobra.Commander {
 			count := 0
 
 			for _, link := range boards {
-				urlValue := getDashboardUrl(link.Hit, rootCmd.ConfigSvc())
+				urlValue := getDashboardUrl(link, rootCmd.ConfigSvc())
 				count++
 				var tagVal string
-				if len(link.Tags) > 0 {
-					tagValByte, err := json.Marshal(link.Tags)
+				if len(link.Resource.Spec.Tags) > 0 {
+					tagValByte, err := json.Marshal(link.Resource.Spec.Tags)
 					if err == nil {
 						tagVal = string(tagValByte)
 					}
 				}
 
-				baseRow := table.Row{link.ID, link.Title, link.Slug, link.FolderTitle, link.NestedPath, link.UID, tagVal, urlValue}
+				baseRow := table.Row{link.Resource.UID, link.Resource.Spec.Title, link.NestedPath, tagVal, urlValue}
 				rootCmd.TableObj.AppendRow(baseRow)
-
 			}
 			printCount(count)
 			if len(boards) > 0 {

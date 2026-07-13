@@ -350,3 +350,22 @@ func TestGetUserSettings_DoesNotOverrideExplicitValues(t *testing.T) {
 	assert.Equal(t, 8, us.MinLength)
 	assert.Equal(t, 32, us.MaxLength)
 }
+
+// ── GetExperimental ───────────────────────────────────────────────────────────
+
+func TestGetExperimental_InitialisesWhenNil(t *testing.T) {
+	cfg := NewGrafanaConfig()
+	assert.Nil(t, cfg.Experimental)
+	exp := cfg.GetExperimental()
+	require.NotNil(t, exp)
+	// Calling again should return the same pointer (idempotent).
+	assert.Same(t, exp, cfg.GetExperimental())
+}
+
+func TestGetExperimental_ReturnsExistingWhenSet(t *testing.T) {
+	cfg := NewGrafanaConfig()
+	existing := &ExperimentalFeatures{}
+	cfg.Experimental = existing
+	got := cfg.GetExperimental()
+	assert.Same(t, existing, got, "should return the pre-existing ExperimentalFeatures pointer")
+}

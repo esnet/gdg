@@ -71,7 +71,7 @@ type Storage_FindAllFiles_Call struct {
 // FindAllFiles is a helper method to define mock.On call
 //   - folder string
 //   - fullPath bool
-func (_e *Storage_Expecter) FindAllFiles(folder interface{}, fullPath interface{}) *Storage_FindAllFiles_Call {
+func (_e *Storage_Expecter) FindAllFiles(folder any, fullPath any) *Storage_FindAllFiles_Call {
 	return &Storage_FindAllFiles_Call{Call: _e.mock.On("FindAllFiles", folder, fullPath)}
 }
 
@@ -226,7 +226,7 @@ type Storage_ReadFile_Call struct {
 
 // ReadFile is a helper method to define mock.On call
 //   - filename string
-func (_e *Storage_Expecter) ReadFile(filename interface{}) *Storage_ReadFile_Call {
+func (_e *Storage_Expecter) ReadFile(filename any) *Storage_ReadFile_Call {
 	return &Storage_ReadFile_Call{Call: _e.mock.On("ReadFile", filename)}
 }
 
@@ -278,7 +278,7 @@ type Storage_WriteFile_Call struct {
 // WriteFile is a helper method to define mock.On call
 //   - filename string
 //   - data []byte
-func (_e *Storage_Expecter) WriteFile(filename interface{}, data interface{}) *Storage_WriteFile_Call {
+func (_e *Storage_Expecter) WriteFile(filename any, data any) *Storage_WriteFile_Call {
 	return &Storage_WriteFile_Call{Call: _e.mock.On("WriteFile", filename, data)}
 }
 

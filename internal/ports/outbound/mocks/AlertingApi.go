@@ -117,7 +117,7 @@ type AlertingApi_ClearAlertRules_Call struct {
 
 // ClearAlertRules is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *AlertingApi_Expecter) ClearAlertRules(filter interface{}) *AlertingApi_ClearAlertRules_Call {
+func (_e *AlertingApi_Expecter) ClearAlertRules(filter any) *AlertingApi_ClearAlertRules_Call {
 	return &AlertingApi_ClearAlertRules_Call{Call: _e.mock.On("ClearAlertRules", filter)}
 }
 
@@ -386,7 +386,7 @@ type AlertingApi_DownloadAlertRules_Call struct {
 
 // DownloadAlertRules is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *AlertingApi_Expecter) DownloadAlertRules(filter interface{}) *AlertingApi_DownloadAlertRules_Call {
+func (_e *AlertingApi_Expecter) DownloadAlertRules(filter any) *AlertingApi_DownloadAlertRules_Call {
 	return &AlertingApi_DownloadAlertRules_Call{Call: _e.mock.On("DownloadAlertRules", filter)}
 }
 
@@ -662,7 +662,7 @@ type AlertingApi_ListAlertRules_Call struct {
 
 // ListAlertRules is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *AlertingApi_Expecter) ListAlertRules(filter interface{}) *AlertingApi_ListAlertRules_Call {
+func (_e *AlertingApi_Expecter) ListAlertRules(filter any) *AlertingApi_ListAlertRules_Call {
 	return &AlertingApi_ListAlertRules_Call{Call: _e.mock.On("ListAlertRules", filter)}
 }
 
@@ -944,7 +944,7 @@ type AlertingApi_UploadAlertRules_Call struct {
 
 // UploadAlertRules is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *AlertingApi_Expecter) UploadAlertRules(filter interface{}) *AlertingApi_UploadAlertRules_Call {
+func (_e *AlertingApi_Expecter) UploadAlertRules(filter any) *AlertingApi_UploadAlertRules_Call {
 	return &AlertingApi_UploadAlertRules_Call{Call: _e.mock.On("UploadAlertRules", filter)}
 }
 

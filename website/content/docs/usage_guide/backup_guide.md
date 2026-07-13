@@ -1,5 +1,6 @@
 ---
 title: "Backup Guide"
+description: "GDG backup and restore guide covering list, download, upload, and delete operations for dashboards, alerts, folders, and connections."
 weight: 16
 ---
 
@@ -128,7 +129,7 @@ gdg backup alerting mute-timings upload      Upload all alert timings for the gi
 ║           ║                       ║           ║     "start_time": "01:00" ║                ║               ║
 ║           ║                       ║           ║   }                       ║                ║               ║
 ║           ║                       ║           ║ ]                         ║                ║               ║
-║ [         ║ Antarctica/South_Pole ║ [         ║ [                         ║ [              ║ [             ║
+║ [ ║ Pacific/Auckland       ║ [         ║ [                         ║ [              ║ [             ║
 ║   "15:31" ║                       ║   "11:12" ║   {                       ║   "friday",    ║   "1900:2700" ║
 ║ ]         ║                       ║ ]         ║     "end_time": "10:00",  ║   "thursday",  ║ ]             ║
 ║           ║                       ║           ║     "start_time": "08:00" ║   "wednesday"  ║               ║
@@ -181,6 +182,21 @@ gdg backup c upload -- Exports all dashboard from local filesystem (matching fol
 gdg backup c clear -- Deletes all connections
 ```
 
+#### Connection Permissions
+
+{{< callout context="caution" title="Enterprise + FGAC required" icon="alert-triangle" >}}
+Connection permissions require **Grafana Enterprise** with the **Fine-Grained Access Control (FGAC)** license tier. A basic Enterprise license is not sufficient — FGAC is a separate tier that enables per-user and per-team datasource access restrictions.
+
+See the [Enterprise Guide]({{< ref "enterprise_guide" >}}) for full details on FGAC prerequisites, how GDG detects license capability at runtime, and troubleshooting steps.
+{{< /callout >}}
+
+```sh
+gdg backup c permission list     -- Lists all current connection permissions
+gdg backup c permission download -- Download all connection permissions to local filesystem
+gdg backup c permission upload   -- Upload connection permissions from local filesystem to Grafana
+gdg backup c permission clear    -- Clear all explicit connection permissions (leaves system defaults)
+```
+
 
 ### Dashboards
 
@@ -206,6 +222,51 @@ The command above will return any dashboard that is tagged with `tagA` or `tagB`
 
 
 **NOTE**: Starting with v0.5.2 full crud support for tag filtering.  You can list,upload,clear,download dashboards using tag filters.  Keep in mind the tag filtering on any matching tags.  ie.  Any dashboard that has tagA or tagB or complex,tagC will be listed,uploaded, etc.
+
+### Dashboard Permissions
+
+{{< callout context="note" title="Note" icon="info-circle" >}}
+Available with +v0.7.2. Dashboard permissions are supported in both Grafana OSS and Enterprise.
+
+Starting with Grafana v13, GDG automatically uses the RBAC access-control API
+(`/api/access-control/dashboards/{uid}`) instead of the legacy ACL API
+(`/api/dashboards/uid/{uid}/permissions`). Downloaded permission files are tagged
+with a `gdg_api_version` field so GDG can detect and handle format differences at
+upload time — preventing cross-version mismatches.
+{{< /callout >}}
+
+All commands can use `permission` or `p` to manage dashboard permissions.
+
+```sh
+gdg backup dash permission list -- Lists all current dashboard permissions
+gdg backup dash permission download -- Download all dashboard permissions from Grafana
+gdg backup dash permission upload -- Upload all dashboard permissions from local filesystem to Grafana
+gdg backup dash permission clear -- Clear all dashboard permissions (leaves default values)
+```
+
+You can additionally filter by dashboard slug to operate on a single dashboard:
+
+```sh
+gdg backup dash permission list --dashboard bandwidth-dashboard
+```
+
+{{< details "Example Output (v13+):" >}}
+```
+┌─────────────────────┬───────────┐
+│ DASHBOARD NAME      │ UID       │
+├─────────────────────┼───────────┤
+│ Bandwidth Dashboard │ 000000003 │
+└─────────────────────┴───────────┘
+╔═══════════════╦═════════════════════╦════════════╦═══════════╦═════════════╦════════════╗
+║ DASHBOARD UID ║ DASHBOARD TITLE     ║ USERLOGIN  ║ TEAM      ║ BUILTIN ROLE║ PERMISSION ║
+╠═══════════════╬═════════════════════╬════════════╬═══════════╬═════════════╬════════════╣
+║ 000000003     ║ Bandwidth Dashboard ║ bob        ║           ║             ║ Edit       ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║ musicians ║             ║ Admin      ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║           ║ Editor      ║ Edit       ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║           ║ Viewer      ║ View       ║
+╚═══════════════╩═════════════════════╩════════════╩═══════════╩═════════════╩════════════╝
+```
+{{< /details >}}
 
 ### Folders
 

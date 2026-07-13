@@ -1,6 +1,6 @@
 ---
 title: "Version 0.7"
-description: "Release Notes for v0.7"
+description: "Release notes for GDG v0.7, including nested folder support, breaking changes, bug fixes, and security updates."
 date: 2024-09-11T00:00:00
 draft: false
 images: [ ]
