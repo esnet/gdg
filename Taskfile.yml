@@ -31,7 +31,8 @@ tasks:
   lint:
     desc: "Lint project, skipping test files."
     cmds:
-      - go tool {{ .TOOLS_ARG}}  golangci-lint run --timeout=30m  ./...
+      - go tool {{ .TOOLS_ARG}} github.com/golangci/golangci-lint/v2/cmd/golangci-lint run --timeout=30m  ./...
+#      - go tool {{ .TOOLS_ARG}}  golangci-lint run --timeout=30m  ./...
   spellcheck:
     desc: "Check Spelling across code"
     cmds:

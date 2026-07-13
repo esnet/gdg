@@ -157,9 +157,9 @@ func (s *DashNGoImpl) DeleteAllConnections(filter outbound.Filter) []string {
 	ds := make([]string, 0)
 	items := s.ListConnections(filter)
 	for _, item := range items {
-		dsItem, err := s.GetClient().Datasources.DeleteDataSourceByID(fmt.Sprintf("%d", item.ID))
+		_, err := s.GetClient().Datasources.DeleteDataSourceByUID(item.UID)
 		if err != nil {
-			slog.Warn("Failed to delete datasource", "datasource", item.Name, "err", dsItem.Error())
+			slog.Warn("Failed to delete datasource", "datasource", item.Name, "err", err)
 			continue
 		}
 		ds = append(ds, item.Name)
@@ -232,7 +232,7 @@ func (s *DashNGoImpl) UploadConnections(filter outbound.Filter) []string {
 
 		for _, existingDS := range dsListing {
 			if existingDS.Name == newDS.Name {
-				if _, err := s.GetClient().Datasources.DeleteDataSourceByID(fmt.Sprintf("%d", existingDS.ID)); err != nil {
+				if _, err := s.GetClient().Datasources.DeleteDataSourceByUID(existingDS.UID); err != nil {
 					slog.Error("error on deleting datasource", "datasource", newDS.Name, "credentialsErr", err)
 				}
 				break

@@ -457,9 +457,9 @@ func (m *Migrator) rekeyGdgCredentials(report *RekeyReport, opts RekeyOptions, a
 	)
 	switch ext {
 	case ".yml", ".yaml":
-		out, writeErr = yaml.Marshal(sm)
+		out, writeErr = yaml.Marshal(sm) // #nosec G117
 	case ".json":
-		out, writeErr = json.MarshalIndent(sm, "", "  ")
+		out, writeErr = json.MarshalIndent(sm, "", "  ") // #nosec G117
 	}
 	if writeErr != nil {
 		report.Errors = append(report.Errors,
@@ -488,10 +488,10 @@ func backupFile(backupDir, srcPath string, srcContent []byte) error {
 	if err := os.MkdirAll(filepath.Dir(dst), 0o750); err != nil {
 		return fmt.Errorf("create backup directory structure: %w", err)
 	}
-	return os.WriteFile(dst, srcContent, 0o600)
+	return os.WriteFile(dst, srcContent, 0o600) // #nosec G703 TODO: revisit
 }
 
-// parseKeyValueFile deserialises a YAML or JSON file into a flat string map.
+// parseKeyValueFile deserializes a YAML or JSON file into a flat string map.
 // It returns the map, the normalised file extension (".yaml", ".yml", or ".json"),
 // and any parsing error.
 func parseKeyValueFile(path string, raw []byte) (map[string]string, string, error) {

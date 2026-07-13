@@ -24,12 +24,13 @@ import (
 
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 
+	"maps"
+
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
 	"github.com/tidwall/pretty"
-	"golang.org/x/exp/maps"
 )
 
 const (
@@ -327,7 +328,7 @@ func (s *DashNGoImpl) ListDashboards(filterReq outbound.Filter) []*domain.Nested
 		}
 	}
 
-	boardLinks = maps.Values(deduplicatedLinks)
+	boardLinks = slices.Collect(maps.Values(deduplicatedLinks))
 	sort.Slice(boardLinks, func(i, j int) bool {
 		return boardLinks[i].ID < boardLinks[j].ID
 	})

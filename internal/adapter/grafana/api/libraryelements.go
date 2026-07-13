@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"strings"
 
+	"maps"
+
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/adapter/grafana"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
@@ -20,7 +22,6 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/library_elements"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/tidwall/gjson"
-	"golang.org/x/exp/maps"
 )
 
 const (

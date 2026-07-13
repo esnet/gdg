@@ -10,7 +10,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/docker/go-connections/nat"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
@@ -50,7 +49,7 @@ func BootstrapCloudStorage(username, password string) (testcontainers.Container,
 			s3UserEnv:    username,
 			s3PassKeyEnv: password,
 		},
-		WaitingFor: wait.ForListeningPort(nat.Port(fmt.Sprintf(s3TcpPortFormatString, s3ApiPort))),
+		WaitingFor: wait.ForListeningPort(fmt.Sprintf(s3TcpPortFormatString, s3ApiPort)),
 	}
 	s3C, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
