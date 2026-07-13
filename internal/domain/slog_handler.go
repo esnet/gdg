@@ -28,10 +28,10 @@ func NewContextHandler(h slog.Handler, out *os.File, err *os.File, opts *tint.Op
 	errOpts.Level = slog.LevelWarn
 	// create a error logger
 	// set global logger with custom options
-	errorHandler := tint.NewHandler(err, &errOpts)
+	errorHandler := tint.NewTextHandler(err, &errOpts)
 	ch.errorHandler = errorHandler
 
-	outHandler := tint.NewHandler(out, opts)
+	outHandler := tint.NewTextHandler(out, opts)
 	ch.handler = outHandler
 	return ch
 }
