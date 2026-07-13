@@ -68,7 +68,7 @@ func setupDashReaders(filterObj outbound.Filter) {
 			{
 				r := gjson.GetBytes(val, "tags")
 				if !r.Exists() || !r.IsArray() {
-					return nil, fmt.Errorf("no valid title found")
+					return []string{}, nil
 				}
 				ar := r.Array()
 				data := lo.Map(ar, func(item gjson.Result, index int) string {
