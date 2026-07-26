@@ -2,6 +2,7 @@ package storage
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -104,4 +105,109 @@ func TestGetMapValueOrEnvOverride(t *testing.T) {
 			t.Errorf("Expected '', got '%s'", result)
 		}
 	})
+}
+
+// ---------------------------------------------------------------------------
+// boolStrCheck
+// ---------------------------------------------------------------------------
+
+func TestBoolStrCheck(t *testing.T) {
+	tests := []struct {
+		input string
+		want  bool
+	}{
+		// truthy values
+		{"true", true},
+		{"True", true},
+		{"TRUE", true},
+		{"tRuE", true},
+		{"1", true},
+		// falsy values
+		{"false", false},
+		{"False", false},
+		{"FALSE", false},
+		{"0", false},
+		{"", false},
+		{"yes", false},
+		{"on", false},
+		{"2", false},
+	}
+	for _, tt := range tests {
+		t.Run("input="+tt.input, func(t *testing.T) {
+			got := boolStrCheck(tt.input)
+			if got != tt.want {
+				t.Errorf("boolStrCheck(%q): got %v, want %v", tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
+// ---------------------------------------------------------------------------
+// getCloudLocation
+// ---------------------------------------------------------------------------
+
+func newCloudStorage(prefix string) *CloudStorage {
+	return &CloudStorage{
+		BucketName:  "test-bucket",
+		Prefix:      prefix,
+		StorageName: "test",
+	}
+}
+
+func TestGetCloudLocation_NilPrefix(t *testing.T) {
+	s := newCloudStorage("<nil>")
+	got := s.getCloudLocation("org_main-org/dashboards/my-dash.json")
+	// "<nil>" prefix must be cleared; result should have no prefix injected.
+	if strings.HasPrefix(got, "<nil>") {
+		t.Errorf("expected prefix to be cleared, got %q", got)
+	}
+	// The file path itself should be preserved.
+	if !strings.Contains(got, "my-dash.json") {
+		t.Errorf("expected file name in result, got %q", got)
+	}
+}
+
+func TestGetCloudLocation_EmptyPrefix(t *testing.T) {
+	s := newCloudStorage("")
+	fileName := "org_main-org/dashboards/my-dash.json"
+	got := s.getCloudLocation(fileName)
+	if got != fileName {
+		t.Errorf("empty prefix: got %q, want %q", got, fileName)
+	}
+}
+
+func TestGetCloudLocation_FileAlreadyContainsPrefix(t *testing.T) {
+	// When the fileName already contains the prefix the function must return it unchanged.
+	s := newCloudStorage("myprefix")
+	fileName := "myprefix/org_main-org/dashboards/my-dash.json"
+	got := s.getCloudLocation(fileName)
+	if got != fileName {
+		t.Errorf("already-prefixed: got %q, want %q", got, fileName)
+	}
+}
+
+func TestGetCloudLocation_FileWithoutLeadingSlash(t *testing.T) {
+	s := newCloudStorage("myprefix")
+	fileName := "org_main-org/dashboards/my-dash.json"
+	got := s.getCloudLocation(fileName)
+	// Must start with the prefix and contain the file name.
+	if !strings.HasPrefix(got, "myprefix") {
+		t.Errorf("expected result to start with prefix, got %q", got)
+	}
+	if !strings.Contains(got, "my-dash.json") {
+		t.Errorf("expected file name in result, got %q", got)
+	}
+}
+
+func TestGetCloudLocation_FileWithLeadingSlash(t *testing.T) {
+	s := newCloudStorage("myprefix")
+	fileName := "/org_main-org/dashboards/my-dash.json"
+	got := s.getCloudLocation(fileName)
+	// Must combine prefix and file name without double slashes.
+	if strings.Contains(got, "//") {
+		t.Errorf("double slash detected in result %q", got)
+	}
+	if !strings.Contains(got, "my-dash.json") {
+		t.Errorf("expected file name in result, got %q", got)
+	}
 }

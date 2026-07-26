@@ -184,10 +184,8 @@ gdg backup c clear -- Deletes all connections
 
 #### Connection Permissions
 
-{{< callout context="caution" title="Enterprise + FGAC required" icon="alert-triangle" >}}
-Connection permissions require **Grafana Enterprise** with the **Fine-Grained Access Control (FGAC)** license tier. A basic Enterprise license is not sufficient — FGAC is a separate tier that enables per-user and per-team datasource access restrictions.
-
-See the [Enterprise Guide]({{< ref "enterprise_guide" >}}) for full details on FGAC prerequisites, how GDG detects license capability at runtime, and troubleshooting steps.
+{{< callout context="caution" title="Enterprise required" icon="alert-triangle" >}}
+Connection permissions require **Grafana Enterprise**. See the [Enterprise Guide]({{< ref "enterprise_guide" >}}) for full details on prerequisites and troubleshooting steps.
 {{< /callout >}}
 
 ```sh

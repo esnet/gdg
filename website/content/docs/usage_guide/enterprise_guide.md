@@ -1,6 +1,6 @@
 ---
 title: "Enterprise Guide"
-description: "GDG enterprise features guide covering data source permissions, Fine-Grained Access Control (FGAC), and other Grafana Enterprise-only operations."
+description: "GDG enterprise features guide covering data source permissions and other Grafana Enterprise-only operations."
 weight: 18
 ---
 
@@ -20,29 +20,24 @@ GDG detects enterprise status automatically by calling Grafana's licensing API �
 
 ---
 
-## Fine-Grained Access Control (FGAC) and Datasource Permissions
+## Datasource Permissions
 
-### What is FGAC?
+### What are datasource permissions?
 
-Fine-Grained Access Control (FGAC) is an **Enterprise license tier feature** that enables restricting datasource query access to specific **users**, **service accounts**, and **teams**. Without FGAC, all users in an organization can query any datasource — FGAC lets you lock down which users or teams can access which datasources.
+Datasource permissions are a **Grafana Enterprise** feature that enables restricting datasource query access to specific **users**, **service accounts**, and **teams**. Without an Enterprise license, all users in an organization can query any datasource.
 
 Grafana's official documentation covers this in two places:
 
 - [Data source permissions](https://grafana.com/docs/grafana/latest/administration/data-source-management/#data-source-permissions) — what permissions mean and how to manage them in the Grafana UI.
-- [Role-based access control (RBAC) overview](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/) — the broader RBAC system that underpins FGAC, including fixed roles and custom roles.
+- [Role-based access control (RBAC) overview](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/) — the broader RBAC system, including fixed roles and custom roles.
 
-{{< callout context="caution" title="Two separate Enterprise gates" icon="alert-triangle" >}}
-Running Grafana Enterprise is not sufficient on its own. FGAC is a separate license tier on top of Enterprise.
-
-- **Gate 1 — Enterprise license**: The Grafana instance must be running with a valid `GF_ENTERPRISE_LICENSE_TEXT` JWT. GDG checks this via `IsEnterprise()`.
-- **Gate 2 — FGAC license tier**: The JWT must include the Fine-Grained Access Control feature. GDG probes this at runtime — if the Grafana instance returns `403 Unlicensed` on a permission write, FGAC is unavailable and GDG skips or reports accordingly.
-
-There is **no GDG configuration key** to enable or disable FGAC. Enablement is determined entirely by what license the Grafana server reports over HTTP.
+{{< callout context="note" title="Enterprise license required" icon="info-circle" >}}
+A valid Grafana Enterprise license (`GF_ENTERPRISE_LICENSE_TEXT`) is the only requirement. Datasource permissions are included in Grafana Enterprise — there is no additional tier or add-on needed. GDG checks enterprise status automatically via `IsEnterprise()`.
 {{< /callout >}}
 
 ### Permission types managed by GDG
 
-When FGAC is available, GDG manages the following permission grant types per datasource:
+GDG manages the following permission grant types per datasource:
 
 | Type | Description |
 |---|---|
@@ -54,27 +49,16 @@ When FGAC is available, GDG manages the following permission grant types per dat
 Built-in role grants (`Viewer`, `Editor`, `Admin`) are managed by Grafana itself and **cannot be removed or modified** via the access-control API — Grafana enforces them as defaults. GDG records these entries in downloaded permission files for visibility, but skips them during upload and clear operations to avoid API errors.
 {{< /callout >}}
 
-### How GDG detects FGAC availability
+### How GDG detects datasource permission availability
 
-When you run a connection permission command, GDG first calls `IsDataSourcePermissionsEnabled()`, which sends a lightweight probe request to the Grafana RBAC API:
-
-```
-POST /api/access-control/datasources/__probe__/users/0
-```
-
-Grafana evaluates the license **before** looking up the resource, so:
-
-- `403 Unlicensed` → FGAC is **not** available on this license tier. GDG logs a warning and skips the operation.
-- `404 Not Found` / `400 Bad Request` / `200 OK` → License check passed. FGAC is **active** (the sentinel resource simply doesn't exist, which is expected).
-
-This probe is transparent — no datasource is modified.
+GDG calls `IsDataSourcePermissionsEnabled()`, which delegates to `IsEnterprise()`. If the connected instance has a valid Enterprise license, datasource permissions are available — no further checks are needed.
 
 ---
 
 ## Connections Permissions
 
 {{< callout context="note" title="Note" icon="info-circle" >}}
-Available with +v0.4.6. Requires Grafana Enterprise with FGAC. See [FGAC prerequisites](#fine-grained-access-control-fgac-and-datasource-permissions) above.
+Available with +v0.4.6. Requires Grafana Enterprise. See [prerequisites](#datasource-permissions) above.
 
 Requires Grafana version: +v10.2.3
 {{< /callout >}}
@@ -151,7 +135,7 @@ GDG could not confirm that the connected Grafana instance is running an Enterpri
 
 ### `403 Unlicensed` on permission writes
 
-The Grafana instance is Enterprise but the license JWT does not include the Fine-Grained Access Control (FGAC) tier. Datasource per-user and per-team permissions require FGAC — see [Grafana's data source permissions docs](https://grafana.com/docs/grafana/latest/administration/data-source-management/#data-source-permissions) for a description of what this feature covers. Contact your Grafana account team to upgrade the license tier.
+The Grafana instance appears to be Enterprise but is returning `403 Unlicensed` on access-control API calls. Verify that `GF_ENTERPRISE_LICENSE_TEXT` contains a valid, non-expired license JWT. See [Grafana's data source permissions docs](https://grafana.com/docs/grafana/latest/administration/data-source-management/#data-source-permissions) for more context on the feature.
 
 ### Built-in role permissions not applied after upload
 

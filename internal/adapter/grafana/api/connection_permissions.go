@@ -243,7 +243,7 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter outbound.Filter) []stri
 // Inherited and non-managed permissions (e.g. fixed admin grants in Grafana v13+) are
 // skipped because they cannot be removed via the access-control API.
 func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter outbound.Filter) []string {
-	dataSources := make([]string, 0)
+	connections := make([]string, 0)
 	connectionPermissions := s.ListConnectionPermissions(filter)
 	for _, conn := range connectionPermissions {
 		success := true
@@ -263,11 +263,11 @@ func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter outbound.Filter) []s
 			}
 		}
 		if success {
-			dataSources = append(dataSources, conn.Connection.Name)
+			connections = append(connections, conn.Connection.Name)
 		}
 	}
 
-	return dataSources
+	return connections
 }
 
 func getPermissionType(perm models.ResourcePermissionDTO) PermissionType {
@@ -351,42 +351,4 @@ func (s *DashNGoImpl) updatedConnectionPermission(key *models.DataSourceListItem
 // getConnectionPermission Get all permissions for a given connection
 func (s *DashNGoImpl) getConnectionPermission(uid string) (*access_control.GetResourcePermissionsOK, error) {
 	return s.GetClient().AccessControl.GetResourcePermissions(uid, connectionResourceType)
-}
-
-// IsDataSourcePermissionsEnabled probes whether fine-grained per-user/per-team
-// datasource permissions are available on this Grafana instance.
-//
-// Grafana Enterprise is required, and beyond that the license must include the
-// Fine-Grained Access Control (FGAC) tier that covers datasource permissions.
-// Instances without FGAC return 403 {"message":"Unlicensed"} on write calls even
-// when IsEnterprise() is true.
-//
-// The probe works by attempting to set an empty permission on a well-known
-// sentinel UID ("__probe__").  Grafana evaluates the license before looking up
-// the resource, so a 403 Unlicensed response means FGAC is unavailable, while
-// any other response (404 not found, 200 OK, etc.) means FGAC is active.
-func (s *DashNGoImpl) IsDataSourcePermissionsEnabled() bool {
-	if !s.IsEnterprise() {
-		return false
-	}
-	p := access_control.NewSetResourcePermissionsForUserParams()
-	p.UserID = 0
-	p.Resource = connectionResourceType
-	p.ResourceID = "__probe__"
-	p.Body = &models.SetPermissionCommand{Permission: ""}
-	_, err := s.GetClient().AccessControl.SetResourcePermissionsForUser(p)
-	if err == nil {
-		return true
-	}
-	errStr := err.Error()
-	// 403 Unlicensed means FGAC is not available on this license tier.
-	if strings.Contains(errStr, "403") && strings.Contains(errStr, "Unlicensed") {
-		slog.Info("datasource permissions (FGAC) are not available on this Grafana license",
-			slog.String("err", errStr))
-		return false
-	}
-	// Any other error (404 resource not found, 400 bad request, etc.) means
-	// the license check passed and FGAC is enabled — the probe resource just
-	// doesn't exist, which is expected.
-	return true
 }

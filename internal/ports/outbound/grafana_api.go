@@ -32,11 +32,6 @@ type MetaServiceApi interface {
 
 type LicenseApi interface {
 	IsEnterprise() bool
-	// IsDataSourcePermissionsEnabled probes whether the connected Grafana instance
-	// supports fine-grained per-user/per-team datasource permissions (Enterprise FGAC).
-	// It returns false when the server responds with 403 Unlicensed, which happens
-	// even on Enterprise instances whose license tier does not include FGAC.
-	IsDataSourcePermissionsEnabled() bool
 }
 
 // ConnectionsApi Contract definition

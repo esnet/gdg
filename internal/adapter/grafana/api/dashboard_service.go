@@ -13,6 +13,59 @@ import (
 	k8stypes "k8s.io/apimachinery/pkg/types"
 )
 
+// partitionDashboardFiles reads each file path in files using readFile, then
+// classifies each as a v1 or v2 dashboard and records its local identifier in
+// processed.  It is a pure function of the file list and the readFile closure,
+// with no dependency on server state, making it straightforwardly unit-testable.
+//
+// Classification rules (applied in order):
+//  1. Non-.json files are skipped with a warning.
+//  2. Files that cannot be read are skipped with a warning.
+//  3. Files whose JSON cannot be decoded into DashboardV2Gdg, or whose
+//     GdgApiVersion field is empty, are treated as v1.
+//  4. Files with GdgApiVersion == GdgApiVersionV2 are treated as v2.
+//  5. Any other non-empty GdgApiVersion falls through to v1.
+//
+// processed is keyed by the dashboard UID (v1) or resource metadata.name (v2).
+func partitionDashboardFiles(
+	files []string,
+	readFile func(string) ([]byte, error),
+) (v1Files, v2Files map[string][]byte, processed map[string]bool) {
+	v1Files = make(map[string][]byte)
+	v2Files = make(map[string][]byte)
+	processed = make(map[string]bool)
+
+	for _, file := range files {
+		if !strings.HasSuffix(file, ".json") {
+			slog.Warn("Only json dashboards are supported, skipping", "filename", file)
+			continue
+		}
+		raw, readErr := readFile(file)
+		if readErr != nil {
+			slog.Warn("unable to read dashboard file, skipping", "file", file, "err", readErr)
+			continue
+		}
+		gdg := &domain.DashboardV2Gdg{}
+		if err := json.Unmarshal(raw, gdg); err != nil || gdg.GdgApiVersion == "" {
+			v1Files[file] = raw
+			board := make(map[string]any)
+			if err := json.Unmarshal(raw, &board); err == nil {
+				if uid, ok := board["uid"].(string); ok && uid != "" {
+					processed[uid] = true
+				}
+			}
+		} else if gdg.GdgApiVersion == domain.GdgApiVersionV2 {
+			v2Files[file] = raw
+			if gdg.Resource != nil && gdg.Resource.Name != "" {
+				processed[gdg.Resource.Name] = true
+			}
+		} else {
+			v1Files[file] = raw
+		}
+	}
+	return
+}
+
 // DashboardServiceImpl is the standalone implementation of outbound.DashboardService.
 // It embeds baseService directly for all shared infrastructure — there is no
 // back-reference to DashNGoImpl. All dashboard-specific logic (v1 API, v2 App
@@ -82,42 +135,7 @@ func (d *DashboardServiceImpl) UploadDashboards(filter outbound.Filter) ([]strin
 		return nil, err
 	}
 
-	v1Files := make(map[string][]byte)
-	v2Files := make(map[string][]byte)
-	// processed collects every local dashboard identifier (UID / resource name)
-	// so pruneDashboards knows what must not be deleted on the server.
-	// v1 files key by board["uid"]; v2 files key by resource.metadata.name —
-	// both map to the same value Grafana exposes as the dashboard UID in its APIs.
-	processed := make(map[string]bool)
-
-	for _, file := range filesInDir {
-		if !strings.HasSuffix(file, ".json") {
-			slog.Warn("Only json dashboards are supported, skipping", "filename", file)
-			continue
-		}
-		raw, readErr := d.storage.ReadFile(file)
-		if readErr != nil {
-			slog.Warn("unable to read dashboard file, skipping", "file", file, "err", readErr)
-			continue
-		}
-		gdg := &domain.DashboardV2Gdg{}
-		if err := json.Unmarshal(raw, gdg); err != nil || gdg.GdgApiVersion == "" {
-			v1Files[file] = raw
-			board := make(map[string]any)
-			if err := json.Unmarshal(raw, &board); err == nil {
-				if uid, ok := board["uid"].(string); ok && uid != "" {
-					processed[uid] = true
-				}
-			}
-		} else if gdg.GdgApiVersion == domain.GdgApiVersionV2 {
-			v2Files[file] = raw
-			if gdg.Resource != nil && gdg.Resource.Name != "" {
-				processed[gdg.Resource.Name] = true
-			}
-		} else {
-			v1Files[file] = raw
-		}
-	}
+	v1Files, v2Files, processed := partitionDashboardFiles(filesInDir, d.storage.ReadFile)
 
 	var uploaded []string
 

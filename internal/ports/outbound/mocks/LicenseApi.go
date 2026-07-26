@@ -79,46 +79,4 @@ func (_c *LicenseApi_IsEnterprise_Call) RunAndReturn(run func() bool) *LicenseAp
 	return _c
 }
 
-// IsDataSourcePermissionsEnabled provides a mock function for the type LicenseApi
-func (_mock *LicenseApi) IsDataSourcePermissionsEnabled() bool {
-	ret := _mock.Called()
 
-	if len(ret) == 0 {
-		panic("no return value specified for IsDataSourcePermissionsEnabled")
-	}
-
-	var r0 bool
-	if returnFunc, ok := ret.Get(0).(func() bool); ok {
-		r0 = returnFunc()
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-	return r0
-}
-
-// LicenseApi_IsDataSourcePermissionsEnabled_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IsDataSourcePermissionsEnabled'
-type LicenseApi_IsDataSourcePermissionsEnabled_Call struct {
-	*mock.Call
-}
-
-// IsDataSourcePermissionsEnabled is a helper method to define mock.On call
-func (_e *LicenseApi_Expecter) IsDataSourcePermissionsEnabled() *LicenseApi_IsDataSourcePermissionsEnabled_Call {
-	return &LicenseApi_IsDataSourcePermissionsEnabled_Call{Call: _e.mock.On("IsDataSourcePermissionsEnabled")}
-}
-
-func (_c *LicenseApi_IsDataSourcePermissionsEnabled_Call) Run(run func()) *LicenseApi_IsDataSourcePermissionsEnabled_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *LicenseApi_IsDataSourcePermissionsEnabled_Call) Return(b bool) *LicenseApi_IsDataSourcePermissionsEnabled_Call {
-	_c.Call.Return(b)
-	return _c
-}
-
-func (_c *LicenseApi_IsDataSourcePermissionsEnabled_Call) RunAndReturn(run func() bool) *LicenseApi_IsDataSourcePermissionsEnabled_Call {
-	_c.Call.Return(run)
-	return _c
-}
