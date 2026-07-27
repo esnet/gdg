@@ -15,7 +15,6 @@ require (
 	github.com/bep/simplecobra v0.7.0
 	github.com/brianvoe/gofakeit/v7 v7.15.0
 	github.com/carlmjohnson/requests v0.25.1
-	github.com/docker/go-connections v0.7.0
 	github.com/extism/go-sdk v1.7.1
 	github.com/go-openapi/strfmt v0.26.4
 	github.com/google/go-cmp v0.7.0
@@ -38,7 +37,7 @@ require (
 	github.com/tidwall/pretty v1.2.1
 	github.com/tidwall/sjson v1.2.5
 	gocloud.dev v0.46.0
-	golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597
+	golang.org/x/exp v0.0.0-20260727155853-b88d891fe743
 	golang.org/x/mod v0.38.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -99,6 +98,7 @@ require (
 	github.com/cpuguy83/dockercfg v0.3.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/distribution/reference v0.6.0 // indirect
+	github.com/docker/go-connections v0.7.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dylibso/observe-sdk/go v0.0.0-20240828172851-9145d8ad07e1 // indirect
 	github.com/ebitengine/purego v0.10.1 // indirect
