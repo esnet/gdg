@@ -5,16 +5,23 @@ package api
 // so they can be tested in a plain unit-test style without Docker / testcontainers.
 
 import (
+	"context"
 	"encoding/json"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/extended"
+	"github.com/esnet/gdg/internal/adapter/grafana/resources"
+	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
+	"github.com/esnet/gdg/internal/adapter/storage"
+	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	k8stypes "k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	k8stypes "k8s.io/apimachinery/pkg/types"
 )
 
 // ---------------------------------------------------------------------------
@@ -309,4 +316,55 @@ func TestMapV1ToDashboardV2Gdg_EmptyInput(t *testing.T) {
 
 	result = mapV1ToDashboardV2Gdg([]*domain.NestedHit{})
 	assert.Empty(t, result)
+}
+
+// ---------------------------------------------------------------------------
+// cipher_helper — EncodeValue / DecodeValue
+// ---------------------------------------------------------------------------
+// DashNGoImpl.EncodeValue and DecodeValue delegate to the configured
+// CipherEncoder. When built with noop.NoOpEncoder both methods are identity
+// functions, so we can test them without a live Grafana server.
+
+// newTestSvc builds a minimal DashNGoImpl backed by a local storage engine
+// and a no-op cipher encoder. No network calls are made during construction.
+func newTestSvc(t *testing.T) *DashNGoImpl {
+	t.Helper()
+	fixEnvironment(t)
+	cfg := config.NewConfig(common.DefaultTestConfig)
+	localEngine := storage.NewLocalStorage(context.Background())
+	svc := NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine,
+		extended.NewExtendedApi(cfg), resources.NewHelpers())
+	return svc.(*DashNGoImpl)
+}
+
+func TestEncodeValue_NoOpIsIdentity(t *testing.T) {
+	svc := newTestSvc(t)
+	input := "my-secret-value"
+	got := svc.EncodeValue(input)
+	assert.Equal(t, input, got, "NoOpEncoder.EncodeValue must return the input unchanged")
+}
+
+func TestDecodeValue_NoOpIsIdentity(t *testing.T) {
+	svc := newTestSvc(t)
+	input := "encoded-looking-string%20"
+	got := svc.DecodeValue(input)
+	assert.Equal(t, input, got, "NoOpEncoder.DecodeValue must return the input unchanged")
+}
+
+func TestEncodeDecodeValue_RoundTrip(t *testing.T) {
+	svc := newTestSvc(t)
+	original := "round-trip value with spaces & special=chars"
+	encoded := svc.EncodeValue(original)
+	decoded := svc.DecodeValue(encoded)
+	assert.Equal(t, original, decoded, "encode then decode must restore the original string")
+}
+
+func TestEncodeValue_EmptyString(t *testing.T) {
+	svc := newTestSvc(t)
+	assert.Equal(t, "", svc.EncodeValue(""))
+}
+
+func TestDecodeValue_EmptyString(t *testing.T) {
+	svc := newTestSvc(t)
+	assert.Equal(t, "", svc.DecodeValue(""))
 }
