@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@tabler/icons':
         specifier: ^3.36.1
-        version: 3.45.0
+        version: 3.46.0
       '@thulite/core':
         specifier: ^1.5.9
         version: 1.5.9(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
@@ -28,7 +28,7 @@ importers:
         version: 2.4.3
       autoprefixer:
         specifier: ^10.4.20
-        version: 10.5.4(postcss@8.5.21)
+        version: 10.5.4(postcss@8.5.25)
       cross-spawn:
         specifier: ^7.0.6
         version: 7.0.6
@@ -43,13 +43,13 @@ importers:
         version: 6.0.0
       pnpm:
         specifier: ^11.0.0
-        version: 11.15.1
+        version: 11.18.0
       postcss:
         specifier: ^8.5.1
-        version: 8.5.21
+        version: 8.5.25
       postcss-cli:
         specifier: ^11.0.0
-        version: 11.0.1(postcss@8.5.21)
+        version: 11.0.1(postcss@8.5.25)
     devDependencies:
       shx:
         specifier: ^0.4.0
@@ -602,8 +602,8 @@ packages:
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
 
-  '@tabler/icons@3.45.0':
-    resolution: {integrity: sha512-jiATwV8+zGYLTZ7gMLGivCic+KtsMZXcDmufIG8umlLxoHhI6902hGYIEt0Oa9Y9SXblNzUlrisHm5jOFMxOQA==}
+  '@tabler/icons@3.46.0':
+    resolution: {integrity: sha512-f2RYFl3fzPwj5WO82x6en0dmkjefxEfOm16D1ByM6cj/McNiwOkL4VaPUoP9VVIrXAD9WnTSVFr70px703b//A==}
 
   '@thulite/bootstrap@1.2.3':
     resolution: {integrity: sha512-230kXC1QwBESDP2ye7hlfVs6OHvLFKxlb9NJxjTLzMnE5cDGTjR3Tf+2PQftVERBmItpgXTL559ZE3zo6CKZSw==}
@@ -1378,8 +1378,8 @@ packages:
     resolution: {integrity: sha512-MnUuEycAemtSaeFSjXKW/aroV7akBbY+Sv+RkyqFjgAe73F+MR0TBWKBRDkmfWq/HiFmdavfZ1G7h4SPZXaCSg==}
     engines: {node: '>=0.10.0'}
 
-  pnpm@11.15.1:
-    resolution: {integrity: sha512-gTULB+U8lTigLx8jA7QpD6LXvgTlbiqXDEzEtBfcdh3hlu2r1J1Vx9yVgNuBAHxEFD5OPX5GKzAA0jwlUSLQZQ==}
+  pnpm@11.18.0:
+    resolution: {integrity: sha512-M9g8d9qC9J+6g2klxvG4QRgewxMrZwY5vQEvcHX1x89jTF+HAUfBmq50ePrAHfCdiJLogEVIlu3SPumzN1dWPA==}
     engines: {node: '>=22.13'}
     hasBin: true
 
@@ -1422,12 +1422,12 @@ packages:
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
-  postcss@8.5.20:
-    resolution: {integrity: sha512-lW616l85ucIQL+FocMmL7pQFPqBmwejrCMg+iPxyImlrANNJG9NHq/RkyCZopDhd8C3LA03PHRJDjkbGu8vvug==}
+  postcss@8.5.24:
+    resolution: {integrity: sha512-8RyVklq0owXUTa4xlpzu4l9AaVKIdQvAcOHZWaMh98HgySsUtxRVf/chRe3dsSLqb6i40BzGRzEUddRaI+9TSw==}
     engines: {node: ^10 || ^12 || >=14}
 
-  postcss@8.5.21:
-    resolution: {integrity: sha512-v4sDNP3fdNiWMfabO7OwOQdOX8TiQSztKyT1Wj0w+j7LDallJThJRBBBmzVGyYj0crMh7jlV4zepPkiNu9UwDQ==}
+  postcss@8.5.25:
+    resolution: {integrity: sha512-DTPx3RWSSnWyzLxQnlH0rJP+EW5ekl16ZU4/psbIhA0e53kJfdgaN5vKM+xP7yJtXVu+nfdVFmlgFDEKAe4Pyw==}
     engines: {node: ^10 || ^12 || >=14}
 
   pretty-hrtime@1.0.3:
@@ -2438,9 +2438,9 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@fullhuman/postcss-purgecss@8.0.0(postcss@8.5.20)':
+  '@fullhuman/postcss-purgecss@8.0.0(postcss@8.5.24)':
     dependencies:
-      postcss: 8.5.20
+      postcss: 8.5.24
       purgecss: 8.0.0
 
   '@jridgewell/gen-mapping@0.3.13':
@@ -2485,7 +2485,7 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tabler/icons@3.45.0': {}
+  '@tabler/icons@3.46.0': {}
 
   '@thulite/bootstrap@1.2.3':
     dependencies:
@@ -2497,12 +2497,12 @@ snapshots:
       '@babel/cli': 7.28.6(@babel/core@7.29.0)
       '@babel/core': 7.29.0
       '@babel/preset-env': 7.29.0(@babel/core@7.29.0)
-      '@fullhuman/postcss-purgecss': 8.0.0(postcss@8.5.20)
-      autoprefixer: 10.5.4(postcss@8.5.20)
+      '@fullhuman/postcss-purgecss': 8.0.0(postcss@8.5.24)
+      autoprefixer: 10.5.4(postcss@8.5.24)
       lazysizes: 5.3.2
       modern-css-reset: 1.4.0
-      postcss: 8.5.20
-      postcss-cli: 11.0.1(postcss@8.5.20)
+      postcss: 8.5.24
+      postcss-cli: 11.0.1(postcss@8.5.24)
       quicklink: 3.0.1(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
     transitivePeerDependencies:
       - jiti
@@ -2561,22 +2561,22 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.1
 
-  autoprefixer@10.5.4(postcss@8.5.20):
+  autoprefixer@10.5.4(postcss@8.5.24):
     dependencies:
       browserslist: 4.28.6
       caniuse-lite: 1.0.30001806
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.20
+      postcss: 8.5.24
       postcss-value-parser: 4.2.0
 
-  autoprefixer@10.5.4(postcss@8.5.21):
+  autoprefixer@10.5.4(postcss@8.5.25):
     dependencies:
       browserslist: 4.28.6
       caniuse-lite: 1.0.30001806
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.21
+      postcss: 8.5.25
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
@@ -3254,19 +3254,19 @@ snapshots:
 
   pinkie@2.0.4: {}
 
-  pnpm@11.15.1: {}
+  pnpm@11.18.0: {}
 
   possible-typed-array-names@1.1.0: {}
 
-  postcss-cli@11.0.1(postcss@8.5.20):
+  postcss-cli@11.0.1(postcss@8.5.24):
     dependencies:
       chokidar: 3.6.0
       dependency-graph: 1.0.0
       fs-extra: 11.3.4
       picocolors: 1.1.1
-      postcss: 8.5.20
-      postcss-load-config: 5.1.0(postcss@8.5.20)
-      postcss-reporter: 7.1.0(postcss@8.5.20)
+      postcss: 8.5.24
+      postcss-load-config: 5.1.0(postcss@8.5.24)
+      postcss-reporter: 7.1.0(postcss@8.5.24)
       pretty-hrtime: 1.0.3
       read-cache: 1.0.0
       slash: 5.1.0
@@ -3276,15 +3276,15 @@ snapshots:
       - jiti
       - tsx
 
-  postcss-cli@11.0.1(postcss@8.5.21):
+  postcss-cli@11.0.1(postcss@8.5.25):
     dependencies:
       chokidar: 3.6.0
       dependency-graph: 1.0.0
       fs-extra: 11.3.4
       picocolors: 1.1.1
-      postcss: 8.5.21
-      postcss-load-config: 5.1.0(postcss@8.5.21)
-      postcss-reporter: 7.1.0(postcss@8.5.21)
+      postcss: 8.5.25
+      postcss-load-config: 5.1.0(postcss@8.5.25)
+      postcss-reporter: 7.1.0(postcss@8.5.25)
       pretty-hrtime: 1.0.3
       read-cache: 1.0.0
       slash: 5.1.0
@@ -3294,30 +3294,30 @@ snapshots:
       - jiti
       - tsx
 
-  postcss-load-config@5.1.0(postcss@8.5.20):
+  postcss-load-config@5.1.0(postcss@8.5.24):
     dependencies:
       lilconfig: 3.1.3
       yaml: 2.8.2
     optionalDependencies:
-      postcss: 8.5.20
+      postcss: 8.5.24
 
-  postcss-load-config@5.1.0(postcss@8.5.21):
+  postcss-load-config@5.1.0(postcss@8.5.25):
     dependencies:
       lilconfig: 3.1.3
       yaml: 2.8.2
     optionalDependencies:
-      postcss: 8.5.21
+      postcss: 8.5.25
 
-  postcss-reporter@7.1.0(postcss@8.5.20):
+  postcss-reporter@7.1.0(postcss@8.5.24):
     dependencies:
       picocolors: 1.1.1
-      postcss: 8.5.20
+      postcss: 8.5.24
       thenby: 1.3.4
 
-  postcss-reporter@7.1.0(postcss@8.5.21):
+  postcss-reporter@7.1.0(postcss@8.5.25):
     dependencies:
       picocolors: 1.1.1
-      postcss: 8.5.21
+      postcss: 8.5.25
       thenby: 1.3.4
 
   postcss-selector-parser@7.1.1:
@@ -3327,13 +3327,13 @@ snapshots:
 
   postcss-value-parser@4.2.0: {}
 
-  postcss@8.5.20:
+  postcss@8.5.24:
     dependencies:
       nanoid: 3.3.16
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postcss@8.5.21:
+  postcss@8.5.25:
     dependencies:
       nanoid: 3.3.16
       picocolors: 1.1.1
@@ -3359,7 +3359,7 @@ snapshots:
     dependencies:
       commander: 12.1.0
       fast-glob: 3.3.3
-      postcss: 8.5.20
+      postcss: 8.5.24
       postcss-selector-parser: 7.1.1
 
   queue-microtask@1.2.3: {}
