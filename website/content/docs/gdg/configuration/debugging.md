@@ -1,5 +1,6 @@
 ---
 title: "Debugging"
+description: "GDG debugging and troubleshooting guide covering debug flags, API request logging, and common configuration issues."
 weight: 106
 ---
 ## Debugging / Trouble shooting

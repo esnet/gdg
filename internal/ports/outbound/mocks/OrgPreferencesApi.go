@@ -116,7 +116,7 @@ type OrgPreferencesApi_UploadOrgPreferences_Call struct {
 // UploadOrgPreferences is a helper method to define mock.On call
 //   - orgName string
 //   - pref *models.PreferencesSpec
-func (_e *OrgPreferencesApi_Expecter) UploadOrgPreferences(orgName interface{}, pref interface{}) *OrgPreferencesApi_UploadOrgPreferences_Call {
+func (_e *OrgPreferencesApi_Expecter) UploadOrgPreferences(orgName any, pref any) *OrgPreferencesApi_UploadOrgPreferences_Call {
 	return &OrgPreferencesApi_UploadOrgPreferences_Call{Call: _e.mock.On("UploadOrgPreferences", orgName, pref)}
 }
 

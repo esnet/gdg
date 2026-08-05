@@ -25,19 +25,25 @@
     "postinstall": "hugo-installer --version otherDependencies.hugo --extended --destination node_modules/.bin/hugo"
   },
   "dependencies": {
+    "@fullhuman/postcss-purgecss": "^8.0.0",
     "@tabler/icons": "^3.36.1",
+    "@thulite/bootstrap": "^1.2.3",
     "@thulite/core": "^1.5.9",
     "@thulite/doks-core": "^1.9.3",
     "@thulite/images": "^3.3.4",
     "@thulite/inline-svg": "^1.2.2",
     "@thulite/seo": "^2.4.3",
     "autoprefixer": "^10.4.20",
+    "basiclightbox": "^5.0.4",
+    "bootstrap": "5.3.8",
+    "clipboard": "^2.0.11",
     "cross-spawn": "^7.0.6",
     "exec-bin": "^1.0.0",
+    "flexsearch": "^0.8.212",
     "hugo-installer": "^4.0.1",
     "nanoid": "^6.0.0",
     "pnpm": "^11.0.0",
-    "postcss": "^8.5.1",
+    "postcss": "8.5.15",
     "postcss-cli": "^11.0.0"
   },
   "devDependencies": {

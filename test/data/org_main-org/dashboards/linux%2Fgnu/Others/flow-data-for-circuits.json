@@ -1,1371 +1,1873 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "$$hashKey": "object:16",
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations \u0026 Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
-  "editable": true,
-  "gnetId": null,
-  "graphTooltip": 0,
-  "id": 11,
-  "iteration": 1619186241736,
-  "links": [],
-  "panels": [
-    {
-      "__netsage_template": "navigation",
-      "choices": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-      "cycleview": true,
-      "dashboardselection": true,
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+  "resource": {
+    "kind": "Dashboard",
+    "apiVersion": "dashboard.grafana.app/v2",
+    "metadata": {
+      "name": "xk26IFhmk",
+      "namespace": "default",
+      "uid": "566ea902-d731-4646-bafd-ee96f78dc5f1",
+      "resourceVersion": "1784640466907018",
+      "generation": 1,
+      "creationTimestamp": "2026-07-21T13:27:46Z",
+      "labels": {
+        "grafana.app/deprecatedInternalID": "2135913085677568"
       },
-      "grafanafavorites": true,
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 0,
-        "y": 0
+      "annotations": {
+        "grafana.app/createdBy": "user:bfrzirobu2bcwf",
+        "grafana.app/folder": "cfs38kigf711cd"
       },
-      "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
-      "id": 1,
-      "link_text": [
-        "What is the current state of the network?",
-        "What are the top sources/destinations of flows?",
-        "What are the top flows by organization?",
-        "What do individual flows look like?",
-        "What are the top flows by country?",
-        "What are the flows by science discipline?",
-        "What are the flows by project?",
-        "Who are the top talkers over time?",
-        "What are the patterns in science data transfers in the network?",
-        "What are the bandwidth patterns in the network?",
-        "What are the current flow data summary statistics?",
-        "Advanced Flow Analysis"
-      ],
-      "link_url": [
-        "/grafana/d/000000003/bandwidth-dashboard",
-        "/grafana/d/xk26IFhmk/flow-data",
-        "/grafana/d/QfzDJKhik/flow-data-per-organization",
-        "/grafana/d/-l3_u8nWk/individual-flows",
-        "/grafana/d/fgrOzz_mk/flow-data-per-country",
-        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
-        "/grafana/d/ie7TeomGz/flow-data-for-projects",
-        "/grafana/d/b35BWxAZz/top-talkers-over-time",
-        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
-        "/grafana/d/000000004/bandwidth-patterns",
-        "/grafana/d/CJC1FFhmz/other-flow-stats",
-        "/grafana/d/VuuXrnPWz/flow-analysis"
-      ],
-      "links": [],
-      "sharescreen": true,
-      "sideLogoPath": "https://portal.netsage.global/netsage-header-logo.png",
-      "sidebar": true,
-      "tablefilters": true,
-      "title": "",
-      "topLogoPath": "https://portal.netsage.global/netsage-cropped.png",
-      "transparent": true,
-      "type": "netsagenavigation"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 18,
-        "x": 3,
-        "y": 0
-      },
-      "id": 2,
-      "links": [],
-      "options": {
-        "content": "\u003ccenter\u003e\u003ch1\u003e\u003cb\u003eFlow Data\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003eThis dashboard provides flow data for the top ten sources and destinations by volume and rate.\u003c/center\u003e\n\u003ccenter\u003eClick on an organization name in one of the tables to see the flow data dashboard for that organization.\u003c/center\u003e\n\u003ccenter\u003e\u003cb\u003ePlease note that rate will be zero if only one sampled flow was detected.\u003c/b\u003e\u003c/center\u003e\n\u003ccenter\u003eThe slope graph below shows the top pairs of organizations by volume.  Darker lines correspond with larger volume.\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e",
-        "mode": "html"
-      },
-      "pluginVersion": "7.3.3",
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 5
-      },
-      "id": 3,
-      "links": [],
-      "options": {
-        "content": "\u003ch1\u003e\u003ccenter\u003eTop Sources\u003c/center\u003e\u003c/h1\u003e",
-        "mode": "html"
-      },
-      "pluginVersion": "7.3.3",
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": "netsage",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "meta.src_organization"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Source"
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "title": "See more information about ${__value.text}",
-                    "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Sum"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Total Vol."
-              },
-              {
-                "id": "unit",
-                "value": "decbytes"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              },
-              {
-                "id": "custom.width",
-                "value": 440
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Largest Flow"
-              },
-              {
-                "id": "unit",
-                "value": "decbytes"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Count"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "# Flows"
-              },
-              {
-                "id": "unit",
-                "value": "short"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 7
-      },
-      "hideTimeOverride": false,
-      "id": 4,
-      "links": [],
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Total Vol."
-          }
-        ]
-      },
-      "pluginVersion": "7.3.3",
-      "targets": [
+      "managedFields": [
         {
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:93",
-              "fake": true,
-              "field": "meta.src_organization",
-              "id": "3",
-              "settings": {
-                "min_doc_count": 1,
-                "order": "desc",
-                "orderBy": "1",
-                "size": "10"
-              },
-              "type": "terms"
-            }
-          ],
-          "dsType": "elasticsearch",
-          "metrics": [
-            {
-              "$$hashKey": "object:87",
-              "field": "values.num_bits",
-              "id": "1",
-              "inlineScript": "_value/8",
-              "meta": {},
-              "settings": {
-                "script": {
-                  "inline": "_value/8"
-                }
-              },
-              "type": "sum"
+          "manager": "grafana",
+          "operation": "Update",
+          "apiVersion": "dashboard.grafana.app/v0alpha1",
+          "time": "2026-07-21T13:27:46Z",
+          "fieldsType": "FieldsV1",
+          "fieldsV1": {
+            "f:metadata": {
+              "f:annotations": {
+                ".": {},
+                "f:grafana.app/folder": {}
+              }
             },
-            {
-              "$$hashKey": "object:88",
-              "field": "values.num_bits",
-              "id": "5",
-              "inlineScript": "_value / 8",
-              "meta": {},
-              "settings": {
-                "script": {
-                  "inline": "_value / 8"
-                }
+            "f:spec": {
+              "f:annotations": {
+                ".": {},
+                "f:list": {}
               },
-              "type": "max"
-            },
-            {
-              "$$hashKey": "object:89",
-              "field": "meta.id",
-              "id": "7",
-              "meta": {},
-              "settings": {},
-              "type": "count"
+              "f:editable": {},
+              "f:gnetId": {},
+              "f:graphTooltip": {},
+              "f:iteration": {},
+              "f:links": {},
+              "f:panels": {},
+              "f:refresh": {},
+              "f:schemaVersion": {},
+              "f:style": {},
+              "f:tags": {},
+              "f:templating": {
+                ".": {},
+                "f:list": {}
+              },
+              "f:time": {
+                ".": {},
+                "f:from": {},
+                "f:to": {}
+              },
+              "f:timepicker": {
+                ".": {},
+                "f:hidden": {},
+                "f:refresh_intervals": {},
+                "f:time_options": {}
+              },
+              "f:timezone": {},
+              "f:title": {},
+              "f:uid": {},
+              "f:version": {}
             }
-          ],
-          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
-          "refId": "A",
-          "timeField": "start"
+          }
+        }
+      ]
+    },
+    "spec": {
+      "annotations": [
+        {
+          "kind": "AnnotationQuery",
+          "spec": {
+            "query": {
+              "kind": "DataQuery",
+              "group": "",
+              "version": "v0",
+              "spec": {}
+            },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations \u0026 Alerts",
+            "builtIn": true,
+            "legacyOptions": {
+              "$$hashKey": "object:16",
+              "type": "dashboard"
+            }
+          }
         }
       ],
-      "timeFrom": null,
-      "title": "By Volume",
-      "type": "table"
-    },
-    {
-      "datasource": "netsage",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "meta.src_organization"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Source"
-              },
-              {
-                "id": "links",
-                "value": [
+      "cursorSync": "Off",
+      "editable": true,
+      "elements": {
+        "panel-1": {
+          "kind": "Panel",
+          "spec": {
+            "id": 1,
+            "title": "",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
                   {
-                    "title": "See more information about ${__value.text}",
-                    "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "",
+                        "version": "v0",
+                        "spec": {}
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
                   }
-                ]
+                ],
+                "transformations": [],
+                "queryOptions": {}
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max"
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Peak"
-              },
-              {
-                "id": "custom.width",
-                "value": 440
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "netsagenavigation",
+              "version": "",
+              "spec": {
+                "options": {
+                  "__angularMigration": {
+                    "autoMigrateFrom": "netsagenavigation",
+                    "originalOptions": {
+                      "__netsage_template": "navigation",
+                      "choices": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                      "cycleview": true,
+                      "dashboardselection": true,
+                      "grafanafavorites": true,
+                      "hamburgerPath": "https://portal.netsage.global/hamburger-v4.gif",
+                      "link_text": [
+                        "What is the current state of the network?",
+                        "What are the top sources/destinations of flows?",
+                        "What are the top flows by organization?",
+                        "What do individual flows look like?",
+                        "What are the top flows by country?",
+                        "What are the flows by science discipline?",
+                        "What are the flows by project?",
+                        "Who are the top talkers over time?",
+                        "What are the patterns in science data transfers in the network?",
+                        "What are the bandwidth patterns in the network?",
+                        "What are the current flow data summary statistics?",
+                        "Advanced Flow Analysis"
+                      ],
+                      "link_url": [
+                        "/grafana/d/000000003/bandwidth-dashboard",
+                        "/grafana/d/xk26IFhmk/flow-data",
+                        "/grafana/d/QfzDJKhik/flow-data-per-organization",
+                        "/grafana/d/-l3_u8nWk/individual-flows",
+                        "/grafana/d/fgrOzz_mk/flow-data-per-country",
+                        "/grafana/d/WNn1qyaiz/flows-by-science-discipline",
+                        "/grafana/d/ie7TeomGz/flow-data-for-projects",
+                        "/grafana/d/b35BWxAZz/top-talkers-over-time",
+                        "/grafana/d/ufIS9W7Zk/science-discipline-patterns",
+                        "/grafana/d/000000004/bandwidth-patterns",
+                        "/grafana/d/CJC1FFhmz/other-flow-stats",
+                        "/grafana/d/VuuXrnPWz/flow-analysis"
+                      ],
+                      "sharescreen": true,
+                      "sideLogoPath": "https://portal.netsage.global/netsage-header-logo.png",
+                      "sidebar": true,
+                      "tablefilters": true,
+                      "topLogoPath": "https://portal.netsage.global/netsage-cropped.png"
+                    }
+                  }
+                },
+                "fieldConfig": {
+                  "defaults": {},
+                  "overrides": []
+                }
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Count"
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "# Flows"
-              },
-              {
-                "id": "unit",
-                "value": "short"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Average"
-            },
-            "properties": []
+            "transparent": true
           }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 19
-      },
-      "hideTimeOverride": false,
-      "id": 6,
-      "links": [],
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Peak"
-          }
-        ]
-      },
-      "pluginVersion": "7.3.3",
-      "targets": [
-        {
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:261",
-              "fake": true,
-              "field": "meta.src_organization",
-              "id": "3",
-              "settings": {
-                "min_doc_count": 1,
-                "order": "desc",
-                "orderBy": "1",
-                "size": "10"
-              },
-              "type": "terms"
-            }
-          ],
-          "dsType": "elasticsearch",
-          "metrics": [
-            {
-              "$$hashKey": "object:255",
-              "field": "values.bits_per_second",
-              "id": "1",
-              "inlineScript": null,
-              "meta": {},
-              "settings": {},
-              "type": "max"
-            },
-            {
-              "$$hashKey": "object:256",
-              "field": "values.bits_per_second",
-              "id": "5",
-              "meta": {},
-              "settings": {},
-              "type": "avg"
-            },
-            {
-              "$$hashKey": "object:257",
-              "field": "meta.id",
-              "id": "7",
-              "meta": {},
-              "settings": {},
-              "type": "count"
-            }
-          ],
-          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
-          "refId": "A",
-          "timeField": "start"
-        }
-      ],
-      "timeFrom": null,
-      "title": "By Rate",
-      "type": "table"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 31
-      },
-      "id": 8,
-      "links": [],
-      "options": {
-        "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Destinations\u003c/center\u003e\u003c/h1\u003e",
-        "mode": "html"
-      },
-      "pluginVersion": "7.3.3",
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": "netsage",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "filterable": false
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "meta.dst_organization"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Destination"
-              },
-              {
-                "id": "links",
-                "value": [
+        "panel-11": {
+          "kind": "Panel",
+          "spec": {
+            "id": 11,
+            "title": "By Rate",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
                   {
-                    "title": "See more information about ${__value.text}",
-                    "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "grafana",
+                        "version": "v0",
+                        "datasource": {
+                          "name": "netsage"
+                        },
+                        "spec": {
+                          "bucketAggs": [
+                            {
+                              "$$hashKey": "object:623",
+                              "fake": true,
+                              "field": "meta.dst_organization",
+                              "id": "3",
+                              "settings": {
+                                "min_doc_count": 1,
+                                "order": "desc",
+                                "orderBy": "1",
+                                "size": "10"
+                              },
+                              "type": "terms"
+                            }
+                          ],
+                          "dsType": "elasticsearch",
+                          "metrics": [
+                            {
+                              "$$hashKey": "object:617",
+                              "field": "values.bits_per_second",
+                              "id": "1",
+                              "meta": {},
+                              "settings": {},
+                              "type": "max"
+                            },
+                            {
+                              "$$hashKey": "object:618",
+                              "field": "values.bits_per_second",
+                              "id": "5",
+                              "meta": {},
+                              "settings": {},
+                              "type": "avg"
+                            },
+                            {
+                              "$$hashKey": "object:619",
+                              "field": "meta.id",
+                              "id": "7",
+                              "meta": {},
+                              "settings": {},
+                              "type": "count"
+                            }
+                          ],
+                          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+                          "timeField": "start"
+                        }
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
                   }
-                ]
+                ],
+                "transformations": [],
+                "queryOptions": {}
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Sum"
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Total Vol."
-              },
-              {
-                "id": "custom.width",
-                "value": 440
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Largest Flow"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Count"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "# Flows"
-              },
-              {
-                "id": "unit",
-                "value": "short"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 34
-      },
-      "hideTimeOverride": false,
-      "id": 9,
-      "links": [],
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Total Vol."
-          }
-        ]
-      },
-      "pluginVersion": "7.3.3",
-      "targets": [
-        {
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:470",
-              "fake": true,
-              "field": "meta.dst_organization",
-              "id": "3",
-              "settings": {
-                "min_doc_count": 1,
-                "order": "desc",
-                "orderBy": "1",
-                "size": "10"
-              },
-              "type": "terms"
-            }
-          ],
-          "dsType": "elasticsearch",
-          "metrics": [
-            {
-              "$$hashKey": "object:464",
-              "field": "values.num_bits",
-              "id": "1",
-              "inlineScript": "_value/8",
-              "meta": {},
-              "settings": {
-                "script": {
-                  "inline": "_value/8"
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "table",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "showHeader": true,
+                  "sortBy": [
+                    {
+                      "desc": true,
+                      "displayName": "Peak"
+                    }
+                  ]
+                },
+                "fieldConfig": {
+                  "defaults": {
+                    "unit": "bps",
+                    "decimals": 1,
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "value": null,
+                          "color": "light-blue"
+                        }
+                      ]
+                    },
+                    "custom": {
+                      "filterable": false
+                    }
+                  },
+                  "overrides": [
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "meta.dst_organization"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Destination"
+                        },
+                        {
+                          "id": "links",
+                          "value": [
+                            {
+                              "title": "See more information about ${__value.text}",
+                              "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Max"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Peak"
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 440
+                        },
+                        {
+                          "id": "custom.cellOptions",
+                          "value": {
+                            "mode": "gradient",
+                            "type": "gauge"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Count"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "# Flows"
+                        },
+                        {
+                          "id": "unit",
+                          "value": "short"
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Average"
+                      },
+                      "properties": []
+                    }
+                  ]
                 }
-              },
-              "type": "sum"
-            },
-            {
-              "$$hashKey": "object:465",
-              "field": "values.num_bits",
-              "id": "5",
-              "inlineScript": "_value / 8",
-              "meta": {},
-              "settings": {
-                "script": {
-                  "inline": "_value / 8"
-                }
-              },
-              "type": "max"
-            },
-            {
-              "$$hashKey": "object:466",
-              "field": "meta.id",
-              "id": "7",
-              "meta": {},
-              "settings": {},
-              "type": "count"
-            }
-          ],
-          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
-          "refId": "A",
-          "timeField": "start"
-        }
-      ],
-      "timeFrom": null,
-      "title": "By Volume",
-      "type": "table"
-    },
-    {
-      "datasource": "netsage",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
               }
-            ]
-          },
-          "unit": "bps"
+            }
+          }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "meta.dst_organization"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Destination"
-              },
-              {
-                "id": "links",
-                "value": [
+        "panel-13": {
+          "kind": "Panel",
+          "spec": {
+            "id": 13,
+            "title": "",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
                   {
-                    "title": "See more information about ${__value.text}",
-                    "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "",
+                        "version": "v0",
+                        "spec": {}
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
                   }
-                ]
+                ],
+                "transformations": [],
+                "queryOptions": {}
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max"
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Peak"
-              },
-              {
-                "id": "custom.width",
-                "value": 440
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "text",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Pairs\u003c/center\u003e\u003c/h1\u003e",
+                  "mode": "html"
+                },
+                "fieldConfig": {
+                  "defaults": {},
+                  "overrides": []
+                }
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Count"
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "# Flows"
-              },
-              {
-                "id": "unit",
-                "value": "short"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Average"
-            },
-            "properties": []
+            "transparent": true
           }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 46
-      },
-      "hideTimeOverride": false,
-      "id": 11,
-      "links": [],
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Peak"
-          }
-        ]
-      },
-      "pluginVersion": "7.3.3",
-      "targets": [
-        {
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:623",
-              "fake": true,
-              "field": "meta.dst_organization",
-              "id": "3",
-              "settings": {
-                "min_doc_count": 1,
-                "order": "desc",
-                "orderBy": "1",
-                "size": "10"
-              },
-              "type": "terms"
-            }
-          ],
-          "dsType": "elasticsearch",
-          "metrics": [
-            {
-              "$$hashKey": "object:617",
-              "field": "values.bits_per_second",
-              "id": "1",
-              "inlineScript": null,
-              "meta": {},
-              "settings": {},
-              "type": "max"
-            },
-            {
-              "$$hashKey": "object:618",
-              "field": "values.bits_per_second",
-              "id": "5",
-              "meta": {},
-              "settings": {},
-              "type": "avg"
-            },
-            {
-              "$$hashKey": "object:619",
-              "field": "meta.id",
-              "id": "7",
-              "meta": {},
-              "settings": {},
-              "type": "count"
-            }
-          ],
-          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
-          "refId": "A",
-          "timeField": "start"
-        }
-      ],
-      "timeFrom": null,
-      "title": "By Rate",
-      "type": "table"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 58
-      },
-      "id": 13,
-      "links": [],
-      "options": {
-        "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Pairs\u003c/center\u003e\u003c/h1\u003e",
-        "mode": "html"
-      },
-      "pluginVersion": "7.3.3",
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": "netsage",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "meta.src_organization"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Source"
-              },
-              {
-                "id": "links",
-                "value": [
+        "panel-14": {
+          "kind": "Panel",
+          "spec": {
+            "id": 14,
+            "title": "Top Pairs",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
                   {
-                    "title": "See more information about ${__value.text}",
-                    "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "grafana",
+                        "version": "v0",
+                        "datasource": {
+                          "name": "netsage"
+                        },
+                        "spec": {
+                          "bucketAggs": [
+                            {
+                              "$$hashKey": "object:774",
+                              "fake": true,
+                              "field": "meta.src_organization",
+                              "id": "8",
+                              "settings": {
+                                "min_doc_count": 1,
+                                "order": "desc",
+                                "orderBy": "1",
+                                "size": "50"
+                              },
+                              "type": "terms"
+                            },
+                            {
+                              "$$hashKey": "object:775",
+                              "fake": true,
+                              "field": "meta.dst_organization",
+                              "id": "3",
+                              "settings": {
+                                "min_doc_count": 1,
+                                "order": "desc",
+                                "orderBy": "1",
+                                "size": "50"
+                              },
+                              "type": "terms"
+                            }
+                          ],
+                          "dsType": "elasticsearch",
+                          "metrics": [
+                            {
+                              "$$hashKey": "object:764",
+                              "field": "values.num_bits",
+                              "id": "1",
+                              "inlineScript": "_value/8",
+                              "meta": {},
+                              "settings": {
+                                "script": {
+                                  "inline": "_value/8"
+                                }
+                              },
+                              "type": "sum"
+                            },
+                            {
+                              "$$hashKey": "object:765",
+                              "field": "values.num_bits",
+                              "id": "5",
+                              "inlineScript": "_value / 8",
+                              "meta": {},
+                              "settings": {
+                                "script": {
+                                  "inline": "_value / 8"
+                                }
+                              },
+                              "type": "max"
+                            },
+                            {
+                              "$$hashKey": "object:766",
+                              "field": "meta.id",
+                              "id": "7",
+                              "meta": {},
+                              "settings": {},
+                              "type": "count"
+                            },
+                            {
+                              "$$hashKey": "object:767",
+                              "field": "values.bits_per_second",
+                              "id": "9",
+                              "meta": {},
+                              "settings": {},
+                              "type": "avg"
+                            },
+                            {
+                              "$$hashKey": "object:768",
+                              "field": "values.bits_per_second",
+                              "id": "10",
+                              "meta": {},
+                              "settings": {},
+                              "type": "max"
+                            }
+                          ],
+                          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+                          "timeField": "start"
+                        }
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
                   }
-                ]
+                ],
+                "transformations": [],
+                "queryOptions": {}
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "meta.dst_organization"
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Destination"
-              },
-              {
-                "id": "links",
-                "value": [
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "table",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "showHeader": true,
+                  "sortBy": [
+                    {
+                      "desc": true,
+                      "displayName": "Total Vol."
+                    }
+                  ]
+                },
+                "fieldConfig": {
+                  "defaults": {
+                    "unit": "bps",
+                    "decimals": 1,
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "value": null,
+                          "color": "green"
+                        },
+                        {
+                          "value": 80,
+                          "color": "red"
+                        }
+                      ]
+                    },
+                    "custom": {
+                      "filterable": false
+                    }
+                  },
+                  "overrides": [
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "meta.src_organization"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Source"
+                        },
+                        {
+                          "id": "links",
+                          "value": [
+                            {
+                              "title": "See more information about ${__value.text}",
+                              "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "meta.dst_organization"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Destination"
+                        },
+                        {
+                          "id": "links",
+                          "value": [
+                            {
+                              "title": "See more information about ${__value.text}",
+                              "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Sum"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Total Vol."
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 100
+                        },
+                        {
+                          "id": "unit",
+                          "value": "decbytes"
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Max values.num_bits"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Largest Flow"
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 100
+                        },
+                        {
+                          "id": "unit",
+                          "value": "decbytes"
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Count"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "# Flows"
+                        },
+                        {
+                          "id": "unit",
+                          "value": "short"
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 100
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Average"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Avg Rate"
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 100
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Max values.bits_per_second"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Peak Rate"
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 100
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "panel-15": {
+          "kind": "Panel",
+          "spec": {
+            "id": 15,
+            "title": "Top 30 Pairs by Data Volume",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
                   {
-                    "title": "See more information about ${__value.text}",
-                    "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "",
+                        "version": "v0",
+                        "spec": {
+                          "bucketAggs": [
+                            {
+                              "$$hashKey": "object:365",
+                              "fake": true,
+                              "field": "meta.src_organization",
+                              "id": "3",
+                              "settings": {
+                                "min_doc_count": 1,
+                                "order": "desc",
+                                "orderBy": "1",
+                                "size": "50"
+                              },
+                              "type": "terms"
+                            },
+                            {
+                              "$$hashKey": "object:366",
+                              "field": "meta.dst_organization",
+                              "id": "2",
+                              "settings": {
+                                "min_doc_count": 1,
+                                "order": "desc",
+                                "orderBy": "1",
+                                "size": "50"
+                              },
+                              "type": "terms"
+                            }
+                          ],
+                          "metrics": [
+                            {
+                              "$$hashKey": "object:363",
+                              "field": "values.num_bits",
+                              "id": "1",
+                              "inlineScript": "_value/8",
+                              "meta": {},
+                              "settings": {
+                                "script": {
+                                  "inline": "_value/8"
+                                }
+                              },
+                              "type": "sum"
+                            }
+                          ],
+                          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+                          "timeField": "start"
+                        }
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
                   }
-                ]
+                ],
+                "transformations": [],
+                "queryOptions": {}
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Sum"
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Total Vol."
-              },
-              {
-                "id": "custom.width",
-                "value": 100
-              },
-              {
-                "id": "unit",
-                "value": "decbytes"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max values.num_bits"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Largest Flow"
-              },
-              {
-                "id": "custom.width",
-                "value": 100
-              },
-              {
-                "id": "unit",
-                "value": "decbytes"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Count"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "# Flows"
-              },
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "custom.width",
-                "value": 100
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Average"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Avg Rate"
-              },
-              {
-                "id": "custom.width",
-                "value": 100
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max values.bits_per_second"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Peak Rate"
-              },
-              {
-                "id": "custom.width",
-                "value": 100
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 61
-      },
-      "hideTimeOverride": false,
-      "id": 14,
-      "links": [],
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Total Vol."
-          }
-        ]
-      },
-      "pluginVersion": "7.3.3",
-      "targets": [
-        {
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:774",
-              "fake": true,
-              "field": "meta.src_organization",
-              "id": "8",
-              "settings": {
-                "min_doc_count": 1,
-                "order": "desc",
-                "orderBy": "1",
-                "size": "50"
-              },
-              "type": "terms"
-            },
-            {
-              "$$hashKey": "object:775",
-              "fake": true,
-              "field": "meta.dst_organization",
-              "id": "3",
-              "settings": {
-                "min_doc_count": 1,
-                "order": "desc",
-                "orderBy": "1",
-                "size": "50"
-              },
-              "type": "terms"
-            }
-          ],
-          "dsType": "elasticsearch",
-          "hide": false,
-          "metrics": [
-            {
-              "$$hashKey": "object:764",
-              "field": "values.num_bits",
-              "id": "1",
-              "inlineScript": "_value/8",
-              "meta": {},
-              "settings": {
-                "script": {
-                  "inline": "_value/8"
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "netsage-slopegraph-panel",
+              "version": "",
+              "spec": {
+                "options": {
+                  "colorPalette": "interpolateBlues",
+                  "headerColor": "black",
+                  "hoverColor": "orange",
+                  "invertColorPalette": false,
+                  "leftHeader": "Left Title",
+                  "numLines": 30,
+                  "rightHeader": "Right Title"
+                },
+                "fieldConfig": {
+                  "defaults": {
+                    "unit": "decbytes"
+                  },
+                  "overrides": []
                 }
-              },
-              "type": "sum"
-            },
-            {
-              "$$hashKey": "object:765",
-              "field": "values.num_bits",
-              "id": "5",
-              "inlineScript": "_value / 8",
-              "meta": {},
-              "settings": {
-                "script": {
-                  "inline": "_value / 8"
-                }
-              },
-              "type": "max"
-            },
-            {
-              "$$hashKey": "object:766",
-              "field": "meta.id",
-              "id": "7",
-              "meta": {},
-              "settings": {},
-              "type": "count"
-            },
-            {
-              "$$hashKey": "object:767",
-              "field": "values.bits_per_second",
-              "id": "9",
-              "meta": {},
-              "settings": {},
-              "type": "avg"
-            },
-            {
-              "$$hashKey": "object:768",
-              "field": "values.bits_per_second",
-              "id": "10",
-              "meta": {},
-              "settings": {},
-              "type": "max"
+              }
             }
-          ],
-          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
-          "refId": "A",
-          "timeField": "start"
+          }
+        },
+        "panel-16": {
+          "kind": "Panel",
+          "spec": {
+            "id": 16,
+            "title": "",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "",
+                        "version": "v0",
+                        "spec": {}
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {}
+              }
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "text",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "content": "\u003cdiv\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@iu.edu\"\u003enetsage@iu.edu\u003c/a\u003e.  Thanks!  \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e",
+                  "mode": "html"
+                },
+                "fieldConfig": {
+                  "defaults": {},
+                  "overrides": []
+                }
+              }
+            },
+            "transparent": true
+          }
+        },
+        "panel-2": {
+          "kind": "Panel",
+          "spec": {
+            "id": 2,
+            "title": "",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "",
+                        "version": "v0",
+                        "spec": {}
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {}
+              }
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "text",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "content": "\u003ccenter\u003e\u003ch1\u003e\u003cb\u003eFlow Data\u003c/b\u003e\u003c/h1\u003e\u003c/center\u003e\n\u003ccenter\u003eThis dashboard provides flow data for the top ten sources and destinations by volume and rate.\u003c/center\u003e\n\u003ccenter\u003eClick on an organization name in one of the tables to see the flow data dashboard for that organization.\u003c/center\u003e\n\u003ccenter\u003e\u003cb\u003ePlease note that rate will be zero if only one sampled flow was detected.\u003c/b\u003e\u003c/center\u003e\n\u003ccenter\u003eThe slope graph below shows the top pairs of organizations by volume.  Darker lines correspond with larger volume.\u003c/center\u003e\n\u003ccenter\u003eAll times are displayed in browser local time.\u003c/center\u003e\n\u003c!-- Global site tag (gtag.js) - Google Analytics --\u003e\n\u003cscript async src=\"https://www.googletagmanager.com/gtag/js?id=UA-142763676-1\"\u003e\u003c/script\u003e\n\u003cscript\u003e\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'UA-142763676-1');\n\u003c/script\u003e",
+                  "mode": "html"
+                },
+                "fieldConfig": {
+                  "defaults": {},
+                  "overrides": []
+                }
+              }
+            },
+            "transparent": true
+          }
+        },
+        "panel-3": {
+          "kind": "Panel",
+          "spec": {
+            "id": 3,
+            "title": "",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "",
+                        "version": "v0",
+                        "spec": {}
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {}
+              }
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "text",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "content": "\u003ch1\u003e\u003ccenter\u003eTop Sources\u003c/center\u003e\u003c/h1\u003e",
+                  "mode": "html"
+                },
+                "fieldConfig": {
+                  "defaults": {},
+                  "overrides": []
+                }
+              }
+            },
+            "transparent": true
+          }
+        },
+        "panel-4": {
+          "kind": "Panel",
+          "spec": {
+            "id": 4,
+            "title": "By Volume",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "grafana",
+                        "version": "v0",
+                        "datasource": {
+                          "name": "netsage"
+                        },
+                        "spec": {
+                          "bucketAggs": [
+                            {
+                              "$$hashKey": "object:93",
+                              "fake": true,
+                              "field": "meta.src_organization",
+                              "id": "3",
+                              "settings": {
+                                "min_doc_count": 1,
+                                "order": "desc",
+                                "orderBy": "1",
+                                "size": "10"
+                              },
+                              "type": "terms"
+                            }
+                          ],
+                          "dsType": "elasticsearch",
+                          "metrics": [
+                            {
+                              "$$hashKey": "object:87",
+                              "field": "values.num_bits",
+                              "id": "1",
+                              "inlineScript": "_value/8",
+                              "meta": {},
+                              "settings": {
+                                "script": {
+                                  "inline": "_value/8"
+                                }
+                              },
+                              "type": "sum"
+                            },
+                            {
+                              "$$hashKey": "object:88",
+                              "field": "values.num_bits",
+                              "id": "5",
+                              "inlineScript": "_value / 8",
+                              "meta": {},
+                              "settings": {
+                                "script": {
+                                  "inline": "_value / 8"
+                                }
+                              },
+                              "type": "max"
+                            },
+                            {
+                              "$$hashKey": "object:89",
+                              "field": "meta.id",
+                              "id": "7",
+                              "meta": {},
+                              "settings": {},
+                              "type": "count"
+                            }
+                          ],
+                          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+                          "timeField": "start"
+                        }
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {}
+              }
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "table",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "showHeader": true,
+                  "sortBy": [
+                    {
+                      "desc": true,
+                      "displayName": "Total Vol."
+                    }
+                  ]
+                },
+                "fieldConfig": {
+                  "defaults": {
+                    "unit": "none",
+                    "decimals": 1,
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "value": null,
+                          "color": "light-blue"
+                        }
+                      ]
+                    },
+                    "custom": {
+                      "filterable": false
+                    }
+                  },
+                  "overrides": [
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "meta.src_organization"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Source"
+                        },
+                        {
+                          "id": "links",
+                          "value": [
+                            {
+                              "title": "See more information about ${__value.text}",
+                              "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Sum"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Total Vol."
+                        },
+                        {
+                          "id": "unit",
+                          "value": "decbytes"
+                        },
+                        {
+                          "id": "decimals",
+                          "value": 1
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 440
+                        },
+                        {
+                          "id": "custom.cellOptions",
+                          "value": {
+                            "mode": "gradient",
+                            "type": "gauge"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Max"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Largest Flow"
+                        },
+                        {
+                          "id": "unit",
+                          "value": "decbytes"
+                        },
+                        {
+                          "id": "decimals",
+                          "value": 1
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Count"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "# Flows"
+                        },
+                        {
+                          "id": "unit",
+                          "value": "short"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "panel-6": {
+          "kind": "Panel",
+          "spec": {
+            "id": 6,
+            "title": "By Rate",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "grafana",
+                        "version": "v0",
+                        "datasource": {
+                          "name": "netsage"
+                        },
+                        "spec": {
+                          "bucketAggs": [
+                            {
+                              "$$hashKey": "object:261",
+                              "fake": true,
+                              "field": "meta.src_organization",
+                              "id": "3",
+                              "settings": {
+                                "min_doc_count": 1,
+                                "order": "desc",
+                                "orderBy": "1",
+                                "size": "10"
+                              },
+                              "type": "terms"
+                            }
+                          ],
+                          "dsType": "elasticsearch",
+                          "metrics": [
+                            {
+                              "$$hashKey": "object:255",
+                              "field": "values.bits_per_second",
+                              "id": "1",
+                              "meta": {},
+                              "settings": {},
+                              "type": "max"
+                            },
+                            {
+                              "$$hashKey": "object:256",
+                              "field": "values.bits_per_second",
+                              "id": "5",
+                              "meta": {},
+                              "settings": {},
+                              "type": "avg"
+                            },
+                            {
+                              "$$hashKey": "object:257",
+                              "field": "meta.id",
+                              "id": "7",
+                              "meta": {},
+                              "settings": {},
+                              "type": "count"
+                            }
+                          ],
+                          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+                          "timeField": "start"
+                        }
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {}
+              }
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "table",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "showHeader": true,
+                  "sortBy": [
+                    {
+                      "desc": true,
+                      "displayName": "Peak"
+                    }
+                  ]
+                },
+                "fieldConfig": {
+                  "defaults": {
+                    "unit": "bps",
+                    "decimals": 1,
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "value": null,
+                          "color": "light-blue"
+                        }
+                      ]
+                    },
+                    "custom": {
+                      "filterable": false
+                    }
+                  },
+                  "overrides": [
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "meta.src_organization"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Source"
+                        },
+                        {
+                          "id": "links",
+                          "value": [
+                            {
+                              "title": "See more information about ${__value.text}",
+                              "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Max"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Peak"
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 440
+                        },
+                        {
+                          "id": "custom.cellOptions",
+                          "value": {
+                            "mode": "gradient",
+                            "type": "gauge"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Count"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "# Flows"
+                        },
+                        {
+                          "id": "unit",
+                          "value": "short"
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Average"
+                      },
+                      "properties": []
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "panel-8": {
+          "kind": "Panel",
+          "spec": {
+            "id": 8,
+            "title": "",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "",
+                        "version": "v0",
+                        "spec": {}
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {}
+              }
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "text",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "content": "\u003ch1 style=\"margin-top:35px;\"\u003e\u003ccenter\u003eTop Destinations\u003c/center\u003e\u003c/h1\u003e",
+                  "mode": "html"
+                },
+                "fieldConfig": {
+                  "defaults": {},
+                  "overrides": []
+                }
+              }
+            },
+            "transparent": true
+          }
+        },
+        "panel-9": {
+          "kind": "Panel",
+          "spec": {
+            "id": 9,
+            "title": "By Volume",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "grafana",
+                        "version": "v0",
+                        "datasource": {
+                          "name": "netsage"
+                        },
+                        "spec": {
+                          "bucketAggs": [
+                            {
+                              "$$hashKey": "object:470",
+                              "fake": true,
+                              "field": "meta.dst_organization",
+                              "id": "3",
+                              "settings": {
+                                "min_doc_count": 1,
+                                "order": "desc",
+                                "orderBy": "1",
+                                "size": "10"
+                              },
+                              "type": "terms"
+                            }
+                          ],
+                          "dsType": "elasticsearch",
+                          "metrics": [
+                            {
+                              "$$hashKey": "object:464",
+                              "field": "values.num_bits",
+                              "id": "1",
+                              "inlineScript": "_value/8",
+                              "meta": {},
+                              "settings": {
+                                "script": {
+                                  "inline": "_value/8"
+                                }
+                              },
+                              "type": "sum"
+                            },
+                            {
+                              "$$hashKey": "object:465",
+                              "field": "values.num_bits",
+                              "id": "5",
+                              "inlineScript": "_value / 8",
+                              "meta": {},
+                              "settings": {
+                                "script": {
+                                  "inline": "_value / 8"
+                                }
+                              },
+                              "type": "max"
+                            },
+                            {
+                              "$$hashKey": "object:466",
+                              "field": "meta.id",
+                              "id": "7",
+                              "meta": {},
+                              "settings": {},
+                              "type": "count"
+                            }
+                          ],
+                          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
+                          "timeField": "start"
+                        }
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {}
+              }
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "table",
+              "version": "7.3.3",
+              "spec": {
+                "options": {
+                  "showHeader": true,
+                  "sortBy": [
+                    {
+                      "desc": true,
+                      "displayName": "Total Vol."
+                    }
+                  ]
+                },
+                "fieldConfig": {
+                  "defaults": {
+                    "unit": "decbytes",
+                    "decimals": 1,
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "value": null,
+                          "color": "light-blue"
+                        }
+                      ]
+                    },
+                    "custom": {
+                      "align": "left",
+                      "filterable": false
+                    }
+                  },
+                  "overrides": [
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "meta.dst_organization"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Destination"
+                        },
+                        {
+                          "id": "links",
+                          "value": [
+                            {
+                              "title": "See more information about ${__value.text}",
+                              "url": "/grafana/d/QfzDJKhik/flow-data-per-organization?var-Organization=${__value.text:percentencode}\u0026from=${__from}\u0026to=${__to}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Sum"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Total Vol."
+                        },
+                        {
+                          "id": "custom.width",
+                          "value": 440
+                        },
+                        {
+                          "id": "custom.cellOptions",
+                          "value": {
+                            "mode": "gradient",
+                            "type": "gauge"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Max"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "Largest Flow"
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Count"
+                      },
+                      "properties": [
+                        {
+                          "id": "displayName",
+                          "value": "# Flows"
+                        },
+                        {
+                          "id": "unit",
+                          "value": "short"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
         }
-      ],
-      "timeFrom": null,
-      "title": "Top Pairs",
-      "type": "table"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "unit": "decbytes"
-        },
-        "overrides": []
       },
-      "gridPos": {
-        "h": 21,
-        "w": 24,
-        "x": 0,
-        "y": 72
-      },
-      "id": 15,
-      "links": [],
-      "options": {
-        "colorPalette": "interpolateBlues",
-        "headerColor": "black",
-        "hoverColor": "orange",
-        "invertColorPalette": false,
-        "leftHeader": "Left Title",
-        "numLines": 30,
-        "rightHeader": "Right Title"
-      },
-      "targets": [
-        {
-          "bucketAggs": [
+      "layout": {
+        "kind": "GridLayout",
+        "spec": {
+          "items": [
             {
-              "$$hashKey": "object:365",
-              "fake": true,
-              "field": "meta.src_organization",
-              "id": "3",
-              "settings": {
-                "min_doc_count": 1,
-                "order": "desc",
-                "orderBy": "1",
-                "size": "50"
-              },
-              "type": "terms"
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 0,
+                "width": 2,
+                "height": 3,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-1"
+                }
+              }
             },
             {
-              "$$hashKey": "object:366",
-              "field": "meta.dst_organization",
-              "id": "2",
-              "settings": {
-                "min_doc_count": 1,
-                "order": "desc",
-                "orderBy": "1",
-                "size": "50"
-              },
-              "type": "terms"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:363",
-              "field": "values.num_bits",
-              "id": "1",
-              "inlineScript": "_value/8",
-              "meta": {},
-              "settings": {
-                "script": {
-                  "inline": "_value/8"
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 3,
+                "y": 0,
+                "width": 18,
+                "height": 5,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-2"
                 }
-              },
-              "type": "sum"
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 5,
+                "width": 24,
+                "height": 2,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-3"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 7,
+                "width": 24,
+                "height": 12,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-4"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 19,
+                "width": 24,
+                "height": 12,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-6"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 31,
+                "width": 24,
+                "height": 3,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-8"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 34,
+                "width": 24,
+                "height": 12,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-9"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 46,
+                "width": 24,
+                "height": 12,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-11"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 58,
+                "width": 24,
+                "height": 3,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-13"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 61,
+                "width": 24,
+                "height": 11,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-14"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 72,
+                "width": 24,
+                "height": 21,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-15"
+                }
+              }
+            },
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 93,
+                "width": 24,
+                "height": 3,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-16"
+                }
+              }
             }
-          ],
-          "query": "meta.sensor_id:$Sensors AND -meta.src_organization:\"\" AND -meta.dst_organization:\"\" AND ((!(_exists_:meta.country_scope)) OR meta.country_scope:$country_scope) AND ((!(_exists_:meta.is_network_testing)) OR meta.is_network_testing:no OR meta.is_network_testing:$is_net_test)",
-          "refId": "A",
-          "timeField": "start"
+          ]
         }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 30 Pairs by Data Volume",
-      "type": "netsage-slopegraph-panel"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
       },
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 93
-      },
-      "id": 16,
       "links": [],
-      "options": {
-        "content": "\u003cdiv\u003e If you have any questions, concerns, or other issues, feel free to contact us at \u003ca href=\"mailto:netsage@iu.edu\"\u003enetsage@iu.edu\u003c/a\u003e.  Thanks!  \u003cimg style=\"margin-left:10px\" src=\"https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png\" width=50 height=50\u003e \u003ca href=\"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1540933\"\u003e NSF GRANT 1540933 \u003c/a\u003e \u003c/img\u003e \u003cspan style=\"float:right; position:relative; top:15px\"\u003e To Review the NetSage Data Policy \u003ca href=\"http://www.netsage.global/home/netsage-privacy-policy\"\u003e click here \u003c/a\u003e \u003c/div\u003e",
-        "mode": "html"
-      },
-      "pluginVersion": "7.3.3",
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    }
-  ],
-  "refresh": false,
-  "schemaVersion": 26,
-  "style": "dark",
-  "tags": ["flow", "netsage"],
-  "templating": {
-    "list": [
-      {
-        "allValue": null,
-        "current": {
-          "selected": true,
-          "text": ["All"],
-          "value": ["$__all"]
-        },
-        "datasource": "netsage",
-        "definition": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\"}",
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "Sensors",
-        "options": [],
-        "query": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\"}",
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": "*",
-        "current": {
-          "selected": true,
-          "tags": [],
-          "text": ["All"],
-          "value": ["$__all"]
-        },
-        "datasource": "netsage",
-        "definition": "{\"find\":\"terms\", \"field\":\"meta.country_scope\"}",
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": "Scope",
-        "multi": true,
-        "name": "country_scope",
-        "options": [],
-        "query": "{\"find\":\"terms\", \"field\":\"meta.country_scope\"}",
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "yes",
-          "value": "yes"
-        },
-        "error": null,
-        "hide": 0,
-        "includeAll": false,
-        "label": "Show Test Traffic",
-        "multi": false,
-        "name": "is_net_test",
-        "options": [
-          {
-            "selected": false,
-            "text": "yes",
-            "value": "yes"
-          },
-          {
-            "selected": true,
-            "text": "no",
-            "value": "no"
-          }
+      "liveNow": false,
+      "preload": false,
+      "tags": ["flow", "netsage"],
+      "timeSettings": {
+        "from": "now-7d",
+        "to": "now",
+        "autoRefresh": "",
+        "autoRefreshIntervals": [
+          "10s",
+          "30s",
+          "1m",
+          "5m",
+          "15m",
+          "30m",
+          "1h",
+          "2h",
+          "1d"
         ],
-        "query": "yes,no",
-        "queryValue": "",
-        "skipUrlSync": false,
-        "type": "custom"
+        "hideTimepicker": false,
+        "fiscalYearStartMonth": 0
+      },
+      "title": "Flow Data for Circuits",
+      "variables": [
+        {
+          "kind": "QueryVariable",
+          "spec": {
+            "name": "Sensors",
+            "current": {
+              "text": ["All"],
+              "value": ["$__all"]
+            },
+            "hide": "dontHide",
+            "refresh": "onTimeRangeChanged",
+            "skipUrlSync": false,
+            "query": {
+              "kind": "DataQuery",
+              "group": "grafana",
+              "version": "v0",
+              "spec": {
+                "__legacyStringValue": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\"}"
+              }
+            },
+            "regex": "",
+            "sort": "alphabeticalAsc",
+            "definition": "{\"find\":\"terms\", \"field\":\"meta.sensor_id\"}",
+            "options": [],
+            "multi": true,
+            "includeAll": true,
+            "allowCustomValue": true
+          }
+        },
+        {
+          "kind": "QueryVariable",
+          "spec": {
+            "name": "country_scope",
+            "current": {
+              "text": ["All"],
+              "value": ["$__all"]
+            },
+            "label": "Scope",
+            "hide": "dontHide",
+            "refresh": "onTimeRangeChanged",
+            "skipUrlSync": false,
+            "query": {
+              "kind": "DataQuery",
+              "group": "grafana",
+              "version": "v0",
+              "spec": {
+                "__legacyStringValue": "{\"find\":\"terms\", \"field\":\"meta.country_scope\"}"
+              }
+            },
+            "regex": "",
+            "sort": "disabled",
+            "definition": "{\"find\":\"terms\", \"field\":\"meta.country_scope\"}",
+            "options": [],
+            "multi": true,
+            "includeAll": true,
+            "allValue": "*",
+            "allowCustomValue": true
+          }
+        },
+        {
+          "kind": "CustomVariable",
+          "spec": {
+            "name": "is_net_test",
+            "query": "yes,no",
+            "current": {
+              "text": "yes",
+              "value": "yes"
+            },
+            "options": [
+              {
+                "selected": false,
+                "text": "yes",
+                "value": "yes"
+              },
+              {
+                "selected": true,
+                "text": "no",
+                "value": "no"
+              }
+            ],
+            "multi": false,
+            "includeAll": false,
+            "label": "Show Test Traffic",
+            "hide": "dontHide",
+            "skipUrlSync": false,
+            "allowCustomValue": true
+          }
+        }
+      ]
+    },
+    "status": {
+      "conversion": {
+        "failed": false,
+        "storedVersion": "v0alpha1"
       }
-    ]
+    }
   },
-  "time": {
-    "from": "now-7d",
-    "to": "now"
-  },
-  "timepicker": {
-    "hidden": false,
-    "refresh_intervals": [
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
-  },
-  "timezone": "",
-  "title": "Flow Data for Circuits",
-  "uid": "xk26IFhmk",
-  "version": 1
+  "nested_path": "linux%2Fgnu/Others",
+  "gdg_api_version": "dashboard.grafana.app/v2"
 }

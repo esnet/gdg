@@ -526,11 +526,8 @@ func getFolderMapping[T comparable, V any](folders []*domain.NestedHit, key func
 }
 
 // getFolderUIDEntityMap builds a map from folder UID to NestedHit using ListFolders.
-func (s *DashNGoImpl) getFolderUIDEntityMap(filter outbound.Filter) map[string]*domain.NestedHit {
-	return getFolderUIDEntityMapByList(s.ListFolders(filter))
-}
-
 // getFolderUIDEntityMapByList helper function to build a mapping for name to folderID
+// getFolderUIDEntityMap is promoted from baseService via DashNGoImpl embedding.
 func getFolderUIDEntityMapByList(folders []*domain.NestedHit) map[string]*domain.NestedHit {
 	return getFolderMapping(folders, func(fld *domain.NestedHit) string {
 		return fld.UID
@@ -541,16 +538,7 @@ func getFolderUIDEntityMapByList(folders []*domain.NestedHit) map[string]*domain
 	)
 }
 
-// getFolderNameUIDMap helper function to build a mapping for name to folderID
-func (s *DashNGoImpl) getFolderNameUIDMap(folders []*domain.NestedHit) map[string]string {
-	return getFolderMapping(folders, func(fld *domain.NestedHit) string {
-		return fld.NestedPath
-	},
-		func(fld *domain.NestedHit) string {
-			return fld.UID
-		},
-	)
-}
+// getFolderNameUIDMap is promoted from baseService via DashNGoImpl embedding.
 
 // getFolderByUid gets a given folder given a valid Uid
 func (s *DashNGoImpl) getFolderByUid(uid string) (*domain.NestedHit, error) {

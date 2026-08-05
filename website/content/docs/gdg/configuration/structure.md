@@ -1,5 +1,6 @@
 ---
 title: "Structure"
+description: "Overview of GDG configuration file structure, YAML layout, environment variable overrides, and config file discovery paths."
 weight: 100
 ---
 

@@ -40,15 +40,15 @@ func TestPoliciesCrud(t *testing.T) {
 	// Upload Contact points first.
 	_, err = apiClient.UploadContactPoints()
 	assert.NoError(t, err)
-	//
 	policies, err := apiClient.ListAlertNotifications()
 	assert.NoError(t, err)
 	assert.Equal(t, len(policies.Routes), 0, "Validate initial contact list is empty")
 	policiesListing, err := apiClient.UploadAlertNotifications()
 	assert.NoError(t, err)
 	assert.Equal(t, len(policiesListing.Routes), 2)
+	// The second sub-route uses slack with continue=true and matcher moo=23.
 	route := lo.FindOrElse(policiesListing.Routes, nil, func(item *models.Route) bool {
-		return item.Receiver == "slack"
+		return item.Receiver == "slack" && item.Continue
 	})
 	assert.NotNil(t, route)
 	assert.Equal(t, len(route.ObjectMatchers[0]), 3)
@@ -70,3 +70,5 @@ func TestPoliciesCrud(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(policies.Routes), 0)
 }
+
+

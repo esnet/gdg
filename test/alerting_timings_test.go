@@ -18,7 +18,7 @@ import (
 func TestAlertingTimingsCrud(t *testing.T) {
 	assert := assert.New(t)
 	assert.NoError(os.Setenv(common.ContextNameEnv, common.TestContextName))
-	assert.NoError(os.Unsetenv(common.ContextNameEnv))
+	defer os.Unsetenv(common.ContextNameEnv)
 
 	assert.NoError(path.FixTestDir("test", ".."))
 	cfg := config.NewConfig(common.DefaultTestConfig)

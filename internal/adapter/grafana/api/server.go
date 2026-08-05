@@ -1,9 +1,6 @@
 package api
 
-import (
-	"log"
-)
-
+// Server info constants used by baseService.GetServerInfo and any callers.
 const (
 	SrvInfoDBKey               = "Database"
 	SrvInfoCommitKey           = "Commit"
@@ -11,18 +8,4 @@ const (
 	SrvInfoEnterpriseCommitKey = "EnterpriseCommit"
 )
 
-// GetServerInfo returns basic Grafana Server info
-func (s *DashNGoImpl) GetServerInfo() map[string]any {
-	response, err := s.GetClient().Health.GetHealth()
-	if err != nil {
-		log.Fatalf("Unable to get server health info, err: %v", err)
-	}
-	t := response.GetPayload()
-	result := make(map[string]any)
-	result[SrvInfoDBKey] = t.Database
-	result[SrvInfoCommitKey] = t.Commit
-	result[SrvInfoVersionKey] = t.Version
-	result[SrvInfoEnterpriseCommitKey] = t.EnterpriseCommit
-
-	return result
-}
+// GetServerInfo is promoted from baseService via DashNGoImpl embedding.

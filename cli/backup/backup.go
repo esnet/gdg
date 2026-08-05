@@ -32,6 +32,9 @@ limited to clear/delete, list, download and upload.  Any other functionality wil
 		},
 		CommandsList: []simplecobra.Commander{
 			newDashboardCommand(),
+			// newDashboardV2Command() is intentionally not registered here.
+			// The dashboards2 code is retained for reference and internal use
+			// while the unified DashboardService (steps 5-7) is being built.
 			newConnectionsCommand(),
 			newFolderCommand(),
 			newLibraryElementsCommand(),

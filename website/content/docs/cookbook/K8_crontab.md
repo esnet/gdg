@@ -1,5 +1,6 @@
 ---
 title: "Kubernetes Crontab Example"
+description: "Example Kubernetes CronJob manifest for running scheduled GDG dashboard backups in a cluster using a service account."
 weight: 52
 ---
 

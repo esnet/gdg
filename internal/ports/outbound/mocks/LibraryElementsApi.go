@@ -64,7 +64,7 @@ type LibraryElementsApi_DeleteAllLibraryElements_Call struct {
 
 // DeleteAllLibraryElements is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *LibraryElementsApi_Expecter) DeleteAllLibraryElements(filter interface{}) *LibraryElementsApi_DeleteAllLibraryElements_Call {
+func (_e *LibraryElementsApi_Expecter) DeleteAllLibraryElements(filter any) *LibraryElementsApi_DeleteAllLibraryElements_Call {
 	return &LibraryElementsApi_DeleteAllLibraryElements_Call{Call: _e.mock.On("DeleteAllLibraryElements", filter)}
 }
 
@@ -117,7 +117,7 @@ type LibraryElementsApi_DownloadLibraryElements_Call struct {
 
 // DownloadLibraryElements is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *LibraryElementsApi_Expecter) DownloadLibraryElements(filter interface{}) *LibraryElementsApi_DownloadLibraryElements_Call {
+func (_e *LibraryElementsApi_Expecter) DownloadLibraryElements(filter any) *LibraryElementsApi_DownloadLibraryElements_Call {
 	return &LibraryElementsApi_DownloadLibraryElements_Call{Call: _e.mock.On("DownloadLibraryElements", filter)}
 }
 
@@ -170,7 +170,7 @@ type LibraryElementsApi_ListLibraryElements_Call struct {
 
 // ListLibraryElements is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *LibraryElementsApi_Expecter) ListLibraryElements(filter interface{}) *LibraryElementsApi_ListLibraryElements_Call {
+func (_e *LibraryElementsApi_Expecter) ListLibraryElements(filter any) *LibraryElementsApi_ListLibraryElements_Call {
 	return &LibraryElementsApi_ListLibraryElements_Call{Call: _e.mock.On("ListLibraryElements", filter)}
 }
 
@@ -224,7 +224,7 @@ type LibraryElementsApi_ListLibraryElementsConnections_Call struct {
 // ListLibraryElementsConnections is a helper method to define mock.On call
 //   - filter outbound.Filter
 //   - connectionID string
-func (_e *LibraryElementsApi_Expecter) ListLibraryElementsConnections(filter interface{}, connectionID interface{}) *LibraryElementsApi_ListLibraryElementsConnections_Call {
+func (_e *LibraryElementsApi_Expecter) ListLibraryElementsConnections(filter any, connectionID any) *LibraryElementsApi_ListLibraryElementsConnections_Call {
 	return &LibraryElementsApi_ListLibraryElementsConnections_Call{Call: _e.mock.On("ListLibraryElementsConnections", filter, connectionID)}
 }
 
@@ -282,7 +282,7 @@ type LibraryElementsApi_UploadLibraryElements_Call struct {
 
 // UploadLibraryElements is a helper method to define mock.On call
 //   - filter outbound.Filter
-func (_e *LibraryElementsApi_Expecter) UploadLibraryElements(filter interface{}) *LibraryElementsApi_UploadLibraryElements_Call {
+func (_e *LibraryElementsApi_Expecter) UploadLibraryElements(filter any) *LibraryElementsApi_UploadLibraryElements_Call {
 	return &LibraryElementsApi_UploadLibraryElements_Call{Call: _e.mock.On("UploadLibraryElements", filter)}
 }
 

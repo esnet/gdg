@@ -1,5 +1,6 @@
 ---
 title: "Other Commands"
+description: "Reference for miscellaneous GDG commands covering context management, organization switching, and other utility operations."
 weight: 18
 ---
 

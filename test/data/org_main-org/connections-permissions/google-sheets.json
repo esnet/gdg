@@ -34,53 +34,6 @@
 		},
 		{
 			"actions": [
-				"datasources.caching:read",
-				"datasources.caching:write",
-				"datasources:read",
-				"datasources:query",
-				"datasources:write",
-				"datasources:delete",
-				"datasources.permissions:read",
-				"datasources.permissions:write"
-			],
-			"id": 607,
-			"isManaged": true,
-			"permission": "Admin",
-			"roleName": "managed:users:3:permissions",
-			"userAvatarUrl": "/avatar/b0af9e9c1c0acf1dc93d4dc9d6bcafb1",
-			"userId": 3,
-			"userLogin": "tux"
-		},
-		{
-			"actions": [
-				"datasources:delete",
-				"datasources:read",
-				"datasources:query",
-				"datasources:write"
-			],
-			"id": 615,
-			"isManaged": true,
-			"permission": "Edit",
-			"roleName": "managed:users:2:permissions",
-			"userAvatarUrl": "/avatar/64029c12d260bd5e3cb2504f4155998f",
-			"userId": 2,
-			"userLogin": "bob"
-		},
-		{
-			"actions": [
-				"datasources:read",
-				"datasources:query"
-			],
-			"id": 619,
-			"isManaged": true,
-			"permission": "Query",
-			"roleName": "managed:teams:2:permissions",
-			"team": "musicians",
-			"teamAvatarUrl": "/avatar/80ca0095115d85b522e59fa72b51a213",
-			"teamId": 2
-		},
-		{
-			"actions": [
 				"datasources.permissions:write",
 				"datasources.caching:write",
 				"datasources:delete",

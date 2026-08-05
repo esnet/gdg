@@ -8,7 +8,7 @@
 	"name": "prometheus",
 	"orgId": 1,
 	"type": "prometheus",
-	"typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+	"typeLogoUrl": "public/plugins/prometheus/img/prometheus_logo.svg",
 	"typeName": "Prometheus",
 	"uid": "eeov1g02ckveoe",
 	"url": "http://prometheus:9090"

@@ -88,6 +88,32 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter outbound.Filter) []stri
 		dataFiles []string
 	)
 
+	// Build a name→live-connection map so that fixture UIDs (which are captured
+	// from a previous Grafana instance and differ on every fresh container) are
+	// replaced with the current server-assigned UIDs before any API calls.
+	liveConnections := s.ListConnections(filter)
+	liveByName := make(map[string]*models.DataSourceListItemDTO, len(liveConnections))
+	for i := range liveConnections {
+		liveByName[liveConnections[i].Name] = &liveConnections[i]
+	}
+
+	// Build login→live-ID and team-name→live-ID maps so that user/team IDs
+	// stored in fixture files (which are assigned by Grafana and can differ
+	// across containers) are resolved to the current server-assigned IDs before
+	// any permission API calls.
+	liveUsers := s.ListUsers(NewUserFilter(""))
+	userLoginToID := make(map[string]int64, len(liveUsers))
+	for _, u := range liveUsers {
+		userLoginToID[u.Login] = u.ID
+	}
+	liveTeams := s.ListTeams(NewTeamFilter(""))
+	teamNameToID := make(map[string]int64)
+	for team := range liveTeams {
+		if team.Name != nil && team.ID != nil {
+			teamNameToID[*team.Name] = *team.ID
+		}
+	}
+
 	orgName := s.grafanaConf.GetOrganizationName()
 	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.ConnectionPermissionResource, orgName), false)
 	if err != nil {
@@ -111,6 +137,16 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter outbound.Filter) []stri
 			slog.Warn("Failed to Decode payload for file", "filename", fileLocation)
 			continue
 		}
+
+		// Replace the fixture connection (stale UID) with the live connection (fresh UID).
+		if live, ok := liveByName[newEntries.Connection.Name]; ok {
+			newEntries.Connection = live
+		} else {
+			slog.Warn("connection from fixture not found on server, skipping permissions upload",
+				slog.String("name", newEntries.Connection.Name))
+			continue
+		}
+
 		// Get current permissions
 		permissions, err := s.getConnectionPermission(newEntries.Connection.UID)
 		if err != nil {
@@ -119,13 +155,27 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter outbound.Filter) []stri
 		}
 
 		var removePermissionError error
-		// Delete datasource Permissions
+		// Delete datasource Permissions.
+		// Only attempt to remove managed, non-inherited, non-built-in-role permissions.
+		// Inherited entries, non-managed entries, and built-in role grants (Viewer/Editor/Admin)
+		// are system-level and cannot be removed via the access-control API in Grafana v13+;
+		// attempting to do so returns an error that would abort the whole upload for this connection.
+		// Only explicit user and team permission grants are safe to clear here.
 		for _, p := range permissions.GetPayload() {
+			if p.IsInherited || !p.IsManaged || p.BuiltInRole != "" {
+				slog.Debug("skipping non-removable permission during pre-clear",
+					slog.String("userLogin", p.UserLogin),
+					slog.String("team", p.Team),
+					slog.String("builtInRole", p.BuiltInRole),
+					slog.Bool("isManaged", p.IsManaged),
+					slog.Bool("isInherited", p.IsInherited),
+				)
+				continue
+			}
 			err := s.updatedConnectionPermission(newEntries.Connection, p, "")
 			if err != nil {
 				removePermissionError = err
 			}
-
 		}
 
 		if removePermissionError != nil {
@@ -135,12 +185,50 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter outbound.Filter) []stri
 
 		success := true
 		for _, permission := range newEntries.Permissions {
-			err = s.updatedConnectionPermission(newEntries.Connection, permission, permission.Permission)
-			if err != nil {
-				slog.Error("Failed to update connection permissions", slog.Any("userId", permission.UserLogin), slog.Any("team", permission.Team), slog.Any("role", permission.BuiltInRole), slog.Any("permission", permission.Permission))
-				success = false
+			// Skip built-in role entries (Viewer, Editor, Admin, etc.) — Grafana
+			// manages these grants itself and rejects attempts to set them via the
+			// access-control API on v13+. Only user and team grants are applied.
+			if permission.BuiltInRole != "" {
+				slog.Debug("skipping built-in role permission during upload",
+					slog.String("builtInRole", permission.BuiltInRole),
+					slog.String("permission", permission.Permission))
+				continue
 			}
 
+			// Resolve live user/team IDs — fixture IDs are captured from a previous
+			// Grafana instance and may not match the current container's assignments.
+			resolved := *permission
+			if resolved.UserLogin != "" {
+				if liveID, ok := userLoginToID[resolved.UserLogin]; ok {
+					resolved.UserID = liveID
+				} else {
+					slog.Warn("user from fixture not found on server, skipping permission",
+						slog.String("userLogin", resolved.UserLogin))
+					continue
+				}
+			}
+			if resolved.Team != "" {
+				if liveID, ok := teamNameToID[resolved.Team]; ok {
+					resolved.TeamID = liveID
+				} else {
+					slog.Warn("team from fixture not found on server, skipping permission",
+						slog.String("team", resolved.Team))
+					continue
+				}
+			}
+			err = s.updatedConnectionPermission(newEntries.Connection, &resolved, resolved.Permission)
+			if err != nil {
+				slog.Error("Failed to update connection permissions",
+					slog.Any("userId", resolved.UserLogin),
+					slog.Any("resolvedUserID", resolved.UserID),
+					slog.Any("team", resolved.Team),
+					slog.Any("resolvedTeamID", resolved.TeamID),
+					slog.Any("role", resolved.BuiltInRole),
+					slog.Any("permission", resolved.Permission),
+					slog.Any("connectionUID", newEntries.Connection.UID),
+					slog.Any("err", err))
+				success = false
+			}
 		}
 		if success {
 			dataFiles = append(dataFiles, fileLocation)
@@ -151,24 +239,35 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter outbound.Filter) []stri
 	return dataFiles
 }
 
-// DeleteAllConnectionPermissions clear all non-default permissions from all connections
+// DeleteAllConnectionPermissions clear all non-default permissions from all connections.
+// Inherited and non-managed permissions (e.g. fixed admin grants in Grafana v13+) are
+// skipped because they cannot be removed via the access-control API.
 func (s *DashNGoImpl) DeleteAllConnectionPermissions(filter outbound.Filter) []string {
-	dataSources := make([]string, 0)
+	connections := make([]string, 0)
 	connectionPermissions := s.ListConnectionPermissions(filter)
 	for _, conn := range connectionPermissions {
 		success := true
 		for _, p := range conn.Permissions {
+			if p.IsInherited || !p.IsManaged || p.BuiltInRole != "" {
+				slog.Debug("skipping non-removable permission during delete-all",
+					slog.String("connection", conn.Connection.Name),
+					slog.String("userLogin", p.UserLogin),
+					slog.String("team", p.Team),
+					slog.String("builtInRole", p.BuiltInRole),
+				)
+				continue
+			}
 			deleteConnectionErr := s.updatedConnectionPermission(conn.Connection, p, "")
 			if deleteConnectionErr != nil {
 				success = false
 			}
 		}
 		if success {
-			dataSources = append(dataSources, conn.Connection.Name)
+			connections = append(connections, conn.Connection.Name)
 		}
 	}
 
-	return dataSources
+	return connections
 }
 
 func getPermissionType(perm models.ResourcePermissionDTO) PermissionType {

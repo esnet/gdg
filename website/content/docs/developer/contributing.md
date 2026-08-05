@@ -1,5 +1,6 @@
 ---
 title: "Contributing"
+description: "Guidelines for contributing to GDG, including how to submit pull requests, set up a development environment, and run tests."
 weight: 62
 ---
 

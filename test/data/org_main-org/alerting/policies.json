@@ -6,7 +6,7 @@
 	],
 	"mute_time_intervals": null,
 	"provenance": "api",
-	"receiver": "grafana-default-email",
+	"receiver": "slack",
 	"routes": [
 		{
 			"active_time_intervals": null,
@@ -19,7 +19,7 @@
 					"22"
 				]
 			],
-			"receiver": "grafana-default-email",
+			"receiver": "discord",
 			"routes": null
 		},
 		{

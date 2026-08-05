@@ -78,3 +78,5 @@ func (_c *LicenseApi_IsEnterprise_Call) RunAndReturn(run func() bool) *LicenseAp
 	_c.Call.Return(run)
 	return _c
 }
+
+

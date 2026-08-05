@@ -1,6 +1,6 @@
 ---
 title: "Version 0.8"
-description: "Release Notes for v0.8"
+description: "Release notes for GDG v0.8, covering new storage backends, logo additions, global CLI context flags, and bug fixes."
 date: 2025-05-15T00:00:00
 draft: false
 images: [ ]

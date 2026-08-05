@@ -1,330 +1,490 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations \u0026 Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
-        "type": "dashboard"
-      }
-    ]
-  },
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "id": 24,
-  "iteration": 1639165599351,
-  "links": [],
-  "liveNow": false,
-  "panels": [
-    {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Sum values.num_bits"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Traffic"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+  "resource": {
+    "kind": "Dashboard",
+    "apiVersion": "dashboard.grafana.app/v2",
+    "metadata": {
+      "name": "JywX0Qt7k",
+      "namespace": "default",
+      "uid": "13537fb6-62dc-4ed3-abca-49a602eb7eef",
+      "resourceVersion": "1784640467266984",
+      "generation": 1,
+      "creationTimestamp": "2026-07-21T13:27:47Z",
+      "labels": {
+        "grafana.app/deprecatedInternalID": "2135914599821312"
       },
-      "gridPos": {
-        "h": 14,
-        "w": 24,
-        "x": 0,
-        "y": 0
+      "annotations": {
+        "grafana.app/createdBy": "user:bfrzirobu2bcwf",
+        "grafana.app/folder": "afs38khvtj6dca"
       },
-      "id": 2,
-      "interval": "30s",
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
+      "managedFields": [
         {
-          "alias": "Traffic",
-          "bucketAggs": [
-            {
-              "field": "start",
-              "id": "2",
-              "settings": {
-                "interval": "auto"
+          "manager": "grafana",
+          "operation": "Update",
+          "apiVersion": "dashboard.grafana.app/v0alpha1",
+          "time": "2026-07-21T13:27:47Z",
+          "fieldsType": "FieldsV1",
+          "fieldsV1": {
+            "f:metadata": {
+              "f:annotations": {
+                ".": {},
+                "f:grafana.app/folder": {}
+              }
+            },
+            "f:spec": {
+              "f:annotations": {
+                ".": {},
+                "f:list": {}
               },
-              "type": "date_histogram"
-            }
-          ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "LixEBcHnk"
-          },
-          "metrics": [
-            {
-              "field": "values.num_bits",
-              "id": "1",
-              "settings": {
-                "script": "_value / ($__interval_ms / 1000)"
+              "f:editable": {},
+              "f:fiscalYearStartMonth": {},
+              "f:graphTooltip": {},
+              "f:iteration": {},
+              "f:links": {},
+              "f:liveNow": {},
+              "f:panels": {},
+              "f:refresh": {},
+              "f:schemaVersion": {},
+              "f:style": {},
+              "f:tags": {},
+              "f:templating": {
+                ".": {},
+                "f:list": {}
               },
-              "type": "sum"
+              "f:time": {
+                ".": {},
+                "f:from": {},
+                "f:to": {}
+              },
+              "f:timepicker": {},
+              "f:timezone": {},
+              "f:title": {},
+              "f:uid": {},
+              "f:version": {},
+              "f:weekStart": {}
             }
-          ],
-          "query": "meta.src_ip: $src_ip AND meta.src_port: $src_port AND meta.dst_ip: $dst_ip AND meta.dst_port: $dst_port AND meta.protocol: $protocol AND meta.iface_in.intercloud:true",
-          "refId": "A",
-          "timeField": "start"
+          }
+        }
+      ]
+    },
+    "spec": {
+      "annotations": [
+        {
+          "kind": "AnnotationQuery",
+          "spec": {
+            "query": {
+              "kind": "DataQuery",
+              "group": "",
+              "version": "v0",
+              "spec": {
+                "limit": 100,
+                "matchAny": false,
+                "tags": [],
+                "type": "dashboard"
+              }
+            },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations \u0026 Alerts",
+            "builtIn": true,
+            "legacyOptions": {
+              "type": "dashboard"
+            }
+          }
         }
       ],
-      "title": "Traffic Over Time",
-      "transparent": true,
-      "type": "timeseries"
-    }
-  ],
-  "refresh": false,
-  "schemaVersion": 33,
-  "style": "dark",
-  "tags": [],
-  "templating": {
-    "list": [
-      {
-        "current": {
-          "selected": false,
-          "text": "",
-          "value": ""
-        },
-        "hide": 0,
-        "label": "Flow ID",
-        "name": "ff_id",
-        "options": [
-          {
-            "selected": false,
-            "text": "",
-            "value": ""
+      "cursorSync": "Off",
+      "editable": true,
+      "elements": {
+        "panel-2": {
+          "kind": "Panel",
+          "spec": {
+            "id": 2,
+            "title": "Traffic Over Time",
+            "description": "",
+            "links": [],
+            "data": {
+              "kind": "QueryGroup",
+              "spec": {
+                "queries": [
+                  {
+                    "kind": "PanelQuery",
+                    "spec": {
+                      "query": {
+                        "kind": "DataQuery",
+                        "group": "elasticsearch",
+                        "version": "v0",
+                        "datasource": {
+                          "name": "LixEBcHnk"
+                        },
+                        "spec": {
+                          "alias": "Traffic",
+                          "bucketAggs": [
+                            {
+                              "field": "start",
+                              "id": "2",
+                              "settings": {
+                                "interval": "auto"
+                              },
+                              "type": "date_histogram"
+                            }
+                          ],
+                          "metrics": [
+                            {
+                              "field": "values.num_bits",
+                              "id": "1",
+                              "settings": {
+                                "script": "_value / ($__interval_ms / 1000)"
+                              },
+                              "type": "sum"
+                            }
+                          ],
+                          "query": "meta.src_ip: $src_ip AND meta.src_port: $src_port AND meta.dst_ip: $dst_ip AND meta.dst_port: $dst_port AND meta.protocol: $protocol AND meta.iface_in.intercloud:true",
+                          "timeField": "start"
+                        }
+                      },
+                      "refId": "A",
+                      "hidden": false
+                    }
+                  }
+                ],
+                "transformations": [],
+                "queryOptions": {
+                  "interval": "30s"
+                }
+              }
+            },
+            "vizConfig": {
+              "kind": "VizConfig",
+              "group": "timeseries",
+              "version": "",
+              "spec": {
+                "options": {
+                  "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                  },
+                  "tooltip": {
+                    "mode": "single"
+                  }
+                },
+                "fieldConfig": {
+                  "defaults": {
+                    "unit": "bps",
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "value": null,
+                          "color": "green"
+                        },
+                        {
+                          "value": 80,
+                          "color": "red"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "mode": "palette-classic"
+                    },
+                    "custom": {
+                      "axisLabel": "",
+                      "axisPlacement": "auto",
+                      "barAlignment": 0,
+                      "drawStyle": "line",
+                      "fillOpacity": 80,
+                      "gradientMode": "none",
+                      "hideFrom": {
+                        "legend": false,
+                        "tooltip": false,
+                        "viz": false
+                      },
+                      "lineInterpolation": "linear",
+                      "lineWidth": 1,
+                      "pointSize": 5,
+                      "scaleDistribution": {
+                        "type": "linear"
+                      },
+                      "showPoints": "auto",
+                      "spanNulls": false,
+                      "stacking": {
+                        "group": "A",
+                        "mode": "none"
+                      },
+                      "thresholdsStyle": {
+                        "mode": "off"
+                      }
+                    }
+                  },
+                  "overrides": [
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Sum values.num_bits"
+                      },
+                      "properties": [
+                        {
+                          "id": "color",
+                          "value": {
+                            "fixedColor": "blue",
+                            "mode": "fixed"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "matcher": {
+                        "id": "byName",
+                        "options": "Traffic"
+                      },
+                      "properties": [
+                        {
+                          "id": "color",
+                          "value": {
+                            "fixedColor": "blue",
+                            "mode": "fixed"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            "transparent": true
           }
+        }
+      },
+      "layout": {
+        "kind": "GridLayout",
+        "spec": {
+          "items": [
+            {
+              "kind": "GridLayoutItem",
+              "spec": {
+                "x": 0,
+                "y": 0,
+                "width": 24,
+                "height": 14,
+                "element": {
+                  "kind": "ElementReference",
+                  "name": "panel-2"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "links": [],
+      "liveNow": false,
+      "preload": false,
+      "tags": [],
+      "timeSettings": {
+        "from": "now-6h",
+        "to": "now",
+        "autoRefresh": "",
+        "autoRefreshIntervals": [
+          "5s",
+          "10s",
+          "30s",
+          "1m",
+          "5m",
+          "15m",
+          "30m",
+          "1h",
+          "2h",
+          "1d"
         ],
-        "query": "",
-        "skipUrlSync": false,
-        "type": "textbox"
+        "hideTimepicker": false,
+        "fiscalYearStartMonth": 0
       },
-      {
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
+      "title": "Firefly Details",
+      "variables": [
+        {
+          "kind": "TextVariable",
+          "spec": {
+            "name": "ff_id",
+            "current": {
+              "text": "",
+              "value": ""
+            },
+            "query": "",
+            "label": "Flow ID",
+            "hide": "dontHide",
+            "skipUrlSync": false
+          }
         },
-        "datasource": {
-          "type": "elasticsearch",
-          "uid": "WZGfAwtnk"
+        {
+          "kind": "QueryVariable",
+          "spec": {
+            "name": "src_ip",
+            "current": {
+              "text": "None",
+              "value": ""
+            },
+            "label": "Source IP",
+            "hide": "dontHide",
+            "refresh": "onTimeRangeChanged",
+            "skipUrlSync": false,
+            "query": {
+              "kind": "DataQuery",
+              "group": "elasticsearch",
+              "version": "v0",
+              "datasource": {
+                "name": "WZGfAwtnk"
+              },
+              "spec": {
+                "__legacyStringValue": "{\"find\":\"terms\", \"field\":\"flow-id.src-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}"
+              }
+            },
+            "regex": "",
+            "sort": "disabled",
+            "definition": "{\"find\":\"terms\", \"field\":\"flow-id.src-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+            "options": [],
+            "multi": false,
+            "includeAll": false,
+            "allowCustomValue": true
+          }
         },
-        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.src-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Source IP",
-        "multi": false,
-        "name": "src_ip",
-        "options": [],
-        "query": "{\"find\":\"terms\", \"field\":\"flow-id.src-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
+        {
+          "kind": "QueryVariable",
+          "spec": {
+            "name": "src_port",
+            "current": {
+              "text": "None",
+              "value": ""
+            },
+            "label": "Source Port",
+            "hide": "dontHide",
+            "refresh": "onTimeRangeChanged",
+            "skipUrlSync": false,
+            "query": {
+              "kind": "DataQuery",
+              "group": "elasticsearch",
+              "version": "v0",
+              "datasource": {
+                "name": "WZGfAwtnk"
+              },
+              "spec": {
+                "__legacyStringValue": "{\"find\":\"terms\", \"field\":\"flow-id.src-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}"
+              }
+            },
+            "regex": "",
+            "sort": "disabled",
+            "definition": "{\"find\":\"terms\", \"field\":\"flow-id.src-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+            "options": [],
+            "multi": false,
+            "includeAll": false,
+            "allowCustomValue": true
+          }
         },
-        "datasource": {
-          "type": "elasticsearch",
-          "uid": "WZGfAwtnk"
+        {
+          "kind": "QueryVariable",
+          "spec": {
+            "name": "dst_ip",
+            "current": {
+              "text": "None",
+              "value": ""
+            },
+            "label": "Destination IP",
+            "hide": "dontHide",
+            "refresh": "onTimeRangeChanged",
+            "skipUrlSync": false,
+            "query": {
+              "kind": "DataQuery",
+              "group": "elasticsearch",
+              "version": "v0",
+              "datasource": {
+                "name": "WZGfAwtnk"
+              },
+              "spec": {
+                "__legacyStringValue": "{\"find\":\"terms\", \"field\":\"flow-id.dst-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}"
+              }
+            },
+            "regex": "",
+            "sort": "disabled",
+            "definition": "{\"find\":\"terms\", \"field\":\"flow-id.dst-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+            "options": [],
+            "multi": false,
+            "includeAll": false,
+            "allowCustomValue": true
+          }
         },
-        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.src-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Source Port",
-        "multi": false,
-        "name": "src_port",
-        "options": [],
-        "query": "{\"find\":\"terms\", \"field\":\"flow-id.src-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
+        {
+          "kind": "QueryVariable",
+          "spec": {
+            "name": "dst_port",
+            "current": {
+              "text": "None",
+              "value": ""
+            },
+            "label": "Destination Port",
+            "hide": "dontHide",
+            "refresh": "onTimeRangeChanged",
+            "skipUrlSync": false,
+            "query": {
+              "kind": "DataQuery",
+              "group": "elasticsearch",
+              "version": "v0",
+              "datasource": {
+                "name": "WZGfAwtnk"
+              },
+              "spec": {
+                "__legacyStringValue": "{\"find\":\"terms\", \"field\":\"flow-id.dst-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}"
+              }
+            },
+            "regex": "",
+            "sort": "disabled",
+            "definition": "{\"find\":\"terms\", \"field\":\"flow-id.dst-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+            "options": [],
+            "multi": false,
+            "includeAll": false,
+            "allowCustomValue": true
+          }
         },
-        "datasource": {
-          "type": "elasticsearch",
-          "uid": "WZGfAwtnk"
-        },
-        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.dst-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Destination IP",
-        "multi": false,
-        "name": "dst_ip",
-        "options": [],
-        "query": "{\"find\":\"terms\", \"field\":\"flow-id.dst-ip.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
-        },
-        "datasource": {
-          "type": "elasticsearch",
-          "uid": "WZGfAwtnk"
-        },
-        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.dst-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Destination Port",
-        "multi": false,
-        "name": "dst_port",
-        "options": [],
-        "query": "{\"find\":\"terms\", \"field\":\"flow-id.dst-port\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
-        },
-        "datasource": {
-          "type": "elasticsearch",
-          "uid": "WZGfAwtnk"
-        },
-        "definition": "{\"find\":\"terms\", \"field\":\"flow-id.protocol.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Protocol",
-        "multi": false,
-        "name": "protocol",
-        "options": [],
-        "query": "{\"find\":\"terms\", \"field\":\"flow-id.protocol.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
+        {
+          "kind": "QueryVariable",
+          "spec": {
+            "name": "protocol",
+            "current": {
+              "text": "None",
+              "value": ""
+            },
+            "label": "Protocol",
+            "hide": "dontHide",
+            "refresh": "onTimeRangeChanged",
+            "skipUrlSync": false,
+            "query": {
+              "kind": "DataQuery",
+              "group": "elasticsearch",
+              "version": "v0",
+              "datasource": {
+                "name": "WZGfAwtnk"
+              },
+              "spec": {
+                "__legacyStringValue": "{\"find\":\"terms\", \"field\":\"flow-id.protocol.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}"
+              }
+            },
+            "regex": "",
+            "sort": "disabled",
+            "definition": "{\"find\":\"terms\", \"field\":\"flow-id.protocol.keyword\", \"query\": \"flow_fingerprint.keyword: $ff_id\", \"size\": 1}",
+            "options": [],
+            "multi": false,
+            "includeAll": false,
+            "allowCustomValue": true
+          }
+        }
+      ]
+    },
+    "status": {
+      "conversion": {
+        "failed": false,
+        "storedVersion": "v0alpha1"
       }
-    ]
+    }
   },
-  "time": {
-    "from": "now-6h",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "",
-  "title": "Firefly Details",
-  "uid": "JywX0Qt7k",
-  "version": 1,
-  "weekStart": ""
+  "nested_path": "ES+net/LHC+Data+Challenge",
+  "gdg_api_version": "dashboard.grafana.app/v2"
 }

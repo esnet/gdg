@@ -1,6 +1,6 @@
 ---
 title: "Version 0.9"
-description: "Release Notes for v0.9"
+description: "Release notes for GDG v0.9, including the new Dashboard App Platform API, plugin system, secure fields, and TUI improvements."
 date: 2026-03-04T00:00:00
 draft: false
 images: [ ]
@@ -13,6 +13,11 @@ toc: true
 
 **Release Date: 00/00/2026**
 
+### Min Recommended Grafana Versions (v0.9.4)
+
+- Grafana 11+ / 12+ (v1 legacy API — default behavior, no config changes required)
+- Grafana 13+ (v2 App Platform API — auto-enabled, no config changes required)
+
 ### Breaking Changes (v0.9.4)
 
 {{< callout context="note" title="Note" icon="info-circle" >}}
@@ -20,10 +25,21 @@ This release has a major TUI revamp that should capture all configuration option
 GDG using the easy-to-use wizard as well as providing a custom configuration file if that's preferred.
 {{< /callout >}}
 
+{{< callout context="caution" title="Dashboard File Format Change" icon="alert-triangle" >}}
+Dashboards downloaded from a Grafana v13+ instance are saved in a new format. These files are not compatible with older
+versions of GDG. If you need to roll back, re-download your dashboards after downgrading.
+{{< /callout >}}
+
+  - Dashboard files downloaded from Grafana v13+ use a new storage format. Files from older GDG versions will continue to upload correctly, but re-downloading is recommended to migrate to the new format.
+
 ### Changes (v0.9.4)
-  - [569](https://github.com/esnet/gdg/issues/569) Added plugin rekey that will update all values with the encrypted equivalent when enabling a new plugin
-  - [568](https://github.com/esnet/gdg/issues/568) A plugin registry was added to help discover new plugin to choose from.
-  - [566](https://github.com/esnet/gdg/issues/566) Very similar to 568 but adding the TUI that uses that functionality.
+  - [569](https://github.com/esnet/gdg/issues/569) Added plugin rekey — updates all stored values with their encrypted equivalent when enabling a new cipher plugin, so existing backups stay accessible.
+  - [568](https://github.com/esnet/gdg/issues/568) A plugin registry was added to help discover available plugins.
+  - [566](https://github.com/esnet/gdg/issues/566) TUI support for the plugin registry, allowing plugin discovery and selection from the interactive wizard.
+  - GDG now uses the Grafana App Platform dashboard API on Grafana v13+. No configuration changes are required — version detection is automatic.
+  - On Grafana v12 and older the existing legacy API continues to be used unchanged.
+  - When connected to Grafana v13+, downloaded dashboards are saved in a new Kubernetes-style resource format. This replaces the flat JSON format used in previous versions. The new format carries additional metadata (folder placement, resource name, API version) that the App Platform API requires.
+  - Upload is smarter about mixed repositories: if your backup folder contains a mix of old and new format dashboard files, GDG will handle each file correctly and warn you if any files cannot be applied to the connected server.
 
 ### BugFixes (v0.9.4)
 

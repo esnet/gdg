@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	defaultGrafanaVersion    = "11.1.4-ubuntu"
+	defaultGrafanaVersion    = "13.0-ubuntu"
 	defaultGrafanaVersionEnv = "GRAFANA_TEST_VERSION"
 	EnterpriseLicenceKey     = "GF_ENTERPRISE_LICENSE_TEXT"
 	EnterpriseLicenceKeyEnv  = "ENTERPRISE_LICENSE"

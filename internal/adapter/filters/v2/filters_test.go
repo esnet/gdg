@@ -141,3 +141,53 @@ func TestFilters(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, []string{"netsage", "Ho"}, anyArr)
 }
+
+// ---------------------------------------------------------------------------
+// GetExpectedStringSlice
+// ---------------------------------------------------------------------------
+
+func TestGetExpectedStringSlice_NoExpectedValue_ReturnsError(t *testing.T) {
+	v := NewBaseFilter()
+	ctx := context.Background()
+	// Nothing registered for DashFilter → GetExpectedValue returns nil → error.
+	result, err := v.GetExpectedStringSlice(ctx, domain.DashFilter)
+	assert.Nil(t, result)
+	assert.Error(t, err)
+}
+
+func TestGetExpectedStringSlice_StringSliceValue_ReturnsSlice(t *testing.T) {
+	v := NewBaseFilter()
+	ctx := context.Background()
+	v.AddValidation(domain.TagsFilter, func(ctx context.Context, value any, expected any) error {
+		return nil
+	}, []string{"alpha", "beta"})
+
+	result, err := v.GetExpectedStringSlice(ctx, domain.TagsFilter)
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"alpha", "beta"}, result)
+}
+
+func TestGetExpectedStringSlice_SingleStringValue_WrapsInSlice(t *testing.T) {
+	v := NewBaseFilter()
+	ctx := context.Background()
+	v.AddValidation(domain.DashFilter, func(ctx context.Context, value any, expected any) error {
+		return nil
+	}, "single-value")
+
+	result, err := v.GetExpectedStringSlice(ctx, domain.DashFilter)
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"single-value"}, result)
+}
+
+func TestGetExpectedStringSlice_UnsupportedType_ReturnsError(t *testing.T) {
+	v := NewBaseFilter()
+	ctx := context.Background()
+	// Register an int — neither []string nor string.
+	v.AddValidation(domain.FolderFilter, func(ctx context.Context, value any, expected any) error {
+		return nil
+	}, 42)
+
+	result, err := v.GetExpectedStringSlice(ctx, domain.FolderFilter)
+	assert.Nil(t, result)
+	assert.Error(t, err)
+}

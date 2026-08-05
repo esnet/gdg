@@ -1,5 +1,6 @@
 ---
 title: "Structure"
+description: "Reference for the GDG templating configuration structure, including the templates.yml format and dashboard entity definitions."
 weight: 22
 ---
 The structure of the templating config is all defined under the key `entities.dashboards`

@@ -72,7 +72,7 @@ type CipherEncoder_Decode_Call struct {
 // Decode is a helper method to define mock.On call
 //   - resourceType domain.ResourceType
 //   - b []byte
-func (_e *CipherEncoder_Expecter) Decode(resourceType interface{}, b interface{}) *CipherEncoder_Decode_Call {
+func (_e *CipherEncoder_Expecter) Decode(resourceType any, b any) *CipherEncoder_Decode_Call {
 	return &CipherEncoder_Decode_Call{Call: _e.mock.On("Decode", resourceType, b)}
 }
 
@@ -137,7 +137,7 @@ type CipherEncoder_DecodeValue_Call struct {
 
 // DecodeValue is a helper method to define mock.On call
 //   - b string
-func (_e *CipherEncoder_Expecter) DecodeValue(b interface{}) *CipherEncoder_DecodeValue_Call {
+func (_e *CipherEncoder_Expecter) DecodeValue(b any) *CipherEncoder_DecodeValue_Call {
 	return &CipherEncoder_DecodeValue_Call{Call: _e.mock.On("DecodeValue", b)}
 }
 
@@ -200,7 +200,7 @@ type CipherEncoder_Encode_Call struct {
 // Encode is a helper method to define mock.On call
 //   - resourceType domain.ResourceType
 //   - b []byte
-func (_e *CipherEncoder_Expecter) Encode(resourceType interface{}, b interface{}) *CipherEncoder_Encode_Call {
+func (_e *CipherEncoder_Expecter) Encode(resourceType any, b any) *CipherEncoder_Encode_Call {
 	return &CipherEncoder_Encode_Call{Call: _e.mock.On("Encode", resourceType, b)}
 }
 
@@ -265,7 +265,7 @@ type CipherEncoder_EncodeValue_Call struct {
 
 // EncodeValue is a helper method to define mock.On call
 //   - b string
-func (_e *CipherEncoder_Expecter) EncodeValue(b interface{}) *CipherEncoder_EncodeValue_Call {
+func (_e *CipherEncoder_Expecter) EncodeValue(b any) *CipherEncoder_EncodeValue_Call {
 	return &CipherEncoder_EncodeValue_Call{Call: _e.mock.On("EncodeValue", b)}
 }
 

@@ -6,7 +6,6 @@ import (
 	"log"
 	"log/slog"
 
-	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/samber/lo"
 
@@ -69,9 +68,6 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 	return dsPath, nil
 }
 
-func (s *DashNGoImpl) isLocal() bool {
-	return s.storage.Name() == storage.LocalStorageType.String()
-}
 
 func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 	var (

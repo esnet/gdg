@@ -70,7 +70,7 @@ type Templating_Generate_Call struct {
 
 // Generate is a helper method to define mock.On call
 //   - templateName string
-func (_e *Templating_Expecter) Generate(templateName interface{}) *Templating_Generate_Call {
+func (_e *Templating_Expecter) Generate(templateName any) *Templating_Generate_Call {
 	return &Templating_Generate_Call{Call: _e.mock.On("Generate", templateName)}
 }
 

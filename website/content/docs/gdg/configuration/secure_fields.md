@@ -1,5 +1,6 @@
 ---
 title: "Secure Fields"
+description: "Guide to GDG secure fields for separating sensitive credentials from main config using a dedicated secure storage location."
 weight: 105
 ---
 # Secure Fields

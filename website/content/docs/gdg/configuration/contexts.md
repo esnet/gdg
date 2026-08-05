@@ -1,5 +1,6 @@
 ---
 title: "Contexts"
+description: "GDG context configuration guide covering Grafana connection settings, API tokens, credential rules, and multi-org support."
 weight: 103
 ---
 

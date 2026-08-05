@@ -7,7 +7,10 @@ import (
 
 	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/pkg/test_tooling/common"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
 
@@ -32,6 +35,55 @@ func TestSecureUnmarshall(t *testing.T) {
 	const alerting = "alerting"
 	assert.True(slices.Contains(keys, alerting))
 	assert.True(cfg.SecureConfig[alerting] != nil)
+}
+
+// TestDefaultConfig_ReturnsNonEmptyString verifies that the embedded default
+// config asset can be loaded and is non-empty.
+func TestDefaultConfig_ReturnsNonEmptyString(t *testing.T) {
+	cfg := DefaultConfig()
+	assert.NotEmpty(t, cfg, "DefaultConfig should return the embedded gdg-example.yml content")
+	// The default config is YAML — it should at least contain a "contexts" key.
+	assert.Contains(t, cfg, "context", "default config should mention 'context'")
+}
+
+// TestLoadDefaultSecureConfig_PopulatesPluginConfig verifies that
+// loadDefaultSecureConfig correctly unmarshals the embedded secure.yml into
+// the provided GDGAppConfiguration.
+func TestLoadDefaultSecureConfig_PopulatesPluginConfig(t *testing.T) {
+	cfg := new(config_domain.GDGAppConfiguration)
+	err := loadDefaultSecureConfig(cfg)
+	require.NoError(t, err)
+	// Plugin block should be present and disabled by default.
+	assert.True(t, cfg.PluginConfig.Disabled)
+	assert.NotNil(t, cfg.PluginConfig.CipherPlugin)
+	// Secure config block should contain at least one entry.
+	assert.NotEmpty(t, cfg.SecureConfig)
+}
+
+// TestInitTemplateConfig_LoadsTemplates verifies that InitTemplateConfig can
+// read the example templates config bundled with the test data and return a
+// populated TemplatingConfig with at least one dashboard template entry.
+func TestInitTemplateConfig_LoadsTemplates(t *testing.T) {
+	require.NoError(t, path.FixTestDir("config", "../.."))
+	tplCfg := InitTemplateConfig(common.DefaultTemplateConfig)
+	require.NotNil(t, tplCfg)
+	assert.NotEmpty(t, tplCfg.Entities.Dashboards,
+		"template config should contain at least one dashboard template")
+	assert.NotEmpty(t, tplCfg.Entities.Dashboards[0].TemplateName,
+		"first dashboard template should have a non-empty name")
+}
+
+// TestInitTemplateConfig_EmptyOverrideUsesDefault verifies that passing an
+// empty string falls back to the default "templates.yml" search, and does not
+// panic even when the file is absent (it will fatal — so we only test the
+// non-empty path in CI where the file is present).
+func TestInitTemplateConfig_ViperConfigSet(t *testing.T) {
+	require.NoError(t, path.FixTestDir("config", "../.."))
+	tplCfg := InitTemplateConfig(common.DefaultTemplateConfig)
+	require.NotNil(t, tplCfg)
+	// ViperConfig must be populated by InitTemplateConfig.
+	assert.NotNil(t, tplCfg.ViperConfig,
+		"InitTemplateConfig should set ViperConfig on the returned struct")
 }
 
 func TestConfigSearchPathBuilding(t *testing.T) {
