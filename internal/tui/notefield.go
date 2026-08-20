@@ -35,10 +35,7 @@ func (f *NoteField) View(_ bool, width int) string {
 	sb.WriteString(TitleStyle.Render(f.title))
 	sb.WriteByte('\n')
 
-	dividerWidth := width - 4
-	if dividerWidth < 4 {
-		dividerWidth = 4
-	}
+	dividerWidth := max(width-4, 4)
 	divider := lipgloss.NewStyle().
 		Foreground(ColorMuted).
 		Render(strings.Repeat("─", dividerWidth))
@@ -47,7 +44,7 @@ func (f *NoteField) View(_ bool, width int) string {
 	sb.WriteByte('\n')
 
 	bodyStyle := lipgloss.NewStyle().Foreground(ColorText)
-	for _, line := range strings.Split(f.body, "\n") {
+	for line := range strings.SplitSeq(f.body, "\n") {
 		sb.WriteString(bodyStyle.Render("  " + line))
 		sb.WriteByte('\n')
 	}

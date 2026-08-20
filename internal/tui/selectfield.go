@@ -57,10 +57,10 @@ func (f *SelectField) Value() string {
 
 // ── Field interface ───────────────────────────────────────────────────────────
 
-func (f *SelectField) Focus() tea.Cmd   { return nil }
-func (f *SelectField) Blur()            {}
-func (f *SelectField) Focusable() bool  { return true }
-func (f *SelectField) Validate() error  { return nil }
+func (f *SelectField) Focus() tea.Cmd  { return nil }
+func (f *SelectField) Blur()           {}
+func (f *SelectField) Focusable() bool { return true }
+func (f *SelectField) Validate() error { return nil }
 
 func (f *SelectField) Update(msg tea.Msg) (Field, tea.Cmd) {
 	key, ok := msg.(tea.KeyMsg)
@@ -90,7 +90,7 @@ func (f *SelectField) View(focused bool, width int) string {
 	sb.WriteByte('\n')
 
 	if f.desc != "" {
-		for _, line := range strings.Split(f.desc, "\n") {
+		for line := range strings.SplitSeq(f.desc, "\n") {
 			sb.WriteString(DescStyle.Render("  " + line))
 			sb.WriteByte('\n')
 		}

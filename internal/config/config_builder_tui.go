@@ -396,10 +396,7 @@ func (m configBuilderModel) View() tea.View {
 // ── Layout helpers ────────────────────────────────────────────────────────────
 
 func (m configBuilderModel) leftWidth() int {
-	w := m.width / 2
-	if w < 30 {
-		w = 30
-	}
+	w := max(m.width/2, 30)
 	return w
 }
 
@@ -408,10 +405,7 @@ func (m configBuilderModel) rightWidth() int {
 }
 
 func (m configBuilderModel) bodyHeight() int {
-	h := m.height - tuiHeaderHeight - tuiFooterHeight
-	if h < tuiMinBodyH {
-		h = tuiMinBodyH
-	}
+	h := max(m.height-tuiHeaderHeight-tuiFooterHeight, tuiMinBodyH)
 	return h
 }
 

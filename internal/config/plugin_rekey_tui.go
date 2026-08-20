@@ -5,6 +5,7 @@ package config
 import (
 	"fmt"
 	"log/slog"
+	"maps"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -122,9 +123,7 @@ func (rs *rekeyState) buildNewPluginEntity() {
 	}
 	wasmURL := rs.resolvedEntry.ResolveURL(rs.resolvedVersionEntry.Version)
 	cfg := make(map[string]string, len(rs.pluginConfigValues))
-	for k, v := range rs.pluginConfigValues {
-		cfg[k] = v
-	}
+	maps.Copy(cfg, rs.pluginConfigValues)
 	rs.newPluginEntity = &config_domain.PluginEntity{
 		Url:          wasmURL,
 		PluginConfig: cfg,

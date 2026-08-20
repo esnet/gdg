@@ -322,8 +322,7 @@ func (s *DashNGoImpl) DeleteAllLibraryElements(filter outbound.Filter) []string 
 		_, err := s.GetClient().LibraryElements.DeleteLibraryElementByUID(element.Entity.UID)
 		if err != nil {
 			logEntries := make([]any, 0)
-			var serr *library_elements.DeleteLibraryElementByUIDForbidden
-			if errors.As(err, &serr) {
+			if serr, ok := errors.AsType[*library_elements.DeleteLibraryElementByUIDForbidden](err); ok {
 				logEntries = append(logEntries, []any{"ErrorMessage", *serr.GetPayload().Message}...)
 			}
 

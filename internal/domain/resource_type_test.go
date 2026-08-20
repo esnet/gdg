@@ -45,7 +45,6 @@ func TestResourceType_IsNamespaced_True(t *testing.T) {
 		AlertingRulesResource,
 	}
 	for _, rt := range namespaced {
-		rt := rt
 		t.Run(rt.String(), func(t *testing.T) {
 			assert.True(t, rt.isNamespaced(), "expected %q to be namespaced", rt)
 		})
@@ -61,7 +60,6 @@ func TestResourceType_IsNamespaced_False(t *testing.T) {
 		SecureSecretsResource,
 	}
 	for _, rt := range notNamespaced {
-		rt := rt
 		t.Run(rt.String(), func(t *testing.T) {
 			assert.False(t, rt.isNamespaced(), "expected %q NOT to be namespaced", rt)
 		})

@@ -162,7 +162,7 @@ func (f *MultiSelectField) View(focused bool, width int) string {
 
 	// Description
 	if f.desc != "" {
-		for _, line := range strings.Split(f.desc, "\n") {
+		for line := range strings.SplitSeq(f.desc, "\n") {
 			sb.WriteString(DescStyle.Render("  " + line))
 			sb.WriteByte('\n')
 		}
