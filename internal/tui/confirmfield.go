@@ -60,7 +60,7 @@ func (f *ConfirmField) View(focused bool, width int) string {
 	sb.WriteByte('\n')
 
 	if f.desc != "" {
-		for _, line := range strings.Split(f.desc, "\n") {
+		for line := range strings.SplitSeq(f.desc, "\n") {
 			sb.WriteString(DescStyle.Render("  " + line))
 			sb.WriteByte('\n')
 		}

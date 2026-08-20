@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"reflect"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 
@@ -177,10 +178,8 @@ func setupAlertRulesFolderFilter(filterObj outbound.Filter, filterEntities domai
 				return fmt.Errorf("invalid regex: %s", exp)
 			}
 
-			for _, folder := range folders {
-				if r.MatchString(folder) {
-					return nil
-				}
+			if slices.ContainsFunc(folders, r.MatchString) {
+				return nil
 			}
 		}
 

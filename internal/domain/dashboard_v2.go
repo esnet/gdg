@@ -28,7 +28,7 @@ const (
 // for the intermediate dashboardV2Payload type in the adapter layer.
 type DashboardResourceV2 struct {
 	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.ObjectMeta `json:"metadata"`
 	Spec              dashboardv2.Dashboard `json:"spec"`
 	Status            map[string]any        `json:"status,omitempty"`
 }

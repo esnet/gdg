@@ -208,8 +208,8 @@ func TestSanitizeForApply(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestToUnstructured_SetsTypeMeta(t *testing.T) {
-	dr := domain.DashboardResourceV2{}
-	dr.Name = "test-dashboard"
+	dr := domain.DashboardResourceV2{
+		Name: "test-dashboard"}
 	dr.Spec.Title = "Test"
 
 	obj, err := toUnstructured(dr)
@@ -223,8 +223,8 @@ func TestToUnstructured_SetsTypeMeta(t *testing.T) {
 }
 
 func TestFromUnstructured_RoundTrip(t *testing.T) {
-	dr := domain.DashboardResourceV2{}
-	dr.Name = "round-trip-dashboard"
+	dr := domain.DashboardResourceV2{
+		Name: "round-trip-dashboard"}
 	dr.Spec.Title = "Round Trip"
 	dr.Annotations = map[string]string{domain.AnnotationFolder: "folder-uid-abc"}
 
@@ -298,7 +298,7 @@ func TestMapV1ToDashboardV2Gdg_BasicConversion(t *testing.T) {
 
 func TestMapV1ToDashboardV2Gdg_SkipsNilAndNilHit(t *testing.T) {
 	hits := []*domain.NestedHit{
-		nil, // nil entry
+		nil,                               // nil entry
 		{Hit: nil, NestedPath: "General"}, // non-nil entry but nil Hit
 		{
 			Hit:        &models.Hit{UID: "uid-ok", Title: "Good"},

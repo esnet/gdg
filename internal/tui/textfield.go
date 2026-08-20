@@ -84,10 +84,7 @@ func (f *TextField) Update(msg tea.Msg) (Field, tea.Cmd) {
 }
 
 func (f *TextField) View(focused bool, width int) string {
-	inputWidth := width - 6
-	if inputWidth < 10 {
-		inputWidth = 10
-	}
+	inputWidth := max(width-6, 10)
 	f.ti.SetWidth(inputWidth)
 
 	var sb strings.Builder
@@ -98,7 +95,7 @@ func (f *TextField) View(focused bool, width int) string {
 
 	// Description (multi-line, indented)
 	if f.desc != "" {
-		for _, line := range strings.Split(f.desc, "\n") {
+		for line := range strings.SplitSeq(f.desc, "\n") {
 			sb.WriteString(DescStyle.Render("  " + line))
 			sb.WriteByte('\n')
 		}
@@ -128,7 +125,7 @@ func (f *TextField) View(focused bool, width int) string {
 		Padding(0, 1).
 		Width(inputWidth).
 		Render(tiView)
-	for _, line := range strings.Split(box, "\n") {
+	for line := range strings.SplitSeq(box, "\n") {
 		sb.WriteString("  ")
 		sb.WriteString(line)
 		sb.WriteByte('\n')

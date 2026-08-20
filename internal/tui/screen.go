@@ -116,10 +116,7 @@ func (s Screen) cycleFocus(dir int) (Screen, tea.Cmd) {
 	if n == 0 {
 		return s, nil
 	}
-	start := s.focused
-	if start < 0 {
-		start = 0
-	}
+	start := max(s.focused, 0)
 	for i := 1; i <= n; i++ {
 		next := ((start+i*dir)%n + n) % n
 		if s.fields[next].Focusable() {
