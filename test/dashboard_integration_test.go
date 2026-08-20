@@ -11,8 +11,8 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
-	customModels "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	customModels "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/esnet/gdg/pkg/test_tooling/containers"

@@ -88,12 +88,12 @@ func newDashboardPermissionListCmd() simplecobra.Commander {
 			} else {
 				for _, perms := range permissions {
 					writer := getDashboardPermTblWriter()
-			urlValue := getDashboardPermUrl(perms.Dashboard.Hit, rootCmd.ConfigSvc())
-				link := perms.Dashboard
-				writer.AppendRow(table.Row{
-					link.ID, link.Title, link.Slug, link.NestedPath,
-					link.UID, urlValue,
-				})
+					urlValue := getDashboardPermUrl(perms.Dashboard.Hit, rootCmd.ConfigSvc())
+					link := perms.Dashboard
+					writer.AppendRow(table.Row{
+						link.ID, link.Title, link.Slug, link.NestedPath,
+						link.UID, urlValue,
+					})
 					writer.Render()
 					if perms.Permissions != nil {
 						twConfigs := table.NewWriter()

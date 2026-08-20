@@ -720,12 +720,20 @@ func (m *configBuilderModel) buildScreen() tui.Screen {
 
 	case phasePluginSelect:
 		plugins, err := m.bs.registryClient.CipherPlugins()
+		if err == nil {
+			plugins = filterValidPlugins(plugins)
+		}
 		if err != nil || len(plugins) == 0 {
 			m.bs.pluginLoadErr = true
 			m.bs.configurePlugin = false
 			msg := "Could not load cipher plugins from the registry.\n" +
 				"Plugin configuration will be skipped.\n" +
 				"Check your network, or run 'gdg tools plugins rekey' later."
+			if err == nil {
+				msg = "No cipher plugins compatible with this GDG version were found.\n" +
+					"Plugin configuration will be skipped.\n" +
+					"Check for a newer plugin release, or run 'gdg tools plugins rekey' later."
+			}
 			return tui.NewScreen(w,
 				tui.NewNoteField("Plugin Registry Unavailable", msg),
 			)
@@ -753,6 +761,9 @@ func (m *configBuilderModel) buildScreen() tui.Screen {
 		var opts []tui.Option
 		if entry != nil {
 			for _, v := range entry.Versions {
+				if !v.IsValid() {
+					continue
+				}
 				label := v.Version
 				if len(v.ConfigFields) > 0 {
 					label += fmt.Sprintf(" (fields: %s)", strings.Join(v.ConfigFields, ", "))

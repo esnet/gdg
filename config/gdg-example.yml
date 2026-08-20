@@ -114,7 +114,10 @@ global:
   ignore_ssl_errors: false ## When set to true will ignore invalid SSL errors
   retry_count: 3 ## Will retry any failed API request up to 3 times.
   retry_delay: 5s  ## Will wait for specified duration before trying again.
-## Keep in mind longer the delay and higher the count the slower GDG will be in performing certain tasks.
+  # Override the default behavior. File takes precedence over URL overrides.
+#  plugin_registry_url: "https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugin_registry.json"
+#  plugin_registry_file: "/tmp/my_registry.json"
+## Keep in mind the longer the delay and the higher the count and the slower GDG will be in performing certain tasks.
 ## A failing endpoint that has 10s * 6 = 60 seconds minimum for each failing endpoint.  Use this carefully
 
 ## Keep this off if you don't need encryption or plugins

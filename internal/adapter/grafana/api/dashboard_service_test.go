@@ -110,7 +110,7 @@ func TestPartitionDashboardFiles(t *testing.T) {
 			wantProcessed: []string{},
 		},
 		{
-			name: "SingleV1File_UIDRecorded",
+			name:  "SingleV1File_UIDRecorded",
 			files: []string{"org_main-org/dashboards/my-dash.json"},
 			contents: map[string][]byte{
 				"org_main-org/dashboards/my-dash.json": v1JSON("uid-abc"),
@@ -134,7 +134,7 @@ func TestPartitionDashboardFiles(t *testing.T) {
 			wantProcessed: []string{"uid-1", "uid-2"},
 		},
 		{
-			name: "SingleV2File_NameRecorded",
+			name:  "SingleV2File_NameRecorded",
 			files: []string{"dashboards/v2-dash.json"},
 			contents: map[string][]byte{
 				"dashboards/v2-dash.json": v2JSON("my-v2-dashboard"),
@@ -190,7 +190,7 @@ func TestPartitionDashboardFiles(t *testing.T) {
 			wantV2Absent:  []string{"dashboards/unreadable.json"},
 		},
 		{
-			name: "V1FileWithNoUID_ProcessedEmpty",
+			name:  "V1FileWithNoUID_ProcessedEmpty",
 			files: []string{"dashboards/no-uid.json"},
 			contents: map[string][]byte{
 				"dashboards/no-uid.json": v1JSONNoUID(),
@@ -200,7 +200,7 @@ func TestPartitionDashboardFiles(t *testing.T) {
 			wantProcessed: []string{}, // no uid → nothing added to processed
 		},
 		{
-			name: "V2FileWithNilResource_ProcessedEmpty",
+			name:  "V2FileWithNilResource_ProcessedEmpty",
 			files: []string{"dashboards/nil-res.json"},
 			contents: map[string][]byte{
 				"dashboards/nil-res.json": v2JSONNilResource(),
@@ -210,7 +210,7 @@ func TestPartitionDashboardFiles(t *testing.T) {
 			wantProcessed: []string{}, // nil resource → nothing added to processed
 		},
 		{
-			name: "V2FileWithNoResourceName_ProcessedEmpty",
+			name:  "V2FileWithNoResourceName_ProcessedEmpty",
 			files: []string{"dashboards/no-name.json"},
 			contents: map[string][]byte{
 				"dashboards/no-name.json": v2JSONNoName(),
@@ -220,7 +220,7 @@ func TestPartitionDashboardFiles(t *testing.T) {
 			wantProcessed: []string{},
 		},
 		{
-			name: "InvalidJSON_TreatedAsV1",
+			name:  "InvalidJSON_TreatedAsV1",
 			files: []string{"dashboards/corrupt.json"},
 			contents: map[string][]byte{
 				// Invalid JSON can't be decoded into DashboardV2Gdg, so it falls
@@ -232,7 +232,7 @@ func TestPartitionDashboardFiles(t *testing.T) {
 			wantProcessed: []string{},
 		},
 		{
-			name: "UnknownVersion_FallsBackToV1",
+			name:  "UnknownVersion_FallsBackToV1",
 			files: []string{"dashboards/future.json"},
 			contents: map[string][]byte{
 				// A non-empty version that is neither "" nor GdgApiVersionV2

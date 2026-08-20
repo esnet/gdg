@@ -68,7 +68,6 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 	return dsPath, nil
 }
 
-
 func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 	var (
 		err    error

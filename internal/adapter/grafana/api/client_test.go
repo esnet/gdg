@@ -21,6 +21,7 @@ func fixEnvironment(t *testing.T) {
 	assert.Nil(t, err)
 	config.NewConfig(common.DefaultTestConfig)
 }
+
 func TestRelativePathLogin(t *testing.T) {
 	envKey := "GDG_CONTEXTS__QA__URL"
 	assert.NoError(t, os.Setenv(envKey, "http://localhost:3000/grafana/"))

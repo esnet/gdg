@@ -27,6 +27,7 @@ func (m *mockField) Focus() tea.Cmd {
 	m.focusCount++
 	return nil
 }
+
 func (m *mockField) Blur() {
 	m.blurred = true
 	m.blurCount++

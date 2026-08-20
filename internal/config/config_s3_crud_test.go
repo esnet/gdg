@@ -295,8 +295,8 @@ func TestDeleteS3Config_MultipleContexts_OtherStorageUntouched(t *testing.T) {
 	app, outputDir := newS3TestApp(t)
 
 	app.StorageEngine = map[string]map[string]string{
-		"target":  {storage.CloudType: storage.Custom},
-		"keeper":  {storage.CloudType: storage.Custom},
+		"target": {storage.CloudType: storage.Custom},
+		"keeper": {storage.CloudType: storage.Custom},
 	}
 
 	// Default context is assigned to the engine being deleted.

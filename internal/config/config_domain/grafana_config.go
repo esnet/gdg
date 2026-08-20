@@ -19,8 +19,7 @@ type DashboardSettings struct {
 // ExperimentalFeatures holds opt-in flags for functionality that is not yet GA.
 // Add new experimental flags here as needed; each flag should document its
 // minimum Grafana version requirement in a comment.
-type ExperimentalFeatures struct {
-}
+type ExperimentalFeatures struct{}
 
 type dashFilter struct {
 	Name      string

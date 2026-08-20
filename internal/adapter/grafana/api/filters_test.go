@@ -212,5 +212,3 @@ func TestNewLibraryElementFilter_MapReader_FolderPath(t *testing.T) {
 	m := map[string]any{NestedDashFolderName: "General"}
 	assert.True(t, f.Validate(ctx, domain.FolderFilter, m))
 }
-
-

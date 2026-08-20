@@ -438,7 +438,7 @@ func aclDTOToResourcePermission(acl *models.DashboardACLInfoDTO, _ int) *models.
 		UserLogin:   acl.UserLogin,
 		TeamID:      acl.TeamID,
 		Team:        acl.Team,
-		BuiltInRole: acl.Role,          // "Viewer"/"Editor"/"Admin" — same enum values
+		BuiltInRole: acl.Role,           // "Viewer"/"Editor"/"Admin" — same enum values
 		Permission:  acl.PermissionName, // "View"/"Edit"/"Admin" — string, matches ResourcePermissionDTO.Permission
 	}
 }

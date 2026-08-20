@@ -25,7 +25,7 @@ func NewHelpers() ports.Resources {
 type Helpers struct{}
 
 func (h Helpers) BuildResourceFolder(cfg *config_domain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
-	//func BuildResourceFolder(cfg *config_domain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
+	// func BuildResourceFolder(cfg *config_domain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
 	if (resourceType == domain.DashboardResource || resourceType == domain.AlertingRulesResource) && folderName == "" {
 		folderName = domain.ApiConsts.DefaultFolderName
 	}
@@ -40,7 +40,7 @@ func (h Helpers) BuildResourceFolder(cfg *config_domain.GrafanaConfig, folderNam
 // The path format is: <output_path>/<org_name>/<resource_type>/<folderName>.json
 // If createDestination is true, the directory is created on disk.
 func (h Helpers) BuildResourcePath(cfg *config_domain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
-	//func BuildResourcePath(cfg *config_domain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
+	// func BuildResourcePath(cfg *config_domain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
 	v := fmt.Sprintf("%s%s%s.json", cfg.GetPath(resourceType, cfg.GetOrganizationName()), pathSeparator, folderName)
 	if createDestination {
 		tools.CreateDestinationPath(cfg.GetPath(resourceType, cfg.GetOrganizationName()), clearOutput, filepath.Dir(v))

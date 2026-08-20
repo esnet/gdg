@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//common tools
+// common tools
 
 // testRegexMatch compiles regex and tests whether value matches.
 // Returns (matched, nil) on success, or (false, error) when the regex is invalid.

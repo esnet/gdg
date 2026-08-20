@@ -209,7 +209,8 @@ func TestSanitizeForApply(t *testing.T) {
 
 func TestToUnstructured_SetsTypeMeta(t *testing.T) {
 	dr := domain.DashboardResourceV2{
-		Name: "test-dashboard"}
+		Name: "test-dashboard",
+	}
 	dr.Spec.Title = "Test"
 
 	obj, err := toUnstructured(dr)
@@ -224,7 +225,8 @@ func TestToUnstructured_SetsTypeMeta(t *testing.T) {
 
 func TestFromUnstructured_RoundTrip(t *testing.T) {
 	dr := domain.DashboardResourceV2{
-		Name: "round-trip-dashboard"}
+		Name: "round-trip-dashboard",
+	}
 	dr.Spec.Title = "Round Trip"
 	dr.Annotations = map[string]string{domain.AnnotationFolder: "folder-uid-abc"}
 

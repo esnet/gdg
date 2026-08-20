@@ -35,9 +35,11 @@ func (e prefixEncoder) DecodeValue(s string) (string, error) {
 	}
 	return after, nil
 }
+
 func (e prefixEncoder) Encode(_ domain.ResourceType, b []byte) ([]byte, error) {
 	return append([]byte(e.prefix), b...), nil
 }
+
 func (e prefixEncoder) Decode(_ domain.ResourceType, b []byte) ([]byte, error) {
 	s := string(b)
 	after, found := strings.CutPrefix(s, e.prefix)
