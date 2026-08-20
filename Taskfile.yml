@@ -9,6 +9,16 @@ vars:
   IMAGE_NAME: "esnet/gdg"
   LD_FLAGS: "-s -w -X github.com/esnet/gdg/pkg/version.GitCommit={{ .GIT_COMMIT}}{{ .GIT_DIRTY}} -X github.com/esnet/gdg/pkg/version.BuildDate={{ .BUILD_DATE }} "
   TOOLS_ARG: "-modfile tools/go.mod"
+  TOOL_MODULES: >-
+    github.com/client9/misspell/cmd/misspell
+    github.com/evilmartians/lefthook/v2
+    github.com/golangci/golangci-lint/v2/cmd/golangci-lint
+    github.com/goreleaser/goreleaser/v2
+    github.com/securego/gosec/v2/cmd/gosec
+    github.com/vektra/mockery/v3
+    golang.org/x/vuln/cmd/govulncheck
+    gotest.tools/gotestsum
+    mvdan.cc/gofumpt
 
 dotenv: [ '.env' ]
 
@@ -20,6 +30,23 @@ tasks:
     desc: "Install required Dev tools by GDG"
     cmds:
       - go tool {{ .TOOLS_ARG}} github.com/evilmartians/lefthook/v2 install
+  update_tools:
+    desc: "Bump every dev tool pinned in tools/go.mod to its latest version"
+    dir: tools
+    cmds:
+      # NOTE: intentionally not using {{ .TOOLS_ARG }}/-modfile here. -modfile only swaps
+      # which go.mod is read; it does NOT move the module root used for package discovery.
+      # Run from repo root, `go mod tidy -modfile tools/go.mod` treats the whole repo tree
+      # (cli/, internal/, pkg/, ...) as if it belonged to the "tools" module and fails trying
+      # to resolve their imports. Running with dir: tools makes tools/ the actual cwd, so
+      # plain `go get`/`go mod tidy` operate correctly scoped to that module.
+      - |
+        for mod in {{ .TOOL_MODULES }}; do
+          echo "==> updating $mod"
+          go get -tool "$mod@latest"
+        done
+      - go mod tidy
+      - echo "Done. Review the diff in tools/go.mod and tools/go.sum, then run 'task install_tools' to refresh lefthook."
   security:
     desc: "Run security scan"
     cmds:
