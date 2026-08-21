@@ -3,8 +3,22 @@ package domain
 import (
 	"testing"
 
+	"github.com/esnet/gdg/pkg/version"
 	"github.com/stretchr/testify/assert"
 )
+
+// withGdgVersion temporarily overrides the package-level version.Version
+// (normally set by the linker at release build time, and "DEVEL" otherwise)
+// so IsValid's range-check logic can be exercised deterministically. The
+// original value is restored after the test.
+func withGdgVersion(t *testing.T, v string) {
+	t.Helper()
+	original := version.Version
+	version.Version = v
+	t.Cleanup(func() {
+		version.Version = original
+	})
+}
 
 func newTestEntry() PluginRegistryEntry {
 	return PluginRegistryEntry{
@@ -61,4 +75,54 @@ func TestFindVersion_NotFound(t *testing.T) {
 
 func TestPluginTypeCipherConstant(t *testing.T) {
 	assert.Equal(t, "cipher", PluginTypeCipher)
+}
+
+// ── IsValid ───────────────────────────────────────────────────────────────────
+
+func TestIsValid_DevelBypassesRangeCheck(t *testing.T) {
+	withGdgVersion(t, "DEVEL")
+	// A range that would reject any real version; DEVEL should short-circuit
+	// past it and report valid regardless.
+	e := PluginVersionEntry{MinimumVersion: "99.0.0", MaximumVersion: "99.0.0"}
+	assert.True(t, e.IsValid())
+}
+
+func TestIsValid_WithinRange(t *testing.T) {
+	withGdgVersion(t, "1.5.0")
+	e := PluginVersionEntry{MinimumVersion: "1.0.0", MaximumVersion: "2.0.0"}
+	assert.True(t, e.IsValid())
+}
+
+func TestIsValid_AtRangeBoundsInclusive(t *testing.T) {
+	withGdgVersion(t, "1.0.0")
+	min := PluginVersionEntry{MinimumVersion: "1.0.0", MaximumVersion: "2.0.0"}
+	assert.True(t, min.IsValid(), "minimum bound should be inclusive")
+
+	withGdgVersion(t, "2.0.0")
+	max := PluginVersionEntry{MinimumVersion: "1.0.0", MaximumVersion: "2.0.0"}
+	assert.True(t, max.IsValid(), "maximum bound should be inclusive")
+}
+
+func TestIsValid_BelowMinimum(t *testing.T) {
+	withGdgVersion(t, "0.9.0")
+	e := PluginVersionEntry{MinimumVersion: "1.0.0", MaximumVersion: "2.0.0"}
+	assert.False(t, e.IsValid())
+}
+
+func TestIsValid_AboveMaximum(t *testing.T) {
+	withGdgVersion(t, "3.0.0")
+	e := PluginVersionEntry{MinimumVersion: "1.0.0", MaximumVersion: "2.0.0"}
+	assert.False(t, e.IsValid())
+}
+
+func TestIsValid_NoBoundsIsAlwaysValid(t *testing.T) {
+	withGdgVersion(t, "0.0.1")
+	e := PluginVersionEntry{}
+	assert.True(t, e.IsValid())
+}
+
+func TestIsValid_MalformedBoundIsInvalid(t *testing.T) {
+	withGdgVersion(t, "1.0.0")
+	e := PluginVersionEntry{MinimumVersion: "not-a-semver-version"}
+	assert.False(t, e.IsValid())
 }

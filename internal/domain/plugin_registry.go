@@ -32,7 +32,6 @@ type PluginVersionEntry struct {
 	ConfigFields   []string `json:"config_fields"`
 	MinimumVersion string   `json:"minimum_version"`
 	MaximumVersion string   `json:"maximum_version"`
-	valid          *bool
 }
 
 type staticVersionCheck struct {
@@ -44,9 +43,6 @@ func (v staticVersionCheck) GetServerInfo() map[string]any {
 }
 
 func (e *PluginVersionEntry) IsValid() bool {
-	if e.valid != nil {
-		return *e.valid
-	}
 	vCheck := staticVersionCheck{
 		Version: version.Version,
 	}
@@ -58,8 +54,7 @@ func (e *PluginVersionEntry) IsValid() bool {
 		MaxVersion: e.MaximumVersion,
 	}
 
-	e.valid = new(tools.InRange([]tools.VersionRange{checker}, vCheck))
-	return *e.valid
+	return tools.InRange([]tools.VersionRange{checker}, vCheck)
 }
 
 // ResolveURL returns the concrete WASM download URL for this entry by replacing
