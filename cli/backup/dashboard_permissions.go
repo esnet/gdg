@@ -133,9 +133,11 @@ func newDashboardPermissionClearCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			slog.Info("Clear all Dashboard permissions")
-			tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all Dashboards on: '%s' "+
-				"(Or all permission matching your filters).  Do you wish to continue (y/n) ", rootCmd.ConfigSvc().ContextName,
-			), "", true)
+			if !skipConfirmAction {
+				tools.GetUserConfirmation(fmt.Sprintf("WARNING: this will clear all permission from all Dashboards on: '%s' "+
+					"(Or all permission matching your filters).  Do you wish to continue (y/n) ", rootCmd.ConfigSvc().ContextName,
+				), "", true)
+			}
 			rootCmd.TableObj.AppendHeader(table.Row{"cleared Dashboard permissions"})
 			filters := api.NewDashboardFilter(rootCmd.ConfigSvc(), parseDashboardGlobalFlags(cd.CobraCommand)...)
 			err := rootCmd.GrafanaSvc().ClearDashboardPermissions(filters)

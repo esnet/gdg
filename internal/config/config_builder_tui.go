@@ -10,6 +10,7 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/esnet/gdg/internal/adapter/plugins/registry"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/internal/tui"
 	"gopkg.in/yaml.v3"
@@ -719,9 +720,15 @@ func (m *configBuilderModel) buildScreen() tui.Screen {
 		)
 
 	case phasePluginSelect:
-		plugins, err := m.bs.registryClient.CipherPlugins()
-		if err == nil {
-			plugins = filterValidPlugins(plugins)
+		var plugins []domain.PluginRegistryEntry
+		var err error
+		if m.bs.registryClient == nil {
+			err = fmt.Errorf("no registry client configured")
+		} else {
+			plugins, err = m.bs.registryClient.CipherPlugins()
+			if err == nil {
+				plugins = filterValidPlugins(plugins)
+			}
 		}
 		if err != nil || len(plugins) == 0 {
 			m.bs.pluginLoadErr = true
@@ -757,7 +764,10 @@ func (m *configBuilderModel) buildScreen() tui.Screen {
 		)
 
 	case phasePluginVersion:
-		entry, _ := m.bs.registryClient.Find(m.bs.pluginName)
+		var entry *domain.PluginRegistryEntry
+		if m.bs.registryClient != nil {
+			entry, _ = m.bs.registryClient.Find(m.bs.pluginName)
+		}
 		var opts []tui.Option
 		if entry != nil {
 			for _, v := range entry.Versions {
