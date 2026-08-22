@@ -6,14 +6,19 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	tea "charm.land/bubbletea/v2"
+	"github.com/esnet/gdg/internal/adapter/plugins/registry"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/pkg/version"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -1269,4 +1274,276 @@ func TestRoundtrip_FilterLoop(t *testing.T) {
 	}(), ",")
 	assert.Contains(t, allFields, "name")
 	assert.Contains(t, allFields, "type")
+}
+
+// ── phasePluginSelect / phasePluginVersion (buildScreen) ────────────────────
+
+// withBuilderGdgVersion temporarily overrides the package-level version.Version
+// so IsValid()'s range-check logic can be exercised deterministically.
+func withBuilderGdgVersion(t *testing.T, v string) {
+	t.Helper()
+	original := version.Version
+	version.Version = v
+	t.Cleanup(func() {
+		version.Version = original
+	})
+}
+
+// newBuilderRegistryFile writes a registry JSON payload with one cipher
+// plugin compatible with the given gdg version (two versions, one valid and
+// one not) and one cipher plugin that is entirely incompatible, then returns
+// a *registry.Client backed by that file.
+func newBuilderRegistryFile(t *testing.T) *registry.Client {
+	t.Helper()
+	entries := []domain.PluginRegistryEntry{
+		{
+			Name:        "aes-256-gcm",
+			Type:        domain.PluginTypeCipher,
+			Description: "seeded implementation of aes-256",
+			Versions: []domain.PluginVersionEntry{
+				{Version: "1.0.0", MinimumVersion: "1.0.0", MaximumVersion: "2.0.0", ConfigFields: []string{"passphrase"}},
+				{Version: "9.9.9", MinimumVersion: "99.0.0"},
+			},
+		},
+		{
+			Name: "future-cipher",
+			Type: domain.PluginTypeCipher,
+			Versions: []domain.PluginVersionEntry{
+				{Version: "9.9.9", MinimumVersion: "99.0.0"},
+			},
+		},
+	}
+	raw, err := json.Marshal(entries)
+	require.NoError(t, err)
+	dir := t.TempDir()
+	path := filepath.Join(dir, "plugin_registry.json")
+	require.NoError(t, os.WriteFile(path, raw, 0o600))
+	return registry.NewClient(registry.ClientConfig{FilePath: path})
+}
+
+// TestBuildScreen_PluginSelect_NilRegistryClient_ShowsNote verifies that a
+// nil *registry.Client (e.g. newConfigBuilderModel constructed without one)
+// degrades gracefully to the "Plugin Registry Unavailable" note instead of
+// panicking, matching phaseRekeyPluginSelect's defensive handling in
+// plugin_rekey_tui.go.
+func TestBuildScreen_PluginSelect_NilRegistryClient_ShowsNote(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phasePluginSelect
+	m.bs.configurePlugin = true
+
+	require.NotPanics(t, func() {
+		m.screen = m.buildScreen()
+	})
+	assert.True(t, m.bs.pluginLoadErr)
+	assert.False(t, m.bs.configurePlugin)
+	assert.Contains(t, m.screen.View(), "Plugin Registry Unavailable")
+}
+
+// TestBuildScreen_PluginVersion_NilRegistryClient_FallsBackToLatest mirrors
+// the phasePluginSelect nil-client test above for phasePluginVersion, which
+// also guards its registryClient.Find call.
+func TestBuildScreen_PluginVersion_NilRegistryClient_FallsBackToLatest(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phasePluginVersion
+	m.bs.pluginName = "aes-256-gcm"
+
+	require.NotPanics(t, func() {
+		m.screen = m.buildScreen()
+	})
+	assert.Contains(t, m.screen.View(), "latest")
+}
+
+func TestBuildScreen_PluginSelect_FiltersInvalidPlugins(t *testing.T) {
+	withBuilderGdgVersion(t, "1.5.0")
+	m := newTUIModel(t)
+	m.phase = phasePluginSelect
+	m.bs.registryClient = newBuilderRegistryFile(t)
+
+	m.screen = m.buildScreen()
+	view := m.screen.View()
+	assert.Contains(t, view, "aes-256-gcm", "compatible plugin should be listed")
+	assert.NotContains(t, view, "future-cipher", "fully incompatible plugin should be filtered out")
+	assert.False(t, m.bs.pluginLoadErr)
+}
+
+func TestBuildScreen_PluginSelect_NoCompatiblePlugins_ShowsNote(t *testing.T) {
+	withBuilderGdgVersion(t, "0.0.1") // below every MinimumVersion in the fixture
+	m := newTUIModel(t)
+	m.phase = phasePluginSelect
+	m.bs.configurePlugin = true
+	m.bs.registryClient = newBuilderRegistryFile(t)
+
+	m.screen = m.buildScreen()
+	assert.True(t, m.bs.pluginLoadErr)
+	assert.False(t, m.bs.configurePlugin)
+	assert.Contains(t, m.screen.View(), "No cipher plugins compatible with this GDG version")
+}
+
+func TestBuildScreen_PluginVersion_FiltersInvalidVersions(t *testing.T) {
+	withBuilderGdgVersion(t, "1.5.0")
+	m := newTUIModel(t)
+	m.phase = phasePluginVersion
+	m.bs.registryClient = newBuilderRegistryFile(t)
+	m.bs.pluginName = "aes-256-gcm"
+
+	m.screen = m.buildScreen()
+	view := m.screen.View()
+	assert.Contains(t, view, "1.0.0", "compatible version should be listed")
+	assert.NotContains(t, view, "9.9.9", "incompatible version should be filtered out")
+}
+
+func TestBuildScreen_PluginVersion_UnknownPlugin_FallsBackToLatest(t *testing.T) {
+	withBuilderGdgVersion(t, "1.5.0")
+	m := newTUIModel(t)
+	m.phase = phasePluginVersion
+	m.bs.registryClient = newBuilderRegistryFile(t)
+	m.bs.pluginName = "does-not-exist"
+
+	m.screen = m.buildScreen()
+	assert.Contains(t, m.screen.View(), "latest")
+}
+
+func TestBuildScreen_PluginVersion_AllVersionsInvalid_FallsBackToLatest(t *testing.T) {
+	withBuilderGdgVersion(t, "0.0.1") // below every MinimumVersion in the fixture
+	m := newTUIModel(t)
+	m.phase = phasePluginVersion
+	m.bs.registryClient = newBuilderRegistryFile(t)
+	m.bs.pluginName = "future-cipher"
+
+	m.screen = m.buildScreen()
+	assert.Contains(t, m.screen.View(), "latest")
+}
+
+// ── key message test double ───────────────────────────────────────────────────
+
+// builderTestKeyMsg is a minimal tea.KeyMsg implementation used only in
+// tests, mirroring rekeyTestKeyMsg in plugin_rekey_tui_internal_test.go.
+type builderTestKeyMsg struct {
+	s string
+}
+
+func (m builderTestKeyMsg) String() string { return m.s }
+func (m builderTestKeyMsg) Key() tea.Key   { return tea.Key{} }
+
+func builderCtrlC() builderTestKeyMsg { return builderTestKeyMsg{s: "ctrl+c"} }
+func builderEsc() builderTestKeyMsg   { return builderTestKeyMsg{s: "esc"} }
+func builderEnter() builderTestKeyMsg { return builderTestKeyMsg{s: "enter"} }
+
+// castBuilderModel type-asserts tea.Model back to configBuilderModel.
+func castBuilderModel(t *testing.T, model tea.Model) configBuilderModel {
+	t.Helper()
+	m, ok := model.(configBuilderModel)
+	require.True(t, ok, "Update() must return a configBuilderModel")
+	return m
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+func TestBuilderInit_DoesNotPanic(t *testing.T) {
+	m := newTUIModel(t)
+	require.NotPanics(t, func() { m.Init() })
+}
+
+// ── View ─────────────────────────────────────────────────────────────────────
+
+func TestBuilderView_DoneReturnsEmpty(t *testing.T) {
+	m := newTUIModel(t)
+	m.done = true
+	v := m.View()
+	assert.Equal(t, "", v.Content)
+}
+
+func TestBuilderView_CancelledReturnsEmpty(t *testing.T) {
+	m := newTUIModel(t)
+	m.cancelled = true
+	v := m.View()
+	assert.Equal(t, "", v.Content)
+}
+
+func TestBuilderView_NotDoneDoesNotPanic(t *testing.T) {
+	m := newTUIModel(t)
+	m.width = 120
+	m.height = 40
+	require.NotPanics(t, func() { m.View() })
+}
+
+func TestBuilderView_ContainsHeader(t *testing.T) {
+	m := newTUIModel(t)
+	m.width = 120
+	m.height = 40
+	v := m.View()
+	assert.Contains(t, stripAnsiCodes(v.Content), "GDG Config Builder")
+}
+
+// ── Update ───────────────────────────────────────────────────────────────────
+
+func TestBuilderUpdate_WindowSizeMsg_UpdatesDimensions(t *testing.T) {
+	m := newTUIModel(t)
+	result, _ := m.Update(tea.WindowSizeMsg{Width: 120, Height: 50})
+	updated := castBuilderModel(t, result)
+	assert.Equal(t, 120, updated.width)
+	assert.Equal(t, 50, updated.height)
+}
+
+func TestBuilderUpdate_CtrlC_Cancels(t *testing.T) {
+	m := newTUIModel(t)
+	result, cmd := m.Update(builderCtrlC())
+	updated := castBuilderModel(t, result)
+	assert.True(t, updated.cancelled)
+	assert.NotNil(t, cmd)
+}
+
+func TestBuilderUpdate_EscAtStartPhase_Cancels(t *testing.T) {
+	m := newTUIModel(t)
+	require.Equal(t, phasePluginToggle, m.phase) // default startPhase
+	result, _ := m.Update(builderEsc())
+	updated := castBuilderModel(t, result)
+	assert.True(t, updated.cancelled)
+}
+
+func TestBuilderUpdate_EscNotAtStartPhase_GoesToPrevPhase(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseServerSettings
+	m.screen = m.buildScreen()
+	result, _ := m.Update(builderEsc())
+	updated := castBuilderModel(t, result)
+	assert.NotEqual(t, phaseServerSettings, updated.phase)
+}
+
+func TestBuilderUpdate_Submit_AdvancesPhaseAndAppliesState(t *testing.T) {
+	m := newTUIModel(t)
+	// phasePluginToggle is a ConfirmField bound to m.bs.configurePlugin,
+	// defaulting to false; Enter submits it and nextPhase() should move on
+	// to phaseAuthType (see nextPhase's phasePluginToggle case).
+	result, _ := m.Update(builderEnter())
+	updated := castBuilderModel(t, result)
+	assert.Equal(t, phaseAuthType, updated.phase)
+}
+
+func TestBuilderUpdate_UnknownMsg_DoesNotPanic(t *testing.T) {
+	m := newTUIModel(t)
+	require.NotPanics(t, func() {
+		m.Update("arbitrary non-tea message")
+	})
+}
+
+func TestBuilderUpdate_UnknownMsg_PhaseUnchanged(t *testing.T) {
+	m := newTUIModel(t)
+	result, _ := m.Update("arbitrary non-tea message")
+	updated := castBuilderModel(t, result)
+	assert.Equal(t, phasePluginToggle, updated.phase)
+}
+
+func TestBuilderUpdate_PluginConfigLoop_EscStepsBackOneField(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phasePluginConfig
+	m.bs.pluginConfigFields = []string{"field_a", "field_b"}
+	m.bs.pluginConfigValues = map[string]string{"field_a": "va"}
+	m.bs.pluginConfigIdx = 1
+	m.screen = m.buildScreen()
+
+	result, _ := m.Update(builderEsc())
+	updated := castBuilderModel(t, result)
+	assert.Equal(t, phasePluginConfig, updated.phase)
+	assert.Equal(t, 0, updated.bs.pluginConfigIdx)
 }

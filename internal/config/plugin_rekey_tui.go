@@ -300,10 +300,13 @@ func (m *pluginRekeyModel) buildScreen() tui.Screen {
 			plugins, err := m.rs.regClient.CipherPlugins()
 			if err != nil {
 				m.rs.registryError = fmt.Sprintf("Could not load plugin registry: %s", err)
-			} else if len(plugins) == 0 {
-				m.rs.registryError = "No cipher plugins found in the registry."
 			} else {
-				m.rs.availablePlugins = plugins
+				valid := filterValidPlugins(plugins)
+				if len(valid) == 0 {
+					m.rs.registryError = "No valid cipher plugins found in the registry."
+				} else {
+					m.rs.availablePlugins = valid
+				}
 			}
 		}
 		if m.rs.registryError != "" {
@@ -760,6 +763,29 @@ func (m *pluginRekeyModel) prevPhase() rekeyPhase {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+// filterValidPlugins narrows a plugin registry listing down to plugins that
+// are actually usable with the running GDG binary: each plugin's Versions
+// slice is reduced to just the versions whose gdg_min_ver/end_of_life_ver
+// range covers the current GDG version, and any plugin left with zero valid
+// versions is dropped entirely.
+func filterValidPlugins(plugins []domain.PluginRegistryEntry) []domain.PluginRegistryEntry {
+	filtered := make([]domain.PluginRegistryEntry, 0, len(plugins))
+	for _, p := range plugins {
+		validVersions := make([]domain.PluginVersionEntry, 0, len(p.Versions))
+		for _, v := range p.Versions {
+			if v.IsValid() {
+				validVersions = append(validVersions, v)
+			}
+		}
+		if len(validVersions) == 0 {
+			continue
+		}
+		p.Versions = validVersions
+		filtered = append(filtered, p)
+	}
+	return filtered
+}
 
 // currentPluginDescription returns a human-readable description of the active
 // cipher plugin configuration, suitable for display in a NoteField.

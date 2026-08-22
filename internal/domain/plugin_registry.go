@@ -1,6 +1,11 @@
 package domain
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/esnet/gdg/pkg/tools"
+	"github.com/esnet/gdg/pkg/version"
+)
 
 const (
 	// PluginTypeCipher is the only plugin type currently supported.
@@ -23,8 +28,33 @@ type PluginRegistryEntry struct {
 // PluginVersionEntry describes one released version of a plugin and which
 // config fields the caller must supply when using it.
 type PluginVersionEntry struct {
-	Version      string   `json:"version"`
-	ConfigFields []string `json:"config_fields"`
+	Version        string   `json:"version"`
+	ConfigFields   []string `json:"config_fields"`
+	MinimumVersion string   `json:"minimum_version"`
+	MaximumVersion string   `json:"maximum_version"`
+}
+
+type staticVersionCheck struct {
+	Version string
+}
+
+func (v staticVersionCheck) GetServerInfo() map[string]any {
+	return map[string]any{"Version": v.Version}
+}
+
+func (e *PluginVersionEntry) IsValid() bool {
+	vCheck := staticVersionCheck{
+		Version: version.Version,
+	}
+	if vCheck.Version == "DEVEL" {
+		return true
+	}
+	checker := tools.VersionRange{
+		MinVersion: e.MinimumVersion,
+		MaxVersion: e.MaximumVersion,
+	}
+
+	return tools.InRange([]tools.VersionRange{checker}, vCheck)
 }
 
 // ResolveURL returns the concrete WASM download URL for this entry by replacing

@@ -10,6 +10,7 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/esnet/gdg/internal/adapter/plugins/registry"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/internal/tui"
 	"gopkg.in/yaml.v3"
@@ -719,13 +720,27 @@ func (m *configBuilderModel) buildScreen() tui.Screen {
 		)
 
 	case phasePluginSelect:
-		plugins, err := m.bs.registryClient.CipherPlugins()
+		var plugins []domain.PluginRegistryEntry
+		var err error
+		if m.bs.registryClient == nil {
+			err = fmt.Errorf("no registry client configured")
+		} else {
+			plugins, err = m.bs.registryClient.CipherPlugins()
+			if err == nil {
+				plugins = filterValidPlugins(plugins)
+			}
+		}
 		if err != nil || len(plugins) == 0 {
 			m.bs.pluginLoadErr = true
 			m.bs.configurePlugin = false
 			msg := "Could not load cipher plugins from the registry.\n" +
 				"Plugin configuration will be skipped.\n" +
 				"Check your network, or run 'gdg tools plugins rekey' later."
+			if err == nil {
+				msg = "No cipher plugins compatible with this GDG version were found.\n" +
+					"Plugin configuration will be skipped.\n" +
+					"Check for a newer plugin release, or run 'gdg tools plugins rekey' later."
+			}
 			return tui.NewScreen(w,
 				tui.NewNoteField("Plugin Registry Unavailable", msg),
 			)
@@ -749,10 +764,16 @@ func (m *configBuilderModel) buildScreen() tui.Screen {
 		)
 
 	case phasePluginVersion:
-		entry, _ := m.bs.registryClient.Find(m.bs.pluginName)
+		var entry *domain.PluginRegistryEntry
+		if m.bs.registryClient != nil {
+			entry, _ = m.bs.registryClient.Find(m.bs.pluginName)
+		}
 		var opts []tui.Option
 		if entry != nil {
 			for _, v := range entry.Versions {
+				if !v.IsValid() {
+					continue
+				}
 				label := v.Version
 				if len(v.ConfigFields) > 0 {
 					label += fmt.Sprintf(" (fields: %s)", strings.Join(v.ConfigFields, ", "))

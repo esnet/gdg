@@ -22,7 +22,6 @@ type DashNGoImpl struct {
 
 func (s *DashNGoImpl) DashboardSvc() outbound.DashboardService {
 	return s.dashboardSvc
-
 }
 
 func (s *DashNGoImpl) GetGdgConfig() *config_domain.GDGAppConfiguration {
@@ -38,8 +37,8 @@ func NewDashNGo(
 	encoder outbound.CipherEncoder,
 	disk outbound.Storage,
 	extended outbound.ExtendedApi,
-	resource ports.Resources) outbound.GrafanaService {
-
+	resource ports.Resources,
+) outbound.GrafanaService {
 	base := baseService{
 		gdgConfig:   cfg,
 		grafanaConf: cfg.GetDefaultGrafanaConfig(),

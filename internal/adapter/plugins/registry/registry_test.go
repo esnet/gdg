@@ -37,8 +37,8 @@ var sampleEntries = []domain.PluginRegistryEntry{
 		},
 	},
 	{
-		Name:    "future-plugin",
-		Type:    "future-type",
+		Name: "future-plugin",
+		Type: "future-type",
 		Versions: []domain.PluginVersionEntry{
 			{Version: "1.0.0", ConfigFields: []string{}},
 		},

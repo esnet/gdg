@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/bep/simplecobra"
@@ -52,14 +53,24 @@ func newPluginsListCmd() simplecobra.Commander {
 				return err
 			}
 
-			r.TableObj.AppendHeader(table.Row{"Name", "Type", "Version", "Config Fields", "Description"})
+			r.TableObj.AppendHeader(table.Row{"Name", "Type", "Version", "GDG Restrictions", "Config Fields", "Description"})
 			for _, p := range plugins {
 				for _, v := range p.Versions {
+					var restrictions string
+					restrictions = fmt.Sprintf(
+						"gdg_min_ver: %s\nvalid: %v",
+						v.MinimumVersion, v.IsValid())
+
+					if v.MaximumVersion != "" {
+						restrictions = fmt.Sprintf("%s\n%v", restrictions, v.MaximumVersion)
+					}
+
 					r.TableObj.AppendRow(table.Row{
 						p.Name,
 						p.Type,
 						v.Version,
-						strings.Join(v.ConfigFields, ", "),
+						restrictions,
+						strings.Join(v.ConfigFields, "\n"),
 						p.Description,
 					})
 				}

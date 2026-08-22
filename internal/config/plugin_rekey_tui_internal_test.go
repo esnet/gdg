@@ -16,6 +16,7 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -24,9 +25,11 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"github.com/esnet/gdg/internal/adapter/plugins/migration"
+	"github.com/esnet/gdg/internal/adapter/plugins/registry"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/pkg/version"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -1036,4 +1039,201 @@ func TestRekeyUpdate_UnknownMsg_PhaseUnchanged(t *testing.T) {
 	result, _ := m.Update("arbitrary non-tea message")
 	updated := castModel(t, result)
 	assert.Equal(t, phaseRekeyCurrentInfo, updated.phase)
+}
+
+// ── filterValidPlugins ───────────────────────────────────────────────────────
+
+// withRekeyGdgVersion temporarily overrides the package-level version.Version
+// (mirrors the pattern in internal/domain/plugin_registry_test.go) so
+// IsValid()'s range-check logic can be exercised deterministically.
+func withRekeyGdgVersion(t *testing.T, v string) {
+	t.Helper()
+	original := version.Version
+	version.Version = v
+	t.Cleanup(func() {
+		version.Version = original
+	})
+}
+
+func TestFilterValidPlugins_EmptyInput(t *testing.T) {
+	result := filterValidPlugins(nil)
+	assert.Empty(t, result)
+}
+
+func TestFilterValidPlugins_AllValid(t *testing.T) {
+	withRekeyGdgVersion(t, "DEVEL")
+	plugins := []domain.PluginRegistryEntry{
+		{
+			Name: "aes-256-gcm",
+			Versions: []domain.PluginVersionEntry{
+				{Version: "0.1.0", MinimumVersion: "99.0.0"}, // would fail without DEVEL short-circuit
+			},
+		},
+		{
+			Name: "ansible-vault",
+			Versions: []domain.PluginVersionEntry{
+				{Version: "0.2.0"},
+			},
+		},
+	}
+	result := filterValidPlugins(plugins)
+	require.Len(t, result, 2)
+	assert.Equal(t, "aes-256-gcm", result[0].Name)
+	assert.Equal(t, "ansible-vault", result[1].Name)
+}
+
+func TestFilterValidPlugins_DropsPluginWithNoValidVersions(t *testing.T) {
+	withRekeyGdgVersion(t, "1.5.0")
+	plugins := []domain.PluginRegistryEntry{
+		{
+			Name: "too-new",
+			Versions: []domain.PluginVersionEntry{
+				{Version: "9.9.9", MinimumVersion: "99.0.0"},
+			},
+		},
+		{
+			Name: "compatible",
+			Versions: []domain.PluginVersionEntry{
+				{Version: "1.0.0", MinimumVersion: "1.0.0", MaximumVersion: "2.0.0"},
+			},
+		},
+	}
+	result := filterValidPlugins(plugins)
+	require.Len(t, result, 1)
+	assert.Equal(t, "compatible", result[0].Name)
+}
+
+func TestFilterValidPlugins_PartiallyValidVersionsAreTrimmed(t *testing.T) {
+	withRekeyGdgVersion(t, "1.5.0")
+	plugins := []domain.PluginRegistryEntry{
+		{
+			Name: "mixed",
+			Versions: []domain.PluginVersionEntry{
+				{Version: "0.9.0", MinimumVersion: "99.0.0"}, // invalid, should be dropped
+				{Version: "1.0.0"},                           // valid, no bounds
+			},
+		},
+	}
+	result := filterValidPlugins(plugins)
+	require.Len(t, result, 1)
+	require.Len(t, result[0].Versions, 1)
+	assert.Equal(t, "1.0.0", result[0].Versions[0].Version)
+}
+
+// ── phaseRekeyPluginSelect (buildScreen) ────────────────────────────────────
+
+// newRekeyRegistryFile writes a registry JSON payload with one plugin whose
+// only version is compatible with the given gdg version, and one plugin whose
+// only version is not, then returns a *registry.Client backed by that file.
+func newRekeyRegistryFile(t *testing.T) *registry.Client {
+	t.Helper()
+	entries := []domain.PluginRegistryEntry{
+		{
+			Name:        "aes-256-gcm",
+			Type:        domain.PluginTypeCipher,
+			Description: "seeded implementation of aes-256",
+			Versions: []domain.PluginVersionEntry{
+				{Version: "1.0.0", MinimumVersion: "1.0.0", MaximumVersion: "2.0.0"},
+			},
+		},
+		{
+			Name: "future-cipher",
+			Type: domain.PluginTypeCipher,
+			Versions: []domain.PluginVersionEntry{
+				{Version: "9.9.9", MinimumVersion: "99.0.0"},
+			},
+		},
+	}
+	raw, err := json.Marshal(entries)
+	require.NoError(t, err)
+	dir := t.TempDir()
+	path := filepath.Join(dir, "plugin_registry.json")
+	require.NoError(t, os.WriteFile(path, raw, 0o600))
+	return registry.NewClient(registry.ClientConfig{FilePath: path})
+}
+
+func TestRekeyBuildScreen_PluginSelect_NoRegistryClient_ShowsError(t *testing.T) {
+	m := newRekeyModel(t)
+	m.phase = phaseRekeyPluginSelect
+	m.rs.regClient = nil
+	screen := m.buildScreen()
+	assert.Contains(t, screen.View(), "No registry client configured")
+}
+
+func TestRekeyBuildScreen_PluginSelect_FiltersInvalidPlugins(t *testing.T) {
+	withRekeyGdgVersion(t, "1.5.0")
+	m := newRekeyModel(t)
+	m.phase = phaseRekeyPluginSelect
+	m.rs.regClient = newRekeyRegistryFile(t)
+	screen := m.buildScreen()
+
+	view := screen.View()
+	assert.Contains(t, view, "aes-256-gcm", "compatible plugin should be listed")
+	assert.NotContains(t, view, "future-cipher", "incompatible plugin should be filtered out")
+	require.Len(t, m.rs.availablePlugins, 1)
+	assert.Equal(t, "aes-256-gcm", m.rs.availablePlugins[0].Name)
+	require.Len(t, m.rs.availablePlugins[0].Versions, 1)
+	assert.Equal(t, "1.0.0", m.rs.availablePlugins[0].Versions[0].Version)
+}
+
+func TestRekeyBuildScreen_PluginSelect_AllInvalid_ShowsError(t *testing.T) {
+	withRekeyGdgVersion(t, "0.0.1") // below every MinimumVersion in the fixture
+	m := newRekeyModel(t)
+	m.phase = phaseRekeyPluginSelect
+	m.rs.regClient = newRekeyRegistryFile(t)
+	screen := m.buildScreen()
+	assert.Contains(t, screen.View(), "No valid cipher plugins found")
+}
+
+func TestRekeyBuildScreen_PluginSelect_CachesAvailablePlugins(t *testing.T) {
+	withRekeyGdgVersion(t, "1.5.0")
+	m := newRekeyModel(t)
+	m.phase = phaseRekeyPluginSelect
+	m.rs.regClient = newRekeyRegistryFile(t)
+	_ = m.buildScreen()
+	require.Len(t, m.rs.availablePlugins, 1)
+
+	// Mutate regClient to point at a broken path; since availablePlugins is
+	// already cached the second buildScreen call should not re-fetch.
+	m.rs.regClient = registry.NewClient(registry.ClientConfig{FilePath: "/nonexistent"})
+	screen := m.buildScreen()
+	assert.Contains(t, screen.View(), "aes-256-gcm")
+}
+
+// ── runDryScan ───────────────────────────────────────────────────────────────
+
+func TestRunDryScan_DoesNotPanic(t *testing.T) {
+	m := newRekeyModel(t)
+	require.NotPanics(t, func() {
+		m.runDryScan()
+	})
+}
+
+func TestRunDryScan_SkipsUnknownContext(t *testing.T) {
+	m := newRekeyModel(t)
+	m.rs.contextNames = []string{"does-not-exist"}
+	report := m.runDryScan()
+	assert.Empty(t, report.Previews)
+	assert.Empty(t, report.Errors)
+}
+
+// ── printRekeyReport ─────────────────────────────────────────────────────────
+
+func TestPrintRekeyReport_Empty_DoesNotPanic(t *testing.T) {
+	require.NotPanics(t, func() {
+		printRekeyReport(migration.RekeyReport{})
+	})
+}
+
+func TestPrintRekeyReport_WithFilesAndErrors_DoesNotPanic(t *testing.T) {
+	r := migration.RekeyReport{
+		BackupDir:              "/tmp/backup",
+		ContactPointsFiles:     []string{"contactpoints.yml"},
+		SecureDataFiles:        []string{"secure/auth_default.yaml"},
+		GdgCredentialsMigrated: true,
+		Errors:                 []error{fmt.Errorf("boom")},
+	}
+	require.NotPanics(t, func() {
+		printRekeyReport(r)
+	})
 }

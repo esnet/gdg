@@ -2433,7 +2433,6 @@ func (_c *GrafanaService_IsEnterprise_Call) RunAndReturn(run func() bool) *Grafa
 	return _c
 }
 
-
 // ListAlertNotifications provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) ListAlertNotifications() (*models.Route, error) {
 	ret := _mock.Called()

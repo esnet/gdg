@@ -43,7 +43,6 @@ func skipLegacyVersion(t *testing.T) {
 
 	if !tools.ValidateMinimumVersion("v13.0.0", versionCheckerV2) {
 		t.Skip("Grafana version is too old, skipping test", t.Name())
-
 	}
 }
 

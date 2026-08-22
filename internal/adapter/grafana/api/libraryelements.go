@@ -7,10 +7,9 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"maps"
 	"reflect"
 	"strings"
-
-	"maps"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/adapter/grafana"

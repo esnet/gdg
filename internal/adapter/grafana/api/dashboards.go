@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"maps"
 	"reflect"
 	"regexp"
 	"slices"
@@ -21,8 +22,6 @@ import (
 	"github.com/gosimple/slug"
 
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
-
-	"maps"
 
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
