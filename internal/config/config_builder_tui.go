@@ -47,10 +47,12 @@ const (
 	phaseStorageCustomCreds
 	phaseStorageCustomOptions
 	phaseStorageAssign
-	phasePluginToggle  // "Configure a cipher plugin?"
-	phasePluginSelect  // select plugin name from registry
-	phasePluginVersion // select plugin version
-	phasePluginConfig  // input per config_field (loops)
+	phasePluginToggle        // "Configure a cipher plugin?"
+	phasePluginSelect        // select plugin name from registry
+	phasePluginVersion       // select plugin version
+	phasePluginConfig        // input per config_field (loops)
+	phaseContactFilterToggle // "Configure contact point filters?"
+	phaseContactFilterInput  // input field + regex + inclusive + add more (loops)
 	phaseDone
 )
 
@@ -74,6 +76,8 @@ func (p builderPhase) sectionName() string {
 		return "Cloud Storage"
 	case phasePluginToggle, phasePluginSelect, phasePluginVersion, phasePluginConfig:
 		return "Cipher Plugin"
+	case phaseContactFilterToggle, phaseContactFilterInput:
+		return "Alert Settings"
 	default:
 		return ""
 	}
@@ -163,6 +167,14 @@ type builderState struct {
 	storageInitBucket bool
 	storageSSL        bool
 	storageAssign     bool
+
+	// Contact point filters (alert settings)
+	addContactFilters      bool
+	contactFilterField     string
+	contactFilterRegex     string
+	contactFilterInclusive bool
+	addMoreContactFilters  bool
+	contactFilters         []config_domain.MatchingRule
 
 	// Plugin
 	configurePlugin          bool
@@ -810,6 +822,38 @@ func (m *configBuilderModel) buildScreen() tui.Screen {
 			),
 		)
 
+	// ── Alert Settings ────────────────────────────────────────────────────
+
+	case phaseContactFilterToggle:
+		return tui.NewScreen(w,
+			tui.NewConfirmField(
+				"Configure Alerting: contact point filters?",
+				"Alerting contact points are the notification channels GDG backs up and restores\n"+
+					"(e.g. Slack, PagerDuty, email webhooks).\n"+
+					"Filters let you include or exclude specific contact points by field value.",
+				&m.bs.addContactFilters,
+			),
+		)
+
+	case phaseContactFilterInput:
+		m.bs.contactFilterField = ""
+		m.bs.contactFilterRegex = ""
+		m.bs.contactFilterInclusive = false
+		m.bs.addMoreContactFilters = false
+		desc := fmt.Sprintf("Alerting contact point filters so far: %s", summariseFilters(m.bs.contactFilters))
+		return tui.NewScreen(w,
+			tui.NewTextField("Filter Field",
+				desc+"\ngjson path on the contact point object (e.g. 'name', 'receivers.#.type', 'receivers.#.settings.recipient')",
+				&m.bs.contactFilterField),
+			tui.NewTextField("Filter Regex",
+				"Regular expression to match against the field value",
+				&m.bs.contactFilterRegex),
+			tui.NewConfirmField("Inclusive filter? (allowlist)",
+				"Yes = keep only matching contact points.  No = drop matching contact points (denylist).",
+				&m.bs.contactFilterInclusive),
+			tui.NewConfirmField("Add another contact point filter?", "", &m.bs.addMoreContactFilters),
+		)
+
 	default:
 		return tui.NewScreen(w)
 	}
@@ -985,6 +1029,16 @@ func (m *configBuilderModel) applyPhase() {
 				PluginConfig: m.bs.pluginConfigValues,
 			}
 		}
+
+	case phaseContactFilterToggle:
+		// addContactFilters already bound
+
+	case phaseContactFilterInput:
+		rule, err := validateFilter(m.bs.contactFilterField, m.bs.contactFilterRegex, m.bs.contactFilterInclusive)
+		if err == nil {
+			m.bs.contactFilters = append(m.bs.contactFilters, *rule)
+		}
+		m.bs.config.GetAlertSettings().ContactSettings.FilterRules = m.bs.contactFilters
 	}
 }
 
@@ -1103,14 +1157,14 @@ func (m *configBuilderModel) nextPhase() builderPhase {
 		if m.bs.configureStorage {
 			return phaseStorageProvider
 		}
-		return phaseDone
+		return phaseContactFilterToggle
 	case phaseStorageProvider:
 		if cloudProvider(m.bs.storageProvider) != providerCustom {
 			return phaseStorageProviderInfo
 		}
 		return phaseStorageCustomConfig
 	case phaseStorageProviderInfo:
-		return phaseDone
+		return phaseContactFilterToggle
 	case phaseStorageCustomConfig:
 		return phaseStorageCustomCreds
 	case phaseStorageCustomCreds:
@@ -1118,6 +1172,17 @@ func (m *configBuilderModel) nextPhase() builderPhase {
 	case phaseStorageCustomOptions:
 		return phaseStorageAssign
 	case phaseStorageAssign:
+		return phaseContactFilterToggle
+
+	case phaseContactFilterToggle:
+		if m.bs.addContactFilters {
+			return phaseContactFilterInput
+		}
+		return phaseDone
+	case phaseContactFilterInput:
+		if m.bs.addMoreContactFilters {
+			return phaseContactFilterInput
+		}
 		return phaseDone
 
 	default:
@@ -1246,6 +1311,21 @@ func (m *configBuilderModel) prevPhase() builderPhase {
 		return phaseStorageCustomCreds
 	case phaseStorageAssign:
 		return phaseStorageCustomOptions
+
+	// ── Alert Settings ────────────────────────────────────────────────────
+	case phaseContactFilterToggle:
+		// Mirror the same back-logic as phaseStorageToggle's forward exit.
+		if m.bs.configureStorage {
+			// Storage was configured; go back to wherever it ended.
+			if cloudProvider(m.bs.storageProvider) == providerCustom {
+				return phaseStorageAssign
+			}
+			return phaseStorageProviderInfo
+		}
+		return phaseStorageToggle
+	case phaseContactFilterInput:
+		// Loop iterations not individually indexed; return to toggle.
+		return phaseContactFilterToggle
 
 	default:
 		return m.phase

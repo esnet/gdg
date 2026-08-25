@@ -119,6 +119,16 @@ func TestSectionName_DonePhase(t *testing.T) {
 	assert.Equal(t, "", phaseDone.sectionName())
 }
 
+func TestSectionName_AlertSettingsPhases(t *testing.T) {
+	alertPhases := []builderPhase{
+		phaseContactFilterToggle, phaseContactFilterInput,
+	}
+	for _, p := range alertPhases {
+		assert.Equal(t, "Alert Settings", p.sectionName(),
+			"phase %d should map to Alert Settings", p)
+	}
+}
+
 // ── Layout helpers ────────────────────────────────────────────────────────────
 
 func TestLeftWidth_HalfOfWidth(t *testing.T) {
@@ -544,7 +554,7 @@ func TestNextPhase_StorageToggle_Skip(t *testing.T) {
 	m := newTUIModel(t)
 	m.phase = phaseStorageToggle
 	m.bs.configureStorage = false
-	assert.Equal(t, phaseDone, m.nextPhase())
+	assert.Equal(t, phaseContactFilterToggle, m.nextPhase())
 }
 
 func TestNextPhase_StorageProvider_Custom(t *testing.T) {
@@ -564,7 +574,7 @@ func TestNextPhase_StorageProvider_Managed(t *testing.T) {
 func TestNextPhase_StorageProviderInfo(t *testing.T) {
 	m := newTUIModel(t)
 	m.phase = phaseStorageProviderInfo
-	assert.Equal(t, phaseDone, m.nextPhase())
+	assert.Equal(t, phaseContactFilterToggle, m.nextPhase())
 }
 
 func TestNextPhase_StorageCustomSequence(t *testing.T) {
@@ -579,6 +589,34 @@ func TestNextPhase_StorageCustomSequence(t *testing.T) {
 	assert.Equal(t, phaseStorageAssign, m.nextPhase())
 
 	m.phase = phaseStorageAssign
+	assert.Equal(t, phaseContactFilterToggle, m.nextPhase())
+}
+
+func TestNextPhase_ContactFilterToggle_Skip(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterToggle
+	m.bs.addContactFilters = false
+	assert.Equal(t, phaseDone, m.nextPhase())
+}
+
+func TestNextPhase_ContactFilterToggle_Configure(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterToggle
+	m.bs.addContactFilters = true
+	assert.Equal(t, phaseContactFilterInput, m.nextPhase())
+}
+
+func TestNextPhase_ContactFilterInput_Loop(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterInput
+	m.bs.addMoreContactFilters = true
+	assert.Equal(t, phaseContactFilterInput, m.nextPhase())
+}
+
+func TestNextPhase_ContactFilterInput_Done(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterInput
+	m.bs.addMoreContactFilters = false
 	assert.Equal(t, phaseDone, m.nextPhase())
 }
 
@@ -840,6 +878,35 @@ func TestPrevPhase_StorageCustomSequence(t *testing.T) {
 	assert.Equal(t, phaseStorageCustomOptions, m.prevPhase())
 }
 
+func TestPrevPhase_ContactFilterInput(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterInput
+	assert.Equal(t, phaseContactFilterToggle, m.prevPhase())
+}
+
+func TestPrevPhase_ContactFilterToggle_NoStorage(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterToggle
+	m.bs.configureStorage = false
+	assert.Equal(t, phaseStorageToggle, m.prevPhase())
+}
+
+func TestPrevPhase_ContactFilterToggle_ManagedStorage(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterToggle
+	m.bs.configureStorage = true
+	m.bs.storageProvider = string(providerAWS)
+	assert.Equal(t, phaseStorageProviderInfo, m.prevPhase())
+}
+
+func TestPrevPhase_ContactFilterToggle_CustomStorage(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterToggle
+	m.bs.configureStorage = true
+	m.bs.storageProvider = string(providerCustom)
+	assert.Equal(t, phaseStorageAssign, m.prevPhase())
+}
+
 // ── applyPhase — state mutations ──────────────────────────────────────────────
 
 func TestApplyPhase_BasicCreds(t *testing.T) {
@@ -1028,6 +1095,62 @@ func TestApplyPhase_FilterInput_InvalidRegex_NoAppend(t *testing.T) {
 	assert.Empty(t, m.bs.filters)
 }
 
+func TestApplyPhase_ContactFilterInput_ValidRule(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterInput
+	m.bs.contactFilterField = "name"
+	m.bs.contactFilterRegex = `discord.*`
+	m.bs.contactFilterInclusive = false
+	m.applyPhase()
+	require.Len(t, m.bs.contactFilters, 1)
+	assert.Equal(t, "name", m.bs.contactFilters[0].Field)
+	assert.Equal(t, `discord.*`, m.bs.contactFilters[0].Regex)
+	assert.False(t, m.bs.contactFilters[0].Inclusive)
+	rules := m.bs.config.GetAlertSettings().ContactSettings.FilterRules
+	assert.Equal(t, m.bs.contactFilters, rules)
+}
+
+func TestApplyPhase_ContactFilterInput_Inclusive(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterInput
+	m.bs.contactFilterField = "receivers.#.type"
+	m.bs.contactFilterRegex = "slack"
+	m.bs.contactFilterInclusive = true
+	m.applyPhase()
+	require.Len(t, m.bs.contactFilters, 1)
+	assert.True(t, m.bs.contactFilters[0].Inclusive)
+}
+
+func TestApplyPhase_ContactFilterInput_InvalidRegex_NoAppend(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterInput
+	m.bs.contactFilterField = "name"
+	m.bs.contactFilterRegex = "[invalid"
+	m.applyPhase()
+	assert.Empty(t, m.bs.contactFilters)
+	assert.Empty(t, m.bs.config.GetAlertSettings().ContactSettings.FilterRules)
+}
+
+func TestApplyPhase_ContactFilterInput_Accumulates(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterInput
+
+	// First rule.
+	m.bs.contactFilterField = "name"
+	m.bs.contactFilterRegex = "discord"
+	m.bs.contactFilterInclusive = false
+	m.applyPhase()
+
+	// Second rule.
+	m.bs.contactFilterField = "receivers.#.type"
+	m.bs.contactFilterRegex = "slack"
+	m.bs.contactFilterInclusive = true
+	m.applyPhase()
+
+	require.Len(t, m.bs.contactFilters, 2)
+	assert.Equal(t, m.bs.contactFilters, m.bs.config.GetAlertSettings().ContactSettings.FilterRules)
+}
+
 func TestApplyPhase_StorageAssign_Enabled(t *testing.T) {
 	m := newTUIModel(t)
 	m.phase = phaseStorageAssign
@@ -1190,13 +1313,13 @@ func TestRoundtrip_BasicAuthFlow(t *testing.T) {
 	assert.Equal(t, "/tmp/gdg", m.bs.config.OutputPath)
 }
 
-// TestRoundtrip_StorageSkip confirms that declining storage ends the wizard.
+// TestRoundtrip_StorageSkip confirms that declining storage moves to contact filter toggle.
 func TestRoundtrip_StorageSkip(t *testing.T) {
 	m := newTUIModel(t)
 	m.phase = phaseStorageToggle
 	m.bs.configureStorage = false
 	m.applyPhase()
-	assert.Equal(t, phaseDone, m.nextPhase())
+	assert.Equal(t, phaseContactFilterToggle, m.nextPhase())
 }
 
 // TestRoundtrip_FolderAllowlistAdd adds two folders then finishes.
@@ -1274,6 +1397,52 @@ func TestRoundtrip_FilterLoop(t *testing.T) {
 	}(), ",")
 	assert.Contains(t, allFields, "name")
 	assert.Contains(t, allFields, "type")
+}
+
+// TestRoundtrip_ContactPointFilterLoop verifies adding two contact point filters in a loop.
+func TestRoundtrip_ContactPointFilterLoop(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterToggle
+	m.bs.addContactFilters = true
+	m.applyPhase()
+	m.phase = m.nextPhase()
+	assert.Equal(t, phaseContactFilterInput, m.phase)
+
+	// First filter — exclude by name.
+	m.bs.contactFilterField = "name"
+	m.bs.contactFilterRegex = `discord`
+	m.bs.contactFilterInclusive = false
+	m.bs.addMoreContactFilters = true
+	m.applyPhase()
+	m.phase = m.nextPhase()
+	assert.Equal(t, phaseContactFilterInput, m.phase) // loop back
+
+	// Second filter — keep only by receiver type.
+	m.bs.contactFilterField = "receivers.#.type"
+	m.bs.contactFilterRegex = "slack"
+	m.bs.contactFilterInclusive = true
+	m.bs.addMoreContactFilters = false
+	m.applyPhase()
+	m.phase = m.nextPhase()
+	assert.Equal(t, phaseDone, m.phase)
+
+	require.Len(t, m.bs.contactFilters, 2)
+	rules := m.bs.config.GetAlertSettings().ContactSettings.FilterRules
+	require.Len(t, rules, 2)
+	assert.Equal(t, "name", rules[0].Field)
+	assert.False(t, rules[0].Inclusive)
+	assert.Equal(t, "receivers.#.type", rules[1].Field)
+	assert.True(t, rules[1].Inclusive)
+}
+
+// TestRoundtrip_ContactPointFilter_Skip confirms skipping the toggle goes straight to phaseDone.
+func TestRoundtrip_ContactPointFilter_Skip(t *testing.T) {
+	m := newTUIModel(t)
+	m.phase = phaseContactFilterToggle
+	m.bs.addContactFilters = false
+	m.applyPhase()
+	assert.Equal(t, phaseDone, m.nextPhase())
+	assert.Empty(t, m.bs.contactFilters)
 }
 
 // ── phasePluginSelect / phasePluginVersion (buildScreen) ────────────────────

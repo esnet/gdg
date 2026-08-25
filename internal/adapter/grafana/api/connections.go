@@ -12,7 +12,8 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/adapter/grafana/resources"
-	domain "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/config/config_tooling"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/tidwall/gjson"
 
@@ -113,7 +114,7 @@ func (s *DashNGoImpl) ListConnections(filter outbound.Filter) []models.DataSourc
 
 	dsSettings := s.grafanaConf.GetConnectionSettings()
 	for _, item := range ds.GetPayload() {
-		if dsSettings.FiltersEnabled() && dsSettings.IsExcluded(item) {
+		if dsSettings.FiltersEnabled() && config_tooling.IsExcluded(item, dsSettings.FilterRules) {
 			slog.Debug("Skipping data source, since it fails datatype filter checks", "datasource", item.Name, "datatype", item.Type)
 			continue
 		}
@@ -212,7 +213,7 @@ func (s *DashNGoImpl) UploadConnections(filter outbound.Filter) []string {
 			slog.Warn("DataSource has no secureData configured.  Please check your configuration.")
 		}
 
-		if dsSettings.FiltersEnabled() && dsSettings.IsExcluded(newDS) {
+		if dsSettings.FiltersEnabled() && config_tooling.IsExcluded(newDS, dsSettings.FilterRules) {
 			slog.Debug("Skipping local JSON file since source fails datatype filter checks", "datasource", newDS.Name, "datatype", newDS.Type)
 			continue
 		}

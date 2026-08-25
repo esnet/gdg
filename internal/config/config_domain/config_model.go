@@ -1,7 +1,7 @@
 package config_domain
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -15,7 +15,7 @@ import (
 
 // FiltersEnabled returns true if the filters are enabled for the resource type
 func (ds *ConnectionSettings) FiltersEnabled() bool {
-	return ds.FilterRules != nil
+	return len(ds.FilterRules) > 0
 }
 
 // GetCredentials returns the credentials for the connection
@@ -57,43 +57,7 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 	return nil, errors.New("no valid configuration found, falling back on default")
 }
 
-// IsExcluded returns true if the item should be excluded from the connection List
-func (ds *ConnectionSettings) IsExcluded(item any) bool {
-	data, err := json.Marshal(item)
-	if err != nil {
-		slog.Warn("Unable to serialize object, cannot validate")
-		return true
-	}
-
-	// Since filters are always converted only check we need should be this one.
-	if ds.FilterRules != nil {
-		for _, field := range ds.FilterRules {
-
-			fieldParse := gjson.GetBytes(data, field.Field)
-			if !fieldParse.Exists() || field.Regex == "" {
-				continue
-			}
-
-			fieldValue := fieldParse.String()
-			p, err := regexp.Compile(field.Regex)
-			if err != nil {
-				slog.Warn("Invalid regex for filter rule", "field", field.Field)
-				return true
-			}
-			match := p.Match([]byte(fieldValue))
-			// If inclusive, then the boolean is flipped
-			if field.Inclusive {
-				match = !match
-			}
-			if match {
-				return match
-			}
-		}
-	}
-
-	return false
-}
-
+// GetDashboardSettings returns the current DashboardSettings or initializes and returns a new instance if nil.
 func (s *GrafanaConfig) GetDashboardSettings() *DashboardSettings {
 	if s.DashboardSettings == nil {
 		s.DashboardSettings = new(DashboardSettings)
@@ -108,6 +72,14 @@ func (s *GrafanaConfig) GetExperimental() *ExperimentalFeatures {
 		s.Experimental = new(ExperimentalFeatures)
 	}
 	return s.Experimental
+}
+
+// GetAlertSettings retrieves the AlertSettings configuration and initializes it if not already set.
+func (s *GrafanaConfig) GetAlertSettings() *AlertSettings {
+	if s.AlertSettings == nil {
+		s.AlertSettings = &AlertSettings{}
+	}
+	return s.AlertSettings
 }
 
 // GetConnectionSettings returns the settings for the connection

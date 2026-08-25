@@ -1,11 +1,17 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"log/slog"
+	"reflect"
+	"regexp"
 
+	v2 "github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/grafana/grafana-openapi-client-go/client/provisioning"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
@@ -14,12 +20,58 @@ const (
 	templatesFile = "templates"
 )
 
-func (s *DashNGoImpl) DownloadAlertTemplates() (string, error) {
+func setupTemplateReaders(filterObj outbound.Filter) {
+	err := filterObj.RegisterReader(reflect.TypeFor[*models.NotificationTemplate](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
+		val, ok := a.(*models.NotificationTemplate)
+		if !ok {
+			return nil, fmt.Errorf("unsupported data type")
+		}
+		switch filterType {
+		case domain.Name:
+			return val.Name, nil
+
+		default:
+			return nil, fmt.Errorf("unsupported data type")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Unable to create a valid Connection Filter, aborting.")
+	}
+}
+
+func NewAlertTemplatesFilter(regexPattern string) outbound.Filter {
+	filterEntity := v2.NewBaseFilter()
+	setupTemplateReaders(filterEntity)
+	getValidateFunc := func(filterType domain.FilterType) func(ctx context.Context, value any, expected any) error {
+		return func(ctx context.Context, value any, expected any) error {
+			val, expression, convErr := v2.GetParams[string](value, expected, filterType)
+			if convErr != nil {
+				return convErr
+			}
+			if expression == "" {
+				return nil
+			}
+			r, ReErr := regexp.Compile(expression)
+			if ReErr != nil {
+				return fmt.Errorf("invalid regex: %s", expression)
+			}
+			if r.MatchString(val) {
+				return nil
+			}
+			return fmt.Errorf("invalid template filter. Expected: %v", expression)
+		}
+	}
+
+	filterEntity.AddValidation(domain.Name, getValidateFunc(domain.Name), regexPattern)
+	return filterEntity
+}
+
+func (s *DashNGoImpl) DownloadAlertTemplates(filter outbound.Filter) (string, error) {
 	var (
 		dsPacked []byte
 		err      error
 	)
-	tpls, err := s.ListAlertTemplates()
+	tpls, err := s.ListAlertTemplates(filter)
 	if err != nil {
 		return "", err
 	}
@@ -35,17 +87,24 @@ func (s *DashNGoImpl) DownloadAlertTemplates() (string, error) {
 	return dsPath, nil
 }
 
-func (s *DashNGoImpl) ListAlertTemplates() ([]*models.NotificationTemplate, error) {
+func (s *DashNGoImpl) ListAlertTemplates(filter outbound.Filter) ([]*models.NotificationTemplate, error) {
 	p := provisioning.NewGetTemplatesParams()
 	tpl, err := s.GetClient().Provisioning.GetTemplatesWithParams(p)
 	if err != nil {
 		return nil, err
 	}
-	return tpl.GetPayload(), nil
+	ctx := context.Background()
+	var result []*models.NotificationTemplate
+	for _, item := range tpl.GetPayload() {
+		if filter.Validate(ctx, domain.Name, item) {
+			result = append(result, item)
+		}
+	}
+	return result, nil
 }
 
-func (s *DashNGoImpl) ClearAlertTemplates() ([]string, error) {
-	tpls, err := s.ListAlertTemplates()
+func (s *DashNGoImpl) ClearAlertTemplates(filter outbound.Filter) ([]string, error) {
+	tpls, err := s.ListAlertTemplates(filter)
 	if err != nil {
 		return nil, err
 	}
@@ -63,13 +122,13 @@ func (s *DashNGoImpl) ClearAlertTemplates() ([]string, error) {
 	return result, nil
 }
 
-func (s *DashNGoImpl) UploadAlertTemplates() ([]string, error) {
+func (s *DashNGoImpl) UploadAlertTemplates(filter outbound.Filter) ([]string, error) {
 	var (
 		err   error
 		rawDS []byte
 	)
 	data := make([]*models.NotificationTemplate, 0)
-	currentTemplates, err := s.ListAlertTemplates()
+	currentTemplates, err := s.ListAlertTemplates(filter)
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +144,13 @@ func (s *DashNGoImpl) UploadAlertTemplates() ([]string, error) {
 	if err = json.Unmarshal(rawDS, &data); err != nil {
 		return nil, fmt.Errorf("failed to unmarshall file, file:%s, err: %w", fileLocation, err)
 	}
+	ctx := context.Background()
 	var result []string
 	for _, tpl := range data {
+		if !filter.Validate(ctx, domain.Name, tpl) {
+			slog.Debug("Skipping template, failed regex filter", slog.String("template", tpl.Name))
+			continue
+		}
 		p := provisioning.NewPutTemplateParams()
 		p.Name = tpl.Name
 		p.XDisableProvenance = new("true")

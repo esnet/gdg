@@ -145,23 +145,23 @@ func (_c *AlertContactPoints_DownloadContactPoints_Call) RunAndReturn(run func()
 }
 
 // ListContactPoints provides a mock function for the type AlertContactPoints
-func (_mock *AlertContactPoints) ListContactPoints() ([]*models.EmbeddedContactPoint, error) {
+func (_mock *AlertContactPoints) ListContactPoints() ([]*models.ContactPointExport, error) {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListContactPoints")
 	}
 
-	var r0 []*models.EmbeddedContactPoint
+	var r0 []*models.ContactPointExport
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*models.EmbeddedContactPoint, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func() ([]*models.ContactPointExport, error)); ok {
 		return returnFunc()
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*models.EmbeddedContactPoint); ok {
+	if returnFunc, ok := ret.Get(0).(func() []*models.ContactPointExport); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.EmbeddedContactPoint)
+			r0 = ret.Get(0).([]*models.ContactPointExport)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func() error); ok {
@@ -189,12 +189,12 @@ func (_c *AlertContactPoints_ListContactPoints_Call) Run(run func()) *AlertConta
 	return _c
 }
 
-func (_c *AlertContactPoints_ListContactPoints_Call) Return(embeddedContactPoints []*models.EmbeddedContactPoint, err error) *AlertContactPoints_ListContactPoints_Call {
-	_c.Call.Return(embeddedContactPoints, err)
+func (_c *AlertContactPoints_ListContactPoints_Call) Return(contactPointExports []*models.ContactPointExport, err error) *AlertContactPoints_ListContactPoints_Call {
+	_c.Call.Return(contactPointExports, err)
 	return _c
 }
 
-func (_c *AlertContactPoints_ListContactPoints_Call) RunAndReturn(run func() ([]*models.EmbeddedContactPoint, error)) *AlertContactPoints_ListContactPoints_Call {
+func (_c *AlertContactPoints_ListContactPoints_Call) RunAndReturn(run func() ([]*models.ContactPointExport, error)) *AlertContactPoints_ListContactPoints_Call {
 	_c.Call.Return(run)
 	return _c
 }

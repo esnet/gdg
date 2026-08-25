@@ -145,8 +145,8 @@ func (_c *AlertingApi_ClearAlertRules_Call) RunAndReturn(run func(filter outboun
 }
 
 // ClearAlertTemplates provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) ClearAlertTemplates() ([]string, error) {
-	ret := _mock.Called()
+func (_mock *AlertingApi) ClearAlertTemplates(filter outbound.Filter) ([]string, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ClearAlertTemplates")
@@ -154,18 +154,18 @@ func (_mock *AlertingApi) ClearAlertTemplates() ([]string, error) {
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
+		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -178,13 +178,20 @@ type AlertingApi_ClearAlertTemplates_Call struct {
 }
 
 // ClearAlertTemplates is a helper method to define mock.On call
-func (_e *AlertingApi_Expecter) ClearAlertTemplates() *AlertingApi_ClearAlertTemplates_Call {
-	return &AlertingApi_ClearAlertTemplates_Call{Call: _e.mock.On("ClearAlertTemplates")}
+//   - filter outbound.Filter
+func (_e *AlertingApi_Expecter) ClearAlertTemplates(filter any) *AlertingApi_ClearAlertTemplates_Call {
+	return &AlertingApi_ClearAlertTemplates_Call{Call: _e.mock.On("ClearAlertTemplates", filter)}
 }
 
-func (_c *AlertingApi_ClearAlertTemplates_Call) Run(run func()) *AlertingApi_ClearAlertTemplates_Call {
+func (_c *AlertingApi_ClearAlertTemplates_Call) Run(run func(filter outbound.Filter)) *AlertingApi_ClearAlertTemplates_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 outbound.Filter
+		if args[0] != nil {
+			arg0 = args[0].(outbound.Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -194,7 +201,7 @@ func (_c *AlertingApi_ClearAlertTemplates_Call) Return(strings []string, err err
 	return _c
 }
 
-func (_c *AlertingApi_ClearAlertTemplates_Call) RunAndReturn(run func() ([]string, error)) *AlertingApi_ClearAlertTemplates_Call {
+func (_c *AlertingApi_ClearAlertTemplates_Call) RunAndReturn(run func(filter outbound.Filter) ([]string, error)) *AlertingApi_ClearAlertTemplates_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -414,8 +421,8 @@ func (_c *AlertingApi_DownloadAlertRules_Call) RunAndReturn(run func(filter outb
 }
 
 // DownloadAlertTemplates provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) DownloadAlertTemplates() (string, error) {
-	ret := _mock.Called()
+func (_mock *AlertingApi) DownloadAlertTemplates(filter outbound.Filter) (string, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DownloadAlertTemplates")
@@ -423,16 +430,16 @@ func (_mock *AlertingApi) DownloadAlertTemplates() (string, error) {
 
 	var r0 string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) (string, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) string); ok {
+		r0 = returnFunc(filter)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -445,13 +452,20 @@ type AlertingApi_DownloadAlertTemplates_Call struct {
 }
 
 // DownloadAlertTemplates is a helper method to define mock.On call
-func (_e *AlertingApi_Expecter) DownloadAlertTemplates() *AlertingApi_DownloadAlertTemplates_Call {
-	return &AlertingApi_DownloadAlertTemplates_Call{Call: _e.mock.On("DownloadAlertTemplates")}
+//   - filter outbound.Filter
+func (_e *AlertingApi_Expecter) DownloadAlertTemplates(filter any) *AlertingApi_DownloadAlertTemplates_Call {
+	return &AlertingApi_DownloadAlertTemplates_Call{Call: _e.mock.On("DownloadAlertTemplates", filter)}
 }
 
-func (_c *AlertingApi_DownloadAlertTemplates_Call) Run(run func()) *AlertingApi_DownloadAlertTemplates_Call {
+func (_c *AlertingApi_DownloadAlertTemplates_Call) Run(run func(filter outbound.Filter)) *AlertingApi_DownloadAlertTemplates_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 outbound.Filter
+		if args[0] != nil {
+			arg0 = args[0].(outbound.Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -461,7 +475,7 @@ func (_c *AlertingApi_DownloadAlertTemplates_Call) Return(s string, err error) *
 	return _c
 }
 
-func (_c *AlertingApi_DownloadAlertTemplates_Call) RunAndReturn(run func() (string, error)) *AlertingApi_DownloadAlertTemplates_Call {
+func (_c *AlertingApi_DownloadAlertTemplates_Call) RunAndReturn(run func(filter outbound.Filter) (string, error)) *AlertingApi_DownloadAlertTemplates_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -690,8 +704,8 @@ func (_c *AlertingApi_ListAlertRules_Call) RunAndReturn(run func(filter outbound
 }
 
 // ListAlertTemplates provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) ListAlertTemplates() ([]*models.NotificationTemplate, error) {
-	ret := _mock.Called()
+func (_mock *AlertingApi) ListAlertTemplates(filter outbound.Filter) ([]*models.NotificationTemplate, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListAlertTemplates")
@@ -699,18 +713,18 @@ func (_mock *AlertingApi) ListAlertTemplates() ([]*models.NotificationTemplate, 
 
 	var r0 []*models.NotificationTemplate
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*models.NotificationTemplate, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]*models.NotificationTemplate, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*models.NotificationTemplate); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []*models.NotificationTemplate); ok {
+		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*models.NotificationTemplate)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -723,13 +737,20 @@ type AlertingApi_ListAlertTemplates_Call struct {
 }
 
 // ListAlertTemplates is a helper method to define mock.On call
-func (_e *AlertingApi_Expecter) ListAlertTemplates() *AlertingApi_ListAlertTemplates_Call {
-	return &AlertingApi_ListAlertTemplates_Call{Call: _e.mock.On("ListAlertTemplates")}
+//   - filter outbound.Filter
+func (_e *AlertingApi_Expecter) ListAlertTemplates(filter any) *AlertingApi_ListAlertTemplates_Call {
+	return &AlertingApi_ListAlertTemplates_Call{Call: _e.mock.On("ListAlertTemplates", filter)}
 }
 
-func (_c *AlertingApi_ListAlertTemplates_Call) Run(run func()) *AlertingApi_ListAlertTemplates_Call {
+func (_c *AlertingApi_ListAlertTemplates_Call) Run(run func(filter outbound.Filter)) *AlertingApi_ListAlertTemplates_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 outbound.Filter
+		if args[0] != nil {
+			arg0 = args[0].(outbound.Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -739,7 +760,7 @@ func (_c *AlertingApi_ListAlertTemplates_Call) Return(notificationTemplates []*m
 	return _c
 }
 
-func (_c *AlertingApi_ListAlertTemplates_Call) RunAndReturn(run func() ([]*models.NotificationTemplate, error)) *AlertingApi_ListAlertTemplates_Call {
+func (_c *AlertingApi_ListAlertTemplates_Call) RunAndReturn(run func(filter outbound.Filter) ([]*models.NotificationTemplate, error)) *AlertingApi_ListAlertTemplates_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -800,23 +821,23 @@ func (_c *AlertingApi_ListAlertTimings_Call) RunAndReturn(run func() ([]*models.
 }
 
 // ListContactPoints provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) ListContactPoints() ([]*models.EmbeddedContactPoint, error) {
+func (_mock *AlertingApi) ListContactPoints() ([]*models.ContactPointExport, error) {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListContactPoints")
 	}
 
-	var r0 []*models.EmbeddedContactPoint
+	var r0 []*models.ContactPointExport
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*models.EmbeddedContactPoint, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func() ([]*models.ContactPointExport, error)); ok {
 		return returnFunc()
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*models.EmbeddedContactPoint); ok {
+	if returnFunc, ok := ret.Get(0).(func() []*models.ContactPointExport); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*models.EmbeddedContactPoint)
+			r0 = ret.Get(0).([]*models.ContactPointExport)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func() error); ok {
@@ -844,12 +865,12 @@ func (_c *AlertingApi_ListContactPoints_Call) Run(run func()) *AlertingApi_ListC
 	return _c
 }
 
-func (_c *AlertingApi_ListContactPoints_Call) Return(embeddedContactPoints []*models.EmbeddedContactPoint, err error) *AlertingApi_ListContactPoints_Call {
-	_c.Call.Return(embeddedContactPoints, err)
+func (_c *AlertingApi_ListContactPoints_Call) Return(contactPointExports []*models.ContactPointExport, err error) *AlertingApi_ListContactPoints_Call {
+	_c.Call.Return(contactPointExports, err)
 	return _c
 }
 
-func (_c *AlertingApi_ListContactPoints_Call) RunAndReturn(run func() ([]*models.EmbeddedContactPoint, error)) *AlertingApi_ListContactPoints_Call {
+func (_c *AlertingApi_ListContactPoints_Call) RunAndReturn(run func() ([]*models.ContactPointExport, error)) *AlertingApi_ListContactPoints_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -972,8 +993,8 @@ func (_c *AlertingApi_UploadAlertRules_Call) RunAndReturn(run func(filter outbou
 }
 
 // UploadAlertTemplates provides a mock function for the type AlertingApi
-func (_mock *AlertingApi) UploadAlertTemplates() ([]string, error) {
-	ret := _mock.Called()
+func (_mock *AlertingApi) UploadAlertTemplates(filter outbound.Filter) ([]string, error) {
+	ret := _mock.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UploadAlertTemplates")
@@ -981,18 +1002,18 @@ func (_mock *AlertingApi) UploadAlertTemplates() ([]string, error) {
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) ([]string, error)); ok {
+		return returnFunc(filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(outbound.Filter) []string); ok {
+		r0 = returnFunc(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(outbound.Filter) error); ok {
+		r1 = returnFunc(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1005,13 +1026,20 @@ type AlertingApi_UploadAlertTemplates_Call struct {
 }
 
 // UploadAlertTemplates is a helper method to define mock.On call
-func (_e *AlertingApi_Expecter) UploadAlertTemplates() *AlertingApi_UploadAlertTemplates_Call {
-	return &AlertingApi_UploadAlertTemplates_Call{Call: _e.mock.On("UploadAlertTemplates")}
+//   - filter outbound.Filter
+func (_e *AlertingApi_Expecter) UploadAlertTemplates(filter any) *AlertingApi_UploadAlertTemplates_Call {
+	return &AlertingApi_UploadAlertTemplates_Call{Call: _e.mock.On("UploadAlertTemplates", filter)}
 }
 
-func (_c *AlertingApi_UploadAlertTemplates_Call) Run(run func()) *AlertingApi_UploadAlertTemplates_Call {
+func (_c *AlertingApi_UploadAlertTemplates_Call) Run(run func(filter outbound.Filter)) *AlertingApi_UploadAlertTemplates_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 outbound.Filter
+		if args[0] != nil {
+			arg0 = args[0].(outbound.Filter)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -1021,7 +1049,7 @@ func (_c *AlertingApi_UploadAlertTemplates_Call) Return(strings []string, err er
 	return _c
 }
 
-func (_c *AlertingApi_UploadAlertTemplates_Call) RunAndReturn(run func() ([]string, error)) *AlertingApi_UploadAlertTemplates_Call {
+func (_c *AlertingApi_UploadAlertTemplates_Call) RunAndReturn(run func(filter outbound.Filter) ([]string, error)) *AlertingApi_UploadAlertTemplates_Call {
 	_c.Call.Return(run)
 	return _c
 }
