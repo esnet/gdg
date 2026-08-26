@@ -8,7 +8,6 @@ import (
 	"log"
 	"log/slog"
 	"maps"
-	"reflect"
 	"regexp"
 	"slices"
 	"sort"
@@ -33,11 +32,7 @@ const (
 )
 
 func setupDashReaders(filterObj outbound.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(*domain.NestedHit)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err := v2.RegisterTypedReader[*domain.NestedHit](filterObj, func(ctx context.Context, filterType domain.FilterType, val *domain.NestedHit) (any, error) {
 		switch filterType {
 		case domain.FolderFilter:
 			return val.NestedPath, nil
@@ -45,19 +40,14 @@ func setupDashReaders(filterObj outbound.Filter) {
 			return val.Tags, nil
 		case domain.DashFilter:
 			return val.UID, nil
-
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
 		log.Fatalf("Unable to create a valid Dashboard Filter, object reader could not be created, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[[]byte](filterObj, func(ctx context.Context, filterType domain.FilterType, val []byte) (any, error) {
 		switch filterType {
 		case domain.TagsFilter:
 			// Try top-level "tags" first, then the legacy Grafana envelope "dashboard.tags".
@@ -71,7 +61,6 @@ func setupDashReaders(filterObj outbound.Filter) {
 			return lo.Map(r.Array(), func(item gjson.Result, _ int) string {
 				return item.String()
 			}), nil
-
 		case domain.DashFilter:
 			// Try top-level "uid" first (v1 raw JSON and v2 filterJSON), then the
 			// legacy Grafana envelope "dashboard.uid", and finally "resource.metadata.name"
@@ -91,26 +80,19 @@ func setupDashReaders(filterObj outbound.Filter) {
 				return "", nil
 			}
 			return r.String(), nil
-
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
 		log.Fatalf("Unable to create a valid Dashboard Filter, json reader could not be created, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[map[string]any](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(map[string]any)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[map[string]any](filterObj, func(ctx context.Context, filterType domain.FilterType, val map[string]any) (any, error) {
 		switch filterType {
 		case domain.FolderFilter:
-			{
-				return val[NestedDashFolderName], nil
-			}
+			return val[NestedDashFolderName], nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
@@ -164,37 +146,14 @@ func NewDashboardFilter(cfg *configDomain.GDGAppConfiguration, entries ...string
 	setupDashReaders(filterObj)
 	// Setup Readers
 
-	err := filterObj.RegisterDataProcessor(domain.FolderFilter, domain.ProcessorEntity{
-		Name: "folderQuoteRegEx",
-		Processor: func(ctx context.Context, item any) (any, error) {
-			switch w := item.(type) {
-			case string:
-				slog.Debug("folder quote filter applied to string")
-				quoteRegex, _ := regexp.Compile("['\"]+")
-				w = quoteRegex.ReplaceAllString(w, "")
-				return w, nil
-			case []string:
-				slog.Debug("folder quote filter applied to []string")
-				return lo.Map(w, func(i string, index int) string {
-					quoteRegex, _ := regexp.Compile("['\"]+")
-					i = quoteRegex.ReplaceAllString(i, "")
-					return i
-				}), nil
-			}
-			return item, nil
-		},
-	})
+	err := filterObj.RegisterDataProcessor(domain.FolderFilter, v2.FolderQuoteRegExProcessor)
 	if err != nil {
 		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
 	}
 
 	addFolderFilter(cfg, filterObj, folderFilter)
 
-	filterObj.AddValidation(domain.DashFilter, func(ctx context.Context, value any, expected any) error {
-		val, exp, convErr := v2.GetParams[string](value, expected, domain.DashFilter)
-		if convErr != nil {
-			return convErr
-		}
+	v2.RegisterTypedValidation[string](filterObj, domain.DashFilter, dashboardFilter, func(ctx context.Context, val, exp string) error {
 		if val == "" || exp == "" {
 			return nil
 		}
@@ -202,14 +161,9 @@ func NewDashboardFilter(cfg *configDomain.GDGAppConfiguration, entries ...string
 			return fmt.Errorf("failed validation test val:%s  expected: %s", val, exp)
 		}
 		return nil
-	}, dashboardFilter)
+	})
 
-	filterObj.AddValidation(domain.TagsFilter, func(ctx context.Context, value any, expected any) error {
-		val, exp, convErr := v2.GetParams[[]string](value, expected, domain.TagsFilter)
-
-		if convErr != nil {
-			return convErr
-		}
+	v2.RegisterTypedValidation[[]string](filterObj, domain.TagsFilter, tagObj, func(ctx context.Context, val, exp []string) error {
 		// no filter active, returning nil
 		if len(exp) == 0 {
 			return nil
@@ -219,9 +173,8 @@ func NewDashboardFilter(cfg *configDomain.GDGAppConfiguration, entries ...string
 				return nil
 			}
 		}
-
 		return fmt.Errorf("failed validation test val:%s  expected: %s", val, exp)
-	}, tagObj)
+	})
 
 	return filterObj
 }

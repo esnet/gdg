@@ -25,7 +25,6 @@ func NewHelpers() ports.Resources {
 type Helpers struct{}
 
 func (h Helpers) BuildResourceFolder(cfg *config_domain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
-	// func BuildResourceFolder(cfg *config_domain.GrafanaConfig, folderName string, resourceType domain.ResourceType, createDestination bool, clearOutput bool) string {
 	if (resourceType == domain.DashboardResource || resourceType == domain.AlertingRulesResource) && folderName == "" {
 		folderName = domain.ApiConsts.DefaultFolderName
 	}

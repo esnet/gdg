@@ -8,7 +8,6 @@ import (
 	"log"
 	"log/slog"
 	"maps"
-	"reflect"
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
@@ -29,57 +28,38 @@ const (
 )
 
 func setupLibElementsReaders(filterObj outbound.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.WithNested[models.LibraryElementDTO]](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(*domain.WithNested[models.LibraryElementDTO])
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
-		_ = val
+	err := v2.RegisterTypedReader[*domain.WithNested[models.LibraryElementDTO]](filterObj, func(ctx context.Context, filterType domain.FilterType, val *domain.WithNested[models.LibraryElementDTO]) (any, error) {
 		switch filterType {
 		case domain.FolderFilter:
 			return val.NestedPath, nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
 		log.Fatalf("Unable to create a valid Library Elements Filter, obj entity filter failure, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[[]byte](filterObj, func(ctx context.Context, filterType domain.FilterType, val []byte) (any, error) {
 		switch filterType {
 		case domain.FolderFilter:
-			{
-				foo := string(val)
-				_ = foo
-				r := gjson.GetBytes(val, "meta.folderName")
-				if !r.Exists() || r.String() == "" {
-					return nil, fmt.Errorf("no valid title found")
-				}
-				return r.String(), nil
+			r := gjson.GetBytes(val, "meta.folderName")
+			if !r.Exists() || r.String() == "" {
+				return nil, fmt.Errorf("no valid folder name found")
 			}
+			return r.String(), nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
 		log.Fatalf("Unable to create a valid Library Elements Filter, json filter failure, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[map[string]any](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(map[string]any)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[map[string]any](filterObj, func(ctx context.Context, filterType domain.FilterType, val map[string]any) (any, error) {
 		switch filterType {
 		case domain.FolderFilter:
-			{
-				return val[NestedDashFolderName], nil
-			}
+			return val[NestedDashFolderName], nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
@@ -158,7 +138,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter outbound.Filter) []*domain.With
 			nestedPath = fld.NestedPath
 		}
 
-		if ignoreFilters || filter.ValidateAll(context.Background(), map[string]any{NestedDashFolderName: nestedPath}) {
+		if ignoreFilters || v2.NewTypedFilter[map[string]any](filter).ValidateEntity(context.Background(), map[string]any{NestedDashFolderName: nestedPath}) {
 			newData = append(newData, &domain.WithNested[models.LibraryElementDTO]{
 				Entity:     val,
 				NestedPath: nestedPath,
