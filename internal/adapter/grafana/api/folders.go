@@ -10,7 +10,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"reflect"
 	"regexp"
 	"sort"
 	"strings"
@@ -34,16 +33,12 @@ const (
 
 func NewFolderFilter(cfg *configDomain.GDGAppConfiguration) outbound.Filter {
 	filterObj := v2.NewBaseFilter()
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.NestedHit](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(*domain.NestedHit)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err := v2.RegisterTypedReader[*domain.NestedHit](filterObj, func(ctx context.Context, filterType domain.FilterType, val *domain.NestedHit) (any, error) {
 		switch filterType {
 		case domain.FolderFilter:
 			return val.NestedPath, nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {

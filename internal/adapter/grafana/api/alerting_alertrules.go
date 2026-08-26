@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"strings"
 
+	v2 "github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
@@ -48,7 +49,7 @@ func (s *DashNGoImpl) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRul
 			continue
 		}
 		ctx := getFilterContext(folderNameLocation)
-		if filter == nil || filter.ValidateAll(ctx, entry) {
+		if filter == nil || v2.ValidateEntity(ctx, filter, entry) {
 			results = append(results, entry)
 		}
 	}
@@ -110,11 +111,12 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 		}
 		ctx := getFilterContext(folderNameLocation)
 
-		if filter != nil && !filter.ValidateAll(ctx, rawEntity) {
+		typedRawFilter := v2.NewTypedFilter[[]byte](filter)
+		if filter != nil && !typedRawFilter.ValidateEntity(ctx, rawEntity) {
 			slog.Debug("Skipping file, failed alert rule filter", "file", file)
 			continue
 		}
-		folderUidRaw := filter.GetReaderValue(ctx, domain.FolderFilter, rawEntity)
+		folderUidRaw := typedRawFilter.GetEntityReaderValue(ctx, domain.FolderFilter, rawEntity)
 		var folderUid string
 		var ok bool
 		if folderUid, ok = folderUidRaw.(string); !ok {
