@@ -179,6 +179,16 @@ func (s *DashNGoImpl) InitOrganizations() {
 
 	} else if s.grafanaConf.GetOrganizationName() != "unknown" {
 		slog.Warn("Tokens do no operate across multiple Organizations. Cannot verify or scope into the given org. Please be sure your token belongs to the correct organization", slog.String("configure organization", s.grafanaConf.GetOrganizationName()))
+	} else if s.grafanaConf.GetAPIToken() != "" {
+		// No organization_name is configured for this token context, so
+		// GetOrganizationName() would otherwise report "unknown" for the rest
+		// of the run (every "Organization"/"orgName" log field included).
+		// A token is permanently scoped to a single org, so there is no
+		// ambiguity to resolve: ask the token's own identity via GET /api/org
+		// and cache the real org name for display purposes.
+		if org := s.GetTokenOrganization(); org != nil && org.Name != "" {
+			s.grafanaConf.OrganizationName = org.Name
+		}
 	}
 
 	if s.grafanaConf.IsGrafanaAdmin() {
