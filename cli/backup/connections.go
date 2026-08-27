@@ -23,8 +23,7 @@ func newConnectionsCommand() simplecobra.Commander {
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"connection", "ds", "c", "datasource", "datasources"}
-			connections := cmd
-			connections.PersistentFlags().StringP("connection", "", "", "filter by connection slug")
+			cmd.PersistentFlags().StringP("connection", "", "", "filter by connection slug")
 		},
 		CommandsList: []simplecobra.Commander{
 			newClearConnectionsCmd(),
@@ -50,8 +49,8 @@ func newClearConnectionsCmd() simplecobra.Commander {
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *cliDomain.RootCommand, args []string) error {
 			slog.Info("Delete connections", slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())))
-			dashboardFilter, _ := cd.CobraCommand.Flags().GetString("connection")
-			filters := api.NewConnectionFilter(dashboardFilter)
+			connectionFilter, _ := cd.CobraCommand.Flags().GetString("connection")
+			filters := api.NewConnectionFilter(connectionFilter)
 			savedFiles := rootCmd.GrafanaSvc().DeleteAllConnections(filters)
 			rootCmd.TableObj.AppendHeader(table.Row{"type", "filename"})
 			for _, file := range savedFiles {

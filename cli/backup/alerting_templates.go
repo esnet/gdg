@@ -7,6 +7,7 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
+	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -19,6 +20,7 @@ func newAlertingTemplatesCommand() simplecobra.Commander {
 		Long:  description,
 		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
 			cmd.Aliases = []string{"templates", "t"}
+			cmd.PersistentFlags().StringP("filter", "", "", "filter using regex pattern on name")
 		},
 		CommandsList: []simplecobra.Commander{
 			newListAlertTemplatesCmd(),
@@ -47,7 +49,9 @@ func newUploadAlertTemplatesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			files, err := rootCmd.GrafanaSvc().UploadAlertTemplates()
+			templateFilter, _ := cd.CobraCommand.Flags().GetString("filter")
+			filters := api.NewAlertTemplatesFilter(templateFilter)
+			files, err := rootCmd.GrafanaSvc().UploadAlertTemplates(filters)
 			if err != nil {
 				log.Fatal("unable to upload Orgs templates alerts", slog.Any("err", err))
 			}
@@ -75,7 +79,9 @@ func newClearAlertTemplatesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			files, err := rootCmd.GrafanaSvc().ClearAlertTemplates()
+			templateFilter, _ := cd.CobraCommand.Flags().GetString("filter")
+			filters := api.NewAlertTemplatesFilter(templateFilter)
+			files, err := rootCmd.GrafanaSvc().ClearAlertTemplates(filters)
 			if err != nil {
 				log.Fatal("unable to deleting Orgs templates alerts", slog.Any("err", err))
 			}
@@ -104,7 +110,9 @@ func newListAlertTemplatesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			rules, err := rootCmd.GrafanaSvc().ListAlertTemplates()
+			templateFilter, _ := cd.CobraCommand.Flags().GetString("filter")
+			filters := api.NewAlertTemplatesFilter(templateFilter)
+			rules, err := rootCmd.GrafanaSvc().ListAlertTemplates(filters)
 			if err != nil {
 				log.Fatal("unable to retrieve Orgs rule alerts", slog.Any("err", err))
 			}
@@ -139,7 +147,9 @@ func newDownloadAlertTemplatesCmd() simplecobra.Commander {
 				slog.String("Organization", GetOrganizationName(rootCmd.ConfigSvc())),
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
-			file, err := rootCmd.GrafanaSvc().DownloadAlertTemplates()
+			templateFilter, _ := cd.CobraCommand.Flags().GetString("filter")
+			filters := api.NewAlertTemplatesFilter(templateFilter)
+			file, err := rootCmd.GrafanaSvc().DownloadAlertTemplates(filters)
 			if err != nil {
 				log.Fatal("unable to retrieve Orgs templates alerts", slog.Any("err", err))
 			}

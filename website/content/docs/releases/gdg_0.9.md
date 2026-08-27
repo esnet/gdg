@@ -11,7 +11,7 @@ toc: true
 
 ## Release Notes for v0.9.4
 
-**Release Date: 00/00/2026**
+**Release Date: 08/27/2026**
 
 ### Min Recommended Grafana Versions (v0.9.4)
 
@@ -36,13 +36,10 @@ versions of GDG. If you need to roll back, re-download your dashboards after dow
   - [569](https://github.com/esnet/gdg/issues/569) Added plugin rekey — updates all stored values with their encrypted equivalent when enabling a new cipher plugin, so existing backups stay accessible.
   - [568](https://github.com/esnet/gdg/issues/568) A plugin registry was added to help discover available plugins.
   - [566](https://github.com/esnet/gdg/issues/566) TUI support for the plugin registry, allowing plugin discovery and selection from the interactive wizard.
-  - GDG now uses the Grafana App Platform dashboard API on Grafana v13+. No configuration changes are required — version detection is automatic.
-  - On Grafana v12 and older the existing legacy API continues to be used unchanged.
-  - When connected to Grafana v13+, downloaded dashboards are saved in a new Kubernetes-style resource format. This replaces the flat JSON format used in previous versions. The new format carries additional metadata (folder placement, resource name, API version) that the App Platform API requires.
-  - Upload is smarter about mixed repositories: if your backup folder contains a mix of old and new format dashboard files, GDG will handle each file correctly and warn you if any files cannot be applied to the connected server.
-
-### BugFixes (v0.9.4)
-
+  - [#590](https://github.com/esnet/gdg/pull/590) GDG now auto-detects Grafana v13+ and switches to the App Platform dashboard API with no configuration changes required. Dashboards are saved in a new Kubernetes-style format carrying additional metadata (folder, resource name, API version); v12 and older continue using the legacy API and flat JSON format unchanged. Repositories containing a mix of old and new format files are handled correctly, with a warning logged for any file that cannot be applied to the connected server.
+  - [#525](https://github.com/esnet/gdg/issues/525) / [#598](https://github.com/esnet/gdg/pull/598) Added filtering support for alerting contact points. Filters are configured under `alert_settings.contact_points.filters` and apply to all contact point operations (list, download, upload, clear).
+  - [#598](https://github.com/esnet/gdg/pull/598) Added `--filter` flag to all `gdg backup alerting templates` subcommands for name-based regex filtering.
+  - [#598](https://github.com/esnet/gdg/pull/598) The interactive config wizard (`gdg tools ctx add`) now includes an Alert Settings phase for configuring contact point filters.
 
 ### TechDebt (v0.9.4)
   - [570](https://github.com/esnet/gdg/issues/570) Upgraded website code to a latest version.

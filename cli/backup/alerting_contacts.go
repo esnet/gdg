@@ -35,7 +35,8 @@ func newAlertingContactCommand() simplecobra.Commander {
 
 func logWarning() {
 	slog.Warn("GDG does not manage the 'email receiver' entity.  It has a very odd behavior compared to all " +
-		"other entities. If you need to manage email contacts, please create a new contact.  GDG will ignore the default contact.")
+		"other entities. If you need to manage email contacts, please create a new contact.  GDG will ignore the default contact. " +
+		"This is as issue for v12 but to keep backward compatibility, anything named 'email receiver' will be ignored")
 }
 
 func newListContactPointsCmd() simplecobra.Commander {
@@ -62,15 +63,13 @@ func newListContactPointsCmd() simplecobra.Commander {
 				slog.Info("No contact points found")
 			} else {
 				for _, link := range contactPoints {
-					rawBytes, err := json.Marshal(link.Settings)
-					if err != nil {
-						slog.Warn("unable to marshall settings to valid JSON")
+					for _, receiver := range link.Receivers {
+						rawBytes, err := json.Marshal(receiver.Settings)
+						if err != nil {
+							slog.Warn("unable to marshall settings to valid JSON")
+						}
+						rootCmd.TableObj.AppendRow(table.Row{receiver.UID, link.Name, receiver.Type, string(rawBytes)})
 					}
-					typeVal := ""
-					if link.Type != nil {
-						typeVal = *link.Type
-					}
-					rootCmd.TableObj.AppendRow(table.Row{link.UID, link.Name, typeVal, string(rawBytes)})
 				}
 				rootCmd.Render(cd.CobraCommand, contactPoints)
 			}

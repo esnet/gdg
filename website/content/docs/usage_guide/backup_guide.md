@@ -16,11 +16,12 @@ Example: Alert Rules need the contact points to exist in older to be created. Th
 operate on to exist.
 
 {{< callout context="caution" title="Caution" icon="alert-triangle" >}}
-Unlike most other entities that GDG operates on, Alerting will be global to the Grafana organization. They will also ignore folder watch list, and any other filter set.
+Unlike most other entities that GDG operates on, alerting entities are global to the Grafana organization and ignore the watched folder list. This applies to notification policies, mute timings, and alert templates (when no `--filter` flag is passed).
 
+Contact points and templates support their own dedicated filtering — see the sections below.
 {{< /callout >}}
 
-**Alerting Rules is the exception that is tied to a folder and respect filters.**
+**Alert Rules are the exception: they are tied to a folder and respect folder filters.**
 
 #### Contact Points
 
@@ -46,6 +47,23 @@ gdg backup alerting contactpoints clear -- Clear all contact points
 └────────────────┴─────────┴─────────┴───────────────────────────────────────────────────┘
 ```
 {{< /details >}}
+
+#### Filtering
+
+All four contact point operations respect `alert_settings.contact_points.filters` in your context config. Filters match a [gjson](https://github.com/tidwall/gjson) path on the contact point JSON with a regular expression. Set `inclusive: true` to keep only matches (allowlist); omit it or set `false` to drop matches (denylist). Multiple filters are evaluated in order and the first match wins. Rules where the field path does not exist in the payload are silently skipped.
+
+```yaml
+alert_settings:
+  contact_points:
+    filters:
+      - field: name
+        regex: "discord"        # exclude contact points named "discord"
+      - field: receivers.#.type
+        regex: "slack"
+        inclusive: true         # keep ONLY contact points with a slack receiver
+```
+
+Nested array paths such as `receivers.#.type` and `receivers.#.settings.recipient` are supported. See [Contexts]({{< ref "contexts" >}}) for the full filter reference.
 
 #### Notifications
 
@@ -151,6 +169,14 @@ gdg backup alerting templates download  -- Download all templates
 gdg backup alerting templates upload -- Upload all contact templates
 gdg backup alerting templates clear -- Clear all templates
 ```
+
+All four commands accept a `--filter` flag for name-based regex filtering. An empty filter (the default) matches all templates.
+
+```sh
+gdg backup alerting templates list --filter "^prod_.*"     # list only templates whose name starts with "prod_"
+gdg backup alerting templates download --filter "critical"  # download only templates whose name contains "critical"
+```
+
 {{< details "Example Output:" >}}
 ```
 ┌───────────┬────────────┬───────────────────────────────────────────────────────┬──────────────────┐

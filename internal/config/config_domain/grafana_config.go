@@ -30,6 +30,7 @@ type dashFilter struct {
 type GrafanaConfig struct {
 	contextName              string
 	secureAuth               *SecureModel
+	AlertSettings            *AlertSettings        `mapstructure:"alert_settings" yaml:"alert_settings"`
 	ConnectionSettings       *ConnectionSettings   `mapstructure:"connections" yaml:"connections"`
 	DashboardSettings        *DashboardSettings    `mapstructure:"dashboard_settings" yaml:"dashboard_settings"`
 	Experimental             *ExperimentalFeatures `mapstructure:"experimental" yaml:"experimental,omitempty"`

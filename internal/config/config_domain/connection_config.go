@@ -1,14 +1,16 @@
 package config_domain
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/esnet/gdg/internal/ports/outbound"
+	"github.com/tidwall/gjson"
 	"gopkg.in/yaml.v3"
 )
 
@@ -18,6 +20,8 @@ const (
 	connectionUser          = "user"
 	connectionPassword      = "basicAuthPassword"
 )
+
+var ErrMissingField = errors.New("no valid field found")
 
 type CredentialRule struct {
 	RegexMatchesList
@@ -29,6 +33,55 @@ type MatchingRule struct {
 	Field     string `yaml:"field,omitempty" mapstructure:"field,omitempty"`
 	Regex     string `yaml:"regex,omitempty" mapstructure:"regex,omitempty"`
 	Inclusive bool   `yaml:"inclusive,omitempty" mapstructure:"inclusive,omitempty"`
+}
+
+// IsValid evaluates if the provided data satisfies the matching rule based on field existence, regex, and inclusion criteria.
+func (mr MatchingRule) IsValid(data []byte) (bool, error) {
+	fieldParse := gjson.GetBytes(data, mr.Field)
+	if !fieldParse.Exists() || mr.Regex == "" {
+		return false, ErrMissingField
+	}
+
+	matchFunc := func(val string, matcher *regexp.Regexp) (bool, bool) {
+		matchFound := false
+		match := matcher.Match([]byte(val))
+		// If inclusive, then the boolean is flipped
+		if match {
+			matchFound = true
+		}
+		if mr.Inclusive {
+			match = !match
+		}
+		if match {
+			return match, matchFound
+		}
+		return false, matchFound
+	}
+
+	p, err := regexp.Compile(mr.Regex)
+	if err != nil {
+		slog.Warn("Invalid regex for filter rule", "field", mr.Field)
+		return true, nil
+	}
+	if fieldParse.IsArray() {
+		for _, item := range fieldParse.Array() {
+			fieldValue := item.String()
+			match, found := matchFunc(fieldValue, p)
+			if found {
+				return match, nil
+			}
+		}
+		// No element matched the regex. For an inclusive rule this means the
+		// item does not satisfy the keep-condition, so it should be excluded.
+		if mr.Inclusive {
+			return true, nil
+		}
+		return false, nil
+	}
+
+	fieldValue := fieldParse.String()
+	match, _ := matchFunc(fieldValue, p)
+	return match, nil
 }
 
 // ConnectionFilters model wraps connection filters for grafana

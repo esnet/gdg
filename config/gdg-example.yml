@@ -26,6 +26,16 @@ contexts:
     storage: "any_label"
     output_path: test/data
     secure_location: /run/secrets
+    alert_settings:
+      contact_points:
+        filters:
+          ## matches all fields in array and checks each one for pattern
+          - field: receivers.#.settings.recipient
+            regex: test.*
+          ## Matches single field and matches pattern
+          - field: orgId
+            regex: 1
+            inclusive: true
     user:
       random_password: true
       min_length: 8
