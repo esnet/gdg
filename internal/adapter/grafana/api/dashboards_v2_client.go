@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"strings"
 
@@ -62,13 +63,34 @@ func (d *DashboardServiceImpl) k8sRestConfig() (*rest.Config, error) {
 // k8sNamespace resolves the App Platform namespace for the active organization.
 // OSS/on-prem: org 1 -> "default", org N -> "org-N". The org is encoded in the
 // namespace here instead of the legacy X-Grafana-Org-Id transport header.
+//
+// Token auth and basic/admin auth resolve the org differently:
+//
+//   - Token (service account) auth: tokens are permanently scoped to a single
+//     org and cannot switch, so GDG must discover *that* org directly by asking
+//     the token's own identity via GET /api/org. The legacy /api/user/orgs
+//     endpoint used for basic-auth org-name lookups is a signed-in-user-session
+//     endpoint that service account tokens cannot use reliably (it consistently
+//     fails for tokens, previously causing a silent, always-wrong fallback to
+//     org 1/"default" for any token whose real org wasn't the default org).
+//   - Basic/admin auth: resolve the configured organization_name to an ID via
+//     /api/user/orgs, as before.
 func (d *DashboardServiceImpl) k8sNamespace() string {
 	orgID := int64(config_domain.DefaultOrganizationId)
-	if orgName := d.grafanaConf.OrganizationName; orgName != "" {
-		if id, err := extended.NewExtendedApi(d.gdgConfig).GetConfiguredOrgId(orgName); err == nil {
+
+	switch {
+	case d.grafanaConf.GetAPIToken() != "":
+		if org, err := d.GetClient().Org.GetCurrentOrg(); err == nil && org.GetPayload() != nil {
+			orgID = org.GetPayload().ID
+		} else {
+			slog.Warn("unable to determine the token's organization via /api/org; defaulting to org 1/\"default\"", "err", err)
+		}
+	case d.grafanaConf.OrganizationName != "":
+		if id, err := extended.NewExtendedApi(d.gdgConfig).GetConfiguredOrgId(d.grafanaConf.OrganizationName); err == nil {
 			orgID = id
 		}
 	}
+
 	if orgID <= config_domain.DefaultOrganizationId {
 		return "default"
 	}
