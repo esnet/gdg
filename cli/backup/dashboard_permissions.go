@@ -61,7 +61,7 @@ func getDashboardPermTblWriter() table.Writer {
 	writer := table.NewWriter()
 	writer.SetOutputMirror(os.Stdout)
 	writer.SetStyle(table.StyleLight)
-	writer.AppendHeader(table.Row{"id", "name", "slug", "folder", "uid", "url"}, table.RowConfig{AutoMerge: true})
+	writer.AppendHeader(table.Row{"id", "name", "folder", "uid", "url"}, table.RowConfig{AutoMerge: true})
 	return writer
 }
 
@@ -91,7 +91,7 @@ func newDashboardPermissionListCmd() simplecobra.Commander {
 					urlValue := getDashboardPermUrl(perms.Dashboard.Hit, rootCmd.ConfigSvc())
 					link := perms.Dashboard
 					writer.AppendRow(table.Row{
-						link.ID, link.Title, link.Slug, link.NestedPath,
+						link.ID, link.Title, link.NestedPath,
 						link.UID, urlValue,
 					})
 					writer.Render()

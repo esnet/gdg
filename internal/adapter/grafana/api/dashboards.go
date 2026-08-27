@@ -19,8 +19,6 @@ import (
 	"github.com/esnet/gdg/pkg/encode"
 	"github.com/tidwall/gjson"
 
-	"github.com/gosimple/slug"
-
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 
 	"github.com/grafana/grafana-openapi-client-go/client/dashboards"
@@ -46,7 +44,7 @@ func setupDashReaders(filterObj outbound.Filter) {
 		case domain.TagsFilter:
 			return val.Tags, nil
 		case domain.DashFilter:
-			return slug.Make(val.Title), nil
+			return val.UID, nil
 
 		default:
 			return nil, fmt.Errorf("unsupported data type")
@@ -75,14 +73,19 @@ func setupDashReaders(filterObj outbound.Filter) {
 			}), nil
 
 		case domain.DashFilter:
-			// Try top-level "title" first, then the legacy Grafana envelope "dashboard.title".
-			// Return an empty string (not an error) when no title is found so the validation
+			// Try top-level "uid" first (v1 raw JSON and v2 filterJSON), then the
+			// legacy Grafana envelope "dashboard.uid", and finally "resource.metadata.name"
+			// for DashboardV2Gdg files stored on disk.
+			// Return an empty string (not an error) when no UID is found so the validation
 			// function can decide: if no dash filter is configured it passes via its own
 			// `val == "" || exp == ""` short-circuit; if a filter IS configured the empty
-			// string correctly fails to match any slug.
-			r := gjson.GetBytes(val, "title")
+			// string correctly fails to match any UID.
+			r := gjson.GetBytes(val, "uid")
 			if !r.Exists() || r.String() == "" {
-				r = gjson.GetBytes(val, "dashboard.title")
+				r = gjson.GetBytes(val, "dashboard.uid")
+			}
+			if !r.Exists() || r.String() == "" {
+				r = gjson.GetBytes(val, "resource.metadata.name")
 			}
 			if !r.Exists() || r.String() == "" {
 				return "", nil
@@ -195,7 +198,7 @@ func NewDashboardFilter(cfg *configDomain.GDGAppConfiguration, entries ...string
 		if val == "" || exp == "" {
 			return nil
 		}
-		if exp != slug.Make(val) {
+		if exp != val {
 			return fmt.Errorf("failed validation test val:%s  expected: %s", val, exp)
 		}
 		return nil

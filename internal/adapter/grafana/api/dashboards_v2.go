@@ -216,8 +216,8 @@ func (d *DashboardServiceImpl) dashboardV2PassesFilters(filterReq outbound.Filte
 	}
 
 	filterJSON, err := json.Marshal(map[string]any{
-		"title": dr.Spec.Title,
-		"tags":  dr.Spec.Tags,
+		"uid":  dr.Name,
+		"tags": dr.Spec.Tags,
 	})
 	if err != nil {
 		return false

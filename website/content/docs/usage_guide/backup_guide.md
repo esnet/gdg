@@ -235,17 +235,24 @@ gdg backup dash upload -- Exports all dashboard from local filesystem (matching 
 gdg backup dash clear -- Deletes all dashboards
 ```
 
-You can also use filtering options to list or import your dashboard by folder or by tags.
+You can also use filtering options to list or import your dashboard by folder, by tags, or by UID.
 
 ```sh
 gdg backup dash download -f myFolder
 gdg backup dash download -t myTag
 gdg backup dash download -t tagA -t tagB  -t complex,tagC
+gdg backup dash download -u 000000003
 ```
 The command above will return any dashboard that is tagged with `tagA` or `tagB` or `complex,tagC`
 
+**Available Flags:**
+  - `-f, --folder string`       Filter by folder name
+  - `-t, --tags stringArray`    Filter by tag (repeatable; any match returns the dashboard)
+  - `-u, --uid string`          Filter by dashboard UID — the value shown in the `UID` column of `gdg backup dash list`
 
 **NOTE**: Starting with v0.5.2 full crud support for tag filtering.  You can list,upload,clear,download dashboards using tag filters.  Keep in mind the tag filtering on any matching tags.  ie.  Any dashboard that has tagA or tagB or complex,tagC will be listed,uploaded, etc.
+
+**NOTE**: Starting with v0.9.4 the `--dashboard`/`-d` flag (slug-based) has been replaced by `--uid`/`-u` (UID-based). Use the UID shown in `gdg backup dash list` output.
 
 ### Dashboard Permissions
 
@@ -268,10 +275,10 @@ gdg backup dash permission upload -- Upload all dashboard permissions from local
 gdg backup dash permission clear -- Clear all dashboard permissions (leaves default values)
 ```
 
-You can additionally filter by dashboard slug to operate on a single dashboard:
+You can additionally filter by dashboard UID to operate on a single dashboard:
 
 ```sh
-gdg backup dash permission list --dashboard bandwidth-dashboard
+gdg backup dash permission list --uid 000000003
 ```
 
 {{< details "Example Output (v13+):" >}}
