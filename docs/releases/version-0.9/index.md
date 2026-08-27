@@ -1,5 +1,53 @@
 # Version 0.9<no value>
 
+
+## Release Notes for v0.9.4
+
+**Release Date: 08/27/2026**
+
+### Min Recommended Grafana Versions (v0.9.4)
+
+- Grafana 11+ / 12+ (v1 legacy API — default behavior, no config changes required)
+- Grafana 13+ (v2 App Platform API — auto-enabled, no config changes required)
+
+### Breaking Changes (v0.9.4)
+
+{{< callout context="note" title="Note" icon="info-circle" >}}
+This release has a major TUI revamp that should capture all configuration options as of 0.9.3. This should allow the user to configure
+GDG using the easy-to-use wizard as well as providing a custom configuration file if that's preferred.
+{{< /callout >}}
+
+{{< callout context="caution" title="Dashboard File Format Change" icon="alert-triangle" >}}
+Dashboards downloaded from a Grafana v13+ instance are saved in a new format. These files are not compatible with older
+versions of GDG. If you need to roll back, re-download your dashboards after downgrading.
+{{< /callout >}}
+
+{{< callout context="caution" title="Dashboard Filter Flag: --dashboard Replaced by --uid" icon="alert-triangle" >}}
+The `--dashboard` / `-d` flag has been renamed to `--uid` / `-u` and now filters by **dashboard UID** instead of slug.
+If you previously used `--dashboard bandwidth-dashboard`, update your scripts to use `--uid 000000003` (the UID shown in `gdg backup dash list`).
+The dashboard listing output now also shows the Grafana UID (resource name) instead of the Kubernetes metadata UID.
+{{< /callout >}}
+
+  - Dashboard files downloaded from Grafana v13+ use a new storage format. Files from older GDG versions will continue to upload correctly, but re-downloading is recommended to migrate to the new format.
+  - The `--dashboard` / `-d` flag is replaced by `--uid` / `-u`. Filtering now matches the dashboard UID visible in `gdg backup dash list` output rather than a slug derived from the title.
+
+### Changes (v0.9.4)
+  - [#601](https://github.com/esnet/gdg/issues/601) The `--dashboard` / `-d` filter flag has been renamed to `--uid` / `-u` and now filters by dashboard UID instead of slug, since Grafana no longer exposes slug data reliably in the search API response. The `gdg backup dash list` output now shows the Grafana UID (resource name) in the `UID` column, which can be passed directly to `--uid`.
+  - [569](https://github.com/esnet/gdg/issues/569) Added plugin rekey — updates all stored values with their encrypted equivalent when enabling a new cipher plugin, so existing backups stay accessible.
+  - [568](https://github.com/esnet/gdg/issues/568) A plugin registry was added to help discover available plugins.
+  - [566](https://github.com/esnet/gdg/issues/566) TUI support for the plugin registry, allowing plugin discovery and selection from the interactive wizard.
+  - [#590](https://github.com/esnet/gdg/pull/590) GDG now auto-detects Grafana v13+ and switches to the App Platform dashboard API with no configuration changes required. Dashboards are saved in a new Kubernetes-style format carrying additional metadata (folder, resource name, API version); v12 and older continue using the legacy API and flat JSON format unchanged. Repositories containing a mix of old and new format files are handled correctly, with a warning logged for any file that cannot be applied to the connected server.
+  - [#525](https://github.com/esnet/gdg/issues/525) / [#598](https://github.com/esnet/gdg/pull/598) Added filtering support for alerting contact points. Filters are configured under `alert_settings.contact_points.filters` and apply to all contact point operations (list, download, upload, clear).
+  - [#598](https://github.com/esnet/gdg/pull/598) Added `--filter` flag to all `gdg backup alerting templates` subcommands for name-based regex filtering.
+  - [#598](https://github.com/esnet/gdg/pull/598) The interactive config wizard (`gdg tools ctx add`) now includes an Alert Settings phase for configuring contact point filters.
+
+### TechDebt (v0.9.4)
+  - [570](https://github.com/esnet/gdg/issues/570) Upgraded website code to a latest version.
+  - [571](https://github.com/esnet/gdg/issues/571) Fixed documentation issues that help clarify how to use gdg for new users
+  - [574](https://github.com/esnet/gdg/issues/574) Upgraded to use huh v2 (and later replacet with bubbles deprecating huh from code base)
+
+
+
 ## Release Notes for v0.9.3
 
 **Release Date: 03/05/2026**

@@ -70,6 +70,37 @@ The default rule is defined below.  This should match every possible condition a
         regex: ".*"
     secure_data: "default.yaml"
 ```
+### Alert Settings
+
+The `alert_settings` key configures filtering behavior for Grafana alerting entities. All settings are nested under `alert_settings:` within a context.
+
+#### Contact Point Filters
+
+Filters define a list of rules applied when listing, downloading, uploading, or clearing contact points. They use the same `field / regex / inclusive` structure as connection filters, but target the contact point JSON payload.
+
+Each filter has 3 components:
+
+1. **Field** — a [gjson](https://github.com/tidwall/gjson) path into the contact point object. Supports nested and array paths, e.g. `name`, `orgId`, `receivers.#.type`, `receivers.#.settings.recipient`.
+2. **Regex** — any valid Go regular expression matched against the extracted field value.
+3. **Inclusive** — when `false` (the default), matching items are excluded (denylist). When `true`, only matching items are kept (allowlist). Rules where the field path does not exist in the payload are silently skipped.
+
+Filters are evaluated in order; the first matching rule for a given contact point determines its fate.
+
+```yaml
+contexts:
+  my-context:
+    alert_settings:
+      contact_points:
+        filters:
+          - field: name
+            regex: "discord"          # exclude any contact point named "discord"
+          - field: receivers.#.type
+            regex: "slack"
+            inclusive: true           # keep ONLY contact points with a slack receiver
+```
+
+The interactive config wizard (`gdg tools ctx add`) includes an "Alert Settings" phase that lets you configure these filters without editing YAML directly.
+
 ### Dashboard Settings
 
 The entries under `dashboard_settings` define custom behavior for how dashboards are imported.  They can be typically ignored unless you wish to enable a specialized behavior.

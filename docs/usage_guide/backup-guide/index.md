@@ -12,11 +12,12 @@ Example: Alert Rules need the contact points to exist in older to be created. Th
 operate on to exist.
 
 {{< callout context="caution" title="Caution" icon="alert-triangle" >}}
-Unlike most other entities that GDG operates on, Alerting will be global to the Grafana organization. They will also ignore folder watch list, and any other filter set.
+Unlike most other entities that GDG operates on, alerting entities are global to the Grafana organization and ignore the watched folder list. This applies to notification policies, mute timings, and alert templates (when no `--filter` flag is passed).
 
+Contact points and templates support their own dedicated filtering — see the sections below.
 {{< /callout >}}
 
-**Alerting Rules is the exception that is tied to a folder and respect filters.**
+**Alert Rules are the exception: they are tied to a folder and respect folder filters.**
 
 #### Contact Points
 
@@ -42,6 +43,23 @@ gdg backup alerting contactpoints clear -- Clear all contact points
 └────────────────┴─────────┴─────────┴───────────────────────────────────────────────────┘
 ```
 {{< /details >}}
+
+#### Filtering
+
+All four contact point operations respect `alert_settings.contact_points.filters` in your context config. Filters match a [gjson](https://github.com/tidwall/gjson) path on the contact point JSON with a regular expression. Set `inclusive: true` to keep only matches (allowlist); omit it or set `false` to drop matches (denylist). Multiple filters are evaluated in order and the first match wins. Rules where the field path does not exist in the payload are silently skipped.
+
+```yaml
+alert_settings:
+  contact_points:
+    filters:
+      - field: name
+        regex: "discord"        # exclude contact points named "discord"
+      - field: receivers.#.type
+        regex: "slack"
+        inclusive: true         # keep ONLY contact points with a slack receiver
+```
+
+Nested array paths such as `receivers.#.type` and `receivers.#.settings.recipient` are supported. See [Contexts]({{< ref "contexts" >}}) for the full filter reference.
 
 #### Notifications
 
@@ -125,7 +143,7 @@ gdg backup alerting mute-timings upload      Upload all alert timings for the gi
 ║           ║                       ║           ║     "start_time": "01:00" ║                ║               ║
 ║           ║                       ║           ║   }                       ║                ║               ║
 ║           ║                       ║           ║ ]                         ║                ║               ║
-║ [         ║ Antarctica/South_Pole ║ [         ║ [                         ║ [              ║ [             ║
+║ [ ║ Pacific/Auckland       ║ [         ║ [                         ║ [              ║ [             ║
 ║   "15:31" ║                       ║   "11:12" ║   {                       ║   "friday",    ║   "1900:2700" ║
 ║ ]         ║                       ║ ]         ║     "end_time": "10:00",  ║   "thursday",  ║ ]             ║
 ║           ║                       ║           ║     "start_time": "08:00" ║   "wednesday"  ║               ║
@@ -147,6 +165,14 @@ gdg backup alerting templates download  -- Download all templates
 gdg backup alerting templates upload -- Upload all contact templates
 gdg backup alerting templates clear -- Clear all templates
 ```
+
+All four commands accept a `--filter` flag for name-based regex filtering. An empty filter (the default) matches all templates.
+
+```sh
+gdg backup alerting templates list --filter "^prod_.*"     # list only templates whose name starts with "prod_"
+gdg backup alerting templates download --filter "critical"  # download only templates whose name contains "critical"
+```
+
 {{< details "Example Output:" >}}
 ```
 ┌───────────┬────────────┬───────────────────────────────────────────────────────┬──────────────────┐
@@ -178,6 +204,19 @@ gdg backup c upload -- Exports all dashboard from local filesystem (matching fol
 gdg backup c clear -- Deletes all connections
 ```
 
+#### Connection Permissions
+
+{{< callout context="caution" title="Enterprise required" icon="alert-triangle" >}}
+Connection permissions require **Grafana Enterprise**. See the [Enterprise Guide]({{< ref "enterprise_guide" >}}) for full details on prerequisites and troubleshooting steps.
+{{< /callout >}}
+
+```sh
+gdg backup c permission list     -- Lists all current connection permissions
+gdg backup c permission download -- Download all connection permissions to local filesystem
+gdg backup c permission upload   -- Upload connection permissions from local filesystem to Grafana
+gdg backup c permission clear    -- Clear all explicit connection permissions (leaves system defaults)
+```
+
 
 ### Dashboards
 
@@ -192,17 +231,69 @@ gdg backup dash upload -- Exports all dashboard from local filesystem (matching 
 gdg backup dash clear -- Deletes all dashboards
 ```
 
-You can also use filtering options to list or import your dashboard by folder or by tags.
+You can also use filtering options to list or import your dashboard by folder, by tags, or by UID.
 
 ```sh
 gdg backup dash download -f myFolder
 gdg backup dash download -t myTag
 gdg backup dash download -t tagA -t tagB  -t complex,tagC
+gdg backup dash download -u 000000003
 ```
 The command above will return any dashboard that is tagged with `tagA` or `tagB` or `complex,tagC`
 
+**Available Flags:**
+  - `-f, --folder string`       Filter by folder name
+  - `-t, --tags stringArray`    Filter by tag (repeatable; any match returns the dashboard)
+  - `-u, --uid string`          Filter by dashboard UID — the value shown in the `UID` column of `gdg backup dash list`
 
 **NOTE**: Starting with v0.5.2 full crud support for tag filtering.  You can list,upload,clear,download dashboards using tag filters.  Keep in mind the tag filtering on any matching tags.  ie.  Any dashboard that has tagA or tagB or complex,tagC will be listed,uploaded, etc.
+
+**NOTE**: Starting with v0.9.4 the `--dashboard`/`-d` flag (slug-based) has been replaced by `--uid`/`-u` (UID-based). Use the UID shown in `gdg backup dash list` output.
+
+### Dashboard Permissions
+
+{{< callout context="note" title="Note" icon="info-circle" >}}
+Available with +v0.7.2. Dashboard permissions are supported in both Grafana OSS and Enterprise.
+
+Starting with Grafana v13, GDG automatically uses the RBAC access-control API
+(`/api/access-control/dashboards/{uid}`) instead of the legacy ACL API
+(`/api/dashboards/uid/{uid}/permissions`). Downloaded permission files are tagged
+with a `gdg_api_version` field so GDG can detect and handle format differences at
+upload time — preventing cross-version mismatches.
+{{< /callout >}}
+
+All commands can use `permission` or `p` to manage dashboard permissions.
+
+```sh
+gdg backup dash permission list -- Lists all current dashboard permissions
+gdg backup dash permission download -- Download all dashboard permissions from Grafana
+gdg backup dash permission upload -- Upload all dashboard permissions from local filesystem to Grafana
+gdg backup dash permission clear -- Clear all dashboard permissions (leaves default values)
+```
+
+You can additionally filter by dashboard UID to operate on a single dashboard:
+
+```sh
+gdg backup dash permission list --uid 000000003
+```
+
+{{< details "Example Output (v13+):" >}}
+```
+┌─────────────────────┬───────────┐
+│ DASHBOARD NAME      │ UID       │
+├─────────────────────┼───────────┤
+│ Bandwidth Dashboard │ 000000003 │
+└─────────────────────┴───────────┘
+╔═══════════════╦═════════════════════╦════════════╦═══════════╦═════════════╦════════════╗
+║ DASHBOARD UID ║ DASHBOARD TITLE     ║ USERLOGIN  ║ TEAM      ║ BUILTIN ROLE║ PERMISSION ║
+╠═══════════════╬═════════════════════╬════════════╬═══════════╬═════════════╬════════════╣
+║ 000000003     ║ Bandwidth Dashboard ║ bob        ║           ║             ║ Edit       ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║ musicians ║             ║ Admin      ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║           ║ Editor      ║ Edit       ║
+║ 000000003     ║ Bandwidth Dashboard ║            ║           ║ Viewer      ║ View       ║
+╚═══════════════╩═════════════════════╩════════════╩═══════════╩═════════════╩════════════╝
+```
+{{< /details >}}
 
 ### Folders
 

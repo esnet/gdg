@@ -8,67 +8,67 @@
 
 > GDG is a tool used to manage dashboards, connections, orgs and various entities of the Grafana application platform.
 
-- [Releases](https://software.es.net/gdg/docs/releases/)
-- [GDG](https://software.es.net/gdg/docs/gdg/)
-- [Usage Guide](https://software.es.net/gdg/docs/usage_guide/)
-- [Generate Docs (templating)](https://software.es.net/gdg/docs/templating/)
-- [Tutorials](https://software.es.net/gdg/docs/tutorials/)
-- [Cookbook](https://software.es.net/gdg/docs/cookbook/): A collection of recipes and patterns that can be used with GDG, including kubernetes configs, docker, etc
-- [Developer Guide](https://software.es.net/gdg/docs/developer/)
+- [Releases](https://software.es.net/gdg/docs/releases/): GDG release notes and changelog covering new features, breaking changes, bug fixes, and upgrade guidance for each version.
+- [GDG](https://software.es.net/gdg/docs/gdg/): Documentation for GDG (Grafana Dash-n-Grab): installation, configuration, and managing Grafana resources via CLI.
+- [Usage Guide](https://software.es.net/gdg/docs/usage_guide/): GDG usage guide covering backup and restore operations, tools commands, enterprise features, and managing Grafana resources.
+- [Generate Docs (templating)](https://software.es.net/gdg/docs/templating/): GDG templating system for generating Grafana dashboards from reusable templates using the gdg-generate companion tool.
+- [Tutorials](https://software.es.net/gdg/docs/tutorials/): Step-by-step GDG tutorials covering nested folders, multi-org authentication, library panels, and other common workflows.
+- [Cookbook](https://software.es.net/gdg/docs/cookbook/): A collection of practical recipes and deployment patterns for GDG, including Kubernetes cron jobs and Docker examples.
+- [Developer Guide](https://software.es.net/gdg/docs/developer/): Resources for contributors and developers working on GDG, covering setup, architecture, and contribution guidelines.
 
 ### Releases
 
+> GDG release notes and changelog covering new features, breaking changes, bug fixes, and upgrade guidance for each version.
 
-
-- [Version 0.9](https://software.es.net/gdg/docs/releases/version-0.9/): Release Notes for v0.9
-- [Version 0.8](https://software.es.net/gdg/docs/releases/version-0.8/): Release Notes for v0.8
-- [Version 0.7](https://software.es.net/gdg/docs/releases/version-0.7/): Release Notes for v0.7
-- [Legacy Versions](https://software.es.net/gdg/docs/releases/legacy-versions/): Release Notes for Legacy Versions
+- [Version 0.9](https://software.es.net/gdg/docs/releases/version-0.9/): Release notes for GDG v0.9, including the new Dashboard App Platform API, plugin system, secure fields, and TUI improvements.
+- [Version 0.8](https://software.es.net/gdg/docs/releases/version-0.8/): Release notes for GDG v0.8, covering new storage backends, logo additions, global CLI context flags, and bug fixes.
+- [Version 0.7](https://software.es.net/gdg/docs/releases/version-0.7/): Release notes for GDG v0.7, including nested folder support, breaking changes, bug fixes, and security updates.
+- [Legacy Versions](https://software.es.net/gdg/docs/releases/legacy-versions/): Release notes for legacy GDG versions (v0.4 through v0.6), including historical changes, breaking changes, and bug fixes.
 
 ### GDG
 
+> Documentation for GDG (Grafana Dash-n-Grab): installation, configuration, and managing Grafana resources via CLI.
 
-
-- [Configuration](https://software.es.net/gdg/docs/gdg/configuration/)
-- [Getting Started](https://software.es.net/gdg/docs/gdg/getting-started/)
-- [Installation](https://software.es.net/gdg/docs/gdg/installation/)
-- [Frequently Asked Questions](https://software.es.net/gdg/docs/gdg/frequently-asked-questions/)
+- [Configuration](https://software.es.net/gdg/docs/gdg/configuration/): GDG configuration reference covering config file structure, contexts, storage backends, plugins, and global settings.
+- [Getting Started](https://software.es.net/gdg/docs/gdg/getting-started/): Quick start guide for GDG: create a configuration, connect to a Grafana instance, and run your first backup or restore.
+- [Installation](https://software.es.net/gdg/docs/gdg/installation/): How to install GDG using pre-built binaries, RPM packages, or building from source via the Go toolchain or goreleaser.
+- [Frequently Asked Questions](https://software.es.net/gdg/docs/gdg/frequently-asked-questions/): Answers to common questions about GDG capabilities, limitations, supported Grafana versions, and typical use cases.
 
 ### Usage Guide
 
+> GDG usage guide covering backup and restore operations, tools commands, enterprise features, and managing Grafana resources.
 
-
-- [Backup Guide](https://software.es.net/gdg/docs/usage_guide/backup-guide/)
-- [Tools Guide](https://software.es.net/gdg/docs/usage_guide/tools-guide/)
-- [Enterprise Guide](https://software.es.net/gdg/docs/usage_guide/enterprise-guide/)
-- [Other Commands](https://software.es.net/gdg/docs/usage_guide/other-commands/)
+- [Backup Guide](https://software.es.net/gdg/docs/usage_guide/backup-guide/): GDG backup and restore guide covering list, download, upload, and delete operations for dashboards, alerts, folders, and connections.
+- [Tools Guide](https://software.es.net/gdg/docs/usage_guide/tools-guide/): Guide to the GDG tools subcommand covering auth management, context switching, organization tools, and user administration.
+- [Enterprise Guide](https://software.es.net/gdg/docs/usage_guide/enterprise-guide/): GDG enterprise features guide covering data source permissions and other Grafana Enterprise-only operations.
+- [Other Commands](https://software.es.net/gdg/docs/usage_guide/other-commands/): Reference for miscellaneous GDG commands covering context management, organization switching, and other utility operations.
 
 ### Generate Docs (templating)
 
+> GDG templating system for generating Grafana dashboards from reusable templates using the gdg-generate companion tool.
 
-
-- [Configuration](https://software.es.net/gdg/docs/templating/configuration/)
-- [Usage Guide](https://software.es.net/gdg/docs/templating/usage-guide/)
+- [Configuration](https://software.es.net/gdg/docs/templating/configuration/): Configuration reference for the GDG templating system, covering template structure, entity definitions, and YAML options.
+- [Usage Guide](https://software.es.net/gdg/docs/templating/usage-guide/): Usage guide for the GDG templating tool (gdg-generate), covering context selection, template rendering, and dashboard generation.
 
 ### Tutorials
 
+> Step-by-step GDG tutorials covering nested folders, multi-org authentication, library panels, and other common workflows.
 
-
-- [Working with Library Panels](https://software.es.net/gdg/docs/tutorials/working-with-library-panels/)
-- [Organization and Authentication](https://software.es.net/gdg/docs/tutorials/organization-and-authentication/)
-- [Working with Nested Folders](https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/)
+- [Working with Library Panels](https://software.es.net/gdg/docs/tutorials/working-with-library-panels/): Tutorial for managing Grafana library panels with GDG, covering backup, restore, folder rules, and immutability constraints.
+- [Organization and Authentication](https://software.es.net/gdg/docs/tutorials/organization-and-authentication/): Tutorial on managing multiple Grafana organizations with GDG, including API token auth, basic auth, and org switching.
+- [Working with Nested Folders](https://software.es.net/gdg/docs/tutorials/working-with-nested-folders/): Tutorial for using GDG with Grafana nested folders, covering configuration, watched folder patterns, and version requirements.
 
 ### Cookbook
 
-> A collection of recipes and patterns that can be used with GDG, including kubernetes configs, docker, etc
+> A collection of practical recipes and deployment patterns for GDG, including Kubernetes cron jobs and Docker examples.
 
 - [Docker Compose Example](https://software.es.net/gdg/docs/cookbook/docker-compose-example/): Illustrates an example on how to use docker and taking advantage of the built in secret feature in conjunction with GDG.
-- [Kubernetes Crontab Example](https://software.es.net/gdg/docs/cookbook/kubernetes-crontab-example/)
+- [Kubernetes Crontab Example](https://software.es.net/gdg/docs/cookbook/kubernetes-crontab-example/): Example Kubernetes CronJob manifest for running scheduled GDG dashboard backups in a cluster using a service account.
 
 ### Developer Guide
 
+> Resources for contributors and developers working on GDG, covering setup, architecture, and contribution guidelines.
 
-
-- [Developer Guide](https://software.es.net/gdg/docs/developer/developer-guide/)
-- [Contributing](https://software.es.net/gdg/docs/developer/contributing/)
+- [Developer Guide](https://software.es.net/gdg/docs/developer/developer-guide/): Developer reference for GDG covering build tooling, Go and task dependencies, architecture overview, and testing guidance.
+- [Contributing](https://software.es.net/gdg/docs/developer/contributing/): Guidelines for contributing to GDG, including how to submit pull requests, set up a development environment, and run tests.
 

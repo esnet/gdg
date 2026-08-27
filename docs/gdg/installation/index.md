@@ -24,6 +24,7 @@ dpkg -i ./gdg_0.6.0_amd64.deb
 ```sh
 brew tap esnet/gdg
 brew update
+brew trust --cask esnet/gdg/gdg
 brew install --cask gdg
 ```
 

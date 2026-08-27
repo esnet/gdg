@@ -1,8 +1,10 @@
 # Working with Nested Folders<no value>
 
-Starting with GDG 0.7, support for nested folders has been added.  This feature requires grafana 11+.  You can watch a Intro [video](https://www.youtube.com/watch?v=R9mehA0EssU) or read the offical annoucements [here](https://grafana.com/docs/grafana-cloud/whats-new/2024-02-27-subfolders/).
+NOTE: This is now deprecated and is now the default behavior.
 
-It is current behind a feature toggle.  You will need to set the folliwing value in your grafana.ini
+Starting with GDG 0.7, support for nested folders has been added.  This feature requires grafana 11+.  You can watch a Intro [video](https://www.youtube.com/watch?v=R9mehA0EssU) or read the official announcements [here](https://grafana.com/docs/grafana-cloud/whats-new/2024-02-27-subfolders/).
+
+It is current behind a feature toggle.  You will need to set the following value in your grafana.ini
 
 ```toml
 [feature_toggles]
@@ -62,14 +64,14 @@ watched:
 `gdg backup folders list `
 
 ```sh
-┌────────────────┬──────────────┬────────────┐
+┌────────────────┬──────────────┬───────────────────┐
 │ UID            │ TITLE      │ NESTEDPATH          │
-├────────────────┼──────────────┼────────────┤
+├────────────────┼──────────────┼───────────────────┤
 │ ddxll3n7dse80d │ dummy      │ Others/dummy        │
 │ edx4a6qbjt5hcd │ dummy      │ dummy               │
 │ fdxll3n62cbnkf │ Others     │ Others              │
 │ fdxll3nd7jv9cc │ someFolder │ Others/someFolder   │
-└────────────────┴────────────┴──────────────┘
+└────────────────┴────────────┴─────────────────────┘
 ```
 
 ## Folder Permission

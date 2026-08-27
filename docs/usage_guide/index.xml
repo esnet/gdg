@@ -8,14 +8,21 @@ operate on to exist.&lt;/p&gt;</description></item><item><title>Tools Guide</tit
 switching contexts or Orgs for a given user and so on.&lt;/p&gt;
 &lt;h3 id="authentication-management"&gt;Authentication Management&lt;/h3&gt;
 &lt;p&gt;This is mainly added as a convenience mechanism. It was needed to support some testing and exposing the feature is useful as a really simple CLI to create tokens / service Keys. You probably should be using other tooling for managing all your service files and tokens. Unlike most other entities, this is not a backup feature as much as utility.&lt;/p&gt;</description></item><item><title>Enterprise Guide</title><link>https://software.es.net/gdg/docs/usage_guide/enterprise-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/enterprise-guide/</guid><description>&lt;p&gt;The features listed below are for the enterprise edition of Grafana only. They will not work on the OSS version.&lt;/p&gt;
-&lt;p&gt;In order to use these features you need.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Have a running Enterprise version of grafana, I&amp;rsquo;ll defer to the grafana community on instructions on how to set this up.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;For a docker setup, you need to set:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;GF_ENTERPRISE_LICENSE_TEXT='jwt token value'&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id="connections-permissions"&gt;Connections Permissions&lt;/h3&gt;
-&lt;p&gt;Note: Available with +v0.4.6. All of these commands are a subset of the connection command. Requires grafana version: +v10.2.3&lt;/p&gt;</description></item><item><title>Other Commands</title><link>https://software.es.net/gdg/docs/usage_guide/other-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/other-commands/</guid><description>&lt;p&gt;These are miscellaneous commands that don&amp;rsquo;t fit under any category.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;To use any enterprise feature you need a running Grafana Enterprise instance with a valid JWT license.&lt;/p&gt;
+&lt;p&gt;For a Docker setup, pass the license as an environment variable:&lt;/p&gt;
+
+
+
+&lt;div class="expressive-code"&gt;
+ &lt;figure class="frame is-terminal not-content"&gt;
+ &lt;figcaption class="header"&gt;
+ &lt;span class="title"&gt;&lt;/span&gt;
+ &lt;/figcaption&gt;
+ &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sh" data-lang="sh"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;GF_ENTERPRISE_LICENSE_TEXT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;lt;your jwt token&amp;gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+ &lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;GDG detects enterprise status automatically by calling Grafana&amp;rsquo;s licensing API — no GDG configuration key is needed. If the connected instance is not Enterprise, GDG will refuse enterprise-only commands with a clear error message.&lt;/p&gt;</description></item><item><title>Other Commands</title><link>https://software.es.net/gdg/docs/usage_guide/other-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/usage_guide/other-commands/</guid><description>&lt;p&gt;These are miscellaneous commands that don&amp;rsquo;t fit under any category.&lt;/p&gt;
 &lt;h3 id="contexts"&gt;Contexts&lt;/h3&gt;
 &lt;p&gt;Starting with version 0.1.4 contexts are now supported. Your config can contain one or multiple contexts which are essentially a grafana server configuration.&lt;/p&gt;
 &lt;p&gt;ctx is shorthand for context and basic CRUD is supported which is mainly tooling to make it easier to avoid updating the yaml file manually&lt;/p&gt;
