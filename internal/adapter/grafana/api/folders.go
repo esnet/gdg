@@ -185,16 +185,17 @@ func (s *DashNGoImpl) ListFolders(filter outbound.Filter) []*domain.NestedHit {
 		filter = nil
 	}
 
-	p := search.NewSearchParams()
-	p.Type = &domain.ApiConsts.SearchTypeFolder
-	folderRawListing, err := s.GetClient().Search.Search(p)
-	if err != nil {
-		log.Fatal("unable to retrieve folder list.")
-	}
+	// See searchAllPages' doc comment (base_service.go): an unpaginated
+	// Search() call silently truncates to one page once an org has more
+	// folders than fit on it, the same bug class as the v2 dashboard
+	// pagination issue.
+	rawHits := searchAllPages(s.GetClient(), func(p *search.SearchParams) {
+		p.Type = &domain.ApiConsts.SearchTypeFolder
+	})
 
 	folderListing := make([]*domain.NestedHit, 0)
 
-	lo.ForEach(folderRawListing.GetPayload(), func(item *models.Hit, index int) {
+	lo.ForEach(rawHits, func(item *models.Hit, index int) {
 		newItem := &domain.NestedHit{Hit: item}
 		folderListing = append(folderListing, newItem)
 	})
