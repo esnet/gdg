@@ -177,23 +177,72 @@ func (s *DashNGoImpl) InitOrganizations() {
 			}
 		}
 
-	} else if s.grafanaConf.GetOrganizationName() != "unknown" {
-		slog.Warn("Tokens do no operate across multiple Organizations. Cannot verify or scope into the given org. Please be sure your token belongs to the correct organization", slog.String("configure organization", s.grafanaConf.GetOrganizationName()))
-	} else if s.grafanaConf.GetAPIToken() != "" {
-		// No organization_name is configured for this token context, so
-		// GetOrganizationName() would otherwise report "unknown" for the rest
-		// of the run (every "Organization"/"orgName" log field included).
-		// A token is permanently scoped to a single org, so there is no
-		// ambiguity to resolve: ask the token's own identity via GET /api/org
-		// and cache the real org name for display purposes.
-		if org := s.GetTokenOrganization(); org != nil && org.Name != "" {
-			s.grafanaConf.OrganizationName = org.Name
-		}
+	} else {
+		// Token (service account) auth and anonymous access are both pinned to
+		// exactly one org that GDG cannot switch, so unlike the basic-auth
+		// branch above there is no "requested vs actual" reconciliation to
+		// do -- only discovery of what that one org actually is.
+		s.resolvePinnedOrgIdentity()
 	}
 
 	if s.grafanaConf.IsGrafanaAdmin() {
 		slog.Info("Running Sanity Check of Organization Membership")
 		s.sanitizeOrganizationMembership()
+	}
+}
+
+// resolvePinnedOrgIdentity handles org discovery for auth modes that cannot
+// switch organizations (token and anonymous access -- anything that reaches
+// here because IsBasicAuth() is false). GetTokenOrganization, despite its
+// name, resolves via GetClient(), which for these modes always means "the
+// one identity this context has" (a bearer token, or an anonymous request):
+// GET /api/org is the only thing that reliably reports that identity's real
+// org, because it works for tokens (401/403 on the legacy /api/user/orgs
+// endpoint) and anonymous requests (401 there too) alike.
+//
+// This previously only resolved the org when organization_name was left
+// unconfigured (fixing the cosmetic "orgName=unknown" that showed up
+// throughout the logs for tokens), and skipped anonymous access entirely --
+// so an anonymous context with no organization_name configured was silently
+// stuck reporting "unknown" forever, and one WITH organization_name
+// configured only got a generic "can't verify" warning with no actual check
+// against reality. Since a pinned identity's real org is always
+// authoritative here (there's nothing to reconcile against, unlike basic
+// auth), the more reliable behavior is: always ask, and if the configured
+// name disagrees with the live answer, trust the live answer and say so
+// loudly rather than silently running the rest of the session under a
+// misconfigured name -- that name still feeds on-disk backup/restore paths
+// (GetPath(..., GetOrganizationName())) even though it no longer drives the
+// v2 dashboard namespace lookup (k8sNamespace resolves that live too, for
+// the same reason).
+func (s *DashNGoImpl) resolvePinnedOrgIdentity() {
+	configured := s.grafanaConf.OrganizationName
+
+	// Deliberately NOT GetTokenOrganization()/getAssociatedActiveOrg(): those
+	// log.Fatal on any /api/org error, which is fine for call sites that
+	// treat the org as mandatory, but wrong here -- this now runs
+	// unconditionally at startup for every token/anonymous context
+	// (previously it only ran when organization_name was left unconfigured),
+	// so a transient network hiccup on this single verification call would
+	// crash the whole CLI. Fail soft instead, the same way k8sNamespace
+	// already does for the identical /api/org call.
+	resp, err := s.GetClient().Org.GetCurrentOrg()
+	if err != nil || resp.GetPayload() == nil || resp.GetPayload().Name == "" {
+		if configured == "" {
+			slog.Warn("unable to determine the current organization via /api/org; org-scoped paths will use \"unknown\" for this run", "err", err)
+		} else {
+			slog.Warn("unable to verify configured organization_name via /api/org; trusting it as configured, but tokens and anonymous access are pinned to a single org and cannot switch, so this may be wrong", "configured organization", configured, "err", err)
+		}
+		return
+	}
+	actual := resp.GetPayload().Name
+
+	switch {
+	case configured == "":
+		s.grafanaConf.OrganizationName = actual
+	case configured != actual:
+		slog.Warn("configured organization_name does not match this identity's actual organization; overriding to the actual org, since tokens and anonymous access cannot switch orgs", "configured", configured, "actual", actual)
+		s.grafanaConf.OrganizationName = actual
 	}
 }
 
