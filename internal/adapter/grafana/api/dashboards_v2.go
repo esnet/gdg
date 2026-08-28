@@ -15,6 +15,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/tidwall/pretty"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 // listDashboardsV2 lists dashboards via the App Platform (/apis) dashboard.grafana.app/v2
@@ -29,15 +30,34 @@ func (d *DashboardServiceImpl) listDashboardsV2(filterReq outbound.Filter) []*do
 		log.Fatal("unable to create dashboard v2 client: ", err)
 	}
 
-	list, err := client.List(context.Background(), metav1.ListOptions{})
-	if err != nil {
-		log.Fatal("failed to list dashboards via app platform api: ", err)
+	// The App Platform list endpoint paginates server-side (observed page size:
+	// 44 items on at least one real instance) and returns a metadata.continue
+	// token whenever more items remain. A single unpaginated call silently
+	// truncates to just the first page -- on any org with more dashboards than
+	// fit on one page, entire folders' worth of dashboards go missing with no
+	// error and no log line, because the truncated items are never even seen
+	// by the filter step below. Loop until the server stops returning a
+	// continue token to collect every dashboard.
+	ctx := context.Background()
+	var items []unstructured.Unstructured
+	opts := metav1.ListOptions{}
+	for {
+		list, listErr := client.List(ctx, opts)
+		if listErr != nil {
+			log.Fatal("failed to list dashboards via app platform api: ", listErr)
+		}
+		items = append(items, list.Items...)
+		cont := list.GetContinue()
+		if cont == "" {
+			break
+		}
+		opts.Continue = cont
 	}
 
 	folderUIDMap := d.getFolderUIDEntityMap(nil)
-	results := make([]*domain.DashboardV2Gdg, 0, len(list.Items))
-	for i := range list.Items {
-		dr, convErr := fromUnstructured(&list.Items[i])
+	results := make([]*domain.DashboardV2Gdg, 0, len(items))
+	for i := range items {
+		dr, convErr := fromUnstructured(&items[i])
 		if convErr != nil {
 			slog.Error("skipping dashboard, unable to decode resource", "err", convErr)
 			continue
