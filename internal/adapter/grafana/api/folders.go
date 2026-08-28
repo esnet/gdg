@@ -23,7 +23,6 @@ import (
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/gosimple/slug"
 	"github.com/grafana/grafana-openapi-client-go/client/folders"
-	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
@@ -179,41 +178,11 @@ func (s *DashNGoImpl) ListFolderPermissions(filter outbound.Filter) map[*domain.
 }
 
 // ListFolders list the current existing folders that match the given filter.
+// Delegates to the promoted baseService.listFolders, which paginates via
+// searchAllPages instead of relying on a single, potentially truncated
+// /api/search call.
 func (s *DashNGoImpl) ListFolders(filter outbound.Filter) []*domain.NestedHit {
-	result := make([]*domain.NestedHit, 0)
-	if s.grafanaConf.GetDashboardSettings().IgnoreFilters {
-		filter = nil
-	}
-
-	p := search.NewSearchParams()
-	p.Type = &domain.ApiConsts.SearchTypeFolder
-	folderRawListing, err := s.GetClient().Search.Search(p)
-	if err != nil {
-		log.Fatal("unable to retrieve folder list.")
-	}
-
-	folderListing := make([]*domain.NestedHit, 0)
-
-	lo.ForEach(folderRawListing.GetPayload(), func(item *models.Hit, index int) {
-		newItem := &domain.NestedHit{Hit: item}
-		folderListing = append(folderListing, newItem)
-	})
-	folderUid := getFolderUIDEntityMapByList(folderListing)
-
-	addFolder := func(ndx int, nestedVal string) {
-		item := folderListing[ndx]
-		item.NestedPath = nestedVal
-		result = append(result, item)
-	}
-	for ndx, val := range folderListing {
-		nestedVal := getNestedFolder(val.Title, val.UID, folderUid)
-		val.NestedPath = nestedVal
-		if filter == nil || filter.Validate(context.Background(), domain.FolderFilter, val) {
-			addFolder(ndx, nestedVal)
-		}
-	}
-
-	return result
+	return s.listFolders(filter)
 }
 
 // DownloadFolders Download all the given folders matching filter
