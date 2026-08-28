@@ -46,12 +46,12 @@ Current Entities supported (See official docs for more details)
 | Teams                   |               | Supported | N/A             | Token/Basic         |                 |
 | Users                   |               | Supported | N/A             | Basic               |                 |
 | Library Elements        |               | Supported | Available       | Token/Basic         |                 |
-| Connections Permissions |               | Supported |                 | Token/Basic         | X               |
-| Alerting                | contacts      | Supported | N/A             | Token/Basic         |                 |
+| Connections Permissions |               | Supported | Available       | Token/Basic         | X               |
+| Alerting                | contacts      | Supported | Available       | Token/Basic         |                 |
 | Alerting                | mute-timings  | Supported | N/A             | Token/Basic         |                 |
 | Alerting                | policies      | Supported | N/A             | Token/Basic         |                 |
 | Alerting                | rules         | Supported | Available       | Token/Basic         |                 |
-| Alerting                | templates     | Supported | N/A             | Token/Basic         |                 |
+| Alerting                | templates     | Supported | Available       | Token/Basic         |                 |
 
 
 ## Release conventions.
