@@ -64,26 +64,31 @@ func (d *DashboardServiceImpl) k8sRestConfig() (*rest.Config, error) {
 // OSS/on-prem: org 1 -> "default", org N -> "org-N". The org is encoded in the
 // namespace here instead of the legacy X-Grafana-Org-Id transport header.
 //
-// Token auth and basic/admin auth resolve the org differently:
+// Basic/admin auth resolves the org differently from every other auth mode:
 //
-//   - Token (service account) auth: tokens are permanently scoped to a single
-//     org and cannot switch, so GDG must discover *that* org directly by asking
-//     the token's own identity via GET /api/org. The legacy /api/user/orgs
-//     endpoint used for basic-auth org-name lookups is a signed-in-user-session
-//     endpoint that service account tokens cannot use reliably (it consistently
-//     fails for tokens, previously causing a silent, always-wrong fallback to
-//     org 1/"default" for any token whose real org wasn't the default org).
-//   - Basic/admin auth: resolve the configured organization_name to an ID via
-//     /api/user/orgs, as before.
+//   - Token (service account) auth and anonymous access are both pinned to
+//     exactly one org that GDG cannot switch: a token is permanently scoped
+//     to the org it was created in, and an anonymous request is scoped to
+//     whatever org auth.anonymous.org_id/org_name configures server-side.
+//     Neither can be resolved by looking up organization_name via the legacy
+//     /api/user/orgs endpoint -- that's a signed-in-user-session endpoint
+//     that both tokens (401/403) and anonymous requests (401) fail against.
+//     GET /api/org, however, reports the current identity's actual org for
+//     tokens AND anonymous requests alike, so that's what both use here.
+//     Getting this wrong isn't just cosmetic: requesting the wrong namespace
+//     is rejected outright by the App Platform ("invalid namespace" /
+//     "namespace mismatch"), so the whole v2 dashboard call fails.
+//   - Basic/admin auth can actually switch orgs, so organization_name is
+//     resolved to an ID via /api/user/orgs, as before.
 func (d *DashboardServiceImpl) k8sNamespace() string {
 	orgID := int64(config_domain.DefaultOrganizationId)
 
 	switch {
-	case d.grafanaConf.GetAPIToken() != "":
+	case !d.grafanaConf.IsBasicAuth():
 		if org, err := d.GetClient().Org.GetCurrentOrg(); err == nil && org.GetPayload() != nil {
 			orgID = org.GetPayload().ID
 		} else {
-			slog.Warn("unable to determine the token's organization via /api/org; defaulting to org 1/\"default\"", "err", err)
+			slog.Warn("unable to determine the current organization via /api/org; defaulting to org 1/\"default\"", "err", err)
 		}
 	case d.grafanaConf.OrganizationName != "":
 		if id, err := extended.NewExtendedApi(d.gdgConfig).GetConfiguredOrgId(d.grafanaConf.OrganizationName); err == nil {
