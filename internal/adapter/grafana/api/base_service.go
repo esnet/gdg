@@ -186,16 +186,8 @@ func (b *baseService) GetServerInfo() map[string]any {
 // ---------------------------------------------------------------------------
 
 // searchAllPages drives a legacy /api/search call to exhaustion, looping on
-// Limit/Page the same way listDashboardsV1 already does for dashboards.
-// Grafana's search endpoint caps a single page at up to 5000 results and
-// simply returns whatever fits -- it does not error or signal truncation,
-// so a caller that sends one unpaginated request silently gets only the
-// first page. That's exactly the bug class that hit dashboard v2 listing
-// (a single List() call silently truncated to the server's page size): a
-// single Search() call here would silently drop folders once an org has
-// more of them than one page holds, which in turn corrupts folder-path
-// resolution for every dashboard under a missing folder with no error or
-// log line. Loop until a short page confirms there's nothing left.
+// Limit/Page. Grafana's search endpoint caps a single page at up to 5000
+// results and simply returns whatever fits.
 func searchAllPages(apiClient *client.GrafanaHTTPAPI, configure func(*search.SearchParams)) []*models.Hit {
 	const pageSize int64 = 5000 // Grafana's documented per-page maximum.
 
