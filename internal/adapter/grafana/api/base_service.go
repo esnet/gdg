@@ -185,6 +185,36 @@ func (b *baseService) GetServerInfo() map[string]any {
 // Folder helpers — used by DashboardServiceImpl and any future service
 // ---------------------------------------------------------------------------
 
+// searchAllPages drives a legacy /api/search call to exhaustion, looping on
+// Limit/Page. Grafana's search endpoint caps a single page at up to 5000
+// results and simply returns whatever fits.
+func searchAllPages(apiClient *client.GrafanaHTTPAPI, configure func(*search.SearchParams)) []*models.Hit {
+	const pageSize int64 = 5000 // Grafana's documented per-page maximum.
+
+	var all []*models.Hit
+	var page int64 = 1
+	for {
+		p := search.NewSearchParams()
+		if configure != nil {
+			configure(p)
+		}
+		p.Limit = new(pageSize)
+		p.Page = new(page)
+
+		resp, err := apiClient.Search.Search(p)
+		if err != nil {
+			log.Fatal("unable to retrieve folder list.")
+		}
+		payload := resp.GetPayload()
+		all = append(all, payload...)
+		if int64(len(payload)) < pageSize {
+			break
+		}
+		page++
+	}
+	return all
+}
+
 // listFolders fetches all folders from Grafana, optionally filtered.
 // This is an infrastructure call — it does not use the DashboardService routing.
 func (b *baseService) listFolders(filter outbound.Filter) []*domain.NestedHit {
@@ -193,15 +223,12 @@ func (b *baseService) listFolders(filter outbound.Filter) []*domain.NestedHit {
 		filter = nil
 	}
 
-	p := search.NewSearchParams()
-	p.Type = &domain.ApiConsts.SearchTypeFolder
-	folderRawListing, err := b.GetClient().Search.Search(p)
-	if err != nil {
-		log.Fatal("unable to retrieve folder list.")
-	}
+	rawHits := searchAllPages(b.GetClient(), func(p *search.SearchParams) {
+		p.Type = &domain.ApiConsts.SearchTypeFolder
+	})
 
 	folderListing := make([]*domain.NestedHit, 0)
-	lo.ForEach(folderRawListing.GetPayload(), func(item *models.Hit, index int) {
+	lo.ForEach(rawHits, func(item *models.Hit, index int) {
 		newItem := &domain.NestedHit{Hit: item}
 		folderListing = append(folderListing, newItem)
 	})
