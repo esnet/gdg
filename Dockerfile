@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/wolfi-base:latest
+FROM alpine:latest
 ARG TARGETPLATFORM
 RUN mkdir /app && apk add bash
 COPY $TARGETPLATFORM/gdg /app/gdg

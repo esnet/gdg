@@ -8,19 +8,19 @@ weight: 2
 toc: true
 ---
 
-
-## Release Notes for v0.9.5 – Bug Fix Release
+## Release Notes for v0.9.6 – Bug Fix Release
 
 **Release Date: 08/28/2026**
 
-### BugFixes (v0.9.5)
+### BugFixes (v0.9.6)
+  - [#611](https://github.com/esnet/gdg/issues/611) Rolling back docker secure image, not available on all platforms.
   - [#607](https://github.com/esnet/gdg/issues/607) Added Folder listing pagination.
   - [#609](https://github.com/esnet/gdg/issues/609) Dashboard v2 listing dropped most dashboards in any org with more than one page of results.
   - [#604](https://github.com/esnet/gdg/issues/604) Token (service account) auth resolved its organization via the legacy `/api/user/orgs` endpoint, which tokens cannot use, and silently fell back to the default org with no error.
   - Anonymous access hit a hard "namespace mismatch" error from the App Platform because it was routed through the same broken token org-lookup.
 
 
-### TechDebt (v0.9.5)
+### TechDebt (v0.9.6)
   - [#605](https://github.com/esnet/gdg/pull/605) Docker base image switched from `alpine:latest` to `cgr.dev/chainguard/wolfi-base:latest`.
   - Added a multi-org Grafana integration test suite (`multi_org_auth_integration_test.go`) covering service-account token and anonymous access pinned to a non-default org, plus regression tests for both pagination fixes above.
 
