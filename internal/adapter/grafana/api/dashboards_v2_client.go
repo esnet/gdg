@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"strings"
 
@@ -59,16 +60,31 @@ func (d *DashboardServiceImpl) k8sRestConfig() (*rest.Config, error) {
 	return cfg, nil
 }
 
-// k8sNamespace resolves the App Platform namespace for the active organization.
-// OSS/on-prem: org 1 -> "default", org N -> "org-N". The org is encoded in the
-// namespace here instead of the legacy X-Grafana-Org-Id transport header.
+// k8sNamespace maps the active org to an App Platform namespace (org 1 ->
+// "default", org N -> "org-N"), replacing the legacy X-Grafana-Org-Id header.
+// Token/anonymous auth is pinned to one org that /api/user/orgs can't see
+// (401/403), so those resolve it via GET /api/org instead — getting this
+// wrong isn't cosmetic; it makes the App Platform reject the namespace
+// outright. Basic/admin auth can switch orgs, so it still resolves
+// organization_name to an ID via /api/user/orgs.
 func (d *DashboardServiceImpl) k8sNamespace() string {
 	orgID := int64(config_domain.DefaultOrganizationId)
-	if orgName := d.grafanaConf.OrganizationName; orgName != "" {
-		if id, err := extended.NewExtendedApi(d.gdgConfig).GetConfiguredOrgId(orgName); err == nil {
+
+	switch {
+	case !d.grafanaConf.IsBasicAuth():
+		// fatal=false: same /api/org call and fail-soft policy as
+		// resolvePinnedOrgIdentity, via the shared helper.
+		if org, err := d.getCurrentOrg(d.GetClient(), false); err == nil && org != nil {
+			orgID = org.ID
+		} else {
+			slog.Warn("unable to determine the current organization via /api/org; defaulting to org 1/\"default\"", "err", err)
+		}
+	case d.grafanaConf.OrganizationName != "":
+		if id, err := extended.NewExtendedApi(d.gdgConfig).GetConfiguredOrgId(d.grafanaConf.OrganizationName); err == nil {
 			orgID = id
 		}
 	}
+
 	if orgID <= config_domain.DefaultOrganizationId {
 		return "default"
 	}
