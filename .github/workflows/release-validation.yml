@@ -16,7 +16,7 @@ jobs:
       - name: Setup Release
         uses: ./actions/release
         with:
-          go_version: '1.26.5'
+          go_version: '1.27.0'
           docker_user: ${{ secrets.DOCKER_USERNAME }}
           docker_password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run GoReleaser
@@ -24,7 +24,7 @@ jobs:
         with:
           distribution: goreleaser
           version: "~> v2"  ## or latest, nightly
-          args: build --snapshot
+          args: release --snapshot --clean --skip=publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
