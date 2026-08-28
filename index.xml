@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GDG - Grafana Dash-n-Grab on GDG</title><link>https://software.es.net/gdg/</link><description>Recent content in GDG - Grafana Dash-n-Grab on GDG</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 04 Mar 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://software.es.net/gdg/index.xml" rel="self" type="application/rss+xml"/><item><title>Version 0.9</title><link>https://software.es.net/gdg/docs/releases/version-0.9/</link><pubDate>Wed, 04 Mar 2026 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.9/</guid><description>&lt;h2 id="release-notes-for-v095--bug-fix-release"&gt;Release Notes for v0.9.5 – Bug Fix Release&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GDG - Grafana Dash-n-Grab on GDG</title><link>https://software.es.net/gdg/</link><description>Recent content in GDG - Grafana Dash-n-Grab on GDG</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 04 Mar 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://software.es.net/gdg/index.xml" rel="self" type="application/rss+xml"/><item><title>Version 0.9</title><link>https://software.es.net/gdg/docs/releases/version-0.9/</link><pubDate>Wed, 04 Mar 2026 00:00:00 +0000</pubDate><guid>https://software.es.net/gdg/docs/releases/version-0.9/</guid><description>&lt;h2 id="release-notes-for-v096--bug-fix-release"&gt;Release Notes for v0.9.6 – Bug Fix Release&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;Release Date: 08/28/2026&lt;/strong&gt;&lt;/p&gt;
-&lt;h3 id="bugfixes-v095"&gt;BugFixes (v0.9.5)&lt;/h3&gt;
+&lt;h3 id="bugfixes-v096"&gt;BugFixes (v0.9.6)&lt;/h3&gt;
 &lt;ul&gt;
+&lt;li&gt;
+
+&lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/611" rel="external"&gt;#611&lt;/a&gt; Rolling back docker secure image, not available on all platforms.&lt;/li&gt;
 &lt;li&gt;
 
 &lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/607" rel="external"&gt;#607&lt;/a&gt; Added Folder listing pagination.&lt;/li&gt;
@@ -13,7 +16,7 @@
 &lt;a class="link link--text" href="https://github.com/esnet/gdg/issues/604" rel="external"&gt;#604&lt;/a&gt; Token (service account) auth resolved its organization via the legacy &lt;code&gt;/api/user/orgs&lt;/code&gt; endpoint, which tokens cannot use, and silently fell back to the default org with no error.&lt;/li&gt;
 &lt;li&gt;Anonymous access hit a hard &amp;ldquo;namespace mismatch&amp;rdquo; error from the App Platform because it was routed through the same broken token org-lookup.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id="techdebt-v095"&gt;TechDebt (v0.9.5)&lt;/h3&gt;
+&lt;h3 id="techdebt-v096"&gt;TechDebt (v0.9.6)&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;
 
