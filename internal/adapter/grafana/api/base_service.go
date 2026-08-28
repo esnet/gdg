@@ -342,6 +342,21 @@ func (b *baseService) getDashboardByUid(uid string) (*models.DashboardFullWithMe
 	return data.GetPayload(), nil
 }
 
+// getCurrentOrg reports the org for apiClient's identity via GET /api/org,
+// which works for basic auth, tokens, and anonymous access alike (unlike
+// /api/user/orgs). fatal=true dies on error, for callers that require an org;
+// fatal=false returns the error, for callers that should fail soft.
+func (b *baseService) getCurrentOrg(apiClient *client.GrafanaHTTPAPI, fatal bool) (*models.OrgDetailsDTO, error) {
+	resp, err := apiClient.Org.GetCurrentOrg()
+	if err != nil {
+		if fatal {
+			log.Fatalf("Unable to retrieve current organization, err: %v", err)
+		}
+		return nil, err
+	}
+	return resp.GetPayload(), nil
+}
+
 // IsEnterprise returns true if the connected Grafana instance runs an Enterprise licence.
 func (b *baseService) IsEnterprise() bool {
 	r, err := b.GetClient().Licensing.GetStatus()
