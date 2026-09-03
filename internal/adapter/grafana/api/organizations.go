@@ -177,13 +177,50 @@ func (s *DashNGoImpl) InitOrganizations() {
 			}
 		}
 
-	} else if s.grafanaConf.GetOrganizationName() != "unknown" {
-		slog.Warn("Tokens do no operate across multiple Organizations. Cannot verify or scope into the given org. Please be sure your token belongs to the correct organization", slog.String("configure organization", s.grafanaConf.GetOrganizationName()))
+	} else {
+		// Token (service account) auth and anonymous access are both pinned to
+		// exactly one org that GDG cannot switch, so unlike the basic-auth
+		// branch above there is no "requested vs actual" reconciliation to
+		// do -- only discovery of what that one org actually is.
+		s.resolvePinnedOrgIdentity()
 	}
 
 	if s.grafanaConf.IsGrafanaAdmin() {
 		slog.Info("Running Sanity Check of Organization Membership")
 		s.sanitizeOrganizationMembership()
+	}
+}
+
+// resolvePinnedOrgIdentity resolves the real org for auth modes that can't
+// switch orgs (token/anonymous). GET /api/org is used because it works
+// reliably for both. Previously this only ran when organization_name was
+// unset (fixing "unknown" in logs) and skipped anonymous access, so a
+// configured-but-wrong name was never actually checked. Now it always
+// queries live and overrides a mismatched configured name loudly, since
+// that name still feeds backup/restore paths even though it no longer
+// drives v2 namespace lookups.
+func (s *DashNGoImpl) resolvePinnedOrgIdentity() {
+	configured := s.grafanaConf.OrganizationName
+
+	// fatal=false: this runs unconditionally at startup now, so a transient
+	// /api/org error shouldn't crash the CLI the way GetTokenOrganization() does.
+	org, err := s.getCurrentOrg(s.GetClient(), false)
+	if err != nil || org == nil || org.Name == "" {
+		if configured == "" {
+			slog.Warn("unable to determine the current organization via /api/org; org-scoped paths will use \"unknown\" for this run", "err", err)
+		} else {
+			slog.Warn("unable to verify configured organization_name via /api/org; trusting it as configured, but tokens and anonymous access are pinned to a single org and cannot switch, so this may be wrong", "configured organization", configured, "err", err)
+		}
+		return
+	}
+	actual := org.Name
+
+	switch {
+	case configured == "":
+		s.grafanaConf.OrganizationName = actual
+	case configured != actual:
+		slog.Warn("configured organization_name does not match this identity's actual organization; overriding to the actual org, since tokens and anonymous access cannot switch orgs", "configured", configured, "actual", actual)
+		s.grafanaConf.OrganizationName = actual
 	}
 }
 
@@ -423,13 +460,11 @@ func (s *DashNGoImpl) GetTokenOrganization() *models.OrgDetailsDTO {
 	return s.getAssociatedActiveOrg(s.GetClient())
 }
 
-// getAssociatedActiveOrg returns the Org associated with the given authentication mechanism.
+// getAssociatedActiveOrg returns the Org for the given auth mechanism.
+// fatal=true: callers treat having a resolvable org as mandatory.
 func (s *DashNGoImpl) getAssociatedActiveOrg(apiClient *client.GrafanaHTTPAPI) *models.OrgDetailsDTO {
-	payload, err := apiClient.Org.GetCurrentOrg()
-	if err != nil {
-		log.Fatalf("Unable to retrieve current organization, err: %v", err)
-	}
-	return payload.GetPayload()
+	org, _ := s.getCurrentOrg(apiClient, true)
+	return org
 }
 
 func (s *DashNGoImpl) ListUserOrganizations() ([]*models.UserOrgDTO, error) {

@@ -186,18 +186,26 @@ func TestListContactPoints(t *testing.T) {
 			setupMocks: func(testSvc *mocks.GrafanaService) {
 				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
-				resp := []*models.EmbeddedContactPoint{
+				resp := []*models.ContactPointExport{
 					{
-						UID:      "discordUid",
-						Name:     "Discord",
-						Type:     new("discordType"),
-						Settings: map[string]any{"token": "secret", "someValue": "result"},
+						Receivers: []*models.ReceiverExport{
+							{
+								UID:      "discordUid",
+								Type:     "discordType",
+								Settings: map[string]any{"token": "secret", "someValue": "result"},
+							},
+						},
+						Name: "Discord",
 					},
 					{
-						UID:      "slackUid",
-						Name:     "Slack",
-						Type:     new("slackType"),
-						Settings: map[string]any{"token": "secret", "slack": "rocks"},
+						Receivers: []*models.ReceiverExport{
+							{
+								UID:      "slackUid",
+								Type:     "slackType",
+								Settings: map[string]any{"token": "secret", "slack": "rocks"},
+							},
+						},
+						Name: "Slack",
 					},
 				}
 

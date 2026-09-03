@@ -146,6 +146,7 @@ func TestFolderPermissions(t *testing.T) {
 
 // TODO: write a full CRUD validation of folder permissions
 func TestFolderNestedPermissions(t *testing.T) {
+	skipLegacyVersion(t)
 	test_tooling.SkipTokenBasedTests(t)
 	assert.NoError(t, os.Setenv(test_tooling.OrgNameOverride, "testing"))
 	cfg := config.NewConfig(common.DefaultTestConfig)

@@ -21,17 +21,17 @@ type AlertRules interface {
 }
 
 type AlertContactPoints interface {
-	ListContactPoints() ([]*models.EmbeddedContactPoint, error)
+	ListContactPoints() ([]*models.ContactPointExport, error)
 	DownloadContactPoints() (string, error)
 	ClearContactPoints() ([]string, error)
 	UploadContactPoints() ([]string, error)
 }
 
 type AlertTemplates interface {
-	DownloadAlertTemplates() (string, error)
-	ListAlertTemplates() ([]*models.NotificationTemplate, error)
-	ClearAlertTemplates() ([]string, error)
-	UploadAlertTemplates() ([]string, error)
+	DownloadAlertTemplates(filter Filter) (string, error)
+	ListAlertTemplates(filter Filter) ([]*models.NotificationTemplate, error)
+	ClearAlertTemplates(filter Filter) ([]string, error)
+	UploadAlertTemplates(filter Filter) ([]string, error)
 }
 
 type AlertPolicies interface {

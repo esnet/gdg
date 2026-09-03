@@ -108,7 +108,7 @@ func TestDashboardCRUDIgnoreFiltersV2(t *testing.T) {
 	boards = apiClient.ListDashboards(filterFolder)
 	assert.Equal(t, 4, len(boards))
 	//
-	dashboardFilter := api.NewDashboardFilter(cfg, "", "flow-information", "")
+	dashboardFilter := api.NewDashboardFilter(cfg, "", "nzuMyBcGk", "")
 	boards = apiClient.ListDashboards(dashboardFilter)
 	assert.Equal(t, 1, len(boards))
 
@@ -227,7 +227,7 @@ func TestDashListFiltersV2(t *testing.T) {
 		boards = apiClient.ListDashboards(filtersEntity)
 		assert.Equal(t, len(boards), 8)
 		// Dash filter
-		filtersEntity = api.NewDashboardFilter(cfg, "", "individual-flows-per-country", "")
+		filtersEntity = api.NewDashboardFilter(cfg, "", "80IVUboZk", "")
 		boards = apiClient.ListDashboards(filtersEntity)
 		assert.Equal(t, len(boards), 1)
 		func() {
@@ -279,7 +279,7 @@ func TestUploadDashboardsBehaviorV2(t *testing.T) {
 	assert.Equal(t, len(uploadedFiles), 8)
 	cleanupDash(len(uploadedFiles))
 	// Dash filter
-	filtersEntity = api.NewDashboardFilter(cfg, "", "individual-flows-per-country", "")
+	filtersEntity = api.NewDashboardFilter(cfg, "", "80IVUboZk", "")
 	uploadedFiles, err = apiClient.UploadDashboards(filtersEntity)
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedFiles), 1)

@@ -23,7 +23,7 @@ var skipConfirmAction bool
 
 func parseDashboardGlobalFlags(command *cobra.Command) []string {
 	folderFilter, _ := command.Flags().GetString("folder")
-	dashboardFilter, _ := command.Flags().GetString("dashboard")
+	dashboardFilter, _ := command.Flags().GetString("uid")
 	tagsFilter, _ := command.Flags().GetStringArray("tags")
 	rawTags, err := json.Marshal(tagsFilter)
 	jsonTags := ""
@@ -43,7 +43,7 @@ func newDashboardCommand() simplecobra.Commander {
 		WithCFunc: func(cmd *cobra.Command, r *cliDomain.RootCommand) {
 			cmd.Aliases = []string{"dash", "dashboard"}
 			cmd.PersistentFlags().BoolVarP(&skipConfirmAction, "skip-confirmation", "", false, "when set to true, bypass confirmation prompts")
-			cmd.PersistentFlags().StringP("dashboard", "d", "", "filter by dashboard slug")
+			cmd.PersistentFlags().StringP("uid", "u", "", "filter by dashboard UID")
 			cmd.PersistentFlags().StringP("folder", "f", "", "Filter by Folder Name (Quotes in names not supported)")
 			cmd.PersistentFlags().StringArrayP("tags", "t", []string{}, "Filter by list of comma delimited tags. (Additive behavior dashboard includes: tag1 AND tag2)")
 		},
@@ -214,7 +214,7 @@ func newListDashboardsCmd() simplecobra.Commander {
 					}
 				}
 
-				baseRow := table.Row{link.Resource.UID, link.Resource.Spec.Title, link.NestedPath, tagVal, urlValue}
+				baseRow := table.Row{link.Resource.Name, link.Resource.Spec.Title, link.NestedPath, tagVal, urlValue}
 				rootCmd.TableObj.AppendRow(baseRow)
 			}
 			printCount(count)

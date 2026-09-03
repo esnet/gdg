@@ -8,10 +8,26 @@ weight: 2
 toc: true
 ---
 
+## Release Notes for v0.9.6 – Bug Fix Release
+
+**Release Date: 08/28/2026**
+
+### BugFixes (v0.9.6)
+  - [#611](https://github.com/esnet/gdg/issues/611) Rolling back docker secure image, not available on all platforms.
+  - [#607](https://github.com/esnet/gdg/issues/607) Added Folder listing pagination.
+  - [#609](https://github.com/esnet/gdg/issues/609) Dashboard v2 listing dropped most dashboards in any org with more than one page of results.
+  - [#604](https://github.com/esnet/gdg/issues/604) Token (service account) auth resolved its organization via the legacy `/api/user/orgs` endpoint, which tokens cannot use, and silently fell back to the default org with no error.
+  - Anonymous access hit a hard "namespace mismatch" error from the App Platform because it was routed through the same broken token org-lookup.
+
+
+### TechDebt (v0.9.6)
+  - [#605](https://github.com/esnet/gdg/pull/605) Docker base image switched from `alpine:latest` to `cgr.dev/chainguard/wolfi-base:latest`.
+  - Added a multi-org Grafana integration test suite (`multi_org_auth_integration_test.go`) covering service-account token and anonymous access pinned to a non-default org, plus regression tests for both pagination fixes above.
+
 
 ## Release Notes for v0.9.4
 
-**Release Date: 00/00/2026**
+**Release Date: 08/27/2026**
 
 ### Min Recommended Grafana Versions (v0.9.4)
 
@@ -30,19 +46,24 @@ Dashboards downloaded from a Grafana v13+ instance are saved in a new format. Th
 versions of GDG. If you need to roll back, re-download your dashboards after downgrading.
 {{< /callout >}}
 
+{{< callout context="caution" title="Dashboard Filter Flag: --dashboard Replaced by --uid" icon="alert-triangle" >}}
+The `--dashboard` / `-d` flag has been renamed to `--uid` / `-u` and now filters by **dashboard UID** instead of slug.
+If you previously used `--dashboard bandwidth-dashboard`, update your scripts to use `--uid 000000003` (the UID shown in `gdg backup dash list`).
+The dashboard listing output now also shows the Grafana UID (resource name) instead of the Kubernetes metadata UID.
+{{< /callout >}}
+
   - Dashboard files downloaded from Grafana v13+ use a new storage format. Files from older GDG versions will continue to upload correctly, but re-downloading is recommended to migrate to the new format.
+  - The `--dashboard` / `-d` flag is replaced by `--uid` / `-u`. Filtering now matches the dashboard UID visible in `gdg backup dash list` output rather than a slug derived from the title.
 
 ### Changes (v0.9.4)
+  - [#601](https://github.com/esnet/gdg/issues/601) The `--dashboard` / `-d` filter flag has been renamed to `--uid` / `-u` and now filters by dashboard UID instead of slug, since Grafana no longer exposes slug data reliably in the search API response. The `gdg backup dash list` output now shows the Grafana UID (resource name) in the `UID` column, which can be passed directly to `--uid`.
   - [569](https://github.com/esnet/gdg/issues/569) Added plugin rekey — updates all stored values with their encrypted equivalent when enabling a new cipher plugin, so existing backups stay accessible.
   - [568](https://github.com/esnet/gdg/issues/568) A plugin registry was added to help discover available plugins.
   - [566](https://github.com/esnet/gdg/issues/566) TUI support for the plugin registry, allowing plugin discovery and selection from the interactive wizard.
-  - GDG now uses the Grafana App Platform dashboard API on Grafana v13+. No configuration changes are required — version detection is automatic.
-  - On Grafana v12 and older the existing legacy API continues to be used unchanged.
-  - When connected to Grafana v13+, downloaded dashboards are saved in a new Kubernetes-style resource format. This replaces the flat JSON format used in previous versions. The new format carries additional metadata (folder placement, resource name, API version) that the App Platform API requires.
-  - Upload is smarter about mixed repositories: if your backup folder contains a mix of old and new format dashboard files, GDG will handle each file correctly and warn you if any files cannot be applied to the connected server.
-
-### BugFixes (v0.9.4)
-
+  - [#590](https://github.com/esnet/gdg/pull/590) GDG now auto-detects Grafana v13+ and switches to the App Platform dashboard API with no configuration changes required. Dashboards are saved in a new Kubernetes-style format carrying additional metadata (folder, resource name, API version); v12 and older continue using the legacy API and flat JSON format unchanged. Repositories containing a mix of old and new format files are handled correctly, with a warning logged for any file that cannot be applied to the connected server.
+  - [#525](https://github.com/esnet/gdg/issues/525) / [#598](https://github.com/esnet/gdg/pull/598) Added filtering support for alerting contact points. Filters are configured under `alert_settings.contact_points.filters` and apply to all contact point operations (list, download, upload, clear).
+  - [#598](https://github.com/esnet/gdg/pull/598) Added `--filter` flag to all `gdg backup alerting templates` subcommands for name-based regex filtering.
+  - [#598](https://github.com/esnet/gdg/pull/598) The interactive config wizard (`gdg tools ctx add`) now includes an Alert Settings phase for configuring contact point filters.
 
 ### TechDebt (v0.9.4)
   - [570](https://github.com/esnet/gdg/issues/570) Upgraded website code to a latest version.

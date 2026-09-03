@@ -37,21 +37,25 @@ New features particularly related to Orgs, ACLs, roles etc are far less likely t
 Current Entities supported (See official docs for more details)
 
 
-| Resource                | sub-component | Status    | Regex Filtering | Authorization       | Enterprise Only |
-|-------------------------|---------------|-----------|-----------------|---------------------|-----------------|
-| Connections             |               | Supported | Available       | Token/Basic         |                 |
-| Dashboards              |               | Supported | Available       | Token/Basic         |                 |
-| Folders                 |               | Supported | Optional        | Token/Basic         |                 |
-| Organization            |               | Supported | N/A             | Basic Grafana Admin |                 |
-| Teams                   |               | Supported | N/A             | Token/Basic         |                 |
-| Users                   |               | Supported | N/A             | Basic               |                 |
-| Library Elements        |               | Supported | Available       | Token/Basic         |                 |
-| Connections Permissions |               | Supported |                 | Token/Basic         | X               |
-| Alerting                | contacts      | Supported | N/A             | Token/Basic         |                 |
-| Alerting                | mute-timings  | Supported | N/A             | Token/Basic         |                 |
-| Alerting                | policies      | Supported | N/A             | Token/Basic         |                 |
-| Alerting                | rules         | Supported | Available       | Token/Basic         |                 |
-| Alerting                | templates     | Supported | N/A             | Token/Basic         |                 |
+| Resource                    | Sub-component  | Status       | Regex Filtering | Authorization        | Enterprise Only |
+|:-----------------------------|:----------------|:--------------:|:------------------:|:-----------------------|:------------------:|
+| Connections                 | —               | ✅ | ✅      | 🔑 / 🔒         | —                |
+| Dashboards                  | —               | ✅ | ✅      | 🔑 / 🔒         | —                |
+| Folders                     | —               | ✅ | ❓       | 🔑 / 🔒         | —                |
+| Organization                | —               | ✅ | ❌ N/A            | 🔒 👑 | —                |
+| Teams                       | —               | ✅ | ❌ N/A            | 🔑 / 🔒         | —                |
+| Users                       | —               | ✅ | ❌ N/A            | 🔒                    | —                |
+| Library Elements            | —               | ✅ | ✅      | 🔑 / 🔒         | —                |
+| Connections Permissions     | —               | ✅ | ✅      | 🔑 / 🔒         | $$           |
+| Alerting                    | Contacts        | ✅ | ✅      | 🔑 / 🔒         | —                |
+| Alerting                    | Mute Timings    | ✅ | ❌ N/A            | 🔑 / 🔒         | —                |
+| Alerting                    | Policies        | ✅ | ❌ N/A            | 🔑 / 🔒         | —                |
+| Alerting                    | Rules           | ✅ | ✅      | 🔑 / 🔒         | —                |
+| Alerting                    | Templates       | ✅ | ✅      | 🔑 / 🔒         | —                |
+
+**Legend:** ✅ = Supported / Available &nbsp;|&nbsp; ❌ = N/A &nbsp;|&nbsp; ❓ = Optional &nbsp;|&nbsp; $$ = Enterprise Only &nbsp;|&nbsp; — = Not applicable
+
+**Auth Legend:** 🔑 = Token &nbsp;|&nbsp; 🔒 = Basic &nbsp;|&nbsp; 👑 = Requires Grafana Admin
 
 
 ## Release conventions.

@@ -93,7 +93,7 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 	slog.Info("Imported dashboards", "count", len(boards), "uploadedFiles", len(uploadedFiles))
 	ignoredSkipped := true
 	// TODO(step-6): once DashboardServiceImpl maps v1 NestedHit fields into
-	// DashboardV2Gdg, restore slug-based lookup and the full field assertions.
+	// DashboardV2Gdg, restore UID-based lookup and the full field assertions.
 	var generalBoard *customModels.DashboardV2Gdg
 	var otherBoard *customModels.DashboardV2Gdg
 	for ndx, board := range boards {
@@ -128,14 +128,14 @@ func TestDashboardCRUDIgnoreFilters(t *testing.T) {
 		filterFolder = api.NewDashboardFilter(cfg, "linux%2Fgnu$", "", "")
 		boards = apiClient.ListDashboards(filterFolder)
 		assert.Equal(t, 4, len(boards))
-		dashboardFilter := api.NewDashboardFilter(cfg, "", "flow-information", "")
+		dashboardFilter := api.NewDashboardFilter(cfg, "", "nzuMyBcGk", "")
 		boards = apiClient.ListDashboards(dashboardFilter)
 		assert.Equal(t, 1, len(boards))
 	} else {
 		filterFolder := api.NewDashboardFilter(cfg, "General", "", "")
 		boards = apiClient.ListDashboards(filterFolder)
 		assert.Equal(t, DashboardCountV1, len(boards))
-		dashboardFilter := api.NewDashboardFilter(cfg, "", "bandwidth-dashboard", "")
+		dashboardFilter := api.NewDashboardFilter(cfg, "", "000000003", "")
 		boards = apiClient.ListDashboards(dashboardFilter)
 		assert.Equal(t, 1, len(boards))
 	}
@@ -300,7 +300,7 @@ func TestDashListFilters(t *testing.T) {
 			boards = apiClient.ListDashboards(filtersEntity)
 			assert.Equal(t, TagFlowCountV2, len(boards))
 			// Dash filter
-			filtersEntity = api.NewDashboardFilter(cfg, "", "individual-flows-per-country", "")
+			filtersEntity = api.NewDashboardFilter(cfg, "", "80IVUboZk", "")
 			boards = apiClient.ListDashboards(filtersEntity)
 			assert.Equal(t, 1, len(boards))
 		} else {
@@ -311,8 +311,8 @@ func TestDashListFilters(t *testing.T) {
 			filtersEntity = api.NewDashboardFilter(cfg, "", "", encodeTags("flow"))
 			boards = apiClient.ListDashboards(filtersEntity)
 			assert.Equal(t, TagFlowCountV1, len(boards))
-			// Dash filter — slug of a v1 General/ dashboard
-			filtersEntity = api.NewDashboardFilter(cfg, "", "bandwidth-dashboard", "")
+			// Dash filter — UID of a v1 General/ dashboard
+			filtersEntity = api.NewDashboardFilter(cfg, "", "000000003", "")
 			boards = apiClient.ListDashboards(filtersEntity)
 			assert.Equal(t, 1, len(boards))
 		}
@@ -366,8 +366,8 @@ func TestUploadDashboardsBehavior(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, TagFlowCountV2, len(uploadedFiles))
 		cleanupDash(len(uploadedFiles))
-		// Dash filter — slug from a v2 linux%2Fgnu dashboard.
-		filtersEntity = api.NewDashboardFilter(cfg, "", "individual-flows-per-country", "")
+		// Dash filter — UID of a v1 General/ dashboard (individual-flows-per-country).
+		filtersEntity = api.NewDashboardFilter(cfg, "", "80IVUboZk", "")
 		uploadedFiles, err = apiClient.UploadDashboards(filtersEntity)
 		assert.NoError(t, err)
 		assert.Equal(t, 1, len(uploadedFiles))
@@ -385,8 +385,8 @@ func TestUploadDashboardsBehavior(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, TagFlowCountV1, len(uploadedFiles))
 		cleanupDash(len(uploadedFiles))
-		// Dash filter — slug of a v1 General/ dashboard.
-		filtersEntity = api.NewDashboardFilter(cfg, "", "bandwidth-dashboard", "")
+		// Dash filter — UID of a v1 General/ dashboard (bandwidth-dashboard).
+		filtersEntity = api.NewDashboardFilter(cfg, "", "000000003", "")
 		uploadedFiles, err = apiClient.UploadDashboards(filtersEntity)
 		assert.NoError(t, err)
 		assert.Equal(t, 1, len(uploadedFiles))
@@ -602,7 +602,7 @@ func TestWildcardFilter(t *testing.T) {
 	assert.Equal(t, len(boards), 0)
 }
 
-// TODO(step-6): restore full field assertions (UID, URI, URL, Slug, FolderTitle,
+// TODO(step-6): restore full field assertions (UID, URI, URL, FolderTitle,
 // FolderID, Type) once DashboardServiceImpl maps v1 NestedHit into DashboardV2Gdg.
 
 func validateOtherBoard(t *testing.T, board *customModels.DashboardV2Gdg) {
