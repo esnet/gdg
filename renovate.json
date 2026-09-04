@@ -21,6 +21,12 @@
     "docker",
     "javascript"
   ],
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "automerge": false
+  },
   "packageRules": [
     {
       "matchCategories": [
