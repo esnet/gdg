@@ -29,8 +29,84 @@ type GDGAppConfiguration struct {
 }
 
 type PluginConfig struct {
-	Disabled     bool          `mapstructure:"disabled" yaml:"disabled"`
-	CipherPlugin *PluginEntity `mapstructure:"cipher" yaml:"cipher"`
+	// CipherPlugin holds the entire "plugins.cipher" block: the cipher
+	// plugin's own enabled/disabled switch (CipherConfig.Disabled) sits
+	// alongside its PluginEntity configuration (url/file_path/config),
+	// mirroring how Lookup.Disabled sits alongside the lookup providers
+	// rather than being a top-level, plugins-wide kill switch.
+	CipherPlugin *CipherConfig `mapstructure:"cipher" yaml:"cipher"`
+
+	// Lookup holds the entire "plugins.lookup" block: a subsystem-wide
+	// enabled/disabled switch alongside every named lookup provider's
+	// configuration.
+	Lookup LookupConfig `mapstructure:"lookup" yaml:"lookup"`
+}
+
+// CipherConfig is the "plugins.cipher" block. Disabled is a named field
+// scoped to the cipher plugin alone (there is no longer a top-level,
+// plugins-wide "plugins.disabled" switch); PluginEntity is squashed/inlined
+// so the YAML shape stays flat:
+//
+//	cipher:
+//	  disabled: false
+//	  url: https://example.com/cipher_aes256_gcm.wasm
+//	  config:
+//	    passphrase: hello_world
+type CipherConfig struct {
+	// Disabled turns off the cipher-plugin code path. When true, or when
+	// CipherPlugin is nil, files are read/written in plaintext via
+	// NoOpEncoder instead of the configured cipher plugin.
+	Disabled bool `mapstructure:"disabled" yaml:"disabled"`
+
+	// PluginEntity is squashed (mapstructure) / inlined (yaml) so its
+	// fields (url, file_path, config) sit flat alongside Disabled under
+	// "plugins.cipher", rather than nesting under another key.
+	PluginEntity `mapstructure:",squash" yaml:",inline"`
+}
+
+// LookupConfig is the "plugins.lookup" block:
+//
+//	lookup:
+//	  disabled: false
+//	  gsm:
+//	    url: https://example.com/lookup_gsm.wasm
+//	    config:
+//	      credentials: env:GOOGLE_APPLICATION_CREDENTIALS
+//
+// Disabled is a named field so a single flag can turn off every provider
+// at once; every other key under "lookup" (e.g. "gsm", "vault") is a named
+// provider and falls through into Plugins, keyed by the provider name
+// referenced in a "lookup:<name>:<key>" value. Each entry is resolved the
+// same way a cipher plugin is.
+type LookupConfig struct {
+	// Disabled turns off the entire lookup-plugin code path — every named
+	// provider in Plugins at once — with a single flag, so a user who
+	// doesn't want the feature at all isn't required to disable each
+	// configured provider individually.
+	Disabled bool `mapstructure:"disabled" yaml:"disabled"`
+
+	// Plugins holds every other key under "lookup" as a named provider's
+	// PluginEntity config. The "mapstructure:,remain" / "yaml:,inline"
+	// tags make Disabled and Plugins coexist at the same YAML level: named
+	// fields (Disabled) are matched first, and anything left over falls
+	// into this map instead of requiring its own nesting level.
+	Plugins map[string]*PluginEntity `mapstructure:",remain" yaml:",inline"`
+}
+
+// LookupEnabled reports whether the lookup plugin subsystem should be
+// active. Both the global plugin kill switch (Disabled) and the
+// lookup-specific one (Lookup.Disabled) must allow it; callers building a
+// LookupResolver should check this once, up front, rather than requiring
+// each named provider to carry its own enabled/disabled flag.
+func (pc *PluginConfig) LookupEnabled() bool {
+	return !pc.Lookup.Disabled
+}
+
+// CipherEnabled reports whether a cipher plugin is configured and not
+// disabled. It mirrors LookupEnabled's role for the lookup subsystem: a nil
+// CipherPlugin or CipherPlugin.Disabled == true both mean "use NoOpEncoder".
+func (pc *PluginConfig) CipherEnabled() bool {
+	return pc.CipherPlugin != nil && !pc.CipherPlugin.Disabled
 }
 
 type PluginEntity struct {
@@ -180,7 +256,7 @@ func (app *GDGAppConfiguration) PrintContextAll(name string) {
 	app.PrintContext(name)
 
 	// Plugin configuration.
-	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
+	if app.PluginConfig.CipherEnabled() {
 		d, err := yaml.Marshal(app.PluginConfig)
 		if err == nil {
 			fmt.Printf("---plugins:\n%s\n", string(d))

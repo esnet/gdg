@@ -790,12 +790,12 @@ func filterValidPlugins(plugins []domain.PluginRegistryEntry) []domain.PluginReg
 // currentPluginDescription returns a human-readable description of the active
 // cipher plugin configuration, suitable for display in a NoteField.
 func currentPluginDescription(app *config_domain.GDGAppConfiguration) string {
-	if app.PluginConfig.Disabled {
-		return "Cipher plugin is currently DISABLED.\n\nAll files are stored as plaintext."
-	}
 	pe := app.PluginConfig.CipherPlugin
 	if pe == nil {
 		return "No cipher plugin is currently configured.\n\nFiles are stored without encryption."
+	}
+	if pe.Disabled {
+		return "Cipher plugin is currently DISABLED.\n\nAll files are stored as plaintext."
 	}
 	var source string
 	switch {
@@ -833,8 +833,8 @@ func currentPluginDescription(app *config_domain.GDGAppConfiguration) string {
 func RunRekey(app *config_domain.GDGAppConfiguration, regClient *registry.Client) error {
 	// Build the old encoder from the current plugin config.
 	var oldEncoder outbound.CipherEncoder = noop.NoOpEncoder{}
-	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
-		enc, encErr := cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
+	if app.PluginConfig.CipherEnabled() {
+		enc, encErr := cipher.NewPluginCipherEncoder(&app.PluginConfig.CipherPlugin.PluginEntity, app.SecureConfig)
 		if encErr != nil {
 			return fmt.Errorf("loading current cipher plugin: %w", encErr)
 		}
@@ -913,10 +913,12 @@ func RunRekey(app *config_domain.GDGAppConfiguration, regClient *registry.Client
 	// Update gdg.yml.
 	switch final.rs.action {
 	case "switch":
-		app.PluginConfig.Disabled = false
-		app.PluginConfig.CipherPlugin = final.rs.newPluginEntity
+		app.PluginConfig.CipherPlugin = &config_domain.CipherConfig{PluginEntity: *final.rs.newPluginEntity}
 	case "disable":
-		app.PluginConfig.Disabled = true
+		if app.PluginConfig.CipherPlugin == nil {
+			app.PluginConfig.CipherPlugin = &config_domain.CipherConfig{}
+		}
+		app.PluginConfig.CipherPlugin.Disabled = true
 	}
 	if saveErr := app.SaveToDisk(false); saveErr != nil {
 		return fmt.Errorf("saving updated config: %w", saveErr)

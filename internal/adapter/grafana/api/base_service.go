@@ -30,12 +30,13 @@ import (
 // needs. DashNGoImpl also embeds baseService so all existing methods continue to
 // compile unchanged.
 type baseService struct {
-	extended    outbound.ExtendedApi
-	gdgConfig   *configDomain.GDGAppConfiguration
-	grafanaConf *configDomain.GrafanaConfig
-	storage     outbound.Storage
-	encoder     outbound.CipherEncoder
-	resources   ports.Resources
+	extended       outbound.ExtendedApi
+	gdgConfig      *configDomain.GDGAppConfiguration
+	grafanaConf    *configDomain.GrafanaConfig
+	storage        outbound.Storage
+	encoder        outbound.CipherEncoder
+	lookupResolver outbound.LookupResolver
+	resources      ports.Resources
 }
 
 // ---------------------------------------------------------------------------

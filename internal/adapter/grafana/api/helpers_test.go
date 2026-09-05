@@ -335,7 +335,7 @@ func newTestSvc(t *testing.T) *DashNGoImpl {
 	cfg := config.NewConfig(common.DefaultTestConfig)
 	localEngine := storage.NewLocalStorage(context.Background())
 	svc := NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine,
-		extended.NewExtendedApi(cfg), resources.NewHelpers())
+		extended.NewExtendedApi(cfg), resources.NewHelpers(), nil)
 	return svc.(*DashNGoImpl)
 }
 

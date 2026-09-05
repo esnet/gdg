@@ -8,6 +8,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/adapter/grafana/resources"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
@@ -32,9 +33,9 @@ func main() {
 // and initializes the service. The function will terminate the process if the storage engine cannot be configured.
 func buildGrafanaService(cfg *configDomain.GDGAppConfiguration) outbound.GrafanaService {
 	var encoder outbound.CipherEncoder
-	if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
+	if cfg.PluginConfig.CipherEnabled() {
 		var err error
-		encoder, err = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		encoder, err = cipher.NewPluginCipherEncoder(&cfg.PluginConfig.CipherPlugin.PluginEntity, cfg.SecureConfig)
 		if err != nil {
 			log.Fatalf("Failed to load cipher plugin: %v", err)
 		}
@@ -48,7 +49,12 @@ func buildGrafanaService(cfg *configDomain.GDGAppConfiguration) outbound.Grafana
 	if err != nil {
 		log.Fatal("Unable to configure a valid storage engine, %w", err)
 	}
+	lookupResolver, err := lookup.NewResolver(&cfg.PluginConfig)
+	if err != nil {
+		log.Fatalf("Failed to initialize lookup plugins: %v", err)
+	}
+
 	extendedApi := extended.NewExtendedApi(cfg)
-	grafanaSvc := api.NewDashNGo(cfg, encoder, storageEngine, extendedApi, resources.NewHelpers())
+	grafanaSvc := api.NewDashNGo(cfg, encoder, storageEngine, extendedApi, resources.NewHelpers(), lookupResolver)
 	return grafanaSvc
 }

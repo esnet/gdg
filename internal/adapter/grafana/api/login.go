@@ -13,8 +13,12 @@ type NewClientOpts func(transportConfig *client.TransportConfig)
 // Login sets admin flag and provisions the Extended API for calls unsupported
 // by the OpenAPI spec.
 func (s *DashNGoImpl) Login() {
-	if !s.gdgConfig.PluginConfig.Disabled && s.gdgConfig.PluginConfig.CipherPlugin != nil {
+	if s.gdgConfig.PluginConfig.CipherEnabled() {
 		s.grafanaConf.UpdateSecureModel(s.encoder.DecodeValue)
+	}
+
+	if s.lookupResolver != nil {
+		s.grafanaConf.ResolveLookups(s.lookupResolver.Resolve)
 	}
 
 	// Will only succeed for BasicAuth

@@ -91,6 +91,100 @@ func TestUpdateSecureModel_BothEmptyNoCalls(t *testing.T) {
 	assert.Equal(t, 0, called)
 }
 
+func TestUpdateSecureModel_LookupRefTokenSkipped(t *testing.T) {
+	sm := &SecureModel{Password: "pw", Token: "lookup:gsm:projects/1/secrets/x/versions/1"}
+	called := 0
+	sm.UpdateSecureModel(func(s string) (string, error) {
+		called++
+		return "encoded:" + s, nil
+	})
+	// Token is a lookup reference, so it must be left untouched by UpdateSecureModel.
+	assert.Equal(t, "lookup:gsm:projects/1/secrets/x/versions/1", sm.Token)
+	assert.Equal(t, "encoded:pw", sm.Password)
+	assert.Equal(t, 1, called)
+}
+
+func TestUpdateSecureModel_LookupRefPasswordSkipped(t *testing.T) {
+	sm := &SecureModel{Password: "lookup:gsm:projects/1/secrets/x/versions/1", Token: "tok"}
+	called := 0
+	sm.UpdateSecureModel(func(s string) (string, error) {
+		called++
+		return "encoded:" + s, nil
+	})
+	assert.Equal(t, "lookup:gsm:projects/1/secrets/x/versions/1", sm.Password)
+	assert.Equal(t, "encoded:tok", sm.Token)
+	assert.Equal(t, 1, called)
+}
+
+func TestUpdateSecureModel_BothLookupRefsNoCalls(t *testing.T) {
+	sm := &SecureModel{Password: "lookup:gsm:a", Token: "lookup:gsm:b"}
+	called := 0
+	sm.UpdateSecureModel(func(s string) (string, error) {
+		called++
+		return s, nil
+	})
+	assert.Equal(t, 0, called)
+	assert.Equal(t, "lookup:gsm:a", sm.Password)
+	assert.Equal(t, "lookup:gsm:b", sm.Token)
+}
+
+// ── SecureModel.ResolveLookups ────────────────────────────────────────────────
+
+func TestResolveLookups_TransformsLookupRefsOnly(t *testing.T) {
+	sm := &SecureModel{Password: "plain-pass", Token: "lookup:gsm:projects/1/secrets/x/versions/1"}
+	called := 0
+	sm.ResolveLookups(func(s string) (string, error) {
+		called++
+		return "resolved-value", nil
+	})
+	// Token is a lookup ref, so it should be resolved; Password is plain and must be untouched.
+	assert.Equal(t, "resolved-value", sm.Token)
+	assert.Equal(t, "plain-pass", sm.Password)
+	assert.Equal(t, 1, called)
+}
+
+func TestResolveLookups_ErrorLeavesFieldUnchanged(t *testing.T) {
+	sm := &SecureModel{Token: "lookup:gsm:projects/1/secrets/x/versions/1"}
+	sm.ResolveLookups(func(s string) (string, error) {
+		return "", errors.New("resolve failed")
+	})
+	assert.Equal(t, "lookup:gsm:projects/1/secrets/x/versions/1", sm.Token)
+}
+
+func TestResolveLookups_BothFieldsResolved(t *testing.T) {
+	sm := &SecureModel{
+		Password: "lookup:gsm:a",
+		Token:    "lookup:gsm:b",
+	}
+	sm.ResolveLookups(func(s string) (string, error) {
+		return "resolved:" + s, nil
+	})
+	assert.Equal(t, "resolved:lookup:gsm:a", sm.Password)
+	assert.Equal(t, "resolved:lookup:gsm:b", sm.Token)
+}
+
+func TestResolveLookups_NoLookupRefsNoCalls(t *testing.T) {
+	sm := &SecureModel{Password: "plain-pass", Token: "plain-token"}
+	called := 0
+	sm.ResolveLookups(func(s string) (string, error) {
+		called++
+		return s, nil
+	})
+	assert.Equal(t, 0, called)
+	assert.Equal(t, "plain-pass", sm.Password)
+	assert.Equal(t, "plain-token", sm.Token)
+}
+
+func TestResolveLookups_EmptyFieldsNoCalls(t *testing.T) {
+	sm := &SecureModel{}
+	called := 0
+	sm.ResolveLookups(func(s string) (string, error) {
+		called++
+		return s, nil
+	})
+	assert.Equal(t, 0, called)
+}
+
 // ── GrafanaConnection ─────────────────────────────────────────────────────────
 
 func TestGrafanaConnection_UserAndPassword(t *testing.T) {

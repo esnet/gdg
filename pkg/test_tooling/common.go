@@ -148,8 +148,8 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfigu
 
 	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
 	var encoder outbound.CipherEncoder
-	if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
-		encoder, err = cipher.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+	if cfg.PluginConfig.CipherEnabled() {
+		encoder, err = cipher.NewPluginCipherEncoder(&cfg.PluginConfig.CipherPlugin.PluginEntity, cfg.SecureConfig)
 		assert.NoError(t, err, "failed to load cipher plugin")
 	} else {
 		encoder = noop.NoOpEncoder{}
@@ -157,7 +157,7 @@ func CreateSimpleClientWithConfig(t *testing.T, cfg *config_domain.GDGAppConfigu
 
 	storageEngine, err := storage.NewStorageFromConfig(storageType, appData, encoder)
 	assert.NoError(t, err)
-	client := api.NewDashNGo(cfg, encoder, storageEngine, extended.NewExtendedApi(cfg), resources.NewHelpers())
+	client := api.NewDashNGo(cfg, encoder, storageEngine, extended.NewExtendedApi(cfg), resources.NewHelpers(), nil)
 	client.Login()
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {
@@ -196,8 +196,8 @@ func CreateSimpleClient(t *testing.T, cfg *config_domain.GDGAppConfiguration, cf
 	/*
 		cfg := rootSvc.LoadConfig(configPath, contextOverride)
 		var encoder contract.CipherEncoder
-		if !cfg.PluginConfig.Disabled && cfg.PluginConfig.CipherPlugin != nil {
-			encoder = secure.NewPluginCipherEncoder(cfg.PluginConfig.CipherPlugin, cfg.SecureConfig)
+		if cfg.PluginConfig.CipherEnabled() {
+			encoder = secure.NewPluginCipherEncoder(&cfg.PluginConfig.CipherPlugin.PluginEntity, cfg.SecureConfig)
 		} else {
 			encoder = secure.NoOpEncoder{}
 		}
@@ -207,7 +207,7 @@ func CreateSimpleClient(t *testing.T, cfg *config_domain.GDGAppConfiguration, cf
 	storageType, appData := cfg.GetCloudConfiguration(cfg.GetDefaultGrafanaConfig().Storage)
 	storageEngine, err := storage.NewStorageFromConfig(storageType, appData, noop.NoOpEncoder{})
 	assert.NoError(t, err)
-	client := api.NewDashNGo(cfg, noop.NoOpEncoder{}, storageEngine, extended.NewExtendedApi(cfg), resources.NewHelpers())
+	client := api.NewDashNGo(cfg, noop.NoOpEncoder{}, storageEngine, extended.NewExtendedApi(cfg), resources.NewHelpers(), nil)
 	client.Login()
 	currentPath, _ := os.Getwd()
 	if strings.Contains(currentPath, "test") {

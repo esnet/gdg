@@ -34,7 +34,7 @@ func TestRelativePathLogin(t *testing.T) {
 	}()
 
 	localEngine := storage.NewLocalStorage(context.Background())
-	svc := NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine, extended.NewExtendedApi(cfg), resourcesHelpers)
+	svc := NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine, extended.NewExtendedApi(cfg), resourcesHelpers, nil)
 	_, clientCfg := svc.(*DashNGoImpl).getNewClient()
 	assert.Equal(t, clientCfg.Host, "localhost:3000")
 	assert.Equal(t, clientCfg.BasePath, "/grafana/api")

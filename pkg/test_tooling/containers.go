@@ -98,7 +98,7 @@ func SetupCloudFunctionOpt(cfgObj *config_domain.GDGAppConfiguration, encoder ou
 		log.Fatalf("Could not instantiate cloud storage for type: %s", m[storage.CloudType])
 	}
 
-	apiClient := api.NewDashNGo(cfgObj, encoder, s, extended.NewExtendedApi(cfgObj), resources.NewHelpers())
+	apiClient := api.NewDashNGo(cfgObj, encoder, s, extended.NewExtendedApi(cfgObj), resources.NewHelpers(), nil)
 
 	return ctx, cancel, apiClient, s, nil
 }

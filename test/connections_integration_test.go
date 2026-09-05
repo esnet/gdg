@@ -199,7 +199,7 @@ func TestConnectionFilter(t *testing.T) {
 	testingContext = cfg.GetContexts()[common.TestContextName]
 
 	localEngine := storage.NewLocalStorage(context.Background())
-	apiClient = api.NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine, extended.NewExtendedApi(cfg), resources.NewHelpers())
+	apiClient = api.NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine, extended.NewExtendedApi(cfg), resources.NewHelpers(), nil)
 	apiClient.Login()
 
 	filtersEntity := api.NewConnectionFilter("")

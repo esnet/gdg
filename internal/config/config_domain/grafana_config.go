@@ -174,6 +174,20 @@ func (s *GrafanaConfig) UpdateSecureModel(fn func(string) (string, error)) {
 	secureAuth.UpdateSecureModel(fn)
 }
 
+// ResolveLookups resolves any "lookup:<name>:<key>[.<json_field>]" values
+// in the secure model using the supplied function (typically a
+// LookupResolver's Resolve), if secure auth is present. Non-lookup values
+// (literal tokens/passwords, or cipher ciphertext already handled by
+// UpdateSecureModel) are left untouched — see SecureModel.ResolveLookups.
+func (s *GrafanaConfig) ResolveLookups(fn func(string) (string, error)) {
+	secureAuth := s.getSecureAuth()
+	if secureAuth == nil || secureAuth.Empty() {
+		return
+	}
+
+	secureAuth.ResolveLookups(fn)
+}
+
 // GetPassword returns the password, respecting environment variable override if set.
 func (s *GrafanaConfig) GetPassword() string {
 	secureAuth := s.getSecureAuth()
