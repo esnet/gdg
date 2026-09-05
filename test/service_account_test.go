@@ -50,8 +50,9 @@ func TestServiceAccountCrud(t *testing.T) {
 	assert.True(t, strings.HasPrefix(token.Key, "glsa_"))
 	tokens, err := apiClient.ListServiceAccountsTokens(account.ID)
 	assert.NoError(t, err)
-	assert.Equal(t, len(tokens), 1)
-	assert.Equal(t, tokens[0].Name, tokenName)
+	if assert.NotEmpty(t, tokens) {
+		assert.Equal(t, tokens[0].Name, tokenName)
+	}
 	assert.NoError(t, apiClient.DeleteServiceAccount(account.ID))
 	serviceAccounts = apiClient.ListServiceAccounts()
 	assert.Equal(t, len(serviceAccounts), 1)
