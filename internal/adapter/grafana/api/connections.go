@@ -7,7 +7,6 @@ import (
 	"log"
 	"log/slog"
 	"path/filepath"
-	"reflect"
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
@@ -23,48 +22,33 @@ import (
 )
 
 func setupConnectionReaders(filterObj outbound.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.DataSourceListItemDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(models.DataSourceListItemDTO)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err := v2.RegisterTypedReader[models.DataSourceListItemDTO](filterObj, func(ctx context.Context, filterType domain.FilterType, val models.DataSourceListItemDTO) (any, error) {
 		switch filterType {
 		case domain.Name:
 			return val.Name, nil
-
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
 		log.Fatalf("Unable to create a valid Connection Filter, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[[]byte](filterObj, func(ctx context.Context, filterType domain.FilterType, val []byte) (any, error) {
 		switch filterType {
 		case domain.Name:
-			{
-				r := gjson.GetBytes(val, "name")
-				if !r.Exists() || r.IsArray() {
-					return nil, fmt.Errorf("no valid connection name found")
-				}
-				return r.String(), nil
-
+			r := gjson.GetBytes(val, "name")
+			if !r.Exists() || r.IsArray() {
+				return nil, fmt.Errorf("no valid connection name found")
 			}
+			return r.String(), nil
 		case domain.ConnectionName:
-			{
-				r := gjson.GetBytes(val, "Connection.name")
-				if !r.Exists() || r.IsArray() {
-					return nil, fmt.Errorf("no valid connection name found")
-				}
-				return r.String(), nil
+			r := gjson.GetBytes(val, "Connection.name")
+			if !r.Exists() || r.IsArray() {
+				return nil, fmt.Errorf("no valid connection name found")
 			}
-
+			return r.String(), nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
@@ -76,25 +60,20 @@ func NewConnectionFilter(name string) outbound.Filter {
 	resourceHelper := resources.NewHelpers()
 	filterEntity := v2.NewBaseFilter()
 	setupConnectionReaders(filterEntity)
-	getValidateFunc := func(filterType domain.FilterType) func(ctx context.Context, value any, expected any) error {
-		return func(ctx context.Context, value any, expected any) error {
-			val, expression, convErr := v2.GetParams[string](value, expected, filterType)
-			if convErr != nil {
-				return convErr
-			}
-			if expression == "" {
-				return nil
-			}
-			if name != resourceHelper.GetSlug(val) {
-				return fmt.Errorf("invalid connection filter. Expected: %v", expression)
-			}
+
+	validateSlug := func(ctx context.Context, val, expression string) error {
+		if expression == "" {
 			return nil
 		}
+		if name != resourceHelper.GetSlug(val) {
+			return fmt.Errorf("invalid connection filter. Expected: %v", expression)
+		}
+		return nil
 	}
 
-	filterEntity.AddValidation(domain.Name, getValidateFunc(domain.Name), name)
+	v2.RegisterTypedValidation[string](filterEntity, domain.Name, name, validateSlug)
 	// used to check filter for connection permissions
-	filterEntity.AddValidation(domain.ConnectionName, getValidateFunc(domain.ConnectionName), name)
+	v2.RegisterTypedValidation[string](filterEntity, domain.ConnectionName, name, validateSlug)
 
 	return filterEntity
 }

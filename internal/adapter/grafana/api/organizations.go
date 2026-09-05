@@ -9,7 +9,6 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
@@ -25,40 +24,27 @@ import (
 )
 
 func setupOrgReaders(filterObj outbound.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.OrgDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(models.OrgDTO)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err := v2.RegisterTypedReader[models.OrgDTO](filterObj, func(ctx context.Context, filterType domain.FilterType, val models.OrgDTO) (any, error) {
 		switch filterType {
 		case domain.OrgFilter:
 			return val.Name, nil
-
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
 		log.Fatalf("Unable to create a valid Org Filter, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[[]byte](filterObj, func(ctx context.Context, filterType domain.FilterType, val []byte) (any, error) {
 		switch filterType {
 		case domain.OrgFilter:
-			{
-				r := gjson.GetBytes(val, "organization.name")
-				if !r.Exists() || r.IsArray() {
-					return nil, fmt.Errorf("no valid connection name found")
-				}
-				return r.String(), nil
-
+			r := gjson.GetBytes(val, "organization.name")
+			if !r.Exists() || r.IsArray() {
+				return nil, fmt.Errorf("no valid org name found")
 			}
-
+			return r.String(), nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
@@ -73,11 +59,7 @@ func NewOrganizationFilter(args ...string) outbound.Filter {
 		return filterObj
 	}
 
-	filterObj.AddValidation(domain.OrgFilter, func(ctx context.Context, value any, expected any) error {
-		val, expectedValue, convErr := v2.GetParams[string](value, expected, domain.OrgFilter)
-		if convErr != nil {
-			return convErr
-		}
+	v2.RegisterTypedValidation[string](filterObj, domain.OrgFilter, args[0], func(ctx context.Context, val, expectedValue string) error {
 		if expectedValue == "" {
 			return nil
 		}
@@ -85,7 +67,7 @@ func NewOrganizationFilter(args ...string) outbound.Filter {
 			return fmt.Errorf("failed Org Name filter, expected %v, got %v", expectedValue, val)
 		}
 		return nil
-	}, args[0])
+	})
 
 	return filterObj
 }
@@ -280,9 +262,10 @@ func (s *DashNGoImpl) ListOrganizations(filter outbound.Filter, withPreferences 
 		}
 	}
 
+	typedFilter := v2.NewTypedFilter[models.OrgDTO](filter)
 	var resultsData []*domain.OrgsDTOWithPreferences
 	for _, org := range orgList.GetPayload() {
-		if filter.ValidateAll(context.Background(), *org) {
+		if typedFilter.ValidateEntity(context.Background(), *org) {
 			if !withPreferences {
 				resultsData = append(resultsData, &domain.OrgsDTOWithPreferences{Organization: org, Preferences: &models.PreferencesSpec{}})
 			} else {
@@ -368,7 +351,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter outbound.Filter) []string {
 			continue
 		}
 		newOrg.Name = jsonOrg.Organization.Name
-		if !filter.ValidateAll(context.Background(), rawFolder) {
+		if !v2.NewTypedFilter[[]byte](filter).ValidateEntity(context.Background(), rawFolder) {
 			slog.Debug("Skipping org, failing filter check", "file", file)
 			continue
 		}
