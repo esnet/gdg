@@ -12,6 +12,11 @@ concurrency:
 
 jobs:
   integration_tests:
+    env:
+      # Fork PRs don't get repo secrets (e.g. ENTERPRISE_LICENSE), so
+      # enterprise-only tests can't run against them. Skip those tests
+      # automatically when the PR head repo isn't this repo.
+      ENTERPRISE_DISABLED: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
     strategy:
       matrix:
         grafana_version: [ 12.0.0-ubuntu, 13.2.0-ubuntu ]
@@ -31,6 +36,7 @@ jobs:
           grafana_version: "${{ matrix.grafana_version  }}"
           coverage_token: "${{ secrets.CODECOV_TOKEN }}"
           enterprise_jwt: "${{ secrets.ENTERPRISE_LICENSE }}"
+          enterprise_disabled: "${{ env.ENTERPRISE_DISABLED }}"
       - name: Run Non Reporting test
         if: ${{ matrix.grafana_version != '13.2.0-ubuntu' || matrix.use_tokens != 0 }}
         env:

@@ -12,6 +12,10 @@ inputs:
     description: 'Token for testing enterprise features'
     required: true
     default: ''
+  enterprise_disabled:
+    description: 'Set to true to skip enterprise-only tests (e.g. for fork PRs without access to enterprise_jwt)'
+    required: false
+    default: 'false'
 
 
 
@@ -22,6 +26,7 @@ runs:
       env:
         go-version: "${{ inputs.go_version }}"
         ENTERPRISE_LICENSE: "${{ inputs.enterprise_jwt }}"
+        ENTERPRISE_DISABLED: "${{ inputs.enterprise_disabled }}"
         GRAFANA_TEST_VERSION: "${{ inputs.grafana_version}}"
         TEST_TOKEN_CONFIG: "0"
       run:  go tool -modfile tools/go.mod gotestsum --junitfile report.xml --format testname  -- -coverprofile=cover.out  -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks|test_tooling" | tr '\n' ',' )   ./...
