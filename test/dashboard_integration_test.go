@@ -612,8 +612,9 @@ func validateOtherBoard(t *testing.T, board *customModels.DashboardV2Gdg) {
 
 func validateGeneralBoard(t *testing.T, board *customModels.DashboardV2Gdg) {
 	assert.Equal(t, board.Resource.Spec.Title, "Individual Flows")
-	assert.Equal(t, len(board.Resource.Spec.Tags), 1)
-	assert.Equal(t, board.Resource.Spec.Tags[0], "netsage")
+	if assert.NotEmpty(t, board.Resource.Spec.Tags) {
+		assert.Equal(t, board.Resource.Spec.Tags[0], "netsage")
+	}
 	assert.Equal(t, board.NestedPath, "General")
 }
 

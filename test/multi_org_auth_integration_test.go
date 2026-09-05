@@ -13,6 +13,7 @@ import (
 	"github.com/esnet/gdg/pkg/test_tooling/common"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 )
 
@@ -29,10 +30,7 @@ func pinAdminOrgContext(t *testing.T, cfg *config_domain.GDGAppConfiguration, co
 		return rebuilt, config_domain.DefaultOrganizationId
 	}
 	orgs := rebuilt.ListOrganizations(api.NewOrganizationFilter(orgName), false)
-	assert.Equal(t, 1, len(orgs), "expected exactly one org named %q", orgName)
-	if len(orgs) != 1 {
-		t.FailNow()
-	}
+	require.Equal(t, 1, len(orgs), "expected exactly one org named %q", orgName)
 	return rebuilt, orgs[0].Organization.ID
 }
 

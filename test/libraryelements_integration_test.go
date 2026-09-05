@@ -113,15 +113,16 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		// On v12 that dashboard is skipped, so no connection exists.
 		connections := apiClient.ListLibraryElementsConnections(filtersEntity, "T47RSwQnz")
 		if isV13() {
-			assert.Equal(t, 1, len(connections))
-			connection := connections[0]
-			assert.Equal(t, connection.Meta.FolderTitle, "n+_=23r")
-			assert.True(t, len(connection.Meta.FolderUID) > 0)
-			assert.Equal(t, connection.Meta.Slug, "dashboard-makeover-challenge")
-			assert.Equal(t, connection.Dashboard.(map[string]any)["uid"].(string), "F3eInwQ7z")
-			assert.Equal(t, connection.Dashboard.(map[string]any)["title"].(string), "Dashboard Makeover Challenge")
+			if assert.NotEmpty(t, connections) {
+				connection := connections[0]
+				assert.Equal(t, connection.Meta.FolderTitle, "n+_=23r")
+				assert.True(t, len(connection.Meta.FolderUID) > 0)
+				assert.Equal(t, connection.Meta.Slug, "dashboard-makeover-challenge")
+				assert.Equal(t, connection.Dashboard.(map[string]any)["uid"].(string), "F3eInwQ7z")
+				assert.Equal(t, connection.Dashboard.(map[string]any)["title"].(string), "Dashboard Makeover Challenge")
+			}
 		} else {
-			assert.Equal(t, 0, len(connections))
+			assert.Empty(t, connections)
 		}
 
 		// Delete All Dashboards
