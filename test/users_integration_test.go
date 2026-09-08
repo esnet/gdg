@@ -41,6 +41,7 @@ func TestUsers(t *testing.T) {
 	apiClient.DeleteAllUsers(userFilter) // clear any previous state
 	users := apiClient.ListUsers(userFilter)
 	if assert.NotEmpty(t, users) {
+		assert.Equal(t, 1, len(users))
 		adminUser := users[0]
 		assert.Equal(t, adminUser.ID, int64(1))
 		assert.Equal(t, adminUser.Login, "admin")
@@ -49,11 +50,13 @@ func TestUsers(t *testing.T) {
 	// Only upload users matching filter
 	newUsers := apiClient.UploadUsers(api.NewUserFilter("foobar"))
 	if assert.NotEmpty(t, newUsers) {
+		assert.Equal(t, 1, len(newUsers))
 		assert.Equal(t, newUsers[0].Email, "s@s.com")
 	}
 	// upload remaining user that do not already exist
 	newUsers = apiClient.UploadUsers(userFilter)
 	if assert.NotEmpty(t, newUsers) {
+		assert.Equal(t, 1, len(newUsers))
 		assert.Equal(t, newUsers[0].Email, "bob@aol.com")
 	}
 	users = apiClient.ListUsers(userFilter)

@@ -51,6 +51,7 @@ func TestAlertingTimingsCrud(t *testing.T) {
 	assert.NoError(err)
 
 	if assert.NotEmpty(timingsList) {
+		assert.Equal(1, len(timingsList))
 		timingItem := timingsList[0]
 		assert.Equal(timingItem.Name, "after-hours")
 		assert.Equal(len(timingItem.TimeIntervals), 2)

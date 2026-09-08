@@ -3,7 +3,6 @@ package test
 import (
 	"bytes"
 	"context"
-	"log"
 	"log/slog"
 	"os"
 	"slices"
@@ -153,9 +152,7 @@ func TestTemplatesFilterTest(t *testing.T) {
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				filter := api.NewAlertTemplatesFilter(tc.regex)
-				log.Printf("FILTER: %v", filter)
 				list, listErr := apiClient.ListAlertTemplates(filter)
-				log.Printf("LIST: %v", list)
 				assert.NoError(t, listErr)
 				assert.Equal(t, tc.expected, len(list))
 				if tc.validate != nil {
@@ -169,12 +166,14 @@ func TestTemplatesFilterTest(t *testing.T) {
 		cleared, clearErr := apiClient.ClearAlertTemplates(api.NewAlertTemplatesFilter("^test_tpl1$"))
 		assert.NoError(t, clearErr)
 		if assert.NotEmpty(t, cleared) {
+			assert.Equal(t, 1, len(cleared))
 			assert.Equal(t, "test_tpl1", cleared[0])
 		}
 
 		remaining, listErr := apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
 		assert.NoError(t, listErr)
 		if assert.NotEmpty(t, remaining) {
+			assert.Equal(t, 1, len(remaining))
 			assert.Equal(t, "tpl2_test", remaining[0].Name)
 		}
 
@@ -182,6 +181,7 @@ func TestTemplatesFilterTest(t *testing.T) {
 		restored, uploadErr := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter("^test_tpl1$"))
 		assert.NoError(t, uploadErr)
 		if assert.NotEmpty(t, restored) {
+			assert.Equal(t, 1, len(restored))
 			assert.Equal(t, "test_tpl1", restored[0])
 		}
 	})
@@ -194,12 +194,14 @@ func TestTemplatesFilterTest(t *testing.T) {
 		uploaded, uploadErr := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter("_test$"))
 		assert.NoError(t, uploadErr)
 		if assert.NotEmpty(t, uploaded) {
+			assert.Equal(t, 1, len(uploaded))
 			assert.Equal(t, "tpl2_test", uploaded[0])
 		}
 
 		afterUpload, listErr := apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
 		assert.NoError(t, listErr)
 		if assert.NotEmpty(t, afterUpload) {
+			assert.Equal(t, 1, len(afterUpload))
 			assert.Equal(t, "tpl2_test", afterUpload[0].Name)
 		}
 
