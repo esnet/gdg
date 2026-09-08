@@ -114,6 +114,7 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		connections := apiClient.ListLibraryElementsConnections(filtersEntity, "T47RSwQnz")
 		if isV13() {
 			if assert.NotEmpty(t, connections) {
+				assert.Equal(t, 1, len(connections))
 				connection := connections[0]
 				assert.Equal(t, connection.Meta.FolderTitle, "n+_=23r")
 				assert.True(t, len(connection.Meta.FolderUID) > 0)

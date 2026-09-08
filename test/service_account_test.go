@@ -51,6 +51,7 @@ func TestServiceAccountCrud(t *testing.T) {
 	tokens, err := apiClient.ListServiceAccountsTokens(account.ID)
 	assert.NoError(t, err)
 	if assert.NotEmpty(t, tokens) {
+		assert.Equal(t, 1, len(tokens))
 		assert.Equal(t, tokens[0].Name, tokenName)
 	}
 	assert.NoError(t, apiClient.DeleteServiceAccount(account.ID))
