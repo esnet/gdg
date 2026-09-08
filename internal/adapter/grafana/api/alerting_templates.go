@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
-	"reflect"
 	"regexp"
 
 	v2 "github.com/esnet/gdg/internal/adapter/filters/v2"
@@ -21,48 +20,35 @@ const (
 )
 
 func setupTemplateReaders(filterObj outbound.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[*models.NotificationTemplate](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(*models.NotificationTemplate)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err := v2.RegisterTypedReader[*models.NotificationTemplate](filterObj, func(ctx context.Context, filterType domain.FilterType, val *models.NotificationTemplate) (any, error) {
 		switch filterType {
 		case domain.Name:
 			return val.Name, nil
-
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
-		log.Fatalf("Unable to create a valid Connection Filter, aborting.")
+		log.Fatalf("Unable to create a valid Alert Templates Filter, aborting.")
 	}
 }
 
 func NewAlertTemplatesFilter(regexPattern string) outbound.Filter {
 	filterEntity := v2.NewBaseFilter()
 	setupTemplateReaders(filterEntity)
-	getValidateFunc := func(filterType domain.FilterType) func(ctx context.Context, value any, expected any) error {
-		return func(ctx context.Context, value any, expected any) error {
-			val, expression, convErr := v2.GetParams[string](value, expected, filterType)
-			if convErr != nil {
-				return convErr
-			}
-			if expression == "" {
-				return nil
-			}
-			r, ReErr := regexp.Compile(expression)
-			if ReErr != nil {
-				return fmt.Errorf("invalid regex: %s", expression)
-			}
-			if r.MatchString(val) {
-				return nil
-			}
-			return fmt.Errorf("invalid template filter. Expected: %v", expression)
+	v2.RegisterTypedValidation[string](filterEntity, domain.Name, regexPattern, func(ctx context.Context, val, expression string) error {
+		if expression == "" {
+			return nil
 		}
-	}
-
-	filterEntity.AddValidation(domain.Name, getValidateFunc(domain.Name), regexPattern)
+		r, ReErr := regexp.Compile(expression)
+		if ReErr != nil {
+			return fmt.Errorf("invalid regex: %s", expression)
+		}
+		if r.MatchString(val) {
+			return nil
+		}
+		return fmt.Errorf("invalid template filter. Expected: %v", expression)
+	})
 	return filterEntity
 }
 

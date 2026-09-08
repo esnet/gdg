@@ -8,7 +8,6 @@ import (
 	"log"
 	"log/slog"
 	"path/filepath"
-	"reflect"
 	"slices"
 	"sort"
 	"strings"
@@ -27,42 +26,29 @@ import (
 )
 
 func setupUserReaders(filterObj outbound.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.UserSearchHitDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(models.UserSearchHitDTO)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err := v2.RegisterTypedReader[models.UserSearchHitDTO](filterObj, func(ctx context.Context, filterType domain.FilterType, val models.UserSearchHitDTO) (any, error) {
 		switch filterType {
 		case domain.AuthLabel:
 			return val.AuthLabels, nil
-
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
 		log.Fatalf("Unable to create a valid User Filter, obj reader failed, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[[]byte](filterObj, func(ctx context.Context, filterType domain.FilterType, val []byte) (any, error) {
 		switch filterType {
 		case domain.AuthLabel:
-			{
-				r := gjson.GetBytes(val, "authLabels")
-				if !r.Exists() || !r.IsArray() {
-					return nil, fmt.Errorf("no valid connection name found")
-				}
-				return lo.Map(r.Array(), func(item gjson.Result, index int) string {
-					return item.String()
-				}), nil
-
+			r := gjson.GetBytes(val, "authLabels")
+			if !r.Exists() || !r.IsArray() {
+				return nil, fmt.Errorf("no valid auth labels found")
 			}
-
+			return lo.Map(r.Array(), func(item gjson.Result, index int) string {
+				return item.String()
+			}), nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
@@ -77,11 +63,7 @@ func NewUserFilter(label string) outbound.Filter {
 	if label != "" {
 		labelArray = []string{label}
 	}
-	filterEntity.AddValidation(domain.AuthLabel, func(ctx context.Context, value any, expected any) error {
-		val, expectedList, convErr := v2.GetParams[[]string](value, expected, domain.FolderFilter)
-		if convErr != nil {
-			return convErr
-		}
+	v2.RegisterTypedValidation[[]string](filterEntity, domain.AuthLabel, labelArray, func(ctx context.Context, val, expectedList []string) error {
 		if len(expectedList) == 0 {
 			return nil
 		}
@@ -91,7 +73,7 @@ func NewUserFilter(label string) outbound.Filter {
 			}
 		}
 		return fmt.Errorf("failed validation test val:%v  expected: %v", val, expectedList)
-	}, labelArray)
+	})
 	return filterEntity
 }
 
@@ -229,10 +211,11 @@ func (s *DashNGoImpl) ListUsers(filter outbound.Filter) []*models.UserSearchHitD
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	typedFilter := v2.NewTypedFilter[*models.UserSearchHitDTO](filter)
 	for _, entry := range usersList.GetPayload() {
 		if len(entry.AuthLabels) == 0 {
 			filteredUsers = append(filteredUsers, entry)
-		} else if filter.ValidateAll(context.Background(), entry) {
+		} else if typedFilter.ValidateEntity(context.Background(), entry) {
 			filteredUsers = append(filteredUsers, entry)
 		}
 	}

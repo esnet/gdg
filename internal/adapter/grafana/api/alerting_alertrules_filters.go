@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
-	"reflect"
 	"regexp"
 	"slices"
 	"strings"
@@ -19,7 +18,6 @@ import (
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/pkg/ptr"
-	"github.com/samber/lo"
 	"github.com/tidwall/gjson"
 )
 
@@ -38,21 +36,16 @@ var alertRuleCache = ttlcache.New[string, *domain.NestedHit](
 // log.Fatalf if either reader registration fails.
 func setupAlertRulesReaders(filterObj outbound.Filter, grafanaSvc outbound.GrafanaService) {
 	// Object Reader
-	err := filterObj.RegisterReader(reflect.TypeFor[*domain.AlertRuleWithNestedFolder](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(*domain.AlertRuleWithNestedFolder)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err := v2.RegisterTypedReader[*domain.AlertRuleWithNestedFolder](filterObj, func(ctx context.Context, filterType domain.FilterType, val *domain.AlertRuleWithNestedFolder) (any, error) {
 		switch filterType {
 		case domain.UID:
 			return val.UID, nil
 		case domain.FolderFilter:
-			// return val.NestedPath, nil
 			return ptr.ValueOrDefault(val.FolderUID, ""), nil
 		case domain.TagsFilter:
 			return val.Labels, nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
@@ -60,47 +53,35 @@ func setupAlertRulesReaders(filterObj outbound.Filter, grafanaSvc outbound.Grafa
 	}
 
 	// Raw Reader
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[[]byte](filterObj, func(ctx context.Context, filterType domain.FilterType, val []byte) (any, error) {
 		switch filterType {
 		case domain.UID:
-			{
-				r := gjson.GetBytes(val, "uid")
-				if !r.Exists() || r.IsArray() {
-					return nil, errors.New("no valid rule name was found")
-				}
-				return r.String(), nil
+			r := gjson.GetBytes(val, "uid")
+			if !r.Exists() || r.IsArray() {
+				return nil, errors.New("no valid rule name was found")
 			}
+			return r.String(), nil
 		case domain.FolderFilter:
-			{
-				r := gjson.GetBytes(val, "folderUID")
-				if !r.Exists() || r.IsArray() {
-					return domain.ApiConsts.DefaultFolderName, nil
-				}
-
-				return r.String(), nil
+			r := gjson.GetBytes(val, "folderUID")
+			if !r.Exists() || r.IsArray() {
+				return domain.ApiConsts.DefaultFolderName, nil
 			}
+			return r.String(), nil
 		case domain.TagsFilter:
-			{
-				slog.Debug("Trying to read labels filter")
-				r := gjson.GetBytes(val, "labels")
-				data := make(map[string]string)
-				if !r.Exists() || r.IsArray() {
-					slog.Debug("unable to read rules labels")
-					return data, nil
-				}
-				ar := r.Map()
-				for k, v := range ar {
-					data[k] = v.String()
-				}
+			slog.Debug("Trying to read labels filter")
+			r := gjson.GetBytes(val, "labels")
+			data := make(map[string]string)
+			if !r.Exists() || r.IsArray() {
+				slog.Debug("unable to read rules labels")
 				return data, nil
 			}
-
+			ar := r.Map()
+			for k, v := range ar {
+				data[k] = v.String()
+			}
+			return data, nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
@@ -116,26 +97,7 @@ func setupAlertRulesReaders(filterObj outbound.Filter, grafanaSvc outbound.Grafa
 // filter registration fails.
 func setupAlertRulesFolderFilter(filterObj outbound.Filter, filterEntities domain.AlertRuleFilterParams, cfg *configDomain.GDGAppConfiguration, grafanaSvc outbound.GrafanaService) {
 	const folderSeparator = "|"
-	err := filterObj.RegisterDataProcessor(domain.FolderFilter, domain.ProcessorEntity{
-		Name: "folderQuoteRegEx",
-		Processor: func(ctx context.Context, item any) (any, error) {
-			switch w := item.(type) {
-			case string:
-				slog.Debug("folder quote filter applied to string")
-				quoteRegex, _ := regexp.Compile("['\"]+")
-				w = quoteRegex.ReplaceAllString(w, "")
-				return w, nil
-			case []string:
-				slog.Debug("folder quote filter applied to []string")
-				return lo.Map(w, func(i string, index int) string {
-					quoteRegex, _ := regexp.Compile("['\"]+")
-					i = quoteRegex.ReplaceAllString(i, "")
-					return i
-				}), nil
-			}
-			return item, nil
-		},
-	})
+	err := filterObj.RegisterDataProcessor(domain.FolderFilter, v2.FolderQuoteRegExProcessor)
 	if err != nil {
 		log.Fatalf("Unable to create a valid Dashboard Filter, aborting.")
 	}
@@ -233,21 +195,16 @@ func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc outbou
 	setupAlertRulesFolderFilter(filterObj, filterEntities, cfg, grafanaSvc)
 
 	// AlertName filter
-	filterObj.AddValidation(domain.UID, func(ctx context.Context, value any, expected any) error {
-		val, expressions, convErr := v2.GetParams[string](value, expected, domain.UID)
-		if convErr != nil {
-			return convErr
-		}
+	v2.RegisterTypedValidation[string](filterObj, domain.UID, filterEntities.UID, func(ctx context.Context, val, expressions string) error {
 		// no filter active
 		if expressions == "" {
 			return nil
 		}
-		if expected == val {
+		if val == expressions {
 			return nil
 		}
-
-		return fmt.Errorf("invalid folder filter. Expected: %v", expressions)
-	}, filterEntities.UID)
+		return fmt.Errorf("invalid UID filter. Expected: %v", expressions)
+	})
 
 	// Alert Label filter
 	filterObj.AddValidation(domain.TagsFilter, func(ctx context.Context, value any, expected any) error {

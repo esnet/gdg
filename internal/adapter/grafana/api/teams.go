@@ -8,7 +8,6 @@ import (
 	"log"
 	"log/slog"
 	"path/filepath"
-	"reflect"
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/filters/v2"
@@ -31,40 +30,27 @@ const (
 )
 
 func setupTeamReader(filterObj outbound.Filter) {
-	err := filterObj.RegisterReader(reflect.TypeFor[models.TeamDTO](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.(models.TeamDTO)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err := v2.RegisterTypedReader[models.TeamDTO](filterObj, func(ctx context.Context, filterType domain.FilterType, val models.TeamDTO) (any, error) {
 		switch filterType {
 		case domain.Name:
 			return ptr.ValueOrDefault(val.Name, ""), nil
-
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
 		log.Fatalf("Unable to create a valid Team Filter, obj entity reader failed, aborting.")
 	}
-	err = filterObj.RegisterReader(reflect.TypeFor[[]byte](), func(ctx context.Context, filterType domain.FilterType, a any) (any, error) {
-		val, ok := a.([]byte)
-		if !ok {
-			return nil, fmt.Errorf("unsupported data type")
-		}
+	err = v2.RegisterTypedReader[[]byte](filterObj, func(ctx context.Context, filterType domain.FilterType, val []byte) (any, error) {
 		switch filterType {
 		case domain.Name:
-			{
-				r := gjson.GetBytes(val, "name")
-				if !r.Exists() || r.IsArray() {
-					return nil, fmt.Errorf("no valid connection name found")
-				}
-				return r.String(), nil
-
+			r := gjson.GetBytes(val, "name")
+			if !r.Exists() || r.IsArray() {
+				return nil, fmt.Errorf("no valid team name found")
 			}
-
+			return r.String(), nil
 		default:
-			return nil, fmt.Errorf("unsupported data type")
+			return nil, fmt.Errorf("unsupported filter type: %s", filterType)
 		}
 	})
 	if err != nil {
@@ -75,11 +61,7 @@ func setupTeamReader(filterObj outbound.Filter) {
 func NewTeamFilter(entries ...string) outbound.Filter {
 	filterObj := v2.NewBaseFilter()
 	setupTeamReader(filterObj)
-	filterObj.AddValidation(domain.Name, func(ctx context.Context, value any, expected any) error {
-		val, expectedValue, convErr := v2.GetParams[string](value, expected, domain.Name)
-		if convErr != nil {
-			return convErr
-		}
+	v2.RegisterTypedValidation[string](filterObj, domain.Name, entries[0], func(ctx context.Context, val, expectedValue string) error {
 		if expectedValue == "" {
 			return nil
 		}
@@ -87,7 +69,7 @@ func NewTeamFilter(entries ...string) outbound.Filter {
 			return fmt.Errorf("failed Team Name filter, expected %v, got %v", expectedValue, val)
 		}
 		return nil
-	}, entries[0])
+	})
 
 	return filterObj
 }
@@ -150,7 +132,7 @@ func (s *DashNGoImpl) UploadTeams(filter outbound.Filter) map[*models.TeamDTO][]
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
-			if !filter.ValidateAll(context.Background(), rawTeam) {
+			if !v2.NewTypedFilter[[]byte](filter).ValidateEntity(context.Background(), rawTeam) {
 				slog.Debug("Skipping file, failed Team filter", "file", fileLocation)
 				continue
 			}
@@ -238,7 +220,7 @@ func (s *DashNGoImpl) DeleteTeam(filter outbound.Filter) ([]*models.TeamDTO, err
 	teamListing := maps.Keys(s.ListTeams(filter))
 	var result []*models.TeamDTO
 	for _, team := range teamListing {
-		if !filter.ValidateAll(context.Background(), *team) || team.ID == nil {
+		if !v2.NewTypedFilter[models.TeamDTO](filter).ValidateEntity(context.Background(), *team) || team.ID == nil {
 			slog.Error("Team failed basic validation, could not delete entry")
 			continue
 		}
