@@ -15,6 +15,7 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUsers(t *testing.T) {
@@ -39,26 +40,32 @@ func TestUsers(t *testing.T) {
 	apiClient := r.ApiClient
 	apiClient.DeleteAllUsers(userFilter) // clear any previous state
 	users := apiClient.ListUsers(userFilter)
-	assert.Equal(t, len(users), 1)
-	adminUser := users[0]
-	assert.Equal(t, adminUser.ID, int64(1))
-	assert.Equal(t, adminUser.Login, "admin")
-	assert.Equal(t, adminUser.IsAdmin, true)
+	if assert.NotEmpty(t, users) {
+		assert.Equal(t, 1, len(users))
+		adminUser := users[0]
+		assert.Equal(t, adminUser.ID, int64(1))
+		assert.Equal(t, adminUser.Login, "admin")
+		assert.Equal(t, adminUser.IsAdmin, true)
+	}
 	// Only upload users matching filter
 	newUsers := apiClient.UploadUsers(api.NewUserFilter("foobar"))
-	assert.Equal(t, len(newUsers), 1)
-	assert.Equal(t, newUsers[0].Email, "s@s.com")
+	if assert.NotEmpty(t, newUsers) {
+		assert.Equal(t, 1, len(newUsers))
+		assert.Equal(t, newUsers[0].Email, "s@s.com")
+	}
 	// upload remaining user that do not already exist
 	newUsers = apiClient.UploadUsers(userFilter)
-	assert.Equal(t, len(newUsers), 1)
-	assert.Equal(t, newUsers[0].Email, "bob@aol.com")
+	if assert.NotEmpty(t, newUsers) {
+		assert.Equal(t, 1, len(newUsers))
+		assert.Equal(t, newUsers[0].Email, "bob@aol.com")
+	}
 	users = apiClient.ListUsers(userFilter)
 	assert.Equal(t, len(users), 3)
 	var user *models.UserSearchHitDTO
 	user = lo.FirstOrEmpty(lo.Filter(users, func(userItem *models.UserSearchHitDTO, index int) bool {
 		return userItem.Name == "supertux"
 	}))
-	assert.NotNil(t, user)
+	require.NotNil(t, user)
 	assert.Equal(t, user.Login, "tux")
 	assert.Equal(t, user.Email, "s@s.com")
 	assert.Equal(t, user.LastSeenAtAge, "10 years")

@@ -40,10 +40,12 @@ func TestOrganizationCrud(t *testing.T) {
 	}()
 	apiClient := r.ApiClient
 	orgs := apiClient.ListOrganizations(api.NewOrganizationFilter(), true)
-	assert.Equal(t, len(orgs), 1)
-	mainOrg := orgs[0]
-	assert.Equal(t, mainOrg.Organization.ID, int64(1))
-	assert.Equal(t, mainOrg.Organization.Name, "Main Org.")
+	if assert.NotEmpty(t, orgs) {
+		assert.Equal(t, 1, len(orgs))
+		mainOrg := orgs[0]
+		assert.Equal(t, mainOrg.Organization.ID, int64(1))
+		assert.Equal(t, mainOrg.Organization.Name, "Main Org.")
+	}
 	newOrgs := apiClient.UploadOrganizations(api.NewOrganizationFilter())
 	assert.Equal(t, len(newOrgs), 4)
 	assert.True(t, slices.Contains(newOrgs, "DumbDumb"))
@@ -51,8 +53,10 @@ func TestOrganizationCrud(t *testing.T) {
 	assert.True(t, slices.Contains(newOrgs, "testing"))
 	// Filter Org
 	orgs = apiClient.ListOrganizations(api.NewOrganizationFilter("DumbDumb"), true)
-	assert.Equal(t, len(orgs), 1)
-	assert.Equal(t, orgs[0].Organization.Name, "DumbDumb")
+	if assert.NotEmpty(t, orgs) {
+		assert.Equal(t, 1, len(orgs))
+		assert.Equal(t, orgs[0].Organization.Name, "DumbDumb")
+	}
 }
 
 func TestOrganizationUserMembership(t *testing.T) {
@@ -99,9 +103,11 @@ func TestOrganizationUserMembership(t *testing.T) {
 	assert.Nil(t, err)
 	// Start CRUD test
 	orgUsers := apiClient.ListOrgUsers(newOrg.Organization.ID)
-	assert.Equal(t, len(orgUsers), 1)
-	assert.Equal(t, orgUsers[0].Login, "admin")
-	assert.Equal(t, orgUsers[0].Role, "Admin")
+	if assert.NotEmpty(t, orgUsers) {
+		assert.Equal(t, 1, len(orgUsers))
+		assert.Equal(t, orgUsers[0].Login, "admin")
+		assert.Equal(t, orgUsers[0].Role, "Admin")
+	}
 
 	err = apiClient.AddUserToOrg("Admin", slug.Make(newOrg.Organization.Name), orgUser.ID)
 	assert.Nil(t, err)
