@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
@@ -187,6 +188,23 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 				alertCfg: domain.AlertRuleFilterParams{
 					IgnoreWatchedFolders: false,
 					Folder:               "linux%2Fgnu/*",
+				},
+				validate: func(alertCfg domain.AlertRuleFilterParams, rulesList []*domain.AlertRuleWithNestedFolder) {
+					for _, rule := range rulesList {
+						is.True(strings.HasPrefix(rule.NestedPath, "linux%2Fgnu/"))
+					}
+				},
+			},
+			{
+				name:     "folder filter exact subfolder, using watch folders",
+				enabled:  true,
+				expected: 1,
+				alertCfg: domain.AlertRuleFilterParams{
+					IgnoreWatchedFolders: false,
+					Folder:               "linux%2Fgnu/Others",
+				},
+				validate: func(alertCfg domain.AlertRuleFilterParams, rulesList []*domain.AlertRuleWithNestedFolder) {
+					is.Equal(rulesList[0].NestedPath, "linux%2Fgnu/Others")
 				},
 			},
 			{
