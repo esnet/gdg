@@ -11,7 +11,7 @@ package gsm
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"os"
 	"strings"
@@ -22,7 +22,7 @@ import (
 
 // SecretManagerScope is the OAuth2 scope required to call the Secret
 // Manager REST API.
-const SecretManagerScope = "https://www.googleapis.com/auth/cloud-platform"
+const SecretManagerScope = "https://www.googleapis.com/auth/cloud-platform" // #nosec G101
 
 // loadCredentialsJSON resolves the "credentials" plugin config value into
 // raw service-account JSON bytes.

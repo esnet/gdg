@@ -1,14 +1,7 @@
 package lookup
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/pem"
 	"errors"
-	"fmt"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/esnet/gdg/internal/config/config_domain"
@@ -112,16 +105,6 @@ func TestParseRef(t *testing.T) {
 			assert.Equal(t, tt.wantJSONField, jsonField)
 		})
 	}
-}
-
-// ── IsRef ───────────────────────────────────────────────────────────────
-
-func TestIsRef(t *testing.T) {
-	assert.True(t, IsRef("lookup:gsm:foo"))
-	assert.False(t, IsRef("env:FOO"))
-	assert.False(t, IsRef("file:/foo"))
-	assert.False(t, IsRef("plain-value"))
-	assert.False(t, IsRef(""))
 }
 
 // ── Resolve ─────────────────────────────────────────────────────────────
@@ -246,61 +229,4 @@ func TestNewResolver_UnknownProviderName_ReturnsError(t *testing.T) {
 	_, err := NewResolver(cfg)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "no lookup plugin implementation registered")
-}
-
-// fakeServiceAccountJSON builds a syntactically valid GCP service-account
-// key JSON document backed by a freshly generated RSA key, mirroring the
-// helper in the gsm package's own tests -- duplicated here (rather than
-// exported from gsm) since it's a small, test-only fixture and this test
-// wants to exercise the real gsm.NewPluginLookupGSM path via buildProvider
-// without depending on gsm's unexported test internals.
-func fakeServiceAccountJSON(t *testing.T) string {
-	t.Helper()
-	key, err := rsa.GenerateKey(rand.Reader, 2048)
-	require.NoError(t, err)
-
-	der, err := x509.MarshalPKCS8PrivateKey(key)
-	require.NoError(t, err)
-
-	pemBytes := pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: der})
-
-	return fmt.Sprintf(`{
-		"type": "service_account",
-		"project_id": "test-project",
-		"private_key_id": "test-key-id",
-		"private_key": %q,
-		"client_email": "test@test-project.iam.gserviceaccount.com",
-		"client_id": "1234567890",
-		"token_uri": "https://oauth2.googleapis.com/token"
-	}`, string(pemBytes))
-}
-
-// minimalWasmModule is the smallest possible valid WebAssembly binary --
-// see gsm's own tests for the full explanation of why this is sufficient
-// to exercise a real extism.NewPlugin construction.
-var minimalWasmModule = []byte{0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00}
-
-func TestNewResolver_KnownProvider_DispatchesToRealConstructor(t *testing.T) {
-	dir := t.TempDir()
-	wasmPath := filepath.Join(dir, "empty.wasm")
-	require.NoError(t, os.WriteFile(wasmPath, minimalWasmModule, 0o600))
-
-	cfg := &config_domain.PluginConfig{
-		Lookup: config_domain.LookupConfig{
-			Plugins: map[string]*config_domain.PluginEntity{
-				"gsm": {
-					FilePath: wasmPath,
-					PluginConfig: map[string]string{
-						"credentials": fakeServiceAccountJSON(t),
-					},
-				},
-			},
-		},
-	}
-
-	r, err := NewResolver(cfg)
-	require.NoError(t, err, "expected buildProvider to dispatch \"gsm\" to gsm.NewPluginLookupGSM and succeed")
-	require.NotNil(t, r)
-	_, ok := r.providers["gsm"]
-	assert.True(t, ok, "expected a \"gsm\" provider to be registered")
 }

@@ -44,7 +44,7 @@ func TestGrafanaConfig_ResolveLookups_ResolvesLookupRefs(t *testing.T) {
 
 	cfg.ResolveLookups(func(s string) (string, error) {
 		return "resolved-value", nil
-	})
+	}, stubLookupSvc{})
 
 	assert.Equal(t, "resolved-value", cfg.GetAPIToken())
 	assert.Equal(t, "plain-pass", cfg.GetPassword())
@@ -57,7 +57,7 @@ func TestGrafanaConfig_ResolveLookups_NilSecureAuthNoOp(t *testing.T) {
 	cfg.ResolveLookups(func(s string) (string, error) {
 		called++
 		return s, nil
-	})
+	}, stubLookupSvc{})
 	assert.Equal(t, 0, called)
 }
 
@@ -68,7 +68,7 @@ func TestGrafanaConfig_ResolveLookups_NoLookupRefsNoCalls(t *testing.T) {
 	cfg.ResolveLookups(func(s string) (string, error) {
 		called++
 		return s, nil
-	})
+	}, stubLookupSvc{})
 	assert.Equal(t, 0, called)
 	assert.Equal(t, "plain-pass", cfg.GetPassword())
 	assert.Equal(t, "plain-token", cfg.GetAPIToken())

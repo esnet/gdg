@@ -19,13 +19,13 @@ func (sm *SecureModel) Empty() bool {
 // UpdateSecureModel updates Token and Password by applying fn (typically a
 // CipherEncoder's DecodeValue); logs errors on failure.
 //
-// Fields holding a lookup reference (outbound.IsLookupRef — e.g.
+// Fields holding a lookup reference (svc.IsLookupRef — e.g.
 // "lookup:gsm:projects/.../versions/1") are left untouched here: a lookup
 // reference is not cipher-encoded ciphertext, so running it through a
 // cipher decode function would corrupt it rather than resolve it. Those
 // fields are instead resolved via ResolveLookups.
-func (sm *SecureModel) UpdateSecureModel(fn func(string) (string, error)) {
-	if sm.Token != "" && !outbound.IsLookupRef(sm.Token) {
+func (sm *SecureModel) UpdateSecureModel(fn func(string) (string, error), svc outbound.LookupService) {
+	if sm.Token != "" && !svc.IsLookupRef(sm.Token) {
 		newToken, err := fn(sm.Token)
 		if err == nil {
 			sm.Token = newToken
@@ -33,7 +33,7 @@ func (sm *SecureModel) UpdateSecureModel(fn func(string) (string, error)) {
 			slog.Warn("error updating secure model, cannot decode token", "err", err)
 		}
 	}
-	if sm.Password != "" && !outbound.IsLookupRef(sm.Password) {
+	if sm.Password != "" && !svc.IsLookupRef(sm.Password) {
 		newPassword, err := fn(sm.Password)
 		if err == nil {
 			sm.Password = newPassword
@@ -45,12 +45,12 @@ func (sm *SecureModel) UpdateSecureModel(fn func(string) (string, error)) {
 
 // ResolveLookups resolves Token and Password through fn (typically a
 // LookupResolver's Resolve) when — and only when — the value is a lookup
-// reference (outbound.IsLookupRef). This is the mirror image of
+// reference (svc.IsLookupRef). This is the mirror image of
 // UpdateSecureModel: that method acts on everything except lookup
 // references, this one acts on nothing but them, so a field is always
 // handled by exactly one of the two, never both and never neither.
-func (sm *SecureModel) ResolveLookups(fn func(string) (string, error)) {
-	if sm.Token != "" && outbound.IsLookupRef(sm.Token) {
+func (sm *SecureModel) ResolveLookups(fn func(string) (string, error), svc outbound.LookupService) {
+	if sm.Token != "" && svc.IsLookupRef(sm.Token) {
 		newToken, err := fn(sm.Token)
 		if err == nil {
 			sm.Token = newToken
@@ -58,7 +58,7 @@ func (sm *SecureModel) ResolveLookups(fn func(string) (string, error)) {
 			slog.Warn("error resolving lookup token", "err", err)
 		}
 	}
-	if sm.Password != "" && outbound.IsLookupRef(sm.Password) {
+	if sm.Password != "" && svc.IsLookupRef(sm.Password) {
 		newPassword, err := fn(sm.Password)
 		if err == nil {
 			sm.Password = newPassword

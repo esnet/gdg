@@ -9,6 +9,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/adapter/grafana/resources"
 	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup/gsm"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
@@ -49,12 +50,13 @@ func buildGrafanaService(cfg *configDomain.GDGAppConfiguration) outbound.Grafana
 	if err != nil {
 		log.Fatal("Unable to configure a valid storage engine, %w", err)
 	}
+	lookup.RegisterProvider("gsm", gsm.NewPluginLookupGSM)
 	lookupResolver, err := lookup.NewResolver(&cfg.PluginConfig)
 	if err != nil {
 		log.Fatalf("Failed to initialize lookup plugins: %v", err)
 	}
 
 	extendedApi := extended.NewExtendedApi(cfg)
-	grafanaSvc := api.NewDashNGo(cfg, encoder, storageEngine, extendedApi, resources.NewHelpers(), lookupResolver)
+	grafanaSvc := api.NewDashNGo(cfg, encoder, storageEngine, extendedApi, resources.NewHelpers(), lookupResolver, lookupResolver)
 	return grafanaSvc
 }

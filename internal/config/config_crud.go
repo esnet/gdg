@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup/gsm"
 	"github.com/esnet/gdg/internal/adapter/plugins/registry"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
@@ -286,7 +288,9 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 
 	// ── Write auth credentials file ───────────────────────────────────────
 	authFileLocation := fmt.Sprintf("%s.yaml", newConfig.GetAuthLocation())
-	secure.UpdateSecureModel(encoder.EncodeValue)
+	lookup.RegisterProvider("gsm", gsm.NewPluginLookupGSM)
+	lookupSvc, _ := lookup.NewResolver(&app.PluginConfig)
+	secure.UpdateSecureModel(encoder.EncodeValue, lookupSvc)
 
 	if writeErr := writeSecureFileData(*secure, authFileLocation); writeErr != nil {
 		log.Fatalf("unable to write secret auth file.  location: %s, %v", authFileLocation, writeErr)

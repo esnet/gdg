@@ -14,11 +14,11 @@ type NewClientOpts func(transportConfig *client.TransportConfig)
 // by the OpenAPI spec.
 func (s *DashNGoImpl) Login() {
 	if s.gdgConfig.PluginConfig.CipherEnabled() {
-		s.grafanaConf.UpdateSecureModel(s.encoder.DecodeValue)
+		s.grafanaConf.UpdateSecureModel(s.encoder.DecodeValue, s.lookupSvc)
 	}
 
 	if s.lookupResolver != nil {
-		s.grafanaConf.ResolveLookups(s.lookupResolver.Resolve)
+		s.grafanaConf.ResolveLookups(s.lookupResolver.Resolve, s.lookupSvc)
 	}
 
 	// Will only succeed for BasicAuth

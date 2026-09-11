@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   integration_tests:
+    timeout-minutes: 30
     env:
       # Fork PRs don't get repo secrets (e.g. ENTERPRISE_LICENSE), so
       # enterprise-only tests can't run against them. Skip those tests
@@ -43,4 +44,4 @@ jobs:
           ENTERPRISE_LICENSE: "${{ secrets.ENTERPRISE_LICENSE }}"
           GRAFANA_TEST_VERSION: "${{ matrix.grafana_version }}"
           TEST_TOKEN_CONFIG: "${{ matrix.use_tokens }}"
-        run:  go tool -modfile tools/go.mod gotestsum --format testname  -- -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks|test_tooling" | tr '\n' ',' )   ./...
+        run:  go tool -modfile tools/go.mod gotestsum --format testname  -- -timeout=20m -covermode=atomic -coverpkg=$(go list ./... | egrep -v "mocks|test_tooling" | tr '\n' ',' )   ./...

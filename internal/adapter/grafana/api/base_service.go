@@ -36,6 +36,7 @@ type baseService struct {
 	storage        outbound.Storage
 	encoder        outbound.CipherEncoder
 	lookupResolver outbound.LookupResolver
+	lookupSvc      outbound.LookupService
 	resources      ports.Resources
 }
 

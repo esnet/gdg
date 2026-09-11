@@ -29,10 +29,9 @@ func TestSecureUnmarshall(t *testing.T) {
 	assert.Equal(cfg.PluginConfig.CipherPlugin.FilePath, "")
 	assert.Equal(len(cfg.PluginConfig.CipherPlugin.PluginConfig), 1)
 	assert.Equal(cfg.PluginConfig.CipherPlugin.PluginConfig["passphrase"], "hello_world")
-	// lookup plugins — lookup has its own independent "disabled" flag, no
-	// longer gated by any top-level plugins-wide switch.
-	assert.False(cfg.PluginConfig.Lookup.Disabled, "lookup.disabled is explicitly false in this fixture")
-	assert.True(cfg.PluginConfig.LookupEnabled(), "lookup.disabled:false must leave lookups enabled regardless of cipher.disabled")
+	// lookup plugins — disabled by default in the secure.yml fixture.
+	assert.True(cfg.PluginConfig.Lookup.Disabled, "lookup.disabled:true in fixture")
+	assert.False(cfg.PluginConfig.LookupEnabled(), "lookup.disabled:true must disable lookups")
 	require.NotNil(t, cfg.PluginConfig.Lookup.Plugins)
 	gsmPlugin, ok := cfg.PluginConfig.Lookup.Plugins["gsm"]
 	require.True(t, ok, "expected a \"gsm\" entry under plugins.lookup")

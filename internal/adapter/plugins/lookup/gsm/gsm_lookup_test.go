@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	extism "github.com/extism/go-sdk"
 	"github.com/stretchr/testify/assert"
@@ -33,7 +34,10 @@ func writeMinimalWasmModule(t *testing.T) string {
 	return path
 }
 
-// ── resolveWasmSource ───────────────────────────────────────────────────
+// ── plugins.ResolveWasmSource ───────────────────────────────────────────
+// These tests live here (adjacent to the GSM plugin) because ResolveWasmSource
+// was extracted from this package; keeping them here avoids a separate test
+// file for a one-function helper.
 
 func TestResolveWasmSource_FilePathTakesPrecedenceOverURL(t *testing.T) {
 	cfg := &config_domain.PluginEntity{
@@ -41,7 +45,7 @@ func TestResolveWasmSource_FilePathTakesPrecedenceOverURL(t *testing.T) {
 		Url:      "https://example.com/lookup_gsm.wasm",
 	}
 
-	src, err := resolveWasmSource(cfg)
+	src, err := lookup.ResolveWasmSource(cfg)
 	require.NoError(t, err)
 
 	file, ok := src.(extism.WasmFile)
@@ -54,7 +58,7 @@ func TestResolveWasmSource_URLUsedWhenNoFilePath(t *testing.T) {
 		Url: "https://example.com/lookup_gsm.wasm",
 	}
 
-	src, err := resolveWasmSource(cfg)
+	src, err := lookup.ResolveWasmSource(cfg)
 	require.NoError(t, err)
 
 	u, ok := src.(extism.WasmUrl)
@@ -65,7 +69,7 @@ func TestResolveWasmSource_URLUsedWhenNoFilePath(t *testing.T) {
 func TestResolveWasmSource_NeitherSetReturnsError(t *testing.T) {
 	cfg := &config_domain.PluginEntity{}
 
-	_, err := resolveWasmSource(cfg)
+	_, err := lookup.ResolveWasmSource(cfg)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "no URL or file path was provided")
 }
@@ -115,7 +119,7 @@ func TestNewPluginLookupGSM_MalformedCredentialsJSON_ReturnsError(t *testing.T) 
 
 	_, err := NewPluginLookupGSM(cfg)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "unable to build credentials")
+	assert.Contains(t, err.Error(), "unable to parse credentials JSON")
 }
 
 // ── NewPluginLookupGSM / Lookup — real (minimal) WASM instantiation ─────

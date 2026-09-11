@@ -12,7 +12,7 @@ import (
 // getGCPAccessTokenFunctionName is the extism host function name a GSM
 // lookup guest plugin calls to obtain a valid bearer token immediately
 // before making its request to the Secret Manager REST API.
-const getGCPAccessTokenFunctionName = "get_gcp_access_token"
+const getGCPAccessTokenFunctionName = "get_gcp_access_token" // #nosec G101
 
 // fetchAccessToken retrieves the current access token string from
 // tokenSource.

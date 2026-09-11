@@ -9,6 +9,7 @@ import (
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/adapter/grafana/resources"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
@@ -199,7 +200,8 @@ func TestConnectionFilter(t *testing.T) {
 	testingContext = cfg.GetContexts()[common.TestContextName]
 
 	localEngine := storage.NewLocalStorage(context.Background())
-	apiClient = api.NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine, extended.NewExtendedApi(cfg), resources.NewHelpers(), nil)
+	lookupSvc, _ := lookup.NewResolver(nil)
+	apiClient = api.NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine, extended.NewExtendedApi(cfg), resources.NewHelpers(), nil, lookupSvc)
 	apiClient.Login()
 
 	filtersEntity := api.NewConnectionFilter("")

@@ -138,8 +138,7 @@ global:
 #    config:
 #      passphrase: hello_world
 #  lookup:
-#    ## disabled turns off the entire lookup feature at once (every
-#    ## provider below), rather than disabling each one individually.
+#    ## disabled turns off lookup plugins
 #    disabled: false
 #    gsm:
 #      url: https://.../lookup_gsm.wasm

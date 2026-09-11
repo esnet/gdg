@@ -11,10 +11,12 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
+
 	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup/gsm"
 	"github.com/esnet/gdg/internal/adapter/plugins/registry"
 	gdgconfig "github.com/esnet/gdg/internal/config"
-	"github.com/esnet/gdg/internal/ports/outbound"
+	plugDomain "github.com/esnet/gdg/internal/domain"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -59,7 +61,7 @@ func newPluginsListCmd() simplecobra.Commander {
 
 			pluginType, _ := cd.CobraCommand.Flags().GetString("type")
 
-			fetch := client.CipherPlugins
+			var fetch func() ([]plugDomain.PluginRegistryEntry, error)
 			switch strings.ToLower(pluginType) {
 			case "", "cipher":
 				fetch = client.CipherPlugins
@@ -256,12 +258,13 @@ so lookup plugin configuration can be verified in isolation.`,
 			key := args[1]
 
 			cfg := r.ConfigSvc()
+			lookup.RegisterProvider("gsm", gsm.NewPluginLookupGSM)
 			resolver, err := lookup.NewResolver(&cfg.PluginConfig)
 			if err != nil {
 				return fmt.Errorf("initializing lookup plugins: %w", err)
 			}
 
-			ref := fmt.Sprintf("%s%s:%s", outbound.LookupPrefix, provider, key)
+			ref := fmt.Sprintf("%s%s:%s", resolver.Prefix(), provider, key)
 			value, err := resolver.Resolve(ref)
 			if err != nil {
 				return fmt.Errorf("resolving %q: %w", ref, err)
