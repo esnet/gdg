@@ -314,6 +314,9 @@ func (m *Migrator) rekeySecureDataFiles(report *RekeyReport, opts RekeyOptions, 
 			var firstDecErr string
 			for k, v := range values {
 				keys = append(keys, k)
+				if m.LookupSvc != nil && m.LookupSvc.IsLookupRef(v) {
+					continue // lookup refs are not cipher-decoded
+				}
 				if _, decErr := m.OldEncoder.DecodeValue(v); decErr != nil && allOK {
 					allOK = false
 					firstDecErr = fmt.Sprintf("key %q: %s", k, decErr)
@@ -343,6 +346,14 @@ func (m *Migrator) rekeySecureDataFiles(report *RekeyReport, opts RekeyOptions, 
 		}
 
 		for k, v := range values {
+			// Lookup references are not cipher-managed; leave them as-is during
+			// re-keying, same as UpdateSecureModel does for auth credentials.
+			if m.LookupSvc != nil && m.LookupSvc.IsLookupRef(v) {
+				slog.Debug("secure data: skipping lookup ref during rekey",
+					"key", k, "file", path)
+				continue
+			}
+
 			plaintext, decErr := m.OldEncoder.DecodeValue(v)
 			if decErr != nil {
 				slog.Warn("secure data: could not decode value, skipping key",
