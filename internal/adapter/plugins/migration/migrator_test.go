@@ -608,6 +608,102 @@ func TestRekey_AllCategories(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
+// Lookup ref guard tests
+// ---------------------------------------------------------------------------
+
+// stubLookupSvc is a minimal LookupService that considers any value
+// starting with "lookup:" a lookup reference.
+type stubLookupSvc struct{}
+
+func (s stubLookupSvc) IsLookupRef(raw string) bool { return strings.HasPrefix(raw, "lookup:") }
+func (s stubLookupSvc) Prefix() string              { return "lookup:" }
+
+func TestRekeySecureDataFiles_SkipsLookupRefs(t *testing.T) {
+	is := is.New(t)
+	tmp := t.TempDir()
+
+	oldEnc := prefixEncoder{"OLD:"}
+	newEnc := prefixEncoder{"NEW:"}
+
+	secureDir := filepath.Join(tmp, "secure")
+	is.NoErr(os.MkdirAll(secureDir, 0o750))
+
+	// File has one lookup ref and one plain (cipher-encoded) value.
+	creds := map[string]string{
+		"basicAuthPassword": "lookup:gsm:projects/p/secrets/db-pass/versions/1",
+		"apiKey":            oldEnc.mustEncodeValue("plain-api-key"),
+	}
+	raw, err := yaml.Marshal(creds)
+	is.NoErr(err)
+	credFile := filepath.Join(secureDir, "creds.yml")
+	is.NoErr(os.WriteFile(credFile, raw, 0o600))
+
+	cfg := newGrafanaConfigWithRule(tmp, "creds.yml")
+	stor := storage.NewLocalStorage(context.Background())
+
+	m := migration.Migrator{
+		OldEncoder:  oldEnc,
+		NewEncoder:  newEnc,
+		GrafanaConf: cfg,
+		Storage:     stor,
+		Resources:   resources.NewHelpers(),
+		LookupSvc:   stubLookupSvc{},
+	}
+	report, err := m.Rekey(migration.RekeyOptions{NoBackup: true})
+	is.NoErr(err)
+	is.Equal(len(report.Errors), 0)
+	is.Equal(len(report.SecureDataFiles), 1)
+
+	// Read back and check:
+	// - lookup ref must be UNCHANGED
+	// - cipher-encoded value must be re-keyed
+	updated := make(map[string]string)
+	data, readErr := os.ReadFile(credFile)
+	is.NoErr(readErr)
+	is.NoErr(yaml.Unmarshal(data, updated))
+
+	is.Equal(updated["basicAuthPassword"], "lookup:gsm:projects/p/secrets/db-pass/versions/1")
+	is.True(strings.HasPrefix(updated["apiKey"], "NEW:"))
+}
+
+func TestRekeySecureDataFiles_DryRun_SkipsLookupRefs(t *testing.T) {
+	is := is.New(t)
+	tmp := t.TempDir()
+
+	oldEnc := prefixEncoder{"OLD:"}
+
+	secureDir := filepath.Join(tmp, "secure")
+	is.NoErr(os.MkdirAll(secureDir, 0o750))
+
+	// File has one lookup ref and one cipher-encoded value.
+	creds := map[string]string{
+		"basicAuthPassword": "lookup:gsm:projects/p/secrets/db-pass/versions/1",
+		"apiKey":            oldEnc.mustEncodeValue("plain-api-key"),
+	}
+	raw, _ := yaml.Marshal(creds)
+	credFile := filepath.Join(secureDir, "creds.yml")
+	is.NoErr(os.WriteFile(credFile, raw, 0o600))
+
+	cfg := newGrafanaConfigWithRule(tmp, "creds.yml")
+	stor := storage.NewLocalStorage(context.Background())
+
+	m := migration.Migrator{
+		OldEncoder:  oldEnc,
+		NewEncoder:  prefixEncoder{"NEW:"},
+		GrafanaConf: cfg,
+		Storage:     stor,
+		Resources:   resources.NewHelpers(),
+		LookupSvc:   stubLookupSvc{},
+	}
+	report, err := m.Rekey(migration.RekeyOptions{DryRun: true})
+	is.NoErr(err)
+	// DryRun must not produce decode errors for the lookup ref key.
+	is.Equal(len(report.Errors), 0)
+	is.Equal(len(report.Previews), 1)
+	is.True(report.Previews[0].DecodedOK) // lookup ref does not fail decode check
+}
+
+// ---------------------------------------------------------------------------
 // Helper constructors used only in tests
 // ---------------------------------------------------------------------------
 

@@ -93,7 +93,7 @@ type ConnectionFilters struct {
 // GrafanaConnection Default connection credentials
 type GrafanaConnection map[string]string
 
-func (r *RegexMatchesList) GetConnectionAuth(path string, encoder outbound.CipherEncoder) (*GrafanaConnection, error) {
+func (r *RegexMatchesList) GetConnectionAuth(path string, encoder outbound.CipherEncoder, lookupResolver outbound.LookupResolver, lookupSvc outbound.LookupService) (*GrafanaConnection, error) {
 	if r.result != nil {
 		return r.result, nil
 	}
@@ -114,7 +114,7 @@ func (r *RegexMatchesList) GetConnectionAuth(path string, encoder outbound.Ciphe
 	case ".yml", ".yaml":
 		err = yaml.Unmarshal(raw, result)
 		if err != nil {
-			msg := "unable to read JSON secrets"
+			msg := "unable to read YAML secrets"
 			slog.Error(msg, slog.Any("err", err), slog.String("file", secretLocation))
 			return nil, errors.New(msg)
 		}
@@ -130,6 +130,24 @@ func (r *RegexMatchesList) GetConnectionAuth(path string, encoder outbound.Ciphe
 	}
 
 	for key, value := range *result {
+		// Lookup refs are resolved via the lookup plugin, mirroring the
+		// two-step pattern in login.go (cipher-decode non-lookup values,
+		// then resolve lookup values).
+		if lookupSvc != nil && lookupSvc.IsLookupRef(value) {
+			if lookupResolver != nil {
+				newVal, resolveErr := lookupResolver.Resolve(value)
+				if resolveErr == nil {
+					(*result)[key] = newVal
+				} else {
+					slog.Warn("error resolving lookup ref for key",
+						slog.String("key", key),
+						slog.String("file", secretLocation),
+						slog.Any("err", resolveErr))
+				}
+			}
+			continue // skip cipher decode for lookup refs
+		}
+
 		if encoder != nil {
 			newVal, decodeErr := encoder.DecodeValue(value)
 			if decodeErr == nil {
