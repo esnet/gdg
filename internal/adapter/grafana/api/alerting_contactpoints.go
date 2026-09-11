@@ -82,7 +82,7 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 	if dsPacked, err = json.MarshalIndent(filtered, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
-	if !s.gdgConfig.PluginConfig.Disabled && s.gdgConfig.PluginConfig.CipherPlugin != nil {
+	if s.gdgConfig.PluginConfig.CipherEnabled() {
 		newData, encodeErr := s.encoder.Encode(domain.AlertingResource, dsPacked)
 		if encodeErr != nil {
 			slog.Error("unable to encode sensitive data using cipher plugin. All data was saved in plaintext.", "err", encodeErr)
@@ -117,7 +117,7 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}
-	if !s.gdgConfig.PluginConfig.Disabled && s.gdgConfig.PluginConfig.CipherPlugin != nil {
+	if s.gdgConfig.PluginConfig.CipherEnabled() {
 		newData, encodeErr := s.encoder.Decode(domain.AlertingResource, rawDS)
 		if encodeErr != nil {
 			slog.Error("unable to encode sensitive data using cipher plugin. All data was saved in plaintext. ", "err", encodeErr)

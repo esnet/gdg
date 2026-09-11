@@ -9,6 +9,7 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/storage"
 	resourceTypes "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/spf13/viper"
 )
 
@@ -161,7 +162,7 @@ func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 }
 
 // UpdateSecureModel updates the secure model using the supplied function, if secure auth is present.
-func (s *GrafanaConfig) UpdateSecureModel(fn func(string) (string, error)) {
+func (s *GrafanaConfig) UpdateSecureModel(fn func(string) (string, error), svc outbound.LookupService) {
 	secureAuth := s.getSecureAuth()
 	if secureAuth == nil || secureAuth.Empty() {
 		return
@@ -171,7 +172,21 @@ func (s *GrafanaConfig) UpdateSecureModel(fn func(string) (string, error)) {
 		slog.Warn("You have plugins and a cipher plugin configured. The Env value is assumed to be encrypted. If that is not the case, make sure you remove the cipher plugins.")
 	}
 
-	secureAuth.UpdateSecureModel(fn)
+	secureAuth.UpdateSecureModel(fn, svc)
+}
+
+// ResolveLookups resolves any "lookup:<name>:<key>[.<json_field>]" values
+// in the secure model using the supplied function (typically a
+// LookupResolver's Resolve), if secure auth is present. Non-lookup values
+// (literal tokens/passwords, or cipher ciphertext already handled by
+// UpdateSecureModel) are left untouched — see SecureModel.ResolveLookups.
+func (s *GrafanaConfig) ResolveLookups(fn func(string) (string, error), svc outbound.LookupService) {
+	secureAuth := s.getSecureAuth()
+	if secureAuth == nil || secureAuth.Empty() {
+		return
+	}
+
+	secureAuth.ResolveLookups(fn, svc)
 }
 
 // GetPassword returns the password, respecting environment variable override if set.

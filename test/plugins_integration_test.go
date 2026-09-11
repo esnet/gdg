@@ -103,7 +103,7 @@ func TestConnectionsPluginCfg(t *testing.T) {
 }
 
 func patchConfig(t *testing.T, cfg *config_domain.GDGAppConfiguration, testType plugTestType) {
-	cfg.PluginConfig.Disabled = false
+	cfg.PluginConfig.CipherPlugin.Disabled = false
 	cfg.PluginConfig.CipherPlugin.GetPluginConfig()
 	switch testType {
 	case envPlugType:

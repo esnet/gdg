@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup/gsm"
 	"github.com/esnet/gdg/internal/adapter/plugins/registry"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/cipher"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
@@ -190,7 +192,7 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 	// true the on-disk files are plaintext and the old cipher must NOT be used
 	// as the decoder — we use NoOpEncoder instead.
 	oldPlugin := app.PluginConfig.CipherPlugin
-	pluginWasDisabled := app.PluginConfig.Disabled
+	pluginWasDisabled := !app.PluginConfig.CipherEnabled()
 
 	// Capture the set of existing context names BEFORE adding the new one.
 	// These are the contexts that already have on-disk files and are therefore
@@ -201,9 +203,9 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 	}
 
 	var encoder outbound.CipherEncoder
-	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
+	if app.PluginConfig.CipherEnabled() {
 		var encErr error
-		encoder, encErr = cipher.NewPluginCipherEncoder(app.PluginConfig.CipherPlugin, app.SecureConfig)
+		encoder, encErr = cipher.NewPluginCipherEncoder(&app.PluginConfig.CipherPlugin.PluginEntity, app.SecureConfig)
 		if encErr != nil {
 			log.Fatalf("Failed to load cipher plugin: %v", encErr)
 		}
@@ -235,8 +237,7 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 			log.Fatalf("Failed to initialise cipher plugin from TUI selection: %v", encErr)
 		}
 		encoder = newEnc
-		app.PluginConfig.CipherPlugin = bs.pluginResult
-		app.PluginConfig.Disabled = false
+		app.PluginConfig.CipherPlugin = &config_domain.CipherConfig{PluginEntity: *bs.pluginResult}
 	}
 
 	// ── Write default connection credentials ──────────────────────────────
@@ -287,7 +288,9 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 
 	// ── Write auth credentials file ───────────────────────────────────────
 	authFileLocation := fmt.Sprintf("%s.yaml", newConfig.GetAuthLocation())
-	secure.UpdateSecureModel(encoder.EncodeValue)
+	lookup.RegisterProvider("gsm", gsm.NewPluginLookupGSM)
+	lookupSvc, _ := lookup.NewResolver(&app.PluginConfig)
+	secure.UpdateSecureModel(encoder.EncodeValue, lookupSvc)
 
 	if writeErr := writeSecureFileData(*secure, authFileLocation); writeErr != nil {
 		log.Fatalf("unable to write secret auth file.  location: %s, %v", authFileLocation, writeErr)
@@ -366,7 +369,7 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 		slog.Info("Cipher plugin configured — launching rekey TUI to migrate existing files")
 		var effectiveOldPlugin *config_domain.PluginEntity
 		if !pluginWasDisabled && oldPlugin != nil {
-			effectiveOldPlugin = oldPlugin
+			effectiveOldPlugin = &oldPlugin.PluginEntity
 		}
 		if rekeyErr := RunRekeyWithPlugin(app, registryClient, effectiveOldPlugin, bs.pluginResult, existingContextNames); rekeyErr != nil {
 			slog.Warn("Rekey aborted or encountered errors", "err", rekeyErr)

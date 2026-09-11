@@ -11,6 +11,7 @@ import (
 
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/adapter/grafana/resources"
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
 	"github.com/esnet/gdg/internal/adapter/plugins/secure/noop"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config"
@@ -334,8 +335,9 @@ func newTestSvc(t *testing.T) *DashNGoImpl {
 	fixEnvironment(t)
 	cfg := config.NewConfig(common.DefaultTestConfig)
 	localEngine := storage.NewLocalStorage(context.Background())
+	lookupSvc, _ := lookup.NewResolver(nil)
 	svc := NewDashNGo(cfg, noop.NoOpEncoder{}, localEngine,
-		extended.NewExtendedApi(cfg), resources.NewHelpers())
+		extended.NewExtendedApi(cfg), resources.NewHelpers(), nil, lookupSvc)
 	return svc.(*DashNGoImpl)
 }
 
