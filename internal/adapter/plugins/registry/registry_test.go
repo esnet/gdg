@@ -43,6 +43,16 @@ var sampleEntries = []domain.PluginRegistryEntry{
 			{Version: "1.0.0", ConfigFields: []string{}},
 		},
 	},
+	{
+		Name:        "gsm",
+		Type:        domain.PluginTypeLookup,
+		Description: "Google Secret Manager lookup plugin",
+		Source:      "https://github.com/esnet/gdg-plugins/tree/main/lookup/gsm",
+		URLPattern:  "https://github.com/esnet/gdg-plugins/raw/refs/tags/{version}/plugins/lookup_gsm.wasm",
+		Versions: []domain.PluginVersionEntry{
+			{Version: "0.1.0", ConfigFields: []string{"credentials"}},
+		},
+	},
 }
 
 // newTestServer starts an httptest server that serves sampleEntries as JSON.
@@ -169,6 +179,26 @@ func TestCipherPlugins_FiltersNonCipher(t *testing.T) {
 	for _, e := range ciphers {
 		assert.Equal(t, domain.PluginTypeCipher, e.Type)
 	}
+}
+
+// ── LookupPlugins ────────────────────────────────────────────────────────────
+
+func TestLookupPlugins_FiltersNonLookup(t *testing.T) {
+	path := newLocalFile(t)
+	c := NewClient(ClientConfig{FilePath: path})
+	lookups, err := c.LookupPlugins()
+	require.NoError(t, err)
+	assert.Len(t, lookups, 1)
+	for _, e := range lookups {
+		assert.Equal(t, domain.PluginTypeLookup, e.Type)
+	}
+	assert.Equal(t, "gsm", lookups[0].Name)
+}
+
+func TestLookupPlugins_PropagatesLoadError(t *testing.T) {
+	c := NewClient(ClientConfig{FilePath: "/nonexistent/registry.json"})
+	_, err := c.LookupPlugins()
+	require.Error(t, err)
 }
 
 // ── Find ──────────────────────────────────────────────────────────────────────

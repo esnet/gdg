@@ -36,6 +36,44 @@ func TestGrafanaConfig_Apply(t *testing.T) {
 	assert.Equal(t, "staging", cfg.contextName)
 }
 
+// ── ResolveLookups ────────────────────────────────────────────────────────────
+
+func TestGrafanaConfig_ResolveLookups_ResolvesLookupRefs(t *testing.T) {
+	auth := SecureModel{Password: "plain-pass", Token: "lookup:gsm:projects/1/secrets/x/versions/1"}
+	cfg := NewGrafanaConfig(WithSecureAuth(auth))
+
+	cfg.ResolveLookups(func(s string) (string, error) {
+		return "resolved-value", nil
+	}, stubLookupSvc{})
+
+	assert.Equal(t, "resolved-value", cfg.GetAPIToken())
+	assert.Equal(t, "plain-pass", cfg.GetPassword())
+}
+
+func TestGrafanaConfig_ResolveLookups_NilSecureAuthNoOp(t *testing.T) {
+	cfg := NewGrafanaConfig()
+	require.NoError(t, cfg.TestSetSecureAuth(SecureModel{}))
+	called := 0
+	cfg.ResolveLookups(func(s string) (string, error) {
+		called++
+		return s, nil
+	}, stubLookupSvc{})
+	assert.Equal(t, 0, called)
+}
+
+func TestGrafanaConfig_ResolveLookups_NoLookupRefsNoCalls(t *testing.T) {
+	auth := SecureModel{Password: "plain-pass", Token: "plain-token"}
+	cfg := NewGrafanaConfig(WithSecureAuth(auth))
+	called := 0
+	cfg.ResolveLookups(func(s string) (string, error) {
+		called++
+		return s, nil
+	}, stubLookupSvc{})
+	assert.Equal(t, 0, called)
+	assert.Equal(t, "plain-pass", cfg.GetPassword())
+	assert.Equal(t, "plain-token", cfg.GetAPIToken())
+}
+
 // ── GetURL ────────────────────────────────────────────────────────────────────
 
 func TestGetURL_EmptyReturnEmpty(t *testing.T) {

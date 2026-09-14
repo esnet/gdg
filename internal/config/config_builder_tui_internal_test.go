@@ -240,9 +240,9 @@ func TestNewConfigBuilderModel_WithActivePlugin_StartsAtAuthType(t *testing.T) {
 	// If a cipher plugin is already configured and not disabled, the wizard
 	// skips the plugin setup and starts at auth configuration.
 	app := newTUITestApp(t)
-	app.PluginConfig.Disabled = false
-	app.PluginConfig.CipherPlugin = &config_domain.PluginEntity{
-		Url: "https://example.com/plugin.wasm",
+	app.PluginConfig.CipherPlugin = &config_domain.CipherConfig{
+		Disabled:     false,
+		PluginEntity: config_domain.PluginEntity{Url: "https://example.com/plugin.wasm"},
 	}
 	m := newConfigBuilderModel(app, "tui-test", noop.NoOpEncoder{}, nil)
 	assert.Equal(t, phaseAuthType, m.phase)

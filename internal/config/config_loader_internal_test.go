@@ -22,12 +22,23 @@ func TestSecureUnmarshall(t *testing.T) {
 	cfg := new(config_domain.GDGAppConfiguration)
 	err = yaml.Unmarshal([]byte(raw), cfg)
 	// plugins
-	assert.True(cfg.PluginConfig.Disabled)
 	assert.NotNil(cfg.PluginConfig.CipherPlugin)
+	assert.True(cfg.PluginConfig.CipherPlugin.Disabled)
+	assert.False(cfg.PluginConfig.CipherEnabled(), "cipher.disabled:true must disable the cipher plugin")
 	assert.Equal(cfg.PluginConfig.CipherPlugin.Url, "https://github.com/esnet/gdg-plugins/raw/refs/tags/0.1.0/plugins/cipher_aes256_gcm.wasm")
 	assert.Equal(cfg.PluginConfig.CipherPlugin.FilePath, "")
 	assert.Equal(len(cfg.PluginConfig.CipherPlugin.PluginConfig), 1)
 	assert.Equal(cfg.PluginConfig.CipherPlugin.PluginConfig["passphrase"], "hello_world")
+	// lookup plugins — disabled by default in the secure.yml fixture.
+	assert.True(cfg.PluginConfig.Lookup.Disabled, "lookup.disabled:true in fixture")
+	assert.False(cfg.PluginConfig.LookupEnabled(), "lookup.disabled:true must disable lookups")
+	require.NotNil(t, cfg.PluginConfig.Lookup.Plugins)
+	gsmPlugin, ok := cfg.PluginConfig.Lookup.Plugins["gsm"]
+	require.True(t, ok, "expected a \"gsm\" entry under plugins.lookup")
+	assert.Equal(gsmPlugin.Url, "https://example.com/lookup_gsm.wasm")
+	assert.Equal(gsmPlugin.FilePath, "")
+	assert.Equal(len(gsmPlugin.PluginConfig), 1)
+	assert.Equal(gsmPlugin.PluginConfig["credentials"], "env:GOOGLE_APPLICATION_CREDENTIALS")
 	assert.NoError(err)
 	// Secure
 	assert.Equal(len(cfg.SecureConfig), 1)
@@ -54,8 +65,11 @@ func TestLoadDefaultSecureConfig_PopulatesPluginConfig(t *testing.T) {
 	err := loadDefaultSecureConfig(cfg)
 	require.NoError(t, err)
 	// Plugin block should be present and disabled by default.
-	assert.True(t, cfg.PluginConfig.Disabled)
 	assert.NotNil(t, cfg.PluginConfig.CipherPlugin)
+	assert.True(t, cfg.PluginConfig.CipherPlugin.Disabled)
+	// Lookup plugin block should also be present.
+	require.NotNil(t, cfg.PluginConfig.Lookup.Plugins)
+	assert.Contains(t, cfg.PluginConfig.Lookup.Plugins, "gsm")
 	// Secure config block should contain at least one entry.
 	assert.NotEmpty(t, cfg.SecureConfig)
 }

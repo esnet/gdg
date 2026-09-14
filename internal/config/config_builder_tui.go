@@ -255,7 +255,7 @@ func newConfigBuilderModel(
 	}
 
 	startPhase := phasePluginToggle
-	if !app.PluginConfig.Disabled && app.PluginConfig.CipherPlugin != nil {
+	if app.PluginConfig.CipherEnabled() {
 		startPhase = phaseAuthType
 	}
 

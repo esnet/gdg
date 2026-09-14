@@ -77,6 +77,10 @@ func TestPluginTypeCipherConstant(t *testing.T) {
 	assert.Equal(t, "cipher", PluginTypeCipher)
 }
 
+func TestPluginTypeLookupConstant(t *testing.T) {
+	assert.Equal(t, "lookup", PluginTypeLookup)
+}
+
 // ── IsValid ───────────────────────────────────────────────────────────────────
 
 func TestIsValid_DevelBypassesRangeCheck(t *testing.T) {

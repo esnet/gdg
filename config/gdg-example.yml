@@ -132,8 +132,15 @@ global:
 
 ## Keep this off if you don't need encryption or plugins
 #plugins:
-#  disabled: false
 #  cipher:
+#    disabled: false
 #    url: https://github.com/esnet/gdg-plugins/raw/refs/tags/0.1.0/plugins/cipher_aes256_gcm.wasm
 #    config:
 #      passphrase: hello_world
+#  lookup:
+#    ## disabled turns off lookup plugins
+#    disabled: false
+#    gsm:
+#      url: https://.../lookup_gsm.wasm
+#      config:
+#        credentials: "env:GOOGLE_APPLICATION_CREDENTIALS"

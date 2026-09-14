@@ -70,6 +70,21 @@ func (c *Client) CipherPlugins() ([]domain.PluginRegistryEntry, error) {
 	return result, nil
 }
 
+// LookupPlugins returns only entries whose Type equals domain.PluginTypeLookup.
+func (c *Client) LookupPlugins() ([]domain.PluginRegistryEntry, error) {
+	all, err := c.All()
+	if err != nil {
+		return nil, err
+	}
+	var result []domain.PluginRegistryEntry
+	for _, e := range all {
+		if e.Type == domain.PluginTypeLookup {
+			result = append(result, e)
+		}
+	}
+	return result, nil
+}
+
 // Find returns the registry entry whose Name matches name (case-insensitive),
 // or an error if no such entry exists.
 func (c *Client) Find(name string) (*domain.PluginRegistryEntry, error) {

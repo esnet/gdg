@@ -6,9 +6,9 @@ secure_config:
 
 
 plugins:
-  ## plugins are disabled by default
-  disabled: true
   cipher:
+    ## the cipher plugin is disabled by default
+    disabled: true
 ## AES-256 config
     url:  https://github.com/esnet/gdg-plugins/raw/refs/tags/0.1.0/plugins/cipher_aes256_gcm.wasm
 #    file_path: ./foobar/moo Only enable either filepath Or URL not both.
@@ -22,3 +22,15 @@ plugins:
 #      #  If any field starts with env: then it will instead load the env value
 #      # if any field start with file: then it will load the file data and use its value to be passed to the config
 #      vault_password: file:$HOME/.ansible/vaultSecret
+
+  ## lookup plugins are keyed by provider name, referenced as
+  ## "lookup:<name>:<key>" from a token/password field. "disabled" here
+  ## turns off the entire lookup feature at once (every provider below),
+  ## without needing to disable each one individually.
+  lookup:
+    disabled: true
+    gsm:
+      url: https://example.com/lookup_gsm.wasm
+#      file: $HOME/projects/gdg-plugins/plugins/lookup_gsm.wasm
+      config:
+        credentials: env:GOOGLE_APPLICATION_CREDENTIALS

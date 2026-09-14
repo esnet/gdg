@@ -8,8 +8,13 @@ import (
 )
 
 const (
-	// PluginTypeCipher is the only plugin type currently supported.
+	// PluginTypeCipher identifies a plugin that encodes/decodes secure field values.
 	PluginTypeCipher = "cipher"
+
+	// PluginTypeLookup identifies a plugin that resolves a "lookup:<name>:<key>"
+	// reference (e.g. a HashiCorp Vault path or a GCP Secret Manager resource
+	// name) into a concrete secret value at runtime.
+	PluginTypeLookup = "lookup"
 
 	// RegistryDefaultURL is the canonical location of the GDG plugin registry JSON file.
 	RegistryDefaultURL = "https://raw.githubusercontent.com/esnet/gdg-plugins/refs/heads/main/plugin_registry.json"

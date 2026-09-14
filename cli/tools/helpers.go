@@ -3,9 +3,7 @@ package tools
 import (
 	"context"
 	"fmt"
-	"log"
 	"log/slog"
-	"os"
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
@@ -23,27 +21,6 @@ func newHelpers() simplecobra.Commander {
 		},
 		CommandsList: []simplecobra.Commander{
 			newFolderHelper(),
-			newCipherHelper(),
-		},
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
-			return cd.CobraCommand.Help()
-		},
-	}
-}
-
-func newCipherHelper() simplecobra.Commander {
-	return &domain.SimpleCommand{
-		NameP: "cipher",
-		Short: "Cipher Helpers",
-		Long:  "Cipher Helpers",
-		WithCFunc: func(cmd *cobra.Command, r *domain.RootCommand) {
-			cmd.Aliases = []string{"c", "ciphers"}
-			cmd.PersistentFlags().StringP("file", "f", "", "file to encode/decode")
-			cmd.PersistentFlags().StringP("value", "", "", "value to encode/decode")
-		},
-		CommandsList: []simplecobra.Commander{
-			newCipherEncode(),
-			newCipherDecode(),
 		},
 		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
 			return cd.CobraCommand.Help()
@@ -98,79 +75,6 @@ func newFolderDecode() simplecobra.Commander {
 			folderName := args[0]
 			result := encode.EncodePath(encode.DecodeEscapeSpecialChars, folderName)
 			slog.Info("Decoded result", "output", result)
-			return nil
-		},
-	}
-}
-
-func newCipherEncode() simplecobra.Commander {
-	return &domain.SimpleCommand{
-		NameP: "encode",
-		Short: "apply cipher to string",
-		Long:  "apply cipher to string",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
-			fileName, _ := cd.CobraCommand.Flags().GetString("file")
-			value, _ := cd.CobraCommand.Flags().GetString("value")
-			if fileName != "" && value != "" {
-				log.Fatal("either a value or a file must be specified, not both")
-			}
-			if value != "" {
-				result := rootCmd.GrafanaSvc().EncodeValue(value)
-				slog.Info("Encoded result:")
-				fmt.Println(result)
-			} else {
-				data, err := os.ReadFile(fileName) // #nosec G304
-				if err != nil {
-					log.Fatal("Error reading file", "file", fileName, "err", err)
-				}
-
-				result := rootCmd.GrafanaSvc().EncodeValue(string(data))
-				if result != "" {
-					err = os.WriteFile(fileName, []byte(result), 0o600) // #nosec G703 TODO:revisit
-					if err != nil {
-						log.Fatal("Error writing file", "file", fileName, "err", err)
-					} else {
-						slog.Info("File has been encrypted", "file", fileName)
-					}
-				}
-			}
-
-			return nil
-		},
-	}
-}
-
-func newCipherDecode() simplecobra.Commander {
-	return &domain.SimpleCommand{
-		NameP: "decode",
-		Short: "decode string using cipher plugin",
-		Long:  "decode string using cipher plugin",
-		RunFunc: func(ctx context.Context, cd *simplecobra.Commandeer, rootCmd *domain.RootCommand, args []string) error {
-			fileName, _ := cd.CobraCommand.Flags().GetString("file")
-			value, _ := cd.CobraCommand.Flags().GetString("value")
-			if fileName != "" && value != "" {
-				log.Fatal("either a value or a file must be specified, not both")
-			}
-			if value != "" {
-				result := rootCmd.GrafanaSvc().DecodeValue(value)
-				slog.Info("Decoded result")
-				fmt.Println(result)
-			} else {
-				data, err := os.ReadFile(fileName) // #nosec G304
-				if err != nil {
-					log.Fatal("Error reading file", "file", fileName, "err", err)
-				}
-
-				result := rootCmd.GrafanaSvc().DecodeValue(string(data))
-				if result != "" {
-					err = os.WriteFile(fileName, []byte(result), 0o600) // #nosec G703 TODO:revisit
-					if err != nil {
-						log.Fatal("Error writing file", "file", fileName, "err", err)
-					} else {
-						slog.Info("File has been decrypted", "file", fileName)
-					}
-				}
-			}
 			return nil
 		},
 	}

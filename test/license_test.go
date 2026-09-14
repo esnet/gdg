@@ -3,7 +3,6 @@ package test
 import (
 	"context"
 	"log/slog"
-	"os"
 	"testing"
 
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -15,9 +14,7 @@ import (
 )
 
 func TestLicenseEnterpriseCheck(t *testing.T) {
-	if os.Getenv(containers.DisableEnterpriseTest) == "true" {
-		t.Skip("Enterprise tests disabled by environment variable")
-	}
+	test_tooling.SkipEnterpriseTests(t)
 	tcCases := []struct {
 		name       string
 		disabled   bool

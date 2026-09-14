@@ -20,6 +20,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/esnet/gdg/internal/adapter/plugins/lookup"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
@@ -50,15 +51,24 @@ type Migrator struct {
 
 	// Resources Helper
 	Resources ports.Resources
+
+	// LookupSvc is used to detect lookup references during migration so they
+	// are not inadvertently run through the cipher encoder. A disabled
+	// Resolver (NewResolver(nil)) is safe to use when lookups are not configured.
+	LookupSvc outbound.LookupService
 }
 
 func NewMigrator(oldEncoder outbound.CipherEncoder, newEncoder outbound.CipherEncoder, grafanaConf *config_domain.GrafanaConfig, storage outbound.Storage, resources ports.Resources) *Migrator {
+	// A nil PluginConfig produces a disabled Resolver, which correctly reports
+	// IsLookupRef=false for all values — safe when lookups are not configured.
+	lookupSvc, _ := lookup.NewResolver(nil)
 	return &Migrator{
 		OldEncoder:  oldEncoder,
 		NewEncoder:  newEncoder,
 		GrafanaConf: grafanaConf,
 		Storage:     storage,
 		Resources:   resources,
+		LookupSvc:   lookupSvc,
 	}
 }
 
@@ -449,7 +459,7 @@ func (m *Migrator) rekeyGdgCredentials(report *RekeyReport, opts RekeyOptions, a
 			return "", err
 		}
 		return m.NewEncoder.EncodeValue(plaintext)
-	})
+	}, m.LookupSvc)
 
 	var (
 		out      []byte

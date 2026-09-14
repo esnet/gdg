@@ -38,14 +38,18 @@ func NewDashNGo(
 	disk outbound.Storage,
 	extended outbound.ExtendedApi,
 	resource ports.Resources,
+	lookupResolver outbound.LookupResolver,
+	lookupSvc outbound.LookupService,
 ) outbound.GrafanaService {
 	base := baseService{
-		gdgConfig:   cfg,
-		grafanaConf: cfg.GetDefaultGrafanaConfig(),
-		extended:    extended,
-		encoder:     encoder,
-		storage:     disk,
-		resources:   resource,
+		gdgConfig:      cfg,
+		grafanaConf:    cfg.GetDefaultGrafanaConfig(),
+		extended:       extended,
+		encoder:        encoder,
+		storage:        disk,
+		resources:      resource,
+		lookupResolver: lookupResolver,
+		lookupSvc:      lookupSvc,
 	}
 
 	obj := &DashNGoImpl{

@@ -106,7 +106,9 @@ func TestRekeyPhaseSectionName_AllPhases(t *testing.T) {
 
 func TestCurrentPluginDescription_Disabled(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
-		PluginConfig: config_domain.PluginConfig{Disabled: true},
+		PluginConfig: config_domain.PluginConfig{
+			CipherPlugin: &config_domain.CipherConfig{Disabled: true},
+		},
 	}
 	desc := currentPluginDescription(app)
 	assert.Contains(t, desc, "DISABLED")
@@ -115,7 +117,7 @@ func TestCurrentPluginDescription_Disabled(t *testing.T) {
 
 func TestCurrentPluginDescription_NilPlugin(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
-		PluginConfig: config_domain.PluginConfig{Disabled: false, CipherPlugin: nil},
+		PluginConfig: config_domain.PluginConfig{CipherPlugin: nil},
 	}
 	desc := currentPluginDescription(app)
 	assert.Contains(t, desc, "No cipher plugin")
@@ -125,7 +127,9 @@ func TestCurrentPluginDescription_NilPlugin(t *testing.T) {
 func TestCurrentPluginDescription_WithFilePath(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
-			CipherPlugin: &config_domain.PluginEntity{FilePath: "/opt/gdg/plugins/cipher.wasm"},
+			CipherPlugin: &config_domain.CipherConfig{
+				PluginEntity: config_domain.PluginEntity{FilePath: "/opt/gdg/plugins/cipher.wasm"},
+			},
 		},
 	}
 	desc := currentPluginDescription(app)
@@ -136,7 +140,9 @@ func TestCurrentPluginDescription_WithFilePath(t *testing.T) {
 func TestCurrentPluginDescription_WithURL(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
-			CipherPlugin: &config_domain.PluginEntity{Url: "https://example.com/cipher.wasm"},
+			CipherPlugin: &config_domain.CipherConfig{
+				PluginEntity: config_domain.PluginEntity{Url: "https://example.com/cipher.wasm"},
+			},
 		},
 	}
 	desc := currentPluginDescription(app)
@@ -147,7 +153,7 @@ func TestCurrentPluginDescription_UnknownSource(t *testing.T) {
 	// No Url and no FilePath — should fall into the "unknown" branch.
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
-			CipherPlugin: &config_domain.PluginEntity{},
+			CipherPlugin: &config_domain.CipherConfig{},
 		},
 	}
 	desc := currentPluginDescription(app)
@@ -157,12 +163,14 @@ func TestCurrentPluginDescription_UnknownSource(t *testing.T) {
 func TestCurrentPluginDescription_ConfigFieldsSorted(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
-			CipherPlugin: &config_domain.PluginEntity{
-				Url: "https://example.com/cipher.wasm",
-				PluginConfig: map[string]string{
-					"key_z": "zz",
-					"key_a": "aa",
-					"key_m": "mm",
+			CipherPlugin: &config_domain.CipherConfig{
+				PluginEntity: config_domain.PluginEntity{
+					Url: "https://example.com/cipher.wasm",
+					PluginConfig: map[string]string{
+						"key_z": "zz",
+						"key_a": "aa",
+						"key_m": "mm",
+					},
 				},
 			},
 		},
@@ -179,7 +187,9 @@ func TestCurrentPluginDescription_ConfigFieldsSorted(t *testing.T) {
 func TestCurrentPluginDescription_NoConfigFields_ShowsNone(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
-			CipherPlugin: &config_domain.PluginEntity{Url: "https://example.com/cipher.wasm"},
+			CipherPlugin: &config_domain.CipherConfig{
+				PluginEntity: config_domain.PluginEntity{Url: "https://example.com/cipher.wasm"},
+			},
 		},
 	}
 	desc := currentPluginDescription(app)
