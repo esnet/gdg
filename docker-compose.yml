@@ -1,6 +1,6 @@
 services:
     s3:
-        image: minio/minio:latest
+        image: pgsty/silo:latest
         command:
          - "server"
          - "start"

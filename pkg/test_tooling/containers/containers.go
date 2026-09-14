@@ -24,8 +24,8 @@ const (
 	DefaultCloudPass         = "secretsss"
 	s3UserEnv                = "MINIO_ROOT_USER"
 	s3PassKeyEnv             = "MINIO_ROOT_PASSWORD" // #nosec G101
-	s3ImageTag               = "RELEASE.2025-09-07T16-13-09Z"
-	s3Image                  = "minio/minio"
+	s3ImageTag               = "latest"
+	s3Image                  = "pgsty/silo"
 	S3UiPort                 = "9001"
 	s3ApiPort                = "9000"
 	s3TcpPortFormatString    = "%s/tcp"
