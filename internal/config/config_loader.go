@@ -3,11 +3,13 @@ package config
 import (
 	"log"
 	"log/slog"
+	"net/http"
 	"path/filepath"
 	"strings"
 
 	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/logging"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 )
@@ -92,9 +94,30 @@ func NewConfig(override string, opts ...config_domain.GDGAppConfigurationOption)
 	gdgConfig.UpdateContextNames()
 	gdgConfig.ViperConfig = v
 
+	if gdgConfig.Global != nil {
+		if gdgConfig.Global.Debug {
+			gdgConfig.Global.Logging.Verbose = true
+			slog.Warn("globals.debug is deprecated. Please use globals.logging.verbose instead")
+		}
+
+		if gdgConfig.Global.ApiDebug {
+			gdgConfig.Global.Logging.HTTPTraffic = true
+			slog.Warn("globals.api_debug is deprecated. Please use globals.logging.http_traffic instead")
+		}
+
+		gdgConfig.HTTPClient = setupHTTPClient(
+			gdgConfig.IsHTTPTrafficLogged(),
+			gdgConfig.IsHTTPBodyLogged(),
+			gdgConfig.IgnoreSSL(),
+		)
+	} else {
+		gdgConfig.HTTPClient = http.DefaultClient
+	}
+
 	for _, opt := range opts {
 		opt(gdgConfig)
 	}
+
 	return gdgConfig
 }
 
@@ -137,6 +160,21 @@ func readViperConfig[T any](configName string, configDirs []string, object *T, e
 	}
 
 	return v, err
+}
+
+func setupHTTPClient(logHTTPTraffic, includeBody, skipSSL bool) *http.Client {
+	if logHTTPTraffic == false {
+		return http.DefaultClient
+	}
+
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.TLSClientConfig.InsecureSkipVerify = skipSSL
+
+	lt := logging.NewTransport(t, includeBody)
+
+	return &http.Client{
+		Transport: lt,
+	}
 }
 
 // InitTemplateConfig loads templating configuration from a file or defaults.
