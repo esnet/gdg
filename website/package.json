@@ -1,19 +1,17 @@
 {
   "name": "-gdg",
   "version": "0.0.0",
-  "description": "Doks theme",
-  "author": "Hyas",
+  "description": "GDG documentation site (Hugo + Relearn theme)",
+  "author": "esnet",
   "license": "MIT",
   "scripts": {
-    "dev": "exec-bin node_modules/.bin/hugo/hugo server --bind=0.0.0.0 --disableFastRender --baseURL=http://localhost --noHTTPCache",
-    "dev:drafts": "exec-bin node_modules/.bin/hugo/hugo server --bind=0.0.0.0 --disableFastRender --baseURL=http://localhost --noHTTPCache --buildDrafts",
-    "create": "exec-bin node_modules/.bin/hugo/hugo new",
-    "lint": "npm run lint:scripts && npm run lint:styles && npm run lint:markdown",
-    "lint:scripts": "eslint --cache assets/js",
-    "lint:styles": "stylelint --cache \"assets/scss/**/*.{css,sass,scss}\"",
+    "dev": "bash scripts/hugo-dev-watch.sh --bind=0.0.0.0 --disableFastRender --baseURL=http://localhost/gdg/ --noHTTPCache",
+    "dev:drafts": "bash scripts/hugo-dev-watch.sh --bind=0.0.0.0 --disableFastRender --baseURL=http://localhost/gdg/ --noHTTPCache --buildDrafts",
+    "create": "hugo new",
+    "lint": "npm run lint:markdown",
     "lint:markdown": "markdownlint-cli2 \"*.md\" \"content/**/*.md\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "exec-bin node_modules/.bin/hugo/hugo --minify",
+    "build": "bash scripts/hugo-build.sh --minify",
     "preview": "http-server --gzip --brotli --ext=html --cors",
     "clean": "npm run clean:build && npm run clean:lint && npm run clean:install",
     "clean:build": "shx rm -rf public resources .hugo_build.lock",
@@ -21,42 +19,21 @@
     "clean:lint": "shx rm -rf .eslintcache .stylelintcache",
     "preinfo": "npm version",
     "info": "npm list",
-    "postinfo": "exec-bin node_modules/.bin/hugo/hugo version",
-    "postinstall": "hugo-installer --version otherDependencies.hugo --extended --destination node_modules/.bin/hugo"
+    "postinfo": "hugo version"
   },
   "dependencies": {
-    "@fullhuman/postcss-purgecss": "^8.0.0",
-    "@tabler/icons": "^3.36.1",
-    "@thulite/bootstrap": "^1.2.3",
-    "@thulite/core": "^1.5.9",
-    "@thulite/doks-core": "^1.9.3",
-    "@thulite/images": "^3.3.4",
-    "@thulite/inline-svg": "^1.2.2",
-    "@thulite/seo": "^2.4.3",
-    "autoprefixer": "^10.4.20",
-    "basiclightbox": "^5.0.4",
-    "bootstrap": "5.3.8",
-    "clipboard": "^2.0.11",
-    "cross-spawn": "^7.0.6",
-    "exec-bin": "^1.0.0",
-    "flexsearch": "^0.8.212",
-    "hugo-installer": "^4.0.1",
-    "nanoid": "^6.0.0",
     "pnpm": "^11.0.0",
-    "postcss": "8.5.28",
-    "postcss-cli": "^11.0.0"
+    "hugo-extended": "0.166.0"
   },
   "devDependencies": {
     "shx": "^0.4.0"
-  },
-  "otherDependencies": {
-    "hugo": "0.152.2"
   },
   "overrides": {
     "semver": "^7.5.4"
   },
   "engines": {
     "node": ">=18.14.1",
+    "go": ">=1.21",
     "pnpm": ">=8.10.0"
   },
   "packageManager": "pnpm@11.25.0"

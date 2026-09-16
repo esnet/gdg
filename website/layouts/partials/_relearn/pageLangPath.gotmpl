@@ -1,0 +1,29 @@
+{{- /*
+  Override of Relearn's pageLangPath.gotmpl.
+
+  We repurpose Hugo's multilingual system to implement doc "versions": each
+  version (current, 0.9.6) is a Hugo language with its own contentDir, and
+  each version's whole content tree is remapped to its public URL via
+  explicit `url:` front matter on section pages. Because of that, the path
+  computed from `site.Home.RelPermalink`/`.RelPermalink` below is already
+  fully version-agnostic (the version segment is stripped by construction,
+  not by Hugo's automatic per-language subdir).
+
+  The upstream partial has a second step that re-prepends the language code
+  as a path segment whenever the language's home URL happens to differ from
+  the default language's home URL by exactly that language code (the case
+  it's designed for: Hugo's built-in defaultContentLanguageInSubdir-style
+  URLs). For us, our version identifier ("0.9.6") is coincidentally also the
+  literal URL segment we chose, so that check spuriously matches and
+  re-adds "/0.9.6" on top of an already-clean path. That breaks the version
+  switcher for every page under the 0.9.6 version: the resulting URL still
+  contains "/0.9.6", so switching *away* from 0.9.6 just reloads the same
+  0.9.6 page instead of navigating to the target version.
+
+  We drop that second step entirely - it doesn't apply to our URL scheme.
+*/}}
+{{- $home_path := site.Home.RelPermalink }}
+{{- $this_path := .RelPermalink }}
+{{- $path := print "/" (strings.TrimPrefix $home_path $this_path) }}
+{{- $path = partial "permalink.gotmpl" (dict "link" $path) }}
+{{- return $path }}

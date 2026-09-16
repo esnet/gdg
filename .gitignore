@@ -7,6 +7,7 @@ dist/
 prod/
 public
 resources
+.hugo_build.lock
 .idea
 config/token*.yml
 config/templates.yml

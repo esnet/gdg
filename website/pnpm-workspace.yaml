@@ -1,0 +1,5 @@
+# Explicitly trust hugo-extended's postinstall script (it downloads the
+# pinned Hugo binary for your platform). Without this, pnpm >=10 silently
+# skips it and `hugo` won't be available.
+allowBuilds:
+  hugo-extended: true

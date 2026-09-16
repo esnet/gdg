@@ -6,50 +6,45 @@ relativeURLs = false
 
 disableAliases = true
 disableHugoGeneratorInject = true
-# disableKinds = ["taxonomy", "term"]
 enableEmoji = true
 enableGitInfo = false
 enableRobotsTXT = true
-languageCode = "en-US"
+
+
 [pagination]
 pagerSize = 10
 rssLimit = 10
 summarylength = 20 # 70 (default)
 
-# Multilingual
-defaultContentLanguage = "en"
-disableLanguages = ["de", "nl"]
+# Versioning is implemented as a "multilingual" site: each version is a
+# Hugo "language" pointing at its own content folder (single git branch,
+# folder-based versioning). See config/_default/languages.toml.
+defaultContentLanguage = "current"
 defaultContentLanguageInSubdir = false
 
 copyRight = ""
 
-[build.buildStats]
-enable = true
 
+# NOTE: intentionally NOT enabling Relearn's "print" output format here -
+# combined with our multilingual/versions setup it triggers a Hugo panic
+# ("deferred execution with id ... not found") during build. Search still
+# works fine without it (Relearn wires that up separately).
 [outputs]
-home = ["html", "rss", "sitemap", "searchIndex", "llms"]
-page = ["html", "markdown"]
-section = ["html", "rss", "sitemap"]
-taxonomy = ["html", "rss", "sitemap"]
-term = ["html", "rss", "sitemap"]
+home = ["html", "rss"]
+section = ["html", "rss"]
+page = ["html"]
 
-[outputFormats.searchIndex]
-mediaType = "application/json"
-baseName = "search-index"
-isPlainText = true
-notAlternative = true
-
-[outputFormats.markdown]
-baseName = "index"
-isHTML = false
-isPlainText = true
-mediaType = "text/markdown"
-
-[outputFormats.llms]
-baseName = "llms"
-isHTML = false
-isPlainText = true
-mediaType = "text/plain"
+# Keep the old /docs/<section>/... URLs even though these are now
+# top-level content sections (content/current/<section>/...), so the
+# sidebar tree isn't nested under an extra "docs" wrapper node.
+[permalinks]
+cookbook = "/docs/cookbook/:sections[1:]/:slug/"
+developer = "/docs/developer/:sections[1:]/:slug/"
+gdg = "/docs/gdg/:sections[1:]/:slug/"
+releases = "/docs/releases/:sections[1:]/:slug/"
+templating = "/docs/templating/:sections[1:]/:slug/"
+tutorials = "/docs/tutorials/:sections[1:]/:slug/"
+usage_guide = "/docs/usage_guide/:sections[1:]/:slug/"
 
 [sitemap]
 changefreq = "monthly"
@@ -65,11 +60,6 @@ maxAge = -1 # "30m"
 contributor = "contributors"
 category = "categories"
 tag = "tags"
-
-[permalinks]
-blog = "/blog/:slug/"
-docs = "/docs/:sections[1:]/:slug/"
-# docs = "/docs/1.0/:sections[1:]/:slug/"
 
 [minify.tdewolff.html]
 keepWhitespace = false
@@ -91,6 +81,23 @@ weight = 10
 [imaging]
 anchor = "Center"
 bgColor = "#ffffff"
-hint = "photo"
-quality = 85
 resampleFilter = "Lanczos"
+
+# Hugo has an upstream race condition (gohugoio/hugo#13492) where building
+# multiple languages together can intermittently panic with
+# "deferred execution with id ... not found" on sites using notice/expand
+# shortcodes (which use templates.Defer). Splitting the build into one
+# segment per version/language avoids triggering the race, since each
+# segment is rendered in its own process. See package.json's "build"/"dev"
+# scripts, which invoke these segments sequentially.
+[segments]
+  [segments.current]
+    [[segments.current.includes]]
+      [segments.current.includes.sites]
+        [segments.current.includes.sites.matrix]
+          languages = ["current"]
+  [segments.v096]
+    [[segments.v096.includes]]
+      [segments.v096.includes.sites]
+        [segments.v096.includes.sites.matrix]
+          languages = ["0.9.6"]
