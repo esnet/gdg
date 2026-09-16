@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -19,6 +20,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func DuplicateConfig(t *testing.T) string {
@@ -192,6 +194,28 @@ func TestConfigSecurePath(t *testing.T) {
 	location := grafanaCfg.SecureLocation()
 	assert.True(t, strings.Contains(location, "foobar"))
 	assert.True(t, strings.Contains(location, "test"))
+}
+
+func TestNewConfig_InternalNilDereference(t *testing.T) {
+	dir := t.TempDir()
+	cfgPath := filepath.Join(dir, "gdg-tui-test.yml")
+	yaml := ""
+	require.NoError(t, os.WriteFile(cfgPath, []byte(yaml), 0o600))
+	
+	_ = config.NewConfig(cfgPath)
+}
+
+func TestNewConfig_NotNil(t *testing.T) {
+	dir := t.TempDir()
+	cfgPath := filepath.Join(dir, "gdg-tui-test.yml")
+	yaml := ""
+	require.NoError(t, os.WriteFile(cfgPath, []byte(yaml), 0o600))
+
+	cfg := config.NewConfig(cfgPath)
+
+	require.NotNil(t, cfg)
+	assert.NotNil(t, cfg.ViperConfig)
+	assert.NotNil(t, cfg.HTTPClient)
 }
 
 func validateGrafanaQA(t *testing.T, grafana *config_domain.GrafanaConfig) {
