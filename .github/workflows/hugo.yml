@@ -1,12 +1,12 @@
 name: Publish Documentation 
 on:
   push:
-#   branches:
-#     - main
+   branches:
+     - main
 # Update for given branch for one of releases, otherwise only release on tags
 #     - feature/fixingReleaseDocs
-    tags:
-      - v*
+#    tags:
+#      - v*
 
 jobs:
   deployHugoPages:
@@ -16,11 +16,10 @@ jobs:
        with:
          submodules: true
          fetch-depth: 0
-     - name: Setup Hugo
-       uses: peaceiris/actions-hugo@v3
+     - name: Setup Go
+       uses: actions/setup-go@v5
        with:
-         hugo-version: 'latest'
-         extended: true
+         go-version: '1.27'
      - name: Setup Node.js
        uses: actions/setup-node@v4
        with:

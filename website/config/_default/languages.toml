@@ -1,10 +1,41 @@
-[en]
-  languageName = "English"
-  contentDir = "content/en"
+[current]
+  locale = "en-US"
+  label = "Devel"
+  contentDir = "content/current"
   weight = 10
-  [en.params]
-    languageISO = "EN"
-    languageTag = "en-US"
-    footer = 'Brought to you by <a class="text-muted" href="https://gethyas.com/">Hyas</a>'
-    alertText = '<a class="alert-link stretched-link fw-normal" href="/blog/example-post/">Doks version 1.0 just shipped!</a>'
 
+  [current.params]
+    version = "current"
+    editURL = "https://github.com/esnet/gdg/edit/main/website/content/current/${FilePath}"
+
+    [[current.params.versions]]
+      identifier = "current"
+      title = "Devel"
+      baseURL = "/gdg/"
+      isLatest = true
+
+    [[current.params.versions]]
+      identifier = "0.9.6"
+      title = "v0.9.6"
+      baseURL = "/gdg/0.9.6/"
+
+["0.9.6"]
+  locale = "en-US"
+  label = "v0.9.6"
+  contentDir = "content/0.9.6"
+  weight = 20
+
+  ["0.9.6".params]
+    version = "0.9.6"
+    editURL = "https://github.com/esnet/gdg/edit/main/website/content/0.9.6/${FilePath}"
+
+    [["0.9.6".params.versions]]
+      identifier = "current"
+      title = "Devel"
+      baseURL = "/gdg/"
+      isLatest = true
+
+    [["0.9.6".params.versions]]
+      identifier = "0.9.6"
+      title = "v0.9.6"
+      baseURL = "/gdg/0.9.6/"
