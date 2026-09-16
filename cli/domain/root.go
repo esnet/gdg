@@ -164,9 +164,9 @@ func (c *RootCommand) LoadConfig(configOverride, contextOverride string) *config
 		c.configObj.SetContext(contextOverride)
 	}
 
-	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, c.configObj.IsDebug())
+	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, c.configObj.IsVerboseLogging())
 	c.configObj.GetDefaultGrafanaConfig().Validate()
-	if c.configObj.GetAppGlobals().ApiDebug {
+	if c.configObj.IsVerboseLogging() {
 		err := os.Setenv("DEBUG", "1")
 		if err != nil {
 			slog.Debug("unable to set debug env value", slog.Any("err", err))

@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/internal/logging"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -45,6 +47,14 @@ func (d *DashboardServiceImpl) k8sRestConfig() (*rest.Config, error) {
 		Host:    host,
 		APIPath: "apis",
 	}
+
+	cfg.Wrap(func(rt http.RoundTripper) http.RoundTripper {
+		if d.gdgConfig.IsHTTPTrafficLogged() {
+			return logging.NewTransport(rt, d.gdgConfig.IsHTTPBodyLogged())
+		}
+
+		return rt
+	})
 
 	if token := d.grafanaConf.GetAPIToken(); token != "" {
 		cfg.BearerToken = token
