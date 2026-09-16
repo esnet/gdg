@@ -163,7 +163,7 @@ func readViperConfig[T any](configName string, configDirs []string, object *T, e
 }
 
 func setupHTTPClient(logHTTPTraffic, includeBody, skipSSL bool) *http.Client {
-	if logHTTPTraffic == false {
+	if !logHTTPTraffic {
 		return http.DefaultClient
 	}
 
