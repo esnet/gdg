@@ -89,7 +89,7 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		Schemes:      []string{u.Scheme},
 		NumRetries:   b.gdgConfig.GetAppGlobals().RetryCount,
 		RetryTimeout: b.gdgConfig.GetAppGlobals().GetRetryTimeout(),
-		Debug:        b.GetGlobals().ApiDebug,
+		Client:       b.gdgConfig.HTTPClient,
 	}
 	if b.grafanaConf.IsBasicAuth() && len(opts) == 1 {
 		opts = append(opts, b.getOrgNameClientOpts())
@@ -110,9 +110,8 @@ func (b *baseService) GetClient() *client.GrafanaHTTPAPI {
 	if b.grafanaConf.GetAPIToken() != "" {
 		grafanaClient, _ := b.getNewClient(func(clientCfg *client.TransportConfig) {
 			clientCfg.APIKey = b.grafanaConf.GetAPIToken()
-			clientCfg.Debug = b.GetGlobals().ApiDebug
 		})
-		return grafanaClient
+		return grafanaClient.WithHTTPClient(b.gdgConfig.HTTPClient)
 	}
 	return b.GetBasicAuthClient()
 }
@@ -120,7 +119,6 @@ func (b *baseService) GetClient() *client.GrafanaHTTPAPI {
 func (b *baseService) getDefaultBasicOpts() []NewClientOpts {
 	return []NewClientOpts{func(clientCfg *client.TransportConfig) {
 		clientCfg.BasicAuth = url.UserPassword(b.grafanaConf.UserName, b.grafanaConf.GetPassword())
-		clientCfg.Debug = b.GetGlobals().ApiDebug
 	}}
 }
 
@@ -129,12 +127,12 @@ func (b *baseService) GetBasicClientWithOpts(opts ...NewClientOpts) *client.Graf
 	allOpts := b.getDefaultBasicOpts()
 	allOpts = append(allOpts, opts...)
 	grafanaClient, _ := b.getNewClient(allOpts...)
-	return grafanaClient
+	return grafanaClient.WithHTTPClient(b.gdgConfig.HTTPClient)
 }
 
 // GetBasicAuthClient returns a basic-auth Grafana API client.
 func (b *baseService) GetBasicAuthClient() *client.GrafanaHTTPAPI {
-	return b.GetBasicClientWithOpts()
+	return b.GetBasicClientWithOpts().WithHTTPClient(b.gdgConfig.HTTPClient)
 }
 
 // GetAdminClient returns the admin client; fatal if admin is not configured.
@@ -142,7 +140,7 @@ func (b *baseService) GetAdminClient() *client.GrafanaHTTPAPI {
 	if !b.grafanaConf.IsGrafanaAdmin() || b.grafanaConf.UserName == "" {
 		log.Fatal("Unable to get Grafana Admin SecureData.")
 	}
-	return b.GetBasicClientWithOpts()
+	return b.GetBasicClientWithOpts().WithHTTPClient(b.gdgConfig.HTTPClient)
 }
 
 // ---------------------------------------------------------------------------
