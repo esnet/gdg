@@ -36,5 +36,5 @@
     "go": ">=1.21",
     "pnpm": ">=8.10.0"
   },
-  "packageManager": "pnpm@11.25.0"
+  "packageManager": "pnpm@11.27.0"
 }
