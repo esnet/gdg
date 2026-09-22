@@ -51,8 +51,10 @@ func TestPoliciesCrud(t *testing.T) {
 		return item.Receiver == "slack" && item.Continue
 	})
 	assert.NotNil(t, route)
-	assert.Equal(t, len(route.ObjectMatchers[0]), 3)
-	assert.Equal(t, route.ObjectMatchers[0][2], "23")
+	if assert.NotEmpty(t, route.ObjectMatchers) {
+		assert.Equal(t, len(route.ObjectMatchers[0]), 3)
+		assert.Equal(t, route.ObjectMatchers[0][2], "23")
+	}
 
 	policies, err = apiClient.ListAlertNotifications()
 	assert.NoError(t, err)
