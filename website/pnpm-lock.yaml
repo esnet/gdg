@@ -13,7 +13,7 @@ importers:
         version: 0.166.0
       pnpm:
         specifier: ^11.0.0
-        version: 11.27.0
+        version: 11.28.0
     devDependencies:
       shx:
         specifier: ^0.4.0
@@ -166,8 +166,8 @@ packages:
     resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
     engines: {node: '>=8.6'}
 
-  pnpm@11.27.0:
-    resolution: {integrity: sha512-rRKCFGO7FDKV8fo+zed6a5uXp5kDhtqAD/V7/8OWTcZLexx1WdXb5cM3rqZZ7ZyJN9Q3C9GYyiAJvG+gJJgI5w==}
+  pnpm@11.28.0:
+    resolution: {integrity: sha512-jtI5Nx3oIkS2zM+eICPBjqhDmWHy7D/omJE7n37i52ygpFcXWArKPHmXwTX21PXeRSTL7uGizKxDDAPRNOKkjA==}
     engines: {node: '>=22.13'}
     hasBin: true
 
@@ -381,7 +381,7 @@ snapshots:
 
   picomatch@2.3.2: {}
 
-  pnpm@11.27.0: {}
+  pnpm@11.28.0: {}
 
   pump@3.0.4:
     dependencies:
