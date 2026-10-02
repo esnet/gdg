@@ -30,6 +30,22 @@ Any code submitted to enhance this project is great appreciated, but here's a ch
 6. If you've introduced a major change that affects the configuration, please take the time to update the context new wizard to ensure it's captured.
 
 
+### AI-Assisted Contributions
+
+We welcome contributions made with the help of AI tools (Claude, Copilot, ChatGPT, Cursor, and similar). These tools are fine to use, but they don't change who is responsible for the work.
+
+**You are ultimately responsible for everything you submit.** If you open a pull request, issue, or comment, you are the author of record, whether you typed every line or an AI generated it. "The AI wrote it" is not an acceptable explanation for a bug, a license problem, or a low-quality submission.
+
+If you use AI tools, please follow these guidelines:
+
+1. **Understand your changes.** You should be able to explain every line you submit and why it is there. If you can't explain it in review, don't submit it.
+2. **Review and test it yourself.** Read the generated code, run it, and make sure it works and passes `make test`. AI output can look plausible and still be wrong, so verify behavior rather than assuming it.
+3. **Follow the project's conventions.** AI-generated code must meet the same standards as any other contribution: tests, docs, config updates, and the checklist under "Code Submissions".
+4. **Check licensing and provenance.** By submitting, you confirm you have the right to contribute the code under this project's license. Be aware that wholly AI-generated output may not be copyrightable and may reproduce code from other sources, so review it, adapt it, and don't submit anything you can't vouch for.
+5. **Keep submissions reviewable.** Large, unreviewed, or speculative AI-generated changes put an unfair burden on maintainers, who are volunteers. Keep pull requests focused and sized so they can be reviewed. A contribution should be worth more to the project than the time it takes to review it.
+6. **Disclose significant AI assistance.** We encourage you to note AI involvement in your commit message using a trailer, for example `Assisted-by: <tool and version>` for minor help or `Generated-by: <tool and version>` for substantially AI-written code. Disclosure helps reviewers and keeps licensing provenance clear.
+7. **Respect maintainers' time.** Submissions that are clearly unreviewed or that the author can't explain (for example, references to APIs or flags that don't exist, or answers that don't address review feedback) may be closed without further review. This applies regardless of whether AI was involved.
+
 ### Submit Feedback
 
 The best way to send feedback is to file an issue at https://github.com/esnet/gdg/issues.
@@ -77,3 +93,4 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.md.
+3. If AI tools were used, see [AI-Assisted Contributions](#ai-assisted-contributions) above. You remain responsible for the submission.
