@@ -48,7 +48,7 @@ func initConfig() {
 
 	appCfg := config.NewConfig(cfgFile)
 	templateConfig = config.InitTemplateConfig(tplCfgFile)
-	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, appCfg.IsDebug())
+	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, appCfg.IsVerboseLogging())
 	template = templating.NewTemplate(templateConfig, appCfg.GetDefaultGrafanaConfig())
 }
 

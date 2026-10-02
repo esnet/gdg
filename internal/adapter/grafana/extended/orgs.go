@@ -3,7 +3,6 @@ package extended
 import (
 	"context"
 	"errors"
-	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -21,10 +20,6 @@ func (extended *Api) GetConfiguredOrgId(orgName string) (int64, error) {
 			Path("api/user/orgs").
 			ToJSON(&result).
 			Method(http.MethodGet)
-
-		if extended.debug {
-			log.Printf("%v", req)
-		}
 
 		return req.Fetch(context.Background())
 	}

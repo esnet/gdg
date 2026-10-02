@@ -5,6 +5,7 @@ import (
 	"log"
 	"log/slog"
 	"maps"
+	"net/http"
 	"os"
 	"slices"
 	"strings"
@@ -26,6 +27,7 @@ type GDGAppConfiguration struct {
 	Global        *AppGlobals                  `mapstructure:"global" yaml:"global"`
 	SecureConfig  map[string][]string          `mapstructure:"secure_config" yaml:"secure_config"`
 	PluginConfig  PluginConfig                 `mapstructure:"plugins" yaml:"plugins"`
+	HTTPClient    *http.Client                 `mapstructure:"-" yaml:"-"`
 }
 
 type PluginConfig struct {
@@ -187,20 +189,19 @@ func (app *GDGAppConfiguration) IgnoreSSL() bool {
 	return app.GetViperConfig().GetBool("global.ignore_ssl_errors")
 }
 
-// IsDebug returns true if debug mode is enabled
-func (app *GDGAppConfiguration) IsDebug() bool {
-	if val := app.GetViperConfig(); val != nil {
-		return val.GetBool("global.debug")
-	}
-	return false
+// IsVerboseLogging returns true if verbose logging is enabled (logging level DEBUG)
+func (app *GDGAppConfiguration) IsVerboseLogging() bool {
+	return app.Global.Logging.Verbose
 }
 
-// IsApiDebug returns true if debug mode is enabled for APIs
-func (app *GDGAppConfiguration) IsApiDebug() bool {
-	if val := app.GetViperConfig(); val != nil {
-		return val.GetBool("global.api_debug")
-	}
-	return false
+// IsHTTPTrafficLogged returns true if HTTP requests and responses should be logged
+func (app *GDGAppConfiguration) IsHTTPTrafficLogged() bool {
+	return app.Global.Logging.HTTPTraffic
+}
+
+// IsHTTPBodyLogged returns true if the body of HTTP requests and responses should be logged as well
+func (app *GDGAppConfiguration) IsHTTPBodyLogged() bool {
+	return app.Global.Logging.HTTPBody
 }
 
 // GetCloudConfiguration Returns storage type and configuration
