@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "pnpm": "^11.0.0",
-    "hugo-extended": "0.166.0"
+    "hugo-extended": "0.167.0"
   },
   "devDependencies": {
     "shx": "^0.4.0"
@@ -36,5 +36,5 @@
     "go": ">=1.21",
     "pnpm": ">=8.10.0"
   },
-  "packageManager": "pnpm@11.25.0"
+  "packageManager": "pnpm@11.28.5"
 }
