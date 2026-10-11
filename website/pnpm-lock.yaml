@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       hugo-extended:
-        specifier: 0.166.0
-        version: 0.166.0
+        specifier: 0.167.0
+        version: 0.167.0
       pnpm:
         specifier: ^11.0.0
-        version: 11.27.0
+        version: 11.28.5
     devDependencies:
       shx:
         specifier: ^0.4.0
@@ -90,8 +90,8 @@ packages:
     resolution: {integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==}
     engines: {node: '>= 0.4'}
 
-  hugo-extended@0.166.0:
-    resolution: {integrity: sha512-vv0OylKYYQ10RoEc0b2kXup1MOAzI3E7bBW3Znje/4yOB5LDqalDW0+OYHMro6/DkP87St8uwccSbQuZVLZGnA==}
+  hugo-extended@0.167.0:
+    resolution: {integrity: sha512-XEtjQwhAT4IJqGSGaP7Tm3tUfkaeUk1J8fWo1E7wBAYTywyjNSvBz8bu8czc3axskQ8WycewIuOz89vEZGWlig==}
     engines: {node: '>=18.17'}
     hasBin: true
 
@@ -166,8 +166,8 @@ packages:
     resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
     engines: {node: '>=8.6'}
 
-  pnpm@11.27.0:
-    resolution: {integrity: sha512-rRKCFGO7FDKV8fo+zed6a5uXp5kDhtqAD/V7/8OWTcZLexx1WdXb5cM3rqZZ7ZyJN9Q3C9GYyiAJvG+gJJgI5w==}
+  pnpm@11.28.5:
+    resolution: {integrity: sha512-SEVj0wtMKtJ8tIqpT/KzAtvOvI/2vyiBbCWJiG4UbOf3bzVPO8GkOOb16XaMMCqgpvet2CMpA81M+BQmy8FNng==}
     engines: {node: '>=22.13'}
     hasBin: true
 
@@ -325,7 +325,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hugo-extended@0.166.0:
+  hugo-extended@0.167.0:
     dependencies:
       adm-zip: 0.5.18
       tar: 7.5.22
@@ -381,7 +381,7 @@ snapshots:
 
   picomatch@2.3.2: {}
 
-  pnpm@11.27.0: {}
+  pnpm@11.28.5: {}
 
   pump@3.0.4:
     dependencies:
