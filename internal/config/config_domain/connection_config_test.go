@@ -50,10 +50,10 @@ func TestGetAppGlobals_InitialisesNilGlobal(t *testing.T) {
 }
 
 func TestGetAppGlobals_ReturnsExisting(t *testing.T) {
-	existing := &AppGlobals{Debug: true}
+	existing := &AppGlobals{IgnoreSSLErrors: true}
 	app := &GDGAppConfiguration{Global: existing}
 	g := app.GetAppGlobals()
-	assert.True(t, g.Debug)
+	assert.True(t, g.IgnoreSSLErrors)
 }
 
 func TestGetContext_LowerCase(t *testing.T) {
