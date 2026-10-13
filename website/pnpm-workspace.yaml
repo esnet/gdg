@@ -3,3 +3,4 @@
 # skips it and `hugo` won't be available.
 allowBuilds:
   hugo-extended: true
+  pnpm: true
