@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "pnpm": "^12.0.0",
-    "hugo-extended": "0.166.0"
+    "hugo-extended": "0.167.0"
   },
   "devDependencies": {
     "shx": "^0.4.0"
