@@ -88,7 +88,9 @@ func TestDashboardPermissionsCrud(t *testing.T) {
 		assert.True(t, bobGone, "bob's permission should be cleared")
 		assert.True(t, musiciansGone, "musicians team permission should be cleared")
 	} else {
-		assert.Equal(t, 0, len(currentPerms[0].Permissions))
+		if assert.NotEmpty(t, currentPerms) {
+			assert.Equal(t, 0, len(currentPerms[0].Permissions))
+		}
 	}
 	addPerms, err := apiClient.UploadDashboardPermissions(dashFilter)
 	assert.NoError(t, err)
