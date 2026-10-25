@@ -15,9 +15,13 @@ type Api struct {
 }
 
 func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) outbound.ExtendedApi {
+	c := *http.DefaultClient
+	if cfg != nil && cfg.TransportWrapper != nil {
+		c.Transport = cfg.TransportWrapper(c.Transport)
+	}
 	o := Api{
 		appCfg:     cfg,
-		httpClient: cfg.HTTPClient,
+		httpClient: &c,
 	}
 	return &o
 }

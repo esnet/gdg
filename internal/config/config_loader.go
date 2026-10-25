@@ -3,13 +3,12 @@ package config
 import (
 	"log"
 	"log/slog"
-	"net/http"
 	"path/filepath"
 	"strings"
 
 	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
-	"github.com/esnet/gdg/internal/logging"
+	"github.com/esnet/gdg/internal/middleware"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 )
@@ -95,24 +94,29 @@ func NewConfig(override string, opts ...config_domain.GDGAppConfigurationOption)
 	gdgConfig.ViperConfig = v
 
 	if gdgConfig.Global != nil {
+		if gdgConfig.Global.Logging == nil {
+			gdgConfig.Global.Logging = &config_domain.GlobalsLogging{}
+
+			if gdgConfig.Global.Debug {
+				gdgConfig.Global.Logging.Verbose = true
+			}
+
+			if gdgConfig.Global.ApiDebug {
+				gdgConfig.Global.Logging.HTTPTraffic.Headers = true
+				gdgConfig.Global.Logging.HTTPTraffic.Body = true
+			}
+		}
+
 		if gdgConfig.Global.Debug {
-			gdgConfig.Global.Logging.Verbose = true
 			slog.Warn("globals.debug is deprecated. Please use globals.logging.verbose instead")
 		}
 
 		if gdgConfig.Global.ApiDebug {
-			gdgConfig.Global.Logging.HTTPTraffic = true
-			slog.Warn("globals.api_debug is deprecated. Please use globals.logging.http_traffic instead")
+			slog.Warn("globals.api_debug is deprecated. Please use globals.logging.http_traffic.headers and globals.logging.http_traffic.body instead")
 		}
-
-		gdgConfig.HTTPClient = setupHTTPClient(
-			gdgConfig.IsHTTPTrafficLogged(),
-			gdgConfig.IsHTTPBodyLogged(),
-			gdgConfig.IgnoreSSL(),
-		)
-	} else {
-		gdgConfig.HTTPClient = http.DefaultClient
 	}
+
+	gdgConfig.TransportWrapper = middleware.NewLoggingTransportWrapper(log.Default(), gdgConfig.IsHTTPTrafficHeadersLogging(), gdgConfig.IsHTTPTrafficBodyLogging())
 
 	for _, opt := range opts {
 		opt(gdgConfig)
@@ -160,21 +164,6 @@ func readViperConfig[T any](configName string, configDirs []string, object *T, e
 	}
 
 	return v, err
-}
-
-func setupHTTPClient(logHTTPTraffic, includeBody, skipSSL bool) *http.Client {
-	if !logHTTPTraffic {
-		return http.DefaultClient
-	}
-
-	t := http.DefaultTransport.(*http.Transport).Clone()
-	t.TLSClientConfig.InsecureSkipVerify = skipSSL
-
-	lt := logging.NewTransport(t, includeBody)
-
-	return &http.Client{
-		Transport: lt,
-	}
 }
 
 // InitTemplateConfig loads templating configuration from a file or defaults.
