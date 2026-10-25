@@ -120,8 +120,9 @@ contexts:
 global:
   logging:
     verbose: true
-    http_traffic: false
-    http_body: false
+    http_traffic:
+      headers: false
+      body: false
   clear_output: true
   ignore_ssl_errors: false ## When set to true will ignore invalid SSL errors
   retry_count: 3 ## Will retry any failed API request up to 3 times.

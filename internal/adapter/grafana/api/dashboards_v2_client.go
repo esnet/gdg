@@ -5,14 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
-	"github.com/esnet/gdg/internal/logging"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -20,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/transport"
 )
 
 // dashboardV2GVR is the group/version/resource for the App Platform dashboard API.
@@ -47,14 +46,9 @@ func (d *DashboardServiceImpl) k8sRestConfig() (*rest.Config, error) {
 		Host:    host,
 		APIPath: "apis",
 	}
-
-	cfg.Wrap(func(rt http.RoundTripper) http.RoundTripper {
-		if d.gdgConfig.IsHTTPTrafficLogged() {
-			return logging.NewTransport(rt, d.gdgConfig.IsHTTPBodyLogged())
-		}
-
-		return rt
-	})
+	if d.gdgConfig != nil && d.gdgConfig.TransportWrapper != nil {
+		cfg.Wrap(transport.WrapperFunc(d.gdgConfig.TransportWrapper))
+	}
 
 	if token := d.grafanaConf.GetAPIToken(); token != "" {
 		cfg.BearerToken = token

@@ -83,14 +83,21 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 	if err != nil {
 		log.Fatal("invalid Grafana URL Path")
 	}
+
+	c := *http.DefaultClient
+	if b.gdgConfig != nil && b.gdgConfig.TransportWrapper != nil {
+		c.Transport = b.gdgConfig.TransportWrapper(http.DefaultTransport)
+	}
+
 	httpConfig := &client.TransportConfig{
 		Host:         u.Host,
 		BasePath:     path,
 		Schemes:      []string{u.Scheme},
 		NumRetries:   b.gdgConfig.GetAppGlobals().RetryCount,
 		RetryTimeout: b.gdgConfig.GetAppGlobals().GetRetryTimeout(),
-		Client:       b.gdgConfig.HTTPClient,
+		Client:       &c,
 	}
+
 	if b.grafanaConf.IsBasicAuth() && len(opts) == 1 {
 		opts = append(opts, b.getOrgNameClientOpts())
 	}
@@ -111,7 +118,7 @@ func (b *baseService) GetClient() *client.GrafanaHTTPAPI {
 		grafanaClient, _ := b.getNewClient(func(clientCfg *client.TransportConfig) {
 			clientCfg.APIKey = b.grafanaConf.GetAPIToken()
 		})
-		return grafanaClient.WithHTTPClient(b.gdgConfig.HTTPClient)
+		return grafanaClient
 	}
 	return b.GetBasicAuthClient()
 }
@@ -127,12 +134,12 @@ func (b *baseService) GetBasicClientWithOpts(opts ...NewClientOpts) *client.Graf
 	allOpts := b.getDefaultBasicOpts()
 	allOpts = append(allOpts, opts...)
 	grafanaClient, _ := b.getNewClient(allOpts...)
-	return grafanaClient.WithHTTPClient(b.gdgConfig.HTTPClient)
+	return grafanaClient
 }
 
 // GetBasicAuthClient returns a basic-auth Grafana API client.
 func (b *baseService) GetBasicAuthClient() *client.GrafanaHTTPAPI {
-	return b.GetBasicClientWithOpts().WithHTTPClient(b.gdgConfig.HTTPClient)
+	return b.GetBasicClientWithOpts()
 }
 
 // GetAdminClient returns the admin client; fatal if admin is not configured.
@@ -140,7 +147,7 @@ func (b *baseService) GetAdminClient() *client.GrafanaHTTPAPI {
 	if !b.grafanaConf.IsGrafanaAdmin() || b.grafanaConf.UserName == "" {
 		log.Fatal("Unable to get Grafana Admin SecureData.")
 	}
-	return b.GetBasicClientWithOpts().WithHTTPClient(b.gdgConfig.HTTPClient)
+	return b.GetBasicClientWithOpts()
 }
 
 // ---------------------------------------------------------------------------

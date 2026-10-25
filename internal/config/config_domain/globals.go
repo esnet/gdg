@@ -12,22 +12,26 @@ const (
 	passwordFormat  = "GDG_CONTEXTS__%s__PASSWORD" // #nosec G101
 )
 
+type LoggingHTTPTraffic struct {
+	Headers bool `mapstructure:"headers" yaml:"headers`
+	Body    bool `mapstructure:"body" yaml:"body`
+}
+
 type GlobalsLogging struct {
-	Verbose     bool `mapstructure:"verbose" yaml:"verbose"`
-	HTTPTraffic bool `mapstructure:"http_traffic" yaml:"http_traffic"`
-	HTTPBody    bool `mapstructure:"http_body" yaml:"http_body"`
+	Verbose     bool               `mapstructure:"verbose" yaml:"verbose"`
+	HTTPTraffic LoggingHTTPTraffic `mapstructure:"http_traffic" yaml:"http_traffic"`
 }
 
 // AppGlobals is the global configuration for the application
 type AppGlobals struct {
-	Debug           bool           `mapstructure:"debug" yaml:"debug"`
-	ApiDebug        bool           `mapstructure:"api_debug" yaml:"api_debug"`
-	Logging         GlobalsLogging `mapstructure:"logging" yaml:"logging"`
-	IgnoreSSLErrors bool           `mapstructure:"ignore_ssl_errors" yaml:"ignore_ssl_errors"`
-	RetryCount      int            `mapstructure:"retry_count" yaml:"retry_count"`
-	RetryDelay      string         `mapstructure:"retry_delay" yaml:"retry_delay"`
-	ClearOutput     bool           `mapstructure:"clear_output" yaml:"clear_output"`
-	retryTimeout    *time.Duration `mapstructure:"-" yaml:"-"`
+	Debug           bool            `mapstructure:"debug" yaml:"debug"`
+	ApiDebug        bool            `mapstructure:"api_debug" yaml:"api_debug"`
+	Logging         *GlobalsLogging `mapstructure:"logging" yaml:"logging"`
+	IgnoreSSLErrors bool            `mapstructure:"ignore_ssl_errors" yaml:"ignore_ssl_errors"`
+	RetryCount      int             `mapstructure:"retry_count" yaml:"retry_count"`
+	RetryDelay      string          `mapstructure:"retry_delay" yaml:"retry_delay"`
+	ClearOutput     bool            `mapstructure:"clear_output" yaml:"clear_output"`
+	retryTimeout    *time.Duration  `mapstructure:"-" yaml:"-"`
 
 	// PluginRegistryURL overrides the remote URL used to fetch the plugin registry.
 	// Defaults to domain.RegistryDefaultURL when empty.

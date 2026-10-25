@@ -201,7 +201,7 @@ func TestNewConfig_InternalNilDereference(t *testing.T) {
 	cfgPath := filepath.Join(dir, "gdg-tui-test.yml")
 	yaml := ""
 	require.NoError(t, os.WriteFile(cfgPath, []byte(yaml), 0o600))
-	
+
 	_ = config.NewConfig(cfgPath)
 }
 
@@ -215,7 +215,6 @@ func TestNewConfig_NotNil(t *testing.T) {
 
 	require.NotNil(t, cfg)
 	assert.NotNil(t, cfg.ViperConfig)
-	assert.NotNil(t, cfg.HTTPClient)
 }
 
 func validateGrafanaQA(t *testing.T, grafana *config_domain.GrafanaConfig) {
