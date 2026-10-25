@@ -13,8 +13,8 @@ const (
 )
 
 type LoggingHTTPTraffic struct {
-	Headers bool `mapstructure:"headers" yaml:"headers`
-	Body    bool `mapstructure:"body" yaml:"body`
+	Headers bool `mapstructure:"headers" yaml:"headers"`
+	Body    bool `mapstructure:"body" yaml:"body"`
 }
 
 type GlobalsLogging struct {
