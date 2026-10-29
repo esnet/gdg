@@ -1,0 +1,36 @@
+actions/setup_go/action.yml
+  h_5c3111fc5355aa 7
+.github/workflows/hugo.yml
+  h_5c3111fc5355aa 22
+tools/go.mod
+  h_5c3111fc5355aa 3
+.github/workflows/release.yml
+  h_5c3111fc5355aa 21
+.github/workflows/code_scanners.yml
+  h_5c3111fc5355aa 27
+website/go.mod
+  h_5c3111fc5355aa 3
+actions/release/action.yml
+  h_5c3111fc5355aa 7
+go.mod
+  h_5c3111fc5355aa 3
+.github/workflows/release-validation.yml
+  h_5c3111fc5355aa 19
+.github/workflows/go.yml
+  h_5c3111fc5355aa 25
+internal/config/config_builder_tui_internal_test.go
+  h_5c3111fc5355aa 244-245
+internal/config/plugin_rekey_tui_internal_test.go
+  h_5c3111fc5355aa 131,144,167-171,189
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a067d926cb9d1a356ae1e1d0bd3d1a8019992b6f",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
