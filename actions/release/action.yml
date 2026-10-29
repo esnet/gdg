@@ -4,7 +4,7 @@ inputs:
   go_version:
     description: 'Golang version'
     required: true
-    default: '1.25.5'
+    default: '1.27.3'
   docker_user:
     description: 'Docker username'
     required: true

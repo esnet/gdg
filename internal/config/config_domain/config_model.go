@@ -19,7 +19,7 @@ func (ds *ConnectionSettings) FiltersEnabled() bool {
 }
 
 // GetCredentials returns the credentials for the connection
-func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSourceCommand, path string, encoder outbound.CipherEncoder) (*GrafanaConnection, error) {
+func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSourceCommand, path string, encoder outbound.CipherEncoder, lookupResolver outbound.LookupResolver, lookupSvc outbound.LookupService) (*GrafanaConnection, error) {
 	data, err := json.Marshal(connectionEntity)
 	if err != nil {
 		slog.Warn("Unable to marshall Connection, unable to fetch credentials")
@@ -49,7 +49,13 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 			}
 		}
 		if valid {
-			return entry.GetConnectionAuth(path, encoder)
+			lookUp := CredentialLookup{
+				Path:           path,
+				Encoder:        encoder,
+				LookupResolver: lookupResolver,
+				LookupSvc:      lookupSvc,
+			}
+			return entry.GetConnectionAuth(lookUp)
 		}
 
 	}
@@ -150,8 +156,8 @@ func (s *GrafanaConfig) IsGrafanaAdmin() bool {
 }
 
 // GetCredentials return credentials for a given datasource or falls back on default value
-func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceCommand, location string, encoder outbound.CipherEncoder) (*GrafanaConnection, error) {
-	source, err := s.GetConnectionSettings().GetCredentials(dataSourceName, location, encoder)
+func (s *GrafanaConfig) GetCredentials(dataSourceName models.AddDataSourceCommand, location string, encoder outbound.CipherEncoder, lookupResolver outbound.LookupResolver, lookupSvc outbound.LookupService) (*GrafanaConnection, error) {
+	source, err := s.GetConnectionSettings().GetCredentials(dataSourceName, location, encoder, lookupResolver, lookupSvc)
 	if err == nil {
 		return source, nil
 	}

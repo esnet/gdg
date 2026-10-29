@@ -52,6 +52,10 @@ The auth file either be `json` or `yaml` but only a flat structure is supported.
 
 Some credentials use a different set of keys that is required, simply adjust the auth file to match your needs.
 
+Any value in the file may be a `lookup:<provider>:<key>` reference resolved through a configured
+[lookup plugin](https://software.es.net/gdg/docs/gdg/configuration/plugins/) (e.g. Google Secret Manager). Lookup refs,
+cipher-encoded values, and plain strings can be mixed in the same file.
+
 The Rules format for connections settings are the same as the filters. An example configuration can be seen below.
 
 ```yaml

@@ -240,6 +240,11 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 		app.PluginConfig.CipherPlugin = &config_domain.CipherConfig{PluginEntity: *bs.pluginResult}
 	}
 
+	// Construct lookup service early — needed for both connection credential
+	// encoding and auth credential encoding below.
+	lookup.RegisterProvider("gsm", gsm.NewPluginLookupGSM)
+	lookupSvc, _ := lookup.NewResolver(&app.PluginConfig)
+
 	// ── Write default connection credentials ──────────────────────────────
 	if bs.configureConnections {
 		const passKey = "basicAuthPassword"
@@ -255,10 +260,12 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 		}
 
 		secretFileLocation := filepath.Join(location, "default.yaml")
-		if encoder != nil {
+		if encoder != nil && lookupSvc != nil && !lookupSvc.IsLookupRef(defaultDs.Password()) {
 			newVal, encodeErr := encoder.EncodeValue(defaultDs.Password())
 			if encodeErr == nil {
 				defaultDs[passKey] = newVal
+			} else {
+				slog.Warn("unable to decode password in file. Assuming plaintext and continuing with best effort", "file", secretFileLocation)
 			}
 		}
 
@@ -272,7 +279,7 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 				"user":  cred.user,
 				passKey: cred.password,
 			}
-			if encoder != nil {
+			if encoder != nil && lookupSvc != nil && !lookupSvc.IsLookupRef(ds.Password()) {
 				newVal, encodeErr := encoder.EncodeValue(ds.Password())
 				if encodeErr == nil {
 					ds[passKey] = newVal
@@ -288,8 +295,6 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 
 	// ── Write auth credentials file ───────────────────────────────────────
 	authFileLocation := fmt.Sprintf("%s.yaml", newConfig.GetAuthLocation())
-	lookup.RegisterProvider("gsm", gsm.NewPluginLookupGSM)
-	lookupSvc, _ := lookup.NewResolver(&app.PluginConfig)
 	secure.UpdateSecureModel(encoder.EncodeValue, lookupSvc)
 
 	if writeErr := writeSecureFileData(*secure, authFileLocation); writeErr != nil {

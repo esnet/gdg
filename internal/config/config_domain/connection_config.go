@@ -93,15 +93,22 @@ type ConnectionFilters struct {
 // GrafanaConnection Default connection credentials
 type GrafanaConnection map[string]string
 
-func (r *RegexMatchesList) GetConnectionAuth(path string, encoder outbound.CipherEncoder) (*GrafanaConnection, error) {
+type CredentialLookup struct {
+	Path           string
+	Encoder        outbound.CipherEncoder
+	LookupResolver outbound.LookupResolver
+	LookupSvc      outbound.LookupService
+}
+
+func (r *RegexMatchesList) GetConnectionAuth(lookup CredentialLookup) (*GrafanaConnection, error) {
 	if r.result != nil {
 		return r.result, nil
 	}
 	if r.SecureData == "" {
-		return nil, fmt.Errorf("no valid auth can be found for the given path %s", path)
+		return nil, fmt.Errorf("no valid auth can be found for the given path %s", lookup.Path)
 	}
 
-	secretLocation := filepath.Join(path, r.SecureData)
+	secretLocation := filepath.Join(lookup.Path, r.SecureData)
 	result := new(GrafanaConnection)
 	raw, err := os.ReadFile(secretLocation) // #nosec G304
 	if err != nil {
@@ -114,7 +121,7 @@ func (r *RegexMatchesList) GetConnectionAuth(path string, encoder outbound.Ciphe
 	case ".yml", ".yaml":
 		err = yaml.Unmarshal(raw, result)
 		if err != nil {
-			msg := "unable to read JSON secrets"
+			msg := "unable to read YAML secrets"
 			slog.Error(msg, slog.Any("err", err), slog.String("file", secretLocation))
 			return nil, errors.New(msg)
 		}
@@ -130,8 +137,26 @@ func (r *RegexMatchesList) GetConnectionAuth(path string, encoder outbound.Ciphe
 	}
 
 	for key, value := range *result {
-		if encoder != nil {
-			newVal, decodeErr := encoder.DecodeValue(value)
+		// Lookup refs are resolved via the lookup plugin, mirroring the
+		// two-step pattern in login.go (cipher-decode non-lookup values,
+		// then resolve lookup values).
+		if lookup.LookupSvc != nil && lookup.LookupSvc.IsLookupRef(value) {
+			if lookup.LookupResolver != nil {
+				newVal, resolveErr := lookup.LookupResolver.Resolve(value)
+				if resolveErr == nil {
+					(*result)[key] = newVal
+				} else {
+					slog.Warn("error resolving lookup ref for key",
+						slog.String("key", key),
+						slog.String("file", secretLocation),
+						slog.Any("err", resolveErr))
+				}
+			}
+			continue // skip cipher decode for lookup refs
+		}
+
+		if lookup.Encoder != nil {
+			newVal, decodeErr := lookup.Encoder.DecodeValue(value)
 			if decodeErr == nil {
 				(*result)[key] = newVal
 			} else {

@@ -24,9 +24,10 @@ plugins:
 #      vault_password: file:$HOME/.ansible/vaultSecret
 
   ## lookup plugins are keyed by provider name, referenced as
-  ## "lookup:<name>:<key>" from a token/password field. "disabled" here
-  ## turns off the entire lookup feature at once (every provider below),
-  ## without needing to disable each one individually.
+  ## "lookup:<name>:<key>" from an auth token/password or a datasource
+  ## credential value. "disabled" here turns off the entire lookup feature
+  ## at once (every provider below), without needing to disable each one
+  ## individually.
   lookup:
     disabled: true
     gsm:

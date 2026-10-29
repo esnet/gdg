@@ -1,10 +1,63 @@
 package config_domain
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+// ── GetConnectionAuth — lookup resolution ─────────────────────────────────────
+
+func TestGetConnectionAuth_ResolvesLookupRef(t *testing.T) {
+	dir := t.TempDir()
+	credFile := filepath.Join(dir, "creds.yaml")
+	yamlContent := "user: admin\nbasicAuthPassword: \"lookup:gsm:projects/p/secrets/db-pass/versions/1\"\n"
+	require.NoError(t, os.WriteFile(credFile, []byte(yamlContent), 0o600))
+
+	r := &RegexMatchesList{SecureData: "creds.yaml"}
+	svc := stubLookupSvc{}
+	resolver := &stubLookupResolver{value: "resolved-db-password"}
+
+	result, err := r.GetConnectionAuth(CredentialLookup{Path: dir, LookupResolver: resolver, LookupSvc: svc})
+	require.NoError(t, err)
+	assert.Equal(t, "resolved-db-password", (*result)["basicAuthPassword"])
+	assert.Equal(t, "admin", (*result)["user"]) // plain value unchanged
+}
+
+func TestGetConnectionAuth_CipherDecodesNonLookupValues(t *testing.T) {
+	dir := t.TempDir()
+	credFile := filepath.Join(dir, "creds.yaml")
+	yamlContent := "user: admin\nbasicAuthPassword: encrypted-blob\n"
+	require.NoError(t, os.WriteFile(credFile, []byte(yamlContent), 0o600))
+
+	r := &RegexMatchesList{SecureData: "creds.yaml"}
+	svc := stubLookupSvc{}
+	enc := &stubCipherEncoder{decodeResult: "plain-password"}
+
+	result, err := r.GetConnectionAuth(CredentialLookup{Path: dir, Encoder: enc, LookupSvc: svc})
+	require.NoError(t, err)
+	assert.Equal(t, "plain-password", (*result)["basicAuthPassword"])
+}
+
+func TestGetConnectionAuth_MixedLookupAndCipherValues(t *testing.T) {
+	dir := t.TempDir()
+	credFile := filepath.Join(dir, "creds.yaml")
+	yamlContent := "user: admin\nbasicAuthPassword: \"lookup:gsm:projects/p/secrets/db-pass/versions/1\"\napiKey: cipher-encrypted-blob\n"
+	require.NoError(t, os.WriteFile(credFile, []byte(yamlContent), 0o600))
+
+	r := &RegexMatchesList{SecureData: "creds.yaml"}
+	svc := stubLookupSvc{}
+	resolver := &stubLookupResolver{value: "resolved-db-password"}
+	enc := &stubCipherEncoder{decodeResult: "decrypted-api-key"}
+
+	result, err := r.GetConnectionAuth(CredentialLookup{Path: dir, Encoder: enc, LookupResolver: resolver, LookupSvc: svc})
+	require.NoError(t, err)
+	assert.Equal(t, "resolved-db-password", (*result)["basicAuthPassword"])
+	assert.Equal(t, "decrypted-api-key", (*result)["apiKey"])
+}
 
 // ── ConnectionSettings.FiltersEnabled ────────────────────────────────────────
 
