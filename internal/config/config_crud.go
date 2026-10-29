@@ -260,10 +260,12 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 		}
 
 		secretFileLocation := filepath.Join(location, "default.yaml")
-		if encoder != nil && !lookupSvc.IsLookupRef(defaultDs.Password()) {
+		if encoder != nil && lookupSvc != nil && !lookupSvc.IsLookupRef(defaultDs.Password()) {
 			newVal, encodeErr := encoder.EncodeValue(defaultDs.Password())
 			if encodeErr == nil {
 				defaultDs[passKey] = newVal
+			} else {
+				slog.Warn("unable to decode password in file. Assuming plaintext and continuing with best effort", "file", secretFileLocation)
 			}
 		}
 
@@ -277,7 +279,7 @@ func CreateNewContext(app *config_domain.GDGAppConfiguration, name string, regis
 				"user":  cred.user,
 				passKey: cred.password,
 			}
-			if encoder != nil && !lookupSvc.IsLookupRef(ds.Password()) {
+			if encoder != nil && lookupSvc != nil && !lookupSvc.IsLookupRef(ds.Password()) {
 				newVal, encodeErr := encoder.EncodeValue(ds.Password())
 				if encodeErr == nil {
 					ds[passKey] = newVal

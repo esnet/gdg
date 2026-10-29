@@ -209,7 +209,7 @@ func validateGrafanaQA(t *testing.T, grafana *config_domain.GrafanaConfig) {
 	assert.Equal(t, len(grafana.ConnectionSettings.MatchingRules), 3)
 	// Last Entry is the default
 	secureLoc := grafana.SecureLocation()
-	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(secureLoc, noop.NoOpEncoder{}, nil, nil)
+	defaultSettings, err := grafana.ConnectionSettings.MatchingRules[2].GetConnectionAuth(config_domain.CredentialLookup{Path: secureLoc, Encoder: noop.NoOpEncoder{}})
 	assert.Nil(t, err)
 	assert.Equal(t, "user", defaultSettings.User())
 	assert.Equal(t, "password", defaultSettings.Password())

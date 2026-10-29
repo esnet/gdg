@@ -17,6 +17,7 @@ import (
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/matryer/is"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 )
 
@@ -680,7 +681,8 @@ func TestRekeySecureDataFiles_DryRun_SkipsLookupRefs(t *testing.T) {
 		"basicAuthPassword": "lookup:gsm:projects/p/secrets/db-pass/versions/1",
 		"apiKey":            oldEnc.mustEncodeValue("plain-api-key"),
 	}
-	raw, _ := yaml.Marshal(creds)
+	raw, err := yaml.Marshal(creds)
+	assert.NoError(t, err, "failed to marshall credentials")
 	credFile := filepath.Join(secureDir, "creds.yml")
 	is.NoErr(os.WriteFile(credFile, raw, 0o600))
 

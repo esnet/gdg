@@ -21,7 +21,7 @@ func TestGetConnectionAuth_ResolvesLookupRef(t *testing.T) {
 	svc := stubLookupSvc{}
 	resolver := &stubLookupResolver{value: "resolved-db-password"}
 
-	result, err := r.GetConnectionAuth(dir, nil, resolver, svc)
+	result, err := r.GetConnectionAuth(CredentialLookup{Path: dir, LookupResolver: resolver, LookupSvc: svc})
 	require.NoError(t, err)
 	assert.Equal(t, "resolved-db-password", (*result)["basicAuthPassword"])
 	assert.Equal(t, "admin", (*result)["user"]) // plain value unchanged
@@ -37,7 +37,7 @@ func TestGetConnectionAuth_CipherDecodesNonLookupValues(t *testing.T) {
 	svc := stubLookupSvc{}
 	enc := &stubCipherEncoder{decodeResult: "plain-password"}
 
-	result, err := r.GetConnectionAuth(dir, enc, nil, svc)
+	result, err := r.GetConnectionAuth(CredentialLookup{Path: dir, Encoder: enc, LookupSvc: svc})
 	require.NoError(t, err)
 	assert.Equal(t, "plain-password", (*result)["basicAuthPassword"])
 }
@@ -53,13 +53,10 @@ func TestGetConnectionAuth_MixedLookupAndCipherValues(t *testing.T) {
 	resolver := &stubLookupResolver{value: "resolved-db-password"}
 	enc := &stubCipherEncoder{decodeResult: "decrypted-api-key"}
 
-	result, err := r.GetConnectionAuth(dir, enc, resolver, svc)
+	result, err := r.GetConnectionAuth(CredentialLookup{Path: dir, Encoder: enc, LookupResolver: resolver, LookupSvc: svc})
 	require.NoError(t, err)
 	assert.Equal(t, "resolved-db-password", (*result)["basicAuthPassword"])
 	assert.Equal(t, "decrypted-api-key", (*result)["apiKey"])
-	// "admin" is a plain value; the stub cipher encoder returns decodeResult
-	// for all non-lookup values, so "user" will be "decrypted-api-key" too.
-	// That's expected behaviour from the stub.
 }
 
 // ── ConnectionSettings.FiltersEnabled ────────────────────────────────────────

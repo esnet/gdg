@@ -49,7 +49,13 @@ func (ds *ConnectionSettings) GetCredentials(connectionEntity models.AddDataSour
 			}
 		}
 		if valid {
-			return entry.GetConnectionAuth(path, encoder, lookupResolver, lookupSvc)
+			lookUp := CredentialLookup{
+				Path:           path,
+				Encoder:        encoder,
+				LookupResolver: lookupResolver,
+				LookupSvc:      lookupSvc,
+			}
+			return entry.GetConnectionAuth(lookUp)
 		}
 
 	}
