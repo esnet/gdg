@@ -23,7 +23,7 @@ window.relearn=window.relearn||{};var touchsupport,reducedmotion,hovernone,forme
         document.querySelectorAll(".model-container > .model-box > .model-box > .model > span > button[aria-expanded=true]").forEach(btn => btn.click());
         return false;
       }
-    <\/script>
+    </script>
   </head>
   <body>
     <a class="relearn-expander" href="" onclick="return relearn_collapse_all()">Collapse all</a>
