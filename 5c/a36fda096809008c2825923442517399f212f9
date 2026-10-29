@@ -1,0 +1,32 @@
+.github/workflows/code_scanners.yml
+  h_5c3111fc5355aa 27
+.github/workflows/go.yml
+  h_5c3111fc5355aa 25
+.github/workflows/hugo.yml
+  h_5c3111fc5355aa 22
+.github/workflows/release-validation.yml
+  h_5c3111fc5355aa 19
+.github/workflows/release.yml
+  h_5c3111fc5355aa 21
+actions/release/action.yml
+  h_5c3111fc5355aa 7
+actions/setup_go/action.yml
+  h_5c3111fc5355aa 7
+go.mod
+  h_5c3111fc5355aa 3
+tools/go.mod
+  h_5c3111fc5355aa 3
+website/go.mod
+  h_5c3111fc5355aa 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5ca36fda096809008c2825923442517399f212f9",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
