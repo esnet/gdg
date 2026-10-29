@@ -48,6 +48,7 @@ contexts:
           regex: "elasticsearch"
           inclusive: true
       credential_rules:
+        # secure_data values may be lookup:<provider>:<key> refs (see plugins.lookup below)
         - rules:
             - field: "name"
               regex: "misc"

@@ -1,6 +1,6 @@
 ---
 title: "Plugins"
-description: "GDG plugin system documentation covering the extism-based WASM plugin interface, cipher plugins, and plugin configuration."
+description: "GDG plugin system documentation covering the extism-based WASM plugin interface, cipher and lookup plugins, and plugin configuration."
 weight: 104
 ---
 ## Plugins
@@ -32,8 +32,7 @@ plugins:
 
 The cipher plugin is disabled by default. If you would like to enable it make sure you have `plugins.cipher.disabled` set to `false`. There is no top-level "disable everything" switch — each plugin subsystem (`plugins.cipher`, `plugins.lookup`) has its own independent `disabled` flag, scoped alongside that subsystem's own configuration.
 
-Currently on the cipher plugin is the only one available. You can configure the plugin either via a URL or by pointing it
-to a local path on your file system.
+You can configure a cipher plugin either via a URL or by pointing it to a local path on your file system.
 
 The only required field is url or file_path. You should configure either a url or file_path not both.  config is an unstructured string map.
 Each plugin may define its own or omit it completely.
@@ -47,9 +46,10 @@ the string value is used instead. e.g. if value is set to `env:foobar` and `foob
 ### Lookup Plugins
 
 Lookup plugins resolve a `lookup:<provider>:<key>[.<json_field>]` reference to a secret value stored in an external
-system, such as Google Secret Manager (GSM). They are currently only applied to your Grafana authentication
-credentials — the `token` and `password` fields in your [secure auth file](https://software.es.net/gdg/docs/gdg/getting-started/)
-(`auth_<context>.yaml`) — not to arbitrary values elsewhere in your configuration.
+system, such as Google Secret Manager (GSM). They are resolved in two places: the `token` and `password` fields of your
+[secure auth file](https://software.es.net/gdg/docs/gdg/getting-started/) (`auth_<context>.yaml`), and every value in a
+datasource [credential file](https://software.es.net/gdg/docs/gdg/configuration/contexts/) (`secure_data`). They do not
+apply to arbitrary config values.
 
 Lookup plugins are configured under a nested `lookup` key inside `plugins`:
 
@@ -73,13 +73,22 @@ a `lookup:<provider>:<key>` reference. Every provider entry is configured the sa
 `plugins.cipher.disabled` — disabling one plugin subsystem has no effect on the other. It must be `false` (the
 default) for lookup references to be resolved.
 
-Once configured, reference a secret by putting a `lookup:` value directly in your secure auth file instead of a
-literal token or password:
+Once configured, reference a secret by putting a `lookup:` value instead of a literal credential. Quote it in YAML —
+the value contains colons:
 
 ```yaml
 # auth_<context>.yaml
 token: "lookup:gsm:projects/my-gcp-project/secrets/grafana-api-token/versions/latest.token"
 ```
+
+```yaml
+# datasource credential file, referenced by connections.credential_rules[].secure_data
+user: readonly
+basicAuthPassword: "lookup:gsm:projects/my-gcp-project/secrets/db-password/versions/latest"
+```
+
+Each value is handled independently: `lookup:` refs are resolved through the plugin, everything else is cipher-decoded
+as before, so a file can mix both.
 
 The `.json_field` suffix (`.token` above) is optional — include it when the secret's value is a JSON object and you
 only want one field extracted from it; omit it to use the secret's raw value as-is.
@@ -135,7 +144,7 @@ All plugin-related commands live under `gdg tools plugins` (alias `gdg tools plu
 gdg tools plugins list                     # browse available cipher plugins from the registry (default --type)
 gdg tools plugins list --type lookup       # browse available lookup plugins instead
 gdg tools plugins list --type all          # browse every registry entry regardless of type
-gdg tools plugins rekey                    # interactively re-encrypt on-disk files after switching cipher plugins
+gdg tools plugins rekey                    # interactively re-encrypt on-disk files after switching cipher plugins (lookup refs are left untouched)
 gdg tools plugins cipher encode --value ""  # encode/decode a value or file using the currently configured cipher plugin
 gdg tools plugins cipher decode --value ""
 gdg tools plugins lookup test <provider> <key>  # resolve a lookup:<provider>:<key> reference against configured lookup plugins
