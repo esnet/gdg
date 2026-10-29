@@ -83,14 +83,21 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 	if err != nil {
 		log.Fatal("invalid Grafana URL Path")
 	}
+
+	c := *http.DefaultClient
+	if b.gdgConfig != nil && b.gdgConfig.TransportWrapper != nil {
+		c.Transport = b.gdgConfig.TransportWrapper(http.DefaultTransport)
+	}
+
 	httpConfig := &client.TransportConfig{
 		Host:         u.Host,
 		BasePath:     path,
 		Schemes:      []string{u.Scheme},
 		NumRetries:   b.gdgConfig.GetAppGlobals().RetryCount,
 		RetryTimeout: b.gdgConfig.GetAppGlobals().GetRetryTimeout(),
-		Debug:        b.GetGlobals().ApiDebug,
+		Client:       &c,
 	}
+
 	if b.grafanaConf.IsBasicAuth() && len(opts) == 1 {
 		opts = append(opts, b.getOrgNameClientOpts())
 	}
@@ -110,7 +117,6 @@ func (b *baseService) GetClient() *client.GrafanaHTTPAPI {
 	if b.grafanaConf.GetAPIToken() != "" {
 		grafanaClient, _ := b.getNewClient(func(clientCfg *client.TransportConfig) {
 			clientCfg.APIKey = b.grafanaConf.GetAPIToken()
-			clientCfg.Debug = b.GetGlobals().ApiDebug
 		})
 		return grafanaClient
 	}
@@ -120,7 +126,6 @@ func (b *baseService) GetClient() *client.GrafanaHTTPAPI {
 func (b *baseService) getDefaultBasicOpts() []NewClientOpts {
 	return []NewClientOpts{func(clientCfg *client.TransportConfig) {
 		clientCfg.BasicAuth = url.UserPassword(b.grafanaConf.UserName, b.grafanaConf.GetPassword())
-		clientCfg.Debug = b.GetGlobals().ApiDebug
 	}}
 }
 

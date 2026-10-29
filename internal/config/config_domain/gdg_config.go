@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/storage"
+	"github.com/esnet/gdg/internal/middleware"
 	"github.com/gosimple/slug"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -19,13 +20,14 @@ type GDGAppConfigurationOption func(*GDGAppConfiguration)
 
 // GDGAppConfiguration is the configuration for the application
 type GDGAppConfiguration struct {
-	ViperConfig   *viper.Viper                 `mapstructure:"-" yaml:"-"`
-	ContextName   string                       `mapstructure:"context_name" yaml:"context_name"`
-	StorageEngine map[string]map[string]string `mapstructure:"storage_engine" yaml:"storage_engine"`
-	Contexts      map[string]*GrafanaConfig    `mapstructure:"contexts" yaml:"contexts"`
-	Global        *AppGlobals                  `mapstructure:"global" yaml:"global"`
-	SecureConfig  map[string][]string          `mapstructure:"secure_config" yaml:"secure_config"`
-	PluginConfig  PluginConfig                 `mapstructure:"plugins" yaml:"plugins"`
+	ViperConfig      *viper.Viper                 `mapstructure:"-" yaml:"-"`
+	ContextName      string                       `mapstructure:"context_name" yaml:"context_name"`
+	StorageEngine    map[string]map[string]string `mapstructure:"storage_engine" yaml:"storage_engine"`
+	Contexts         map[string]*GrafanaConfig    `mapstructure:"contexts" yaml:"contexts"`
+	Global           *AppGlobals                  `mapstructure:"global" yaml:"global"`
+	SecureConfig     map[string][]string          `mapstructure:"secure_config" yaml:"secure_config"`
+	PluginConfig     PluginConfig                 `mapstructure:"plugins" yaml:"plugins"`
+	TransportWrapper middleware.TransportWrapper  `mapstructure:"-" yaml:"-"`
 }
 
 type PluginConfig struct {
@@ -187,20 +189,37 @@ func (app *GDGAppConfiguration) IgnoreSSL() bool {
 	return app.GetViperConfig().GetBool("global.ignore_ssl_errors")
 }
 
-// IsDebug returns true if debug mode is enabled
-func (app *GDGAppConfiguration) IsDebug() bool {
-	if val := app.GetViperConfig(); val != nil {
-		return val.GetBool("global.debug")
+// IsVerboseLogging returns true if verbose logging is enabled (logging level DEBUG)
+func (app *GDGAppConfiguration) IsVerboseLogging() bool {
+	if app.Global == nil {
+		app.Global = &AppGlobals{}
+		app.Global.Logging = &GlobalsLogging{}
+	} else if app.Global.Logging == nil {
+		app.Global.Logging = &GlobalsLogging{}
 	}
-	return false
+	return app.Global.Logging.Verbose
 }
 
-// IsApiDebug returns true if debug mode is enabled for APIs
-func (app *GDGAppConfiguration) IsApiDebug() bool {
-	if val := app.GetViperConfig(); val != nil {
-		return val.GetBool("global.api_debug")
+// IsHTTPTrafficHeadersLogging returns true if the headers of HTTP responses and requests should be logged
+func (app *GDGAppConfiguration) IsHTTPTrafficHeadersLogging() bool {
+	if app.Global == nil {
+		app.Global = &AppGlobals{}
+		app.Global.Logging = &GlobalsLogging{}
+	} else if app.Global.Logging == nil {
+		app.Global.Logging = &GlobalsLogging{}
 	}
-	return false
+	return app.Global.Logging.HTTPTraffic.Headers
+}
+
+// IsHTTPTrafficBodyLogging returns true if the body of HTTP responses and requests should be logged
+func (app *GDGAppConfiguration) IsHTTPTrafficBodyLogging() bool {
+	if app.Global == nil {
+		app.Global = &AppGlobals{}
+		app.Global.Logging = &GlobalsLogging{}
+	} else if app.Global.Logging == nil {
+		app.Global.Logging = &GlobalsLogging{}
+	}
+	return app.Global.Logging.HTTPTraffic.Body
 }
 
 // GetCloudConfiguration Returns storage type and configuration

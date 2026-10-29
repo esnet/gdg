@@ -18,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/transport"
 )
 
 // dashboardV2GVR is the group/version/resource for the App Platform dashboard API.
@@ -44,6 +45,9 @@ func (d *DashboardServiceImpl) k8sRestConfig() (*rest.Config, error) {
 	cfg := &rest.Config{
 		Host:    host,
 		APIPath: "apis",
+	}
+	if d.gdgConfig != nil && d.gdgConfig.TransportWrapper != nil {
+		cfg.Wrap(transport.WrapperFunc(d.gdgConfig.TransportWrapper))
 	}
 
 	if token := d.grafanaConf.GetAPIToken(); token != "" {
