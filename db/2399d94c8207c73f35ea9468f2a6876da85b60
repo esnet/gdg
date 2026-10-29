@@ -1,0 +1,22 @@
+website/content/current/gdg/configuration/plugins.md
+  h_5c3111fc5355aa 3,35,49-52,76-77,84-92,147
+config/gdg-example.yml
+  h_5c3111fc5355aa 51
+config/secure.yml
+  h_5c3111fc5355aa 27-30
+website/content/current/gdg/configuration/contexts.md
+  h_5c3111fc5355aa 55-58
+website/pnpm-lock.yaml
+  h_5c3111fc5355aa 9-11,95-99,149-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "db2399d94c8207c73f35ea9468f2a6876da85b60",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
