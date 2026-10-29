@@ -22,7 +22,7 @@ jobs:
       matrix:
         grafana_version: [ 12.0.0-ubuntu, 13.2.0-ubuntu ]
         use_tokens: [ 0, 1 ]
-        go_version: [ 1.27.0]
+        go_version: [ 1.27.3]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -128,7 +128,7 @@ func TestCurrentPluginDescription_WithFilePath(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
 			CipherPlugin: &config_domain.CipherConfig{
-				PluginEntity: config_domain.PluginEntity{FilePath: "/opt/gdg/plugins/cipher.wasm"},
+				FilePath: "/opt/gdg/plugins/cipher.wasm",
 			},
 		},
 	}
@@ -141,7 +141,7 @@ func TestCurrentPluginDescription_WithURL(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
 			CipherPlugin: &config_domain.CipherConfig{
-				PluginEntity: config_domain.PluginEntity{Url: "https://example.com/cipher.wasm"},
+				Url: "https://example.com/cipher.wasm",
 			},
 		},
 	}
@@ -164,13 +164,11 @@ func TestCurrentPluginDescription_ConfigFieldsSorted(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
 			CipherPlugin: &config_domain.CipherConfig{
-				PluginEntity: config_domain.PluginEntity{
-					Url: "https://example.com/cipher.wasm",
-					PluginConfig: map[string]string{
-						"key_z": "zz",
-						"key_a": "aa",
-						"key_m": "mm",
-					},
+				Url: "https://example.com/cipher.wasm",
+				PluginConfig: map[string]string{
+					"key_z": "zz",
+					"key_a": "aa",
+					"key_m": "mm",
 				},
 			},
 		},
@@ -188,7 +186,7 @@ func TestCurrentPluginDescription_NoConfigFields_ShowsNone(t *testing.T) {
 	app := &config_domain.GDGAppConfiguration{
 		PluginConfig: config_domain.PluginConfig{
 			CipherPlugin: &config_domain.CipherConfig{
-				PluginEntity: config_domain.PluginEntity{Url: "https://example.com/cipher.wasm"},
+				Url: "https://example.com/cipher.wasm",
 			},
 		},
 	}
