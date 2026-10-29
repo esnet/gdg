@@ -1,0 +1,24 @@
+internal/config/config_domain/connection_config.go
+  h_5c3111fc5355aa 96-103,108,111,143-145,158-159
+internal/adapter/plugins/migration/migrator_test.go
+  h_5c3111fc5355aa 20,684-685
+internal/config/config_domain/config_model.go
+  h_5c3111fc5355aa 52-58
+internal/config/config_domain/connection_config_test.go
+  h_5c3111fc5355aa 24,40,56
+internal/config/config_loader_test.go
+  h_5c3111fc5355aa 212
+internal/config/config_crud.go
+  h_5c3111fc5355aa 263,267-268,282
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "61da092de5ac479c9298526f81058abc9cb08fd9",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
