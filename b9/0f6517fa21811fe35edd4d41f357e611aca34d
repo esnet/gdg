@@ -1,0 +1,18 @@
+website/content/current/gdg/configuration/structure.md
+  h_5c3111fc5355aa 34-74
+website/content/current/gdg/getting_started.md
+  h_5c3111fc5355aa 97-103,105-111,113-115
+website/content/current/releases/gdg_0.10.md
+  h_5c3111fc5355aa 1-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b90f6517fa21811fe35edd4d41f357e611aca34d",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
