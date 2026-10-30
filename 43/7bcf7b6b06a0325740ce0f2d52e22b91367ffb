@@ -1,0 +1,22 @@
+internal/adapter/storage/storage_cloud.go
+  h_5c3111fc5355aa 152-153,237
+internal/adapter/storage/storage_cloud_test.go
+  h_5c3111fc5355aa 62-64
+internal/config/config_domain/globals.go
+  h_5c3111fc5355aa 13-18
+internal/config/config_domain/grafana_config.go
+  h_5c3111fc5355aa 115-135,137-140,142,146-154
+internal/config/config_loader_test.go
+  h_5c3111fc5355aa 176-228
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "437bcf7b6b06a0325740ce0f2d52e22b91367ffb",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
