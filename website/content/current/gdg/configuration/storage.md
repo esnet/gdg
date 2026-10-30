@@ -14,11 +14,6 @@ All configuration below fall under the `storage_engine` section, where a new lab
 
 These would be S3, AWS, Azure.
 
-
-### Kind
-
-The flag `kind` is now deprecated, but if you need to set it, it should always be set to 'cloud'.
-
 ### Cloud Type
 
 `cloud_type` should be set to the provider you wish to use.  Please note, that custom requires additional values to be set.
@@ -54,8 +49,7 @@ If you would like to configure a prefix, you can set a value that will be append
 ```yaml
 storage_engine:
   any_label:
-    kind: cloud
-    cloud_type: [s3, gs,  azblob, custom]
+    cloud_type: [s3, gs, azblob, custom]
     bucket_name: ""
     prefix: "dummy"
 ```
@@ -69,25 +63,14 @@ The rest of these properties listed below are ignore by any of the standard prov
 
 The auth as of v0.9.0+, will only look for auth in the secure location defined in your context. gdg will look for a file name that follows this naming pattern: s3_`storage_name`. So if you are configuring a storage backend, and you named it super_cloud, then your config name will be called `s3_super_cloud.yml`.  Same as the authentication mechanism for grafana s3 support JSON and YAML data format. I'd recommend using yaml but if you prefer json feel free to use it. If the same file name is found with both yaml and json, then the yaml file will be used.
 
-Additionally, if you prefer to set these values via ENV, and they will be used instead of the configuration values defined.
-
+To override credentials via environment variables, use the GDG-namespaced pattern:
 
 ```sh
-AWS_ACCESS_KEY=test
-AWS_SECRET_KEY=password
+GDG_STORAGE_ENGINE__<STORAGE_NAME>__ACCESS_ID=myaccesskey
+GDG_STORAGE_ENGINE__<STORAGE_NAME>__SECRET_KEY=mysecretkey
 ```
 
-
-{{% expand title="Deprecated Auth Behavior" %}}
-### Access Id
-
-`access_id` is the access id used to authenticate.  This can be a username, or a key depending on the provider.  It's not typically seen a secret.
-
-### Secret Key
-
-`secret_key` is the secret used to valid access.  This is a sensitive credential and should not be shared.
-
-{{% /expand %}}
+Where `<STORAGE_NAME>` is the label defined under `storage_engine` in upper case. See the [Environment Variables reference](../structure/#cloud--custom-s3-storage-credentials-v0100) for details.
 
 ### Init Bucket
 
@@ -107,15 +90,12 @@ Example of a custom config:
 ```yaml
 storage_engine:
   some_label:
-    custom: true   ## Required, if set to true most of the 'custom' configuration will be disregarded.
-    kind: cloud
-    cloud_type: s3
+    cloud_type: custom
     prefix: dummy
     bucket_name: "mybucket"
-    init_bucket: "true" ## Only supported for custom workflows. Will attempt to create a bucket if one does not exist.
+    init_bucket: "true" ## Will attempt to create the bucket if it does not exist.
     endpoint: "http://localhost:9000"
     region: us-east-1
-    ssl_enabled: "false"
 ```
 
 

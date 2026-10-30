@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"os"
 	"strings"
 	"testing"
 )
@@ -60,52 +59,9 @@ func TestGetMapValue(t *testing.T) {
 	})
 }
 
-func TestGetMapValueOrEnvOverride(t *testing.T) {
-	// Set up test data
-	testData := map[string]string{
-		"key1": "value1",
-		"key2": "value2",
-	}
-
-	t.Run("Environment variable overrides map value", func(t *testing.T) {
-		// Set environment variable
-		os.Setenv("TEST_ENV_KEY", "env_override_value")
-		defer os.Unsetenv("TEST_ENV_KEY")
-
-		result := getMapValueOrEnvOverride("key1", "TEST_ENV_KEY", testData)
-		if result != "env_override_value" {
-			t.Errorf("Expected 'env_override_value', got '%s'", result)
-		}
-	})
-
-	t.Run("Environment variable not set, returns map value", func(t *testing.T) {
-		// Ensure environment variable is not set
-		os.Unsetenv("UNSET_TEST_ENV_KEY")
-
-		result := getMapValueOrEnvOverride("key1", "UNSET_TEST_ENV_KEY", testData)
-		if result != "value1" {
-			t.Errorf("Expected 'value1', got '%s'", result)
-		}
-	})
-
-	t.Run("Environment variable is empty string, returns map value", func(t *testing.T) {
-		// Set environment variable to empty string
-		os.Setenv("EMPTY_ENV_KEY", "")
-		defer os.Unsetenv("EMPTY_ENV_KEY")
-
-		result := getMapValueOrEnvOverride("key2", "EMPTY_ENV_KEY", testData)
-		if result != "value2" {
-			t.Errorf("Expected 'value2', got '%s'", result)
-		}
-	})
-
-	t.Run("Non-existent key returns empty string", func(t *testing.T) {
-		result := getMapValueOrEnvOverride("nonexistent", "NONEXISTENT_ENV_KEY", testData)
-		if result != "" {
-			t.Errorf("Expected '', got '%s'", result)
-		}
-	})
-}
+// getMapValueOrEnvOverride was removed in 0.10.0. Env-var precedence for cloud
+// storage credentials is now handled in config_domain.GrafanaConfig.GetCloudAuth().
+// See TestCloudAuth_EnvWinsOverFile in internal/config/config_loader_test.go.
 
 // ---------------------------------------------------------------------------
 // boolStrCheck

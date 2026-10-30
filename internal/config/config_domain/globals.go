@@ -10,6 +10,14 @@ const (
 	CloudAuthPrefix = "s3"
 	tokenFormat     = "GDG_CONTEXTS__%s__TOKEN"    // #nosec G101
 	passwordFormat  = "GDG_CONTEXTS__%s__PASSWORD" // #nosec G101
+
+	// cloudAccessIdFormat and cloudSecretKeyFormat are the GDG-namespaced env var
+	// patterns for overriding cloud storage credentials (e.g. MinIO / custom S3).
+	// Usage: GDG_STORAGE_ENGINE__<STORAGE_NAME_UPPER>__ACCESS_ID
+	// Note: storage names must contain only alphanumeric characters and underscores
+	// for the env var to resolve correctly (hyphens are not valid in env var names).
+	cloudAccessIdFormat  = "GDG_STORAGE_ENGINE__%s__ACCESS_ID"  // #nosec G101
+	cloudSecretKeyFormat = "GDG_STORAGE_ENGINE__%s__SECRET_KEY" // #nosec G101
 )
 
 // AppGlobals is the global configuration for the application

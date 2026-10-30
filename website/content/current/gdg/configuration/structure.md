@@ -31,3 +31,39 @@ For example if I want to set the context name to a different value I can use:
 GDG_CONTEXT_NAME="testing" gdg tools ctx show ## Which will override the value from the context file.
 GDG_CONTEXTS__TESTING__URL="www.google.com" Will override the URL with the one provided.
  ```
+
+## Supported Environment Variables
+
+### Grafana Authentication (v0.10.0+: env always takes precedence)
+
+| Environment Variable | Description |
+|---|---|
+| `GDG_CONTEXTS__<CTX>__TOKEN` | API token / service account token for context `<CTX>` |
+| `GDG_CONTEXTS__<CTX>__PASSWORD` | Basic auth password for context `<CTX>` |
+
+`<CTX>` must be the context name in **upper case**, e.g. `TESTING`, `PRODUCTION`.
+
+These variables are always evaluated and **win over the secure auth file** on a
+per-field basis. See [Getting Started](../getting_started) for full auth precedence details.
+
+### Cloud / Custom S3 Storage Credentials (v0.10.0+)
+
+| Environment Variable | Description |
+|---|---|
+| `GDG_STORAGE_ENGINE__<STORAGE>__ACCESS_ID` | Access ID for custom S3-compatible storage named `<STORAGE>` |
+| `GDG_STORAGE_ENGINE__<STORAGE>__SECRET_KEY` | Secret key for custom S3-compatible storage named `<STORAGE>` |
+
+`<STORAGE>` must be the storage name in **upper case**, matching the key under
+`storage_engine` in your `gdg.yml`.
+
+```sh
+# Example: storage named "super_cloud"
+export GDG_STORAGE_ENGINE__SUPER_CLOUD__ACCESS_ID=myaccesskey
+export GDG_STORAGE_ENGINE__SUPER_CLOUD__SECRET_KEY=mysecretkey
+```
+
+These apply only to `cloud_type: custom` (MinIO / custom S3-compatible endpoints).
+Native cloud providers (AWS S3, GCS, Azure Blob) use their own SDK credential
+chains and are not affected.
+
+Standard AWS SDK variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) for native AWS S3 are unaffected by GDG and continue to work as expected by the AWS SDK.

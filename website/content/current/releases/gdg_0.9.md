@@ -149,19 +149,16 @@ You can also easily write your own. The cipher plugin takes in a string and retu
 
 More detailed docs will be available with the official [docs](https://software.es.net/gdg/docs/gdg/configuration/plugins/).
 
-{{% notice style="warning" title="Caution" %}}
-Not all data in the `secure` folder currently supports encryption. Datasource auth is still in plaintext. The next release should
-address this. issued [#524](https://github.com/esnet/gdg/issues/524), will address this change.
-{{% /notice %}}
+
 
 ### Breaking Changes (v0.9.1)
 
 - [#502](https://github.com/esnet/gdg/pull/502) Password and Tokens in config file has been deprecated.
-- [#510](https://github.com/esnet/gdg/pull/510) Renamed default config to gdg.(yaml|yml). importer.yml will still work but a warning will be printed. importer.yml will be dropped in 0.10.x
+- [#510](https://github.com/esnet/gdg/pull/510) Renamed default config to gdg.(yaml|yml). importer.yml was dropped in 0.10.0.
 - [#513](https://github.com/esnet/gdg/pull/513) Changed location of S3 secure auth.
   - Additionally:
     - `custom`: `true` flag has been removed. It was deprecated 0.8.x. Please use `cloud_type`: `custom` instead.
-    - Behavioral change. AWS_ACCESS_KEY and AWS_SECRET_KEY will now override config values. This is now consistent with how the rest of the GDG config handled env overrides.
+    - Behavioral change. Cloud storage credentials now resolve from the secure auth file. See v0.10.0 release notes for the GDG-namespaced env var pattern.
 - [#504](https://github.com/esnet/gdg/pull/504) Changing behavior of alert rules. Since they are tied to a given folder, the rules will be saved in the given folder. Additionally, folder filtering has been added to allow a user to only include rules they are interested in.
 
 ### Changes (v0.9.1)

@@ -14,11 +14,8 @@ For example, my current output is as follows:
 ```yaml
 context_name:
   storage: ""
-  enterprise_support: true
   url: http://localhost:3000
-  token: ""
   user_name: admin
-  password: admin
   organization_name: Main Org.
   watched_folders_override: [ ]
   watched:
@@ -166,7 +163,7 @@ Example output:
 
 ```sh
 2023-11-16 09:49:03 INF gen/main.go:16 Reading GDG configuration
-2023-11-16 09:49:03 INF gen/main.go:20 Configuration file is:  config=importer.yml
+2023-11-16 09:49:03 INF gen/main.go:20 Configuration file is:  config=gdg.yml
 2023-11-16 09:49:03 INF gen/main.go:29 Context is set to:  context=testing
 2023-11-16 09:49:03 INF templating/templating.go:83 Processing template template=template_example
 2023-11-16 09:49:03 INF templating/templating.go:97 Creating a new template folder=General orgId=2 data="map[enabledlight:false lightsources:[sun moon lightbulb office lights] title:Bob Loves Candy]"

@@ -16,7 +16,7 @@ Authentication with GDG and grafana can take a few different patterns.
 1. Grafana Admin  - this is your typical admin/admin default user that comes with most installs.  You have full access to do everything.
 2. Org Admin - this is a user that is an admin for one or multiple Orgs and can manage most entities under the given org but not high level entities.
 
-Each user can be authenticated with 'BasicAuth' or APIKeys/Service Tokens.
+Each user can be authenticated with 'BasicAuth' or Service Tokens.
 
  - Basic Auth allows a user to change Orgs context if they have access to more than one.
  - Service Token/API Keys are bound to a given org, so if the user tries to change the Org, it won't work.  It grants access, viewer, editor, admin for a given Org.
@@ -51,11 +51,8 @@ Let's take a look at our context
 ```yaml
 ---local:
 storage: ""
-enterprise_support: false
 url: http://localhost:3000
-token: "SomeTokenHere"
 user_name: admin
-password: admin
 organization_name: Main Org.
 watched:
     - General
@@ -65,10 +62,7 @@ connections:
         - rules:
             - field: name
               regex: .*
-          auth:
-            user: user
-            password: password
-datasources: {}
+          secure_data: "default.yaml"
 dashboard_settings:
     ignore_filters: false
 output_path: test/data

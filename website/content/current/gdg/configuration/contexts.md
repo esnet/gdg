@@ -8,15 +8,12 @@ Contexts define a connection to grafana and how to interact with it, authenticat
 
 ### API Token
 
-{{% notice style="warning" title="Danger" %}}
-Token has been deprecated as of v0.9.0, see https://software.es.net/gdg/docs/gdg/getting-started/ on setting up your auth using
-a secure location or ENV vars.
-{{% /notice %}}
+Service tokens are used to authenticate against Grafana. Please be aware of their limits:
 
-The `token` key is used to authenticate against grafana.  Please be aware that there are certain limits to the token.
+1. They are scoped to a single organization and cannot be used across multiple orgs.
+2. Some endpoints require basic auth and do not support token authentication even with admin rights.
 
-1.  They are scoped to a single organization.  They cannot be used across multiple orgs.
-2. Some endpoints require basic auth and do not support token authentication even if it has admin rights.
+Set your token via environment variable or secure auth file — see [Getting Started](../getting_started) for details.
 
 ### Connection Settings
 
@@ -48,7 +45,7 @@ basicAuthPassword: password
 user: user
 ```
 The auth file either be `json` or `yaml` but only a flat structure is supported. No nested values.
-(yaml is recommended, it's generally more readable and json will likely get dropped in future versions)
+(yaml is recommended; it's generally more readable)
 
 Some credentials use a different set of keys that is required, simply adjust the auth file to match your needs.
 
@@ -147,18 +144,11 @@ The `output_path` key is the path relative to the current working directory wher
 
 ### Password
 
-{{% notice style="warning" title="Danger" %}}
-Password has been deprecated as of v0.9.0, see https://software.es.net/gdg/docs/gdg/getting-started/ on setting up your auth using
-a secure location or ENV vars.
-{{% /notice %}}
-
-
-If using Basic auth the `password` field defines the password used to authenticate against grafana.  Both Username and password need to be defined.
+Supply the password via environment variable or secure auth file — see [Getting Started](../getting_started) for details. Both `user_name` and password must be provided for basic auth.
 
 {{% notice style="note" title="Note" %}}
-If you configure both, an auth `Token` and `BasicAuth`, then the Token is given priority.
-Watched folders under grafana is a white list of folders that are being managed by gdg. By default, only "General" is managed.
-
+If both a service token and basic auth credentials are configured, the token takes priority.
+Watched folders under Grafana is a whitelist of folders managed by GDG. By default, only "General" is managed.
 {{% /notice %}}
 
 ### Secure_Location

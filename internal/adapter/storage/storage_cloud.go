@@ -7,7 +7,6 @@ import (
 	"log"
 	"log/slog"
 	"net/url"
-	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -150,8 +149,8 @@ func NewCloudStorage(c context.Context, encoder outbound.CipherEncoder) (outboun
 
 	if getMapValue(CloudType, "s3", stringEmpty, appData) == Custom {
 		creds := credentials.NewStaticCredentialsProvider(
-			getMapValueOrEnvOverride(AccessId, CloudKey, appData),
-			getMapValueOrEnvOverride(SecretKey, CloudSecret, appData),
+			appData[AccessId],
+			appData[SecretKey],
 			"",
 		)
 		host := getMapValue(Endpoint, "http://localhost:9000", stringEmpty, appData)
@@ -235,11 +234,4 @@ func getMapValue[T comparable](key, defaultValue T, emptyTest func(key T) bool, 
 	return defaultValue
 }
 
-// getMapValueOrEnvOverride returns the environment variable value if set, otherwise falls back to data[key].
-func getMapValueOrEnvOverride(key, envKey string, data map[string]string) string {
-	envVal := os.Getenv(envKey)
-	if envVal != "" {
-		return envVal
-	}
-	return data[key]
-}
+

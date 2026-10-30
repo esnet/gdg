@@ -3,6 +3,7 @@ package config_domain
 import (
 	"fmt"
 	"log/slog"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -112,18 +113,47 @@ func loadSecureData[T any](securePath string, obj *T) (*T, error) {
 	return nil, fmt.Errorf("unable to find secure file %s", securePath)
 }
 
-// GetCloudAuth returns a map of cloud authentication credentials loaded from the configured file.
-func (s *GrafanaConfig) GetCloudAuth() map[string]string {
-	authFile := s.GetCloudAuthLocation()
+// getEnvCloudAuth returns a map of cloud credentials sourced from GDG-namespaced
+// environment variables for the given storage name.
+// Pattern: GDG_STORAGE_ENGINE__<STORAGE_NAME_UPPER>__ACCESS_ID / SECRET_KEY
+func getEnvCloudAuth(storageName string) map[string]string {
+	upper := strings.ToUpper(storageName)
 	m := make(map[string]string)
+	if v := os.Getenv(fmt.Sprintf(cloudAccessIdFormat, upper)); v != "" {
+		m[storage.AccessId] = v
+	}
+	if v := os.Getenv(fmt.Sprintf(cloudSecretKeyFormat, upper)); v != "" {
+		m[storage.SecretKey] = v
+	}
+	return m
+}
+
+// GetCloudAuth returns a map of cloud authentication credentials for the configured storage.
+// GDG-namespaced env vars (GDG_STORAGE_ENGINE__<STORAGE>__ACCESS_ID / SECRET_KEY) always
+// take precedence over the secure auth file on a per-field basis, consistent with 12-factor.
+//
+// AWS_ACCESS_KEY and AWS_SECRET_KEY were never officially supported by GDG. When cloud
+// storage is configured, they are explicitly unset so they cannot cause unexpected behavior
+// in downstream code (e.g. leaking into SDK calls that happen to read them).
+func (s *GrafanaConfig) GetCloudAuth() map[string]string {
+	m := make(map[string]string)
+	authFile := s.GetCloudAuthLocation()
 	if authFile == "" {
 		return m
 	}
-	_, err := loadSecureData(authFile, &m)
-	if err != nil {
-		slog.Warn(fmt.Sprintf("%v, falling back on Env settings. Please set '%s' and '%s' if you haven't done so already",
-			err, storage.CloudKey, storage.CloudSecret))
+
+	// Explicitly unset legacy unsupported env vars so they cannot leak downstream.
+	// Only done when cloud storage is actually configured (authFile non-empty).
+	_ = os.Unsetenv("AWS_ACCESS_KEY")
+	_ = os.Unsetenv("AWS_SECRET_KEY")
+
+	// Load file as base (best-effort; a missing file is not an error).
+	if _, err := loadSecureData(authFile, &m); err != nil {
+		slog.Debug("no cloud auth file found", "path", authFile, "err", err.Error())
 	}
+
+	// GDG env vars always win; overlay any non-empty env fields on top of file values.
+	maps.Copy(m, getEnvCloudAuth(s.Storage))
 
 	return m
 }
@@ -139,24 +169,47 @@ func (s *GrafanaConfig) getEnvSecureAuth() *SecureModel {
 	return out
 }
 
-// getSecureAuth returns the parsed secure authentication model,
-// loading from YAML, YML or JSON files in order of precedence.
-// It caches the result for subsequent calls.
+// mergeSecureModels returns a new SecureModel with base as the default and any
+// non-empty fields from override replacing the corresponding base fields.
+// This allows environment variables to win on a per-field basis while still
+// letting the auth file supply values for fields that env does not set.
+// Note: if SecureModel gains new credential fields they must be added here.
+func mergeSecureModels(base, override *SecureModel) *SecureModel {
+	result := *base
+	if override.Token != "" {
+		result.Token = override.Token
+	}
+	if override.Password != "" {
+		result.Password = override.Password
+	}
+	return &result
+}
+
+// getSecureAuth returns the parsed secure authentication model.
+// On the first call, environment variables (GDG_CONTEXTS__<CTX>__TOKEN / PASSWORD) are
+// evaluated and take precedence over the secure auth file on a per-field basis, consistent
+// with 12-factor config principles. The result is cached; subsequent calls return the
+// cached value regardless of any later env changes.
 func (s *GrafanaConfig) getSecureAuth() *SecureModel {
 	if s.secureAuth != nil {
 		return s.secureAuth
 	}
+
+	// Load file as base (best-effort; a missing file is not an error).
+	base := new(SecureModel)
 	authFile := s.GetAuthLocation()
-	obj, err := loadSecureData(authFile, new(SecureModel))
-	if err != nil {
-		slog.Warn("no secure auth found, falling back on env", "err", err.Error())
-		// falling back on env values
-		obj = s.getEnvSecureAuth()
+	if fileModel, err := loadSecureData(authFile, new(SecureModel)); err == nil {
+		base = fileModel
+	} else {
+		slog.Debug("no secure auth file found", "path", authFile, "err", err.Error())
 	}
 
-	s.secureAuth = obj
-	if obj.Empty() {
-		slog.Warn("no secure auth found or env overrides found. Assuming annonymous access is enabled.")
+	// Env vars always win; overlay any non-empty env fields on top of the file values.
+	merged := mergeSecureModels(base, s.getEnvSecureAuth())
+
+	s.secureAuth = merged
+	if merged.Empty() {
+		slog.Warn("no secure auth found or env overrides found. Assuming anonymous access is enabled.")
 	}
 	return s.secureAuth
 }
