@@ -1,0 +1,16 @@
+internal/config/config_domain/grafana_config.go
+  h_5c3111fc5355aa 142-160,165-167,169-172,175-180
+internal/config/config_domain/grafana_config_test.go
+  h_5c3111fc5355aa 7,411-496
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b541b82464c095729e467fe03ba9ea11d8d1d1b0",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
