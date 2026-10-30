@@ -1,0 +1,34 @@
+internal/config/config_loader_test.go
+  h_5c3111fc5355aa 201
+internal/config/config_domain/grafana_config.go
+  h_5c3111fc5355aa 134-136,144-148,177,190-193
+internal/config/config_domain/globals.go
+  h_5c3111fc5355aa 17-18
+test/cloud_integration_test.go
+  h_5c3111fc5355aa 219-222
+website/content/current/gdg/configuration/structure.md
+  h_5c3111fc5355aa 69
+website/content/current/gdg/configuration/contexts.md
+  h_5c3111fc5355aa 11,13-14,16,48,147,150-151
+website/content/current/gdg/configuration/storage.md
+  h_5c3111fc5355aa 52,66,69-70,73,93,96
+website/content/current/gdg/getting_started.md
+  h_5c3111fc5355aa 36,48,86,154
+website/content/current/releases/gdg_0.9.md
+  h_5c3111fc5355aa 152,157,161
+website/content/current/templating/description.md
+  h_5c3111fc5355aa 166
+website/content/current/tutorials/orgs_auth.md
+  h_5c3111fc5355aa 19,65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "180a4b5f83c69f677173cf0e2bc6b3c27967bc69",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
