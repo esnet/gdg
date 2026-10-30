@@ -22,7 +22,4 @@ const (
 	InitBucket            = "init_bucket"
 	LocalStorageType Type = "LocalStorage"
 	SecureLocation        = "secure_location"
-	// Auth
-	CloudKey    = "AWS_ACCESS_KEY" // #nosec G101
-	CloudSecret = "AWS_SECRET_KEY" // #nosec G101
 )

@@ -173,6 +173,58 @@ func TestConfigSecureCloud(t *testing.T) {
 	assert.NoError(os.Unsetenv(common.ContextNameEnv))
 }
 
+func TestCloudAuth_EnvWinsOverFile(t *testing.T) {
+	assert.NoError(t, path.FixTestDir("config", "../.."))
+	t.Setenv(common.ContextNameEnv, "testing")
+	t.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
+	cfg := config.NewConfig(common.DefaultTestConfig)
+	grafanaCfg := cfg.GetDefaultGrafanaConfig()
+	grafanaCfg.Storage = "test"
+
+	// Env overrides should win over file values (access_id: test, secret_key: secretsss)
+	t.Setenv("GDG_STORAGE_ENGINE__TEST__ACCESS_ID", "env-access-id")
+	t.Setenv("GDG_STORAGE_ENGINE__TEST__SECRET_KEY", "env-secret-key")
+
+	m := grafanaCfg.GetCloudAuth()
+	assert.Equal(t, "env-access-id", m[storage.AccessId])
+	assert.Equal(t, "env-secret-key", m[storage.SecretKey])
+}
+
+func TestCloudAuth_PartialEnvFillsFromFile(t *testing.T) {
+	assert.NoError(t, path.FixTestDir("config", "../.."))
+	t.Setenv(common.ContextNameEnv, "testing")
+	t.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
+	cfg := config.NewConfig(common.DefaultTestConfig)
+	grafanaCfg := cfg.GetDefaultGrafanaConfig()
+	grafanaCfg.Storage = "test"
+
+	// Only access_id overridden; secret_key not set in env → comes from file ("secretsss")
+	t.Setenv("GDG_STORAGE_ENGINE__TEST__ACCESS_ID", "env-only-access")
+
+	m := grafanaCfg.GetCloudAuth()
+	assert.Equal(t, "env-only-access", m[storage.AccessId])
+	assert.Equal(t, "secretsss", m[storage.SecretKey])
+}
+
+func TestCloudAuth_LegacyAWSEnvVarsAreUnset(t *testing.T) {
+	assert.NoError(t, path.FixTestDir("config", "../.."))
+	t.Setenv(common.ContextNameEnv, "testing")
+	t.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
+	// Simulate a user who had AWS_ACCESS_KEY set from before 0.10.x
+	t.Setenv("AWS_ACCESS_KEY", "old-aws-key")
+	t.Setenv("AWS_SECRET_KEY", "old-aws-secret")
+
+	cfg := config.NewConfig(common.DefaultTestConfig)
+	grafanaCfg := cfg.GetDefaultGrafanaConfig()
+	grafanaCfg.Storage = "test"
+
+	grafanaCfg.GetCloudAuth()
+
+	// After calling GetCloudAuth, the legacy vars must be unset
+	assert.Empty(t, os.Getenv("AWS_ACCESS_KEY"), "AWS_ACCESS_KEY must be unset after GetCloudAuth")
+	assert.Empty(t, os.Getenv("AWS_SECRET_KEY"), "AWS_SECRET_KEY must be unset after GetCloudAuth")
+}
+
 func TestConfigSecurePath(t *testing.T) {
 	os.Setenv("GDG_CONTEXTS__TESTING__URL", "www.google.com")
 	override := config_domain.SecureModel{

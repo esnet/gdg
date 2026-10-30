@@ -33,22 +33,7 @@ Anything to do with Org will require a Grafana admin. If you're trying to fetch 
 
 
 
-#### 1. Using Config:
-
-{{% notice style="warning" title="Caution" %}}
-Starting with v0.9.0 auth in the gdg.yml has been removed.  You will need to use the secure pattern (#3) or Env Overrides (#2) explained further down.
-{{% /notice %}}
-
-
-
-The simplest way to set up you auth is to have everything in the gdg.yml. It's not a very secure pattern if you're
-deploying this to a remote server as everything is in plaintext, but it will get you started.
-
-This should be perfectly fine if you're only running this locally.
-
-Simply use the new context wizard reference above to set that up or set a value for: `password` and `token` for the given context.
-
-#### 2. Using Environment Variables:
+#### 1. Using Environment Variables:
 
 You can also override the value using ENV var that line up to the section you want to override:
 
@@ -60,19 +45,7 @@ GDG_CONTEXTS__TESTING__TOKEN=1234
 
 will set the token and password value to the one in the ENV.
 
-Keep in mind that the config entry for token and password still need to exist in the config file even if it's set to an empty value.
-
-
-{{% notice style="warning" title="Danger" %}}
-**Prior to 0.9.2**:
-Be careful with using convenience utility around contexts (aka set, copy, delete, etc.) Anything that write to the config
-file will leak those credentials and persist them to the given config file.
-
-All alerting entities will ignore folder watch list, and any other filter set.
-
-{{% /notice %}}
-
-#### 3. Using a secure auth location:
+#### 2. Using a secure auth location:
 
 The context name, in this example `testing` specifies that authentication details should be stored in a file named
 `auth_testing.yaml`. This file should be placed in your secure location, which by default is `output_path/secure/`,
@@ -94,15 +67,23 @@ If not set, it defaults to . `output_path/secure/`
 
 #### Priority
 
-{{% notice style="note" title="Note" %}}
-Secure Auth takes precedence over environment variables and if supported config plaintext values are evaluated last.
-
-i.e.:
-
-1. Secure location is checked first
-2. Env is looked up for any matching values
-3. Config auth is checked last (No longer supported in +0.9.0)
+{{% notice style="warning" title="Breaking Change in v0.10.0" %}}
+From v0.10.0, environment variables take precedence over the secure auth file,
+consistent with [12-factor app](https://12factor.net/config) principles.
 {{% /notice %}}
+
+{{% notice style="note" title="Auth Precedence (v0.10.0+)" %}}
+Credentials are resolved in this order (highest wins, per field):
+
+1. **Environment variables** — `GDG_CONTEXTS__<CTX>__TOKEN` / `GDG_CONTEXTS__<CTX>__PASSWORD`
+2. **Secure auth file** — `<secure_location>/auth_<context>.yaml`
+3. **Anonymous access** (a warning is logged if nothing is found)
+
+Field-level merging applies: if `TOKEN` is set via env but `PASSWORD` is not,
+the password from the file still fills in.
+{{% /notice %}}
+
+
 
 ## Download Dashboards
 
@@ -170,8 +151,7 @@ context_name: all
 contexts:
   all:
     url: https://grafana.example.org
-    token: "<<Grafana API Token>>"
-    # user_name: admin
+    user_name: admin # Omit if using a service token via env or secure file
     output_path: exports
     watched:
       - Example
