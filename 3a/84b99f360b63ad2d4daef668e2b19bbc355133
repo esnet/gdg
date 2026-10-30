@@ -1,0 +1,20 @@
+internal/config/config_domain/globals.go
+  h_5c3111fc5355aa 17-18
+internal/config/config_domain/grafana_config.go
+  h_5c3111fc5355aa 134-136,144-148,177,190-193
+internal/config/config_loader_test.go
+  h_5c3111fc5355aa 201
+test/cloud_integration_test.go
+  h_5c3111fc5355aa 219-222
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3a84b99f360b63ad2d4daef668e2b19bbc355133",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
