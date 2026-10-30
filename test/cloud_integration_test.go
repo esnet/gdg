@@ -216,17 +216,18 @@ func TestDashboardCloudLeadingSlashCRUD(t *testing.T) {
 		t.Log("Running test", tc.name)
 		var storageSvc outbound.Storage
 		slog.Warn("Running testcase", "name", tc.name)
+		// useEnv cases have an output path that prevents the secure auth file from being
+		// found. Set GDG-namespaced env vars so GetCloudAuth() can supply credentials
+		// when the file lookup fails. These are cleaned up automatically by t.Setenv.
 		if tc.useEnv {
-			os.Setenv("AWS_ACCESS_KEY", "test")
-			os.Setenv("AWS_SECRET_KEY", "secretsss")
+			t.Setenv("GDG_STORAGE_ENGINE__TEST__ACCESS_ID", "test")
+			t.Setenv("GDG_STORAGE_ENGINE__TEST__SECRET_KEY", "secretsss")
 		}
 		_, cancel, apiClient, storageSvc, err = test_tooling.SetupCloudFunctionOpt(
 			cfg,
 			noop.NoOpEncoder{},
 			test_tooling.SetCloudType("custom"),
 			test_tooling.SetPrefix(tc.prefix),
-			test_tooling.SetAccessKey("test"),
-			test_tooling.SetSecretKey("secretsss"),
 			test_tooling.SetBucketName(common.TestBucketName))
 
 		grafanaConfig := cfg.GetDefaultGrafanaConfig()
