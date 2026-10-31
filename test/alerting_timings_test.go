@@ -50,33 +50,35 @@ func TestAlertingTimingsCrud(t *testing.T) {
 	timingsList, err = apiClient.ListAlertTimings()
 	assert.NoError(err)
 
-	assert.Equal(len(timingsList), 1)
-	timingItem := timingsList[0]
-	assert.Equal(timingItem.Name, "after-hours")
-	assert.Equal(len(timingItem.TimeIntervals), 2)
-	timedInterval := lo.FindOrElse(timingItem.TimeIntervals, nil, func(item *models.TimeIntervalItem) bool {
-		return item.Location == "America/New_York"
-	})
-	assert.NotEmpty(timedInterval)
+	if assert.NotEmpty(timingsList) {
+		assert.Equal(1, len(timingsList))
+		timingItem := timingsList[0]
+		assert.Equal(timingItem.Name, "after-hours")
+		assert.Equal(len(timingItem.TimeIntervals), 2)
+		timedInterval := lo.FindOrElse(timingItem.TimeIntervals, nil, func(item *models.TimeIntervalItem) bool {
+			return item.Location == "America/New_York"
+		})
+		assert.NotEmpty(timedInterval)
 
-	expected := models.TimeIntervalItem{
-		Location:    "America/New_York",
-		DaysOfMonth: []string{"7:31"},
-		Months:      []string{"1:11"},
-		Weekdays:    []string{"monday", "tuesday", "wednesday", "thursday", "friday"},
-		Years:       []string{"2021:2031"},
-		Times: []*models.TimeIntervalTimeRange{
-			{
-				EndTime:   "23:59",
-				StartTime: "17:00",
+		expected := models.TimeIntervalItem{
+			Location:    "America/New_York",
+			DaysOfMonth: []string{"7:31"},
+			Months:      []string{"1:11"},
+			Weekdays:    []string{"monday", "tuesday", "wednesday", "thursday", "friday"},
+			Years:       []string{"2021:2031"},
+			Times: []*models.TimeIntervalTimeRange{
+				{
+					EndTime:   "23:59",
+					StartTime: "17:00",
+				},
+				{
+					EndTime:   "09:00",
+					StartTime: "01:00",
+				},
 			},
-			{
-				EndTime:   "09:00",
-				StartTime: "01:00",
-			},
-		},
+		}
+		assert.True(diffStruct(timedInterval, &expected))
 	}
-	assert.True(diffStruct(timedInterval, &expected))
 
 	_, err = apiClient.DownloadAlertTimings()
 	assert.NoError(err)
