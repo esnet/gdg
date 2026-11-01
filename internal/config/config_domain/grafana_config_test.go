@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	resourceTypes "github.com/esnet/gdg/internal/domain"
+	"github.com/esnet/gdg/pkg/test_tooling/path"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -406,4 +407,90 @@ func TestGetExperimental_ReturnsExistingWhenSet(t *testing.T) {
 	cfg.Experimental = existing
 	got := cfg.GetExperimental()
 	assert.Same(t, existing, got, "should return the pre-existing ExperimentalFeatures pointer")
+}
+
+// ── getSecureAuth env precedence (Phase 1 — 0.10.x breaking change) ──────────
+// Env vars (GDG_CONTEXTS__<CTX>__TOKEN / PASSWORD) must always take precedence
+// over the secure auth file, even when the file loads successfully.
+
+func TestGetSecureAuth_EnvWinsOverFile(t *testing.T) {
+	require.NoError(t, path.FixTestDir("config_domain", "../../.."))
+	// Arrange: point to the real testing auth file (has password: "admin")
+	cfg := NewGrafanaConfig(WithContextName("testing"))
+	cfg.OutputPath = "test/data"
+	cfg.SecureLocationOverride = "secure"
+
+	t.Setenv("GDG_CONTEXTS__TESTING__PASSWORD", "env-password")
+	t.Setenv("GDG_CONTEXTS__TESTING__TOKEN", "env-token")
+
+	// Act
+	assert.Equal(t, "env-password", cfg.GetPassword())
+	assert.Equal(t, "env-token", cfg.GetAPIToken())
+}
+
+func TestGetSecureAuth_EnvTokenWinsFileFillsPassword(t *testing.T) {
+	require.NoError(t, path.FixTestDir("config_domain", "../../.."))
+	// Arrange: env sets only token; file has password → file's password fills in
+	cfg := NewGrafanaConfig(WithContextName("testing"))
+	cfg.OutputPath = "test/data"
+	cfg.SecureLocationOverride = "secure"
+
+	t.Setenv("GDG_CONTEXTS__TESTING__TOKEN", "env-only-token")
+	t.Setenv("GDG_CONTEXTS__TESTING__PASSWORD", "") // not set → file value used
+
+	assert.Equal(t, "env-only-token", cfg.GetAPIToken())
+	assert.Equal(t, "admin", cfg.GetPassword())
+}
+
+func TestGetSecureAuth_EnvOnlyNoFile(t *testing.T) {
+	// Arrange: point to non-existent auth file location; env provides creds
+	cfg := NewGrafanaConfig(WithContextName("nofile"))
+	cfg.OutputPath = "/nonexistent/path"
+
+	t.Setenv("GDG_CONTEXTS__NOFILE__PASSWORD", "only-env-pass")
+	t.Setenv("GDG_CONTEXTS__NOFILE__TOKEN", "")
+
+	assert.Equal(t, "only-env-pass", cfg.GetPassword())
+	assert.Equal(t, "", cfg.GetAPIToken())
+}
+
+func TestGetSecureAuth_FileOnlyNoEnv(t *testing.T) {
+	require.NoError(t, path.FixTestDir("config_domain", "../../.."))
+	// File has password, no env set → file value used
+	cfg := NewGrafanaConfig(WithContextName("testing"))
+	cfg.OutputPath = "test/data"
+	cfg.SecureLocationOverride = "secure"
+
+	// Ensure env vars are unset (empty string = not set for our purposes)
+	t.Setenv("GDG_CONTEXTS__TESTING__PASSWORD", "")
+	t.Setenv("GDG_CONTEXTS__TESTING__TOKEN", "")
+
+	assert.Equal(t, "admin", cfg.GetPassword())
+	assert.Equal(t, "", cfg.GetAPIToken())
+}
+
+// ── mergeSecureModels ─────────────────────────────────────────────────────────
+
+func TestMergeSecureModels_OverrideWinsAllFields(t *testing.T) {
+	base := &SecureModel{Password: "file-pass", Token: "file-token"}
+	override := &SecureModel{Password: "env-pass", Token: "env-token"}
+	result := mergeSecureModels(base, override)
+	assert.Equal(t, "env-pass", result.Password)
+	assert.Equal(t, "env-token", result.Token)
+}
+
+func TestMergeSecureModels_EmptyOverrideKeepsBase(t *testing.T) {
+	base := &SecureModel{Password: "file-pass", Token: "file-token"}
+	override := &SecureModel{}
+	result := mergeSecureModels(base, override)
+	assert.Equal(t, "file-pass", result.Password)
+	assert.Equal(t, "file-token", result.Token)
+}
+
+func TestMergeSecureModels_PartialOverride(t *testing.T) {
+	base := &SecureModel{Password: "file-pass", Token: "file-token"}
+	override := &SecureModel{Token: "env-token"} // only token set
+	result := mergeSecureModels(base, override)
+	assert.Equal(t, "file-pass", result.Password) // base fills in
+	assert.Equal(t, "env-token", result.Token)    // env wins
 }

@@ -13,14 +13,6 @@ switching contexts or Orgs for a given user and so on.
 
 This is mainly added as a convenience mechanism.  It was needed to support some testing and exposing the feature is useful as a really simple CLI to create tokens / service Keys.  You probably should be using other tooling for managing all your service files and tokens.   Unlike most other entities, this is not a backup feature as much as utility.
 
-There are two sub commands for auth, service-accounts and tokens (will be deprecated at some point).
-
-#### Token Management
-
-No longer supported, Deprecated in v0.7.3 as it's been removed from the official grafana API.
-
-Please see below on how to add a token to a service account.
-
 #### Service Accounts
 
 
