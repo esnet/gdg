@@ -8,6 +8,7 @@ import (
 
 	assets "github.com/esnet/gdg/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/middleware"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 )
@@ -92,9 +93,12 @@ func NewConfig(override string, opts ...config_domain.GDGAppConfigurationOption)
 	gdgConfig.UpdateContextNames()
 	gdgConfig.ViperConfig = v
 
+	gdgConfig.TransportWrapper = middleware.NewLoggingTransportWrapper(log.Default(), gdgConfig.IsHTTPTrafficHeadersLogging(), gdgConfig.IsHTTPTrafficBodyLogging())
+
 	for _, opt := range opts {
 		opt(gdgConfig)
 	}
+
 	return gdgConfig
 }
 
