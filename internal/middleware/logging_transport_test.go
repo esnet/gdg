@@ -114,7 +114,19 @@ func TestLoggingTransportWrapper(t *testing.T) {
 				if !tc.includeHeaders && !tc.includeBody {
 					assert.Zero(t, buf.Len())
 				} else {
-					assert.NotZero(t, buf.Len())
+					if tc.includeHeaders {
+						assert.Contains(t, buf.String(), "POST")
+						assert.Contains(t, buf.String(), "200")
+					} else {
+						assert.NotContains(t, buf.String(), "POST")
+						assert.NotContains(t, buf.String(), "200")
+					}
+
+					if tc.includeBody {
+						assert.Contains(t, buf.String(), "test body")
+					} else {
+						assert.NotContains(t, buf.String(), "test body")
+					}
 				}
 			}
 

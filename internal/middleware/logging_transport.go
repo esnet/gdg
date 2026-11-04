@@ -8,17 +8,15 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"strings"
+
+	"github.com/esnet/gdg/internal/domain"
 )
 
 var (
 	ErrNilRequest         = errors.New("nil HTTP request")
 	ErrInvalidRequest     = errors.New("invalid request")
-	ErrDumpRequestOut     = errors.New("dumping request out")
-	ErrFormatRequestDump  = errors.New("format request dump")
 	ErrExecuteHTTPRequest = errors.New("execute HTTP request")
 	ErrNilResponse        = errors.New("nil HTTP response")
-	ErrDumpResponse       = errors.New("dumping response")
-	ErrFormatResponseDump = errors.New("format response dump")
 
 	ErrInvalidDump = errors.New("invalid dump")
 )
@@ -32,7 +30,7 @@ type LoggingTransport struct {
 
 // NewLoggingTransportWrapper creates HTTP traffic logging
 // middleware used specifically to wrap http.Transport.
-func NewLoggingTransportWrapper(logger *log.Logger, includeHeaders, includeBody bool) TransportWrapper {
+func NewLoggingTransportWrapper(logger *log.Logger, includeHeaders, includeBody bool) domain.TransportWrapper {
 	if !includeHeaders && !includeBody {
 		return func(rt http.RoundTripper) http.RoundTripper {
 			if rt == nil {
@@ -48,6 +46,10 @@ func NewLoggingTransportWrapper(logger *log.Logger, includeHeaders, includeBody 
 	}
 
 	return func(rt http.RoundTripper) http.RoundTripper {
+		if !includeHeaders && !includeBody {
+			return rt
+		}
+
 		if rt == nil {
 			rt = http.DefaultTransport
 		}
@@ -73,19 +75,19 @@ func (lt *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error)
 
 	reqDump, err := httputil.DumpRequestOut(req, lt.includeBody)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrDumpRequestOut, err)
+		lt.logger.Printf("failed to dump request out: %v", err)
+	} else {
+		reqLog, err := formatDump(reqDump, lt.includeHeaders, lt.includeBody)
+		if err != nil {
+			lt.logger.Printf("failed to format request dump: %v", err)
+		} else {
+			lt.logger.Println(reqLog)
+		}
 	}
-
-	reqLog, err := formatDump(reqDump, lt.includeHeaders, lt.includeBody)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFormatRequestDump, err)
-	}
-
-	lt.logger.Println(reqLog)
 
 	resp, err := lt.inner.RoundTrip(req)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrExecuteHTTPRequest, err)
+		return nil, fmt.Errorf("%w: %w", ErrExecuteHTTPRequest, err)
 	}
 
 	if resp == nil {
@@ -94,15 +96,16 @@ func (lt *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error)
 
 	respDump, err := httputil.DumpResponse(resp, lt.includeBody)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrDumpResponse, err)
-	}
+		lt.logger.Printf("failed to dump response: %v", err)
+	} else {
+		respLog, err := formatDump(respDump, lt.includeHeaders, lt.includeBody)
+		if err != nil {
+			lt.logger.Printf("failed to format response dump: %v", err)
+		} else {
+			lt.logger.Println(respLog)
+		}
 
-	respLog, err := formatDump(respDump, lt.includeHeaders, lt.includeBody)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFormatResponseDump, err)
 	}
-
-	lt.logger.Println(respLog)
 
 	return resp, nil
 }
@@ -122,6 +125,9 @@ func formatDump(dump []byte, includeHeaders, includeBody bool) (string, error) {
 
 	if includeHeaders {
 		sb.Write(before)
+	}
+
+	if includeHeaders && includeBody {
 		sb.Write([]byte("\r\n"))
 	}
 

@@ -1,6 +1,7 @@
 package extended
 
 import (
+	"crypto/tls"
 	"net/http"
 
 	"github.com/carlmjohnson/requests"
@@ -16,9 +17,18 @@ type Api struct {
 
 func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) outbound.ExtendedApi {
 	c := *http.DefaultClient
-	if cfg != nil && cfg.TransportWrapper != nil {
-		c.Transport = cfg.TransportWrapper(c.Transport)
+	if cfg != nil {
+		if cfg.IgnoreSSL() {
+			t := http.DefaultTransport.(*http.Transport).Clone()
+			t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+			c.Transport = t
+		}
+
+		if cfg.TransportWrapper != nil {
+			c.Transport = cfg.TransportWrapper(c.Transport)
+		}
 	}
+
 	o := Api{
 		appCfg:     cfg,
 		httpClient: &c,

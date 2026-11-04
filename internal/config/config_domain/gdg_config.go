@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/esnet/gdg/internal/adapter/storage"
-	"github.com/esnet/gdg/internal/middleware"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/gosimple/slug"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -27,7 +27,7 @@ type GDGAppConfiguration struct {
 	Global           *AppGlobals                  `mapstructure:"global" yaml:"global"`
 	SecureConfig     map[string][]string          `mapstructure:"secure_config" yaml:"secure_config"`
 	PluginConfig     PluginConfig                 `mapstructure:"plugins" yaml:"plugins"`
-	TransportWrapper middleware.TransportWrapper  `mapstructure:"-" yaml:"-"`
+	TransportWrapper domain.TransportWrapper  `mapstructure:"-" yaml:"-"`
 }
 
 type PluginConfig struct {
@@ -191,35 +191,17 @@ func (app *GDGAppConfiguration) IgnoreSSL() bool {
 
 // IsVerboseLogging returns true if verbose logging is enabled (logging level DEBUG)
 func (app *GDGAppConfiguration) IsVerboseLogging() bool {
-	if app.Global == nil {
-		app.Global = &AppGlobals{}
-		app.Global.Logging = &GlobalsLogging{}
-	} else if app.Global.Logging == nil {
-		app.Global.Logging = &GlobalsLogging{}
-	}
-	return app.Global.Logging.Verbose
+	return app.GetAppGlobals().Logging.Verbose
 }
 
 // IsHTTPTrafficHeadersLogging returns true if the headers of HTTP responses and requests should be logged
 func (app *GDGAppConfiguration) IsHTTPTrafficHeadersLogging() bool {
-	if app.Global == nil {
-		app.Global = &AppGlobals{}
-		app.Global.Logging = &GlobalsLogging{}
-	} else if app.Global.Logging == nil {
-		app.Global.Logging = &GlobalsLogging{}
-	}
-	return app.Global.Logging.HTTPTraffic.Headers
+	return app.GetAppGlobals().Logging.HTTPTraffic.Headers
 }
 
 // IsHTTPTrafficBodyLogging returns true if the body of HTTP responses and requests should be logged
 func (app *GDGAppConfiguration) IsHTTPTrafficBodyLogging() bool {
-	if app.Global == nil {
-		app.Global = &AppGlobals{}
-		app.Global.Logging = &GlobalsLogging{}
-	} else if app.Global.Logging == nil {
-		app.Global.Logging = &GlobalsLogging{}
-	}
-	return app.Global.Logging.HTTPTraffic.Body
+	return app.GetAppGlobals().Logging.HTTPTraffic.Body
 }
 
 // GetCloudConfiguration Returns storage type and configuration

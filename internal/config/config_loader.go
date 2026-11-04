@@ -93,29 +93,6 @@ func NewConfig(override string, opts ...config_domain.GDGAppConfigurationOption)
 	gdgConfig.UpdateContextNames()
 	gdgConfig.ViperConfig = v
 
-	if gdgConfig.Global != nil {
-		if gdgConfig.Global.Logging == nil {
-			gdgConfig.Global.Logging = &config_domain.GlobalsLogging{}
-
-			if gdgConfig.Global.Debug {
-				gdgConfig.Global.Logging.Verbose = true
-			}
-
-			if gdgConfig.Global.ApiDebug {
-				gdgConfig.Global.Logging.HTTPTraffic.Headers = true
-				gdgConfig.Global.Logging.HTTPTraffic.Body = true
-			}
-		}
-
-		if gdgConfig.Global.Debug {
-			slog.Warn("globals.debug is deprecated. Please use globals.logging.verbose instead")
-		}
-
-		if gdgConfig.Global.ApiDebug {
-			slog.Warn("globals.api_debug is deprecated. Please use globals.logging.http_traffic.headers and globals.logging.http_traffic.body instead")
-		}
-	}
-
 	gdgConfig.TransportWrapper = middleware.NewLoggingTransportWrapper(log.Default(), gdgConfig.IsHTTPTrafficHeadersLogging(), gdgConfig.IsHTTPTrafficBodyLogging())
 
 	for _, opt := range opts {
