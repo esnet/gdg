@@ -20,7 +20,7 @@ func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) outbound.ExtendedApi
 	if cfg != nil {
 		if cfg.IgnoreSSL() {
 			t := http.DefaultTransport.(*http.Transport).Clone()
-			t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+			t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
 			c.Transport = t
 		}
 
@@ -39,7 +39,7 @@ func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) outbound.ExtendedApi
 // getRequestBuilder returns a requests.Builder preconfigured with Grafana URL, auth, and optional TLS settings.
 func (extended *Api) getRequestBuilder() *requests.Builder {
 	req := requests.URL(extended.appCfg.GetDefaultGrafanaConfig().GetURL())
-	req.Client(extended.httpClient)
+	req = req.Client(extended.httpClient)
 
 	token := extended.appCfg.GetDefaultGrafanaConfig().GetAPIToken()
 

@@ -46,10 +46,6 @@ func NewLoggingTransportWrapper(logger *log.Logger, includeHeaders, includeBody 
 	}
 
 	return func(rt http.RoundTripper) http.RoundTripper {
-		if !includeHeaders && !includeBody {
-			return rt
-		}
-
 		if rt == nil {
 			rt = http.DefaultTransport
 		}

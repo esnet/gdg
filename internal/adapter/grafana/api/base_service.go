@@ -96,6 +96,7 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		NumRetries:   b.gdgConfig.GetAppGlobals().RetryCount,
 		RetryTimeout: b.gdgConfig.GetAppGlobals().GetRetryTimeout(),
 		Client:       &c,
+		TLSConfig:    &tls.Config{InsecureSkipVerify: b.gdgConfig.IgnoreSSL()}, // #nosec G402
 	}
 
 	if b.grafanaConf.IsBasicAuth() && len(opts) == 1 {
