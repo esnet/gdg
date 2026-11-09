@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"log/slog"
 	"os"
 
 	"github.com/bep/simplecobra"
@@ -164,19 +163,8 @@ func (c *RootCommand) LoadConfig(configOverride, contextOverride string) *config
 		c.configObj.SetContext(contextOverride)
 	}
 
-	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, c.configObj.IsDebug())
+	appconfig.InitializeAppLogger(os.Stdout, os.Stderr, c.configObj.IsVerboseLogging())
 	c.configObj.GetDefaultGrafanaConfig().Validate()
-	if c.configObj.GetAppGlobals().ApiDebug {
-		err := os.Setenv("DEBUG", "1")
-		if err != nil {
-			slog.Debug("unable to set debug env value", slog.Any("err", err))
-		}
-	} else {
-		err := os.Setenv("DEBUG", "0")
-		if err != nil {
-			slog.Debug("unable to set debug env value", slog.Any("err", err))
-		}
-	}
 
 	// Build the GrafanaService lazily the first time config is loaded.
 	// Commands that don't require a config (version, default-config, help) never
