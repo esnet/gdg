@@ -174,14 +174,10 @@ func TestLoggingTransportWrapper_nilInputs(t *testing.T) {
 func TestFormatDump(t *testing.T) {
 	const body = "Go is a general-purpose language designed with systems programming in mind."
 	req, err := http.NewRequest("PUT", "http://www.example.org", strings.NewReader(body))
-	if err != nil {
-		log.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	validDump, err := httputil.DumpRequestOut(req, true)
-	if err != nil {
-		log.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	testCases := []struct {
 		name        string

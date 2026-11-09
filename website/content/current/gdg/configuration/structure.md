@@ -12,7 +12,7 @@ The configuration has a few sections of note:
 1. context_name: the selected context
 2. Storage -- defines the storage engine if a cloud provider is used
 3. contexts: defines every context you operate on, think of it as the definition of a grafana instance and how to connect to it.  It also defines behavior for what folders to inspect, authentication mechanism, etc.
-4. global: defines global behavior for all contexts.  These settings are not context specific.  They tend to be things like enabling debugging, retry logic, api debugging etc.
+4. global: defines global behavior for all contexts.  These settings are not context specific.  They tend to be things like logging verbosity, HTTP traffic logging, retry logic, SSL handling, etc.
 
 ## Environment Overrides
 

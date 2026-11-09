@@ -43,19 +43,6 @@ type baseService struct {
 // ---------------------------------------------------------------------------
 // HTTP client helpers
 // ---------------------------------------------------------------------------
-
-func ignoreSSLBase(transportConfig *client.TransportConfig) {
-	_, clientTransport := ignoreSSLErrorsBase()
-	transportConfig.TLSConfig = clientTransport.TLSClientConfig
-}
-
-func ignoreSSLErrorsBase() (*http.Client, *http.Transport) {
-	customTransport := http.DefaultTransport.(*http.Transport).Clone()
-	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
-	httpclient := &http.Client{Transport: customTransport}
-	return httpclient, customTransport
-}
-
 func (b *baseService) getOrgNameClientOpts() NewClientOpts {
 	cfg := b.gdgConfig
 	orgName := cfg.GetDefaultGrafanaConfig().OrganizationName
@@ -84,9 +71,17 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		log.Fatal("invalid Grafana URL Path")
 	}
 
-	c := *http.DefaultClient
+	// Build the transport stack from the inside out: TLS base → logging wrapper.
+	// This mirrors the pattern in extended.go and ensures the logging middleware
+	// always sees traffic regardless of TLS configuration.
+	var base = http.DefaultTransport
+	if b.gdgConfig.IgnoreSSL() {
+		t := http.DefaultTransport.(*http.Transport).Clone()
+		t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
+		base = t
+	}
 	if b.gdgConfig != nil && b.gdgConfig.TransportWrapper != nil {
-		c.Transport = b.gdgConfig.TransportWrapper(http.DefaultTransport)
+		base = b.gdgConfig.TransportWrapper(base)
 	}
 
 	httpConfig := &client.TransportConfig{
@@ -95,8 +90,7 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		Schemes:      []string{u.Scheme},
 		NumRetries:   b.gdgConfig.GetAppGlobals().RetryCount,
 		RetryTimeout: b.gdgConfig.GetAppGlobals().GetRetryTimeout(),
-		Client:       &c,
-		TLSConfig:    &tls.Config{InsecureSkipVerify: b.gdgConfig.IgnoreSSL()}, // #nosec G402
+		Client:       &http.Client{Transport: base},
 	}
 
 	if b.grafanaConf.IsBasicAuth() && len(opts) == 1 {
@@ -106,9 +100,6 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 		if opt != nil {
 			opt(httpConfig)
 		}
-	}
-	if b.gdgConfig.IgnoreSSL() {
-		ignoreSSLBase(httpConfig)
 	}
 	return client.NewHTTPClientWithConfig(strfmt.Default, httpConfig), httpConfig
 }

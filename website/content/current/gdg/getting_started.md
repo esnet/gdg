@@ -108,7 +108,8 @@ contexts:
       ignore_filters: false # When set to true all Watched filtered folders will be ignored and ALL folders will be acted on
 
 global:
-  debug: true
+  logging:
+    verbose: true
   ignore_ssl_errors: false
 ```
 You need to adjust three parts in the configuration in order to function:
@@ -158,7 +159,8 @@ contexts:
       - Infrastructure
 
 global:
-  debug: true
+  logging:
+    verbose: true
   ignore_ssl_errors: false
 ```
 You need to adjust three parts in the configuration in order to function:
