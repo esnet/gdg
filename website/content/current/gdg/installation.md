@@ -35,15 +35,6 @@ brew install --cask gdg
 If there is a conflict you can try to be explicit.
 
 
-#### Migrating from formula to cask
-
-You might get an error on a simple upgrade after 0.8. Be sure to uninstall the formula first and install the gdg cask.
-
-```sh
-brew uninstall gdg
-brew install --cask gdg
-```
-
 ### Docker usage
 
 The docker tags are released started with 0.3.1.  Each release will generate a major version and minor version tag.
