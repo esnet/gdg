@@ -1,21 +1,24 @@
 ---
 title: "Debugging"
-description: "GDG debugging and troubleshooting guide covering debug flags, API request logging, and common configuration issues."
+description: "GDG debugging and troubleshooting guide covering logging flags, HTTP traffic logging, and common configuration issues."
 weight: 106
 ---
 ## Debugging / Trouble shooting
 
-There are two configuration flags that can be very useful to determine the issue.
+There are several configuration flags nested under `global.logging` that can be very useful to determine the issue.
 
 ```yaml
-...
 global:
-  debug: true
-  api_debug: true
+  logging:
+    verbose: true
+    http_traffic:
+      headers: true
+      body: true
 ```
 
-The debug flag enables very logging which may provide some insight on the core issue that you're running into.  Additionally, api_debug
-when enabled with print every request being made and response.
+`logging.verbose` enables DEBUG-level logging, which may provide insight on the core issue you're running into.
+`logging.http_traffic.headers` and `logging.http_traffic.body` control whether the headers and body of every HTTP
+request and response are printed.  You can enable either or both independently.
 
 For example, attempting to upload all the given folders I get the follow response.
 

@@ -24,8 +24,11 @@ contexts:
             - linux%2Fgnu/*
             - ES\+net/LHC\+Data\+Challenge
 global:
-    api_debug: false
-    debug: true
+    logging:
+        verbose: true
+        http_traffic:
+            headers: false
+            body: false
     ignore_ssl_errors: false
     retry_count: 1
     retry_delay: 1s

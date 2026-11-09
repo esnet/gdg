@@ -1,11 +1,11 @@
 ---
 title: "Globals"
-description: "Reference for GDG global configuration flags that apply across all contexts, including debug, SSL, retry, and output settings."
+description: "Reference for GDG global configuration flags that apply across all contexts, including logging, SSL, retry, and output settings."
 weight: 101
 ---
 
 
-Global flags are configuration that applies to all contexts.  The following flags are all nested under `globals:`
+Global flags are configuration that applies to all contexts.  The following flags are all nested under `global:`
 
 ### Clear Output
 
@@ -17,14 +17,34 @@ ie.  if fetching all dashboards for the default org, then all files in the folde
 Be careful when using this pattern.  This removes all related files, if the operation fails all previous backups for that entity type will be lost.
 {{% /notice %}}
 
-### Debug
+### Logging
 
-When `debug` is set to true, verbose debugging is enabled.  Usually only needed for debugging when issues arise.
+All logging options are grouped under `global.logging:`.
 
-### Debug API
+#### Verbose
 
-`debug_api` when set to true will echo out all the raw API calls, parameter and responses being received.  This can be
-very helpful if you wish to debug behavior being seen or reverse engineering what GDG is actually doing.
+`logging.verbose` when set to `true` enables DEBUG-level logging.  Usually only needed when diagnosing issues.
+
+#### HTTP Traffic
+
+`logging.http_traffic` controls whether outbound HTTP requests and their responses are dumped to the log.  The two
+sub-fields are independent so you can include just the headers, just the body, or both:
+
+| Field | Description |
+|---|---|
+| `logging.http_traffic.headers` | Log request and response headers |
+| `logging.http_traffic.body` | Log request and response bodies |
+
+```yaml
+global:
+  logging:
+    verbose: true
+    http_traffic:
+      headers: true
+      body: true
+```
+
+Both default to `false`.  Enabling `body` can produce very large log output for endpoints that return dashboard JSON.
 
 ### Ignore SSL
 
