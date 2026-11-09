@@ -1,0 +1,26 @@
+internal/config/config_domain/grafana_config.go
+  h_5c3111fc5355aa 117
+config/testing.yml
+  h_5c3111fc5355aa 78-82
+config/testing_plugins.yml
+  h_5c3111fc5355aa 27-31
+website/content/current/gdg/configuration/debugging.md
+  h_5c3111fc5355aa 3,8,12-16,19-21
+website/content/current/gdg/configuration/global.md
+  h_5c3111fc5355aa 3,8,20,22,24,26-47
+website/content/current/gdg/configuration/structure.md
+  h_5c3111fc5355aa 15
+website/content/current/gdg/getting_started.md
+  h_5c3111fc5355aa 130-131,182-183
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dffea4b0ae4a61ff9d050bd69b21b844066bb56d",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
