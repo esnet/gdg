@@ -112,13 +112,16 @@ func TestLibraryElementsCRUD(t *testing.T) {
 		// linux%2Fgnu/Others/n%2B_%3D23r/ which is v2-format and only uploads on v13+.
 		// On v12 that dashboard is skipped, so no connection exists.
 		connections := apiClient.ListLibraryElementsConnections(filtersEntity, "T47RSwQnz")
-		if isV13() {
-			if assert.NotEmpty(t, connections) {
-				assert.Equal(t, 1, len(connections))
-				connection := connections[0]
+		if isV13() && assert.Equal(t, 1, len(connections)) {
+			connection := connections[0]
+
+			if assert.NotNil(t, connection.Meta) {
 				assert.Equal(t, connection.Meta.FolderTitle, "n+_=23r")
 				assert.True(t, len(connection.Meta.FolderUID) > 0)
 				assert.Equal(t, connection.Meta.Slug, "dashboard-makeover-challenge")
+			}
+
+			if assert.NotEmpty(t, connection.Dashboard) {
 				assert.Equal(t, connection.Dashboard.(map[string]any)["uid"].(string), "F3eInwQ7z")
 				assert.Equal(t, connection.Dashboard.(map[string]any)["title"].(string), "Dashboard Makeover Challenge")
 			}

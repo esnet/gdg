@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/esnet/gdg/internal/adapter/filters/v2"
+	v2 "github.com/esnet/gdg/internal/adapter/filters/v2"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	customModels "github.com/esnet/gdg/internal/domain"
@@ -612,8 +612,10 @@ func validateOtherBoard(t *testing.T, board *customModels.DashboardV2Gdg) {
 
 func validateGeneralBoard(t *testing.T, board *customModels.DashboardV2Gdg) {
 	assert.Equal(t, board.Resource.Spec.Title, "Individual Flows")
-	if assert.NotEmpty(t, board.Resource.Spec.Tags) {
-		assert.Equal(t, 1, len(board.Resource.Spec.Tags))
+	if assert.NotNil(t, board) &&
+		assert.NotNil(t, board.Resource) &&
+		assert.Equal(t, 1, len(board.Resource.Spec.Tags)) {
+
 		assert.Equal(t, board.Resource.Spec.Tags[0], "netsage")
 	}
 	assert.Equal(t, board.NestedPath, "General")

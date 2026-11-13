@@ -50,8 +50,7 @@ func TestAlertingTimingsCrud(t *testing.T) {
 	timingsList, err = apiClient.ListAlertTimings()
 	assert.NoError(err)
 
-	if assert.NotEmpty(timingsList) {
-		assert.Equal(1, len(timingsList))
+	if assert.Equal(1, len(timingsList)) && assert.NotNil(timingsList[0]) {
 		timingItem := timingsList[0]
 		assert.Equal(timingItem.Name, "after-hours")
 		assert.Equal(len(timingItem.TimeIntervals), 2)

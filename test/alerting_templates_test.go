@@ -116,7 +116,7 @@ func TestTemplatesFilterTest(t *testing.T) {
 				regex:    "^test_tpl1$",
 				expected: 1,
 				validate: func(t *testing.T, list []*models.NotificationTemplate) {
-					if assert.NotEmpty(t, list) {
+					if assert.NotEmpty(t, list) && assert.NotNil(t, list[0]) {
 						assert.Equal(t, "test_tpl1", list[0].Name)
 					}
 				},
@@ -126,11 +126,9 @@ func TestTemplatesFilterTest(t *testing.T) {
 				regex:    "_test$",
 				expected: 1,
 				validate: func(t *testing.T, list []*models.NotificationTemplate) {
-					if len(list) == 0 {
-						t.Error("empty list provided")
-						return
+					if assert.NotEmpty(t, list) && assert.NotNil(t, list[0]) {
+						assert.Equal(t, "tpl2_test", list[0].Name)
 					}
-					assert.Equal(t, "tpl2_test", list[0].Name)
 				},
 			},
 			{
@@ -165,23 +163,20 @@ func TestTemplatesFilterTest(t *testing.T) {
 	t.Run("Clear respects filter", func(t *testing.T) {
 		cleared, clearErr := apiClient.ClearAlertTemplates(api.NewAlertTemplatesFilter("^test_tpl1$"))
 		assert.NoError(t, clearErr)
-		if assert.NotEmpty(t, cleared) {
-			assert.Equal(t, 1, len(cleared))
+		if assert.Equal(t, 1, len(cleared)) {
 			assert.Equal(t, "test_tpl1", cleared[0])
 		}
 
 		remaining, listErr := apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
 		assert.NoError(t, listErr)
-		if assert.NotEmpty(t, remaining) {
-			assert.Equal(t, 1, len(remaining))
+		if assert.Equal(t, 1, len(remaining)) && assert.NotNil(t, remaining[0]) {
 			assert.Equal(t, "tpl2_test", remaining[0].Name)
 		}
 
 		// Restore the cleared template so later sub-tests see both templates again.
 		restored, uploadErr := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter("^test_tpl1$"))
 		assert.NoError(t, uploadErr)
-		if assert.NotEmpty(t, restored) {
-			assert.Equal(t, 1, len(restored))
+		if assert.Equal(t, 1, len(restored)) {
 			assert.Equal(t, "test_tpl1", restored[0])
 		}
 	})
@@ -193,15 +188,13 @@ func TestTemplatesFilterTest(t *testing.T) {
 
 		uploaded, uploadErr := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter("_test$"))
 		assert.NoError(t, uploadErr)
-		if assert.NotEmpty(t, uploaded) {
-			assert.Equal(t, 1, len(uploaded))
+		if assert.Equal(t, 1, len(uploaded)) {
 			assert.Equal(t, "tpl2_test", uploaded[0])
 		}
 
 		afterUpload, listErr := apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
 		assert.NoError(t, listErr)
-		if assert.NotEmpty(t, afterUpload) {
-			assert.Equal(t, 1, len(afterUpload))
+		if assert.Equal(t, 1, len(afterUpload)) && assert.NotNil(t, afterUpload[0]) {
 			assert.Equal(t, "tpl2_test", afterUpload[0].Name)
 		}
 

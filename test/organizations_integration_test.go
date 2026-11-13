@@ -40,8 +40,9 @@ func TestOrganizationCrud(t *testing.T) {
 	}()
 	apiClient := r.ApiClient
 	orgs := apiClient.ListOrganizations(api.NewOrganizationFilter(), true)
-	if assert.NotEmpty(t, orgs) {
-		assert.Equal(t, 1, len(orgs))
+	if assert.Equal(t, 1, len(orgs)) &&
+		assert.NotNil(t, orgs[0]) &&
+		assert.NotNil(t, orgs[0].Organization) {
 		mainOrg := orgs[0]
 		assert.Equal(t, mainOrg.Organization.ID, int64(1))
 		assert.Equal(t, mainOrg.Organization.Name, "Main Org.")
@@ -53,8 +54,9 @@ func TestOrganizationCrud(t *testing.T) {
 	assert.True(t, slices.Contains(newOrgs, "testing"))
 	// Filter Org
 	orgs = apiClient.ListOrganizations(api.NewOrganizationFilter("DumbDumb"), true)
-	if assert.NotEmpty(t, orgs) {
-		assert.Equal(t, 1, len(orgs))
+	if assert.Equal(t, 1, len(orgs)) &&
+		assert.NotNil(t, orgs[0]) &&
+		assert.NotNil(t, orgs[0].Organization) {
 		assert.Equal(t, orgs[0].Organization.Name, "DumbDumb")
 	}
 }

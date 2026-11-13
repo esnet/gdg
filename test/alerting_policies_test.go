@@ -51,7 +51,7 @@ func TestPoliciesCrud(t *testing.T) {
 		return item.Receiver == "slack" && item.Continue
 	})
 	assert.NotNil(t, route)
-	if assert.NotEmpty(t, route.ObjectMatchers) {
+	if assert.NotEmpty(t, route.ObjectMatchers) && assert.NotEmpty(t, route.ObjectMatchers[0]) {
 		assert.Equal(t, len(route.ObjectMatchers[0]), 3)
 		assert.Equal(t, route.ObjectMatchers[0][2], "23")
 	}
