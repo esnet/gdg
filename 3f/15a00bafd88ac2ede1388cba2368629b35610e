@@ -1,0 +1,20 @@
+internal/adapter/grafana/api/base_service.go
+  h_5c3111fc5355aa 86,463-471,473,479
+internal/adapter/grafana/extended/extended.go
+  h_5c3111fc5355aa 18,20-22,25,27
+internal/config/config_domain/gdg_config.go
+  h_5c3111fc5355aa 4,9,194-212
+internal/config/config_domain/gdg_config_test.go
+  h_5c3111fc5355aa 5,8,10-11,15-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3f15a00bafd88ac2ede1388cba2368629b35610e",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
