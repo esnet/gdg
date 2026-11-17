@@ -1,0 +1,16 @@
+internal/adapter/grafana/api/alerting_service.go
+  h_5c3111fc5355aa 251-255,260,268-269,272-275,278,281-299,305,310,327-331,334,343-371,392-396,401-408
+internal/domain/alerting_k8s.go
+  h_5c3111fc5355aa 18-27,98-131
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b40eb8ce9af7fc8444190658cf121b9caaa5c68",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
