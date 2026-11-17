@@ -13,43 +13,58 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
+// Compile-time assertion: AlertingServiceImpl satisfies AlertingContactPointsService.
+var _ outbound.AlertingService = (*AlertingServiceImpl)(nil)
+
+// Contact point constants shared across the legacy and K8s implementation paths.
 const (
 	emailReceiver = "email receiver"
 	contactsFile  = "contacts"
 )
 
-var _ outbound.AlertContactPoints = (*DashNGoImpl)(nil)
+// AlertingServiceImpl is the standalone implementation of outbound.AlertingService.
+// It embeds baseService for all shared infrastructure — there is no back-reference to DashNGoImpl.
+// All contact point operations use the legacy provisioning API; the K8s receivers API does not
+// expose decrypted secrets, making it unsuitable for backup/restore workflows.
+type AlertingServiceImpl struct {
+	baseService
+}
 
-func (s *DashNGoImpl) ListContactPoints() ([]*models.ContactPointExport, error) {
+// NewAlertingService constructs an AlertingServiceImpl from a copy of baseService.
+func NewAlertingService(base baseService) outbound.AlertingService {
+	return &AlertingServiceImpl{baseService: base}
+}
+
+// ---------------------------------------------------------------------------
+// AlertContactPoints — public CRUD methods (provisioning API)
+// ---------------------------------------------------------------------------
+
+func (a *AlertingServiceImpl) ListContactPoints() ([]*models.ContactPointExport, error) {
 	p := provisioning.NewGetContactpointsExportParams()
 	p.Download = new(false)
 	p.Decrypt = new(false)
 	p.Format = new("json")
-	result, err := s.GetClient().Provisioning.GetContactpointsExport(p)
+	result, err := a.GetClient().Provisioning.GetContactpointsExport(p)
 	if err != nil {
 		return nil, err
 	}
 
 	data := make([]*models.ContactPointExport, 0)
-	connSettings := s.grafanaConf.GetAlertSettings().ContactSettings
+	connSettings := a.grafanaConf.GetAlertSettings().ContactSettings
 	for _, item := range result.GetPayload().ContactPoints {
-		// Skipping broken email Receiver from v12 can't manage
 		if item.Name == emailReceiver && len(item.Receivers) > 0 && item.Receivers[0].UID == "" {
 			continue
 		}
-
 		if connSettings.FiltersEnabled() && config_tooling.IsExcluded(item, connSettings.FilterRules) {
 			slog.Debug("Skipping contact point, since it fails filter checks", "contact_point", item.Name)
 			continue
 		}
 		data = append(data, item)
-
 	}
-
 	return data, nil
 }
 
-func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
+func (a *AlertingServiceImpl) DownloadContactPoints() (string, error) {
 	var (
 		dsPacked []byte
 		err      error
@@ -58,14 +73,12 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 	p.Download = new(true)
 	p.Decrypt = new(true)
 	p.Format = new("json")
-	data, err := s.GetClient().Provisioning.GetContactpointsExport(p)
+	data, err := a.GetClient().Provisioning.GetContactpointsExport(p)
 	if err != nil {
 		log.Fatalf("unable to retrieve Contact Points, err: %s", err.Error())
 	}
 
-	// Apply the same email-receiver skip and contact-point filters as
-	// ListContactPoints so Download is consistent with every other operation.
-	connSettings := s.grafanaConf.GetAlertSettings().ContactSettings
+	connSettings := a.grafanaConf.GetAlertSettings().ContactSettings
 	var filtered []*models.ContactPointExport
 	for _, item := range data.GetPayload().ContactPoints {
 		if item.Name == emailReceiver && len(item.Receivers) > 0 && item.Receivers[0].UID == "" {
@@ -78,47 +91,46 @@ func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
 		filtered = append(filtered, item)
 	}
 
-	dsPath := s.resources.BuildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
-	if dsPacked, err = json.MarshalIndent(filtered, "", "	"); err != nil {
+	dsPath := a.resources.BuildResourcePath(a.grafanaConf, contactsFile, domain.AlertingResource, a.isLocal(), false)
+	if dsPacked, err = json.MarshalIndent(filtered, "", "\t"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
-	if s.gdgConfig.PluginConfig.CipherEnabled() {
-		newData, encodeErr := s.encoder.Encode(domain.AlertingResource, dsPacked)
+	if a.gdgConfig.PluginConfig.CipherEnabled() {
+		newData, encodeErr := a.encoder.Encode(domain.AlertingResource, dsPacked)
 		if encodeErr != nil {
 			slog.Error("unable to encode sensitive data using cipher plugin. All data was saved in plaintext.", "err", encodeErr)
 		}
 		dsPacked = newData
 	}
-	if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
+	if err = a.storage.WriteFile(dsPath, dsPacked); err != nil {
 		return "", fmt.Errorf("unable to write file. %w", err)
 	}
-
 	return dsPath, nil
 }
 
-func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
+func (a *AlertingServiceImpl) UploadContactPoints() ([]string, error) {
 	var (
 		rawDS  []byte
 		result []string
 	)
 	var data []models.ContactPointExport
-	currentContacts, err := s.ListContactPoints()
+	currentContacts, err := a.ListContactPoints()
 	if err != nil {
 		return nil, err
 	}
 	m := make(map[string]*models.ReceiverExport)
 	for ndx, i := range currentContacts {
 		for _, item := range i.Receivers {
-			m[item.UID] = i.Receivers[ndx] //currentContacts[ndx]
+			m[item.UID] = i.Receivers[ndx]
 		}
 	}
 
-	fileLocation := s.resources.BuildResourcePath(s.grafanaConf, contactsFile, domain.AlertingResource, s.isLocal(), false)
-	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
+	fileLocation := a.resources.BuildResourcePath(a.grafanaConf, contactsFile, domain.AlertingResource, a.isLocal(), false)
+	if rawDS, err = a.storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}
-	if s.gdgConfig.PluginConfig.CipherEnabled() {
-		newData, encodeErr := s.encoder.Decode(domain.AlertingResource, rawDS)
+	if a.gdgConfig.PluginConfig.CipherEnabled() {
+		newData, encodeErr := a.encoder.Decode(domain.AlertingResource, rawDS)
 		if encodeErr != nil {
 			slog.Error("unable to encode sensitive data using cipher plugin. All data was saved in plaintext. ", "err", encodeErr)
 		}
@@ -127,7 +139,7 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 	if err = json.Unmarshal(rawDS, &data); err != nil {
 		return nil, fmt.Errorf("failed to unmarshall file, file:%s, err: %w", fileLocation, err)
 	}
-	connSettings := s.grafanaConf.GetAlertSettings().ContactSettings
+	connSettings := a.grafanaConf.GetAlertSettings().ContactSettings
 	for _, i := range data {
 		if connSettings.FiltersEnabled() && config_tooling.IsExcluded(i, connSettings.FilterRules) {
 			slog.Debug("Skipping local JSON file since source fails datatype filter checks", "datasource", i.Name)
@@ -139,7 +151,6 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 				continue
 			}
 			if _, ok := m[r.UID]; ok {
-				// do update
 				p := provisioning.NewPutContactpointParams()
 				p.UID = r.UID
 				p.XDisableProvenance = new("true")
@@ -151,13 +162,11 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 					Type:                  new(r.Type),
 					UID:                   r.UID,
 				}
-				_, err := s.GetClient().Provisioning.PutContactpoint(p)
-				if err != nil {
+				if _, putErr := a.GetClient().Provisioning.PutContactpoint(p); putErr != nil {
 					slog.Error("failed to update contact point", slog.Any("uid", r.UID))
 					continue
 				}
 				result = append(result, i.Name)
-
 			} else {
 				p := provisioning.NewPostContactpointsParams()
 				p.XDisableProvenance = new("true")
@@ -169,34 +178,26 @@ func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
 					Settings:              r.Settings,
 					Type:                  new(r.Type),
 				}
-				_, err = s.GetClient().Provisioning.PostContactpoints(p)
-				if err != nil {
+				if _, postErr := a.GetClient().Provisioning.PostContactpoints(p); postErr != nil {
 					slog.Error("failed to create contact point", slog.Any("uid", r.UID))
 					continue
 				}
-
 				result = append(result, i.Name)
 			}
 		}
 	}
-
 	return result, nil
 }
 
-func (s *DashNGoImpl) ClearContactPoints() ([]string, error) {
-	var (
-		err     error
-		results []string
-	)
-	contacts, err := s.ListContactPoints()
+func (a *AlertingServiceImpl) ClearContactPoints() ([]string, error) {
+	contacts, err := a.ListContactPoints()
 	if err != nil {
 		return nil, err
 	}
-
+	var results []string
 	for _, contact := range contacts {
 		for _, receiver := range contact.Receivers {
-			_, err = s.GetClient().Provisioning.DeleteContactpoints(receiver.UID)
-			if err != nil {
+			if _, delErr := a.GetClient().Provisioning.DeleteContactpoints(receiver.UID); delErr != nil {
 				slog.Error("unable to delete contact point",
 					slog.Any("name", contact.Name),
 					slog.Any("uid", receiver.UID),
@@ -206,6 +207,5 @@ func (s *DashNGoImpl) ClearContactPoints() ([]string, error) {
 			results = append(results, contact.Name)
 		}
 	}
-
 	return results, nil
 }

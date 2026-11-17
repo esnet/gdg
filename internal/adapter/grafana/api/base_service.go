@@ -10,8 +10,13 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/carlmjohnson/requests"
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
+	"github.com/jellydator/ttlcache/v3"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/transport"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
@@ -38,6 +43,11 @@ type baseService struct {
 	lookupResolver outbound.LookupResolver
 	lookupSvc      outbound.LookupService
 	resources      ports.Resources
+
+	// discoveredVersions caches API group version discovery results with a 5-minute
+	// TTL so long-running processes pick up version changes without paying a network
+	// cost on every CRUD operation.
+	discoveredVersions *ttlcache.Cache[string, string]
 }
 
 // ---------------------------------------------------------------------------
@@ -354,6 +364,141 @@ func (b *baseService) getCurrentOrg(apiClient *client.GrafanaHTTPAPI, fatal bool
 		return nil, err
 	}
 	return resp.GetPayload(), nil
+}
+
+// ---------------------------------------------------------------------------
+// App Platform (Kubernetes-style API) helpers
+// ---------------------------------------------------------------------------
+
+// k8sRestConfig maps GDG's existing Grafana connection settings onto a
+// Kubernetes rest.Config pointed at the Grafana App Platform (/apis) endpoint.
+func (b *baseService) k8sRestConfig() (*rest.Config, error) {
+	u, err := url.Parse(b.grafanaConf.GetURL())
+	if err != nil {
+		return nil, fmt.Errorf("invalid Grafana URL %q: %w", b.grafanaConf.GetURL(), err)
+	}
+
+	host := strings.TrimSuffix(fmt.Sprintf("%s://%s%s", u.Scheme, u.Host, u.Path), "/")
+
+	cfg := &rest.Config{
+		Host:    host,
+		APIPath: "apis",
+	}
+	if b.gdgConfig != nil && b.gdgConfig.TransportWrapper != nil {
+		cfg.Wrap(transport.WrapperFunc(b.gdgConfig.TransportWrapper))
+	}
+
+	if token := b.grafanaConf.GetAPIToken(); token != "" {
+		cfg.BearerToken = token
+	} else {
+		cfg.Username = b.grafanaConf.UserName
+		cfg.Password = b.grafanaConf.GetPassword()
+	}
+
+	if b.gdgConfig.IgnoreSSL() {
+		cfg.TLSClientConfig = rest.TLSClientConfig{Insecure: true}
+	}
+
+	return cfg, nil
+}
+
+// k8sNamespace maps the active org to an App Platform namespace
+// (org 1 -> "default", org N -> "org-N").
+func (b *baseService) k8sNamespace() string {
+	orgID := int64(configDomain.DefaultOrganizationId)
+
+	switch {
+	case !b.grafanaConf.IsBasicAuth():
+		if org, err := b.getCurrentOrg(b.GetClient(), false); err == nil && org != nil {
+			orgID = org.ID
+		} else {
+			slog.Warn("unable to determine the current organization via /api/org; defaulting to org 1/\"default\"", "err", err)
+		}
+	case b.grafanaConf.OrganizationName != "":
+		if id, err := extended.NewExtendedApi(b.gdgConfig).GetConfiguredOrgId(b.grafanaConf.OrganizationName); err == nil {
+			orgID = id
+		}
+	}
+
+	if orgID <= configDomain.DefaultOrganizationId {
+		return "default"
+	}
+	return fmt.Sprintf("org-%d", orgID)
+}
+
+// apiVersionCacheTTL is how long a discovered API group version is considered
+// fresh before re-querying the App Platform.
+const apiVersionCacheTTL = 5 * time.Minute
+
+// discoverAPIGroupVersion queries the Grafana App Platform discovery endpoint
+// (GET /apis) to find the preferred version for the given API group.
+// Results are cached for apiVersionCacheTTL. Returns fallback on any failure.
+func (b *baseService) discoverAPIGroupVersion(group, fallback string) string {
+	if b.discoveredVersions == nil {
+		b.discoveredVersions = ttlcache.New[string, string](
+			ttlcache.WithTTL[string, string](apiVersionCacheTTL),
+			ttlcache.WithDisableTouchOnHit[string, string](),
+		)
+	}
+	if item := b.discoveredVersions.Get(group); item != nil {
+		return item.Value()
+	}
+	version := b.fetchAPIGroupVersion(group, fallback)
+	b.discoveredVersions.Set(group, version, ttlcache.DefaultTTL)
+	return version
+}
+
+// apiGroupList is a minimal representation of the Kubernetes APIGroupList
+// response returned by GET /apis on a Grafana App Platform instance.
+type apiGroupList struct {
+	Groups []apiGroup `json:"groups"`
+}
+
+type apiGroup struct {
+	Name             string          `json:"name"`
+	PreferredVersion apiGroupVersion `json:"preferredVersion"`
+}
+
+type apiGroupVersion struct {
+	Version string `json:"version"`
+}
+
+// fetchAPIGroupVersion performs the actual GET /apis discovery call.
+// It honours IgnoreSSL and TransportWrapper. This is the raw-HTTP path used
+// for non-OpenAPI discovery requests.
+//
+// TODO: replace with k8s.io/client-go/discovery once k8s.io/apimachinery@v0.38
+// is released and the structured-merge-diff v6/v7 conflict is resolved.
+func (b *baseService) fetchAPIGroupVersion(group, fallback string) string {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var result apiGroupList
+	req := requests.URL(strings.TrimRight(b.grafanaConf.GetURL(), "/") + "/apis").
+		Client(b.gdgConfig.BuildHTTPClient())
+
+	token := b.grafanaConf.GetAPIToken()
+	if token != "" {
+		req = req.Header("Authorization", "Bearer "+token)
+	} else {
+		req = req.BasicAuth(b.grafanaConf.UserName, b.grafanaConf.GetPassword())
+	}
+
+	if err := req.ToJSON(&result).Fetch(ctx); err != nil {
+		slog.Warn("API group version discovery: request failed", "group", group, "err", err)
+		return fallback
+	}
+
+	for _, g := range result.Groups {
+		if g.Name == group {
+			if v := g.PreferredVersion.Version; v != "" {
+				slog.Debug("discovered API group preferred version", "group", group, "version", v)
+				return v
+			}
+		}
+	}
+	slog.Warn("API group not found in discovery, using fallback", "group", group, "fallback", fallback)
+	return fallback
 }
 
 // IsEnterprise returns true if the connected Grafana instance runs an Enterprise licence.

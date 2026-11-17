@@ -214,12 +214,12 @@ func TestToUnstructured_SetsTypeMeta(t *testing.T) {
 	}
 	dr.Spec.Title = "Test"
 
-	obj, err := toUnstructured(dr)
+	obj, err := toUnstructured(dr, domain.GdgApiVersionV2)
 	require.NoError(t, err)
 	require.NotNil(t, obj)
 
-	// TypeMeta should be populated from constants.
-	assert.Equal(t, domain.DashboardV2Group+"/"+domain.DashboardV2Version, obj.GetAPIVersion())
+	// TypeMeta should be populated from the supplied apiVersion.
+	assert.Equal(t, domain.GdgApiVersionV2, obj.GetAPIVersion())
 	assert.Equal(t, domain.DashboardV2Kind, obj.GetKind())
 	assert.Equal(t, "test-dashboard", obj.GetName())
 }
@@ -231,7 +231,7 @@ func TestFromUnstructured_RoundTrip(t *testing.T) {
 	dr.Spec.Title = "Round Trip"
 	dr.Annotations = map[string]string{domain.AnnotationFolder: "folder-uid-abc"}
 
-	obj, err := toUnstructured(dr)
+	obj, err := toUnstructured(dr, domain.GdgApiVersionV2)
 	require.NoError(t, err)
 
 	decoded, err := fromUnstructured(obj)
