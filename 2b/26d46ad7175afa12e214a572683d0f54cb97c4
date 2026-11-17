@@ -1,0 +1,45 @@
+internal/adapter/grafana/api/base_service.go
+  h_5c3111fc5355aa 5,9,84-96,103
+  h_5c3111fc5355aa 17-19,47-50,405-406,429-452,467-468,470-471
+internal/adapter/grafana/api/dashboards_v2_client.go
+  h_5c3111fc5355aa 17-26,29,33,36,70,72
+internal/domain/dashboard_v2.go
+  h_5c3111fc5355aa 11-14,21-22
+internal/adapter/grafana/api/dashboards_v2.go
+  h_5c3111fc5355aa 28,115,164,183
+internal/domain/dashboard_v2_test.go
+  h_5c3111fc5355aa 16
+internal/adapter/grafana/api/helpers_test.go
+  h_5c3111fc5355aa 217,221-222,234
+internal/adapter/grafana/api/dashboard_service.go
+  h_5c3111fc5355aa 194
+internal/adapter/grafana/api/alerting_contactpoints.go
+  h_5c3111fc5355aa 3
+internal/adapter/grafana/api/alerting_contactpoints_k8s.go
+  h_5c3111fc5355aa 1-96
+internal/adapter/grafana/api/alerting_service.go
+  h_5c3111fc5355aa 1-394
+internal/adapter/grafana/api/gdg_api.go
+  h_5c3111fc5355aa 8,16-18,20-22,29-32,65-66,68,125-144
+internal/adapter/grafana/api/organizations_test.go
+  h_5c3111fc5355aa 10,13,116-202
+internal/config/config_domain/gdg_config.go
+  h_5c3111fc5355aa 190-193,207-211
+internal/config/config_domain/gdg_config_test.go
+  h_5c3111fc5355aa 73
+internal/domain/alerting_k8s.go
+  h_5c3111fc5355aa 1-134
+internal/ports/outbound/api_alerting.go
+  h_5c3111fc5355aa 16-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2b26d46ad7175afa12e214a572683d0f54cb97c4",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
