@@ -1,0 +1,28 @@
+internal/adapter/grafana/api/base_service.go
+  h_5c3111fc5355aa 13,15,28-29,45-48,367-520
+internal/adapter/grafana/api/dashboard_service.go
+  h_5c3111fc5355aa 194
+internal/adapter/grafana/api/dashboards_v2.go
+  h_5c3111fc5355aa 28,115,164,183
+internal/adapter/grafana/api/dashboards_v2_client.go
+  h_5c3111fc5355aa 17-21,24,28-34,37-38,72-73,75
+internal/adapter/grafana/api/dashboards_v2_client_test.go
+  h_5c3111fc5355aa 15-110
+internal/adapter/grafana/api/helpers_test.go
+  h_5c3111fc5355aa 217,221-222,234
+internal/domain/dashboard_v2.go
+  h_5c3111fc5355aa 11-14,21-26
+internal/domain/dashboard_v2_test.go
+  h_5c3111fc5355aa 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4b442741213fe4d0d167519e6cb79ef00451fb38",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
