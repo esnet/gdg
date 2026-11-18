@@ -1,0 +1,90 @@
+internal/adapter/grafana/alerting/service.go
+  h_5c3111fc5355aa 1-6,14,22,28-35,36-37,38-40,41-45,47,52,58,72,81,86,99,100,103-104,110,116,122,129,133-134,137-138,147,170,186,197,198,202,205
+internal/adapter/grafana/api/organizations_test.go
+  h_5c3111fc5355aa 9,11,14,37-40,65,69,79,83,96,100,112,116,119-150,151,152-153,154,155-156,157,158-159,160,161-162,163,164-170,171,172-205,223,227
+internal/adapter/grafana/core/service.go
+  h_5c3111fc5355aa 1-6,18,20,32,34-43,46-62,63-67,70-92,96-98,115-120,122,133,138-139,146-147,151,163-166,173,175,180,183,188,193-194,200-205,211-213,215,218-220,228,243,246,249,276,278,280,284,293,296,307-309,312-314,320-322,325,327-328,392-393,395,403,407,418-421,422,423,424-425,426,427,428-435,436-437,438-439,440,441-442,443-444,445-446,447,448-453,454,455,456,457-459,460-461,462-465,466-467,468-481,482,483-484,485,486-520,521,522-525,526-527,528,529,530-532,533,534-552,554
+internal/adapter/grafana/api/gdg_api.go
+  h_5c3111fc5355aa 4-5,10,16,18-20,22-24,31-34,36,40,47,52,55,58,59,61,93,96,118-119,120,121-137
+go.mod
+  h_5c3111fc5355aa 8,12-15,18,27,38-42,44,52,54,59,61,64,68-69,72,74-88,113,122,127,129,131,147,155,164-165,175-176,186-187,208,213,225,239-240,242-243,250-253,258
+internal/ports/outbound/api_alerting.go
+  h_5c3111fc5355aa 16-20
+internal/adapter/grafana/extended/extended.go
+  h_5c3111fc5355aa 18,20-22,24,26
+go.sum
+  h_5c3111fc5355aa 5-6,13-14,19-20,29,32,37-38,41,48-49,60-61,72-73,76,79-80,91,94-95,98,105-106,109-110,113-114,117-118,121-122,125-126,129-130,133-134,137-138,141-142,145-146,149-150,153-154,157-158,161-162,165-166,169-170,173-174,177-178,191-192,246-247,274-275,288-289,294-295,300-301,338,341,344-345,381-382,389-390,403-404,419-420,423-424,451-452,455-456,482-483,486-487,547-548,562-563,578-579,587-588,597-598,601-602,613-614,633,652-653,657-658,661-662,669-670,673-674,677-678,701-702,705-706,709-710,713-714,740-741
+internal/config/config_domain/gdg_config.go
+  h_5c3111fc5355aa 4,9,32,189-206
+internal/config/config_domain/gdg_config_test.go
+  h_5c3111fc5355aa 5,8,10-11,15-80
+internal/adapter/grafana/api/dashboard_service.go
+  h_5c3111fc5355aa 9,71,75,78-79,81-82,130,133-134,139,195
+internal/adapter/grafana/api/dashboards_v2.go
+  h_5c3111fc5355aa 25,28,52,94,96,112,115,120,138,164,183,224,255
+internal/adapter/grafana/api/dashboards_v2_client.go
+  h_5c3111fc5355aa 17-21,22,24,28-29,30,31-34,36,37-38,72-74,76
+internal/adapter/grafana/api/helpers_test.go
+  h_5c3111fc5355aa 217,221-222,234
+internal/adapter/grafana/api/cipher_helper.go
+  h_5c3111fc5355aa 6,15
+internal/adapter/grafana/api/dashboards_v2_client_test.go
+  h_5c3111fc5355aa 9,55-58,90,109,137,161
+internal/adapter/grafana/api/alerting_timings.go
+  h_5c3111fc5355aa 28,32,83-84
+internal/adapter/grafana/core/folders_pagination_test.go
+  h_5c3111fc5355aa 1-15,78,93,103,128
+internal/adapter/grafana/api/dashboards.go
+  h_5c3111fc5355aa 187,236,240,255,259,318-319,363,366,377,415,427
+internal/adapter/grafana/api/alerting_templates.go
+  h_5c3111fc5355aa 65,69,126-127
+internal/adapter/grafana/api/teams.go
+  h_5c3111fc5355aa 81,84,91,103,105,116-117,131,159-160
+internal/adapter/grafana/api/connections.go
+  h_5c3111fc5355aa 83,85,94,124,126,156-158,166,168,173,187,189-190
+internal/adapter/grafana/api/license.go
+  h_5c3111fc5355aa 3-5
+internal/adapter/grafana/api/login_test.go
+  h_5c3111fc5355aa 34,38,43,48,51,55,61,65,70
+internal/adapter/grafana/api/login.go
+  h_5c3111fc5355aa 10-11,14-15,19,24
+internal/adapter/grafana/api/folders.go
+  h_5c3111fc5355aa 87-88,104-105,110,112,148,176-177,193-194,255-256,281,311,375,421-422
+internal/adapter/grafana/api/org_preferences.go
+  h_5c3111fc5355aa 13,16,25,40
+internal/adapter/grafana/core/folders.go
+  h_5c3111fc5355aa 1-92
+internal/adapter/grafana/api/libraryelements.go
+  h_5c3111fc5355aa 86,102,106,161,174,176,195-197,202,209,217,223,264
+test/server_info_test.go
+  h_5c3111fc5355aa 9,40-42,44,46
+internal/adapter/grafana/api/organizations.go
+  h_5c3111fc5355aa 131,136,143,151,155,170,185,189,202,205,210,230,242,247,287,303-304,316,324-325,336,338,391,409,449,519
+.gitignore
+  h_5c3111fc5355aa 18
+internal/adapter/grafana/api/connection_permissions.go
+  h_5c3111fc5355aa 71-72,117-118,123,125
+internal/adapter/grafana/api/server.go
+  h_5c3111fc5355aa 3-4
+internal/adapter/grafana/api/client_test.go
+  h_5c3111fc5355aa 40
+internal/adapter/grafana/api/user.go
+  h_5c3111fc5355aa 98,104,110,125-126,142,144,159,203
+internal/adapter/grafana/api/alerting_notifications.go
+  h_5c3111fc5355aa 29,33,68-69
+internal/adapter/grafana/api/dashboard_permissions.go
+  h_5c3111fc5355aa 56,60-62,64,77,92,422,424
+internal/adapter/grafana/api/alerting_alertrules.go
+  h_5c3111fc5355aa 34,45-46,85-86,103,108,163,177,203,207
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a5bb94ba691a575e3c5ddfecbc88cd295df60c17",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
