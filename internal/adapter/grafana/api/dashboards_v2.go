@@ -25,7 +25,7 @@ func (d *DashboardServiceImpl) listDashboardsV2(filterReq outbound.Filter) []*do
 		filterReq = NewDashboardFilter(d.gdgConfig, "", "", "")
 	}
 
-	client, _, err := d.dashboardV2Client()
+	client, _, _, err := d.dashboardV2Client()
 	if err != nil {
 		log.Fatal("unable to create dashboard v2 client: ", err)
 	}
@@ -112,7 +112,7 @@ func (d *DashboardServiceImpl) uploadDashboardsV2(filterReq outbound.Filter, fil
 		filterReq = NewDashboardFilter(d.gdgConfig, "", "", "")
 	}
 
-	client, ns, err := d.dashboardV2Client()
+	client, ns, apiVersion, err := d.dashboardV2Client()
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func (d *DashboardServiceImpl) uploadDashboardsV2(filterReq outbound.Filter, fil
 
 		sanitizeForApply(dr, ns)
 
-		obj, convErr := toUnstructured(*dr)
+		obj, convErr := toUnstructured(*dr, apiVersion)
 		if convErr != nil {
 			slog.Warn("unable to encode dashboard for upload", "file", file, "err", convErr)
 			continue
@@ -180,7 +180,7 @@ func (d *DashboardServiceImpl) uploadDashboardsV2(filterReq outbound.Filter, fil
 // deleteAllDashboardsV2 removes all dashboards matching the filter via the App Platform API.
 // It is an unexported adapter-layer helper called by DashboardServiceImpl.
 func (d *DashboardServiceImpl) deleteAllDashboardsV2(filterReq outbound.Filter) []string {
-	client, _, err := d.dashboardV2Client()
+	client, _, _, err := d.dashboardV2Client()
 	if err != nil {
 		log.Fatal("unable to create dashboard v2 client: ", err)
 	}

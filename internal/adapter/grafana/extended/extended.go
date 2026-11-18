@@ -1,7 +1,6 @@
 package extended
 
 import (
-	"crypto/tls"
 	"net/http"
 
 	"github.com/carlmjohnson/requests"
@@ -16,24 +15,16 @@ type Api struct {
 }
 
 func NewExtendedApi(cfg *config_domain.GDGAppConfiguration) outbound.ExtendedApi {
-	c := *http.DefaultClient
+	var httpClient *http.Client
 	if cfg != nil {
-		if cfg.IgnoreSSL() {
-			t := http.DefaultTransport.(*http.Transport).Clone()
-			t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
-			c.Transport = t
-		}
-
-		if cfg.TransportWrapper != nil {
-			c.Transport = cfg.TransportWrapper(c.Transport)
-		}
+		httpClient = cfg.BuildHTTPClient()
+	} else {
+		httpClient = http.DefaultClient
 	}
-
-	o := Api{
+	return &Api{
 		appCfg:     cfg,
-		httpClient: &c,
+		httpClient: httpClient,
 	}
-	return &o
 }
 
 // getRequestBuilder returns a requests.Builder preconfigured with Grafana URL, auth, and optional TLS settings.

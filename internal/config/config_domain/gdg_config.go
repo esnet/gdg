@@ -1,10 +1,12 @@
 package config_domain
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"log/slog"
 	"maps"
+	"net/http"
 	"os"
 	"slices"
 	"strings"
@@ -27,7 +29,7 @@ type GDGAppConfiguration struct {
 	Global           *AppGlobals                  `mapstructure:"global" yaml:"global"`
 	SecureConfig     map[string][]string          `mapstructure:"secure_config" yaml:"secure_config"`
 	PluginConfig     PluginConfig                 `mapstructure:"plugins" yaml:"plugins"`
-	TransportWrapper domain.TransportWrapper  `mapstructure:"-" yaml:"-"`
+	TransportWrapper domain.TransportWrapper      `mapstructure:"-" yaml:"-"`
 }
 
 type PluginConfig struct {
@@ -182,6 +184,24 @@ func (s *SecureModelConfig) SecureFieldNames() []string {
 
 type SecureEntity struct {
 	Patterns []string `mapstructure:"patterns" yaml:"patterns"`
+}
+
+// BuildHTTPClient constructs an *http.Client that respects the application's
+// TLS and transport middleware configuration. Use this for plain HTTP calls
+// (e.g. carlmjohnson/requests) that do NOT go through the OpenAPI client.
+// The OpenAPI client's transport stack (getNewClient) manages TLS separately
+// via TransportConfig.TLSConfig — do not use BuildHTTPClient there.
+func (app *GDGAppConfiguration) BuildHTTPClient() *http.Client {
+	var base = http.DefaultTransport
+	if app.IgnoreSSL() {
+		t := http.DefaultTransport.(*http.Transport).Clone()
+		t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
+		base = t
+	}
+	if app.TransportWrapper != nil {
+		base = app.TransportWrapper(base)
+	}
+	return &http.Client{Transport: base}
 }
 
 // IgnoreSSL returns true if SSL errors should be ignored

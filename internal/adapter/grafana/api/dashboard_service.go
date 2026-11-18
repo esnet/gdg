@@ -191,7 +191,7 @@ func (d *DashboardServiceImpl) DeleteAllDashboards(filter outbound.Filter) []str
 // UID / resource metadata.name — so a single map covers all local file formats.
 func (d *DashboardServiceImpl) pruneDashboards(filter outbound.Filter, processed map[string]bool, serverIsV2 bool) {
 	if serverIsV2 {
-		client, _, err := d.dashboardV2Client()
+		client, _, _, err := d.dashboardV2Client()
 		if err != nil {
 			slog.Error("unable to create v2 client for pruning, skipping", "err", err)
 			return

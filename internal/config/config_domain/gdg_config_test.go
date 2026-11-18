@@ -2,11 +2,81 @@ package config_domain
 
 import (
 	"bytes"
+	"net/http"
 	"testing"
 
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
+
+func newTestGDGConfig(v *viper.Viper) *GDGAppConfiguration {
+	if v == nil {
+		v = viper.New()
+	}
+	return &GDGAppConfiguration{ViperConfig: v}
+}
+
+func TestBuildHTTPClient_DefaultTransport(t *testing.T) {
+	cfg := newTestGDGConfig(nil)
+	client := cfg.BuildHTTPClient()
+	require.NotNil(t, client)
+	assert.Equal(t, http.DefaultTransport, client.Transport)
+}
+
+func TestBuildHTTPClient_IgnoreSSL(t *testing.T) {
+	v := viper.New()
+	v.Set("global.ignore_ssl_errors", true)
+	cfg := newTestGDGConfig(v)
+
+	client := cfg.BuildHTTPClient()
+	require.NotNil(t, client)
+
+	transport, ok := client.Transport.(*http.Transport)
+	require.True(t, ok, "transport should be *http.Transport when IgnoreSSL is set")
+	require.NotNil(t, transport.TLSClientConfig)
+	assert.True(t, transport.TLSClientConfig.InsecureSkipVerify)
+}
+
+func TestBuildHTTPClient_TransportWrapper(t *testing.T) {
+	cfg := newTestGDGConfig(nil)
+
+	var wrappedTransport http.RoundTripper
+	cfg.TransportWrapper = domain.TransportWrapper(func(rt http.RoundTripper) http.RoundTripper {
+		wrappedTransport = rt
+		return rt
+	})
+
+	client := cfg.BuildHTTPClient()
+	require.NotNil(t, client)
+	assert.Equal(t, http.DefaultTransport, wrappedTransport)
+}
+
+func TestBuildHTTPClient_IgnoreSSLAndWrapper(t *testing.T) {
+	v := viper.New()
+	v.Set("global.ignore_ssl_errors", true)
+	cfg := newTestGDGConfig(v)
+
+	var wrappedTransport http.RoundTripper
+	cfg.TransportWrapper = domain.TransportWrapper(func(rt http.RoundTripper) http.RoundTripper {
+		wrappedTransport = rt
+		return rt
+	})
+
+	client := cfg.BuildHTTPClient()
+	require.NotNil(t, client)
+
+	tlsTransport, ok := wrappedTransport.(*http.Transport)
+	require.True(t, ok, "wrapper should receive the TLS-patched *http.Transport")
+	assert.True(t, tlsTransport.TLSClientConfig.InsecureSkipVerify)
+	assert.Equal(t, wrappedTransport, client.Transport)
+
+	finalTLS, ok := client.Transport.(*http.Transport)
+	require.True(t, ok)
+	assert.True(t, finalTLS.TLSClientConfig.InsecureSkipVerify)
+}
 
 func TestPluginConfig_LookupEnabled(t *testing.T) {
 	tests := []struct {

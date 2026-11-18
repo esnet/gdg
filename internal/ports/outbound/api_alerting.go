@@ -13,6 +13,11 @@ type AlertingApi interface {
 	AlertTimings
 }
 
+// AlertingService defines alerting operations for managing contact points.
+type AlertingService interface {
+	AlertContactPoints
+}
+
 type AlertRules interface {
 	DownloadAlertRules(filter Filter) ([]string, error)
 	ListAlertRules(filter Filter) ([]*customModels.AlertRuleWithNestedFolder, error)

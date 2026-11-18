@@ -7,8 +7,10 @@ import (
 	"testing"
 
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
+	"github.com/esnet/gdg/internal/domain"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func newTestDashNGo(t *testing.T, serverURL string, token string) *DashNGoImpl {
@@ -110,6 +112,93 @@ func TestInitOrganizations_Anonymous_NoConfiguredName_ResolvesFromCurrentOrg(t *
 
 	assert.Equal(t, "Public", svc.grafanaConf.GetOrganizationName())
 }
+
+// TestInitOrganizations_CipherToken_DecryptedBeforeOrgResolution verifies the
+// full Login → InitOrganizations sequence for a cipher-encrypted token: the
+// token must be decrypted by Login() before InitOrganizations() calls /api/org,
+// so the authenticated org (ESnet) is returned rather than the anonymous org
+// (Public) that an unauthenticated request would reach.
+//
+// Regression test: the branch build was sending the raw encrypted token (or no
+// token) to /api/org, causing Grafana to treat the request as anonymous and
+// return the wrong org, overwriting the configured organization_name.
+func TestInitOrganizations_CipherToken_DecryptedBeforeOrgResolution(t *testing.T) {
+	const rawEncryptedToken = "encrypted-token"
+	const decryptedToken = "glsa_real_token"
+	const expectedOrg = "ESnet"
+
+	// Record the Authorization header that /api/org actually receives so we can
+	// assert the decrypted token was used, not the raw encrypted value.
+	var receivedAuth string
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/org", func(w http.ResponseWriter, r *http.Request) {
+		receivedAuth = r.Header.Get("Authorization")
+		w.Header().Set("Content-Type", "application/json")
+		if receivedAuth == "Bearer "+decryptedToken {
+			_ = json.NewEncoder(w).Encode(map[string]any{"id": 1, "name": expectedOrg})
+		} else {
+			// Unauthenticated or wrong token — simulate anonymous org.
+			_ = json.NewEncoder(w).Encode(map[string]any{"id": 2, "name": "Public"})
+		}
+	})
+	server := httptest.NewServer(mux)
+	t.Cleanup(server.Close)
+
+	svc := newTestDashNGo(t, server.URL, "")
+	svc.grafanaConf.OrganizationName = expectedOrg
+
+	// Mark the cipher plugin as enabled so Login() calls UpdateSecureModel.
+	svc.gdgConfig.PluginConfig.CipherPlugin = &configDomain.CipherConfig{Disabled: false}
+
+	// Inject the encrypted token and a fake cipher encoder.
+	require.NoError(t, svc.grafanaConf.TestSetSecureAuth(configDomain.SecureModel{
+		Token: rawEncryptedToken,
+	}))
+	svc.encoder = &fakeDecryptingEncoder{
+		decryptMap: map[string]string{rawEncryptedToken: decryptedToken},
+	}
+	svc.lookupSvc = &noOpLookupSvc{}
+
+	// Production sequence: Login() decrypts, InitOrganizations() calls /api/org.
+	svc.Login()
+	svc.InitOrganizations()
+
+	assert.Equal(t, "Bearer "+decryptedToken, receivedAuth,
+		"/api/org must receive the decrypted Bearer token, not the raw encrypted value")
+	assert.Equal(t, expectedOrg, svc.grafanaConf.GetOrganizationName(),
+		"the authenticated org must be preserved, not overwritten by the anonymous org")
+}
+
+// fakeDecryptingEncoder simulates a cipher encoder that decrypts tokens using a
+// fixed map. Only DecodeValue is exercised by Login(); the other methods are
+// identity no-ops for this test.
+type fakeDecryptingEncoder struct {
+	decryptMap map[string]string
+}
+
+func (f *fakeDecryptingEncoder) DecodeValue(in string) (string, error) {
+	if v, ok := f.decryptMap[in]; ok {
+		return v, nil
+	}
+	return in, nil
+}
+
+func (f *fakeDecryptingEncoder) EncodeValue(in string) (string, error) { return in, nil }
+
+func (f *fakeDecryptingEncoder) Encode(_ domain.ResourceType, data []byte) ([]byte, error) {
+	return data, nil
+}
+
+func (f *fakeDecryptingEncoder) Decode(_ domain.ResourceType, data []byte) ([]byte, error) {
+	return data, nil
+}
+
+// noOpLookupSvc treats every value as a plain (non-lookup) reference — appropriate
+// for configs that use only cipher-encrypted tokens with no lookup plugin.
+type noOpLookupSvc struct{}
+
+func (n *noOpLookupSvc) IsLookupRef(_ string) bool { return false }
+func (n *noOpLookupSvc) Prefix() string              { return "lookup:" }
 
 // TestInitOrganizations_TokenAuth_ApiOrgUnavailable_KeepsConfiguredName
 // verifies the fallback when /api/org itself can't be reached: GDG must not
