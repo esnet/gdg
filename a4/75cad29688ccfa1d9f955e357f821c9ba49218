@@ -1,0 +1,18 @@
+internal/ports/outbound/api_alerting.go
+  h_5c3111fc5355aa 16-17
+internal/adapter/grafana/api/alerting_service.go
+  h_5c3111fc5355aa 17,19-25,27-28,34,39,67,111,117,192-193
+internal/adapter/grafana/api/gdg_api.go
+  h_5c3111fc5355aa 20-22,29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a475cad29688ccfa1d9f955e357f821c9ba49218",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
