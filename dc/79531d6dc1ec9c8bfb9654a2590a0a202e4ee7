@@ -1,0 +1,60 @@
+cli/backup/alerting_alertrules.go
+  h_5c3111fc5355aa 12,31
+cli/backup/alerting_templates.go
+  h_5c3111fc5355aa 10,53,83,114,151
+internal/adapter/grafana/alerting/contactpoints.go
+  h_5c3111fc5355aa 1-194
+internal/adapter/grafana/alerting/notifications.go
+  h_5c3111fc5355aa 1,19,24,29,33,41-42,50-51,61,68-69,78,82
+internal/adapter/grafana/alerting/rules.go
+  h_5c3111fc5355aa 1,22-23,30-31,36,47-48,79,87-88,92,105,110,129,146,151,163-165,169,173,179,194,199,205,209,218-219,227
+internal/adapter/grafana/alerting/rules_filters.go
+  h_5c3111fc5355aa 1,37,169,194
+internal/adapter/grafana/alerting/service.go
+  h_5c3111fc5355aa 1-9
+internal/adapter/grafana/alerting/templates.go
+  h_5c3111fc5355aa 1,36-37,57,62,67,71,78,80,94-95,103,113,119,128-129,149
+internal/adapter/grafana/alerting/timings.go
+  h_5c3111fc5355aa 1,18,23,28,32,40-41,49-50,57,67,74,83-84,97,102
+internal/adapter/grafana/api/folders.go
+  h_5c3111fc5355aa 15,32-33,35,230,232,320,380-381,430-434
+internal/adapter/grafana/api/gdg_api.go
+  h_5c3111fc5355aa 17-20,24-26,53-54,57-58
+internal/adapter/grafana/api/libraryelements.go
+  h_5c3111fc5355aa 133
+internal/adapter/grafana/api/organizations_test.go
+  h_5c3111fc5355aa 204
+internal/adapter/grafana/core/folders.go
+  h_5c3111fc5355aa 7,15-16,95-117,119-141
+internal/ports/outbound/api_alerting.go
+  h_5c3111fc5355aa 16-18,20
+internal/ports/outbound/grafana_api.go
+  h_5c3111fc5355aa 83-85
+internal/ports/outbound/mocks/AlertingService.go
+  h_5c3111fc5355aa 1-1165
+internal/ports/outbound/mocks/FoldersApi.go
+  h_5c3111fc5355aa 200-261
+internal/ports/outbound/mocks/GrafanaService.go
+  h_5c3111fc5355aa 2122-2183
+internal/ports/outbound/mocks/LookupProvider.go
+  h_5c3111fc5355aa 1-96
+internal/ports/outbound/mocks/LookupResolver.go
+  h_5c3111fc5355aa 1-96
+internal/ports/outbound/mocks/LookupService.go
+  h_5c3111fc5355aa 1-131
+test/alerting_rules_test.go
+  h_5c3111fc5355aa 10,39,74,211,267,290,331,370
+test/alerting_templates_test.go
+  h_5c3111fc5355aa 11,40,43,48,52,55,62,65,71,96,148,160,165,171,179,182,187,193,199
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc79531d6dc1ec9c8bfb9654a2590a0a202e4ee7",
+  "prompts": {},
+  "humans": {
+    "h_5c3111fc5355aa": {
+      "author": "Samir Faci <samir@es.net>"
+    }
+  }
+}
