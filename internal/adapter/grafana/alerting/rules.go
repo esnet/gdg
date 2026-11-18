@@ -1,4 +1,4 @@
-package api
+package alerting
 
 import (
 	"context"
@@ -19,19 +19,21 @@ import (
 	"github.com/tidwall/sjson"
 )
 
+// contextKey namespaces values stored on a context.Context by this file, avoiding
+// collisions with keys used elsewhere.
 type contextKey string
 
 const (
 	fileContextKey contextKey = "file"
 )
 
-func (s *DashNGoImpl) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
-	data, err := s.GetClient().Provisioning.GetAlertRules()
+func (a *serviceImpl) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+	data, err := a.GetClient().Provisioning.GetAlertRules()
 	if err != nil {
 		return nil, err
 	}
 
-	folderUidMap := s.GetFolderUIDEntityMap(nil)
+	folderUidMap := a.GetFolderUIDEntityMap(nil)
 	var results []*domain.AlertRuleWithNestedFolder
 
 	for _, item := range data.GetPayload() {
@@ -42,8 +44,8 @@ func (s *DashNGoImpl) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRul
 		if folder, ok := folderUidMap[ptr.ValueOrDefault(item.FolderUID, "")]; ok {
 			entry.NestedPath = folder.NestedPath
 		}
-		file := getDestinationFilePath(s.GrafanaConf, entry, s.IsLocal(), s.Resources)
-		folderNameLocation, err := s.Resources.GetFolderFromResourcePath(s.GrafanaConf, file, domain.AlertingRulesResource, s.Storage.GetPrefix(), s.GrafanaConf.GetOrganizationName())
+		file := getDestinationFilePath(a.GrafanaConf, entry, a.IsLocal(), a.Resources)
+		folderNameLocation, err := a.Resources.GetFolderFromResourcePath(a.GrafanaConf, file, domain.AlertingRulesResource, a.Storage.GetPrefix(), a.GrafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Error(fmt.Sprintf("unable to determine alert rule folder name, falling back on default, %v", err))
 			continue
@@ -74,7 +76,7 @@ func getFilterContext(file string) context.Context {
 	return ctx
 }
 
-func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
+func (a *serviceImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertRuleWithNestedFolder, error) {
 	// TODO: once filtering in enabled we should delete any rules that we're not tracking in the folders that gdg manages
 	var (
 		success   []*domain.AlertRuleWithNestedFolder
@@ -82,12 +84,12 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 		rawEntity []byte
 	)
 
-	rulesPath := s.GrafanaConf.GetPath(domain.AlertingRulesResource, s.GrafanaConf.GetOrganizationName())
-	filesInDir, err := s.Storage.FindAllFiles(rulesPath, true)
+	rulesPath := a.GrafanaConf.GetPath(domain.AlertingRulesResource, a.GrafanaConf.GetOrganizationName())
+	filesInDir, err := a.Storage.FindAllFiles(rulesPath, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find any rules to export from storage engine, err: %w", err)
 	}
-	currentRules, err := s.ListAlertRules(filter)
+	currentRules, err := a.ListAlertRules(filter)
 	if err != nil {
 		return nil, err
 	}
@@ -100,12 +102,12 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 			slog.Debug("Only json files are supported, skipping", "filename", file)
 			continue
 		}
-		if rawEntity, err = s.Storage.ReadFile(file); err != nil {
+		if rawEntity, err = a.Storage.ReadFile(file); err != nil {
 			slog.Warn("Unable to read file", "filename", file, "err", err)
 			continue
 		}
 
-		folderNameLocation, err := s.Resources.GetFolderFromResourcePath(s.GrafanaConf, file, domain.AlertingRulesResource, s.Storage.GetPrefix(), s.GrafanaConf.GetOrganizationName())
+		folderNameLocation, err := a.Resources.GetFolderFromResourcePath(a.GrafanaConf, file, domain.AlertingRulesResource, a.Storage.GetPrefix(), a.GrafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Debug("unable to determine alert rule folder name", "err", err)
 		}
@@ -124,7 +126,7 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 			continue
 		}
 
-		rawEntity, err = s.alertRulesFolderResolver(ctx, folderUid, rawEntity, file)
+		rawEntity, err = a.alertRulesFolderResolver(ctx, folderUid, rawEntity, file)
 		if err != nil {
 			slog.Error("failed sanity check for alert rule folder. Skipping", "file", file)
 			continue
@@ -141,12 +143,12 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 			p.UID = entity.UID
 
 			p.XDisableProvenance = new("true")
-			_, err = s.GetClient().Provisioning.PutAlertRule(p)
+			_, err = a.GetClient().Provisioning.PutAlertRule(p)
 		} else {
 			p := provisioning.NewPostAlertRuleParams()
 			p.Body = entity.ProvisionedAlertRule
 			p.XDisableProvenance = new("true")
-			_, err = s.GetClient().Provisioning.PostAlertRule(p)
+			_, err = a.GetClient().Provisioning.PostAlertRule(p)
 		}
 		if err != nil {
 			slog.Error("unable to import rule", "uid", entity.UID, "err", err)
@@ -158,23 +160,23 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 	return success, nil
 }
 
-// Create a Folder Resolver to be invoked by AlertRules
-func (s *DashNGoImpl) alertRulesFolderResolver(ctx context.Context, folderUid string, rawEntity []byte, file string) ([]byte, error) {
-	folderNameLocation, fileLocationErr := s.Resources.GetFolderFromResourcePath(s.GrafanaConf, file, domain.AlertingRulesResource, s.Storage.GetPrefix(), s.GrafanaConf.GetOrganizationName())
+// alertRulesFolderResolver creates a Folder Resolver to be invoked by AlertRules.
+func (a *serviceImpl) alertRulesFolderResolver(ctx context.Context, folderUid string, rawEntity []byte, file string) ([]byte, error) {
+	folderNameLocation, fileLocationErr := a.Resources.GetFolderFromResourcePath(a.GrafanaConf, file, domain.AlertingRulesResource, a.Storage.GetPrefix(), a.GrafanaConf.GetOrganizationName())
 	if fileLocationErr != nil {
 		fmt.Printf("unable to determine alert rule folder name, %v", fileLocationErr)
 	}
-	folderObj, folderErr := s.getFolderByUid(folderUid)
+	folderObj, folderErr := a.GetFolderByUid(folderUid)
 	if folderErr != nil && fileLocationErr != nil {
 		return nil, fmt.Errorf("unable to proceed, folder does not exist and unable to look up name from file path. %v, %v", folderErr, fileLocationErr)
 	}
-	folderByPath, folderPathLookupErr := s.getFolderByNestedPath(folderNameLocation, nil)
+	folderByPath, folderPathLookupErr := a.GetFolderByNestedPath(folderNameLocation, nil)
 	// Folder exists but with a different UID
 	if folderErr != nil && folderPathLookupErr == nil {
 		return sjson.SetBytes(rawEntity, "folderUID", folderByPath.UID)
 	}
 	if folderErr != nil {
-		_, err := s.CreatedFoldersWithBaseUID(folderNameLocation, folderUid)
+		_, err := a.CreatedFoldersWithBaseUID(folderNameLocation, folderUid)
 		if err != nil {
 			return nil, fmt.Errorf("unable to proceed, could not create missing folder with UID: %s and path: %s. folderPathLookupErr: %v", folderUid, folderNameLocation, err)
 		}
@@ -189,22 +191,22 @@ func (s *DashNGoImpl) alertRulesFolderResolver(ctx context.Context, folderUid st
 	return rawEntity, nil
 }
 
-func (s *DashNGoImpl) DownloadAlertRules(filter outbound.Filter) ([]string, error) {
+func (a *serviceImpl) DownloadAlertRules(filter outbound.Filter) ([]string, error) {
 	var (
 		dsPacked []byte
 		err      error
 	)
-	data, err := s.ListAlertRules(filter)
+	data, err := a.ListAlertRules(filter)
 	if err != nil {
 		return nil, err
 	}
 	var savedFiles []string
 	for _, link := range data {
-		fileName := getDestinationFilePath(s.GrafanaConf, link, s.IsLocal(), s.Resources)
+		fileName := getDestinationFilePath(a.GrafanaConf, link, a.IsLocal(), a.Resources)
 		if dsPacked, err = json.MarshalIndent(link, "", "	"); err != nil {
 			return nil, fmt.Errorf("unable to serialize data to JSON. %w", err)
 		}
-		if err = s.Storage.WriteFile(fileName, dsPacked); err != nil {
+		if err = a.Storage.WriteFile(fileName, dsPacked); err != nil {
 			return nil, fmt.Errorf("unable to write file. %w", err)
 		}
 		savedFiles = append(savedFiles, fileName)
@@ -213,8 +215,8 @@ func (s *DashNGoImpl) DownloadAlertRules(filter outbound.Filter) ([]string, erro
 	return savedFiles, nil
 }
 
-func (s *DashNGoImpl) ClearAlertRules(filter outbound.Filter) ([]string, error) {
-	rules, err := s.ListAlertRules(filter)
+func (a *serviceImpl) ClearAlertRules(filter outbound.Filter) ([]string, error) {
+	rules, err := a.ListAlertRules(filter)
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +224,7 @@ func (s *DashNGoImpl) ClearAlertRules(filter outbound.Filter) ([]string, error) 
 	for _, rule := range rules {
 		p := provisioning.NewDeleteAlertRuleParams()
 		p.UID = rule.UID
-		_, err := s.GetClient().Provisioning.DeleteAlertRule(p)
+		_, err := a.GetClient().Provisioning.DeleteAlertRule(p)
 		if err != nil {
 			slog.Error("unable to delete rule", "rule", rule.UID)
 			continue

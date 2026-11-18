@@ -130,7 +130,7 @@ func (s *DashNGoImpl) ListLibraryElements(filter outbound.Filter) []*domain.With
 		if val.FolderUID == "" {
 			nestedPath = domain.ApiConsts.DefaultFolderName
 		} else {
-			fld, err := s.getFolderByUid(val.FolderUID)
+			fld, err := s.GetFolderByUid(val.FolderUID)
 			if err != nil {
 				slog.Error("unable to get forder to validate resource")
 				continue

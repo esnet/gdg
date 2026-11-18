@@ -13,9 +13,11 @@ type AlertingApi interface {
 	AlertTimings
 }
 
-// AlertingService defines alerting operations for managing contact points.
+// AlertingService is the standalone port satisfied by the alerting package's
+// ServiceImpl. It covers every alerting operation — contact points, rules,
+// templates, notification policies, and mute timings.
 type AlertingService interface {
-	AlertContactPoints
+	AlertingApi
 }
 
 type AlertRules interface {

@@ -8,7 +8,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/alerting"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -37,38 +37,38 @@ func TestTemplatesCrud(t *testing.T) {
 		}
 	}()
 	apiClient := r.ApiClient
-	templates, err := apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
+	templates, err := apiClient.ListAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 	assert.NoError(t, err)
 	assert.Equal(t, len(templates), 0, "Validate initial templates list is empty")
-	uploadedTemplates, err := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter(""))
+	uploadedTemplates, err := apiClient.UploadAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedTemplates), 2)
 	assert.True(t, slices.Contains(uploadedTemplates, "test_tpl1"))
 	// Update TPL when they already exist
-	uploadedTemplates, err = apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter(""))
+	uploadedTemplates, err = apiClient.UploadAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedTemplates), 2)
 	assert.True(t, slices.Contains(uploadedTemplates, "tpl2_test"))
-	templates, err = apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
+	templates, err = apiClient.ListAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 	assert.NoError(t, err)
 	assert.Equal(t, len(templates), 2)
-	data, err := apiClient.DownloadAlertTemplates(api.NewAlertTemplatesFilter(""))
+	data, err := apiClient.DownloadAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 	assert.NoError(t, err)
 	assert.Equal(t, "test/data/org_main-org/alerting/templates.json", data)
 	rawData, err := os.ReadFile(data)
 	assert.NoError(t, err)
 	assert.True(t, bytes.Contains(rawData, []byte("test_tpl1")))
 	assert.True(t, bytes.Contains(rawData, []byte("tpl2_test")))
-	uploadedTemplates, err = apiClient.ClearAlertTemplates(api.NewAlertTemplatesFilter(""))
+	uploadedTemplates, err = apiClient.ClearAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 	assert.NoError(t, err)
 	assert.Equal(t, len(uploadedTemplates), 2)
-	templates, err = apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
+	templates, err = apiClient.ListAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 	assert.NoError(t, err)
 	assert.Equal(t, len(templates), 0)
 }
 
 // TestTemplatesFilterTest validates that the regex based "filter" pattern (mirroring
-// api.NewAlertTemplatesFilter) is correctly applied across List, Clear, Upload, and
+// alerting.NewAlertTemplatesFilter) is correctly applied across List, Clear, Upload, and
 // Download operations for alert templates.
 func TestTemplatesFilterTest(t *testing.T) {
 	assert.NoError(t, os.Setenv(common.ContextNameEnv, common.TestContextName))
@@ -93,7 +93,7 @@ func TestTemplatesFilterTest(t *testing.T) {
 
 	// Seed both fixture templates (test_tpl1, tpl2_test) unfiltered so subsequent
 	// sub-tests have something meaningful to filter against.
-	seeded, err := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter(""))
+	seeded, err := apiClient.UploadAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(seeded))
 
@@ -145,7 +145,7 @@ func TestTemplatesFilterTest(t *testing.T) {
 		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
-				filter := api.NewAlertTemplatesFilter(tc.regex)
+				filter := alerting.NewAlertTemplatesFilter(tc.regex)
 				list, listErr := apiClient.ListAlertTemplates(filter)
 				assert.NoError(t, listErr)
 				assert.Equal(t, tc.expected, len(list))
@@ -157,18 +157,18 @@ func TestTemplatesFilterTest(t *testing.T) {
 	})
 
 	t.Run("Clear respects filter", func(t *testing.T) {
-		cleared, clearErr := apiClient.ClearAlertTemplates(api.NewAlertTemplatesFilter("^test_tpl1$"))
+		cleared, clearErr := apiClient.ClearAlertTemplates(alerting.NewAlertTemplatesFilter("^test_tpl1$"))
 		assert.NoError(t, clearErr)
 		assert.Equal(t, 1, len(cleared))
 		assert.Equal(t, "test_tpl1", cleared[0])
 
-		remaining, listErr := apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
+		remaining, listErr := apiClient.ListAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 		assert.NoError(t, listErr)
 		assert.Equal(t, 1, len(remaining))
 		assert.Equal(t, "tpl2_test", remaining[0].Name)
 
 		// Restore the cleared template so later sub-tests see both templates again.
-		restored, uploadErr := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter("^test_tpl1$"))
+		restored, uploadErr := apiClient.UploadAlertTemplates(alerting.NewAlertTemplatesFilter("^test_tpl1$"))
 		assert.NoError(t, uploadErr)
 		assert.Equal(t, 1, len(restored))
 		assert.Equal(t, "test_tpl1", restored[0])
@@ -176,27 +176,27 @@ func TestTemplatesFilterTest(t *testing.T) {
 
 	t.Run("Upload respects filter", func(t *testing.T) {
 		// Clear everything, then upload with a filter that only matches one template.
-		_, clearErr := apiClient.ClearAlertTemplates(api.NewAlertTemplatesFilter(""))
+		_, clearErr := apiClient.ClearAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 		assert.NoError(t, clearErr)
 
-		uploaded, uploadErr := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter("_test$"))
+		uploaded, uploadErr := apiClient.UploadAlertTemplates(alerting.NewAlertTemplatesFilter("_test$"))
 		assert.NoError(t, uploadErr)
 		assert.Equal(t, 1, len(uploaded))
 		assert.Equal(t, "tpl2_test", uploaded[0])
 
-		afterUpload, listErr := apiClient.ListAlertTemplates(api.NewAlertTemplatesFilter(""))
+		afterUpload, listErr := apiClient.ListAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 		assert.NoError(t, listErr)
 		assert.Equal(t, 1, len(afterUpload))
 		assert.Equal(t, "tpl2_test", afterUpload[0].Name)
 
 		// Restore full fixture set for the remaining sub-tests.
-		restored, uploadErr := apiClient.UploadAlertTemplates(api.NewAlertTemplatesFilter(""))
+		restored, uploadErr := apiClient.UploadAlertTemplates(alerting.NewAlertTemplatesFilter(""))
 		assert.NoError(t, uploadErr)
 		assert.Equal(t, 2, len(restored))
 	})
 
 	t.Run("Download respects filter", func(t *testing.T) {
-		data, downloadErr := apiClient.DownloadAlertTemplates(api.NewAlertTemplatesFilter("_test$"))
+		data, downloadErr := apiClient.DownloadAlertTemplates(alerting.NewAlertTemplatesFilter("_test$"))
 		assert.NoError(t, downloadErr)
 		rawData, readErr := os.ReadFile(data)
 		assert.NoError(t, readErr)

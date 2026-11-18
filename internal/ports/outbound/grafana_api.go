@@ -80,6 +80,9 @@ type FoldersApi interface {
 	DownloadFolders(filter Filter) []string
 	UploadFolders(filter Filter) []string
 	DeleteAllFolders(filter Filter) []string
+	// GetFolderByUid looks up a single folder by its UID. Used by alert-rule
+	// filtering to resolve a rule's folderUID to its nested path.
+	GetFolderByUid(uid string) (*customModels.NestedHit, error)
 	// Permissions
 	ListFolderPermissions(filter Filter) map[*customModels.NestedHit][]*models.DashboardACLInfoDTO
 	DownloadFolderPermissions(filter Filter) []string

@@ -201,7 +201,7 @@ func (f *fakeDecryptingEncoder) Decode(_ domain.ResourceType, data []byte) ([]by
 type noOpLookupSvc struct{}
 
 func (n *noOpLookupSvc) IsLookupRef(_ string) bool { return false }
-func (n *noOpLookupSvc) Prefix() string              { return "lookup:" }
+func (n *noOpLookupSvc) Prefix() string            { return "lookup:" }
 
 // TestInitOrganizations_TokenAuth_ApiOrgUnavailable_KeepsConfiguredName
 // verifies the fallback when /api/org itself can't be reached: GDG must not

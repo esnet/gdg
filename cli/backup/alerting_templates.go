@@ -7,7 +7,7 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
-	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/alerting"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -50,7 +50,7 @@ func newUploadAlertTemplatesCmd() simplecobra.Commander {
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			templateFilter, _ := cd.CobraCommand.Flags().GetString("filter")
-			filters := api.NewAlertTemplatesFilter(templateFilter)
+			filters := alerting.NewAlertTemplatesFilter(templateFilter)
 			files, err := rootCmd.GrafanaSvc().UploadAlertTemplates(filters)
 			if err != nil {
 				log.Fatal("unable to upload Orgs templates alerts", slog.Any("err", err))
@@ -80,7 +80,7 @@ func newClearAlertTemplatesCmd() simplecobra.Commander {
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			templateFilter, _ := cd.CobraCommand.Flags().GetString("filter")
-			filters := api.NewAlertTemplatesFilter(templateFilter)
+			filters := alerting.NewAlertTemplatesFilter(templateFilter)
 			files, err := rootCmd.GrafanaSvc().ClearAlertTemplates(filters)
 			if err != nil {
 				log.Fatal("unable to deleting Orgs templates alerts", slog.Any("err", err))
@@ -111,7 +111,7 @@ func newListAlertTemplatesCmd() simplecobra.Commander {
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			templateFilter, _ := cd.CobraCommand.Flags().GetString("filter")
-			filters := api.NewAlertTemplatesFilter(templateFilter)
+			filters := alerting.NewAlertTemplatesFilter(templateFilter)
 			rules, err := rootCmd.GrafanaSvc().ListAlertTemplates(filters)
 			if err != nil {
 				log.Fatal("unable to retrieve Orgs rule alerts", slog.Any("err", err))
@@ -148,7 +148,7 @@ func newDownloadAlertTemplatesCmd() simplecobra.Commander {
 				slog.String("context", rootCmd.ConfigSvc().GetContext()))
 
 			templateFilter, _ := cd.CobraCommand.Flags().GetString("filter")
-			filters := api.NewAlertTemplatesFilter(templateFilter)
+			filters := alerting.NewAlertTemplatesFilter(templateFilter)
 			file, err := rootCmd.GrafanaSvc().DownloadAlertTemplates(filters)
 			if err != nil {
 				log.Fatal("unable to retrieve Orgs templates alerts", slog.Any("err", err))

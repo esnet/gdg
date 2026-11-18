@@ -7,7 +7,6 @@ import (
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
 	"github.com/esnet/gdg/internal/ports/outbound"
-	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
 // Compile-time assertion that DashNGoImpl satisfies the full GrafanaService contract.
@@ -15,21 +14,20 @@ var _ outbound.GrafanaService = (*DashNGoImpl)(nil)
 
 // DashNGoImpl is the top-level GrafanaService implementation. It embeds core.Service
 // for shared infrastructure and composes typed service implementations behind their
-// port interfaces for resources that have been decomposed (dashboards, alerting contact points).
+// port interfaces for resources that have been decomposed (dashboards, alerting).
+// AlertingService is embedded anonymously so its methods promote directly onto
+// DashNGoImpl with no hand-written delegation — DashboardService is named because
+// MetaServiceApi requires an explicit DashboardSvc() accessor.
 // All other resource types (folders, connections, etc.) continue to be implemented
 // directly on DashNGoImpl until they are similarly extracted.
 type DashNGoImpl struct {
-	core.Service                          // promoted fields + methods
-	dashboardSvc  outbound.DashboardService // behind the port interface
-	alertingSvc   outbound.AlertingService  // behind the port interface
+	core.Service             // promoted fields + methods
+	outbound.AlertingService // promoted methods — all alerting operations
+	dashboardSvc             outbound.DashboardService
 }
 
 func (s *DashNGoImpl) DashboardSvc() outbound.DashboardService {
 	return s.dashboardSvc
-}
-
-func (s *DashNGoImpl) AlertingSvc() outbound.AlertingService {
-	return s.alertingSvc
 }
 
 func (s *DashNGoImpl) GetGdgConfig() *config_domain.GDGAppConfiguration {
@@ -52,13 +50,13 @@ func NewDashNGo(
 	base := core.NewService(cfg, cfg.GetDefaultGrafanaConfig(), extendedAPI, disk, encoder, resource, lookupResolver, lookupSvc)
 
 	obj := &DashNGoImpl{
-		Service: base,
+		Service:         base,
+		AlertingService: alerting.NewService(base),
 	}
 
-	// Each service gets its own core.Service copy — same values, no back-reference
-	// to DashNGoImpl. Stored behind the port interface.
+	// DashboardServiceImpl gets its own core.Service copy — same values, no
+	// back-reference to DashNGoImpl. Stored behind the port interface.
 	obj.dashboardSvc = NewDashboardService(base)
-	obj.alertingSvc = alerting.NewService(base)
 
 	return obj
 }
@@ -114,24 +112,4 @@ func (s *DashNGoImpl) UploadDashboardPermissions(filter outbound.Filter) ([]stri
 
 func (s *DashNGoImpl) ClearDashboardPermissions(filter outbound.Filter) error {
 	return s.dashboardSvc.ClearDashboardPermissions(filter)
-}
-
-// ---------------------------------------------------------------------------
-// AlertContactPoints — delegated to alerting.ServiceImpl
-// ---------------------------------------------------------------------------
-
-func (s *DashNGoImpl) ListContactPoints() ([]*models.ContactPointExport, error) {
-	return s.alertingSvc.ListContactPoints()
-}
-
-func (s *DashNGoImpl) DownloadContactPoints() (string, error) {
-	return s.alertingSvc.DownloadContactPoints()
-}
-
-func (s *DashNGoImpl) UploadContactPoints() ([]string, error) {
-	return s.alertingSvc.UploadContactPoints()
-}
-
-func (s *DashNGoImpl) ClearContactPoints() ([]string, error) {
-	return s.alertingSvc.ClearContactPoints()
 }

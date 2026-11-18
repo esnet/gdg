@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"path"
 	"regexp"
 
 	v2 "github.com/esnet/gdg/internal/adapter/filters/v2"
@@ -11,6 +12,8 @@ import (
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/encode"
+	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/samber/lo"
 )
 
 // NewFolderFilter builds a Filter that matches folders against the configured
@@ -89,4 +92,50 @@ func GetNestedFolder(folderTitle, folderUID string, folderUidMap map[string]*dom
 	return folderPath
 }
 
+// GetFolderByUid gets a given folder given a valid Uid.
+func (b *Service) GetFolderByUid(uid string) (*domain.NestedHit, error) {
+	res, err := b.GetClient().Folders.GetFolderByUID(uid)
+	if err != nil {
+		return nil, err
+	}
+	return b.FolderToHit(res.GetPayload()), nil
+}
 
+// GetFolderByNestedPath retrieves a single folder matching the given nested path,
+// using the provided filter to obtain the list of folders. Returns an error if no
+// folder is found or if multiple folders match.
+func (b *Service) GetFolderByNestedPath(nestedPath string, filter outbound.Filter) (*domain.NestedHit, error) {
+	folderList := b.ListFolders(filter)
+	result := lo.Filter(folderList, func(item *domain.NestedHit, index int) bool {
+		return item.NestedPath == nestedPath
+	})
+	if len(result) == 0 {
+		return nil, fmt.Errorf("unable to find folder with nested path %s", nestedPath)
+	}
+	if len(result) > 1 {
+		return nil, fmt.Errorf("unexpected behavior, too many folders matched for %s", nestedPath)
+	}
+
+	return result[0], nil
+}
+
+// FolderToHit converts a models.Folder struct to a models.Hit struct.
+func (b *Service) FolderToHit(fld *models.Folder) *domain.NestedHit {
+	res := new(domain.NestedHit)
+	res.Hit = new(models.Hit)
+	res.Title = fld.Title
+	res.UID = fld.UID
+	res.FolderUID = fld.ParentUID
+	res.Type = models.HitType(domain.ApiConsts.SearchTypeFolder)
+	res.URL = fld.URL
+	paths := lo.Map(fld.Parents, func(item *models.Folder, index int) string {
+		return encode.Encode(item.Title)
+	})
+	if val := path.Join(paths...); val == "" {
+		res.NestedPath = encode.Encode(res.Title)
+	} else {
+		res.NestedPath = path.Join(val, encode.Encode(res.Title))
+	}
+
+	return res
+}

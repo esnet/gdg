@@ -9,7 +9,7 @@ import (
 
 	"github.com/bep/simplecobra"
 	"github.com/esnet/gdg/cli/domain"
-	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/alerting"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	appDomain "github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
@@ -28,7 +28,7 @@ func getAlertRulesFilter(cfg *config_domain.GDGAppConfiguration, grafanaService 
 	f.UID, _ = command.Flags().GetString("uid")
 	f.IgnoreWatchedFolders, _ = command.Flags().GetBool("ignore-watched-folders")
 
-	return f, api.NewAlertRuleFilter(cfg, grafanaService, f)
+	return f, alerting.NewAlertRuleFilter(cfg, grafanaService, f)
 }
 
 // newAlertingRulesCommand creates and returns a Commander that manages Alerting Rules. It supports subcommands for

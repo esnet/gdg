@@ -1,4 +1,4 @@
-package api
+package alerting
 
 import (
 	"encoding/json"
@@ -16,21 +16,21 @@ const (
 
 // DownloadAlertNotifications retrieves alert notifications, serializes them to JSON,
 // writes the file to disk/s3, and returns the file path or an error.
-func (s *DashNGoImpl) DownloadAlertNotifications() (string, error) {
+func (a *serviceImpl) DownloadAlertNotifications() (string, error) {
 	var (
 		dsPacked []byte
 		err      error
 	)
-	tpls, err := s.ListAlertNotifications()
+	tpls, err := a.ListAlertNotifications()
 	if err != nil {
 		return "", err
 	}
 
-	dsPath := s.Resources.BuildResourcePath(s.GrafanaConf, policiesFile, domain.AlertingResource, s.IsLocal(), false)
+	dsPath := a.Resources.BuildResourcePath(a.GrafanaConf, policiesFile, domain.AlertingResource, a.IsLocal(), false)
 	if dsPacked, err = json.MarshalIndent(tpls, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
-	if err = s.Storage.WriteFile(dsPath, dsPacked); err != nil {
+	if err = a.Storage.WriteFile(dsPath, dsPacked); err != nil {
 		return "", fmt.Errorf("unable to write file. %w", err)
 	}
 
@@ -38,8 +38,8 @@ func (s *DashNGoImpl) DownloadAlertNotifications() (string, error) {
 }
 
 // ListAlertNotifications retrieves the current alert notification policy tree.
-func (s *DashNGoImpl) ListAlertNotifications() (*models.Route, error) {
-	res, err := s.GetClient().Provisioning.GetPolicyTree()
+func (a *serviceImpl) ListAlertNotifications() (*models.Route, error) {
+	res, err := a.GetClient().Provisioning.GetPolicyTree()
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +47,8 @@ func (s *DashNGoImpl) ListAlertNotifications() (*models.Route, error) {
 }
 
 // ClearAlertNotifications resets the policy tree to clear alert notifications.
-func (s *DashNGoImpl) ClearAlertNotifications() error {
-	_, err := s.GetClient().Provisioning.ResetPolicyTree()
+func (a *serviceImpl) ClearAlertNotifications() error {
+	_, err := a.GetClient().Provisioning.ResetPolicyTree()
 	if err != nil {
 		slog.Error("unable to reset policy tree")
 		return err
@@ -58,15 +58,15 @@ func (s *DashNGoImpl) ClearAlertNotifications() error {
 }
 
 // UploadAlertNotifications uploads alert notification policies from file to Grafana and returns updated list.
-func (s *DashNGoImpl) UploadAlertNotifications() (*models.Route, error) {
+func (a *serviceImpl) UploadAlertNotifications() (*models.Route, error) {
 	var (
 		err   error
 		rawDS []byte
 		data  *models.Route
 	)
 
-	fileLocation := s.Resources.BuildResourcePath(s.GrafanaConf, policiesFile, domain.AlertingResource, s.IsLocal(), false)
-	if rawDS, err = s.Storage.ReadFile(fileLocation); err != nil {
+	fileLocation := a.Resources.BuildResourcePath(a.GrafanaConf, policiesFile, domain.AlertingResource, a.IsLocal(), false)
+	if rawDS, err = a.Storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}
 	if err = json.Unmarshal(rawDS, &data); err != nil {
@@ -75,9 +75,9 @@ func (s *DashNGoImpl) UploadAlertNotifications() (*models.Route, error) {
 	p := provisioning.NewPutPolicyTreeParams()
 	p.XDisableProvenance = new("true")
 	p.Body = data
-	_, err = s.GetClient().Provisioning.PutPolicyTree(p)
+	_, err = a.GetClient().Provisioning.PutPolicyTree(p)
 	if err != nil {
 		return nil, err
 	}
-	return s.ListAlertNotifications()
+	return a.ListAlertNotifications()
 }
