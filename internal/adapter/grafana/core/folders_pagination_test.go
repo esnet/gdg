@@ -1,19 +1,18 @@
-package api
+package core
 
-// Regression test for the folder pagination bug: baseService.listFolders()
-// and DashNGoImpl.ListFolders() called the legacy /api/search endpoint with
-// no Limit/Page set, so they got exactly one page at whatever Grafana's
-// server-side default happens to be and never looped -- the same bug shape
-// that silently dropped 89% of dashboards on the v2 App Platform path,
-// applied to folders instead. searchAllPages() was added to loop Limit/Page
-// (requesting the documented max of 5000 per page) until a page comes back
-// short, mirroring the pattern listDashboardsV1 already used correctly for
-// dashboards. This test drives a fake /api/search that honors the requested
-// limit as its own page size -- the real contract per the client's doc
-// comment ("Limit the number of returned results (max 5000)"), unlike the
-// v2 App Platform's independent server-enforced page size -- across the
-// 5000-item page boundary, and fails if the loop ever regresses back to a
-// single unpaginated call.
+// Regression test for the folder pagination bug: Service.ListFolders()
+// called the legacy /api/search endpoint with no Limit/Page set, so it got
+// exactly one page at whatever Grafana's server-side default happens to be
+// and never looped -- the same bug shape that silently dropped 89% of
+// dashboards on the v2 App Platform path, applied to folders instead.
+// SearchAllPages() was added to loop Limit/Page (requesting the documented
+// max of 5000 per page) until a page comes back short, mirroring the pattern
+// listDashboardsV1 already used correctly for dashboards. This test drives a
+// fake /api/search that honors the requested limit as its own page size --
+// the real contract per the client's doc comment ("Limit the number of
+// returned results (max 5000)"), unlike the v2 App Platform's independent
+// server-enforced page size -- across the 5000-item page boundary, and fails
+// if the loop ever regresses back to a single unpaginated call.
 
 import (
 	"encoding/json"
@@ -76,7 +75,7 @@ func pagedSearchServer(t *testing.T, total int) (*httptest.Server, *[][2]string)
 
 // newTestGrafanaClient builds a bare grafana-openapi-client-go client pointed
 // at a fake server, bypassing GDG's config/auth plumbing entirely -- all
-// searchAllPages needs is a *client.GrafanaHTTPAPI.
+// SearchAllPages needs is a *client.GrafanaHTTPAPI.
 func newTestGrafanaClient(t *testing.T, serverURL string) *client.GrafanaHTTPAPI {
 	t.Helper()
 	u, err := url.Parse(serverURL)
@@ -91,7 +90,7 @@ func newTestGrafanaClient(t *testing.T, serverURL string) *client.GrafanaHTTPAPI
 
 var folderSearchType = "dash-folder"
 
-// TestSearchAllPages_WalksEveryPage verifies searchAllPages loops past the
+// TestSearchAllPages_WalksEveryPage verifies SearchAllPages loops past the
 // documented 5000-item page boundary instead of stopping at the first page
 // -- 5001 total items forces exactly two requests (a full 5000-item page,
 // then a 1-item short page that ends the loop).
@@ -101,7 +100,7 @@ func TestSearchAllPages_WalksEveryPage(t *testing.T) {
 	server, seenPages := pagedSearchServer(t, total)
 	apiClient := newTestGrafanaClient(t, server.URL)
 
-	hits := searchAllPages(apiClient, func(p *search.SearchParams) {
+	hits := SearchAllPages(apiClient, func(p *search.SearchParams) {
 		p.Type = &folderSearchType
 	})
 
@@ -126,7 +125,7 @@ func TestSearchAllPages_ShortPage_StopsLooping(t *testing.T) {
 	server, seenPages := pagedSearchServer(t, total)
 	apiClient := newTestGrafanaClient(t, server.URL)
 
-	hits := searchAllPages(apiClient, func(p *search.SearchParams) {
+	hits := SearchAllPages(apiClient, func(p *search.SearchParams) {
 		p.Type = &folderSearchType
 	})
 

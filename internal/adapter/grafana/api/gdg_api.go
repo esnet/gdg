@@ -1,6 +1,8 @@
 package api
 
 import (
+	"github.com/esnet/gdg/internal/adapter/grafana/alerting"
+	"github.com/esnet/gdg/internal/adapter/grafana/core"
 	"github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports"
@@ -11,15 +13,15 @@ import (
 // Compile-time assertion that DashNGoImpl satisfies the full GrafanaService contract.
 var _ outbound.GrafanaService = (*DashNGoImpl)(nil)
 
-// DashNGoImpl is the top-level GrafanaService implementation. It embeds baseService
+// DashNGoImpl is the top-level GrafanaService implementation. It embeds core.Service
 // for shared infrastructure and composes typed service implementations behind their
 // port interfaces for resources that have been decomposed (dashboards, alerting contact points).
 // All other resource types (folders, connections, etc.) continue to be implemented
 // directly on DashNGoImpl until they are similarly extracted.
 type DashNGoImpl struct {
-	baseService                            // promoted fields + methods
-	dashboardSvc outbound.DashboardService // behind the port interface
-	alertingSvc  outbound.AlertingService  // behind the port interface
+	core.Service                          // promoted fields + methods
+	dashboardSvc  outbound.DashboardService // behind the port interface
+	alertingSvc   outbound.AlertingService  // behind the port interface
 }
 
 func (s *DashNGoImpl) DashboardSvc() outbound.DashboardService {
@@ -31,41 +33,32 @@ func (s *DashNGoImpl) AlertingSvc() outbound.AlertingService {
 }
 
 func (s *DashNGoImpl) GetGdgConfig() *config_domain.GDGAppConfiguration {
-	return s.gdgConfig
+	return s.GdgConfig
 }
 
 func (s *DashNGoImpl) SetStorage(v outbound.Storage) {
-	s.storage = v
+	s.Storage = v
 }
 
 func NewDashNGo(
 	cfg *config_domain.GDGAppConfiguration,
 	encoder outbound.CipherEncoder,
 	disk outbound.Storage,
-	extended outbound.ExtendedApi,
+	extendedAPI outbound.ExtendedApi,
 	resource ports.Resources,
 	lookupResolver outbound.LookupResolver,
 	lookupSvc outbound.LookupService,
 ) outbound.GrafanaService {
-	base := baseService{
-		gdgConfig:      cfg,
-		grafanaConf:    cfg.GetDefaultGrafanaConfig(),
-		extended:       extended,
-		encoder:        encoder,
-		storage:        disk,
-		resources:      resource,
-		lookupResolver: lookupResolver,
-		lookupSvc:      lookupSvc,
-	}
+	base := core.NewService(cfg, cfg.GetDefaultGrafanaConfig(), extendedAPI, disk, encoder, resource, lookupResolver, lookupSvc)
 
 	obj := &DashNGoImpl{
-		baseService: base,
+		Service: base,
 	}
 
-	// Each service gets its own baseService copy — same values, no back-reference
+	// Each service gets its own core.Service copy — same values, no back-reference
 	// to DashNGoImpl. Stored behind the port interface.
 	obj.dashboardSvc = NewDashboardService(base)
-	obj.alertingSvc = NewAlertingService(base)
+	obj.alertingSvc = alerting.NewService(base)
 
 	return obj
 }
@@ -97,10 +90,10 @@ func (s *DashNGoImpl) DeleteAllDashboards(filter outbound.Filter) []string {
 }
 
 // TestCreatedFolders is a test entry point that exercises folder creation logic
-// independently. It delegates to baseService.createdFoldersWithBaseUID which is
+// independently. It delegates to core.Service.CreatedFoldersWithBaseUID which is
 // promoted via embedding.
 func (s *DashNGoImpl) TestCreatedFolders(folderName string) (map[string]string, error) {
-	return s.createdFoldersWithBaseUID(folderName, "")
+	return s.CreatedFoldersWithBaseUID(folderName, "")
 }
 
 // ---------------------------------------------------------------------------
@@ -124,7 +117,7 @@ func (s *DashNGoImpl) ClearDashboardPermissions(filter outbound.Filter) error {
 }
 
 // ---------------------------------------------------------------------------
-// AlertContactPoints — delegated to AlertingServiceImpl
+// AlertContactPoints — delegated to alerting.ServiceImpl
 // ---------------------------------------------------------------------------
 
 func (s *DashNGoImpl) ListContactPoints() ([]*models.ContactPointExport, error) {

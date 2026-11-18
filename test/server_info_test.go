@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/esnet/gdg/internal/adapter/grafana/api"
+	"github.com/esnet/gdg/internal/adapter/grafana/core"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/pkg/test_tooling"
 	"github.com/esnet/gdg/pkg/test_tooling/common"
@@ -37,12 +37,12 @@ func TestServerInfo(t *testing.T) {
 	assert := assert.New(t)
 	res := apiClient.GetServerInfo()
 	assert.NotNil(res)
-	assert.NotEmpty(res[api.SrvInfoDBKey])
-	assert.NotEmpty(res[api.SrvInfoVersionKey])
-	assert.NotEmpty(res[api.SrvInfoCommitKey])
+	assert.NotEmpty(res[core.SrvInfoDBKey])
+	assert.NotEmpty(res[core.SrvInfoVersionKey])
+	assert.NotEmpty(res[core.SrvInfoCommitKey])
 	if apiClient.IsEnterprise() {
-		assert.NotEmpty(res[api.SrvInfoEnterpriseCommitKey])
+		assert.NotEmpty(res[core.SrvInfoEnterpriseCommitKey])
 	} else {
-		assert.Empty(res[api.SrvInfoEnterpriseCommitKey])
+		assert.Empty(res[core.SrvInfoEnterpriseCommitKey])
 	}
 }

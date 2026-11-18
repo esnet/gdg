@@ -1,11 +1,4 @@
 package api
 
-// Server info constants used by baseService.GetServerInfo and any callers.
-const (
-	SrvInfoDBKey               = "Database"
-	SrvInfoCommitKey           = "Commit"
-	SrvInfoVersionKey          = "Version"
-	SrvInfoEnterpriseCommitKey = "EnterpriseCommit"
-)
-
-// GetServerInfo is promoted from baseService via DashNGoImpl embedding.
+// GetServerInfo is promoted from core.Service via DashNGoImpl embedding.
+// Server info keys live in core (core.SrvInfoDBKey, etc).

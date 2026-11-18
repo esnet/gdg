@@ -78,17 +78,17 @@ func NewTeamFilter(entries ...string) outbound.Filter {
 func (s *DashNGoImpl) DownloadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	teamListing := maps.Keys(s.ListTeams(filter))
 	importedTeams := make(map[*models.TeamDTO][]*models.TeamMemberDTO)
-	teamPath := s.resources.BuildResourceFolder(s.grafanaConf, "", domain.TeamResource, s.isLocal(), s.GetGlobals().ClearOutput)
+	teamPath := s.Resources.BuildResourceFolder(s.GrafanaConf, "", domain.TeamResource, s.IsLocal(), s.GetGlobals().ClearOutput)
 	for ndx, team := range teamListing {
 		// Teams
-		teamFileName := filepath.Join(teamPath, s.resources.GetSlug(ptr.ValueOrDefault(team.Name, "")), "team.json")
+		teamFileName := filepath.Join(teamPath, s.Resources.GetSlug(ptr.ValueOrDefault(team.Name, "")), "team.json")
 		teamData, err := json.MarshalIndent(&teamListing[ndx], "", "\t")
 		if err != nil {
 			slog.Error("could not serialize team object for team name", "teamName", team.Name)
 			continue
 		}
 		// Members
-		memberFileName := filepath.Join(teamPath, s.resources.GetSlug(ptr.ValueOrDefault(team.Name, "")), "members.json")
+		memberFileName := filepath.Join(teamPath, s.Resources.GetSlug(ptr.ValueOrDefault(team.Name, "")), "members.json")
 		members, err := s.GetClient().Teams.GetTeamMembers(fmt.Sprintf("%d", ptr.ValueOrDefault(team.ID, 0)))
 		if err != nil {
 			slog.Error("could not get team members object for team name", "teamName", team.Name)
@@ -100,9 +100,9 @@ func (s *DashNGoImpl) DownloadTeams(filter outbound.Filter) map[*models.TeamDTO]
 			continue
 		}
 		// Writing Files
-		if err = s.storage.WriteFile(teamFileName, teamData); err != nil {
+		if err = s.Storage.WriteFile(teamFileName, teamData); err != nil {
 			slog.Error("could not write file", "teamName", team.Name, "err", err)
-		} else if err = s.storage.WriteFile(memberFileName, membersData); err != nil {
+		} else if err = s.Storage.WriteFile(memberFileName, membersData); err != nil {
 			slog.Error("could not write team members file", "teamName", team.Name, "err", err)
 		} else {
 			importedTeams[team] = members.GetPayload()
@@ -113,8 +113,8 @@ func (s *DashNGoImpl) DownloadTeams(filter outbound.Filter) map[*models.TeamDTO]
 
 // UploadTeams Export Teams
 func (s *DashNGoImpl) UploadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
-	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.TeamResource, orgName), true)
+	orgName := s.GrafanaConf.GetOrganizationName()
+	filesInDir, err := s.Storage.FindAllFiles(s.GrafanaConf.GetPath(domain.TeamResource, orgName), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for teams", "err", err)
 	}
@@ -128,7 +128,7 @@ func (s *DashNGoImpl) UploadTeams(filter outbound.Filter) map[*models.TeamDTO][]
 		if strings.HasSuffix(fileLocation, "team.json") {
 			// Export Team
 			var rawTeam []byte
-			if rawTeam, err = s.storage.ReadFile(fileLocation); err != nil {
+			if rawTeam, err = s.Storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
@@ -156,8 +156,8 @@ func (s *DashNGoImpl) UploadTeams(filter outbound.Filter) map[*models.TeamDTO][]
 			var currentMembers []*models.TeamMemberDTO
 			var rawMembers []byte
 
-			teamMemberLocation := filepath.Join(s.grafanaConf.GetPath(domain.TeamResource, orgName), s.resources.GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
-			if rawMembers, err = s.storage.ReadFile(teamMemberLocation); err != nil {
+			teamMemberLocation := filepath.Join(s.GrafanaConf.GetPath(domain.TeamResource, orgName), s.Resources.GetSlug(ptr.ValueOrDefault(newTeam.Name, "")), "members.json")
+			if rawMembers, err = s.Storage.ReadFile(teamMemberLocation); err != nil {
 				slog.Error("failed to find team members", "filename", fileLocation, "err", err)
 				continue
 			}

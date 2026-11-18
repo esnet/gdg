@@ -26,11 +26,11 @@ func (s *DashNGoImpl) DownloadAlertNotifications() (string, error) {
 		return "", err
 	}
 
-	dsPath := s.resources.BuildResourcePath(s.grafanaConf, policiesFile, domain.AlertingResource, s.isLocal(), false)
+	dsPath := s.Resources.BuildResourcePath(s.GrafanaConf, policiesFile, domain.AlertingResource, s.IsLocal(), false)
 	if dsPacked, err = json.MarshalIndent(tpls, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
-	if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
+	if err = s.Storage.WriteFile(dsPath, dsPacked); err != nil {
 		return "", fmt.Errorf("unable to write file. %w", err)
 	}
 
@@ -65,8 +65,8 @@ func (s *DashNGoImpl) UploadAlertNotifications() (*models.Route, error) {
 		data  *models.Route
 	)
 
-	fileLocation := s.resources.BuildResourcePath(s.grafanaConf, policiesFile, domain.AlertingResource, s.isLocal(), false)
-	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
+	fileLocation := s.Resources.BuildResourcePath(s.GrafanaConf, policiesFile, domain.AlertingResource, s.IsLocal(), false)
+	if rawDS, err = s.Storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}
 	if err = json.Unmarshal(rawDS, &data); err != nil {

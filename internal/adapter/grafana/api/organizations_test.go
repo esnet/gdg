@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/core"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/spf13/viper"
@@ -33,8 +34,10 @@ func newTestDashNGo(t *testing.T, serverURL string, token string) *DashNGoImpl {
 	}
 
 	return &DashNGoImpl{
-		gdgConfig:   gdgConfig,
-		grafanaConf: grafanaConf,
+		Service: core.Service{
+			GdgConfig:   gdgConfig,
+			GrafanaConf: grafanaConf,
+		},
 	}
 }
 
@@ -59,11 +62,11 @@ func TestInitOrganizations_TokenAuth_NoConfiguredName_ResolvesFromToken(t *testi
 	server := orgHandler(t, 1, "Main Org.")
 
 	svc := newTestDashNGo(t, server.URL, "glsa_faketoken")
-	assert.Equal(t, "unknown", svc.grafanaConf.GetOrganizationName(), "sanity: unresolved token context starts at unknown")
+	assert.Equal(t, "unknown", svc.GrafanaConf.GetOrganizationName(), "sanity: unresolved token context starts at unknown")
 
 	svc.InitOrganizations()
 
-	assert.Equal(t, "Main Org.", svc.grafanaConf.GetOrganizationName())
+	assert.Equal(t, "Main Org.", svc.GrafanaConf.GetOrganizationName())
 }
 
 // TestInitOrganizations_TokenAuth_ConfiguredNameMatches_NoOverride verifies
@@ -73,11 +76,11 @@ func TestInitOrganizations_TokenAuth_ConfiguredNameMatches_NoOverride(t *testing
 	server := orgHandler(t, 1, "Main Org.")
 
 	svc := newTestDashNGo(t, server.URL, "glsa_faketoken")
-	svc.grafanaConf.OrganizationName = "Main Org."
+	svc.GrafanaConf.OrganizationName = "Main Org."
 
 	svc.InitOrganizations()
 
-	assert.Equal(t, "Main Org.", svc.grafanaConf.GetOrganizationName())
+	assert.Equal(t, "Main Org.", svc.GrafanaConf.GetOrganizationName())
 }
 
 // TestInitOrganizations_TokenAuth_ConfiguredNameMismatch_OverridesToActual
@@ -90,11 +93,11 @@ func TestInitOrganizations_TokenAuth_ConfiguredNameMismatch_OverridesToActual(t 
 	server := orgHandler(t, 2, "Second Org")
 
 	svc := newTestDashNGo(t, server.URL, "glsa_faketoken")
-	svc.grafanaConf.OrganizationName = "Configured Org"
+	svc.GrafanaConf.OrganizationName = "Configured Org"
 
 	svc.InitOrganizations()
 
-	assert.Equal(t, "Second Org", svc.grafanaConf.GetOrganizationName(), "the token's actual org must win over a stale/incorrect configured name")
+	assert.Equal(t, "Second Org", svc.GrafanaConf.GetOrganizationName(), "the token's actual org must win over a stale/incorrect configured name")
 }
 
 // TestInitOrganizations_Anonymous_NoConfiguredName_ResolvesFromCurrentOrg
@@ -106,11 +109,11 @@ func TestInitOrganizations_Anonymous_NoConfiguredName_ResolvesFromCurrentOrg(t *
 	server := orgHandler(t, 2, "Public")
 
 	svc := newTestDashNGo(t, server.URL, "")
-	assert.Equal(t, "unknown", svc.grafanaConf.GetOrganizationName(), "sanity: unresolved anonymous context starts at unknown")
+	assert.Equal(t, "unknown", svc.GrafanaConf.GetOrganizationName(), "sanity: unresolved anonymous context starts at unknown")
 
 	svc.InitOrganizations()
 
-	assert.Equal(t, "Public", svc.grafanaConf.GetOrganizationName())
+	assert.Equal(t, "Public", svc.GrafanaConf.GetOrganizationName())
 }
 
 // TestInitOrganizations_CipherToken_DecryptedBeforeOrgResolution verifies the
@@ -145,19 +148,19 @@ func TestInitOrganizations_CipherToken_DecryptedBeforeOrgResolution(t *testing.T
 	t.Cleanup(server.Close)
 
 	svc := newTestDashNGo(t, server.URL, "")
-	svc.grafanaConf.OrganizationName = expectedOrg
+	svc.GrafanaConf.OrganizationName = expectedOrg
 
 	// Mark the cipher plugin as enabled so Login() calls UpdateSecureModel.
-	svc.gdgConfig.PluginConfig.CipherPlugin = &configDomain.CipherConfig{Disabled: false}
+	svc.GdgConfig.PluginConfig.CipherPlugin = &configDomain.CipherConfig{Disabled: false}
 
 	// Inject the encrypted token and a fake cipher encoder.
-	require.NoError(t, svc.grafanaConf.TestSetSecureAuth(configDomain.SecureModel{
+	require.NoError(t, svc.GrafanaConf.TestSetSecureAuth(configDomain.SecureModel{
 		Token: rawEncryptedToken,
 	}))
-	svc.encoder = &fakeDecryptingEncoder{
+	svc.Encoder = &fakeDecryptingEncoder{
 		decryptMap: map[string]string{rawEncryptedToken: decryptedToken},
 	}
-	svc.lookupSvc = &noOpLookupSvc{}
+	svc.LookupSvc = &noOpLookupSvc{}
 
 	// Production sequence: Login() decrypts, InitOrganizations() calls /api/org.
 	svc.Login()
@@ -165,7 +168,7 @@ func TestInitOrganizations_CipherToken_DecryptedBeforeOrgResolution(t *testing.T
 
 	assert.Equal(t, "Bearer "+decryptedToken, receivedAuth,
 		"/api/org must receive the decrypted Bearer token, not the raw encrypted value")
-	assert.Equal(t, expectedOrg, svc.grafanaConf.GetOrganizationName(),
+	assert.Equal(t, expectedOrg, svc.GrafanaConf.GetOrganizationName(),
 		"the authenticated org must be preserved, not overwritten by the anonymous org")
 }
 
@@ -217,9 +220,9 @@ func TestInitOrganizations_TokenAuth_ApiOrgUnavailable_KeepsConfiguredName(t *te
 	t.Cleanup(server.Close)
 
 	svc := newTestDashNGo(t, server.URL, "glsa_faketoken")
-	svc.grafanaConf.OrganizationName = "Configured Org"
+	svc.GrafanaConf.OrganizationName = "Configured Org"
 
 	svc.InitOrganizations()
 
-	assert.Equal(t, "Configured Org", svc.grafanaConf.GetOrganizationName(), "an unreachable /api/org must not wipe out an already-configured name")
+	assert.Equal(t, "Configured Org", svc.GrafanaConf.GetOrganizationName(), "an unreachable /api/org must not wipe out an already-configured name")
 }

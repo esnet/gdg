@@ -31,7 +31,7 @@ func (s *DashNGoImpl) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRul
 		return nil, err
 	}
 
-	folderUidMap := s.getFolderUIDEntityMap(nil)
+	folderUidMap := s.GetFolderUIDEntityMap(nil)
 	var results []*domain.AlertRuleWithNestedFolder
 
 	for _, item := range data.GetPayload() {
@@ -42,8 +42,8 @@ func (s *DashNGoImpl) ListAlertRules(filter outbound.Filter) ([]*domain.AlertRul
 		if folder, ok := folderUidMap[ptr.ValueOrDefault(item.FolderUID, "")]; ok {
 			entry.NestedPath = folder.NestedPath
 		}
-		file := getDestinationFilePath(s.grafanaConf, entry, s.isLocal(), s.resources)
-		folderNameLocation, err := s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		file := getDestinationFilePath(s.GrafanaConf, entry, s.IsLocal(), s.Resources)
+		folderNameLocation, err := s.Resources.GetFolderFromResourcePath(s.GrafanaConf, file, domain.AlertingRulesResource, s.Storage.GetPrefix(), s.GrafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Error(fmt.Sprintf("unable to determine alert rule folder name, falling back on default, %v", err))
 			continue
@@ -82,8 +82,8 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 		rawEntity []byte
 	)
 
-	rulesPath := s.grafanaConf.GetPath(domain.AlertingRulesResource, s.grafanaConf.GetOrganizationName())
-	filesInDir, err := s.storage.FindAllFiles(rulesPath, true)
+	rulesPath := s.GrafanaConf.GetPath(domain.AlertingRulesResource, s.GrafanaConf.GetOrganizationName())
+	filesInDir, err := s.Storage.FindAllFiles(rulesPath, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find any rules to export from storage engine, err: %w", err)
 	}
@@ -100,12 +100,12 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 			slog.Debug("Only json files are supported, skipping", "filename", file)
 			continue
 		}
-		if rawEntity, err = s.storage.ReadFile(file); err != nil {
+		if rawEntity, err = s.Storage.ReadFile(file); err != nil {
 			slog.Warn("Unable to read file", "filename", file, "err", err)
 			continue
 		}
 
-		folderNameLocation, err := s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		folderNameLocation, err := s.Resources.GetFolderFromResourcePath(s.GrafanaConf, file, domain.AlertingRulesResource, s.Storage.GetPrefix(), s.GrafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Debug("unable to determine alert rule folder name", "err", err)
 		}
@@ -160,7 +160,7 @@ func (s *DashNGoImpl) UploadAlertRules(filter outbound.Filter) ([]*domain.AlertR
 
 // Create a Folder Resolver to be invoked by AlertRules
 func (s *DashNGoImpl) alertRulesFolderResolver(ctx context.Context, folderUid string, rawEntity []byte, file string) ([]byte, error) {
-	folderNameLocation, fileLocationErr := s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.AlertingRulesResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+	folderNameLocation, fileLocationErr := s.Resources.GetFolderFromResourcePath(s.GrafanaConf, file, domain.AlertingRulesResource, s.Storage.GetPrefix(), s.GrafanaConf.GetOrganizationName())
 	if fileLocationErr != nil {
 		fmt.Printf("unable to determine alert rule folder name, %v", fileLocationErr)
 	}
@@ -174,7 +174,7 @@ func (s *DashNGoImpl) alertRulesFolderResolver(ctx context.Context, folderUid st
 		return sjson.SetBytes(rawEntity, "folderUID", folderByPath.UID)
 	}
 	if folderErr != nil {
-		_, err := s.createdFoldersWithBaseUID(folderNameLocation, folderUid)
+		_, err := s.CreatedFoldersWithBaseUID(folderNameLocation, folderUid)
 		if err != nil {
 			return nil, fmt.Errorf("unable to proceed, could not create missing folder with UID: %s and path: %s. folderPathLookupErr: %v", folderUid, folderNameLocation, err)
 		}
@@ -200,11 +200,11 @@ func (s *DashNGoImpl) DownloadAlertRules(filter outbound.Filter) ([]string, erro
 	}
 	var savedFiles []string
 	for _, link := range data {
-		fileName := getDestinationFilePath(s.grafanaConf, link, s.isLocal(), s.resources)
+		fileName := getDestinationFilePath(s.GrafanaConf, link, s.IsLocal(), s.Resources)
 		if dsPacked, err = json.MarshalIndent(link, "", "	"); err != nil {
 			return nil, fmt.Errorf("unable to serialize data to JSON. %w", err)
 		}
-		if err = s.storage.WriteFile(fileName, dsPacked); err != nil {
+		if err = s.Storage.WriteFile(fileName, dsPacked); err != nil {
 			return nil, fmt.Errorf("unable to write file. %w", err)
 		}
 		savedFiles = append(savedFiles, fileName)

@@ -83,7 +83,7 @@ func (s *DashNGoImpl) ListLibraryElementsConnections(filter outbound.Filter, con
 	var results []*models.DashboardFullWithMeta
 
 	for _, item := range payload.GetPayload().Result {
-		dashboard, err := s.getDashboardByUid(item.ConnectionUID)
+		dashboard, err := s.GetDashboardByUid(item.ConnectionUID)
 		if err != nil {
 			slog.Error("failed to retrieve linked Dashboard", "uid", item.ConnectionUID)
 		}
@@ -99,11 +99,11 @@ func (s *DashNGoImpl) ListLibraryElements(filter outbound.Filter) []*domain.With
 		page        int64 = 1
 		allElements []*models.LibraryElementDTO
 	)
-	ignoreFilters := s.grafanaConf.GetDashboardSettings().IgnoreFilters
+	ignoreFilters := s.GrafanaConf.GetDashboardSettings().IgnoreFilters
 	if ignoreFilters {
 		filter = nil
 	} else if filter == nil {
-		filter = NewLibraryElementFilter(s.gdgConfig)
+		filter = NewLibraryElementFilter(s.GdgConfig)
 	}
 
 	// Fetch all lib elements
@@ -158,7 +158,7 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter outbound.Filter) []string {
 		dataFiles []string
 	)
 
-	folderMap := tools.ReverseLookUp(s.getFolderNameUIDMap(s.ListFolders(nil)))
+	folderMap := tools.ReverseLookUp(s.GetFolderNameUIDMap(s.ListFolders(nil)))
 	listing = s.ListLibraryElements(filter)
 	for _, item := range listing {
 		if dsPacked, err = json.MarshalIndent(item, "", "	"); err != nil {
@@ -171,9 +171,9 @@ func (s *DashNGoImpl) DownloadLibraryElements(filter outbound.Filter) []string {
 			folderName = val
 		}
 
-		libraryPath := fmt.Sprintf("%s/%s.json", s.resources.BuildResourceFolder(s.grafanaConf, folderName, domain.LibraryElementResource, s.isLocal(), s.GetGlobals().ClearOutput), slug.Make(item.Entity.Name))
+		libraryPath := fmt.Sprintf("%s/%s.json", s.Resources.BuildResourceFolder(s.GrafanaConf, folderName, domain.LibraryElementResource, s.IsLocal(), s.GetGlobals().ClearOutput), slug.Make(item.Entity.Name))
 
-		if err = s.storage.WriteFile(libraryPath, dsPacked); err != nil {
+		if err = s.Storage.WriteFile(libraryPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err, "library-element", slug.Make(item.Entity.Name))
 		} else {
 			dataFiles = append(dataFiles, libraryPath)
@@ -192,21 +192,21 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq outbound.Filter) []string 
 		folderName        string
 	)
 
-	orgName := s.grafanaConf.GetOrganizationName()
-	slog.Info("Reading files from folder", "folder", s.grafanaConf.GetPath(domain.LibraryElementResource, orgName))
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.LibraryElementResource, orgName), true)
+	orgName := s.GrafanaConf.GetOrganizationName()
+	slog.Info("Reading files from folder", "folder", s.GrafanaConf.GetPath(domain.LibraryElementResource, orgName))
+	filesInDir, err := s.Storage.FindAllFiles(s.GrafanaConf.GetPath(domain.LibraryElementResource, orgName), true)
 	if err != nil {
 		slog.Error("failed to list files in directory for library elements", "err", err)
 	}
 
-	folderUidMap := s.getFolderNameUIDMap(s.ListFolders(nil))
+	folderUidMap := s.GetFolderNameUIDMap(s.ListFolders(nil))
 	currentLibElements := s.ListLibraryElements(filterReq)
 	libMapping := make(map[string]*domain.WithNested[models.LibraryElementDTO])
 	// Build a mapping by UID
 	for ndx, item := range currentLibElements {
 		libMapping[item.Entity.UID] = currentLibElements[ndx]
 	}
-	ignoreFilters := s.grafanaConf.GetDashboardSettings().IgnoreFilters
+	ignoreFilters := s.GrafanaConf.GetDashboardSettings().IgnoreFilters
 
 	for _, file := range filesInDir {
 		if !strings.HasSuffix(file, ".json") {
@@ -214,13 +214,13 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq outbound.Filter) []string 
 			continue
 		}
 
-		if rawLibraryElement, err = s.storage.ReadFile(file); err != nil {
+		if rawLibraryElement, err = s.Storage.ReadFile(file); err != nil {
 			slog.Error("failed to read file", "file", file, "err", err)
 			continue
 		}
 
 		// Extract Folder Name based on dashboardPath
-		folderName, err = s.resources.GetFolderFromResourcePath(s.grafanaConf, file, domain.LibraryElementResource, s.storage.GetPrefix(), s.grafanaConf.GetOrganizationName())
+		folderName, err = s.Resources.GetFolderFromResourcePath(s.GrafanaConf, file, domain.LibraryElementResource, s.Storage.GetPrefix(), s.GrafanaConf.GetOrganizationName())
 		if err != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 			folderName = domain.ApiConsts.DefaultFolderName
@@ -261,7 +261,7 @@ func (s *DashNGoImpl) UploadLibraryElements(filterReq outbound.Filter) []string 
 				folderUid = val
 			} else {
 
-				newFolders, folderErr := s.createdFolders(folderName)
+				newFolders, folderErr := s.CreatedFolders(folderName)
 				if folderErr != nil {
 					log.Panic("Unable to create required folder")
 				} else {

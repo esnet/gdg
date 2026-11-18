@@ -84,8 +84,8 @@ func (s *DashNGoImpl) DownloadFolderPermissions(filter outbound.Filter) []string
 		if fileName == "" {
 			fileName = folder.Title
 		}
-		dsPath := s.resources.BuildResourcePath(s.grafanaConf, slug.Make(fileName), domain.FolderPermissionResource, s.isLocal(), s.GetGlobals().ClearOutput)
-		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
+		dsPath := s.Resources.BuildResourcePath(s.GrafanaConf, slug.Make(fileName), domain.FolderPermissionResource, s.IsLocal(), s.GetGlobals().ClearOutput)
+		if err = s.Storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "filename", slug.Make(folder.Title))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
@@ -101,15 +101,15 @@ func (s *DashNGoImpl) UploadFolderPermissions(filter outbound.Filter) []string {
 		rawFolder []byte
 		dataFiles []string
 	)
-	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.FolderPermissionResource, orgName), false)
+	orgName := s.GrafanaConf.GetOrganizationName()
+	filesInDir, err := s.Storage.FindAllFiles(s.GrafanaConf.GetPath(domain.FolderPermissionResource, orgName), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders permission imports, %v", err)
 	}
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain.FolderPermissionResource, orgName), file)
+		fileLocation := filepath.Join(s.GrafanaConf.GetPath(domain.FolderPermissionResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
-			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
+			if rawFolder, err = s.Storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
@@ -145,7 +145,7 @@ func (s *DashNGoImpl) ListFolderPermissions(filter outbound.Filter) map[*domain.
 	if filter == nil {
 		foldersList = s.ListFolders(nil)
 	} else {
-		foldersList = s.ListFolders(NewFolderFilter(s.gdgConfig))
+		foldersList = s.ListFolders(NewFolderFilter(s.GdgConfig))
 	}
 
 	r := make(map[*domain.NestedHit][]*models.DashboardACLInfoDTO)
@@ -173,12 +173,9 @@ func (s *DashNGoImpl) ListFolderPermissions(filter outbound.Filter) map[*domain.
 }
 
 // ListFolders list the current existing folders that match the given filter.
-// Delegates to the promoted baseService.listFolders, which paginates via
-// searchAllPages instead of relying on a single, potentially truncated
+// Promoted from core.Service.ListFolders, which paginates via
+// core.SearchAllPages instead of relying on a single, potentially truncated
 // /api/search call.
-func (s *DashNGoImpl) ListFolders(filter outbound.Filter) []*domain.NestedHit {
-	return s.listFolders(filter)
-}
 
 // DownloadFolders Download all the given folders matching filter
 func (s *DashNGoImpl) DownloadFolders(filter outbound.Filter) []string {
@@ -193,8 +190,8 @@ func (s *DashNGoImpl) DownloadFolders(filter outbound.Filter) []string {
 			slog.Error("Unable to serialize data to JSON", "err", err, "folderName", folder.Title)
 			continue
 		}
-		dsPath := s.resources.BuildResourcePath(s.grafanaConf, folder.NestedPath, domain.FolderResource, s.isLocal(), s.GetGlobals().ClearOutput)
-		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
+		dsPath := s.Resources.BuildResourcePath(s.GrafanaConf, folder.NestedPath, domain.FolderResource, s.IsLocal(), s.GetGlobals().ClearOutput)
+		if err = s.Storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file.", "err", err.Error(), "folderName", slug.Make(folder.Title))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
@@ -255,8 +252,8 @@ func (s *DashNGoImpl) UploadFolders(filter outbound.Filter) []string {
 		return f.GetPayload().UID, err
 	}
 
-	resourceDir := s.grafanaConf.GetPath(domain.FolderResource, s.grafanaConf.GetOrganizationName())
-	filesInDir, err := s.storage.FindAllFiles(resourceDir, true)
+	resourceDir := s.GrafanaConf.GetPath(domain.FolderResource, s.GrafanaConf.GetOrganizationName())
+	filesInDir, err := s.Storage.FindAllFiles(resourceDir, true)
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, %v", err)
 	}
@@ -281,7 +278,7 @@ func (s *DashNGoImpl) UploadFolders(filter outbound.Filter) []string {
 		}
 		slog.Debug("processing file", slog.Any("file", fileLocation))
 		if strings.HasSuffix(fileLocation, ".json") {
-			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
+			if rawFolder, err = s.Storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
@@ -311,7 +308,7 @@ func (s *DashNGoImpl) UploadFolders(filter outbound.Filter) []string {
 				if parentFile, parentOk := nestedPathMap[sb.String()]; parentOk {
 					getNewFolder := func() (*models.CreateFolderCommand, error) {
 						if strings.HasSuffix(parentFile, ".json") {
-							if rawFolder, err = s.storage.ReadFile(parentFile); err != nil {
+							if rawFolder, err = s.Storage.ReadFile(parentFile); err != nil {
 								slog.Error("failed to read fileOrName", "filename", parentFile, "err", err)
 							}
 						}
@@ -375,7 +372,7 @@ func (s *DashNGoImpl) UploadFolders(filter outbound.Filter) []string {
 			continue
 		}
 		var newFolder models.CreateFolderCommand
-		if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
+		if rawFolder, err = s.Storage.ReadFile(fileLocation); err != nil {
 			slog.Error("failed to read file", "filename", fileLocation, "err", err)
 			continue
 		}
@@ -421,8 +418,8 @@ func (s *DashNGoImpl) UploadFolders(filter outbound.Filter) []string {
 
 // buildNestedFilePath returns a dictionary of nestedPaths to a matching file if one exists.
 func (s *DashNGoImpl) buildNestedFilePath(files []string) map[string]string {
-	orgName := s.grafanaConf.GetOrganizationName()
-	resourceBaseDir := s.grafanaConf.GetPath(domain.FolderResource, orgName)
+	orgName := s.GrafanaConf.GetOrganizationName()
+	resourceBaseDir := s.GrafanaConf.GetPath(domain.FolderResource, orgName)
 	m := make(map[string]string)
 
 	for _, file := range files {

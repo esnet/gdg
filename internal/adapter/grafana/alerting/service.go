@@ -1,4 +1,9 @@
-package api
+// Package alerting implements outbound.AlertingService (currently contact
+// points) as a standalone service embedding core.Service for shared
+// infrastructure. All contact point operations use the legacy provisioning
+// API; the K8s receivers API does not expose decrypted secrets, making it
+// unsuitable for backup/restore workflows.
+package alerting
 
 import (
 	"encoding/json"
@@ -6,6 +11,7 @@ import (
 	"log"
 	"log/slog"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/core"
 	"github.com/esnet/gdg/internal/config/config_tooling"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
@@ -13,33 +19,32 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-// Compile-time assertion: AlertingServiceImpl satisfies AlertingContactPointsService.
-var _ outbound.AlertingService = (*AlertingServiceImpl)(nil)
-
-// Contact point constants shared across the legacy and K8s implementation paths.
+// Contact point constants shared across the legacy and (future) K8s implementation paths.
 const (
 	emailReceiver = "email receiver"
 	contactsFile  = "contacts"
 )
 
-// AlertingServiceImpl is the standalone implementation of outbound.AlertingService.
-// It embeds baseService for all shared infrastructure — there is no back-reference to DashNGoImpl.
-// All contact point operations use the legacy provisioning API; the K8s receivers API does not
-// expose decrypted secrets, making it unsuitable for backup/restore workflows.
-type AlertingServiceImpl struct {
-	baseService
+// Compile-time assertion: serviceImpl satisfies outbound.AlertingService.
+var _ outbound.AlertingService = (*serviceImpl)(nil)
+
+// serviceImpl is the standalone implementation of outbound.AlertingService.
+// It embeds core.Service for all shared infrastructure — there is no
+// back-reference to the top-level api.DashNGoImpl.
+type serviceImpl struct {
+	core.Service
 }
 
-// NewAlertingService constructs an AlertingServiceImpl from a copy of baseService.
-func NewAlertingService(base baseService) outbound.AlertingService {
-	return &AlertingServiceImpl{baseService: base}
+// NewService constructs a serviceImpl from a core.Service value.
+func NewService(base core.Service) outbound.AlertingService {
+	return &serviceImpl{Service: base}
 }
 
 // ---------------------------------------------------------------------------
 // AlertContactPoints — public CRUD methods (provisioning API)
 // ---------------------------------------------------------------------------
 
-func (a *AlertingServiceImpl) ListContactPoints() ([]*models.ContactPointExport, error) {
+func (a *serviceImpl) ListContactPoints() ([]*models.ContactPointExport, error) {
 	p := provisioning.NewGetContactpointsExportParams()
 	p.Download = new(false)
 	p.Decrypt = new(false)
@@ -50,7 +55,7 @@ func (a *AlertingServiceImpl) ListContactPoints() ([]*models.ContactPointExport,
 	}
 
 	data := make([]*models.ContactPointExport, 0)
-	connSettings := a.grafanaConf.GetAlertSettings().ContactSettings
+	connSettings := a.GrafanaConf.GetAlertSettings().ContactSettings
 	for _, item := range result.GetPayload().ContactPoints {
 		if item.Name == emailReceiver && len(item.Receivers) > 0 && item.Receivers[0].UID == "" {
 			continue
@@ -64,7 +69,7 @@ func (a *AlertingServiceImpl) ListContactPoints() ([]*models.ContactPointExport,
 	return data, nil
 }
 
-func (a *AlertingServiceImpl) DownloadContactPoints() (string, error) {
+func (a *serviceImpl) DownloadContactPoints() (string, error) {
 	var (
 		dsPacked []byte
 		err      error
@@ -78,7 +83,7 @@ func (a *AlertingServiceImpl) DownloadContactPoints() (string, error) {
 		log.Fatalf("unable to retrieve Contact Points, err: %s", err.Error())
 	}
 
-	connSettings := a.grafanaConf.GetAlertSettings().ContactSettings
+	connSettings := a.GrafanaConf.GetAlertSettings().ContactSettings
 	var filtered []*models.ContactPointExport
 	for _, item := range data.GetPayload().ContactPoints {
 		if item.Name == emailReceiver && len(item.Receivers) > 0 && item.Receivers[0].UID == "" {
@@ -91,24 +96,24 @@ func (a *AlertingServiceImpl) DownloadContactPoints() (string, error) {
 		filtered = append(filtered, item)
 	}
 
-	dsPath := a.resources.BuildResourcePath(a.grafanaConf, contactsFile, domain.AlertingResource, a.isLocal(), false)
+	dsPath := a.Resources.BuildResourcePath(a.GrafanaConf, contactsFile, domain.AlertingResource, a.IsLocal(), false)
 	if dsPacked, err = json.MarshalIndent(filtered, "", "\t"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
-	if a.gdgConfig.PluginConfig.CipherEnabled() {
-		newData, encodeErr := a.encoder.Encode(domain.AlertingResource, dsPacked)
+	if a.GdgConfig.PluginConfig.CipherEnabled() {
+		newData, encodeErr := a.Encoder.Encode(domain.AlertingResource, dsPacked)
 		if encodeErr != nil {
 			slog.Error("unable to encode sensitive data using cipher plugin. All data was saved in plaintext.", "err", encodeErr)
 		}
 		dsPacked = newData
 	}
-	if err = a.storage.WriteFile(dsPath, dsPacked); err != nil {
+	if err = a.Storage.WriteFile(dsPath, dsPacked); err != nil {
 		return "", fmt.Errorf("unable to write file. %w", err)
 	}
 	return dsPath, nil
 }
 
-func (a *AlertingServiceImpl) UploadContactPoints() ([]string, error) {
+func (a *serviceImpl) UploadContactPoints() ([]string, error) {
 	var (
 		rawDS  []byte
 		result []string
@@ -125,12 +130,12 @@ func (a *AlertingServiceImpl) UploadContactPoints() ([]string, error) {
 		}
 	}
 
-	fileLocation := a.resources.BuildResourcePath(a.grafanaConf, contactsFile, domain.AlertingResource, a.isLocal(), false)
-	if rawDS, err = a.storage.ReadFile(fileLocation); err != nil {
+	fileLocation := a.Resources.BuildResourcePath(a.GrafanaConf, contactsFile, domain.AlertingResource, a.IsLocal(), false)
+	if rawDS, err = a.Storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}
-	if a.gdgConfig.PluginConfig.CipherEnabled() {
-		newData, encodeErr := a.encoder.Decode(domain.AlertingResource, rawDS)
+	if a.GdgConfig.PluginConfig.CipherEnabled() {
+		newData, encodeErr := a.Encoder.Decode(domain.AlertingResource, rawDS)
 		if encodeErr != nil {
 			slog.Error("unable to encode sensitive data using cipher plugin. All data was saved in plaintext. ", "err", encodeErr)
 		}
@@ -139,7 +144,7 @@ func (a *AlertingServiceImpl) UploadContactPoints() ([]string, error) {
 	if err = json.Unmarshal(rawDS, &data); err != nil {
 		return nil, fmt.Errorf("failed to unmarshall file, file:%s, err: %w", fileLocation, err)
 	}
-	connSettings := a.grafanaConf.GetAlertSettings().ContactSettings
+	connSettings := a.GrafanaConf.GetAlertSettings().ContactSettings
 	for _, i := range data {
 		if connSettings.FiltersEnabled() && config_tooling.IsExcluded(i, connSettings.FilterRules) {
 			slog.Debug("Skipping local JSON file since source fails datatype filter checks", "datasource", i.Name)
@@ -189,7 +194,7 @@ func (a *AlertingServiceImpl) UploadContactPoints() ([]string, error) {
 	return result, nil
 }
 
-func (a *AlertingServiceImpl) ClearContactPoints() ([]string, error) {
+func (a *serviceImpl) ClearContactPoints() ([]string, error) {
 	contacts, err := a.ListContactPoints()
 	if err != nil {
 		return nil, err

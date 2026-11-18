@@ -19,7 +19,7 @@ import (
 // version is auto-discovered from the Grafana App Platform;
 // DashboardV2Version is used when discovery fails.
 func (d *DashboardServiceImpl) dashboardV2Client() (dynamic.ResourceInterface, string, string, error) {
-	cfg, err := d.k8sRestConfig()
+	cfg, err := d.K8sRestConfig()
 	if err != nil {
 		return nil, "", "", err
 	}
@@ -27,13 +27,13 @@ func (d *DashboardServiceImpl) dashboardV2Client() (dynamic.ResourceInterface, s
 	if err != nil {
 		return nil, "", "", fmt.Errorf("unable to build dynamic client: %w", err)
 	}
-	version := d.discoverAPIGroupVersion(domain.DashboardV2Group, domain.DashboardV2Version)
+	version := d.DiscoverAPIGroupVersion(domain.DashboardV2Group, domain.DashboardV2Version)
 	gvr := schema.GroupVersionResource{
 		Group:    domain.DashboardV2Group,
 		Version:  version,
 		Resource: domain.DashboardV2Resource,
 	}
-	ns := d.k8sNamespace()
+	ns := d.K8sNamespace()
 	apiVersion := domain.DashboardV2Group + "/" + version
 	return dyn.Resource(gvr).Namespace(ns), ns, apiVersion, nil
 }

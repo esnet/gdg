@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/core"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -51,8 +52,10 @@ func newTestDashboardService(t *testing.T, serverURL string, mode authMode) *Das
 	}
 
 	return &DashboardServiceImpl{
-		gdgConfig:   gdgConfig,
-		grafanaConf: grafanaConf,
+		Service: core.Service{
+			GdgConfig:   gdgConfig,
+			GrafanaConf: grafanaConf,
+		},
 	}
 }
 
@@ -84,7 +87,7 @@ func TestK8sNamespace_TokenAuth_ResolvesViaCurrentOrg(t *testing.T) {
 
 	svc := newTestDashboardService(t, server.URL, authToken)
 
-	ns := svc.k8sNamespace()
+	ns := svc.K8sNamespace()
 
 	assert.Equal(t, "org-2", ns, "token belonging to org 2 must resolve to the org-2 namespace")
 	assert.False(t, userOrgsHit, "token auth must not depend on the user-session /api/user/orgs endpoint")
@@ -103,7 +106,7 @@ func TestK8sNamespace_TokenAuth_DefaultOrg(t *testing.T) {
 
 	svc := newTestDashboardService(t, server.URL, authToken)
 
-	require.Equal(t, "default", svc.k8sNamespace())
+	require.Equal(t, "default", svc.K8sNamespace())
 }
 
 // TestK8sNamespace_Anonymous_ResolvesViaCurrentOrg verifies that anonymous
@@ -131,7 +134,7 @@ func TestK8sNamespace_Anonymous_ResolvesViaCurrentOrg(t *testing.T) {
 
 	svc := newTestDashboardService(t, server.URL, authAnonymous)
 
-	ns := svc.k8sNamespace()
+	ns := svc.K8sNamespace()
 
 	assert.Equal(t, "org-2", ns, "anonymous access scoped to org 2 must resolve to the org-2 namespace")
 	assert.False(t, userOrgsHit, "anonymous access must not depend on the user-session /api/user/orgs endpoint")
@@ -155,5 +158,5 @@ func TestK8sNamespace_BasicAuth_UsesConfiguredOrgName(t *testing.T) {
 
 	svc := newTestDashboardService(t, server.URL, authBasic)
 
-	assert.Equal(t, "org-3", svc.k8sNamespace())
+	assert.Equal(t, "org-3", svc.K8sNamespace())
 }

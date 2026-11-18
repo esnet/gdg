@@ -128,19 +128,19 @@ func (s *DashNGoImpl) InitOrganizations() {
 	var orgInfo *models.OrgDetailsDTO
 	var orgEntity models.OrgDetailsDTO
 
-	if s.grafanaConf.IsGrafanaAdmin() || s.grafanaConf.IsBasicAuth() {
+	if s.GrafanaConf.IsGrafanaAdmin() || s.GrafanaConf.IsBasicAuth() {
 		orgInfo = s.GetUserOrganization()
 		if orgInfo == nil {
 			log.Fatal("Unable to retrieve requested user's org")
 		}
-		if orgInfo.Name != s.grafanaConf.GetOrganizationName() {
+		if orgInfo.Name != s.GrafanaConf.GetOrganizationName() {
 			userOrgs, err := s.ListUserOrganizations()
 			if err != nil {
 				log.Fatal("Unable to switch user's Org")
 			}
 			found := false
 			for _, org := range userOrgs {
-				if org.Name == s.grafanaConf.GetOrganizationName() {
+				if org.Name == s.GrafanaConf.GetOrganizationName() {
 					orgEntity.ID = org.OrgID
 					orgEntity.Name = org.Name
 					found = true
@@ -148,11 +148,11 @@ func (s *DashNGoImpl) InitOrganizations() {
 				}
 			}
 			if !found {
-				log.Fatalf("User does not have access to org: '%s', Unable to switch user's Org", s.grafanaConf.GetOrganizationName())
+				log.Fatalf("User does not have access to org: '%s', Unable to switch user's Org", s.GrafanaConf.GetOrganizationName())
 			}
 
 		}
-		if orgInfo.Name != s.grafanaConf.GetOrganizationName() {
+		if orgInfo.Name != s.GrafanaConf.GetOrganizationName() {
 			err := s.SetUserOrganizations(orgEntity.ID)
 			if err != nil {
 				log.Fatal("Unable to switch user's Org")
@@ -167,7 +167,7 @@ func (s *DashNGoImpl) InitOrganizations() {
 		s.resolvePinnedOrgIdentity()
 	}
 
-	if s.grafanaConf.IsGrafanaAdmin() {
+	if s.GrafanaConf.IsGrafanaAdmin() {
 		slog.Info("Running Sanity Check of Organization Membership")
 		s.sanitizeOrganizationMembership()
 	}
@@ -182,11 +182,11 @@ func (s *DashNGoImpl) InitOrganizations() {
 // that name still feeds backup/restore paths even though it no longer
 // drives v2 namespace lookups.
 func (s *DashNGoImpl) resolvePinnedOrgIdentity() {
-	configured := s.grafanaConf.OrganizationName
+	configured := s.GrafanaConf.OrganizationName
 
 	// fatal=false: this runs unconditionally at startup now, so a transient
 	// /api/org error shouldn't crash the CLI the way GetTokenOrganization() does.
-	org, err := s.getCurrentOrg(s.GetClient(), false)
+	org, err := s.GetCurrentOrg(s.GetClient(), false)
 	if err != nil || org == nil || org.Name == "" {
 		if configured == "" {
 			slog.Warn("unable to determine the current organization via /api/org; org-scoped paths will use \"unknown\" for this run", "err", err)
@@ -199,15 +199,15 @@ func (s *DashNGoImpl) resolvePinnedOrgIdentity() {
 
 	switch {
 	case configured == "":
-		s.grafanaConf.OrganizationName = actual
+		s.GrafanaConf.OrganizationName = actual
 	case configured != actual:
 		slog.Warn("configured organization_name does not match this identity's actual organization; overriding to the actual org, since tokens and anonymous access cannot switch orgs", "configured", configured, "actual", actual)
-		s.grafanaConf.OrganizationName = actual
+		s.GrafanaConf.OrganizationName = actual
 	}
 }
 
 func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
-	if s.grafanaConf.IsGrafanaAdmin() || s.grafanaConf.IsBasicAuth() {
+	if s.GrafanaConf.IsGrafanaAdmin() || s.GrafanaConf.IsBasicAuth() {
 		payload, err := s.ListUserOrganizations()
 		if err != nil {
 			return err
@@ -227,7 +227,7 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 		if requestOrg == nil {
 			log.Fatalf("unable to set org.  Please ensure you have the correct permissions and the org name is correct")
 		}
-		s.grafanaConf.OrganizationName = requestOrg.Name
+		s.GrafanaConf.OrganizationName = requestOrg.Name
 	} else {
 		tokenOrg := s.GetTokenOrganization()
 		orgName := tokenOrg.Name
@@ -239,12 +239,12 @@ func (s *DashNGoImpl) SetOrganizationByName(name string, useSlug bool) error {
 		}
 	}
 
-	return s.gdgConfig.SaveToDisk(false)
+	return s.GdgConfig.SaveToDisk(false)
 }
 
 // ListOrganizations List all dashboards
 func (s *DashNGoImpl) ListOrganizations(filter outbound.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences {
-	if !s.grafanaConf.IsGrafanaAdmin() {
+	if !s.GrafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations List")
 		return nil
 	}
@@ -284,7 +284,7 @@ func (s *DashNGoImpl) ListOrganizations(filter outbound.Filter, withPreferences 
 
 // DownloadOrganizations Download organizations
 func (s *DashNGoImpl) DownloadOrganizations(filter outbound.Filter) []string {
-	if !s.grafanaConf.IsGrafanaAdmin() {
+	if !s.GrafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot retrieve Organizations")
 		return nil
 	}
@@ -300,8 +300,8 @@ func (s *DashNGoImpl) DownloadOrganizations(filter outbound.Filter) []string {
 			slog.Error("Unable to serialize organization object", "err", err, "organization", organisation.Organization.Name)
 			continue
 		}
-		dsPath := s.resources.BuildResourcePath(s.grafanaConf, slug.Make(organisation.Organization.Name), domain.OrganizationResource, s.isLocal(), s.GetGlobals().ClearOutput)
-		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
+		dsPath := s.Resources.BuildResourcePath(s.GrafanaConf, slug.Make(organisation.Organization.Name), domain.OrganizationResource, s.IsLocal(), s.GetGlobals().ClearOutput)
+		if err = s.Storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "err", err.Error(), "organization", slug.Make(organisation.Organization.Name))
 		} else {
 			dataFiles = append(dataFiles, dsPath)
@@ -313,7 +313,7 @@ func (s *DashNGoImpl) DownloadOrganizations(filter outbound.Filter) []string {
 
 // UploadOrganizations Upload organizations to Grafana
 func (s *DashNGoImpl) UploadOrganizations(filter outbound.Filter) []string {
-	if !s.grafanaConf.IsGrafanaAdmin() {
+	if !s.GrafanaConf.IsGrafanaAdmin() {
 		slog.Error("No valid Grafana Admin configured, cannot upload Organizations")
 		return nil
 	}
@@ -321,8 +321,8 @@ func (s *DashNGoImpl) UploadOrganizations(filter outbound.Filter) []string {
 		result    []string
 		rawFolder []byte
 	)
-	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.OrganizationResource, orgName), false)
+	orgName := s.GrafanaConf.GetOrganizationName()
+	filesInDir, err := s.Storage.FindAllFiles(s.GrafanaConf.GetPath(domain.OrganizationResource, orgName), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders imports, err: %v", err)
 	}
@@ -333,9 +333,9 @@ func (s *DashNGoImpl) UploadOrganizations(filter outbound.Filter) []string {
 	}
 
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain.OrganizationResource, orgName), file)
+		fileLocation := filepath.Join(s.GrafanaConf.GetPath(domain.OrganizationResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
-			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
+			if rawFolder, err = s.Storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
@@ -388,7 +388,7 @@ func (s *DashNGoImpl) UploadOrganizations(filter outbound.Filter) []string {
 
 // SwitchOrganizationByName switch organization context
 func (s *DashNGoImpl) SwitchOrganizationByName(orgName string) error {
-	if !s.grafanaConf.IsBasicAuth() {
+	if !s.GrafanaConf.IsBasicAuth() {
 		slog.Warn("Basic auth required for Org switching.  Ignoring Org setting and continuing")
 		return nil
 	}
@@ -406,7 +406,7 @@ func (s *DashNGoImpl) SwitchOrganizationByName(orgName string) error {
 		}
 		for _, orgEntry := range orgsPayload {
 			slog.Debug("", "orgID", orgEntry.ID, "OrgName", orgEntry.Name)
-			if orgEntry.Name == s.grafanaConf.GetOrganizationName() {
+			if orgEntry.Name == s.GrafanaConf.GetOrganizationName() {
 				valid = true
 				orgId = orgEntry.ID
 				break
@@ -446,7 +446,7 @@ func (s *DashNGoImpl) GetTokenOrganization() *models.OrgDetailsDTO {
 // getAssociatedActiveOrg returns the Org for the given auth mechanism.
 // fatal=true: callers treat having a resolvable org as mandatory.
 func (s *DashNGoImpl) getAssociatedActiveOrg(apiClient *client.GrafanaHTTPAPI) *models.OrgDetailsDTO {
-	org, _ := s.getCurrentOrg(apiClient, true)
+	org, _ := s.GetCurrentOrg(apiClient, true)
 	return org
 }
 
@@ -516,7 +516,7 @@ func (s *DashNGoImpl) getOrgIdFromSlug(slugName string, useAdminListing bool) (*
 	var orgId int64
 	var orgEntity *models.UserOrgDTO
 
-	if s.grafanaConf.IsGrafanaAdmin() && useAdminListing {
+	if s.GrafanaConf.IsGrafanaAdmin() && useAdminListing {
 		organizations := s.ListOrganizations(NewOrganizationFilter(), false)
 		for _, org := range organizations {
 			if org.Organization != nil && slug.Make(org.Organization.Name) == slugName {

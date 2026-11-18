@@ -22,7 +22,7 @@ import (
 // endpoint. It is an unexported adapter-layer helper called by DashboardServiceImpl.
 func (d *DashboardServiceImpl) listDashboardsV2(filterReq outbound.Filter) []*domain.DashboardV2Gdg {
 	if filterReq == nil {
-		filterReq = NewDashboardFilter(d.gdgConfig, "", "", "")
+		filterReq = NewDashboardFilter(d.GdgConfig, "", "", "")
 	}
 
 	client, _, _, err := d.dashboardV2Client()
@@ -49,7 +49,7 @@ func (d *DashboardServiceImpl) listDashboardsV2(filterReq outbound.Filter) []*do
 		opts.Continue = cont
 	}
 
-	folderUIDMap := d.getFolderUIDEntityMap(nil)
+	folderUIDMap := d.GetFolderUIDEntityMap(nil)
 	results := make([]*domain.DashboardV2Gdg, 0, len(items))
 	for i := range items {
 		dr, convErr := fromUnstructured(&items[i])
@@ -91,9 +91,9 @@ func (d *DashboardServiceImpl) downloadDashboardsV2(filterReq outbound.Filter) [
 		name := slug.Make(gdg.Resource.Spec.Title)
 
 		fileName := fmt.Sprintf("%s/%s.json",
-			d.resources.BuildResourceFolder(d.grafanaConf, gdg.NestedPath, domain.DashboardResource, d.isLocal(), d.GetGlobals().ClearOutput),
+			d.Resources.BuildResourceFolder(d.GrafanaConf, gdg.NestedPath, domain.DashboardResource, d.IsLocal(), d.GetGlobals().ClearOutput),
 			name)
-		if err = d.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
+		if err = d.Storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file", "err", err, "dashboard", name)
 			continue
 		}
@@ -109,7 +109,7 @@ func (d *DashboardServiceImpl) downloadDashboardsV2(filterReq outbound.Filter) [
 // Pruning is handled by the caller via pruneDashboards.
 func (d *DashboardServiceImpl) uploadDashboardsV2(filterReq outbound.Filter, files map[string][]byte) ([]string, error) {
 	if filterReq == nil {
-		filterReq = NewDashboardFilter(d.gdgConfig, "", "", "")
+		filterReq = NewDashboardFilter(d.GdgConfig, "", "", "")
 	}
 
 	client, ns, apiVersion, err := d.dashboardV2Client()
@@ -117,7 +117,7 @@ func (d *DashboardServiceImpl) uploadDashboardsV2(filterReq outbound.Filter, fil
 		return nil, err
 	}
 
-	folderNameUIDMap := d.getFolderNameUIDMap(d.listFolders(NewFolderFilter(d.gdgConfig)))
+	folderNameUIDMap := d.GetFolderNameUIDMap(d.ListFolders(NewFolderFilter(d.GdgConfig)))
 	seen := make(map[string]bool)
 
 	ctx := context.Background()
@@ -135,7 +135,7 @@ func (d *DashboardServiceImpl) uploadDashboardsV2(filterReq outbound.Filter, fil
 		}
 
 		// Determine folder from the on-disk layout.
-		folderName, folderErr := d.resources.GetFolderFromResourcePath(d.grafanaConf, file, domain.DashboardResource, d.storage.GetPrefix(), d.grafanaConf.GetOrganizationName())
+		folderName, folderErr := d.Resources.GetFolderFromResourcePath(d.GrafanaConf, file, domain.DashboardResource, d.Storage.GetPrefix(), d.GrafanaConf.GetOrganizationName())
 		if folderErr != nil || folderName == "" {
 			folderName = domain.ApiConsts.DefaultFolderName
 		}
@@ -221,7 +221,7 @@ func (d *DashboardServiceImpl) dashboardV2PassesFilters(filterReq outbound.Filte
 	ctx := context.Background()
 
 	folderValid := false
-	if d.grafanaConf.GetDashboardSettings().IgnoreFilters && !d.grafanaConf.IsFilterSet() {
+	if d.GrafanaConf.GetDashboardSettings().IgnoreFilters && !d.GrafanaConf.IsFilterSet() {
 		folderValid = true
 	} else if filterReq.Validate(ctx, domain.FolderFilter, map[string]any{NestedDashFolderName: nestedPath}) {
 		folderValid = true
@@ -252,7 +252,7 @@ func (d *DashboardServiceImpl) resolveDashboardV2Folder(folderName string, folde
 	if uid, ok := folderNameUIDMap[folderName]; ok {
 		return uid, nil
 	}
-	newFolders, err := d.createdFolders(folderName)
+	newFolders, err := d.CreatedFolders(folderName)
 	if err != nil {
 		return "", err
 	}
