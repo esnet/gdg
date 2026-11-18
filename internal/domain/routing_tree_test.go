@@ -11,6 +11,7 @@ func TestRoutingTreeConstants(t *testing.T) {
 	assert.Equal(t, "v1beta1", RoutingTreeVersion)
 	assert.Equal(t, "routingtrees", RoutingTreeResourceName)
 	assert.Equal(t, "RoutingTree", RoutingTreeKind)
+	assert.Equal(t, "grafana-default-email", RoutingTreeDefaultReceiver)
 }
 
 func newRoutingTreeResource(name, namespace string) map[string]any {
@@ -76,6 +77,15 @@ func TestRoutingTreeGdg_RouteCount(t *testing.T) {
 func TestRoutingTreeGdg_RouteCount_MissingRoutes(t *testing.T) {
 	gdg := &RoutingTreeGdg{Resource: map[string]any{}}
 	assert.Equal(t, 0, gdg.RouteCount())
+}
+
+func TestDefaultRoutingTreeSpec(t *testing.T) {
+	spec := DefaultRoutingTreeSpec()
+	assert.Equal(t, map[string]any{
+		"defaults": map[string]any{
+			"receiver": RoutingTreeDefaultReceiver,
+		},
+	}, spec)
 }
 
 func TestRoutingTreeGdg_Fields(t *testing.T) {

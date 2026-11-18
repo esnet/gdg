@@ -14,7 +14,23 @@ const (
 	// GdgRoutingTreeApiVersion tags a stored routing tree as originating from
 	// the App Platform /apis endpoint.
 	GdgRoutingTreeApiVersion = RoutingTreeGroup + "/" + RoutingTreeVersion
+
+	// RoutingTreeDefaultReceiver is the receiver every Grafana instance ships
+	// out of the box, used to reset the protected/default routing tree when it
+	// cannot be deleted outright.
+	RoutingTreeDefaultReceiver = "grafana-default-email"
 )
+
+// DefaultRoutingTreeSpec returns the minimal spec a routing tree is reset to
+// when it cannot be deleted (e.g. the org's protected default tree): only the
+// default receiver, no custom routes.
+func DefaultRoutingTreeSpec() map[string]any {
+	return map[string]any{
+		"defaults": map[string]any{
+			"receiver": RoutingTreeDefaultReceiver,
+		},
+	}
+}
 
 // RoutingTreeGdg is the GDG-internal wrapper around a K8s RoutingTree resource.
 // Resource holds the raw unstructured object exactly as returned by the App

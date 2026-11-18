@@ -419,6 +419,68 @@ func (_c *GrafanaService_ClearDashboardPermissions_Call) RunAndReturn(run func(f
 	return _c
 }
 
+// ClearRoutingTrees provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) ClearRoutingTrees(name string) ([]string, error) {
+	ret := _mock.Called(name)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ClearRoutingTrees")
+	}
+
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) ([]string, error)); ok {
+		return returnFunc(name)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) []string); ok {
+		r0 = returnFunc(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(name)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// GrafanaService_ClearRoutingTrees_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ClearRoutingTrees'
+type GrafanaService_ClearRoutingTrees_Call struct {
+	*mock.Call
+}
+
+// ClearRoutingTrees is a helper method to define mock.On call
+//   - name string
+func (_e *GrafanaService_Expecter) ClearRoutingTrees(name any) *GrafanaService_ClearRoutingTrees_Call {
+	return &GrafanaService_ClearRoutingTrees_Call{Call: _e.mock.On("ClearRoutingTrees", name)}
+}
+
+func (_c *GrafanaService_ClearRoutingTrees_Call) Run(run func(name string)) *GrafanaService_ClearRoutingTrees_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ClearRoutingTrees_Call) Return(strings []string, err error) *GrafanaService_ClearRoutingTrees_Call {
+	_c.Call.Return(strings, err)
+	return _c
+}
+
+func (_c *GrafanaService_ClearRoutingTrees_Call) RunAndReturn(run func(name string) ([]string, error)) *GrafanaService_ClearRoutingTrees_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreateServiceAccount provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) CreateServiceAccount(name string, role string, expiration int64) (*models.ServiceAccountDTO, error) {
 	ret := _mock.Called(name, role, expiration)
@@ -1966,8 +2028,8 @@ func (_c *GrafanaService_DownloadOrganizations_Call) RunAndReturn(run func(filte
 }
 
 // DownloadRoutingTrees provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) DownloadRoutingTrees() ([]string, error) {
-	ret := _mock.Called()
+func (_mock *GrafanaService) DownloadRoutingTrees(name string) ([]string, error) {
+	ret := _mock.Called(name)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DownloadRoutingTrees")
@@ -1975,18 +2037,18 @@ func (_mock *GrafanaService) DownloadRoutingTrees() ([]string, error) {
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) ([]string, error)); ok {
+		return returnFunc(name)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) []string); ok {
+		r0 = returnFunc(name)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(name)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1999,13 +2061,20 @@ type GrafanaService_DownloadRoutingTrees_Call struct {
 }
 
 // DownloadRoutingTrees is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) DownloadRoutingTrees() *GrafanaService_DownloadRoutingTrees_Call {
-	return &GrafanaService_DownloadRoutingTrees_Call{Call: _e.mock.On("DownloadRoutingTrees")}
+//   - name string
+func (_e *GrafanaService_Expecter) DownloadRoutingTrees(name any) *GrafanaService_DownloadRoutingTrees_Call {
+	return &GrafanaService_DownloadRoutingTrees_Call{Call: _e.mock.On("DownloadRoutingTrees", name)}
 }
 
-func (_c *GrafanaService_DownloadRoutingTrees_Call) Run(run func()) *GrafanaService_DownloadRoutingTrees_Call {
+func (_c *GrafanaService_DownloadRoutingTrees_Call) Run(run func(name string)) *GrafanaService_DownloadRoutingTrees_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -2015,7 +2084,7 @@ func (_c *GrafanaService_DownloadRoutingTrees_Call) Return(strings []string, err
 	return _c
 }
 
-func (_c *GrafanaService_DownloadRoutingTrees_Call) RunAndReturn(run func() ([]string, error)) *GrafanaService_DownloadRoutingTrees_Call {
+func (_c *GrafanaService_DownloadRoutingTrees_Call) RunAndReturn(run func(name string) ([]string, error)) *GrafanaService_DownloadRoutingTrees_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3405,8 +3474,8 @@ func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filter ou
 }
 
 // ListRoutingTrees provides a mock function for the type GrafanaService
-func (_mock *GrafanaService) ListRoutingTrees() ([]*domain.RoutingTreeGdg, error) {
-	ret := _mock.Called()
+func (_mock *GrafanaService) ListRoutingTrees(name string) ([]*domain.RoutingTreeGdg, error) {
+	ret := _mock.Called(name)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListRoutingTrees")
@@ -3414,18 +3483,18 @@ func (_mock *GrafanaService) ListRoutingTrees() ([]*domain.RoutingTreeGdg, error
 
 	var r0 []*domain.RoutingTreeGdg
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*domain.RoutingTreeGdg, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) ([]*domain.RoutingTreeGdg, error)); ok {
+		return returnFunc(name)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*domain.RoutingTreeGdg); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) []*domain.RoutingTreeGdg); ok {
+		r0 = returnFunc(name)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.RoutingTreeGdg)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(name)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -3438,13 +3507,20 @@ type GrafanaService_ListRoutingTrees_Call struct {
 }
 
 // ListRoutingTrees is a helper method to define mock.On call
-func (_e *GrafanaService_Expecter) ListRoutingTrees() *GrafanaService_ListRoutingTrees_Call {
-	return &GrafanaService_ListRoutingTrees_Call{Call: _e.mock.On("ListRoutingTrees")}
+//   - name string
+func (_e *GrafanaService_Expecter) ListRoutingTrees(name any) *GrafanaService_ListRoutingTrees_Call {
+	return &GrafanaService_ListRoutingTrees_Call{Call: _e.mock.On("ListRoutingTrees", name)}
 }
 
-func (_c *GrafanaService_ListRoutingTrees_Call) Run(run func()) *GrafanaService_ListRoutingTrees_Call {
+func (_c *GrafanaService_ListRoutingTrees_Call) Run(run func(name string)) *GrafanaService_ListRoutingTrees_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -3454,7 +3530,7 @@ func (_c *GrafanaService_ListRoutingTrees_Call) Return(routingTreeGdgs []*domain
 	return _c
 }
 
-func (_c *GrafanaService_ListRoutingTrees_Call) RunAndReturn(run func() ([]*domain.RoutingTreeGdg, error)) *GrafanaService_ListRoutingTrees_Call {
+func (_c *GrafanaService_ListRoutingTrees_Call) RunAndReturn(run func(name string) ([]*domain.RoutingTreeGdg, error)) *GrafanaService_ListRoutingTrees_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4776,6 +4852,68 @@ func (_c *GrafanaService_UploadOrganizations_Call) Return(strings []string) *Gra
 }
 
 func (_c *GrafanaService_UploadOrganizations_Call) RunAndReturn(run func(filter outbound.Filter) []string) *GrafanaService_UploadOrganizations_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UploadRoutingTrees provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) UploadRoutingTrees(name string) ([]string, error) {
+	ret := _mock.Called(name)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UploadRoutingTrees")
+	}
+
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) ([]string, error)); ok {
+		return returnFunc(name)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) []string); ok {
+		r0 = returnFunc(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(name)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// GrafanaService_UploadRoutingTrees_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadRoutingTrees'
+type GrafanaService_UploadRoutingTrees_Call struct {
+	*mock.Call
+}
+
+// UploadRoutingTrees is a helper method to define mock.On call
+//   - name string
+func (_e *GrafanaService_Expecter) UploadRoutingTrees(name any) *GrafanaService_UploadRoutingTrees_Call {
+	return &GrafanaService_UploadRoutingTrees_Call{Call: _e.mock.On("UploadRoutingTrees", name)}
+}
+
+func (_c *GrafanaService_UploadRoutingTrees_Call) Run(run func(name string)) *GrafanaService_UploadRoutingTrees_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *GrafanaService_UploadRoutingTrees_Call) Return(strings []string, err error) *GrafanaService_UploadRoutingTrees_Call {
+	_c.Call.Return(strings, err)
+	return _c
+}
+
+func (_c *GrafanaService_UploadRoutingTrees_Call) RunAndReturn(run func(name string) ([]string, error)) *GrafanaService_UploadRoutingTrees_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -36,9 +36,71 @@ func (_m *AlertRoutingTrees) EXPECT() *AlertRoutingTrees_Expecter {
 	return &AlertRoutingTrees_Expecter{mock: &_m.Mock}
 }
 
+// ClearRoutingTrees provides a mock function for the type AlertRoutingTrees
+func (_mock *AlertRoutingTrees) ClearRoutingTrees(name string) ([]string, error) {
+	ret := _mock.Called(name)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ClearRoutingTrees")
+	}
+
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) ([]string, error)); ok {
+		return returnFunc(name)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) []string); ok {
+		r0 = returnFunc(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(name)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// AlertRoutingTrees_ClearRoutingTrees_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ClearRoutingTrees'
+type AlertRoutingTrees_ClearRoutingTrees_Call struct {
+	*mock.Call
+}
+
+// ClearRoutingTrees is a helper method to define mock.On call
+//   - name string
+func (_e *AlertRoutingTrees_Expecter) ClearRoutingTrees(name any) *AlertRoutingTrees_ClearRoutingTrees_Call {
+	return &AlertRoutingTrees_ClearRoutingTrees_Call{Call: _e.mock.On("ClearRoutingTrees", name)}
+}
+
+func (_c *AlertRoutingTrees_ClearRoutingTrees_Call) Run(run func(name string)) *AlertRoutingTrees_ClearRoutingTrees_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *AlertRoutingTrees_ClearRoutingTrees_Call) Return(strings []string, err error) *AlertRoutingTrees_ClearRoutingTrees_Call {
+	_c.Call.Return(strings, err)
+	return _c
+}
+
+func (_c *AlertRoutingTrees_ClearRoutingTrees_Call) RunAndReturn(run func(name string) ([]string, error)) *AlertRoutingTrees_ClearRoutingTrees_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // DownloadRoutingTrees provides a mock function for the type AlertRoutingTrees
-func (_mock *AlertRoutingTrees) DownloadRoutingTrees() ([]string, error) {
-	ret := _mock.Called()
+func (_mock *AlertRoutingTrees) DownloadRoutingTrees(name string) ([]string, error) {
+	ret := _mock.Called(name)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DownloadRoutingTrees")
@@ -46,18 +108,18 @@ func (_mock *AlertRoutingTrees) DownloadRoutingTrees() ([]string, error) {
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) ([]string, error)); ok {
+		return returnFunc(name)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) []string); ok {
+		r0 = returnFunc(name)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(name)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -70,13 +132,20 @@ type AlertRoutingTrees_DownloadRoutingTrees_Call struct {
 }
 
 // DownloadRoutingTrees is a helper method to define mock.On call
-func (_e *AlertRoutingTrees_Expecter) DownloadRoutingTrees() *AlertRoutingTrees_DownloadRoutingTrees_Call {
-	return &AlertRoutingTrees_DownloadRoutingTrees_Call{Call: _e.mock.On("DownloadRoutingTrees")}
+//   - name string
+func (_e *AlertRoutingTrees_Expecter) DownloadRoutingTrees(name any) *AlertRoutingTrees_DownloadRoutingTrees_Call {
+	return &AlertRoutingTrees_DownloadRoutingTrees_Call{Call: _e.mock.On("DownloadRoutingTrees", name)}
 }
 
-func (_c *AlertRoutingTrees_DownloadRoutingTrees_Call) Run(run func()) *AlertRoutingTrees_DownloadRoutingTrees_Call {
+func (_c *AlertRoutingTrees_DownloadRoutingTrees_Call) Run(run func(name string)) *AlertRoutingTrees_DownloadRoutingTrees_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -86,14 +155,14 @@ func (_c *AlertRoutingTrees_DownloadRoutingTrees_Call) Return(strings []string, 
 	return _c
 }
 
-func (_c *AlertRoutingTrees_DownloadRoutingTrees_Call) RunAndReturn(run func() ([]string, error)) *AlertRoutingTrees_DownloadRoutingTrees_Call {
+func (_c *AlertRoutingTrees_DownloadRoutingTrees_Call) RunAndReturn(run func(name string) ([]string, error)) *AlertRoutingTrees_DownloadRoutingTrees_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListRoutingTrees provides a mock function for the type AlertRoutingTrees
-func (_mock *AlertRoutingTrees) ListRoutingTrees() ([]*domain.RoutingTreeGdg, error) {
-	ret := _mock.Called()
+func (_mock *AlertRoutingTrees) ListRoutingTrees(name string) ([]*domain.RoutingTreeGdg, error) {
+	ret := _mock.Called(name)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListRoutingTrees")
@@ -101,18 +170,18 @@ func (_mock *AlertRoutingTrees) ListRoutingTrees() ([]*domain.RoutingTreeGdg, er
 
 	var r0 []*domain.RoutingTreeGdg
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*domain.RoutingTreeGdg, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) ([]*domain.RoutingTreeGdg, error)); ok {
+		return returnFunc(name)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*domain.RoutingTreeGdg); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) []*domain.RoutingTreeGdg); ok {
+		r0 = returnFunc(name)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.RoutingTreeGdg)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(name)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -125,13 +194,20 @@ type AlertRoutingTrees_ListRoutingTrees_Call struct {
 }
 
 // ListRoutingTrees is a helper method to define mock.On call
-func (_e *AlertRoutingTrees_Expecter) ListRoutingTrees() *AlertRoutingTrees_ListRoutingTrees_Call {
-	return &AlertRoutingTrees_ListRoutingTrees_Call{Call: _e.mock.On("ListRoutingTrees")}
+//   - name string
+func (_e *AlertRoutingTrees_Expecter) ListRoutingTrees(name any) *AlertRoutingTrees_ListRoutingTrees_Call {
+	return &AlertRoutingTrees_ListRoutingTrees_Call{Call: _e.mock.On("ListRoutingTrees", name)}
 }
 
-func (_c *AlertRoutingTrees_ListRoutingTrees_Call) Run(run func()) *AlertRoutingTrees_ListRoutingTrees_Call {
+func (_c *AlertRoutingTrees_ListRoutingTrees_Call) Run(run func(name string)) *AlertRoutingTrees_ListRoutingTrees_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -141,7 +217,69 @@ func (_c *AlertRoutingTrees_ListRoutingTrees_Call) Return(routingTreeGdgs []*dom
 	return _c
 }
 
-func (_c *AlertRoutingTrees_ListRoutingTrees_Call) RunAndReturn(run func() ([]*domain.RoutingTreeGdg, error)) *AlertRoutingTrees_ListRoutingTrees_Call {
+func (_c *AlertRoutingTrees_ListRoutingTrees_Call) RunAndReturn(run func(name string) ([]*domain.RoutingTreeGdg, error)) *AlertRoutingTrees_ListRoutingTrees_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UploadRoutingTrees provides a mock function for the type AlertRoutingTrees
+func (_mock *AlertRoutingTrees) UploadRoutingTrees(name string) ([]string, error) {
+	ret := _mock.Called(name)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UploadRoutingTrees")
+	}
+
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) ([]string, error)); ok {
+		return returnFunc(name)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) []string); ok {
+		r0 = returnFunc(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(name)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// AlertRoutingTrees_UploadRoutingTrees_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UploadRoutingTrees'
+type AlertRoutingTrees_UploadRoutingTrees_Call struct {
+	*mock.Call
+}
+
+// UploadRoutingTrees is a helper method to define mock.On call
+//   - name string
+func (_e *AlertRoutingTrees_Expecter) UploadRoutingTrees(name any) *AlertRoutingTrees_UploadRoutingTrees_Call {
+	return &AlertRoutingTrees_UploadRoutingTrees_Call{Call: _e.mock.On("UploadRoutingTrees", name)}
+}
+
+func (_c *AlertRoutingTrees_UploadRoutingTrees_Call) Run(run func(name string)) *AlertRoutingTrees_UploadRoutingTrees_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *AlertRoutingTrees_UploadRoutingTrees_Call) Return(strings []string, err error) *AlertRoutingTrees_UploadRoutingTrees_Call {
+	_c.Call.Return(strings, err)
+	return _c
+}
+
+func (_c *AlertRoutingTrees_UploadRoutingTrees_Call) RunAndReturn(run func(name string) ([]string, error)) *AlertRoutingTrees_UploadRoutingTrees_Call {
 	_c.Call.Return(run)
 	return _c
 }

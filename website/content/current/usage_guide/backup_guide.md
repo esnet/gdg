@@ -67,18 +67,34 @@ Nested array paths such as `receivers.#.type` and `receivers.#.settings.recipien
 
 #### Routing Trees
 
-{{% notice style="note" %}} Routing trees are read via the Grafana App Platform API
+{{% notice style="note" %}} Routing trees are managed via the Grafana App Platform API
 (`notifications.alerting.grafana.app/v1beta1`), which supports multiple named routing
 trees per organization and returns the full recursive route structure. This replaces
 the older `notifications`/`policy` command, which only exposed a single flat policy
 tree via the legacy provisioning API and silently dropped nested sub-routes.
-Only `list` and `download` are supported; uploading/clearing routing trees is not yet
-available. {{% /notice %}}
+
+Every organization has a protected/default routing tree that cannot be deleted. `clear`
+and `upload` both detect this automatically: wherever a tree would otherwise be deleted,
+the server's refusal is caught and the tree is reset to Grafana's out-of-the-box default
+(receiver `grafana-default-email`, no custom routes) instead of being skipped.
+
+**`upload` makes the server fully reflect local storage.** It creates or updates every
+routing tree found locally, and then removes any server-side routing tree that has no
+matching local file (deleting it, or resetting it if the server refuses the delete). GDG
+is the source of truth: if a tree isn't downloaded locally, it won't exist on the server
+after an upload. `upload` always logs a warning about this before running. Use `--name`
+to scope both the upload and the removal step to a single tree. {{% /notice %}}
 
 ```sh
 gdg backup alerting routingtree list -- Lists all routing trees
 gdg backup alerting routingtree download  -- Download all known routing trees
+gdg backup alerting routingtree upload -- Make the server match local storage exactly
+gdg backup alerting routingtree clear -- Delete all routing trees, resetting the protected default tree
 ```
+
+**Available Options:**
+  - `--name string`   filter by routing tree name; omit to operate on every routing tree
+
 {{% expand title="Example Output:" %}}
 ```
 ┌──────────────┬───────────────────────┬────────┬────────────────────────────────────────────┐
@@ -91,7 +107,7 @@ gdg backup alerting routingtree download  -- Download all known routing trees
 {{% /expand %}}
 
 Each tree is downloaded to its own file, named after the routing tree, e.g.
-`alerting/routing-trees/user-defined.json`.
+`alerting-routing-trees/user-defined.json`.
 
 #### Rules
 

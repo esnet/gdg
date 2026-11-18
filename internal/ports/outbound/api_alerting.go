@@ -61,8 +61,21 @@ type AlertTimings interface {
 // "routingtrees"). Unlike AlertPolicies, which manages a single flat policy
 // tree via the legacy provisioning API, this supports multiple named routing
 // trees per namespace/org and exposes the full recursive route structure.
-// Read-only for now: list and download only.
+//
+// Every method accepts a name filter: pass "" to operate on every routing
+// tree, or a specific metadata.name to scope the operation to just that tree.
+//
+// ClearRoutingTrees deletes each matching tree; when the server rejects the
+// delete (the org's protected default tree typically cannot be removed), it
+// is reset to domain.DefaultRoutingTreeSpec instead of being skipped.
+//
+// UploadRoutingTrees makes the server fully reflect local storage: it
+// creates/updates every matching local tree, then removes any matching
+// server-side tree that has no local file, using the same delete-or-reset
+// logic as ClearRoutingTrees for trees the server refuses to delete.
 type AlertRoutingTrees interface {
-	ListRoutingTrees() ([]*customModels.RoutingTreeGdg, error)
-	DownloadRoutingTrees() ([]string, error)
+	ListRoutingTrees(name string) ([]*customModels.RoutingTreeGdg, error)
+	DownloadRoutingTrees(name string) ([]string, error)
+	ClearRoutingTrees(name string) ([]string, error)
+	UploadRoutingTrees(name string) ([]string, error)
 }

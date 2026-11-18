@@ -50,7 +50,7 @@ func TestListRoutingTrees(t *testing.T) {
 			setupMocks: func(testSvc *mocks.GrafanaService) {
 				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
-				testSvc.EXPECT().ListRoutingTrees().Return(nil, fmt.Errorf("boom"))
+				testSvc.EXPECT().ListRoutingTrees("").Return(nil, fmt.Errorf("boom"))
 			},
 		},
 		{
@@ -61,7 +61,7 @@ func TestListRoutingTrees(t *testing.T) {
 			setupMocks: func(testSvc *mocks.GrafanaService) {
 				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
-				testSvc.EXPECT().ListRoutingTrees().Return(nil, nil)
+				testSvc.EXPECT().ListRoutingTrees("").Return(nil, nil)
 			},
 		},
 		{
@@ -79,7 +79,7 @@ func TestListRoutingTrees(t *testing.T) {
 					{Resource: routingTreeResource("moo", "devnull", 1), GdgApiVersion: domain.GdgRoutingTreeApiVersion},
 					{Resource: routingTreeResource("user-defined", "grafana-default-email", 3), GdgApiVersion: domain.GdgRoutingTreeApiVersion},
 				}
-				testSvc.EXPECT().ListRoutingTrees().Return(resp, nil)
+				testSvc.EXPECT().ListRoutingTrees("").Return(resp, nil)
 			},
 		},
 	}
@@ -114,6 +114,29 @@ func TestListRoutingTrees(t *testing.T) {
 	}
 }
 
+func TestListRoutingTreesWithNameFilter(t *testing.T) {
+	listCmd := []string{"backup", "alerting", "routingtree", "list", "--name", "user-defined"}
+	testSvc := new(mocks.GrafanaService)
+	testSvc.EXPECT().Login().Return()
+	testSvc.EXPECT().InitOrganizations().Return()
+	resp := []*domain.RoutingTreeGdg{
+		{Resource: routingTreeResource("user-defined", "grafana-default-email", 3), GdgApiVersion: domain.GdgRoutingTreeApiVersion},
+	}
+	testSvc.EXPECT().ListRoutingTrees("user-defined").Return(resp, nil)
+
+	optionMockSvc := GetOptionMockSvc(testSvc)
+	r, w, cleanup := test_tooling.InterceptStdout()
+	defer cleanup()
+
+	rootSvc := cli.NewRootService()
+	err := cli.Execute(rootSvc, listCmd, optionMockSvc())
+	assert.Nil(t, err)
+	assert.NoError(t, w.Close())
+
+	out, _ := io.ReadAll(r)
+	assert.Contains(t, string(out), "user-defined")
+}
+
 func TestDownloadRoutingTrees(t *testing.T) {
 	downloadCmd := []string{"backup", "alerting", "routingtree", "download"}
 	testCases := []struct {
@@ -130,7 +153,7 @@ func TestDownloadRoutingTrees(t *testing.T) {
 			setupMocks: func(testSvc *mocks.GrafanaService) {
 				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
-				testSvc.EXPECT().DownloadRoutingTrees().Return(nil, fmt.Errorf("boom"))
+				testSvc.EXPECT().DownloadRoutingTrees("").Return(nil, fmt.Errorf("boom"))
 			},
 		},
 		{
@@ -141,7 +164,7 @@ func TestDownloadRoutingTrees(t *testing.T) {
 			setupMocks: func(testSvc *mocks.GrafanaService) {
 				testSvc.EXPECT().Login().Return()
 				testSvc.EXPECT().InitOrganizations().Return()
-				testSvc.EXPECT().DownloadRoutingTrees().Return([]string{"alerting/routing-trees/moo.json"}, nil)
+				testSvc.EXPECT().DownloadRoutingTrees("").Return([]string{"alerting-routing-trees/moo.json"}, nil)
 			},
 		},
 	}
@@ -170,4 +193,208 @@ func TestDownloadRoutingTrees(t *testing.T) {
 		assert.NotNil(t, tc.validateFn)
 		tc.validateFn(t, outStr)
 	}
+}
+
+func TestClearRoutingTrees(t *testing.T) {
+	clearCmd := []string{"backup", "alerting", "routingtree", "clear"}
+	testCases := []struct {
+		skip       bool
+		name       string
+		validateFn func(t *testing.T, output string)
+		setupMocks func(testSvc *mocks.GrafanaService)
+	}{
+		{
+			name: "ErrDataTest",
+			validateFn: func(t *testing.T, output string) {
+				assert.True(t, strings.Contains(output, "ERR unable to clear routing trees"))
+			},
+			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
+				testSvc.EXPECT().InitOrganizations().Return()
+				testSvc.EXPECT().ClearRoutingTrees("").Return(nil, fmt.Errorf("boom"))
+			},
+		},
+		{
+			name: "NoDataTest",
+			validateFn: func(t *testing.T, output string) {
+				assert.True(t, strings.Contains(output, "No routing trees found"))
+			},
+			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
+				testSvc.EXPECT().InitOrganizations().Return()
+				testSvc.EXPECT().ClearRoutingTrees("").Return(nil, nil)
+			},
+		},
+		{
+			name: "SuccessClear",
+			validateFn: func(t *testing.T, output string) {
+				assert.True(t, strings.Contains(output, "moo"))
+				assert.True(t, strings.Contains(output, "user-defined"))
+			},
+			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
+				testSvc.EXPECT().InitOrganizations().Return()
+				testSvc.EXPECT().ClearRoutingTrees("").Return([]string{"moo", "user-defined"}, nil)
+			},
+		},
+	}
+	for _, tc := range testCases {
+		if tc.skip {
+			slog.Debug("Skipping test", slog.Any("testName", tc.name))
+			continue
+		}
+		slog.Info("Running test", slog.Any("testName", tc.name))
+		testSvc := new(mocks.GrafanaService)
+		if tc.setupMocks != nil {
+			tc.setupMocks(testSvc)
+		}
+		optionMockSvc := GetOptionMockSvc(testSvc)
+		r, w, cleanup := test_tooling.InterceptStdout()
+		defer cleanup()
+
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, clearCmd, optionMockSvc())
+		assert.Nil(t, err)
+		defer cleanup()
+		assert.NoError(t, w.Close())
+
+		out, _ := io.ReadAll(r)
+		outStr := string(out)
+		assert.NotNil(t, tc.validateFn)
+		tc.validateFn(t, outStr)
+	}
+}
+
+func TestClearRoutingTreesWithNameFilter(t *testing.T) {
+	clearCmd := []string{"backup", "alerting", "routingtree", "clear", "--name", "moo"}
+	testSvc := new(mocks.GrafanaService)
+	testSvc.EXPECT().Login().Return()
+	testSvc.EXPECT().InitOrganizations().Return()
+	testSvc.EXPECT().ClearRoutingTrees("moo").Return([]string{"moo"}, nil)
+
+	optionMockSvc := GetOptionMockSvc(testSvc)
+	r, w, cleanup := test_tooling.InterceptStdout()
+	defer cleanup()
+
+	rootSvc := cli.NewRootService()
+	err := cli.Execute(rootSvc, clearCmd, optionMockSvc())
+	assert.Nil(t, err)
+	assert.NoError(t, w.Close())
+
+	out, _ := io.ReadAll(r)
+	assert.Contains(t, string(out), "moo")
+}
+
+func TestUploadRoutingTrees(t *testing.T) {
+	uploadCmd := []string{"backup", "alerting", "routingtree", "upload"}
+	testCases := []struct {
+		skip       bool
+		name       string
+		validateFn func(t *testing.T, output string)
+		setupMocks func(testSvc *mocks.GrafanaService)
+	}{
+		{
+			name: "ErrDataTest",
+			validateFn: func(t *testing.T, output string) {
+				assert.True(t, strings.Contains(output, "ERR unable to upload routing trees"))
+			},
+			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
+				testSvc.EXPECT().InitOrganizations().Return()
+				testSvc.EXPECT().UploadRoutingTrees("").Return(nil, fmt.Errorf("boom"))
+			},
+		},
+		{
+			name: "NoDataTest",
+			validateFn: func(t *testing.T, output string) {
+				assert.True(t, strings.Contains(output, "No routing trees found"))
+			},
+			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
+				testSvc.EXPECT().InitOrganizations().Return()
+				testSvc.EXPECT().UploadRoutingTrees("").Return(nil, nil)
+			},
+		},
+		{
+			name: "SuccessUpload",
+			validateFn: func(t *testing.T, output string) {
+				assert.True(t, strings.Contains(output, "moo"))
+			},
+			setupMocks: func(testSvc *mocks.GrafanaService) {
+				testSvc.EXPECT().Login().Return()
+				testSvc.EXPECT().InitOrganizations().Return()
+				testSvc.EXPECT().UploadRoutingTrees("").Return([]string{"moo"}, nil)
+			},
+		},
+	}
+	for _, tc := range testCases {
+		if tc.skip {
+			slog.Debug("Skipping test", slog.Any("testName", tc.name))
+			continue
+		}
+		slog.Info("Running test", slog.Any("testName", tc.name))
+		testSvc := new(mocks.GrafanaService)
+		if tc.setupMocks != nil {
+			tc.setupMocks(testSvc)
+		}
+		optionMockSvc := GetOptionMockSvc(testSvc)
+		r, w, cleanup := test_tooling.InterceptStdout()
+		defer cleanup()
+
+		rootSvc := cli.NewRootService()
+		err := cli.Execute(rootSvc, uploadCmd, optionMockSvc())
+		assert.Nil(t, err)
+		defer cleanup()
+		assert.NoError(t, w.Close())
+
+		out, _ := io.ReadAll(r)
+		outStr := string(out)
+		assert.NotNil(t, tc.validateFn)
+		tc.validateFn(t, outStr)
+	}
+}
+
+// TestUploadRoutingTreesWarnsAboutPruning verifies the upload command always
+// surfaces a warning that it will remove server-side routing trees with no
+// local counterpart, since upload makes the server fully reflect local state.
+func TestUploadRoutingTreesWarnsAboutPruning(t *testing.T) {
+	uploadCmd := []string{"backup", "alerting", "routingtree", "upload"}
+	testSvc := new(mocks.GrafanaService)
+	testSvc.EXPECT().Login().Return()
+	testSvc.EXPECT().InitOrganizations().Return()
+	testSvc.EXPECT().UploadRoutingTrees("").Return([]string{"moo"}, nil)
+
+	optionMockSvc := GetOptionMockSvc(testSvc)
+	r, w, cleanup := test_tooling.InterceptStdout()
+	defer cleanup()
+
+	rootSvc := cli.NewRootService()
+	err := cli.Execute(rootSvc, uploadCmd, optionMockSvc())
+	assert.Nil(t, err)
+	assert.NoError(t, w.Close())
+
+	out, _ := io.ReadAll(r)
+	outStr := string(out)
+	assert.True(t, strings.Contains(outStr, "WRN"))
+	assert.True(t, strings.Contains(outStr, "will be deleted"))
+}
+
+func TestUploadRoutingTreesWithNameFilter(t *testing.T) {
+	uploadCmd := []string{"backup", "alerting", "routingtree", "upload", "--name", "moo"}
+	testSvc := new(mocks.GrafanaService)
+	testSvc.EXPECT().Login().Return()
+	testSvc.EXPECT().InitOrganizations().Return()
+	testSvc.EXPECT().UploadRoutingTrees("moo").Return([]string{"moo"}, nil)
+
+	optionMockSvc := GetOptionMockSvc(testSvc)
+	r, w, cleanup := test_tooling.InterceptStdout()
+	defer cleanup()
+
+	rootSvc := cli.NewRootService()
+	err := cli.Execute(rootSvc, uploadCmd, optionMockSvc())
+	assert.Nil(t, err)
+	assert.NoError(t, w.Close())
+
+	out, _ := io.ReadAll(r)
+	assert.Contains(t, string(out), "moo")
 }
