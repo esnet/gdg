@@ -1965,6 +1965,61 @@ func (_c *GrafanaService_DownloadOrganizations_Call) RunAndReturn(run func(filte
 	return _c
 }
 
+// DownloadRoutingTrees provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) DownloadRoutingTrees() ([]string, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for DownloadRoutingTrees")
+	}
+
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []string); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// GrafanaService_DownloadRoutingTrees_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DownloadRoutingTrees'
+type GrafanaService_DownloadRoutingTrees_Call struct {
+	*mock.Call
+}
+
+// DownloadRoutingTrees is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) DownloadRoutingTrees() *GrafanaService_DownloadRoutingTrees_Call {
+	return &GrafanaService_DownloadRoutingTrees_Call{Call: _e.mock.On("DownloadRoutingTrees")}
+}
+
+func (_c *GrafanaService_DownloadRoutingTrees_Call) Run(run func()) *GrafanaService_DownloadRoutingTrees_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_DownloadRoutingTrees_Call) Return(strings []string, err error) *GrafanaService_DownloadRoutingTrees_Call {
+	_c.Call.Return(strings, err)
+	return _c
+}
+
+func (_c *GrafanaService_DownloadRoutingTrees_Call) RunAndReturn(run func() ([]string, error)) *GrafanaService_DownloadRoutingTrees_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // DownloadTeams provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) DownloadTeams(filter outbound.Filter) map[*models.TeamDTO][]*models.TeamMemberDTO {
 	ret := _mock.Called(filter)
@@ -3345,6 +3400,61 @@ func (_c *GrafanaService_ListOrganizations_Call) Return(orgsDTOWithPreferencess 
 }
 
 func (_c *GrafanaService_ListOrganizations_Call) RunAndReturn(run func(filter outbound.Filter, withPreferences bool) []*domain.OrgsDTOWithPreferences) *GrafanaService_ListOrganizations_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListRoutingTrees provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) ListRoutingTrees() ([]*domain.RoutingTreeGdg, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListRoutingTrees")
+	}
+
+	var r0 []*domain.RoutingTreeGdg
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]*domain.RoutingTreeGdg, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []*domain.RoutingTreeGdg); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.RoutingTreeGdg)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// GrafanaService_ListRoutingTrees_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListRoutingTrees'
+type GrafanaService_ListRoutingTrees_Call struct {
+	*mock.Call
+}
+
+// ListRoutingTrees is a helper method to define mock.On call
+func (_e *GrafanaService_Expecter) ListRoutingTrees() *GrafanaService_ListRoutingTrees_Call {
+	return &GrafanaService_ListRoutingTrees_Call{Call: _e.mock.On("ListRoutingTrees")}
+}
+
+func (_c *GrafanaService_ListRoutingTrees_Call) Run(run func()) *GrafanaService_ListRoutingTrees_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *GrafanaService_ListRoutingTrees_Call) Return(routingTreeGdgs []*domain.RoutingTreeGdg, err error) *GrafanaService_ListRoutingTrees_Call {
+	_c.Call.Return(routingTreeGdgs, err)
+	return _c
+}
+
+func (_c *GrafanaService_ListRoutingTrees_Call) RunAndReturn(run func() ([]*domain.RoutingTreeGdg, error)) *GrafanaService_ListRoutingTrees_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -586,6 +586,61 @@ func (_c *AlertingService_DownloadContactPoints_Call) RunAndReturn(run func() (s
 	return _c
 }
 
+// DownloadRoutingTrees provides a mock function for the type AlertingService
+func (_mock *AlertingService) DownloadRoutingTrees() ([]string, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for DownloadRoutingTrees")
+	}
+
+	var r0 []string
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []string); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// AlertingService_DownloadRoutingTrees_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DownloadRoutingTrees'
+type AlertingService_DownloadRoutingTrees_Call struct {
+	*mock.Call
+}
+
+// DownloadRoutingTrees is a helper method to define mock.On call
+func (_e *AlertingService_Expecter) DownloadRoutingTrees() *AlertingService_DownloadRoutingTrees_Call {
+	return &AlertingService_DownloadRoutingTrees_Call{Call: _e.mock.On("DownloadRoutingTrees")}
+}
+
+func (_c *AlertingService_DownloadRoutingTrees_Call) Run(run func()) *AlertingService_DownloadRoutingTrees_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *AlertingService_DownloadRoutingTrees_Call) Return(strings []string, err error) *AlertingService_DownloadRoutingTrees_Call {
+	_c.Call.Return(strings, err)
+	return _c
+}
+
+func (_c *AlertingService_DownloadRoutingTrees_Call) RunAndReturn(run func() ([]string, error)) *AlertingService_DownloadRoutingTrees_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListAlertNotifications provides a mock function for the type AlertingService
 func (_mock *AlertingService) ListAlertNotifications() (*models.Route, error) {
 	ret := _mock.Called()
@@ -871,6 +926,61 @@ func (_c *AlertingService_ListContactPoints_Call) Return(contactPointExports []*
 }
 
 func (_c *AlertingService_ListContactPoints_Call) RunAndReturn(run func() ([]*models.ContactPointExport, error)) *AlertingService_ListContactPoints_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListRoutingTrees provides a mock function for the type AlertingService
+func (_mock *AlertingService) ListRoutingTrees() ([]*domain.RoutingTreeGdg, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListRoutingTrees")
+	}
+
+	var r0 []*domain.RoutingTreeGdg
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]*domain.RoutingTreeGdg, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []*domain.RoutingTreeGdg); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.RoutingTreeGdg)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// AlertingService_ListRoutingTrees_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListRoutingTrees'
+type AlertingService_ListRoutingTrees_Call struct {
+	*mock.Call
+}
+
+// ListRoutingTrees is a helper method to define mock.On call
+func (_e *AlertingService_Expecter) ListRoutingTrees() *AlertingService_ListRoutingTrees_Call {
+	return &AlertingService_ListRoutingTrees_Call{Call: _e.mock.On("ListRoutingTrees")}
+}
+
+func (_c *AlertingService_ListRoutingTrees_Call) Run(run func()) *AlertingService_ListRoutingTrees_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *AlertingService_ListRoutingTrees_Call) Return(routingTreeGdgs []*domain.RoutingTreeGdg, err error) *AlertingService_ListRoutingTrees_Call {
+	_c.Call.Return(routingTreeGdgs, err)
+	return _c
+}
+
+func (_c *AlertingService_ListRoutingTrees_Call) RunAndReturn(run func() ([]*domain.RoutingTreeGdg, error)) *AlertingService_ListRoutingTrees_Call {
 	_c.Call.Return(run)
 	return _c
 }

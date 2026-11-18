@@ -11,6 +11,7 @@ type AlertingApi interface {
 	AlertTemplates
 	AlertPolicies
 	AlertTimings
+	AlertRoutingTrees
 }
 
 // AlertingService is the standalone port satisfied by the alerting package's
@@ -53,4 +54,15 @@ type AlertTimings interface {
 	ListAlertTimings() ([]*models.MuteTimeInterval, error)
 	ClearAlertTimings() error
 	UploadAlertTimings() ([]string, error)
+}
+
+// AlertRoutingTrees covers the App Platform (K8s-style) notification routing
+// tree API (notifications.alerting.grafana.app/v1beta1, resource
+// "routingtrees"). Unlike AlertPolicies, which manages a single flat policy
+// tree via the legacy provisioning API, this supports multiple named routing
+// trees per namespace/org and exposes the full recursive route structure.
+// Read-only for now: list and download only.
+type AlertRoutingTrees interface {
+	ListRoutingTrees() ([]*customModels.RoutingTreeGdg, error)
+	DownloadRoutingTrees() ([]string, error)
 }

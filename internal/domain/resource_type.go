@@ -25,6 +25,7 @@ const (
 	SecureSecretsResource        ResourceType = "secure"
 	AlertingResource             ResourceType = "alerting"
 	AlertingRulesResource        ResourceType = "alerting-rules"
+	RoutingTreeResource          ResourceType = "alerting-routing-trees"
 )
 
 var orgNamespacedResource = map[ResourceType]bool{
@@ -38,6 +39,7 @@ var orgNamespacedResource = map[ResourceType]bool{
 	TeamResource:                 true,
 	AlertingResource:             true,
 	AlertingRulesResource:        true,
+	RoutingTreeResource:          true,
 }
 
 // isNamespaced returns true if the resource type is namespaced

@@ -65,25 +65,33 @@ alert_settings:
 
 Nested array paths such as `receivers.#.type` and `receivers.#.settings.recipient` are supported. See [Contexts]({{% ref "contexts" %}}) for the full filter reference.
 
-#### Notifications
+#### Routing Trees
+
+{{% notice style="note" %}} Routing trees are read via the Grafana App Platform API
+(`notifications.alerting.grafana.app/v1beta1`), which supports multiple named routing
+trees per organization and returns the full recursive route structure. This replaces
+the older `notifications`/`policy` command, which only exposed a single flat policy
+tree via the legacy provisioning API and silently dropped nested sub-routes.
+Only `list` and `download` are supported; uploading/clearing routing trees is not yet
+available. {{% /notice %}}
 
 ```sh
-gdg backup alerting notifications list -- Lists all current contact points
-gdg backup alerting notifications download  -- Download all known contact points
-gdg backup alerting notifications upload -- Upload all contact points
-gdg backup alerting notifications clear -- Clear all contact points
+gdg backup alerting routingtree list -- Lists all routing trees
+gdg backup alerting routingtree download  -- Download all known routing trees
 ```
 {{% expand title="Example Output:" %}}
 ```
-┌───────────────────────┬──────────────┐
-│ UID                   │              │
-│ RECEIVER              │ MATCHERS     │
-├───────────────────────┼──────────────┤
-│ grafana-default-email │ [[foo = 22]] │
-│ slack                 │ [[moo = 23]] │
-└───────────────────────┴──────────────┘
+┌──────────────┬───────────────────────┬────────┬────────────────────────────────────────────┐
+│ NAME         │ DEFAULT RECEIVER      │ ROUTES │ GDG API VERSION                             │
+├──────────────┼───────────────────────┼────────┼────────────────────────────────────────────┤
+│ moo          │ devnull               │      1 │ notifications.alerting.grafana.app/v1beta1  │
+│ user-defined │ grafana-default-email │      3 │ notifications.alerting.grafana.app/v1beta1  │
+└──────────────┴───────────────────────┴────────┴────────────────────────────────────────────┘
 ```
 {{% /expand %}}
+
+Each tree is downloaded to its own file, named after the routing tree, e.g.
+`alerting/routing-trees/user-defined.json`.
 
 #### Rules
 

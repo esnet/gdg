@@ -20,6 +20,7 @@ func TestResourceType_String(t *testing.T) {
 		{OrganizationMetaResource, "org"},
 		{AlertingResource, "alerting"},
 		{AlertingRulesResource, "alerting-rules"},
+		{RoutingTreeResource, "alerting-routing-trees"},
 		{LibraryElementResource, "libraryelements"},
 		{SecureSecretsResource, "secure"},
 		{TemplatesResource, "templates"},
@@ -43,6 +44,7 @@ func TestResourceType_IsNamespaced_True(t *testing.T) {
 		TeamResource,
 		AlertingResource,
 		AlertingRulesResource,
+		RoutingTreeResource,
 	}
 	for _, rt := range namespaced {
 		t.Run(rt.String(), func(t *testing.T) {
