@@ -53,15 +53,15 @@ func (d *DashboardServiceImpl) DownloadDashboardPermissions(filterReq outbound.F
 //   - serverIsV2=false + file is v2 → skipped with warning
 func (d *DashboardServiceImpl) UploadDashboardPermissions(filterReq outbound.Filter) ([]string, error) {
 	if filterReq == nil {
-		filterReq = NewDashboardFilter(d.gdgConfig, "", "", "")
+		filterReq = NewDashboardFilter(d.GdgConfig, "", "", "")
 	}
 
 	serverIsV2 := d.isV2Enabled()
-	orgName := d.grafanaConf.GetOrganizationName()
-	folderUidMap := d.getFolderNameUIDMap(d.listFolders(NewFolderFilter(d.gdgConfig)))
-	path := d.grafanaConf.GetPath(domain.DashboardPermissionsResource, orgName)
+	orgName := d.GrafanaConf.GetOrganizationName()
+	folderUidMap := d.GetFolderNameUIDMap(d.ListFolders(NewFolderFilter(d.GdgConfig)))
+	path := d.GrafanaConf.GetPath(domain.DashboardPermissionsResource, orgName)
 
-	filesInDir, err := d.storage.FindAllFiles(path, true)
+	filesInDir, err := d.Storage.FindAllFiles(path, true)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read dashboard permissions directory: %w", err)
 	}
@@ -74,7 +74,7 @@ func (d *DashboardServiceImpl) UploadDashboardPermissions(filterReq outbound.Fil
 			continue
 		}
 
-		rawFile, readErr := d.storage.ReadFile(file)
+		rawFile, readErr := d.Storage.ReadFile(file)
 		if readErr != nil {
 			slog.Warn("Unable to read file", "filename", file, "err", readErr)
 			continue
@@ -89,7 +89,7 @@ func (d *DashboardServiceImpl) UploadDashboardPermissions(filterReq outbound.Fil
 		}
 
 		// Validate folder before upload.
-		folderName, foldErr := d.resources.GetFolderFromResourcePath(d.grafanaConf, file, domain.DashboardPermissionsResource, d.storage.GetPrefix(), orgName)
+		folderName, foldErr := d.Resources.GetFolderFromResourcePath(d.GrafanaConf, file, domain.DashboardPermissionsResource, d.Storage.GetPrefix(), orgName)
 		if foldErr != nil || folderName == "" {
 			folderName = domain.ApiConsts.DefaultFolderName
 		}
@@ -419,9 +419,9 @@ func (d *DashboardServiceImpl) writeDashboardPermissions(boardLinks []domain.Das
 			continue
 		}
 		dsPath := fmt.Sprintf("%s/%s.json",
-			d.resources.BuildResourceFolder(d.grafanaConf, link.Dashboard.NestedPath, domain.DashboardPermissionsResource, d.isLocal(), d.GetGlobals().ClearOutput),
+			d.Resources.BuildResourceFolder(d.GrafanaConf, link.Dashboard.NestedPath, domain.DashboardPermissionsResource, d.IsLocal(), d.GetGlobals().ClearOutput),
 			slug.Make(link.Dashboard.Title))
-		if err = d.storage.WriteFile(dsPath, pretty.Pretty(dsPacked)); err != nil {
+		if err = d.Storage.WriteFile(dsPath, pretty.Pretty(dsPacked)); err != nil {
 			slog.Error("unable to write permissions file", "filename", slug.Make(link.Dashboard.Title), "err", err)
 		} else {
 			dataFiles = append(dataFiles, dsPath)

@@ -2122,6 +2122,68 @@ func (_c *GrafanaService_EncodeValue_Call) RunAndReturn(run func(in string) stri
 	return _c
 }
 
+// GetFolderByUid provides a mock function for the type GrafanaService
+func (_mock *GrafanaService) GetFolderByUid(uid string) (*domain.NestedHit, error) {
+	ret := _mock.Called(uid)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetFolderByUid")
+	}
+
+	var r0 *domain.NestedHit
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) (*domain.NestedHit, error)); ok {
+		return returnFunc(uid)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) *domain.NestedHit); ok {
+		r0 = returnFunc(uid)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.NestedHit)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(uid)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// GrafanaService_GetFolderByUid_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFolderByUid'
+type GrafanaService_GetFolderByUid_Call struct {
+	*mock.Call
+}
+
+// GetFolderByUid is a helper method to define mock.On call
+//   - uid string
+func (_e *GrafanaService_Expecter) GetFolderByUid(uid any) *GrafanaService_GetFolderByUid_Call {
+	return &GrafanaService_GetFolderByUid_Call{Call: _e.mock.On("GetFolderByUid", uid)}
+}
+
+func (_c *GrafanaService_GetFolderByUid_Call) Run(run func(uid string)) *GrafanaService_GetFolderByUid_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *GrafanaService_GetFolderByUid_Call) Return(nestedHit *domain.NestedHit, err error) *GrafanaService_GetFolderByUid_Call {
+	_c.Call.Return(nestedHit, err)
+	return _c
+}
+
+func (_c *GrafanaService_GetFolderByUid_Call) RunAndReturn(run func(uid string) (*domain.NestedHit, error)) *GrafanaService_GetFolderByUid_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetOrgPreferences provides a mock function for the type GrafanaService
 func (_mock *GrafanaService) GetOrgPreferences() (*models.PreferencesSpec, error) {
 	ret := _mock.Called()

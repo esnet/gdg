@@ -7,6 +7,7 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/alerting"
 	"github.com/esnet/gdg/internal/adapter/grafana/api"
 	"github.com/esnet/gdg/internal/config"
 	"github.com/esnet/gdg/internal/config/config_domain"
@@ -35,7 +36,7 @@ func TestAlertingRulesCrud(t *testing.T) {
 	setupAlertingEnvironment(is, apiClient, true)
 
 	alertCfg := domain.AlertRuleFilterParams{IgnoreWatchedFolders: false}
-	alertFilters := api.NewAlertRuleFilter(cfg, apiClient, alertCfg)
+	alertFilters := alerting.NewAlertRuleFilter(cfg, apiClient, alertCfg)
 	rulesList, err := apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 0)
@@ -70,7 +71,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 	apiClient := r.ApiClient
 	setupAlertingEnvironment(is, apiClient, true)
 	// Upload All rules
-	alertFilters := api.NewAlertRuleFilter(cfg, apiClient, domain.AlertRuleFilterParams{IgnoreWatchedFolders: true})
+	alertFilters := alerting.NewAlertRuleFilter(cfg, apiClient, domain.AlertRuleFilterParams{IgnoreWatchedFolders: true})
 	_, err := apiClient.UploadAlertRules(alertFilters)
 	is.NoErr(err)
 
@@ -207,7 +208,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 				continue
 			}
 			t.Logf("Running test case: %s", tc.name)
-			alertFilters = api.NewAlertRuleFilter(cfg, apiClient, tc.alertCfg)
+			alertFilters = alerting.NewAlertRuleFilter(cfg, apiClient, tc.alertCfg)
 			rulesList, err := apiClient.ListAlertRules(alertFilters)
 			is.NoErr(err)
 			is.Equal(len(rulesList), tc.expected)
@@ -263,7 +264,7 @@ func TestAlertingRulesFilterTest(t *testing.T) {
 				continue
 			}
 			t.Logf("Running test case: %s", tc.name)
-			alertFilters = api.NewAlertRuleFilter(cfg, apiClient, tc.alertCfg)
+			alertFilters = alerting.NewAlertRuleFilter(cfg, apiClient, tc.alertCfg)
 			rulesList, err := apiClient.ListAlertRules(alertFilters)
 			is.NoErr(err)
 			is.Equal(len(rulesList), tc.expected)
@@ -286,7 +287,7 @@ func TestSingleUploadMissingFolderMatch(t *testing.T) {
 	is.True(r != nil)
 	apiClient := r.ApiClient
 	setupAlertingEnvironment(is, apiClient, false)
-	alertFilters := api.NewAlertRuleFilter(cfg, apiClient, alertCfg)
+	alertFilters := alerting.NewAlertRuleFilter(cfg, apiClient, alertCfg)
 	rules, err := r.ApiClient.UploadAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rules), 1)
@@ -327,7 +328,7 @@ func TestSingleUploadFolderUIDMismatch(t *testing.T) {
 		IgnoreWatchedFolders: true,
 		UID:                  "testing",
 	}
-	alertFilters := api.NewAlertRuleFilter(cfg, apiClient, alertCfg)
+	alertFilters := alerting.NewAlertRuleFilter(cfg, apiClient, alertCfg)
 	rules, err := r.ApiClient.UploadAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rules), 1)
@@ -366,7 +367,7 @@ func TestAlertingRulesNoFilterCrud(t *testing.T) {
 	f := domain.AlertRuleFilterParams{
 		IgnoreWatchedFolders: true,
 	}
-	alertFilters := api.NewAlertRuleFilter(cfg, apiClient, f)
+	alertFilters := alerting.NewAlertRuleFilter(cfg, apiClient, f)
 	rulesList, err := apiClient.ListAlertRules(alertFilters)
 	is.NoErr(err)
 	is.Equal(len(rulesList), 0)

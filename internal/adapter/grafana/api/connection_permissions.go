@@ -68,8 +68,8 @@ func (s *DashNGoImpl) DownloadConnectionPermissions(filter outbound.Filter) []st
 			slog.Error("unable to marshall json ", "err", err.Error(), "connectionName", connection.Connection.Name)
 			continue
 		}
-		dsPath := s.resources.BuildResourcePath(s.grafanaConf, slug.Make(connection.Connection.Name), domain.ConnectionPermissionResource, s.isLocal(), s.GetGlobals().ClearOutput)
-		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
+		dsPath := s.Resources.BuildResourcePath(s.GrafanaConf, slug.Make(connection.Connection.Name), domain.ConnectionPermissionResource, s.IsLocal(), s.GetGlobals().ClearOutput)
+		if err = s.Storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("unable to write file. ", "filename", slug.Make(connection.Connection.Name), "error", err.Error())
 		} else {
 			dataFiles = append(dataFiles, dsPath)
@@ -114,15 +114,15 @@ func (s *DashNGoImpl) UploadConnectionPermissions(filter outbound.Filter) []stri
 		}
 	}
 
-	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.ConnectionPermissionResource, orgName), false)
+	orgName := s.GrafanaConf.GetOrganizationName()
+	filesInDir, err := s.Storage.FindAllFiles(s.GrafanaConf.GetPath(domain.ConnectionPermissionResource, orgName), false)
 	if err != nil {
 		log.Fatalf("Failed to read folders permission imports: %s", err.Error())
 	}
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain.ConnectionPermissionResource, orgName), file)
+		fileLocation := filepath.Join(s.GrafanaConf.GetPath(domain.ConnectionPermissionResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
-			if rawFolder, err = s.storage.ReadFile(fileLocation); err != nil {
+			if rawFolder, err = s.Storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file %s", "filename", fileLocation, "err", err)
 				continue
 			}

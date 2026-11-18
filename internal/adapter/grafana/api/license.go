@@ -1,4 +1,5 @@
 package api
 
-// IsEnterprise is promoted from baseService which is embedded in DashNGoImpl.
-// This file is intentionally left minimal; the implementation lives in base_service.go.
+// IsEnterprise is promoted from core.Service which is embedded in DashNGoImpl.
+// This file is intentionally left minimal; the implementation lives in
+// internal/adapter/grafana/core/service.go.

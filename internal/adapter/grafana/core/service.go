@@ -1,4 +1,9 @@
-package api
+// Package core holds the shared infrastructure used by every Grafana service
+// implementation: HTTP/OpenAPI client construction, App Platform (Kubernetes-style)
+// helpers, folder helpers, and other cross-cutting concerns. Feature packages
+// (dashboard, alerting, and the top-level api.DashNGoImpl) embed core.Service to
+// get this behavior without duplicating it.
+package core
 
 import (
 	"context"
@@ -14,9 +19,6 @@ import (
 
 	"github.com/carlmjohnson/requests"
 	"github.com/esnet/gdg/internal/adapter/grafana/extended"
-	"github.com/jellydator/ttlcache/v3"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/transport"
 	"github.com/esnet/gdg/internal/adapter/storage"
 	configDomain "github.com/esnet/gdg/internal/config/config_domain"
 	"github.com/esnet/gdg/internal/domain"
@@ -27,22 +29,37 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/search"
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/jellydator/ttlcache/v3"
 	"github.com/samber/lo"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/transport"
 )
 
-// baseService holds the shared infrastructure that every service implementation
-// (DashboardServiceImpl, and future FolderServiceImpl, ConnectionServiceImpl, etc.)
-// needs. DashNGoImpl also embeds baseService so all existing methods continue to
-// compile unchanged.
-type baseService struct {
-	extended       outbound.ExtendedApi
-	gdgConfig      *configDomain.GDGAppConfiguration
-	grafanaConf    *configDomain.GrafanaConfig
-	storage        outbound.Storage
-	encoder        outbound.CipherEncoder
-	lookupResolver outbound.LookupResolver
-	lookupSvc      outbound.LookupService
-	resources      ports.Resources
+// Server info keys, used by GetServerInfo and any callers inspecting its result.
+const (
+	SrvInfoDBKey               = "Database"
+	SrvInfoCommitKey           = "Commit"
+	SrvInfoVersionKey          = "Version"
+	SrvInfoEnterpriseCommitKey = "EnterpriseCommit"
+)
+
+// NewClientOpts is a functional option applied to a TransportConfig when
+// constructing a Grafana HTTP client.
+type NewClientOpts func(transportConfig *client.TransportConfig)
+
+// Service holds the shared infrastructure that every service implementation
+// (DashboardServiceImpl, AlertingServiceImpl, api.DashNGoImpl, and any future
+// service) needs. Each service embeds its own Service value, obtained via
+// NewService, so there is no shared mutable state between them.
+type Service struct {
+	Extended       outbound.ExtendedApi
+	GdgConfig      *configDomain.GDGAppConfiguration
+	GrafanaConf    *configDomain.GrafanaConfig
+	Storage        outbound.Storage
+	Encoder        outbound.CipherEncoder
+	LookupResolver outbound.LookupResolver
+	LookupSvc      outbound.LookupService
+	Resources      ports.Resources
 
 	// discoveredVersions caches API group version discovery results with a 5-minute
 	// TTL so long-running processes pick up version changes without paying a network
@@ -50,11 +67,35 @@ type baseService struct {
 	discoveredVersions *ttlcache.Cache[string, string]
 }
 
+// NewService constructs a Service from the given dependencies.
+func NewService(
+	gdgConfig *configDomain.GDGAppConfiguration,
+	grafanaConf *configDomain.GrafanaConfig,
+	extendedAPI outbound.ExtendedApi,
+	storageEngine outbound.Storage,
+	encoder outbound.CipherEncoder,
+	resources ports.Resources,
+	lookupResolver outbound.LookupResolver,
+	lookupSvc outbound.LookupService,
+) Service {
+	return Service{
+		GdgConfig:      gdgConfig,
+		GrafanaConf:    grafanaConf,
+		Extended:       extendedAPI,
+		Storage:        storageEngine,
+		Encoder:        encoder,
+		Resources:      resources,
+		LookupResolver: lookupResolver,
+		LookupSvc:      lookupSvc,
+	}
+}
+
 // ---------------------------------------------------------------------------
 // HTTP client helpers
 // ---------------------------------------------------------------------------
-func (b *baseService) getOrgNameClientOpts() NewClientOpts {
-	cfg := b.gdgConfig
+
+func (b *Service) getOrgNameClientOpts() NewClientOpts {
+	cfg := b.GdgConfig
 	orgName := cfg.GetDefaultGrafanaConfig().OrganizationName
 	if orgName != "" {
 		return func(transportConfig *client.TransportConfig) {
@@ -71,10 +112,14 @@ func (b *baseService) getOrgNameClientOpts() NewClientOpts {
 	}
 }
 
-func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAPI, *client.TransportConfig) {
-	u, err := url.Parse(b.grafanaConf.GetURL())
+// GetNewClient builds a Grafana OpenAPI client with the given options applied.
+// Exported (rather than lowercase) so feature packages and tests outside core
+// can still reach it; GetClient/GetBasicAuthClient/GetAdminClient cover the
+// common cases and should be preferred.
+func (b *Service) GetNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAPI, *client.TransportConfig) {
+	u, err := url.Parse(b.GrafanaConf.GetURL())
 	if err != nil {
-		log.Fatal("invalid Grafana URL", b.grafanaConf.GetURL())
+		log.Fatal("invalid Grafana URL", b.GrafanaConf.GetURL())
 	}
 	path, err := url.JoinPath(u.Path, "api")
 	if err != nil {
@@ -85,25 +130,25 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 	// This mirrors the pattern in extended.go and ensures the logging middleware
 	// always sees traffic regardless of TLS configuration.
 	var base = http.DefaultTransport
-	if b.gdgConfig.IgnoreSSL() {
+	if b.GdgConfig.IgnoreSSL() {
 		t := http.DefaultTransport.(*http.Transport).Clone()
 		t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // #nosec G402
 		base = t
 	}
-	if b.gdgConfig != nil && b.gdgConfig.TransportWrapper != nil {
-		base = b.gdgConfig.TransportWrapper(base)
+	if b.GdgConfig != nil && b.GdgConfig.TransportWrapper != nil {
+		base = b.GdgConfig.TransportWrapper(base)
 	}
 
 	httpConfig := &client.TransportConfig{
 		Host:         u.Host,
 		BasePath:     path,
 		Schemes:      []string{u.Scheme},
-		NumRetries:   b.gdgConfig.GetAppGlobals().RetryCount,
-		RetryTimeout: b.gdgConfig.GetAppGlobals().GetRetryTimeout(),
+		NumRetries:   b.GdgConfig.GetAppGlobals().RetryCount,
+		RetryTimeout: b.GdgConfig.GetAppGlobals().GetRetryTimeout(),
 		Client:       &http.Client{Transport: base},
 	}
 
-	if b.grafanaConf.IsBasicAuth() && len(opts) == 1 {
+	if b.GrafanaConf.IsBasicAuth() && len(opts) == 1 {
 		opts = append(opts, b.getOrgNameClientOpts())
 	}
 	for _, opt := range opts {
@@ -115,41 +160,47 @@ func (b *baseService) getNewClient(opts ...NewClientOpts) (*client.GrafanaHTTPAP
 }
 
 // GetClient returns a Grafana API client, preferring token auth over basic auth.
-func (b *baseService) GetClient() *client.GrafanaHTTPAPI {
-	if b.grafanaConf.GetAPIToken() != "" {
-		grafanaClient, _ := b.getNewClient(func(clientCfg *client.TransportConfig) {
-			clientCfg.APIKey = b.grafanaConf.GetAPIToken()
+func (b *Service) GetClient() *client.GrafanaHTTPAPI {
+	if b.GrafanaConf.GetAPIToken() != "" {
+		grafanaClient, _ := b.GetNewClient(func(clientCfg *client.TransportConfig) {
+			clientCfg.APIKey = b.GrafanaConf.GetAPIToken()
 		})
 		return grafanaClient
 	}
 	return b.GetBasicAuthClient()
 }
 
-func (b *baseService) getDefaultBasicOpts() []NewClientOpts {
+func (b *Service) getDefaultBasicOpts() []NewClientOpts {
 	return []NewClientOpts{func(clientCfg *client.TransportConfig) {
-		clientCfg.BasicAuth = url.UserPassword(b.grafanaConf.UserName, b.grafanaConf.GetPassword())
+		clientCfg.BasicAuth = url.UserPassword(b.GrafanaConf.UserName, b.GrafanaConf.GetPassword())
 	}}
 }
 
 // GetBasicClientWithOpts returns a basic-auth client with additional options applied.
-func (b *baseService) GetBasicClientWithOpts(opts ...NewClientOpts) *client.GrafanaHTTPAPI {
+func (b *Service) GetBasicClientWithOpts(opts ...NewClientOpts) *client.GrafanaHTTPAPI {
 	allOpts := b.getDefaultBasicOpts()
 	allOpts = append(allOpts, opts...)
-	grafanaClient, _ := b.getNewClient(allOpts...)
+	grafanaClient, _ := b.GetNewClient(allOpts...)
 	return grafanaClient
 }
 
 // GetBasicAuthClient returns a basic-auth Grafana API client.
-func (b *baseService) GetBasicAuthClient() *client.GrafanaHTTPAPI {
+func (b *Service) GetBasicAuthClient() *client.GrafanaHTTPAPI {
 	return b.GetBasicClientWithOpts()
 }
 
 // GetAdminClient returns the admin client; fatal if admin is not configured.
-func (b *baseService) GetAdminClient() *client.GrafanaHTTPAPI {
-	if !b.grafanaConf.IsGrafanaAdmin() || b.grafanaConf.UserName == "" {
+func (b *Service) GetAdminClient() *client.GrafanaHTTPAPI {
+	if !b.GrafanaConf.IsGrafanaAdmin() || b.GrafanaConf.UserName == "" {
 		log.Fatal("Unable to get Grafana Admin SecureData.")
 	}
 	return b.GetBasicClientWithOpts()
+}
+
+// GetOrgNameClientOpts exposes getOrgNameClientOpts for callers (e.g. org
+// preferences) that need to target a client at a specific configured org by name.
+func (b *Service) GetOrgNameClientOpts() NewClientOpts {
+	return b.getOrgNameClientOpts()
 }
 
 // ---------------------------------------------------------------------------
@@ -157,16 +208,16 @@ func (b *baseService) GetAdminClient() *client.GrafanaHTTPAPI {
 // ---------------------------------------------------------------------------
 
 // GetGlobals returns the global app configuration, initialising it if nil.
-func (b *baseService) GetGlobals() *configDomain.AppGlobals {
-	if b.gdgConfig.Global == nil {
-		b.gdgConfig.Global = &configDomain.AppGlobals{}
+func (b *Service) GetGlobals() *configDomain.AppGlobals {
+	if b.GdgConfig.Global == nil {
+		b.GdgConfig.Global = &configDomain.AppGlobals{}
 	}
-	return b.gdgConfig.Global
+	return b.GdgConfig.Global
 }
 
-// isLocal reports whether the configured storage backend is local disk.
-func (b *baseService) isLocal() bool {
-	return b.storage.Name() == storage.LocalStorageType.String()
+// IsLocal reports whether the configured storage backend is local disk.
+func (b *Service) IsLocal() bool {
+	return b.Storage.Name() == storage.LocalStorageType.String()
 }
 
 // ---------------------------------------------------------------------------
@@ -174,9 +225,7 @@ func (b *baseService) isLocal() bool {
 // ---------------------------------------------------------------------------
 
 // GetServerInfo returns basic Grafana server health information.
-// It satisfies tools.GetVersion so version checks can be called directly on any
-// service that embeds baseService.
-func (b *baseService) GetServerInfo() map[string]any {
+func (b *Service) GetServerInfo() map[string]any {
 	response, err := b.GetClient().Health.GetHealth()
 	if err != nil {
 		log.Fatalf("Unable to get server health info, err: %v", err)
@@ -191,13 +240,13 @@ func (b *baseService) GetServerInfo() map[string]any {
 }
 
 // ---------------------------------------------------------------------------
-// Folder helpers — used by DashboardServiceImpl and any future service
+// Folder helpers — used by DashboardServiceImpl, AlertRules, and any future service
 // ---------------------------------------------------------------------------
 
-// searchAllPages drives a legacy /api/search call to exhaustion, looping on
+// SearchAllPages drives a legacy /api/search call to exhaustion, looping on
 // Limit/Page. Grafana's search endpoint caps a single page at up to 5000
 // results and simply returns whatever fits.
-func searchAllPages(apiClient *client.GrafanaHTTPAPI, configure func(*search.SearchParams)) []*models.Hit {
+func SearchAllPages(apiClient *client.GrafanaHTTPAPI, configure func(*search.SearchParams)) []*models.Hit {
 	const pageSize int64 = 5000 // Grafana's documented per-page maximum.
 
 	var all []*models.Hit
@@ -224,15 +273,15 @@ func searchAllPages(apiClient *client.GrafanaHTTPAPI, configure func(*search.Sea
 	return all
 }
 
-// listFolders fetches all folders from Grafana, optionally filtered.
+// ListFolders fetches all folders from Grafana, optionally filtered.
 // This is an infrastructure call — it does not use the DashboardService routing.
-func (b *baseService) listFolders(filter outbound.Filter) []*domain.NestedHit {
+func (b *Service) ListFolders(filter outbound.Filter) []*domain.NestedHit {
 	result := make([]*domain.NestedHit, 0)
-	if b.grafanaConf.GetDashboardSettings().IgnoreFilters {
+	if b.GrafanaConf.GetDashboardSettings().IgnoreFilters {
 		filter = nil
 	}
 
-	rawHits := searchAllPages(b.GetClient(), func(p *search.SearchParams) {
+	rawHits := SearchAllPages(b.GetClient(), func(p *search.SearchParams) {
 		p.Type = &domain.ApiConsts.SearchTypeFolder
 	})
 
@@ -241,10 +290,10 @@ func (b *baseService) listFolders(filter outbound.Filter) []*domain.NestedHit {
 		newItem := &domain.NestedHit{Hit: item}
 		folderListing = append(folderListing, newItem)
 	})
-	folderUid := getFolderUIDEntityMapByList(folderListing)
+	folderUid := GetFolderUIDEntityMapByList(folderListing)
 
 	for ndx, val := range folderListing {
-		nestedVal := getNestedFolder(val.Title, val.UID, folderUid)
+		nestedVal := GetNestedFolder(val.Title, val.UID, folderUid)
 		val.NestedPath = nestedVal
 		if filter == nil || filter.Validate(context.Background(), domain.FolderFilter, val) {
 			item := folderListing[ndx]
@@ -255,28 +304,28 @@ func (b *baseService) listFolders(filter outbound.Filter) []*domain.NestedHit {
 	return result
 }
 
-// getFolderUIDEntityMap builds a UID→NestedHit map from the current folder list.
-func (b *baseService) getFolderUIDEntityMap(filter outbound.Filter) map[string]*domain.NestedHit {
-	return getFolderUIDEntityMapByList(b.listFolders(filter))
+// GetFolderUIDEntityMap builds a UID→NestedHit map from the current folder list.
+func (b *Service) GetFolderUIDEntityMap(filter outbound.Filter) map[string]*domain.NestedHit {
+	return GetFolderUIDEntityMapByList(b.ListFolders(filter))
 }
 
-// getFolderNameUIDMap builds a NestedPath→UID map from a folder slice.
-func (b *baseService) getFolderNameUIDMap(folders []*domain.NestedHit) map[string]string {
-	return getFolderMapping(folders,
+// GetFolderNameUIDMap builds a NestedPath→UID map from a folder slice.
+func (b *Service) GetFolderNameUIDMap(folders []*domain.NestedHit) map[string]string {
+	return GetFolderMapping(folders,
 		func(fld *domain.NestedHit) string { return fld.NestedPath },
 		func(fld *domain.NestedHit) string { return fld.UID },
 	)
 }
 
-// createdFolders creates any missing folders for folderName (supports nested paths).
-func (b *baseService) createdFolders(folderName string) (map[string]string, error) {
-	return b.createdFoldersWithBaseUID(folderName, "")
+// CreatedFolders creates any missing folders for folderName (supports nested paths).
+func (b *Service) CreatedFolders(folderName string) (map[string]string, error) {
+	return b.CreatedFoldersWithBaseUID(folderName, "")
 }
 
-// createdFoldersWithBaseUID creates any missing folders, assigning uid to the
+// CreatedFoldersWithBaseUID creates any missing folders, assigning uid to the
 // leaf folder. Each segment is created in order if it does not already exist.
-func (b *baseService) createdFoldersWithBaseUID(folderName string, uid string) (map[string]string, error) {
-	namedUIDMap := getFolderMapping(b.listFolders(NewFolderFilter(b.gdgConfig)),
+func (b *Service) CreatedFoldersWithBaseUID(folderName string, uid string) (map[string]string, error) {
+	namedUIDMap := GetFolderMapping(b.ListFolders(NewFolderFilter(b.GdgConfig)),
 		func(db *domain.NestedHit) string { return db.NestedPath },
 		func(fld *domain.NestedHit) *domain.NestedHit { return fld },
 	)
@@ -340,10 +389,10 @@ func (b *baseService) createdFoldersWithBaseUID(folderName string, uid string) (
 	return newFoldersMap, nil
 }
 
-// getDashboardByUid retrieves a single dashboard by UID from the legacy API.
-// Available on baseService so non-dashboard service types (e.g. library elements)
+// GetDashboardByUid retrieves a single dashboard by UID from the legacy API.
+// Available on Service so non-dashboard service types (e.g. library elements)
 // can look up dashboards without depending on DashboardServiceImpl.
-func (b *baseService) getDashboardByUid(uid string) (*models.DashboardFullWithMeta, error) {
+func (b *Service) GetDashboardByUid(uid string) (*models.DashboardFullWithMeta, error) {
 	data, err := b.GetClient().Dashboards.GetDashboardByUID(uid)
 	if err != nil {
 		return nil, err
@@ -351,11 +400,11 @@ func (b *baseService) getDashboardByUid(uid string) (*models.DashboardFullWithMe
 	return data.GetPayload(), nil
 }
 
-// getCurrentOrg reports the org for apiClient's identity via GET /api/org,
+// GetCurrentOrg reports the org for apiClient's identity via GET /api/org,
 // which works for basic auth, tokens, and anonymous access alike (unlike
 // /api/user/orgs). fatal=true dies on error, for callers that require an org;
 // fatal=false returns the error, for callers that should fail soft.
-func (b *baseService) getCurrentOrg(apiClient *client.GrafanaHTTPAPI, fatal bool) (*models.OrgDetailsDTO, error) {
+func (b *Service) GetCurrentOrg(apiClient *client.GrafanaHTTPAPI, fatal bool) (*models.OrgDetailsDTO, error) {
 	resp, err := apiClient.Org.GetCurrentOrg()
 	if err != nil {
 		if fatal {
@@ -370,12 +419,12 @@ func (b *baseService) getCurrentOrg(apiClient *client.GrafanaHTTPAPI, fatal bool
 // App Platform (Kubernetes-style API) helpers
 // ---------------------------------------------------------------------------
 
-// k8sRestConfig maps GDG's existing Grafana connection settings onto a
+// K8sRestConfig maps GDG's existing Grafana connection settings onto a
 // Kubernetes rest.Config pointed at the Grafana App Platform (/apis) endpoint.
-func (b *baseService) k8sRestConfig() (*rest.Config, error) {
-	u, err := url.Parse(b.grafanaConf.GetURL())
+func (b *Service) K8sRestConfig() (*rest.Config, error) {
+	u, err := url.Parse(b.GrafanaConf.GetURL())
 	if err != nil {
-		return nil, fmt.Errorf("invalid Grafana URL %q: %w", b.grafanaConf.GetURL(), err)
+		return nil, fmt.Errorf("invalid Grafana URL %q: %w", b.GrafanaConf.GetURL(), err)
 	}
 
 	host := strings.TrimSuffix(fmt.Sprintf("%s://%s%s", u.Scheme, u.Host, u.Path), "/")
@@ -384,38 +433,38 @@ func (b *baseService) k8sRestConfig() (*rest.Config, error) {
 		Host:    host,
 		APIPath: "apis",
 	}
-	if b.gdgConfig != nil && b.gdgConfig.TransportWrapper != nil {
-		cfg.Wrap(transport.WrapperFunc(b.gdgConfig.TransportWrapper))
+	if b.GdgConfig != nil && b.GdgConfig.TransportWrapper != nil {
+		cfg.Wrap(transport.WrapperFunc(b.GdgConfig.TransportWrapper))
 	}
 
-	if token := b.grafanaConf.GetAPIToken(); token != "" {
+	if token := b.GrafanaConf.GetAPIToken(); token != "" {
 		cfg.BearerToken = token
 	} else {
-		cfg.Username = b.grafanaConf.UserName
-		cfg.Password = b.grafanaConf.GetPassword()
+		cfg.Username = b.GrafanaConf.UserName
+		cfg.Password = b.GrafanaConf.GetPassword()
 	}
 
-	if b.gdgConfig.IgnoreSSL() {
+	if b.GdgConfig.IgnoreSSL() {
 		cfg.TLSClientConfig = rest.TLSClientConfig{Insecure: true}
 	}
 
 	return cfg, nil
 }
 
-// k8sNamespace maps the active org to an App Platform namespace
+// K8sNamespace maps the active org to an App Platform namespace
 // (org 1 -> "default", org N -> "org-N").
-func (b *baseService) k8sNamespace() string {
+func (b *Service) K8sNamespace() string {
 	orgID := int64(configDomain.DefaultOrganizationId)
 
 	switch {
-	case !b.grafanaConf.IsBasicAuth():
-		if org, err := b.getCurrentOrg(b.GetClient(), false); err == nil && org != nil {
+	case !b.GrafanaConf.IsBasicAuth():
+		if org, err := b.GetCurrentOrg(b.GetClient(), false); err == nil && org != nil {
 			orgID = org.ID
 		} else {
 			slog.Warn("unable to determine the current organization via /api/org; defaulting to org 1/\"default\"", "err", err)
 		}
-	case b.grafanaConf.OrganizationName != "":
-		if id, err := extended.NewExtendedApi(b.gdgConfig).GetConfiguredOrgId(b.grafanaConf.OrganizationName); err == nil {
+	case b.GrafanaConf.OrganizationName != "":
+		if id, err := extended.NewExtendedApi(b.GdgConfig).GetConfiguredOrgId(b.GrafanaConf.OrganizationName); err == nil {
 			orgID = id
 		}
 	}
@@ -430,10 +479,10 @@ func (b *baseService) k8sNamespace() string {
 // fresh before re-querying the App Platform.
 const apiVersionCacheTTL = 5 * time.Minute
 
-// discoverAPIGroupVersion queries the Grafana App Platform discovery endpoint
+// DiscoverAPIGroupVersion queries the Grafana App Platform discovery endpoint
 // (GET /apis) to find the preferred version for the given API group.
 // Results are cached for apiVersionCacheTTL. Returns fallback on any failure.
-func (b *baseService) discoverAPIGroupVersion(group, fallback string) string {
+func (b *Service) DiscoverAPIGroupVersion(group, fallback string) string {
 	if b.discoveredVersions == nil {
 		b.discoveredVersions = ttlcache.New[string, string](
 			ttlcache.WithTTL[string, string](apiVersionCacheTTL),
@@ -469,19 +518,19 @@ type apiGroupVersion struct {
 //
 // TODO: replace with k8s.io/client-go/discovery once k8s.io/apimachinery@v0.38
 // is released and the structured-merge-diff v6/v7 conflict is resolved.
-func (b *baseService) fetchAPIGroupVersion(group, fallback string) string {
+func (b *Service) fetchAPIGroupVersion(group, fallback string) string {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var result apiGroupList
-	req := requests.URL(strings.TrimRight(b.grafanaConf.GetURL(), "/") + "/apis").
-		Client(b.gdgConfig.BuildHTTPClient())
+	req := requests.URL(strings.TrimRight(b.GrafanaConf.GetURL(), "/") + "/apis").
+		Client(b.GdgConfig.BuildHTTPClient())
 
-	token := b.grafanaConf.GetAPIToken()
+	token := b.GrafanaConf.GetAPIToken()
 	if token != "" {
 		req = req.Header("Authorization", "Bearer "+token)
 	} else {
-		req = req.BasicAuth(b.grafanaConf.UserName, b.grafanaConf.GetPassword())
+		req = req.BasicAuth(b.GrafanaConf.UserName, b.GrafanaConf.GetPassword())
 	}
 
 	if err := req.ToJSON(&result).Fetch(ctx); err != nil {
@@ -502,7 +551,7 @@ func (b *baseService) fetchAPIGroupVersion(group, fallback string) string {
 }
 
 // IsEnterprise returns true if the connected Grafana instance runs an Enterprise licence.
-func (b *baseService) IsEnterprise() bool {
+func (b *Service) IsEnterprise() bool {
 	r, err := b.GetClient().Licensing.GetStatus()
 	if err != nil {
 		return false

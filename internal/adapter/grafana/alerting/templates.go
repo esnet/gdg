@@ -1,4 +1,4 @@
-package api
+package alerting
 
 import (
 	"context"
@@ -33,6 +33,8 @@ func setupTemplateReaders(filterObj outbound.Filter) {
 	}
 }
 
+// NewAlertTemplatesFilter creates and configures a new Filter for notification
+// templates, matching by name against regexPattern.
 func NewAlertTemplatesFilter(regexPattern string) outbound.Filter {
 	filterEntity := v2.NewBaseFilter()
 	setupTemplateReaders(filterEntity)
@@ -52,30 +54,30 @@ func NewAlertTemplatesFilter(regexPattern string) outbound.Filter {
 	return filterEntity
 }
 
-func (s *DashNGoImpl) DownloadAlertTemplates(filter outbound.Filter) (string, error) {
+func (a *serviceImpl) DownloadAlertTemplates(filter outbound.Filter) (string, error) {
 	var (
 		dsPacked []byte
 		err      error
 	)
-	tpls, err := s.ListAlertTemplates(filter)
+	tpls, err := a.ListAlertTemplates(filter)
 	if err != nil {
 		return "", err
 	}
 
-	dsPath := s.resources.BuildResourcePath(s.grafanaConf, templatesFile, domain.AlertingResource, s.isLocal(), false)
+	dsPath := a.Resources.BuildResourcePath(a.GrafanaConf, templatesFile, domain.AlertingResource, a.IsLocal(), false)
 	if dsPacked, err = json.MarshalIndent(tpls, "", "	"); err != nil {
 		return "", fmt.Errorf("unable to serialize data to JSON. %w", err)
 	}
-	if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
+	if err = a.Storage.WriteFile(dsPath, dsPacked); err != nil {
 		return "", fmt.Errorf("unable to write file. %w", err)
 	}
 
 	return dsPath, nil
 }
 
-func (s *DashNGoImpl) ListAlertTemplates(filter outbound.Filter) ([]*models.NotificationTemplate, error) {
+func (a *serviceImpl) ListAlertTemplates(filter outbound.Filter) ([]*models.NotificationTemplate, error) {
 	p := provisioning.NewGetTemplatesParams()
-	tpl, err := s.GetClient().Provisioning.GetTemplatesWithParams(p)
+	tpl, err := a.GetClient().Provisioning.GetTemplatesWithParams(p)
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +91,8 @@ func (s *DashNGoImpl) ListAlertTemplates(filter outbound.Filter) ([]*models.Noti
 	return result, nil
 }
 
-func (s *DashNGoImpl) ClearAlertTemplates(filter outbound.Filter) ([]string, error) {
-	tpls, err := s.ListAlertTemplates(filter)
+func (a *serviceImpl) ClearAlertTemplates(filter outbound.Filter) ([]string, error) {
+	tpls, err := a.ListAlertTemplates(filter)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +100,7 @@ func (s *DashNGoImpl) ClearAlertTemplates(filter outbound.Filter) ([]string, err
 	for _, tpl := range tpls {
 		p := provisioning.NewDeleteTemplateParams()
 		p.Name = tpl.Name
-		_, err = s.GetClient().Provisioning.DeleteTemplate(p)
+		_, err = a.GetClient().Provisioning.DeleteTemplate(p)
 		if err != nil {
 			slog.Error("unable to delete template", "template", tpl.Name)
 			continue
@@ -108,13 +110,13 @@ func (s *DashNGoImpl) ClearAlertTemplates(filter outbound.Filter) ([]string, err
 	return result, nil
 }
 
-func (s *DashNGoImpl) UploadAlertTemplates(filter outbound.Filter) ([]string, error) {
+func (a *serviceImpl) UploadAlertTemplates(filter outbound.Filter) ([]string, error) {
 	var (
 		err   error
 		rawDS []byte
 	)
 	data := make([]*models.NotificationTemplate, 0)
-	currentTemplates, err := s.ListAlertTemplates(filter)
+	currentTemplates, err := a.ListAlertTemplates(filter)
 	if err != nil {
 		return nil, err
 	}
@@ -123,8 +125,8 @@ func (s *DashNGoImpl) UploadAlertTemplates(filter outbound.Filter) ([]string, er
 		m[i.Name] = currentTemplates[ndx]
 	}
 
-	fileLocation := s.resources.BuildResourcePath(s.grafanaConf, templatesFile, domain.AlertingResource, s.isLocal(), false)
-	if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
+	fileLocation := a.Resources.BuildResourcePath(a.GrafanaConf, templatesFile, domain.AlertingResource, a.IsLocal(), false)
+	if rawDS, err = a.Storage.ReadFile(fileLocation); err != nil {
 		return nil, fmt.Errorf("failed to read file.  file: %s, err: %w", fileLocation, err)
 	}
 	if err = json.Unmarshal(rawDS, &data); err != nil {
@@ -144,7 +146,7 @@ func (s *DashNGoImpl) UploadAlertTemplates(filter outbound.Filter) ([]string, er
 		if val, ok := m[p.Name]; ok {
 			p.Body.Version = val.Version
 		}
-		_, err = s.GetClient().Provisioning.PutTemplate(p)
+		_, err = a.GetClient().Provisioning.PutTemplate(p)
 		if err != nil {
 			slog.Error("unable to upload template", "template", p.Name, "err", err)
 			continue

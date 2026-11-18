@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/esnet/gdg/internal/adapter/grafana/core"
 	"github.com/esnet/gdg/internal/domain"
 	"github.com/esnet/gdg/internal/ports/outbound"
 	"github.com/esnet/gdg/pkg/tools"
@@ -67,18 +68,18 @@ func partitionDashboardFiles(
 }
 
 // DashboardServiceImpl is the standalone implementation of outbound.DashboardService.
-// It embeds baseService directly for all shared infrastructure — there is no
+// It embeds core.Service directly for all shared infrastructure — there is no
 // back-reference to DashNGoImpl. All dashboard-specific logic (v1 API, v2 App
 // Platform API, permissions) lives here.
 type DashboardServiceImpl struct {
-	baseService
+	core.Service
 }
 
-// NewDashboardService constructs a DashboardServiceImpl from a copy of baseService.
-// The caller owns the baseService value; DashboardServiceImpl keeps its own copy
+// NewDashboardService constructs a DashboardServiceImpl from a copy of core.Service.
+// The caller owns the core.Service value; DashboardServiceImpl keeps its own copy
 // so there is no shared mutable state with DashNGoImpl.
-func NewDashboardService(base baseService) outbound.DashboardService {
-	return &DashboardServiceImpl{baseService: base}
+func NewDashboardService(base core.Service) outbound.DashboardService {
+	return &DashboardServiceImpl{Service: base}
 }
 
 // isV2Enabled returns true when the v2 App Platform dashboard API should be used.
@@ -126,16 +127,16 @@ func (d *DashboardServiceImpl) DownloadDashboards(filter outbound.Filter) []stri
 func (d *DashboardServiceImpl) UploadDashboards(filter outbound.Filter) ([]string, error) {
 	serverIsV2 := d.isV2Enabled()
 	if filter == nil {
-		filter = NewDashboardFilter(d.gdgConfig, "", "", "")
+		filter = NewDashboardFilter(d.GdgConfig, "", "", "")
 	}
 
-	dashboardPath := d.grafanaConf.GetPath(domain.DashboardResource, d.grafanaConf.GetOrganizationName())
-	filesInDir, err := d.storage.FindAllFiles(dashboardPath, true)
+	dashboardPath := d.GrafanaConf.GetPath(domain.DashboardResource, d.GrafanaConf.GetOrganizationName())
+	filesInDir, err := d.Storage.FindAllFiles(dashboardPath, true)
 	if err != nil {
 		return nil, err
 	}
 
-	v1Files, v2Files, processed := partitionDashboardFiles(filesInDir, d.storage.ReadFile)
+	v1Files, v2Files, processed := partitionDashboardFiles(filesInDir, d.Storage.ReadFile)
 
 	var uploaded []string
 

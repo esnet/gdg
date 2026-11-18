@@ -31,41 +31,41 @@ func (f *fakeLookupResolver) Resolve(raw string) (string, error) {
 
 func TestLogin_ResolvesLookupsWhenResolverPresent(t *testing.T) {
 	svc := newTestSvc(t)
-	require.NoError(t, svc.grafanaConf.TestSetSecureAuth(config_domain.SecureModel{
+	require.NoError(t, svc.GrafanaConf.TestSetSecureAuth(config_domain.SecureModel{
 		Token: "lookup:gsm:projects/1/secrets/x/versions/1",
 	}))
 	resolver := &fakeLookupResolver{value: "resolved-token"}
-	svc.lookupResolver = resolver
+	svc.LookupResolver = resolver
 
 	svc.Login()
 
 	assert.True(t, resolver.called, "Login should invoke the configured lookup resolver")
-	assert.Equal(t, "resolved-token", svc.grafanaConf.GetAPIToken())
+	assert.Equal(t, "resolved-token", svc.GrafanaConf.GetAPIToken())
 }
 
 func TestLogin_NilResolverSkipsResolution(t *testing.T) {
 	svc := newTestSvc(t)
-	require.NoError(t, svc.grafanaConf.TestSetSecureAuth(config_domain.SecureModel{
+	require.NoError(t, svc.GrafanaConf.TestSetSecureAuth(config_domain.SecureModel{
 		Token: "lookup:gsm:projects/1/secrets/x/versions/1",
 	}))
-	svc.lookupResolver = nil
+	svc.LookupResolver = nil
 
 	svc.Login()
 
-	assert.Equal(t, "lookup:gsm:projects/1/secrets/x/versions/1", svc.grafanaConf.GetAPIToken(),
+	assert.Equal(t, "lookup:gsm:projects/1/secrets/x/versions/1", svc.GrafanaConf.GetAPIToken(),
 		"with no resolver configured, the lookup reference must be left untouched")
 }
 
 func TestLogin_ResolverPresentButNoLookupRefsNoChange(t *testing.T) {
 	svc := newTestSvc(t)
-	require.NoError(t, svc.grafanaConf.TestSetSecureAuth(config_domain.SecureModel{
+	require.NoError(t, svc.GrafanaConf.TestSetSecureAuth(config_domain.SecureModel{
 		Token: "plain-token",
 	}))
 	resolver := &fakeLookupResolver{value: "should-not-be-used"}
-	svc.lookupResolver = resolver
+	svc.LookupResolver = resolver
 
 	svc.Login()
 
 	assert.False(t, resolver.called, "resolver should not be invoked when there are no lookup refs")
-	assert.Equal(t, "plain-token", svc.grafanaConf.GetAPIToken())
+	assert.Equal(t, "plain-token", svc.GrafanaConf.GetAPIToken())
 }

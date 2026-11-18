@@ -80,9 +80,9 @@ func NewConnectionFilter(name string) outbound.Filter {
 
 // ListConnections list all the currently configured connections
 func (s *DashNGoImpl) ListConnections(filter outbound.Filter) []models.DataSourceListItemDTO {
-	err := s.SwitchOrganizationByName(s.grafanaConf.GetOrganizationName())
+	err := s.SwitchOrganizationByName(s.GrafanaConf.GetOrganizationName())
 	if err != nil {
-		log.Fatalf("Failed to switch organization ID %s: ", s.grafanaConf.OrganizationName)
+		log.Fatalf("Failed to switch organization ID %s: ", s.GrafanaConf.OrganizationName)
 	}
 
 	ds, err := s.GetClient().Datasources.GetDataSources()
@@ -91,7 +91,7 @@ func (s *DashNGoImpl) ListConnections(filter outbound.Filter) []models.DataSourc
 	}
 	result := make([]models.DataSourceListItemDTO, 0)
 
-	dsSettings := s.grafanaConf.GetConnectionSettings()
+	dsSettings := s.GrafanaConf.GetConnectionSettings()
 	for _, item := range ds.GetPayload() {
 		if dsSettings.FiltersEnabled() && config_tooling.IsExcluded(item, dsSettings.FilterRules) {
 			slog.Debug("Skipping data source, since it fails datatype filter checks", "datasource", item.Name, "datatype", item.Type)
@@ -121,9 +121,9 @@ func (s *DashNGoImpl) DownloadConnections(filter outbound.Filter) []string {
 			continue
 		}
 
-		dsPath := s.resources.BuildResourcePath(s.grafanaConf, slug.Make(ds.Name), domain.ConnectionResource, s.isLocal(), s.GetGlobals().ClearOutput)
+		dsPath := s.Resources.BuildResourcePath(s.GrafanaConf, slug.Make(ds.Name), domain.ConnectionResource, s.IsLocal(), s.GetGlobals().ClearOutput)
 
-		if err = s.storage.WriteFile(dsPath, dsPacked); err != nil {
+		if err = s.Storage.WriteFile(dsPath, dsPacked); err != nil {
 			slog.Error("Unable to write file", "filename", slug.Make(ds.Name), "err", err)
 		} else {
 			dataFiles = append(dataFiles, dsPath)
@@ -153,9 +153,9 @@ func (s *DashNGoImpl) UploadConnections(filter outbound.Filter) []string {
 
 	var exported []string
 
-	orgName := s.grafanaConf.GetOrganizationName()
-	slog.Info("Reading files from folder", "folder", s.grafanaConf.GetPath(domain.ConnectionResource, orgName))
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.ConnectionResource, orgName), false)
+	orgName := s.GrafanaConf.GetOrganizationName()
+	slog.Info("Reading files from folder", "folder", s.GrafanaConf.GetPath(domain.ConnectionResource, orgName))
+	filesInDir, err := s.Storage.FindAllFiles(s.GrafanaConf.GetPath(domain.ConnectionResource, orgName), false)
 	if err != nil {
 		slog.Error("failed to list files in directory for datasources", "err", err)
 	}
@@ -163,14 +163,14 @@ func (s *DashNGoImpl) UploadConnections(filter outbound.Filter) []string {
 
 	var rawDS []byte
 
-	dsSettings := s.grafanaConf.GetConnectionSettings()
+	dsSettings := s.GrafanaConf.GetConnectionSettings()
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain.ConnectionResource, orgName), file)
+		fileLocation := filepath.Join(s.GrafanaConf.GetPath(domain.ConnectionResource, orgName), file)
 		if !strings.HasSuffix(fileLocation, ".json") {
 			slog.Debug("Ignoring file", "fileLocation", fileLocation)
 			continue
 		}
-		if rawDS, err = s.storage.ReadFile(fileLocation); err != nil {
+		if rawDS, err = s.Storage.ReadFile(fileLocation); err != nil {
 			slog.Error("failed to read file", "filename", fileLocation, "credentialsErr", err)
 			continue
 		}
@@ -184,10 +184,10 @@ func (s *DashNGoImpl) UploadConnections(filter outbound.Filter) []string {
 			continue
 		}
 
-		dsConfig := s.grafanaConf
+		dsConfig := s.GrafanaConf
 
-		secureLocation := s.grafanaConf.SecureLocation()
-		credentials, credentialsErr := dsConfig.GetCredentials(newDS, secureLocation, s.encoder, s.lookupResolver, s.lookupSvc)
+		secureLocation := s.GrafanaConf.SecureLocation()
+		credentials, credentialsErr := dsConfig.GetCredentials(newDS, secureLocation, s.Encoder, s.LookupResolver, s.LookupSvc)
 		if credentialsErr != nil { // Attempt to get Credentials by URL regex
 			slog.Warn("DataSource has no secureData configured.  Please check your configuration.")
 		}

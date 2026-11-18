@@ -95,19 +95,19 @@ func (s *DashNGoImpl) DownloadUsers(filter outbound.Filter) []string {
 	userListing := s.ListUsers(filter)
 	var importedUsers []string
 
-	userPath := s.resources.BuildResourceFolder(s.grafanaConf, "", domain.UserResource, s.isLocal(), s.GetGlobals().ClearOutput)
+	userPath := s.Resources.BuildResourceFolder(s.GrafanaConf, "", domain.UserResource, s.IsLocal(), s.GetGlobals().ClearOutput)
 	for ndx, user := range userListing {
 		if s.isAdminUser(user.ID, user.Name) {
 			slog.Info("Skipping admin super user")
 			continue
 		}
-		fileName := filepath.Join(userPath, fmt.Sprintf("%s.json", s.resources.GetSlug(user.Login)))
+		fileName := filepath.Join(userPath, fmt.Sprintf("%s.json", s.Resources.GetSlug(user.Login)))
 		userData, err = json.Marshal(&userListing[ndx])
 		if err != nil {
 			slog.Error("could not serialize user object for userId", "userID", user.ID)
 			continue
 		}
-		if err = s.storage.WriteFile(fileName, pretty.Pretty(userData)); err != nil {
+		if err = s.Storage.WriteFile(fileName, pretty.Pretty(userData)); err != nil {
 			slog.Error("Failed to write file", "filename", user.Login, "err", err)
 		} else {
 			importedUsers = append(importedUsers, fileName)
@@ -122,8 +122,8 @@ func (s *DashNGoImpl) isAdminUser(id int64, name string) bool {
 }
 
 func (s *DashNGoImpl) UploadUsers(filter outbound.Filter) []domain.UserProfileWithAuth {
-	orgName := s.grafanaConf.GetOrganizationName()
-	filesInDir, err := s.storage.FindAllFiles(s.grafanaConf.GetPath(domain.UserResource, orgName), false)
+	orgName := s.GrafanaConf.GetOrganizationName()
+	filesInDir, err := s.Storage.FindAllFiles(s.GrafanaConf.GetPath(domain.UserResource, orgName), false)
 	if err != nil {
 		slog.Error("failed to list files in directory for userListings", "err", err)
 	}
@@ -139,9 +139,9 @@ func (s *DashNGoImpl) UploadUsers(filter outbound.Filter) []domain.UserProfileWi
 	}
 
 	for _, file := range filesInDir {
-		fileLocation := filepath.Join(s.grafanaConf.GetPath(domain.UserResource, orgName), file)
+		fileLocation := filepath.Join(s.GrafanaConf.GetPath(domain.UserResource, orgName), file)
 		if strings.HasSuffix(file, ".json") {
-			if rawUser, err = s.storage.ReadFile(fileLocation); err != nil {
+			if rawUser, err = s.Storage.ReadFile(fileLocation); err != nil {
 				slog.Error("failed to read file", "filename", fileLocation, "err", err)
 				continue
 			}
@@ -156,7 +156,7 @@ func (s *DashNGoImpl) UploadUsers(filter outbound.Filter) []domain.UserProfileWi
 			var newUser models.AdminCreateUserForm
 
 			// generate user password
-			password := s.grafanaConf.GetUserSettings().GetPassword(file)
+			password := s.GrafanaConf.GetUserSettings().GetPassword(file)
 
 			data := make(map[string]any)
 			if err = json.Unmarshal(rawUser, &data); err != nil {
@@ -200,7 +200,7 @@ func (s *DashNGoImpl) UploadUsers(filter outbound.Filter) []domain.UserProfileWi
 
 // ListUsers list all grafana users
 func (s *DashNGoImpl) ListUsers(filter outbound.Filter) []*models.UserSearchHitDTO {
-	if !s.grafanaConf.IsBasicAuth() {
+	if !s.GrafanaConf.IsBasicAuth() {
 		log.Fatal("User listing requires basic auth to be configured.  Token based listing is not supported")
 	}
 	var filteredUsers []*models.UserSearchHitDTO

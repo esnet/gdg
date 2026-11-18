@@ -184,7 +184,7 @@ func NewDashboardFilter(cfg *configDomain.GDGAppConfiguration, entries ...string
 func (d *DashboardServiceImpl) listDashboardsV1(filterReq outbound.Filter) []*domain.NestedHit {
 	// Fallback on defaults
 	if filterReq == nil {
-		filterReq = NewDashboardFilter(d.gdgConfig, "", "", "")
+		filterReq = NewDashboardFilter(d.GdgConfig, "", "", "")
 	}
 
 	boardLinks := make([]*domain.NestedHit, 0)
@@ -233,11 +233,11 @@ func (d *DashboardServiceImpl) listDashboardsV1(filterReq outbound.Filter) []*do
 		}
 	}
 
-	folderUidMap := d.getFolderUIDEntityMap(nil)
+	folderUidMap := d.GetFolderUIDEntityMap(nil)
 	var validFolder bool
 	var validUid bool
 	for ndx, link := range boardLinks {
-		link.Slug = d.resources.UpdateSlug(link.URI)
+		link.Slug = d.Resources.UpdateSlug(link.URI)
 		_, ok := deduplicatedLinks[link.ID]
 		if ok {
 			slog.Debug("duplicate board, skipping ")
@@ -252,11 +252,11 @@ func (d *DashboardServiceImpl) listDashboardsV1(filterReq outbound.Filter) []*do
 		link.NestedPath = folderMatch
 
 		// accepts all folders if no filter is set
-		if d.grafanaConf.GetDashboardSettings().IgnoreFilters && !d.grafanaConf.IsFilterSet() {
+		if d.GrafanaConf.GetDashboardSettings().IgnoreFilters && !d.GrafanaConf.IsFilterSet() {
 			validFolder = true
 		} else if filterReq.Validate(context.Background(), domain.FolderFilter, link) /* if no global ignore and filter is set, check folder validity */ {
 			validFolder = true
-		} else if slices.Contains(d.grafanaConf.GetMonitoredFolders(false), domain.ApiConsts.DefaultFolderName) && link.FolderID == 0 {
+		} else if slices.Contains(d.GrafanaConf.GetMonitoredFolders(false), domain.ApiConsts.DefaultFolderName) && link.FolderID == 0 {
 			link.FolderTitle = domain.ApiConsts.DefaultFolderName
 			validFolder = true
 		}
@@ -315,8 +315,8 @@ func (d *DashboardServiceImpl) downloadDashboardsV1(filter outbound.Filter) []st
 			continue
 		}
 
-		fileName := fmt.Sprintf("%s/%s.json", d.resources.BuildResourceFolder(d.grafanaConf, link.NestedPath, domain.DashboardResource, d.isLocal(), d.GetGlobals().ClearOutput), metaData.GetPayload().Meta.Slug)
-		if err = d.storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
+		fileName := fmt.Sprintf("%s/%s.json", d.Resources.BuildResourceFolder(d.GrafanaConf, link.NestedPath, domain.DashboardResource, d.IsLocal(), d.GetGlobals().ClearOutput), metaData.GetPayload().Meta.Slug)
+		if err = d.Storage.WriteFile(fileName, pretty.Pretty(rawBoard)); err != nil {
 			slog.Error("Unable to save dashboard to file\n", "err", err, "dashboard", metaData.GetPayload().Meta.Slug)
 		} else {
 			boards = append(boards, fileName)
@@ -360,10 +360,10 @@ func (d *DashboardServiceImpl) uploadDashboardsV1(filterReq outbound.Filter, fil
 	)
 	// Fallback on defaults
 	if filterReq == nil {
-		filterReq = NewDashboardFilter(d.gdgConfig, "", "", "")
+		filterReq = NewDashboardFilter(d.GdgConfig, "", "", "")
 	}
 
-	folderUidMap := d.getFolderNameUIDMap(d.listFolders(NewFolderFilter(d.gdgConfig)))
+	folderUidMap := d.GetFolderNameUIDMap(d.ListFolders(NewFolderFilter(d.GdgConfig)))
 
 	for file, rawBoard := range files {
 		board := make(map[string]any)
@@ -374,7 +374,7 @@ func (d *DashboardServiceImpl) uploadDashboardsV1(filterReq outbound.Filter, fil
 
 		// Extract Folder Name based on dashboardPath
 		var folderErr error
-		folderName, folderErr = d.resources.GetFolderFromResourcePath(d.grafanaConf, file, domain.DashboardResource, d.storage.GetPrefix(), d.grafanaConf.GetOrganizationName())
+		folderName, folderErr = d.Resources.GetFolderFromResourcePath(d.GrafanaConf, file, domain.DashboardResource, d.Storage.GetPrefix(), d.GrafanaConf.GetOrganizationName())
 		if folderErr != nil {
 			slog.Warn("unable to determine dashboard folder name, falling back on default")
 		}
@@ -412,7 +412,7 @@ func (d *DashboardServiceImpl) uploadDashboardsV1(filterReq outbound.Filter, fil
 // parameter has been intentionally removed — tag/dash filter checks belong in
 // validateDashUploadEntity which calls this function.
 func (d *DashboardServiceImpl) baseFolderValidation(filterReq outbound.Filter, folderName string, folderUidMap map[string]string) (folderUID string, updatedMap map[string]string, err error) {
-	if (d.grafanaConf.IsFilterSet() || !d.grafanaConf.GetDashboardSettings().IgnoreFilters) && !filterReq.Validate(context.Background(), domain.FolderFilter, map[string]any{NestedDashFolderName: folderName}) {
+	if (d.GrafanaConf.IsFilterSet() || !d.GrafanaConf.GetDashboardSettings().IgnoreFilters) && !filterReq.Validate(context.Background(), domain.FolderFilter, map[string]any{NestedDashFolderName: folderName}) {
 		return "", folderUidMap, errors.New("dashboard fails to pass folder filter")
 	}
 
@@ -424,7 +424,7 @@ func (d *DashboardServiceImpl) baseFolderValidation(filterReq outbound.Filter, f
 		return val, folderUidMap, nil
 	}
 
-	newFolders, folderErr := d.createdFolders(folderName)
+	newFolders, folderErr := d.CreatedFolders(folderName)
 	if folderErr != nil {
 		log.Panic("Unable to create required folder")
 	}

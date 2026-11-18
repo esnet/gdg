@@ -3,7 +3,7 @@ package api
 import "log"
 
 func (s *DashNGoImpl) EncodeValue(in string) string {
-	newVal, err := s.encoder.EncodeValue(in)
+	newVal, err := s.Encoder.EncodeValue(in)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -12,7 +12,7 @@ func (s *DashNGoImpl) EncodeValue(in string) string {
 }
 
 func (s *DashNGoImpl) DecodeValue(in string) string {
-	newVal, err := s.encoder.DecodeValue(in)
+	newVal, err := s.Encoder.DecodeValue(in)
 	if err != nil {
 		log.Fatal(err)
 	}

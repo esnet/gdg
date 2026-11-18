@@ -1,4 +1,4 @@
-package api
+package alerting
 
 import (
 	"context"
@@ -34,7 +34,7 @@ var alertRuleCache = ttlcache.New[string, *domain.NestedHit](
 // reader extracts fields directly from the struct, while the raw byte reader parses JSON using gjson and
 // resolves folder UIDs to nested paths via the Grafana service. The function terminates the process via
 // log.Fatalf if either reader registration fails.
-func setupAlertRulesReaders(filterObj outbound.Filter, grafanaSvc outbound.GrafanaService) {
+func setupAlertRulesReaders(filterObj outbound.Filter) {
 	// Object Reader
 	err := v2.RegisterTypedReader[*domain.AlertRuleWithNestedFolder](filterObj, func(ctx context.Context, filterType domain.FilterType, val *domain.AlertRuleWithNestedFolder) (any, error) {
 		switch filterType {
@@ -166,7 +166,7 @@ func alertRuleFilterLookUpFolderName(ctx context.Context, folderUid string, graf
 	var folderObj *domain.NestedHit
 	cacheEntry := alertRuleCache.Get(folderUid)
 	if cacheEntry == nil {
-		folderObj, err = grafanaSvc.(*DashNGoImpl).getFolderByUid(folderUid)
+		folderObj, err = grafanaSvc.GetFolderByUid(folderUid)
 		if err != nil {
 			slog.Debug("unable to find folder by uid, using file location for validation", "nested path", folderNameLocation)
 			return folderNameLocation, nil
@@ -191,7 +191,7 @@ func alertRuleFilterLookUpFolderName(ctx context.Context, folderUid string, graf
 func NewAlertRuleFilter(cfg *configDomain.GDGAppConfiguration, grafanaSvc outbound.GrafanaService, filterEntities domain.AlertRuleFilterParams) outbound.Filter {
 	filterObj := v2.NewBaseFilter()
 	// Define how we read data
-	setupAlertRulesReaders(filterObj, grafanaSvc)
+	setupAlertRulesReaders(filterObj)
 	setupAlertRulesFolderFilter(filterObj, filterEntities, cfg, grafanaSvc)
 
 	// AlertName filter
