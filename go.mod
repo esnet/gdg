@@ -15,7 +15,7 @@ require (
 	github.com/aws/smithy-go v1.28.9
 	github.com/bep/simplecobra v0.8.0
 	github.com/brianvoe/gofakeit/v7 v7.15.0
-	github.com/carlmjohnson/requests v0.26.3
+	github.com/carlmjohnson/requests/v2 v2.26.0
 	github.com/extism/go-sdk v1.7.1
 	github.com/go-openapi/strfmt v0.27.4
 	github.com/go-viper/mapstructure/v2 v2.5.0
