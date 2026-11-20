@@ -3,18 +3,18 @@ module github.com/esnet/gdg
 go 1.27.3
 
 require (
-	charm.land/bubbles/v2 v2.2.1
-	charm.land/bubbletea/v2 v2.1.1
+	charm.land/bubbles/v2 v2.2.2
+	charm.land/bubbletea/v2 v2.1.2
 	charm.land/lipgloss/v2 v2.1.1
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/aws/aws-sdk-go-v2 v1.48.0
-	github.com/aws/aws-sdk-go-v2/credentials v1.21.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.115.0
+	github.com/aws/aws-sdk-go-v2/credentials v1.21.3
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.116.0
 	github.com/aws/smithy-go v1.28.9
 	github.com/bep/simplecobra v0.8.0
-	github.com/brianvoe/gofakeit/v7 v7.15.0
+	github.com/brianvoe/gofakeit/v7 v7.18.10
 	github.com/carlmjohnson/requests v0.26.3
 	github.com/extism/go-sdk v1.7.1
 	github.com/go-openapi/strfmt v0.27.4
@@ -36,9 +36,9 @@ require (
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.12.1
 	github.com/testcontainers/testcontainers-go v0.45.0
-	github.com/tidwall/gjson v1.20.4
+	github.com/tidwall/gjson v1.20.5
 	github.com/tidwall/pretty v1.3.0
-	github.com/tidwall/sjson v1.2.9
+	github.com/tidwall/sjson v1.2.11
 	gocloud.dev v0.49.0
 	golang.org/x/exp v0.0.0-20261113113407-e3970619a1a4
 	golang.org/x/oauth2 v0.38.0
@@ -48,7 +48,7 @@ require (
 )
 
 require (
-	al.essio.dev/pkg/shellescape v1.6.0 // indirect
+	al.essio.dev/pkg/shellescape v1.6.1 // indirect
 	cel.dev/expr v0.26.0 // indirect
 	cloud.google.com/go v0.123.0 // indirect
 	cloud.google.com/go/auth v0.24.4 // indirect
@@ -82,11 +82,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.13.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.14.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.39.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.52.0 // indirect
-	github.com/bmatcuk/doublestar/v4 v4.10.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.53.0 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.10.2 // indirect
 	github.com/briandowns/spinner v1.23.2 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -113,14 +113,13 @@ require (
 	github.com/ebitengine/purego v0.11.3 // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.40.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.3.3 // indirect
-	github.com/evilmartians/lefthook/v2 v2.1.10 // indirect
+	github.com/evilmartians/lefthook/v2 v2.2.2 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/felixge/httpsnoop v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/fxamacker/cbor/v2 v2.10.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
-	github.com/go-json-experiment/json v0.0.0-20260623181947-01eb4420fa68 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
@@ -159,17 +158,17 @@ require (
 	github.com/ianlancetaylor/demangle v0.0.0-20261012173340-cbb8aaea4290 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/kaptinlin/jsonpointer v0.4.27 // indirect
-	github.com/kaptinlin/jsonschema v0.9.3 // indirect
+	github.com/kaptinlin/jsonpointer v0.4.28 // indirect
+	github.com/kaptinlin/jsonschema v0.9.10 // indirect
 	github.com/klauspost/compress v1.20.4 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.2 // indirect
-	github.com/knadh/koanf/maps v0.1.2 // indirect
-	github.com/knadh/koanf/parsers/json v1.0.0 // indirect
-	github.com/knadh/koanf/parsers/toml/v2 v2.2.1 // indirect
-	github.com/knadh/koanf/parsers/yaml v1.1.0 // indirect
-	github.com/knadh/koanf/providers/fs v1.0.0 // indirect
-	github.com/knadh/koanf/providers/rawbytes v1.0.0 // indirect
-	github.com/knadh/koanf/v2 v2.3.5 // indirect
+	github.com/knadh/koanf/maps v0.1.3 // indirect
+	github.com/knadh/koanf/parsers/json v1.0.1 // indirect
+	github.com/knadh/koanf/parsers/toml/v2 v2.2.2 // indirect
+	github.com/knadh/koanf/parsers/yaml v1.1.1 // indirect
+	github.com/knadh/koanf/providers/fs v1.0.1 // indirect
+	github.com/knadh/koanf/providers/rawbytes v1.0.1 // indirect
+	github.com/knadh/koanf/v2 v2.3.7 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20261101121723-be84dd9509a0 // indirect
@@ -202,7 +201,7 @@ require (
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
 	github.com/power-devops/perfstat v0.0.0-20260916203055-22a1a467d9f0 // indirect
-	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/rivo/uniseg v0.4.8-0.20261110175422-3a370411ca06 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/schollz/progressbar/v3 v3.19.1 // indirect
 	github.com/shirou/gopsutil/v4 v4.26.10 // indirect
@@ -220,9 +219,10 @@ require (
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tklauser/go-sysconf v0.4.0 // indirect
 	github.com/tklauser/numcpus v0.12.0 // indirect
-	github.com/urfave/cli/v3 v3.10.1 // indirect
+	github.com/urfave/cli/v3 v3.14.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xo/terminfo v1.3.1 // indirect
+	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
