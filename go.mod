@@ -40,7 +40,7 @@ require (
 	github.com/tidwall/pretty v1.3.0
 	github.com/tidwall/sjson v1.2.9
 	gocloud.dev v0.49.0
-	golang.org/x/exp v0.0.0-20261113113407-e3970619a1a4
+	golang.org/x/exp v0.0.0-20261121134650-e1094eeca1b5
 	golang.org/x/oauth2 v0.38.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.37.2
